@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 export const ScribexContext = React.createContext();
 
-const ScribexContextProvider = ({ children }) => {
+const ScribexContextProvider = ({ children , editable = true}) => {
   const initialState = {
     sequenceIds: [],
     sectionable: false,
     blockable: true,
-    editable: true,
+    editable,
     preview: false,
     verbose: false,
     graftSequenceId: null,
