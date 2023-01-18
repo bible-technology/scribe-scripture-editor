@@ -46,7 +46,6 @@ export default function ObsBibleAudioTab({
     const resourceArray = subMenuItems?.filter((ref) => ref?.value?.type?.flavorType?.flavor?.name === resourceName);
     setfilteredBibleObsAudio(resourceArray);
   }, [selectResource, loading, subMenuItems]);
-
   return (
     <div>
       {loading ? (
@@ -85,6 +84,7 @@ export default function ObsBibleAudioTab({
                                 ref.projectDir,
                                 '',
                                 ref.value.type.flavorType.name,
+                                ref.type,
                               )}
                               role="button"
                               tabIndex="0"
@@ -123,6 +123,7 @@ export default function ObsBibleAudioTab({
                                       ref.projectDir,
                                       '',
                                       ref.value.type.flavorType.name,
+                                      ref.type,
                                     )}
                                     role="button"
                                     tabIndex="0"
@@ -139,6 +140,7 @@ export default function ObsBibleAudioTab({
                                       ref.projectDir,
                                       '',
                                       ref.value.type.flavorType.name,
+                                      ref.type,
                                     )}
                                     role="button"
                                     tabIndex="0"
@@ -160,12 +162,12 @@ export default function ObsBibleAudioTab({
                                   )}
                                 {selectResource !== 'audio'
                                   && (
-                                  <RemoveResource
-                                    resource={ref}
-                                    selectResource={selectResource}
-                                    setRenderApp={setRenderApp}
-                                  />
-)}
+                                    <RemoveResource
+                                      resource={ref}
+                                      selectResource={selectResource}
+                                      setRenderApp={setRenderApp}
+                                    />
+                                  )}
                               </div>
                             </div>
                           </td>

@@ -5,7 +5,6 @@ import localforage from 'localforage';
 import PropTypes from 'prop-types';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import EditorSection from '@/layouts/editor/EditorSection';
-import ReferenceBible from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBible';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNavigation from '@/components/EditorPage/Navigation/CustomNavigation';
 import NavigationObs from '@/components/EditorPage/ObsEditor/NavigationObs';
@@ -18,6 +17,8 @@ import useAddNotification from '@/components/hooks/useAddNotification';
 import { fetchSettingsResourceHistory } from '@/core/editor/fetchSettingsResourceHistory';
 import { saveSettingsResourceHistory } from '@/core/editor/saveSettingsResourceHistory';
 import * as logger from '../../logger';
+import ReferenceBibleX from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBibleX';
+import ScribexContextProvider from '@/components/context/ScribexContext';
 
 const TranslationHelps = dynamic(
   () => import('@/components/EditorPage/Reference/TranslationHelps'),
@@ -310,13 +311,15 @@ const SectionPlaceholder2 = ({ editor }) => {
                 <>
                     {referenceColumnTwoData1?.languageId
                   && (
-                  <ReferenceBible
-                    languageId={referenceColumnTwoData1.languageId}
-                    refName={referenceColumnTwoData1.refName}
-                    bookId={_bookId1}
-                    chapter={_chapter1}
-                    verse={_verse1}
-                  />
+                    <ScribexContextProvider editable={false}>
+                    <ReferenceBibleX
+                      languageId={referenceColumnTwoData1.languageId}
+                      refName={referenceColumnTwoData1.refName}
+                      bookId={_bookId1}
+                      chapter={_chapter1}
+                      verse={_verse1}
+                    />
+                  </ScribexContextProvider>
                 )}
                 </>
               )) || (referenceColumnTwoData1.selectedResource === 'obs' && (
@@ -375,15 +378,17 @@ const SectionPlaceholder2 = ({ editor }) => {
               && ((referenceColumnTwoData2.selectedResource === 'bible' && (
                 <>
                   {referenceColumnTwoData2?.languageId
-            && (
-              <ReferenceBible
-                languageId={referenceColumnTwoData2.languageId}
-                refName={referenceColumnTwoData2.refName}
-                bookId={_bookId2}
-                chapter={_chapter2}
-                verse={_verse2}
-              />
-                )}
+                && (
+                  <ScribexContextProvider editable={false}>
+                    <ReferenceBibleX
+                      languageId={referenceColumnTwoData2.languageId}
+                      refName={referenceColumnTwoData2.refName}
+                      bookId={_bookId2}
+                      chapter={_chapter2}
+                      verse={_verse2}
+                    />
+                  </ScribexContextProvider>
+                  )}
                 </>
               )) || (referenceColumnTwoData2.selectedResource === 'obs' && (
                 <>

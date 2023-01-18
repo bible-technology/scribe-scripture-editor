@@ -1,22 +1,21 @@
 import { useEffect, useState, useContext } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import { LockClosedIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 import BibleNavigationX from '@/modules/biblenavigation/BibleNavigationX';
 import usePerf from '@/components/hooks/scribex/usePerf';
 import htmlMap from '@/components/hooks/scribex/htmlmap';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { useReadUsfmFile } from '@/components/hooks/scribex/useReadUsfmFile';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
 import Buttons from './Buttons';
 import Editor from './Editor';
 
-export default function Scribex() {
+export default function Scribex(props) {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
-  const { usfmData, bookAvailable } = useReadUsfmFile();
+  const { usfmData, bookAvailable } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
   let selectedDocument;
@@ -28,7 +27,6 @@ export default function Scribex() {
     newStateId,
     documents: usfmData,
   });
-
   const {
     state: {
       bookId,
@@ -38,6 +36,14 @@ export default function Scribex() {
 
     },
   } = useContext(ReferenceContext);
+  const {
+    states: {
+      scrollLock,
+    },
+    actions: {
+      setScrollLock,
+    },
+  } = useContext(ProjectContext);
 
   const {
     states: { openSideBar },
@@ -116,11 +122,18 @@ export default function Scribex() {
             className="flex items-center"
           >
             <div>
-              <LockClosedIcon
-                aria-label="close-lock"
-                className="h-5 w-5 text-white"
-                aria-hidden="true"
-              />
+              {scrollLock === true ? (
+                <LockOpenIcon
+                  aria-label="open-lock"
+                  className="h-5 mr-2 w-5 text-white cursor-pointer"
+                  aria-hidden="true"
+                  onClick={() => setScrollLock(!scrollLock)}
+                />) : (<LockClosedIcon
+                  aria-label="close-lock"
+                  className="h-5 mr-2 w-5 text-white cursor-pointer"
+                  aria-hidden="true"
+                  onClick={() => setScrollLock(!scrollLock)}
+                />)}
             </div>
             <div
               role="button"
@@ -129,7 +142,7 @@ export default function Scribex() {
               className="mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
             >
               <BookmarkIcon
-                className="h-5 w-5 text-white"
+                className="h-5 mr-2 w-5 text-white cursor-pointer"
                 aria-hidden="true"
               />
             </div>

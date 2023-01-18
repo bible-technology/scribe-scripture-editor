@@ -16,6 +16,7 @@ export default function usePerf({
   bookCode,
   verbose,
   htmlMap,
+  refName
 }) {
   const [isSaving, startSaving] = useTransition();
   const [htmlPerf, setHtmlPerf] = useState();
@@ -29,7 +30,7 @@ export default function usePerf({
         htmlMap,
         options: { historySize: 100 },
       }),
-    [proskomma, ready, docSetId],
+    [proskomma, ready, docSetId,refName],
   );
 
   useDeepCompareEffect(() => {
