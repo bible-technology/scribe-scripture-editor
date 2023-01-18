@@ -185,6 +185,7 @@ export default function EditorSection({
                   openResourcePopUp={openResourcePopUp}
                   setOpenResourcePopUp={setOpenResourcePopUp}
                   selectedProjectMeta={selectedProjectMeta}
+                  referenceResources={referenceResources}
                 />
 
               </div>

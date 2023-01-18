@@ -95,7 +95,6 @@ export default function Editor(props) {
     handlers,
     autoSaveIndication,
   };
-
   return (
     <div className="editor" style={style}>
       {!bookAvailable && <EmptyScreen />}

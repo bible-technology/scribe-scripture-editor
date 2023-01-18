@@ -91,6 +91,7 @@ const ReferenceBible = ({
                     readIngredients({
                       filePath,
                     }).then((res) => {
+                    
                       timeout(2000).then(() => {
                         setUsfmInput(res);
                       }).finally(() => {
