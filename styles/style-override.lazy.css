@@ -188,7 +188,7 @@ the last child. */
 	flex-flow: column;
 }
 .scrollbars-width::-webkit-scrollbar {
-	width: 15px;
+	width: 0.75rem;
 }
 .scrollbars-width::-webkit-scrollbar-thumb {
 	background: #6b6b6b;

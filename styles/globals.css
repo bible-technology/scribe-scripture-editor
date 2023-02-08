@@ -40,12 +40,17 @@
 	@apply mx-3;
 }
 
+.perf .title .section,
+.perf .heading .section {
+	@apply flex items-center;
+}
+
 .editor {
 	@apply my-2;
 }
 
 .sectionHeading {
-	@apply uppercase tracking-wider text-xs;
+	@apply w-20 text-right uppercase tracking-wider text-xs font-semibold after:content-['_:'];
 }
 
 .title .mt,
@@ -57,12 +62,12 @@
 	@apply bg-primary-50 outline-none rounded-sm;
 }
 
-p.paragraph {
-	@apply py-1;
+.mark.chapter {
+	@apply border-b mb-2 pb-1 uppercase tracking-wider font-semibold break-before-column block before:content-['Chapter_:_'];
 }
 
-.mark.chapter {
-	@apply text-xl font-bold mr-2 mt-10 break-before-column before:block;
+p.paragraph:has(> .chapter) {
+	@apply mt-2;
 }
 
 .mark.verse {

@@ -16,6 +16,8 @@ import menuStyles from './MenuBar.module.css';
 import styles from './SubMenuBar.module.css';
 import packageInfo from '../../../../package.json';
 
+import SyncPopup from './SyncPopup';
+
 const activate = () => {
   // console.log('rename');
 };
