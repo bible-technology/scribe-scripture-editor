@@ -1,7 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import {
+  LockClosedIcon,
+  BookmarkIcon,
+  LockOpenIcon,
+} from '@heroicons/react/24/outline';
 import BibleNavigationX from '@/modules/biblenavigation/BibleNavigationX';
 import usePerf from '@/components/hooks/scribex/usePerf';
 import htmlMap from '@/components/hooks/scribex/htmlmap';
@@ -28,21 +32,11 @@ export default function Scribex(props) {
     documents: usfmData,
   });
   const {
-    state: {
-      bookId,
-      selectedFont,
-      fontSize,
-      projectScriptureDir,
-
-    },
+    state: { bookId, selectedFont, fontSize, projectScriptureDir },
   } = useContext(ReferenceContext);
   const {
-    states: {
-      scrollLock,
-    },
-    actions: {
-      setScrollLock,
-    },
+    states: { scrollLock },
+    actions: { setScrollLock },
   } = useContext(ProjectContext);
 
   const {
@@ -103,47 +97,48 @@ export default function Scribex(props) {
         closeSideBar={closeSideBar}
         footnoteProps={_props}
       />
-      <div className="flex flex-col bg-white border-b-2 border-secondary h-editor rounded-md shadow scrollbar-width">
-        <div className="flex flex-wrap items-center mt-1 justify-between bg-secondary ">
-          {/* <div className="bg-white border-b-2 border-secondary rounded-md shadow h-editor overflow-hidden">
-        <div className="flex items-center justify-between bg-secondary rounded-t-md overflow-hidden sticky top-0 left-0 right-0"> */}
+      <div className='flex flex-col bg-white border-b-2 border-secondary h-editor rounded-md shadow scrollbar-width'>
+        <div className='flex flex-wrap items-center justify-between bg-secondary rounded-t-md overflow-hidden'>
           <BibleNavigationX />
           <div
-            aria-label="editor-pane"
-            className="h-4 flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+            aria-label='editor-pane'
+            className='h-4 flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate'
           >
             Editor
           </div>
-          <div className="flex items-center">
+          <div className='flex items-center'>
             <Buttons {..._props} />
           </div>
           <div
-            title="navigation lock/unlock"
-            className="flex items-center"
+            title='navigation lock/unlock'
+            className='flex items-center'
           >
             <div>
               {scrollLock === true ? (
                 <LockOpenIcon
-                  aria-label="open-lock"
-                  className="h-5 mr-2 w-5 text-white cursor-pointer"
-                  aria-hidden="true"
+                  aria-label='open-lock'
+                  className='h-5 mr-2 w-5 text-white cursor-pointer'
+                  aria-hidden='true'
                   onClick={() => setScrollLock(!scrollLock)}
-                />) : (<LockClosedIcon
-                  aria-label="close-lock"
-                  className="h-5 mr-2 w-5 text-white cursor-pointer"
-                  aria-hidden="true"
+                />
+              ) : (
+                <LockClosedIcon
+                  aria-label='close-lock'
+                  className='h-5 mr-2 w-5 text-white cursor-pointer'
+                  aria-hidden='true'
                   onClick={() => setScrollLock(!scrollLock)}
-                />)}
+                />
+              )}
             </div>
             <div
-              role="button"
-              tabIndex="0"
-              title="bookmark"
-              className="mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
+              role='button'
+              tabIndex='0'
+              title='bookmark'
+              className='mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10'
             >
               <BookmarkIcon
-                className="h-5 mr-2 w-5 text-white cursor-pointer"
-                aria-hidden="true"
+                className='h-5 mr-2 w-5 text-white cursor-pointer'
+                aria-hidden='true'
               />
             </div>
           </div>
@@ -155,7 +150,7 @@ export default function Scribex(props) {
             lineHeight: (fontSize > 1.3) ? 1.5 : '',
             direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
           }}
-          className="border-l-2 border-r-2 border-secondary pb-16 prose-sm max-w-none overflow-auto h-full scrollbars-width"
+          className='border-l-2 border-r-2 border-secondary pb-16 overflow-auto h-full scrollbars-width leading-8'
         >
           <Editor {..._props} />
         </div>
