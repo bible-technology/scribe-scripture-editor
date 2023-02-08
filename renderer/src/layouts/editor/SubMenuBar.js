@@ -18,6 +18,8 @@ import styles from './SubMenuBar.module.css';
 import packageInfo from '../../../../package.json';
 // import WifiIcon from '@/icons/wifi.svg';
 
+import SyncPopup from './SyncPopup';
+
 const activate = () => {
   // console.log('rename');
 };

@@ -51,7 +51,7 @@ export default function ColumnOne(props) {
         </div>
       </div>
 
-      <div className="prose-sm p-4 text-xl h-full overflow-y-scroll no-scrollbars">
+      <div className="p-4 text-xl h-full overflow-y-scroll no-scrollbars">
 
         <div className="w-full">
           <h1>asf</h1>

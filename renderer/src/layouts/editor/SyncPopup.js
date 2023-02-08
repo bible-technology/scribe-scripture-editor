@@ -1,0 +1,108 @@
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState } from 'react';
+
+export default function SyncPopup() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  return (
+    <>
+      <div className="flex items-center justify-center">
+        <button
+          type="button"
+          onClick={openModal}
+          className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+        >
+          Sync
+        </button>
+      </div>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium p-6 py-3 leading-6 bg-secondary text-white"
+                  >
+                    Sync Project
+                  </Dialog.Title>
+                  <div className="p-6 py-3">
+                    <p>
+                      Select your username to sync your project
+                    </p>
+
+                    <div className="flex gap-5 py-4">
+                      <div
+                        class="text-xs inline-flex items-center tracking-wider leading-sm uppercase px-3 py-2 bg-primary text-white rounded-full hover:bg-secondary cursor-pointer"
+                      >
+                        Door43 : UserName
+                      </div>
+
+                      <div
+                        class="text-xs inline-flex items-center tracking-wider leading-sm uppercase px-3 py-2 bg-primary-50 text-black rounded-full hover:bg-primary hover:text-white cursor-pointer"
+                      >
+                        Gitlab : UserName
+                      </div>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                      Don&apos;t find your username, please login here
+                      &nbsp;
+                      <b class="text-primary underline"><a href="/sync">sync</a></b>
+                    </p>
+                  </div>
+
+                  <div className="p-6 py-3 mb-3 flex justify-between items-center">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-error px-4 py-2 text-sm font-medium text-white uppercase hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-success px-4 py-2 text-sm font-medium text-white uppercase hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Sync
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}

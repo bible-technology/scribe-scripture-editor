@@ -217,7 +217,7 @@ export default function EditorSection({
                   {scrollLock ? (
                     <>
                       {CustomNavigation}
-                      <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                      <div className="mx-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
                         {title}
                       </div>
                     </>
@@ -262,7 +262,7 @@ export default function EditorSection({
 
         <div
           style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
-          className="prose-sm p-4 text-xl h-full overflow-auto scrollbars-width"
+          className="h-full overflow-auto scrollbars-width leading-8"
         >
           {
             (loadResource === false)
