@@ -1,11 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import {
-  LockClosedIcon,
-  BookmarkIcon,
-  LockOpenIcon,
-} from '@heroicons/react/24/outline';
+import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 import BibleNavigationX from '@/modules/biblenavigation/BibleNavigationX';
 import usePerf from '@/components/hooks/scribex/usePerf';
 import htmlMap from '@/components/hooks/scribex/htmlmap';
@@ -15,6 +11,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
 import Buttons from './Buttons';
 import Editor from './Editor';
+import PopupButton from "./PopupButton";
 
 export default function Scribex(props) {
   const { state, actions } = useContext(ScribexContext);
@@ -22,6 +19,20 @@ export default function Scribex(props) {
   const { usfmData, bookAvailable } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
+  const [chapterNumber, setChapterNumber] = useState(1)
+  const [verseNumber, setVerseNumber] = useState(1)
+  const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
+  const [newVerChapNumber, setInsertNumber] = useState('');
+  const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
+  const handleChange = (event) => {
+    setVerseInsert(event.target.value);
+  };
+
+  const handleClick = (number, title) => {
+    setInsertNumber(number);
+    setInsertVerseRChapter(title)
+    setTriggerVerseInsert(!triggerVerseInsert);
+  };
   let selectedDocument;
 
   const { proskomma, stateId, newStateId } = useProskomma({ verbose });
@@ -84,11 +95,18 @@ export default function Scribex(props) {
     ...perfState,
     ...actions,
     ...perfActions,
+    triggerVerseInsert,
+    chapterNumber,
+    verseNumber,
     isLoading,
     bookName,
     bookChange,
     bookAvailable,
     setBookChange,
+    setChapterNumber,
+    setVerseNumber,
+    newVerChapNumber,
+    insertVerseRChapter,
   };
   return (
     <>
@@ -99,7 +117,7 @@ export default function Scribex(props) {
       />
       <div className='flex flex-col bg-white border-b-2 border-secondary h-editor rounded-md shadow scrollbar-width'>
         <div className='flex flex-wrap items-center justify-between bg-secondary rounded-t-md overflow-hidden'>
-          <BibleNavigationX />
+          <BibleNavigationX chapterNumber={chapterNumber} setChapterNumber={setChapterNumber} verseNumber={verseNumber} setVerseNumber={setVerseNumber} />
           <div
             aria-label='editor-pane'
             className='h-4 flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate'
@@ -142,7 +160,16 @@ export default function Scribex(props) {
               />
             </div>
           </div>
+          <div className='pt-2 flex'>
+            <PopupButton handleClick={handleClick} title={'Verse'} className='flex' />
+            <PopupButton handleClick={handleClick} title={'Chapter'} className='flex' />
+            <PopupButton handleClick={handleClick} title={'Footnote'} className='flex' />
+            <PopupButton handleClick={handleClick} title={'Cross Reference'} className='flex' />
+          </div>
         </div>
+
+
+
         <div
           style={{
             fontFamily: selectedFont || 'sans-serif',

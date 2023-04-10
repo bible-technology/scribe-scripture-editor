@@ -66,7 +66,7 @@
 	@apply border-b mb-2 pb-1 uppercase tracking-wider font-semibold break-before-column block before:content-['Chapter_:_'];
 }
 
-p.paragraph:has(> .chapter) {
+p.paragraph:has(.chapter) {
 	@apply mt-2;
 }
 
@@ -98,6 +98,12 @@ p.paragraph:has(> .chapter) {
 .perf .verse {
 	visibility: hidden;
 	position: relative;
+}
+
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 /* html {

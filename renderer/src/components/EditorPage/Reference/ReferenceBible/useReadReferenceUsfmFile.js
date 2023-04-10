@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import localforage from 'localforage';
+import moment from 'moment';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { readIngredients } from '@/core/reference/readIngredients';
@@ -16,7 +17,7 @@ export const useReadReferenceUsfmFile = ({
   setOpenSnackBar,
   setSnackText,
   setNotify,
-  setDisplayScreen
+  setDisplayScreen,
 }) => {
   const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setBookAvailable] = useState(false);
@@ -38,7 +39,7 @@ export const useReadReferenceUsfmFile = ({
   useEffect(() => {
     setUsfmData([]);
     setBookAvailable(true);
-  }, [refName, scrollLock])
+  }, [refName, scrollLock]);
 
   useEffect(() => {
     async function readLocalFile() {
@@ -48,7 +49,7 @@ export const useReadReferenceUsfmFile = ({
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const localForageResources = await localforage.getItem('resources');
-        const chosenResource = localForageResources.find(resource => resource.projectDir === refName)
+        const chosenResource = localForageResources.find((resource) => resource.projectDir === refName);
         if (chosenResource?.value && chosenResource?.value?.languages && chosenResource?.value?.languages[0]?.name?.en === languageId) {
           const _books = [];
           Object.entries(chosenResource.value.ingredients).forEach(
@@ -57,7 +58,7 @@ export const useReadReferenceUsfmFile = ({
                 const _bookID = Object.entries(ingredient.scope)[0][0];
                 _books.push(_bookID);
                 if (Object.keys(ingredient.scope)[0].toLowerCase() === bookId.toLowerCase()) {
-                  if (chosenResource.type == 'user') {
+                  if (chosenResource.type === 'user') {
                     const filePath = path.join(newpath, 'autographa', 'users', username, 'resources', refName, key);
                     const fileIngredients = await readIngredients({ filePath });
                     const books = [{
@@ -65,7 +66,7 @@ export const useReadReferenceUsfmFile = ({
                       bookCode: bookId.toLowerCase(),
                       data: fileIngredients,
                     }];
-                    setBookAvailable(true)
+                    setBookAvailable(true);
                     setUsfmData(books);
                     setIsLoading(false);
                     setOpenSnackBar(true);
@@ -77,17 +78,17 @@ export const useReadReferenceUsfmFile = ({
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });
                     setCounter(4);
-                  } else if (chosenResource.type == 'common') {
+                  } else if (chosenResource.type === 'common') {
                     const commonResourcePath = path.join(newpath, 'autographa', 'common', 'resources', refName, key);
-                    const commonResourceIngredients = await readIngredients({ filePath: commonResourcePath })
+                    const commonResourceIngredients = await readIngredients({ filePath: commonResourcePath });
                     const books = [{
                       selectors: { org: refName, lang: 'en', abbr: 'ult' },
                       bookCode: bookId.toLowerCase(),
                       data: commonResourceIngredients,
                     }];
-                    setBookAvailable(true)
+                    setBookAvailable(true);
                     setUsfmData(books);
-                    setIsLoading(false)
+                    setIsLoading(false);
                     setOpenSnackBar(true);
                     setSnackText(t('dynamic-msg-load-ref-bible-snack', { refName }));
                     setNotify('success');
@@ -97,11 +98,10 @@ export const useReadReferenceUsfmFile = ({
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });
                     setCounter(4);
-                  }
-                  else {
+                  } else {
                     setUsfmData([]);
                     setBookAvailable(false);
-                    setIsLoading(false)
+                    setIsLoading(false);
                   }
                 }
               }
@@ -110,8 +110,8 @@ export const useReadReferenceUsfmFile = ({
                   setDisplayScreen(true);
                 }
               }
-            }
-          )
+            },
+          );
         }
       } catch (err) {
         setOpenSnackBar(true);
@@ -128,7 +128,7 @@ export const useReadReferenceUsfmFile = ({
           });
           setNotifications(temp);
         });
-        return console.log(err)
+        return console.log(err);
       }
     }
     readLocalFile();

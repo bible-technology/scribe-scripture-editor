@@ -5,7 +5,7 @@ import usePerf from '@/components/hooks/scribex/usePerf';
 import htmlMap from '@/components/hooks/scribex/htmlmap';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ScribexContext } from '@/components/context/ScribexContext';
-import Editor from './Editor';
+import ReferenceEditor from './ReferenceEditor';
 
 export default function ReferenceScribex(props) {
 
@@ -89,7 +89,7 @@ export default function ReferenceScribex(props) {
           direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
         }}
       >
-        <Editor {..._props} />
+        <ReferenceEditor {..._props} />
       </div>
     </>
   );

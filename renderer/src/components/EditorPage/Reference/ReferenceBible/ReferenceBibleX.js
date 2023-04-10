@@ -1,18 +1,16 @@
 /* eslint-disable no-nested-ternary */
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { SnackBar } from '@/components/SnackBar';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import ReferenceScribex from '../../Scribex/ReferenceScribex';
 import { useReadReferenceUsfmFile } from '@/components/EditorPage/Reference/ReferenceBible/useReadReferenceUsfmFile';
+import ReferenceScribex from '../../Scribex/ReferenceScribex';
 
 const ReferenceBibleX = ({
   languageId,
   refName,
-  chapter,
-  verse,
   bookId,
 }) => {
   const {
@@ -38,7 +36,7 @@ const ReferenceBibleX = ({
     setOpenSnackBar,
     setSnackText,
     setNotify,
-    setDisplayScreen
+    setDisplayScreen,
   });
 
   const props = {
@@ -47,13 +45,13 @@ const ReferenceBibleX = ({
     bookAvailable,
     refName,
     scrollLock,
-  }
+  };
   return (
 
     <span>
       {
         isLoading === false && bookAvailable ? (
-          <ReferenceScribex{...props} />
+          <ReferenceScribex {...props} />
         ) : (
           displyScreen === true ? (
             <EmptyScreen />

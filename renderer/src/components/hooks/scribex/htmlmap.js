@@ -36,6 +36,7 @@ const htmlMap = (context) => ({
       classList: ['mark', 'verse', `verse-${atts.number}`],
       id: `ch${context.lastChapter}v${atts.number}`,
       tagName: 'span',
+      attributes: { contenteditable: true },
     }),
   },
   graft: {

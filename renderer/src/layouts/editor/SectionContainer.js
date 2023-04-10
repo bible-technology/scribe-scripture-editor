@@ -2,13 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import localforage from 'localforage';
 import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
-import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
-import SectionPlaceholder1 from './SectionPlaceholder1';
-import SectionPlaceholder2 from './SectionPlaceholder2';
+import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';;
 import packageInfo from '../../../../package.json';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import { useReadUsfmFile } from '@/components/hooks/scribex/useReadUsfmFile';
-import Scribex from '@/components/EditorPage/Scribex/Scribex';
+import SectionPlaceholder1 from './SectionPlaceholder1';
+import SectionPlaceholder2 from './SectionPlaceholder2';
+import Scribex from '@/components/EditorPage/Scribex/Scribex'; // eslint-disable-line 
 
 const MainPlayer = dynamic(
   () => import('@/components/EditorPage/AudioEditor/MainPlayer'),
@@ -40,7 +40,7 @@ const SectionContainer = () => {
     bookAvailable,
     state,
     actions,
-  }
+  };
   return (
     <>
       <div className="grid grid-flow-col auto-cols-fr m-3 gap-2">

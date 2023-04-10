@@ -16,7 +16,7 @@ export default function usePerf({
   bookCode,
   verbose,
   htmlMap,
-  refName
+  refName,
 }) {
   const [isSaving, startSaving] = useTransition();
   const [htmlPerf, setHtmlPerf] = useState();
@@ -30,12 +30,12 @@ export default function usePerf({
         htmlMap,
         options: { historySize: 100 },
       }),
-    [proskomma, ready, docSetId,refName],
+    [proskomma, ready, docSetId, refName],
   );
 
   useDeepCompareEffect(() => {
     if (epiteleteHtml) {
-      epiteleteHtml.readHtml(bookCode, { safe: true }, htmlMap).then((_htmlPerf) => {
+      epiteleteHtml.readHtml(bookCode, { cloning: false }, htmlMap).then((_htmlPerf) => {
         // remove htmlMap for default classes
         setHtmlPerf(_htmlPerf);
       });

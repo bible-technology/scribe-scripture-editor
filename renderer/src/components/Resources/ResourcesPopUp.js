@@ -56,7 +56,7 @@ export default function ResourcesPopUp(
     },
   } = useContext(ReferenceContext);
 
-  const handleRowSelect = (e, row, name, owner, flavorname, userOrCommon,  offline = false,) => {
+  const handleRowSelect = (e, row, name, owner, flavorname, userOrCommon, offline = false) => {
     const offlineResource = offline
       ? { offline: true, data: offline }
       : { offline: false };
