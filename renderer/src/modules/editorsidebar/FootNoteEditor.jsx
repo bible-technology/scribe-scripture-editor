@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
 export default function FootNoteEditor(props) {
@@ -38,10 +37,10 @@ export default function FootNoteEditor(props) {
     sequenceId,
     addSequenceId,
     options: {
-    sectionable,
-    blockable,
-    editable,
-    preview,
+      sectionable,
+      blockable,
+      editable,
+      preview,
     },
     decorators: {},
     verbose,

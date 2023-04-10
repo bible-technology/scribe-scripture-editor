@@ -16,9 +16,9 @@ import { SnackBar } from '@/components/SnackBar';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import { fetchSettingsResourceHistory } from '@/core/editor/fetchSettingsResourceHistory';
 import { saveSettingsResourceHistory } from '@/core/editor/saveSettingsResourceHistory';
-import * as logger from '../../logger';
 import ReferenceBibleX from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBibleX';
 import ScribexContextProvider from '@/components/context/ScribexContext';
+import * as logger from '../../logger';
 
 const TranslationHelps = dynamic(
   () => import('@/components/EditorPage/Reference/TranslationHelps'),
@@ -311,15 +311,15 @@ const SectionPlaceholder2 = ({ editor }) => {
                 <>
                     {referenceColumnTwoData1?.languageId
                   && (
-                    <ScribexContextProvider editable={false}>
-                    <ReferenceBibleX
-                      languageId={referenceColumnTwoData1.languageId}
-                      refName={referenceColumnTwoData1.refName}
-                      bookId={_bookId1}
-                      chapter={_chapter1}
-                      verse={_verse1}
-                    />
-                  </ScribexContextProvider>
+                    <ScribexContextProvider editable={false} reference>
+                      <ReferenceBibleX
+                        languageId={referenceColumnTwoData1.languageId}
+                        refName={referenceColumnTwoData1.refName}
+                        bookId={_bookId1}
+                        chapter={_chapter1}
+                        verse={_verse1}
+                      />
+                    </ScribexContextProvider>
                 )}
                 </>
               )) || (referenceColumnTwoData1.selectedResource === 'obs' && (
@@ -379,7 +379,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                 <>
                   {referenceColumnTwoData2?.languageId
                 && (
-                  <ScribexContextProvider editable={false}>
+                  <ScribexContextProvider editable={false} reference>
                     <ReferenceBibleX
                       languageId={referenceColumnTwoData2.languageId}
                       refName={referenceColumnTwoData2.refName}

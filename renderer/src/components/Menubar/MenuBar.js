@@ -25,7 +25,6 @@ const MenuBar = ({
       leaveFrom="transform opacity-100 scale-100"
       leaveTo="transform opacity-0 scale-95"
     >
-      // TODO Fix map keys. Error : Each child in a list should have a unique "key" prop.
       <Menu.Items style={style} className="flex absolute z-50 left-0 w-screen mt-2 -ml-2 origin-top-left bg-white divide-y divide-gray-100 shadow ring-1 ring-black ring-opacity-5 focus:outline-none">
         {MenuItems.map((item) => (
           <div key={item.itemname} aria-label={header !== 'File' ? 'section-header' : ''} className="flex px-1 py-1">

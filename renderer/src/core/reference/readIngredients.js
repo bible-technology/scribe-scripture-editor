@@ -14,7 +14,6 @@ export const readIngredients = async ({
       );
       logger.debug('readIngreadients.js', 'Returning the file content');
       resolve((fileContent));
-    }
-    else resolve((false))
+    } else { resolve((false)); }
   });
 };

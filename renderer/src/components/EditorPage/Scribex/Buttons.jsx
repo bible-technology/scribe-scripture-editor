@@ -30,6 +30,7 @@ export default function Buttons(props) {
     setEditable,
     setPreview,
     exportUsfm,
+    setTriggerVerseInsert
   } = props;
 
   const onSectionable = () => {
@@ -80,7 +81,7 @@ export default function Buttons(props) {
           onClick={onBlockable}
           title="Collapse blocks"
         />
-        )
+      )
         : (
           <Bars4Icon
             aria-label="List-Icon"
@@ -89,7 +90,7 @@ export default function Buttons(props) {
             onClick={onBlockable}
             title="Split into blocks"
           />
-      )}
+        )}
 
       <ArrowUturnLeftIcon
         aria-label="Undo-Icon"

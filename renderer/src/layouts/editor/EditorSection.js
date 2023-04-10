@@ -122,7 +122,7 @@ export default function EditorSection({
     } else {
       setLoadResource(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openResourcePopUp, title]);
 
   const addRow = () => {
@@ -159,47 +159,29 @@ export default function EditorSection({
       // offline=false->resources are added directly using collection Tab, offline=true-> resources added from door43
       // Fetching the language code from burrito file to get the direction
       getScriptureDirection(title)
-      .then((dir) => {
-        logger.debug('EditorSection.js', 'Setting language direction');
-        setProjectScriptureDir(dir);
-      });
+        .then((dir) => {
+          logger.debug('EditorSection.js', 'Setting language direction');
+          setProjectScriptureDir(dir);
+        });
     } else {
       // Setting language direction to null for Translation Helps
       logger.debug('EditorSection.js', 'Setting language direction to null for Translation Helps');
       setProjectScriptureDir();
     }
   }, [referenceResources, title]);
+
   return (
     <>
-      <div aria-label="resources-panel" className={classNames(openResource ? 'hidden' : '', 'relative first:mt-0 pb-12 border bg-white border-gray-200 rounded shadow-sm overflow-hidden group')}>
-        <div className="bg-gray-200 rounded-t text-center text-gray-600 relative overflow-hidden">
-          {openResourcePopUp
-            && (
-              <div className="fixed z-50 ">
-                <ResourcesPopUp
-                  column={row}
-                  header={title}
-                  languageId={languageId}
-                  selectedResource={selectedResource}
-                  setReferenceResources={setReferenceResources}
-                  openResourcePopUp={openResourcePopUp}
-                  setOpenResourcePopUp={setOpenResourcePopUp}
-                  selectedProjectMeta={selectedProjectMeta}
-                  referenceResources={referenceResources}
-                />
-
-              </div>
-            )}
-
-          <div className="bg-gray-200 rounded-t overflow-hidden">
-            <div className="flex">
-              {selectedResource === 'ta' || selectedResource === 'tw' ? (
-                <div className="h-12 flex">
-                  {selectedResource === 'ta' ? (
-                    <TaNavigation
-                      languageId={languageId}
-                      referenceResources={referenceResources}
-                    />
+      <div aria-label="resources-panel" className={classNames(openResource ? 'hidden' : '', 'relative first:mt-0 pb-12 border bg-white border-gray-200 rounded shadow-sm group')}>
+        <div className="bg-gray-200 rounded-t text-center text-gray-600 relative sticky top-0 left-0 right-0 z-10">
+          <div className="flex">
+            {selectedResource === 'ta' || selectedResource === 'tw' ? (
+              <div className="h-12 flex">
+                {selectedResource === 'ta' ? (
+                  <TaNavigation
+                    languageId={languageId}
+                    referenceResources={referenceResources}
+                  />
                   ) : (
                     <TwNavigation
                       languageId={languageId}
@@ -208,10 +190,10 @@ export default function EditorSection({
                     />
                   )}
 
-                  <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
-                    {title}
-                  </div>
+                <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                  {title}
                 </div>
+              </div>
               ) : (
                 <>
                   {scrollLock ? (
@@ -233,36 +215,34 @@ export default function EditorSection({
                     )}
                 </>
               )}
-              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
-                <button
-                  aria-label="resources-selector"
-                  type="button"
-                  title={t('tooltip-editor-resource-selector')}
-                  onClick={showResourcesPanel}
-                  className="px-2"
-                >
-                  <AdjustmentsVerticalIcon
-                    className="h-5 w-5 text-dark"
-                  />
-                </button>
-                <button
-                  type="button"
-                  title={t('tooltip-editor-remove-section')}
-                  onClick={removeResource}
-                  className="px-2"
-                >
-                  <XMarkIcon
-                    className="h-5 w-5 text-dark"
-                  />
-                </button>
-              </div>
+            <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
+              <button
+                aria-label="resources-selector"
+                type="button"
+                title={t('tooltip-editor-resource-selector')}
+                onClick={showResourcesPanel}
+                className="px-2"
+              >
+                <AdjustmentsVerticalIcon
+                  className="h-5 w-5 text-dark"
+                />
+              </button>
+              <button
+                type="button"
+                title={t('tooltip-editor-remove-section')}
+                onClick={removeResource}
+                className="px-2"
+              >
+                <XMarkIcon
+                  className="h-5 w-5 text-dark"
+                />
+              </button>
             </div>
           </div>
         </div>
-
         <div
           style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
-          className="h-full overflow-auto scrollbars-width leading-8"
+          className="h-full overflow-hidden scrollbars-width leading-8 overflow-auto"
         >
           {
             (loadResource === false)
@@ -306,6 +286,22 @@ export default function EditorSection({
         buttonName={t('btn-remove')}
         closeModal={confirmRemove}
       />
+      {openResourcePopUp
+  && (
+    <div className="fixed z-50 ">
+      <ResourcesPopUp
+        column={row}
+        header={title}
+        languageId={languageId}
+        selectedResource={selectedResource}
+        setReferenceResources={setReferenceResources}
+        openResourcePopUp={openResourcePopUp}
+        setOpenResourcePopUp={setOpenResourcePopUp}
+        referenceResources={referenceResources}
+      />
+
+    </div>
+  )}
     </>
   );
 }

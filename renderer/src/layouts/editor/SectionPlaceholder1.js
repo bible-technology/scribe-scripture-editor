@@ -16,10 +16,10 @@ import { SnackBar } from '@/components/SnackBar';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import { fetchSettingsResourceHistory } from '@/core/editor/fetchSettingsResourceHistory';
 import { saveSettingsResourceHistory } from '@/core/editor/saveSettingsResourceHistory';
-import * as logger from '../../logger';
 import ReferenceBibleX from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBibleX';
 
 import ScribexContextProvider from '@/components/context/ScribexContext';
+import * as logger from '../../logger';
 
 const TranslationHelps = dynamic(
   () => import('@/components/EditorPage/Reference/TranslationHelps'),
@@ -307,7 +307,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                 <>
                   {referenceColumnOneData1?.languageId
                   && (
-                    <ScribexContextProvider editable={false}>
+                    <ScribexContextProvider editable={false} reference>
                       <ReferenceBibleX
                         languageId={referenceColumnOneData1.languageId}
                         refName={referenceColumnOneData1.refName}
@@ -377,7 +377,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                     <>
                       {referenceColumnOneData2?.languageId
                         && (
-                          <ScribexContextProvider editable={false}>
+                          <ScribexContextProvider editable={false} reference>
                             <ReferenceBibleX
                               languageId={referenceColumnOneData2.languageId}
                               refName={referenceColumnOneData2.refName}
@@ -406,16 +406,16 @@ const SectionPlaceholder1 = ({ editor }) => {
                       verse={_verse1}
                     />
                   )) || (
-                      <TranslationHelps
-                        selectedResource={referenceColumnOneData2.selectedResource}
-                        languageId={referenceColumnOneData2.languageId}
-                        owner={referenceColumnOneData2.owner}
-                        bookId={_bookId2}
-                        chapter={_chapter2}
-                        verse={_verse2}
-                        story={_obsNavigation2}
-                        offlineResource={referenceColumnOneData2.offlineResource}
-                      />
+                  <TranslationHelps
+                    selectedResource={referenceColumnOneData2.selectedResource}
+                    languageId={referenceColumnOneData2.languageId}
+                    owner={referenceColumnOneData2.owner}
+                    bookId={_bookId2}
+                    chapter={_chapter2}
+                    verse={_verse2}
+                    story={_obsNavigation2}
+                    offlineResource={referenceColumnOneData2.offlineResource}
+                  />
                     )
                   )
                 }

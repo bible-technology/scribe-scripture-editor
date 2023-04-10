@@ -21,6 +21,8 @@ export default function SelectVerse({
   setSelectedVerses,
   verselectActive,
   setVerseSelectActive,
+  setChapterNumber,
+  setVerseNumber,
 }) {
   const [controlVerseSelect, setControlVerseSelect] = useState([]);
   const [openChapter, setOpenChapter] = useState(true);
@@ -33,6 +35,10 @@ export default function SelectVerse({
     setOpenChapter(false);
     setOpenVerse(true);
     window.location.href = `#ch-${chapterNum}`;
+    if (chapterNum && setChapterNumber) {
+      setChapterNumber(chapterNum);
+      document.getElementById('editor').querySelector(`#ch-${chapterNum}`)?.scrollIntoView();
+    }
   };
 
   const onVerseSelect = (e, verseNum) => {
@@ -40,7 +46,12 @@ export default function SelectVerse({
     onChangeVerse(verseNum, verse);
     closeBooks();
     if (multiSelectVerse === false) { closeVerses(); }
-    window.location.href = `#ch${chapter}v${verseNum}`;
+    if (verseNum && setVerseNumber) {
+      document.getElementById('editor').querySelector(`#ch${chapter}v${verseNum}`)?.scrollIntoView();
+      setVerseNumber(verseNum);
+    }
+     // window.location.href = `#ch${chapter}v${verseNum}`;
+    // document.getElementById(`ch${chapter}v${verseNum}`).scrollIntoView();
   };
 
   const onMultiSelectVerse = async (e, verses) => {
