@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
@@ -28,19 +28,19 @@ const ProjectContextProvider = ({ children }) => {
     const [canonSpecification, setcanonSpecification] = useState(
       advanceSettings.canonSpecification[0],
     );
-    const [versification] = useState(advanceSettings.versification);
-    const [versificationScheme, setVersificationScheme] = useState(
+    const [versification] = React.useState(advanceSettings.versification);
+    const [versificationScheme, setVersificationScheme] = React.useState(
       advanceSettings.versification[0],
     );
-    const [openSideBar, setOpenSideBar] = useState(false);
-    const [newProjectFields, setNewProjectFields] = useState({
+    const [openSideBar, setOpenSideBar] = React.useState(false);
+    const [newProjectFields, setNewProjectFields] = React.useState({
       projectName: '',
       description: '',
       abbreviation: '',
     });
-    const [username, setUsername] = useState();
-    const [selectedProject, setSelectedProject] = useState();
-    const [importedFiles, setImportedFiles] = useState([]);
+    const [username, setUsername] = React.useState();
+    const [selectedProject, setSelectedProject] = React.useState();
+    const [importedFiles, setImportedFiles] = React.useState([]);
     const [sideBarTab, setSideBarTab] = useState('');
 
     const handleProjectFields = (prop) => (event) => {
@@ -295,7 +295,7 @@ const ProjectContextProvider = ({ children }) => {
         setVersificationScheme('kjv');
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
       if (isElectron()) {
         loadSettings();
         localforage.getItem('userProfile').then((value) => {

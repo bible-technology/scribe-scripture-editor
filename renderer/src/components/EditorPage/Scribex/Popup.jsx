@@ -1,10 +1,12 @@
-import React, { useState, Fragment } from "react";
-import PropTypes from "prop-types";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { useState, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { Dialog, Transition } from '@headlessui/react';
 
-const Popup = ({ handleClose, handleButtonClick, title }) => {
-  const [number, setNumber] = useState("");
-  console.log({ title })
+const Popup = ({
+  handleClose, handleButtonClick, title, isPopupOpen,
+}) => {
+  const [number, setNumber] = useState('');
+  console.log({ title });
   const handleInputChange = (event) => {
     setNumber(event.target.value);
   };
@@ -15,8 +17,9 @@ const Popup = ({ handleClose, handleButtonClick, title }) => {
   };
 
   return (
-    <Transition appear show as={Fragment}>
+    <Transition show as={Fragment}>
       <Dialog
+        open={isPopupOpen}
         as="div"
         className="fixed inset-0 z-10 overflow-y-auto"
         onClose={handleClose}
@@ -37,8 +40,7 @@ const Popup = ({ handleClose, handleButtonClick, title }) => {
           <span
             className="inline-block h-screen align-middle"
             aria-hidden="true"
-          >
-          </span>
+          />
           <Transition.Child
             as={Fragment}
             enter="ease-out "
@@ -53,23 +55,29 @@ const Popup = ({ handleClose, handleButtonClick, title }) => {
                 as="h3"
                 className="text-lg font-medium leading-6 text-gray-900"
               >
-                {title} {title === 'Verse' || 'Chapter' ? Number : ''}
+                {title}
+                {' '}
+                {title === 'Verse' || 'Chapter' ? Number : ''}
               </Dialog.Title>
               <div className="mt-2">
-                {title === ('Verse' || 'Chapter') ?
-                  <input
-                    type="number"
-                    placeholder={`${title} Number...`}
-                    className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
-                    value={number}
-                    onChange={handleInputChange}
-                  /> : <input
-                    type="text"
-                    placeholder={`${title} Number...`}
-                    className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
-                    value={number}
-                    onChange={handleInputChange}
-                  />}
+                {title === ('Verse' || 'Chapter')
+                  ? (
+                    <input
+                      type="number"
+                      placeholder={`${title} Number...`}
+                      className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
+                      value={number}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      placeholder={`${title} Number...`}
+                      className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
+                      value={number}
+                      onChange={handleInputChange}
+                    />
+                  )}
 
               </div>
               <div className="mt-4 flex justify-end">

@@ -8,10 +8,9 @@ import SaveIndicator from '@/components/Loading/SaveIndicator';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import RecursiveBlock from './RecursiveBlock';
 import { insertVerseNumber, insertChapterNumber, insertFootnote } from '@/util/cursorUtils';
-import ContextWrapper from './ContextWrapper';
-
+import RecursiveBlock from './RecursiveBlock';
+// import ContextWrapper from './ContextWrapper';
 
 export default function Editor(props) {
   const {
@@ -51,7 +50,7 @@ export default function Editor(props) {
     actions: { setOpenSideBar, setSideBarTab },
   } = useContext(ProjectContext);
 
-  const [chapters, setChapters] = useState()
+  const [chapters, setChapters] = useState();
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
   const handlers = {
@@ -90,61 +89,55 @@ export default function Editor(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSaving]);
 
-
   function onReferenceSelected({ bookId, chapter, verse }) {
-    chapter && setChapterNumber(chapter)
-    verse && setVerseNumber(verse)
+    chapter && setChapterNumber(chapter);
+    verse && setVerseNumber(verse);
   }
 
   useEffect(() => {
     if (insertVerseRChapter === 'Verse') {
-      insertVerseNumber(caretPosition, newVerChapNumber)
+      insertVerseNumber(caretPosition, newVerChapNumber);
     }
     if (insertVerseRChapter === 'Chapter') {
-      insertChapterNumber(caretPosition, newVerChapNumber)
+      insertChapterNumber(caretPosition, newVerChapNumber);
     }
     if (insertVerseRChapter === 'Footnote') {
-      insertFootnote(caretPosition, newVerChapNumber)
+      insertFootnote(caretPosition, newVerChapNumber);
     }
-  }, [triggerVerseInsert])
+  }, [triggerVerseInsert]);
 
   const scrollReference = (chapterNumber) => {
-    let refEditors = document.getElementsByClassName('ref-editor');
-    refEditors.length > 0 && Array.prototype.filter.call(refEditors, function (refEditor) {
-      let editorInView = refEditor.querySelector(`#ch-${chapterNumber}`);
+    const refEditors = document.getElementsByClassName('ref-editor');
+    refEditors.length > 0 && Array.prototype.filter.call(refEditors, (refEditor) => {
+      const editorInView = refEditor.querySelector(`#ch-${chapterNumber}`);
       if (editorInView) {
-        editorInView.scrollIntoView()
-        editorInView.classList.add('scroll-mt-10')
+        editorInView.scrollIntoView();
+        editorInView.classList.add('scroll-mt-10');
       }
     });
-  }
+  };
 
   const onIntersection = (entries) => {
     for (const entry of entries) {
-      // if (entry.boundingClientRect.top < 0) {
       if (entry.isIntersecting) {
+        console.log({ entry })
         setChapterNumber(entry.target.dataset.attsNumber);
         scrollLock === false ? scrollReference(entry.target.dataset.attsNumber) : {};
-        // console.log('entered viewport at the top edge, hence scroll direction is up')
       }
-      // else {
-      //   console.log('left viewport at the top edge, hence scroll direction is down')
-      // }
-      // }
     }
   };
 
-  let options = {
+  const options = {
     root: document.querySelector('editor'),
     threshold: 0,
-    rootMargin: '0% 0% -80% 0%'
-  }
+    rootMargin: '0% 0% -60% 0%',
+  };
   const observer = new IntersectionObserver(onIntersection, options);
 
   const watchNodes = document.querySelectorAll('.editor .chapter');
-  let watchArr = Array.from(watchNodes)
+  const watchArr = Array.from(watchNodes);
   const reverseArray = watchArr.length > 0 ? watchArr.slice().reverse() : [];
-  reverseArray.forEach(chapter => { observer.observe(chapter); })
+  reverseArray.forEach((chapter) => { observer.observe(chapter); });
 
   const _props = {
     htmlPerf,
@@ -153,7 +146,9 @@ export default function Editor(props) {
     sequenceIds,
     addSequenceId,
     components: {
-      block: (__props) => RecursiveBlock({ htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, ...__props }),
+      block: (__props) => RecursiveBlock({
+        htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, ...__props,
+      }),
     },
     options: {
       sectionable,
@@ -167,13 +162,12 @@ export default function Editor(props) {
     autoSaveIndication,
   };
 
-
   return (
     <div className="editor" id="editor" style={style}>
       {!bookAvailable && <EmptyScreen />}
       {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
       {bookAvailable && sequenceId && !bookChange && (
-        <><ContextWrapper><HtmlPerfEditor {..._props} /></ContextWrapper></>
+        <HtmlPerfEditor {..._props} />
       )}
     </div>
   );
