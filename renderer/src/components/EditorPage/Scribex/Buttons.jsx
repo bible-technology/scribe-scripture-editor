@@ -30,7 +30,7 @@ export default function Buttons(props) {
     setEditable,
     setPreview,
     exportUsfm,
-    setTriggerVerseInsert
+    setTriggerVerseInsert,
   } = props;
 
   const onSectionable = () => {

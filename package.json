@@ -128,6 +128,8 @@
     "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.10.12",
     "@ory/kratos-client": "^0.10.1",
+    "@radix-ui/react-dialog": "^1.0.3",
+    "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/typography": "^0.5.9",
     "@xelah/type-perf-html": "^1.0.1",

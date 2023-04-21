@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import Popup from "./Popup";
+import React, { useState } from 'react';
+import Popup from './Popup';
 
-const PopupButton = ({ handleClick, title }) => {
+const PopupButton = ({ handleClick, title, roundedHover }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopupOpen = () => {
@@ -20,13 +20,15 @@ const PopupButton = ({ handleClick, title }) => {
     <div>
       <button
         type="button"
-        className="px-2  mr-2 border border-transparent text-base font-medium  text-white bg-primary hover:bg-secondary "
+        className={`flex w-full border py-2 px-3 border-transparent text-sm font-medium text-black hover:bg-primary hover:text-white ${roundedHover}`}
         onClick={handlePopupOpen}
       >
-        Insert {title}
+        Insert
+        {' '}
+        {title}
       </button>
       {isPopupOpen && (
-        <Popup handleClose={handlePopupClose} handleButtonClick={handleButtonClick} title={title} />
+        <Popup handleClose={handlePopupClose} handleButtonClick={handleButtonClick} title={title} isPopupOpen={isPopupOpen} />
       )}
     </div>
   );
