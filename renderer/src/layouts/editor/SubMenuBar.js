@@ -8,6 +8,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNofications from '@/components/Notification/CustomNofications';
 import localforage from 'localforage';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
+import { UpdateBranchButton } from '../../features/branch-merger/components/UpdateBranchButton';
 import Font from '@/icons/font.svg';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
 import AboutModal from './AboutModal';
@@ -242,8 +243,8 @@ export default function SubMenuBar() {
             </div>
 
             {/* Editor sync 2 new one */}
+            <UpdateBranchButton />
             <EditorSync selectedProject={selectedProject} />
-
             <button aria-label="add-panels" title={t('tooltip-editor-layout')} type="button" onClick={() => handleResource()} className={`group ${menuStyles.btn}`}>
               <ColumnsIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />
               <span

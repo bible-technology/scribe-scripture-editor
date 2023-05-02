@@ -11,6 +11,9 @@
       "@/components/*": [
         "renderer/src/components/*"
       ],
+      "@/features/*": [
+        "renderer/src/features/*"
+      ],
       "@/layouts/*": [
         "renderer/src/layouts/*"
       ],
