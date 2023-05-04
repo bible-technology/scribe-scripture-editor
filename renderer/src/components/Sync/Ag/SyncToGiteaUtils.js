@@ -35,6 +35,9 @@ export const handleCreateRepo = async (repoName, auth, description) => {
 // upload file to gitea
 export const createFiletoServer = async (fileContent, filePath, branch, repoName, auth) => {
     try {
+      console.log({
+ fileContent, filePath, branch, repoName, auth,
+});
       await createContent({
         config: auth.config,
         owner: auth.user.login,
@@ -50,6 +53,7 @@ export const createFiletoServer = async (fileContent, filePath, branch, repoName
         },
       });
     } catch (err) {
+      console.log({ err });
       throw new Error(err?.message || err);
     }
   };
@@ -66,10 +70,34 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repoName
         filepath: filePath,
       },
       );
+      console.log({ readResult, branch, auth });
       if (readResult === null) {
         // throw new Error('can not read repo');
         // Unable to find the branch or file so creating new.
-        await createFiletoServer(fileContent, filePath, branch, repoName, auth);
+
+        // create the new branch - master ---> copied
+        const myHeaders = new Headers();
+        myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
+        myHeaders.append('Content-Type', 'application/json');
+        const payload = {
+          new_branch_name: branch,
+          old_branch_name: 'master',
+        };
+        const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${auth.user.username}/${repoName}/branches`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: JSON.stringify(payload),
+        });
+        // const response = await createBranchResp.json();
+
+        if (createBranchResp.ok) {
+          console.log('inisde first file update ----------');
+          await updateFiletoServer(fileContent, filePath, branch, repoName, auth);
+        } else {
+          throw new Error('Unable to Create the Branch');
+        }
+
+        // await createFiletoServer(fileContent, filePath, branch, repoName, auth);
       } else {
         await updateContent({
           config: auth.config,

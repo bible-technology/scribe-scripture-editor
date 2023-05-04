@@ -7,6 +7,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
   try {
     logger.debug('MergeActions.js', 'Try Merge Project started');
     // uplaod local project to merge branch
+    console.log('work till here - 1 try merge start');
     uploadResp = await uploadProjectToBranchRepoExist(selectedGiteaProject, ignoreFilesPaths);
     if (uploadResp) {
       logger.debug('MergeActions.js', 'Try Merge Project - Local project upload success, send PR');

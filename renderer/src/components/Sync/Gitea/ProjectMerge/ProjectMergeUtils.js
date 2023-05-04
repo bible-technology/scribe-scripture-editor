@@ -1,10 +1,11 @@
-import { createFiletoServer } from '../../Ag/SyncToGiteaUtils';
+import { createFiletoServer, updateFiletoServer } from '../../Ag/SyncToGiteaUtils';
 import * as logger from '../../../../logger';
 import packageInfo from '../../../../../../package.json';
 
 // upload project to a branch on exsting repo
 export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignoreFilesPaths = []) => {
   logger.debug('ProjectMErgeUtils.js', 'Upload project to tempory branch for merge');
+  console.log('till here starting temp branch');
   try {
     const {
       repo, branch, metaDataSB, localUsername, auth,
@@ -16,8 +17,10 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
     const projectName = metaDataSB.identification.name.en;
     // const projectCreated = metaDataSB.meta.dateCreated.split('T')[0];
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', localUsername, 'projects', `${projectName}_${projectId}`);
+    console.log('before read json ');
     const MetadataLocal = fs.readFileSync(path.join(projectsMetaPath, 'metadata.json'));
     const localSB = JSON.parse(MetadataLocal);
+    console.log('After parse json ', !ignoreFilesPaths.includes('metadata.json'));
     if (!ignoreFilesPaths.includes('metadata.json')) {
       await createFiletoServer(JSON.stringify(MetadataLocal), 'metadata.json', `${branch.name}-merge`, repo.name, auth);
     }
@@ -27,14 +30,18 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
       if (Object.prototype.hasOwnProperty.call(ingredientsObj, key)) {
         if (!ignoreFilesPaths.includes(key)) {
           const metadata1 = fs.readFileSync(path.join(projectsMetaPath, key), 'utf8');
+          console.log('till here create meta ', { key });
+          // await createFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
+          // await createFiletoServer(metadata1, key, 'testmerge', repo.name, auth);
           // eslint-disable-next-line no-await-in-loop
-          await createFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
+          await updateFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
         }
       }
     }
     logger.debug('ProjectMErgeUtils.js', 'Upload project to tempory branch for merge finished');
     return true;
   } catch (err) {
+    console.log({ err });
     logger.debug('ProjectMErgeUtils.js', 'Upload project to tempory branch for merge Error', err);
     throw new Error(err);
   }

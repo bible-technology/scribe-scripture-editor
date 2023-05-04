@@ -27,7 +27,7 @@ async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, 
             config: auth.config,
             owner: auth.user.login,
             repo: repo.name,
-            ref: userBranch?.name,
+            ref: `${userBranch?.name}-merge`,
             filepath: key,
           },
           // eslint-disable-next-line no-loop-func

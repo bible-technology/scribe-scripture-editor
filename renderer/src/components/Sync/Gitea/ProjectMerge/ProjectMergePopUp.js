@@ -44,6 +44,7 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
     // backing up project
     const backupProjectName = await backupLocalProject(selectedGiteaProject, { setBackupName, setStepCount });
     // Import Project to local
+    console.log({ selectedGiteaProject });
     if (backupProjectName) {
       setStepCount((prevStepCount) => prevStepCount + 1);
       await importServerProject(

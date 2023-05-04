@@ -32,7 +32,7 @@ import packageInfo from '../../../../package.json';
 
   const {
     states: {
-    selectedAgProject, syncProgress,
+    selectedAgProject, syncProgress, selectedGiteaProjectBranch,
   },
     action: {
       setSyncProgress, setSelectedGiteaProject,
@@ -60,7 +60,11 @@ import packageInfo from '../../../../package.json';
   const handleOfflineSync = async (currentRepo, currentAuth) => {
     if (currentAuth && currentRepo) {
       logger.debug('Sync.js', 'in offlineSync Started');
-      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification);
+      if (selectedGiteaProjectBranch.length > 0) {
+        await downloadFromGitea(selectedGiteaProjectBranch[0], currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification);
+      } else {
+        notifyStatus('warning', 'Please Select a Branch');
+      }
       logger.debug('Sync.js', 'in offlineSync Finished');
     } else {
       logger.debug('Sync.js', 'in offlineSync Sync Failed , Something Wrong, may be internet issue');
