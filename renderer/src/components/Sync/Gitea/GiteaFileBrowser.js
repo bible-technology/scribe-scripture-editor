@@ -91,7 +91,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
   };
 
   const fetchBrachforDropdown = async () => {
-    const response = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${auth.user.username}/${repo.name}/branches`);
+    const response = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`);
     const fetchBranches = await response.json();
     // filter to get only user and mater branch
     const finalBranches = [{ name: repo.default_branch }];

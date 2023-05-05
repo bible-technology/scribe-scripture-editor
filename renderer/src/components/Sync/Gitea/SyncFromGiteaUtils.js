@@ -11,9 +11,10 @@ import packageInfo from '../../../../../package.json';
 const md5 = require('md5');
 const path = require('path');
 
-async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs) {
+async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs, firstTime) {
   logger.debug('SyncFromGiteaUtils.js', 'in read and write ingredients function');
   try {
+    console.log({ sbDataObject });
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const key in sbDataObject.ingredients) {
       action?.setSyncProgress((prev) => ({
@@ -25,13 +26,14 @@ async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, 
         const readResult = await readContent(
           {
             config: auth.config,
-            owner: auth.user.login,
+            owner: repo.owner.username,
             repo: repo.name,
-            ref: `${userBranch?.name}-merge`,
+            ref: firstTime ? userBranch?.name : `${userBranch?.name}-merge1`,
             filepath: key,
           },
           // eslint-disable-next-line no-loop-func
           );
+          console.log({ readResult });
           if (readResult) {
             logger.debug('giteaUtils import.js', 'sending the data from Gitea with content');
             if (readResult !== null) {
@@ -137,7 +139,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
 }
 
 // import gitea project to local
-export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, ignoreFilesPaths = []) => {
+export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, ignoreFilesPaths = [], firstTime = false) => {
   try {
     logger.debug('SyncFromGiteaUtils.js', 'Inside Import Project core');
     const fs = window.require('fs');
@@ -227,10 +229,10 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       const dirName = folderName[0];
       logger.debug('SyncFromGiteaUtils.js', 'Creating a directory if not exists.');
       fs.mkdirSync(path.join(projectDir, `${projectName}_${id}`, dirName), { recursive: true });
-
+      console.log('Call read ing');
       // call for start upload files =-======== trigger action.syncProgress - already started
       // loop thorugh ingredients , fetch file and write to local
-      await readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs);
+      await readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs, firstTime);
       // check and update Md5 of created files
       await checkIngredientsMd5Values(sbDataObject, projectDir, projectName, id, fs);
       // scribe-Settings File create / Update

@@ -33,16 +33,16 @@ export const handleCreateRepo = async (repoName, auth, description) => {
   };
 
 // upload file to gitea
-export const createFiletoServer = async (fileContent, filePath, branch, repoName, auth) => {
+export const createFiletoServer = async (fileContent, filePath, branch, repo, auth) => {
     try {
       console.log({
- fileContent, filePath, branch, repoName, auth,
+ fileContent, filePath, branch, repo, auth,
 });
       await createContent({
         config: auth.config,
-        owner: auth.user.login,
-        // repo: repo.name,
-        repo: repoName,
+        owner: repo.owner.username,
+        repo: repo.name,
+        // repo: repoName,
         branch: branch.replace(/ /g, '_'), // removing space to avoid error
         filepath: filePath,
         content: fileContent,
@@ -59,13 +59,13 @@ export const createFiletoServer = async (fileContent, filePath, branch, repoName
   };
 
 // update file in gitea
-export const updateFiletoServer = async (fileContent, filePath, branch, repoName, auth) => {
+export const updateFiletoServer = async (fileContent, filePath, branch, repo, auth) => {
   try {
     const readResult = await readContent(
       {
         config: auth.config,
-        owner: auth.user.login,
-        repo: repoName.toLowerCase(),
+        owner: repo.owner.username,
+        repo: repo.name.toLowerCase(),
         ref: branch.replace(/ /g, '_'),
         filepath: filePath,
       },
@@ -74,25 +74,37 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repoName
       if (readResult === null) {
         // throw new Error('can not read repo');
         // Unable to find the branch or file so creating new.
-
+        // merge? base branch :"master"
+        // merge-> create merge1
         // create the new branch - master ---> copied
+        const baseBranch = branch.includes('-merge');
         const myHeaders = new Headers();
         myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
         myHeaders.append('Content-Type', 'application/json');
         const payload = {
           new_branch_name: branch,
-          old_branch_name: 'master',
+          old_branch_name: baseBranch ? branch.replace('-merge', '') : 'master',
         };
-        const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${auth.user.username}/${repoName}/branches`, {
+        const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`, {
           method: 'POST',
           headers: myHeaders,
           body: JSON.stringify(payload),
         });
         // const response = await createBranchResp.json();
-
+        if (baseBranch) {
+          const payload = {
+            new_branch_name: `${branch}1`,
+            old_branch_name: branch.replace('-merge', ''),
+          };
+          await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`, {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify(payload),
+          });
+        }
         if (createBranchResp.ok) {
           console.log('inisde first file update ----------');
-          await updateFiletoServer(fileContent, filePath, branch, repoName, auth);
+          await updateFiletoServer(fileContent, filePath, branch, repo, auth);
         } else {
           throw new Error('Unable to Create the Branch');
         }
@@ -101,8 +113,8 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repoName
       } else {
         await updateContent({
           config: auth.config,
-          owner: auth.user.login,
-          repo: repoName.toLowerCase(),
+          owner: repo.owner.username,
+          repo: repo.name.toLowerCase(),
           branch: branch.replace(/ /g, '_'),
           filepath: readResult.path,
           content: fileContent,
@@ -220,7 +232,7 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
               lastSyncedObj = element;
             }
         });
-        return lastSyncedObj;
+        return [lastSyncedObj, settings.sync.services.door43];
       }
       if (method.toLowerCase() === 'put') {
         if (!settings.sync && !settings.sync?.services) {

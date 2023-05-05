@@ -20,7 +20,7 @@ export async function downloadFromGitea(selectedBranch, repo, auth, setSyncProgr
     const readMetaData = await readContent(
       {
       config: auth.config,
-      owner: auth.user.login,
+      owner: repo.owner.username,
       repo: repo.name,
       ref: selectedBranch?.name,
       filepath: 'metadata.json',
@@ -61,7 +61,7 @@ export async function downloadFromGitea(selectedBranch, repo, auth, setSyncProgr
       } else {
         // import call
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
-        await importServerProject(false, repo, metaDataSB, auth, selectedBranch, { setSyncProgress, notifyStatus }, currentUser.username);
+        await importServerProject(false, repo, metaDataSB, auth, selectedBranch, { setSyncProgress, notifyStatus }, currentUser.username, [], !duplicate);
         await notifyStatus('success', 'Project Sync to scribe successfull');
         await addNotification('Sync', 'Project Sync Successfull', 'success');
       }

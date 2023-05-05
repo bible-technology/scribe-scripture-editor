@@ -6,7 +6,8 @@ import {
 import packageInfo from '../../../../../package.json';
 
 // upload project to gitea main function
-export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification) {
+export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification, dcsOwners) {
+  console.log(dcsOwners);
     logger.debug('ToGiteaUtils.js', 'in uploadTOGitea');
     const projectData = projectDataAg.projectMeta;
     const projectId = Object.keys(projectData.identification.primary[packageInfo.name])[0];
@@ -14,7 +15,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
     const ingredientsObj = projectData.ingredients;
     // const projectCreated = projectData.meta.dateCreated.split('T')[0];
     // const repoName = `${packageInfo.name}-${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`;
-    const repoName = `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`;
+    const repo = { name: `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`, owner: { username: dcsOwners.length > 0 ? dcsOwners[0].username : auth.user.username } };
     // const branch= `${user?.username}/${projectCreated}.1`
     const branch = `${auth?.user?.username}/${packageInfo.name}`;
     localForage.getItem('userProfile').then(async (user) => {
@@ -30,8 +31,14 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       ));
       // Create A REPO for the project
       try {
-        const createResult = await handleCreateRepo(repoName.toLowerCase(), auth);
-        if (createResult.id) {
+        let createResult;
+        console.log('try', dcsOwners[0].username === auth.user.username);
+        if (dcsOwners[0].username === auth.user.username) {
+          createResult = await handleCreateRepo(repo.name.toLowerCase(), auth);
+        }
+        console.log(dcsOwners.length > 0);
+        if (createResult?.id) {
+          console.log('if');
           logger.debug('SyncToGitea.js', 'repo created success : starting sync');
           setSyncProgress((prev) => ({
             ...prev,
@@ -39,7 +46,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           }));
           // read metadata
           const Metadata = await fs.readFileSync(path.join(projectsMetaPath, 'metadata.json'));
-          await createFiletoServer(JSON.stringify(Metadata), 'metadata.json', branch, createResult.name, auth);
+          await createFiletoServer(JSON.stringify(Metadata), 'metadata.json', branch, createResult, auth);
           logger.debug('SyncToGitea.js', 'read and uploaded metaData to repo');
           // Read ingredients
           /* eslint-disable no-await-in-loop */
@@ -52,7 +59,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
               }));
               // setTotalUploadedAg((prev) => prev + 1);
               const Metadata1 = fs.readFileSync(path.join(projectsMetaPath, key), 'utf8');
-              await createFiletoServer(Metadata1, key, branch, createResult.name, auth);
+              await createFiletoServer(Metadata1, key, branch, createResult, auth);
               logger.debug('SyncToGitea.js', `Read and uploaded ${key} to repo`);
             }
           }
@@ -61,14 +68,15 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           notifyStatus('success', 'Sync completed successfully !!');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
           logger.debug('SyncToGitea.js', 'sync successfull - first time');
-        } else if (createResult.message.includes('409')) {
+        } else if (createResult?.message.includes('409') || dcsOwners.length > 0) {
+          console.log('else if');
           logger.debug('SyncToGitea.js', 'repo exist update section : 409 error');
           setSyncProgress((prev) => ({
             ...prev,
             syncStarted: true,
           }));
           const metadataContent = fs.readFileSync(path.join(projectsMetaPath, 'metadata.json'));
-          await updateFiletoServer(JSON.stringify(metadataContent), 'metadata.json', branch, repoName, auth);
+          await updateFiletoServer(JSON.stringify(metadataContent), 'metadata.json', branch, repo, auth);
           logger.debug('SyncToGitea.js', 'read and updated metaData to repo');
           // Read ingredients and update
           for (const key in ingredientsObj) {
@@ -79,7 +87,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
               }));
               const metadata1 = await fs.readFileSync(path.join(projectsMetaPath, key), 'utf8');
               // setTotalUploadedAg((prev) => prev + 1);
-              await updateFiletoServer(metadata1, key, branch, repoName, auth);
+              await updateFiletoServer(metadata1, key, branch, repo, auth);
               logger.debug('SyncToGitea.js', `Read and updated ${key} to repo`);
             }
           }

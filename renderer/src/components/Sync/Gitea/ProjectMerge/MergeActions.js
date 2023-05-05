@@ -18,9 +18,9 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
       myHeaders.append('Authorization', `Bearer ${selectedGiteaProject.auth.token.sha1}`);
       myHeaders.append('Content-Type', 'application/json');
       const payloadPr = JSON.stringify({
-        base: `${selectedGiteaProject.branch.name}-merge`,
-        head: selectedGiteaProject.branch.name,
-        title: `Merge ${selectedGiteaProject.branch.name} to ${selectedGiteaProject.branch.name}-merge`,
+        base: `${selectedGiteaProject.branch.name}-merge1`,
+        head: `${selectedGiteaProject.branch.name}-merge`,
+        title: `Merge ${selectedGiteaProject.branch.name}-merge to ${selectedGiteaProject.branch.name}-merge1`,
       });
       const requestOptions = {
         method: 'POST',
@@ -30,15 +30,17 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
       };
       const fetchResult = await fetch(urlPr, requestOptions);
       const result = await fetchResult.json();
+      console.log({ fetchResult }, { result });
       if (fetchResult.ok) {
         if (result.mergeable) {
           // mergeable
           logger.debug('MergeActions.js', 'PR success - continue Merge operations');
           actions.setStepCount((prevStepCount) => prevStepCount + 1);
           const mergePayload = JSON.stringify({
-            Do: 'merge',
-            delete_branch_after_merge: false,
-            });
+            Do: 'rebase',
+            delete_branch_after_merge: true,
+            force_merge: false,
+          });
           requestOptions.body = mergePayload;
           const urlMerge = `${environment.GITEA_API_ENDPOINT}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/pulls/${result.number}/merge`;
           const mergeResult = await fetch(urlMerge, requestOptions);

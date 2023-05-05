@@ -22,7 +22,7 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
     const localSB = JSON.parse(MetadataLocal);
     console.log('After parse json ', !ignoreFilesPaths.includes('metadata.json'));
     if (!ignoreFilesPaths.includes('metadata.json')) {
-      await createFiletoServer(JSON.stringify(MetadataLocal), 'metadata.json', `${branch.name}-merge`, repo.name, auth);
+      await createFiletoServer(JSON.stringify(MetadataLocal), 'metadata.json', `${branch.name}-merge`, repo, auth);
     }
     const ingredientsObj = localSB.ingredients;
     // eslint-disable-next-line no-restricted-syntax
@@ -34,7 +34,7 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
           // await createFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
           // await createFiletoServer(metadata1, key, 'testmerge', repo.name, auth);
           // eslint-disable-next-line no-await-in-loop
-          await updateFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
+          await updateFiletoServer(metadata1, key, `${branch.name}-merge`, repo, auth);
         }
       }
     }
@@ -58,7 +58,7 @@ export const deleteCreatedMergeBranch = async (selectedGiteaProject, actions, GI
     body: '',
     redirect: 'follow',
   };
-  const urlDeleteBranch = `${GITEA_BASE_API_URL}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/branches/${selectedGiteaProject.branch.name}-merge`;
+  const urlDeleteBranch = `${GITEA_BASE_API_URL}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/branches/${selectedGiteaProject.branch.name}-merge1`;
   fetch(urlDeleteBranch, requestOptions)
   .then((response) => response)
   .then((result) => {
