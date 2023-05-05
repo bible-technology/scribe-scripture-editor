@@ -55,6 +55,7 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
         null,
         selectedGiteaProject.localUsername,
         ignoreFilesPaths,
+        false,
         );
       setStepCount((prevStepCount) => prevStepCount + 1);
       setMergeDone(true);

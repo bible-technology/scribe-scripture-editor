@@ -10,6 +10,8 @@ function useSync() {
   const [agProjects, setAgProjects] = useState([]);
   const [agProjectsMeta, setAgProjectsMeta] = useState([]);
   const [selectedAgProject, setSelectedAgProject] = useState(undefined);
+  const [dcsOwners, setDcsOwners] = useState([]);
+  const [selectedGiteaProjectBranch, setSelectedGiteaProjectBranch] = useState([]);
   const [selectedGiteaProject, setSelectedGiteaProject] = useState({
     repo: null,
     branch: null,
@@ -35,7 +37,8 @@ function useSync() {
           // find the lastSync data
           // eslint-disable-next-line no-await-in-loop
           const syncObj = await getOrPutLastSyncInAgSettings('get', value.projects[i]);
-          value.projects[i].lastSync = syncObj;
+          value.projects[i].lastSync = syncObj[0];
+          value.projects[i].ownerSync = syncObj[1];
           projectMetaData.push(value.projects[i]);
         }
     }).finally(() => {
@@ -69,6 +72,8 @@ function useSync() {
       syncProgress,
       selectedGiteaProject,
       refreshGiteaListUI,
+      selectedGiteaProjectBranch,
+      dcsOwners,
     },
     actions: {
       fetchProjects,
@@ -76,6 +81,8 @@ function useSync() {
       setSyncProgress,
       setSelectedGiteaProject,
       setRefreshGiteaListUI,
+      setSelectedGiteaProjectBranch,
+      setDcsOwners,
     },
   };
   return response;

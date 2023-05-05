@@ -75,7 +75,7 @@ function EditorSync({ selectedProject }) {
         const syncUsers = await getGiteaUsersList();
         setUsersList(syncUsers);
         if (currentProjectMeta) {
-          const syncObj = await getOrPutLastSyncInAgSettings('get', currentProjectMeta);
+          const syncObj = await getOrPutLastSyncInAgSettings('get', currentProjectMeta)[0];
           if (syncObj && syncUsers) {
             const currentUserObj = syncUsers?.filter((element) => element.username === syncObj?.username);
             setselectedUsername(currentUserObj[0]);

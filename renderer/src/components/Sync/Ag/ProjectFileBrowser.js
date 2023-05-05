@@ -1,16 +1,17 @@
 import {
  useContext, useEffect,
 } from 'react';
+import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import GridRow from '../GridRow';
 import { SyncContext } from '../SyncContextProvider';
 
 export default function ProjectFileBrowser() {
   const {
     states: {
-    agProjects, agProjectsMeta, selectedAgProject, syncProgress,
+    agProjects, agProjectsMeta, selectedAgProject, syncProgress, dcsOwners,
   },
     action: {
-      fetchProjects, setSelectedAgProject,
+      fetchProjects, setSelectedAgProject, setDcsOwners,
     },
   } = useContext(SyncContext);
 
@@ -46,6 +47,16 @@ export default function ProjectFileBrowser() {
             isUpload={selectedAgProject?.projectName === projectMeta?.identification?.name?.en && syncProgress.syncStarted}
             uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
           />
+          <div className="">
+            {projectMeta?.ownerSync?.length > 0 && (
+            <CustomMultiComboBox
+              selectedList={dcsOwners}
+              setSelectedList={setDcsOwners}
+              customData={projectMeta?.ownerSync}
+              filterParams="username"
+            />
+              )}
+          </div>
         </div>
       )
     ))

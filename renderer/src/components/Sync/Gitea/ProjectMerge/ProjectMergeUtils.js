@@ -1,4 +1,4 @@
-import { createFiletoServer } from '../../Ag/SyncToGiteaUtils';
+import { createFiletoServer, updateFiletoServer } from '../../Ag/SyncToGiteaUtils';
 import * as logger from '../../../../logger';
 import packageInfo from '../../../../../../package.json';
 
@@ -19,7 +19,7 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
     const MetadataLocal = fs.readFileSync(path.join(projectsMetaPath, 'metadata.json'));
     const localSB = JSON.parse(MetadataLocal);
     if (!ignoreFilesPaths.includes('metadata.json')) {
-      await createFiletoServer(JSON.stringify(MetadataLocal), 'metadata.json', `${branch.name}-merge`, repo.name, auth);
+      await createFiletoServer(JSON.stringify(MetadataLocal), 'metadata.json', `${branch.name}-merge`, repo, auth);
     }
     const ingredientsObj = localSB.ingredients;
     // eslint-disable-next-line no-restricted-syntax
@@ -27,8 +27,9 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
       if (Object.prototype.hasOwnProperty.call(ingredientsObj, key)) {
         if (!ignoreFilesPaths.includes(key)) {
           const metadata1 = fs.readFileSync(path.join(projectsMetaPath, key), 'utf8');
+          // await createFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
           // eslint-disable-next-line no-await-in-loop
-          await createFiletoServer(metadata1, key, `${branch.name}-merge`, repo.name, auth);
+          await updateFiletoServer(metadata1, key, `${branch.name}-merge`, repo, auth);
         }
       }
     }

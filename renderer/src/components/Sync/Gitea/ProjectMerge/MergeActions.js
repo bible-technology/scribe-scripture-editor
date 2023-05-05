@@ -37,6 +37,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const mergePayload = JSON.stringify({
             Do: 'merge',
             delete_branch_after_merge: false,
+            force_merge: false,
             });
           requestOptions.body = mergePayload;
           const urlMerge = `${environment.GITEA_API_ENDPOINT}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/pulls/${result.number}/merge`;
@@ -53,7 +54,9 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
             logger.debug('MergeActions.js', 'File not found on server ', mergeResult.resposne.statusText);
             throw new Error(mergeResult.resposne.statusText);
           }
-        } else {
+          return { status: 'success', message: 'Merge Success' };
+        }
+        // else {
           // merge is not possible - conflict , Display Conflict Message
           let htmlPart = '<div></div>';
           const fetchConflict = await fetch(result.html_url);
@@ -62,10 +65,9 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const doc = parser.parseFromString(resultDiff, 'text/html');
           htmlPart = doc.getElementsByClassName('merge-section');
           return { status: 'failure', message: 'Conflict Exist - Can not perform Merge , Need to fix manually', conflictHtml: htmlPart[0].innerHTML };
-        }
-      } else {
-        throw new Error(result?.resposne?.statusText);
+      // }
       }
+        throw new Error(result?.resposne?.statusText);
     }
   } catch (err) {
       logger.debug('MergeActions.js', `failed Merge Action ${err}`);

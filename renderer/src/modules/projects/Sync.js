@@ -32,7 +32,7 @@ import packageInfo from '../../../../package.json';
 
   const {
     states: {
-    selectedAgProject, syncProgress,
+    selectedAgProject, syncProgress, selectedGiteaProjectBranch, dcsOwners,
   },
     action: {
       setSyncProgress, setSelectedGiteaProject,
@@ -47,20 +47,22 @@ import packageInfo from '../../../../package.json';
     setOpenSnackBar(true);
   }
 
-  const handleCloudSync = async (projectData, authData, setSyncProgress) => {
+  const handleCloudSync = async (projectData, authData, setSyncProgress, dcsOwners) => {
     if (!auth) {
       notifyStatus('failure', 'Authentication Failed! , login and try again');
     } else if (!projectData?.projectName) {
       notifyStatus('warning', 'select a project to sync');
     } else {
-      await uploadToGitea(projectData, authData, setSyncProgress, notifyStatus, addNotification);
+      await uploadToGitea(projectData, authData, setSyncProgress, notifyStatus, addNotification, dcsOwners);
     }
   };
 
   const handleOfflineSync = async (currentRepo, currentAuth) => {
     if (currentAuth && currentRepo) {
       logger.debug('Sync.js', 'in offlineSync Started');
-      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification);
+      if (selectedGiteaProjectBranch.length > 0) {
+        await downloadFromGitea(selectedGiteaProjectBranch[0], currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification);
+      }
       logger.debug('Sync.js', 'in offlineSync Finished');
     } else {
       logger.debug('Sync.js', 'in offlineSync Sync Failed , Something Wrong, may be internet issue');
@@ -82,7 +84,7 @@ import packageInfo from '../../../../package.json';
                    <button
                      type="button"
                      className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
-                     onClick={() => handleCloudSync(selectedAgProject, auth, setSyncProgress)}
+                     onClick={() => handleCloudSync(selectedAgProject, auth, setSyncProgress, dcsOwners)}
                      disabled={syncProgress.syncStarted}
                    >
                      <CloudArrowUpIcon className="h-5 w-5" />
