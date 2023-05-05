@@ -116,7 +116,7 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
           await addNotification('Sync', mergeResp?.message, mergeResp?.status);
           if (mergeResp.status === 'failure' && mergeResp?.conflictHtml) {
             setMergeConflict(true);
-            console.log({ mergeResp });
+            // console.log({ mergeResp });
             setFiles(mergeResp.fileList);
             setConflictHtml(mergeResp.conflictHtml);
           } else {
@@ -197,15 +197,15 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
 
         {mergeConflict && (
           <div>
+            <div className="">Select the files to merge</div>
             <ul>
               {files.map((data, index) => (
-                <>
-                  {' '}
+                // eslint-disable-next-line react/no-array-index-key
+                <div key={index}>
                   <input type="checkbox" name={data} onChange={() => handleCheck(data.replace(/<div>|<\/div>/g, ''))} />
                   {' '}
                   <li>{data.replace(/<div>|<\/div>/g, '')}</li>
-                  {' '}
-                </>
+                </div>
               ))}
 
             </ul>
@@ -217,27 +217,28 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
         )}
 
         <div className="mt-4 px-4 py-3 flex justify-between">
-          <div className="">
+          <div className="flex mx-2">
             {(mergeDone || mergeError || mergeConflict) && (
             <button
               aria-label="merge-ok"
               type="button"
-              className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
+              className={`mx-2 w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
               onClick={modalClose}
             >
               {t('btn-ok')}
             </button>
                       )}
+            {/* button for merge */}
             {(keepFiles.length > 0) && (
             <button
               aria-label="merge-ok"
               type="button"
-              className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
+              className={`w-20 h-10 ${!((mergeConflict)) ? 'bg-gray-500' : 'bg-blue-500'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
               onClick={handleMerge}
             >
-              {t('btn-ok')}
+              Merge
             </button>
-                      )}
+            )}
             {(!mergeDone && !mergeConflict && counter > 0) && (
             <div className="ml-1">
               <LoadingSpinner />

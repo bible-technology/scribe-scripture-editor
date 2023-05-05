@@ -64,12 +64,12 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const parser = new DOMParser();
           const doc = parser.parseFromString(resultDiff, 'text/html');
           htmlPart = doc.getElementsByClassName('merge-section');
-          console.log(htmlPart[0].innerHTML);
+          // console.log(htmlPart[0].innerHTML);
 
           const regex = /<div>.*<\/div>/gm;
           // const regex = /[A-Za-z]+/g;
           const files = (htmlPart[0].innerHTML).match(regex);
-          console.log(files);
+          // console.log(files);
 
           return {
  status: 'failure', message: 'Conflict Exist - Can not perform Merge , Need to fix manually', conflictHtml: htmlPart[0].innerHTML, fileList: files,
