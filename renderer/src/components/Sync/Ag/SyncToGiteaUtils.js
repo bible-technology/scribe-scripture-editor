@@ -72,6 +72,7 @@ export const createFiletoServer = async (fileContent, filePath, branch, repo, au
         },
       });
     } catch (err) {
+      console.log('error', err);
       throw new Error(err?.message || err);
     }
   };
@@ -94,14 +95,14 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repo, au
         // merge? base branch :"master"
         // merge-> create merge1
         // create the new branch - master ---> copied
-        // const baseBranch = branch.includes('-merge');
+        const baseBranch = branch.includes('-merge');
         const myHeaders = new Headers();
         myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
         myHeaders.append('Content-Type', 'application/json');
         const payload = {
           new_branch_name: branch,
-          // old_branch_name: baseBranch ? branch.replace('-merge', '') : 'collab-dont-touch',
-          old_branch_name: 'collab-dont-touch',
+          old_branch_name: baseBranch ? 'collab-dont-touch' : 'master',
+          // old_branch_name: 'collab-dont-touch',
         };
         const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`, {
           method: 'POST',
@@ -120,10 +121,14 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repo, au
         //     body: JSON.stringify(payload),
         //   });
         // }
-        if (createBranchResp.ok || createBranchResp.statusCode === 409) {
+        console.log(createBranchResp);
+        // if (createBranchResp.ok || createBranchResp.status === 409 && baseBranch===false) {
+        if (baseBranch === true) {
           console.log('inisde first file update ----------');
           // await updateFiletoServer(fileContent, filePath, branch, repo, auth);
           await createFiletoServer(fileContent, filePath, branch, repo, auth);
+        } else if (baseBranch === false) {
+          await updateFiletoServer(fileContent, filePath, branch, repo, auth);
         } else {
           throw new Error('Unable to Create the Branch');
         }

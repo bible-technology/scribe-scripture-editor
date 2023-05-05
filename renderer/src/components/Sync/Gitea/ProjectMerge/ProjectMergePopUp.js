@@ -14,6 +14,7 @@ import burrito from '../../../../lib/BurritoTemplete.json';
 import { backupLocalProject, deleteCreatedMergeBranch, undoMergeOrDeleteOldBackup } from './ProjectMergeUtils';
 import { environment } from '../../../../../environment';
 import { importServerProject } from '../SyncFromGiteaUtils';
+import packageInfo from '../../../../../../package.json';
 
 export default function ProjectMergePop({ selectedGiteaProject, setSelectedGiteaProject }) {
   const { t } = useTranslation();
@@ -30,10 +31,38 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
   const [snackText, setSnackText] = React.useState('');
   const [notify, setNotify] = React.useState();
   const [backupName, setBackupName] = React.useState('');
-
+  const [files, setFiles] = useState();
+  const [keepFiles, setKeepFiles] = useState([]);
   const path = require('path');
   const ignoreFilesPaths = [path.join('ingredients', environment.PROJECT_SETTING_FILE), 'metadata.json'];
-
+  const handleCheck = (data) => {
+    console.log('in on change', { data });
+    if (!keepFiles.includes(data)) {
+      setKeepFiles([...keepFiles, data]);
+    } else {
+      const filtered = keepFiles.filter((item) => item !== data);
+      setKeepFiles(filtered);
+    }
+  };
+  const handleMerge = async () => {
+    // let i;
+    const projectId = Object.keys(selectedGiteaProject?.metaDataSB?.identification.primary.scribe)[0];
+    const projectName = selectedGiteaProject?.metaDataSB?.identification.name.en;
+    const newpath = localStorage.getItem('userPath');
+    // const fse = window.require('fs-extra');
+    const fs = window.require('fs');
+    const path = require('path');
+    const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', selectedGiteaProject?.localUsername, 'projects', `${projectName}_${projectId}`);
+    console.log({ projectsMetaPath });
+    await keepFiles.forEach(async (filePath) => {
+      console.log(`https://git.door43.org/api/v1/repos/${selectedGiteaProject.repo.owner.username}/${selectedGiteaProject.repo.name}/raw/${filePath}?ref=${selectedGiteaProject.branch.name}`);
+      const res = await fetch(`https://git.door43.org/api/v1/repos/${selectedGiteaProject.repo.owner.username}/${selectedGiteaProject.repo.name}/raw/${filePath}?ref=${selectedGiteaProject.branch.name}`);
+      console.log({ res });
+      const data = await res.text();
+      console.log({ data });
+      await fs.writeFileSync(path.join(projectsMetaPath, filePath), data);
+    });
+  };
   const callFunction = async () => {
     let updateBurrito = null;
     if (model.buttonName === t('btn-update')) {
@@ -87,6 +116,8 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
           await addNotification('Sync', mergeResp?.message, mergeResp?.status);
           if (mergeResp.status === 'failure' && mergeResp?.conflictHtml) {
             setMergeConflict(true);
+            console.log({ mergeResp });
+            setFiles(mergeResp.fileList);
             setConflictHtml(mergeResp.conflictHtml);
           } else {
             await checkBurritoVersion();
@@ -166,10 +197,22 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
 
         {mergeConflict && (
           <div>
-            <div className="mt-3">
+            <ul>
+              {files.map((data, index) => (
+                <>
+                  {' '}
+                  <input type="checkbox" name={data} onChange={() => handleCheck(data.replace(/<div>|<\/div>/g, ''))} />
+                  {' '}
+                  <li>{data.replace(/<div>|<\/div>/g, '')}</li>
+                  {' '}
+                </>
+              ))}
+
+            </ul>
+            {/* <div className="mt-3">
               <p className="text-sm">Can not perform merge - Conflict Exist</p>
               <div className="my-2 text-sm text-red-700 leading-6" dangerouslySetInnerHTML={{ __html: conflictHtml }} />
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -181,6 +224,16 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
               type="button"
               className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
               onClick={modalClose}
+            >
+              {t('btn-ok')}
+            </button>
+                      )}
+            {(keepFiles.length > 0) && (
+            <button
+              aria-label="merge-ok"
+              type="button"
+              className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
+              onClick={handleMerge}
             >
               {t('btn-ok')}
             </button>

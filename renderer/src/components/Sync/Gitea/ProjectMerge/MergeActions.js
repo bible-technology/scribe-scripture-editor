@@ -38,7 +38,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const mergePayload = JSON.stringify({
             Do: 'merge',
             delete_branch_after_merge: false,
-            force_merge: false,
+            force_merge: true,
             });
           requestOptions.body = mergePayload;
           const urlMerge = `${environment.GITEA_API_ENDPOINT}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/pulls/${result.number}/merge`;
@@ -64,7 +64,16 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const parser = new DOMParser();
           const doc = parser.parseFromString(resultDiff, 'text/html');
           htmlPart = doc.getElementsByClassName('merge-section');
-          return { status: 'failure', message: 'Conflict Exist - Can not perform Merge , Need to fix manually', conflictHtml: htmlPart[0].innerHTML };
+          console.log(htmlPart[0].innerHTML);
+
+          const regex = /<div>.*<\/div>/gm;
+          // const regex = /[A-Za-z]+/g;
+          const files = (htmlPart[0].innerHTML).match(regex);
+          console.log(files);
+
+          return {
+ status: 'failure', message: 'Conflict Exist - Can not perform Merge , Need to fix manually', conflictHtml: htmlPart[0].innerHTML, fileList: files,
+};
       }
       }
         throw new Error(result?.resposne?.statusText);

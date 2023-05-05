@@ -89,10 +89,10 @@ const GiteaFileBrowser = ({ changeRepo }) => {
   };
 
   const fetchBrachforDropdown = async () => {
-    const response = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`);
+    const response = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo?.owner?.username}/${repo?.name}/branches`);
     const fetchBranches = await response.json();
     // filter to get only user and mater branch
-    const finalBranches = [{ name: repo.default_branch }];
+    const finalBranches = [{ name: repo?.default_branch }];
     await fetchBranches.filter((branch) => branch.name === `${auth.user.username}/${packageInfo.name}`)
     .forEach((b) => { console.log({ b }); finalBranches.push({ name: b.name }); });
     setPullBranchNames(finalBranches);
@@ -104,7 +104,9 @@ const GiteaFileBrowser = ({ changeRepo }) => {
         fetchTree(`${auth.config.server}/${repo?.tree_url}`, repo.name);
       }
     }
-    fetchBrachforDropdown();
+    if (repo?.name) {
+      fetchBrachforDropdown();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repo?.tree_url]);
 

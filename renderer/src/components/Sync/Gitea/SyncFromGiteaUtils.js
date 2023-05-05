@@ -73,11 +73,12 @@ async function checkIngredientsMd5Values(sbDataObject, projectDir, projectName, 
   });
 }
 
-async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, id, dirName, projectDir, fs) {
+async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, id, dirName, projectDir, fs, syncUsername) {
   logger.debug('SyncFromGiteaUtils.js', 'Inside create/update, write scribe settings');
   // scribe settings file
   sbDataObject.meta.generator.userName = currentUser;
   if (!fs.existsSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE))) {
+    console.log('not availabe');
     logger.debug(`SyncFromGiteaUtils', 'Creating ${environment.PROJECT_SETTING_FILE} file`);
     const settings = {
       version: environment.AG_SETTING_VERSION,
@@ -94,7 +95,15 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
           bookMarks: [],
         },
       },
-      sync: { services: { door43: [] } },
+      sync: {
+        services: {
+          door43: [{
+            username: syncUsername,
+            dateCreated: moment().format(),
+            lastSynced: moment().format(),
+          }],
+        },
+      },
     };
     logger.debug('SyncFromGiteaUtils', `Creating the ${environment.PROJECT_SETTING_FILE} file.`);
     await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
@@ -108,6 +117,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
       role: `x-${packageInfo.name}`,
     };
   } else {
+    console.log('available');
     logger.debug('SyncFromGiteaUtils', `Updating ${environment.PROJECT_SETTING_FILE} file`);
     const scribe = fs.readFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE));
     let settings = JSON.parse(scribe);
@@ -124,14 +134,27 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
       setting.project[sbDataObject.type.flavorType.flavor.name].refResources = settings.project[sbDataObject.type.flavorType.flavor.name]?.refResources ? settings.project[sbDataObject.type.flavorType.flavor.name]?.refResources : [];
       setting.project[sbDataObject.type.flavorType.flavor.name].bookMarks = settings.project[sbDataObject.type.flavorType.flavor.name]?.bookMarks ? settings.project[sbDataObject.type.flavorType.flavor.name]?.bookMarks : [];
       // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
-      if (!setting.sync && !setting.sync?.services) {
-        setting.sync = { services: { door43: [] } };
-        } else {
-          setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
-        }
       settings = setting;
     }
+    if (!settings.sync && !settings.sync?.services) {
+      settings.sync = {
+        services: {
+          door43: [{
+              username: syncUsername,
+              dateCreated: moment().format(),
+              lastSynced: moment().format(),
+            }],
+          },
+        };
+      } else {
+        settings.sync.services.door43 = (settings?.sync?.services?.door43.length !== 0) ? (settings?.sync?.services?.door43) : [{
+          username: syncUsername,
+          dateCreated: moment().format(),
+          lastSynced: moment().format(),
+        }];
+      }
     settings.project[sbDataObject.type.flavorType.flavor.name].lastSeen = moment().format();
+    console.log(JSON.stringify(settings));
     await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
   }
 }
@@ -234,7 +257,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       // check and update Md5 of created files
       await checkIngredientsMd5Values(sbDataObject, projectDir, projectName, id, fs);
       // scribe-Settings File create / Update
-      await createOrUpdateAgSettings(sbDataObject, currentUser, projectName, id, dirName, projectDir, fs);
+      await createOrUpdateAgSettings(sbDataObject, currentUser, projectName, id, dirName, projectDir, fs, repo.owner.username);
 
       // update copyright
       if (sbDataObject.copyright.fullStatementPlain) {

@@ -31,11 +31,12 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       // Create A REPO for the project
       try {
         let createResult;
-        console.log({ dcsOwners, auth });
-        if (dcsOwners.length === 0 || dcsOwners[0].username === auth.user.username) {
+        console.log({ dcsOwners, auth }, dcsOwners.length);
+        if (dcsOwners.length === 0 || dcsOwners[0]?.username === auth.user.username) {
           createResult = await handleCreateRepo(repo.name.toLowerCase(), auth);
         }
-        if (createResult.id) {
+        if (createResult?.id) {
+          console.log('if');
           logger.debug('SyncToGitea.js', 'repo created success : starting sync');
           setSyncProgress((prev) => ({
             ...prev,
@@ -66,7 +67,8 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           notifyStatus('success', 'Sync completed successfully !!');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
           logger.debug('SyncToGitea.js', 'sync successfull - first time');
-        } else if (createResult.message.includes('409') || dcsOwners.length > 0) {
+        } else if (createResult?.message.includes('409') || dcsOwners.length > 0) {
+          console.log('yo');
           logger.debug('SyncToGitea.js', 'repo exist update section : 409 error');
           setSyncProgress((prev) => ({
             ...prev,
