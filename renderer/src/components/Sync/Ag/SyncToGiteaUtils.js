@@ -7,6 +7,24 @@ import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 import { environment } from '../../../../environment';
 
+// create branch from a base branch
+export const handleCreateBranch = async (basebranch, newBranch, auth, repo) => {
+  const myHeaders = new Headers();
+  myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
+  myHeaders.append('Content-Type', 'application/json');
+  const payload = {
+    new_branch_name: newBranch,
+    old_branch_name: basebranch,
+  };
+  const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`, {
+    method: 'POST',
+    headers: myHeaders,
+    body: JSON.stringify(payload),
+  });
+  const createdBranchData = await createBranchResp.json();
+  return [createBranchResp, createdBranchData];
+};
+
 // create repo for new project sync
 export const handleCreateRepo = async (repoName, auth, description) => {
     const settings = {
@@ -22,8 +40,12 @@ export const handleCreateRepo = async (repoName, auth, description) => {
           repo: settings?.name,
           settings,
         },
-      ).then((result) => {
+      ).then(async (result) => {
         logger.debug('Dropzone.js', 'call to create repo from Gitea');
+        // caling create branch for making a duplicate branch of master with only readME and
+        // it is for handling the pull conflicts (to avoid compare with master )
+        console.log({ result });
+        await handleCreateBranch('master', 'collab-dont-touch', auth, result);
         resolve(result);
       }).catch((err) => {
         logger.debug('Dropzone.js', 'call to create repo from Gitea Error : ', err);
@@ -72,20 +94,21 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repo, au
         // merge? base branch :"master"
         // merge-> create merge1
         // create the new branch - master ---> copied
-        const baseBranch = branch.includes('-merge');
+        // const baseBranch = branch.includes('-merge');
         const myHeaders = new Headers();
         myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
         myHeaders.append('Content-Type', 'application/json');
         const payload = {
           new_branch_name: branch,
-          old_branch_name: baseBranch ? branch.replace('-merge', '') : 'master',
+          // old_branch_name: baseBranch ? branch.replace('-merge', '') : 'collab-dont-touch',
+          old_branch_name: 'collab-dont-touch',
         };
         const createBranchResp = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo.owner.username}/${repo.name}/branches`, {
           method: 'POST',
           headers: myHeaders,
           body: JSON.stringify(payload),
         });
-        // const response = await createBranchResp.json();
+        // const responsejson = await createBranchResp.json();
         // if (baseBranch) {
         //   const payload = {
         //     new_branch_name: `${branch}1`,
@@ -97,9 +120,10 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repo, au
         //     body: JSON.stringify(payload),
         //   });
         // }
-        if (createBranchResp.ok) {
+        if (createBranchResp.ok || createBranchResp.statusCode === 409) {
           console.log('inisde first file update ----------');
-          await updateFiletoServer(fileContent, filePath, branch, repo, auth);
+          // await updateFiletoServer(fileContent, filePath, branch, repo, auth);
+          await createFiletoServer(fileContent, filePath, branch, repo, auth);
         } else {
           throw new Error('Unable to Create the Branch');
         }

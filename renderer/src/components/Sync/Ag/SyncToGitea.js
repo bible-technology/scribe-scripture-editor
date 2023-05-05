@@ -31,7 +31,8 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       // Create A REPO for the project
       try {
         let createResult;
-        if (dcsOwners[0].username === auth.user.username) {
+        console.log({ dcsOwners, auth });
+        if (dcsOwners.length === 0 || dcsOwners[0].username === auth.user.username) {
           createResult = await handleCreateRepo(repo.name.toLowerCase(), auth);
         }
         if (createResult.id) {
@@ -73,6 +74,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           }));
           const metadataContent = fs.readFileSync(path.join(projectsMetaPath, 'metadata.json'));
           await updateFiletoServer(JSON.stringify(metadataContent), 'metadata.json', branch, repo, auth);
+          // check for brach exist or not and set a flag to avoid unwanted api call for branhch creation -------------
           logger.debug('SyncToGitea.js', 'read and updated metaData to repo');
           // Read ingredients and update
           for (const key in ingredientsObj) {

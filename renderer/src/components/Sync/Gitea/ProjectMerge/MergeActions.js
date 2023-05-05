@@ -16,6 +16,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
       const myHeaders = new Headers();
       myHeaders.append('Authorization', `Bearer ${selectedGiteaProject.auth.token.sha1}`);
       myHeaders.append('Content-Type', 'application/json');
+      // PR from Master -> temp (master + changes , created base brach of temp from collab)
       const payloadPr = JSON.stringify({
         base: `${selectedGiteaProject.branch.name}-merge`,
         head: selectedGiteaProject.branch.name,
@@ -54,9 +55,8 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
             logger.debug('MergeActions.js', 'File not found on server ', mergeResult.resposne.statusText);
             throw new Error(mergeResult.resposne.statusText);
           }
-          return { status: 'success', message: 'Merge Success' };
-        }
-        // else {
+          // return { status: 'success', message: 'Merge Success' };
+        } else {
           // merge is not possible - conflict , Display Conflict Message
           let htmlPart = '<div></div>';
           const fetchConflict = await fetch(result.html_url);
@@ -65,7 +65,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const doc = parser.parseFromString(resultDiff, 'text/html');
           htmlPart = doc.getElementsByClassName('merge-section');
           return { status: 'failure', message: 'Conflict Exist - Can not perform Merge , Need to fix manually', conflictHtml: htmlPart[0].innerHTML };
-      // }
+      }
       }
         throw new Error(result?.resposne?.statusText);
     }

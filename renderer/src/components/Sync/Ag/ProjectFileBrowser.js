@@ -26,9 +26,11 @@ export default function ProjectFileBrowser() {
   const handleSelectProject = (currentProject) => {
     if (selectedAgProject?.projectName === currentProject) {
       setSelectedAgProject(undefined);
+      setDcsOwners([]);
     } else {
       const currentMeta = agProjectsMeta.filter((projectData) => projectData?.identification?.name?.en === currentProject);
       setSelectedAgProject({ projectName: currentProject, projectMeta: currentMeta[0] });
+      // setDcsOwners() -------------------------- set logic for dropdown select based on project
     }
   };
 
