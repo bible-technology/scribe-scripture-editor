@@ -281,10 +281,13 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
             },
           );
         } else {
-          // eslint-disable-next-line array-callback-return
-        settings.sync?.services?.door43?.forEach((element) => {
-          if (element?.username === syncUsername) {
-            element.lastSynced = moment().format();
+          const existUser = settings.sync?.services?.door43?.filter((user) => user.username.toLowerCase() === syncUsername.toLowerCase());
+          if (existUser?.length > 0) {
+            settings.sync?.services?.door43?.forEach((element) => {
+              if (element?.username === syncUsername) {
+                element.lastSynced = moment().format();
+              }
+            });
           } else {
             settings.sync.services.door43.push(
               {
@@ -294,7 +297,6 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
               },
             );
           }
-        });
         }
 
         logger.debug('SyncToGiteaUtils.js', 'Upadting the scribe settings with sync data');

@@ -15,6 +15,8 @@ export default function ProjectFileBrowser() {
     },
   } = useContext(SyncContext);
 
+  console.log();
+
   useEffect(() => {
     const getProjects = async () => {
       await fetchProjects();
