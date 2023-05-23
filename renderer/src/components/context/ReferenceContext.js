@@ -31,6 +31,10 @@ export default function ReferenceContextProvider({ children }) {
   const [openResource4, setOpenResource4] = React.useState(true);
   const [openResourcePopUp, setOpenResourcePopUp] = React.useState(false);
   const [selectedFont, setSelectedFont] = React.useState('sans-serif');
+  const [font1, setFont1] = useState('sans-serif');
+  const [font2, setFont2] = useState('sans-serif');
+  const [font3, setFont3] = useState('sans-serif');
+  const [font4, setFont4] = useState('sans-serif');
   const [fontSize, setFontsize] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
@@ -176,6 +180,10 @@ export default function ReferenceContextProvider({ children }) {
       openResource4,
       openResourcePopUp,
       selectedFont,
+      font1,
+      font2,
+      font3,
+      font4,
       fontSize,
       layout,
       row,
@@ -219,6 +227,10 @@ export default function ReferenceContextProvider({ children }) {
       setOpenResource4,
       setOpenResourcePopUp,
       setSelectedFont,
+      setFont1,
+      setFont2,
+      setFont3,
+      setFont4,
       setFontsize,
       setLayout,
       setRow,

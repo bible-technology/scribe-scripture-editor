@@ -144,6 +144,7 @@
     "epitelete": "0.2.20-beta.1",
     "epitelete-html": "0.2.20-beta.2",
     "eslint-import-resolver-alias": "^1.1.2",
+    "font-detect-rhl": "^1.0.5-1",
     "font-list": "^1.4.5",
     "fs-extra": "^10.1.0",
     "get-system-fonts": "^2.0.2",

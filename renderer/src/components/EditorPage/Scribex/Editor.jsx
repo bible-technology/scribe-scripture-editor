@@ -229,7 +229,7 @@ export default function Editor(props) {
   };
 
   return (
-    <div className="editor" id="editor" style={style}>
+    <div className="editor" id="editor" style={style} >
       {!bookAvailable && <EmptyScreen />}
       {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
       {bookAvailable && sequenceId && !bookChange && (

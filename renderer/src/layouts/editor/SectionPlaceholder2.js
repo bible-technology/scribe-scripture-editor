@@ -64,6 +64,8 @@ const SectionPlaceholder2 = ({ editor }) => {
       verse,
       obsNavigation,
       resetResourceOnDeleteOffline,
+      font3,
+      font4,
     },
     actions: {
       setRow,
@@ -72,6 +74,8 @@ const SectionPlaceholder2 = ({ editor }) => {
       applyBooksFilter,
       setLayout,
       setResetResourceOnDeleteOffline,
+      setFont3,
+      setFont4,
     },
   } = useContext(ReferenceContext);
   const {
@@ -304,6 +308,8 @@ const SectionPlaceholder2 = ({ editor }) => {
             CustomNavigation={(referenceColumnTwoData1.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation1 : CustomNavigation1}
             setRemovingSection={setRemovingSection}
             setAddingSection={setAddingSection}
+            font={font3}
+            setFont={setFont3}
           >
             {
               (loadResource3 === true)
@@ -318,6 +324,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                         bookId={_bookId1}
                         chapter={_chapter1}
                         verse={_verse1}
+                        font={font3}
                       />
                     </ScribexContextProvider>
                 )}
@@ -372,6 +379,8 @@ const SectionPlaceholder2 = ({ editor }) => {
             CustomNavigation={(referenceColumnTwoData2.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation2 : CustomNavigation2}
             setRemovingSection={setRemovingSection}
             setAddingSection={setAddingSection}
+            font={font4}
+            setFont={setFont4}
           >
             {
               (loadResource4 === true)
@@ -386,6 +395,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                       bookId={_bookId2}
                       chapter={_chapter2}
                       verse={_verse2}
+                      font={font4}
                     />
                   </ScribexContextProvider>
                   )}
