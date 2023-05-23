@@ -11,7 +11,7 @@ export default function ReferenceScribex(props) {
 
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
-  const { usfmData, bookAvailable, refName, bookId, scrollLock } = props;
+  const { usfmData, bookAvailable, refName, bookId, scrollLock, font } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
   let selectedDocument;
@@ -83,7 +83,7 @@ export default function ReferenceScribex(props) {
     <>
       <div
         style={{
-          fontFamily: selectedFont || 'sans-serif',
+          fontFamily: font || 'sans-serif',
           fontSize: `${fontSize}rem`,
           lineHeight: (fontSize > 1.3) ? 1.5 : '',
           direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,

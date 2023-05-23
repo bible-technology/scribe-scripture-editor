@@ -2,9 +2,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { HtmlPerfEditor } from '@xelah/type-perf-html'
-import { EditableContextMenu } from '@xelah/core'
 import { getCurrentVerse, getCurrentChapter } from './getReferences'
-import { getCurrentCursorPosition, setCurrentCursorPosition, pasteHtmlAtCaret } from '@/util/cursorUtils';
+import { getCurrentCursorPosition } from '@/util/cursorUtils';
 
 const getTarget = ({ content }) => {
   const div = document.createElement("div");

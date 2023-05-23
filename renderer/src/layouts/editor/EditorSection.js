@@ -12,6 +12,10 @@ import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
 import TwNavigation from '@/components/EditorPage/Reference/TW/TwNavigation';
 import { getScriptureDirection } from '@/core/projects/languageUtil';
+import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
+import AdjustmentsVerticalIcon from '@/icons/Common/AdjustmentsVertical.svg';
+import XMarkIcon from '@/icons/Common/XMark.svg';
+import SquaresPlusIcon from '@/icons/Common/SquaresPlus.svg';
 import ConfirmationModal from './ConfirmationModal';
 import * as logger from '../../logger';
 
@@ -36,6 +40,8 @@ export default function EditorSection({
   CustomNavigation,
   setRemovingSection,
   setAddingSection,
+  font,
+  setFont,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -176,7 +182,7 @@ export default function EditorSection({
         <div className="bg-gray-200 rounded-t text-center text-gray-600 relative sticky top-0 left-0 right-0 z-10">
           <div className="flex">
             {selectedResource === 'ta' || selectedResource === 'tw' ? (
-              <div className="h-12 flex">
+              <div className="h-12 relative flex">
                 {selectedResource === 'ta' ? (
                   <TaNavigation
                     languageId={languageId}
@@ -216,6 +222,7 @@ export default function EditorSection({
                 </>
               )}
             <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
+              <MenuDropdown selectedFont={font} setSelectedFont={setFont} />
               <button
                 aria-label="resources-selector"
                 type="button"
@@ -241,7 +248,7 @@ export default function EditorSection({
           </div>
         </div>
         <div
-          style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
+          style={{ fontFamily: `${font}`, fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
           className="h-full overflow-hidden scrollbars-width leading-8 overflow-auto"
         >
           {
