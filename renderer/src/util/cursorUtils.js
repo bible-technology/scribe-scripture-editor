@@ -138,7 +138,57 @@ export function insertChapterNumber(caretPosition, chapterNumber) {
 export function insertFootnote(caretPosition, footNote) {
   console.log('insertFootnote', footNote);
   if (footNote && caretPosition) {
-    const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote"  data-previewtext="${footNote}"></span>`;
+  const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
     pasteHtmlAtCaret(footnoteTag, false, caretPosition);
   }
+}
+
+export function insertXRef(caretPosition, references) {
+  if (insertXRef && caretPosition) {
+  // const xRefTag = '<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">Mrk 1.24; Luk 2.39; Jhn 1.45.</span></span></span>';
+    const xRefTag = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xq"></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
+    pasteHtmlAtCaret(xRefTag, false, caretPosition);
+  }
+}
+
+// Helper function to get selected text within the editor
+export function getSelectedText() {
+  let selectedText = '';
+  if (window.getSelection) {
+    const selection = window.getSelection();
+    selectedText = selection.toString();
+  } else if (document.selection && document.selection.type !== 'Control') {
+    selectedText = document.selection.createRange().text;
+  }
+  return selectedText;
+}
+// Copy text to clipboard
+export function copyText() {
+  const editor = document.getElementById('editor');
+  const selectedText = getSelectedText(editor);
+
+  if (selectedText !== '') {
+    navigator.clipboard.writeText(selectedText)
+      .then(() => {
+        console.log(`Text copied to clipboard:${ selectedText}`);
+      })
+      .catch((error) => {
+        console.error(`Unable to copy text: ${ error}`);
+      });
+  }
+}
+
+// Paste text from clipboard
+export function pasteText() {
+  const editor = document.getElementById('editor');
+
+  navigator.clipboard.readText()
+    .then((text) => {
+      editor.focus();
+      document.execCommand('insertText', false, text);
+      console.log(`Text pasted from clipboard: ${ text}`);
+    })
+    .catch((error) => {
+      console.error(`Unable to paste text: ${ error}`);
+    });
 }

@@ -1,72 +1,12 @@
-import { useState } from 'react';
-
-import {
-  ChevronDownIcon, PlusIcon,
-} from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import GraftEditor from './GraftEditor';
 
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
-
-import EditCrossReference from './EditCrossReference';
-
-const references = [
-  {
-    id: 1,
-    title: 'Genesis 1:1 In the beginning',
-    list: [
-      {
-        id: 1,
-        ref: 'Job 38:4-7',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-      {
-        id: 2,
-        ref: 'Psalms 33:6',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: 'James 1:1',
-    list: [
-      {
-        id: 1,
-        ref: 'Job 38:4-7',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-      {
-        id: 2,
-        ref: 'Psalms 33:6',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Peter 1:1',
-    list: [
-      {
-        id: 1,
-        ref: 'Job 38:4-7',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-      {
-        id: 2,
-        ref: 'Psalms 33:6',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-      {
-        id: 3,
-        ref: 'Psalms 33:6',
-        refText: '“Where were you when I laid the foundation of the earth? Tell me, if you have understanding. Who determined its measurements—surely you know! Or who stretched the line upon it? On what were its bases sunk, or who laid its cornerstone, when the morning stars sang together and all the sons of God shouted for joy?',
-      },
-    ],
-  },
-];
-
-export default function CrossReference() {
-  const [isEditCrossReferenceOpen, setEditCrossReference] = useState(false);
+export default function CrossReference(props) {
+  // const [isEditCrossReferenceOpen, setEditCrossReference] = useState(false);
+  // const [chapterNumber, setChapterNumber] = useState(1);
+  // const [verseNumber, setVerseNumber] = useState(1);
+  // const [refBookName, setRefBookName] = useState('');
   const { t } = useTranslation();
 
   return (
@@ -75,8 +15,16 @@ export default function CrossReference() {
         {t('label-cross-ref')}
       </div>
       <div className="overflow-y-auto h-full no-scrollbars">
-
-        {references.map((section) => (
+        {/* <BibleNavigationXref
+          chapterNumber={chapterNumber}
+          setChapterNumber={setChapterNumber}
+          verseNumber={verseNumber}
+          setVerseNumber={setVerseNumber}
+          refBookName={refBookName}
+          setRefBookName={setRefBookName}
+        /> */}
+        <GraftEditor {...props} />
+        {/* {references.map((section) => (
           <>
             <div className="flex justify-between items-center bg-gray-200 p-2 pr-2 text-sm font-semibold tracking-wider">
               <div className="flex items-center">
@@ -116,12 +64,12 @@ export default function CrossReference() {
                 </>
               ))}
 
-              {isEditCrossReferenceOpen && <EditCrossReference />}
+              {isEditCrossReferenceOpen && <EditCrossReference closeReference={()=>setEditCrossReference(false)}/>}
 
             </div>
           </>
 
-        ))}
+        ))} */}
       </div>
     </>
   );

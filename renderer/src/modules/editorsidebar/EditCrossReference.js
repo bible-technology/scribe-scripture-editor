@@ -4,20 +4,28 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
-import BibleNavigation from '@/modules/biblenavigation/BibleNavigation';
+import XMarkIcon from '@/icons/Common/XMark.svg';
+import TrashIcon from '@/icons/Common/Trash.svg';
 
-export default function Comments() {
+export default function Comments({ closeReference }) {
   const { t } = useTranslation();
   return (
     <>
       <div className="bg-primary h-8 w-full text-white font-semibold flex items-center">
-        <BibleNavigation />
+        {/* <BibleNavigationXref
+          chapterNumber={chapterNumber}
+          setChapterNumber={setChapterNumber}
+          verseNumber={verseNumber}
+          setVerseNumber={setVerseNumber}
+          refBookName={refBookName}
+          setRefBookName={setRefBookName}
+        /> */}
         <div className="flex-1 px-4 text-xs uppercase">{t('label-add-ref')}</div>
         <div className="flex justify-end">
           <button type="button" className="bg-black bg-opacity-20 p-2 rounded-sm">
             <TrashIcon className="w-4 h-4" />
           </button>
-          <button type="button" className="w-8 h-8 bg-black bg-opacity-20 p-2 focus:outline-none">
+          <button type="button" className="w-8 h-8 bg-black bg-opacity-20 p-2 focus:outline-none" onClick={closeReference}>
             <XMarkIcon />
           </button>
         </div>
