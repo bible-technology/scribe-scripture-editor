@@ -8,6 +8,9 @@ import Bars4Icon from '@/icons/Xelah/Bars4.svg';
 import ArrowUturnLeftIcon from '@/icons/Xelah/ArrowUturnLeft.svg';
 import ArrowUturnRightIcon from '@/icons/Xelah/ArrowUturnRight.svg';
 import PencilIcon from '@/icons/Common/Pencil.svg';
+import Copy from '@/icons/Xelah/Copy.svg';
+import Paste from '@/icons/Xelah/Paste.svg';
+import { copyText, pasteText } from '@/util/cursorUtils';
 
 export const classNames = (...classes) => classes.filter(Boolean).join(' ');
 
@@ -53,7 +56,7 @@ export default function Buttons(props) {
           sectionable ? 'fill-current' : '',
           'h-5 mr-2 w-5 text-white cursor-pointer',
         )}
-        aria-hidden="true"
+        // aria-hidden="true"
         onClick={onSectionable}
         title={
           sectionable ? 'Expand all Chapters' : 'Collapse Chapters'
@@ -66,7 +69,7 @@ export default function Buttons(props) {
           editable ? 'fill-current' : '',
           'h-5 mr-2 w-5 text-white cursor-pointer',
         )}
-        aria-hidden="true"
+        // aria-hidden="true"
         onClick={onEditable}
         title={editable ? 'Disable Edit' : 'Enable Edit'}
       />
@@ -74,7 +77,7 @@ export default function Buttons(props) {
         <Bars2Icon
           aria-label="Article-Icon"
           className="h-5 mr-2 w-5 text-white cursor-pointer"
-          aria-hidden="true"
+          // aria-hidden="true"
           onClick={onBlockable}
           title="Collapse blocks"
         />
@@ -83,7 +86,7 @@ export default function Buttons(props) {
           <Bars4Icon
             aria-label="List-Icon"
             className="h-5 mr-2 w-5 text-white cursor-pointer"
-            aria-hidden="true"
+            // aria-hidden="true"
             onClick={onBlockable}
             title="Split into blocks"
           />
@@ -92,22 +95,37 @@ export default function Buttons(props) {
       <ArrowUturnLeftIcon
         aria-label="Undo-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"
-        aria-hidden="true"
+        // aria-hidden="true"
         onClick={() => undo()}
         title="Undo"
       />
       <ArrowUturnRightIcon
         aria-label="Redo-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"
-        aria-hidden="true"
+        // aria-hidden="true"
         onClick={() => redo()}
         title="Redo"
       />
       <ArrowDownOnSquareIcon
         aria-label="Save-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"
-        aria-hidden="true"
+        // aria-hidden="true"
         onClick={() => exportUsfm(bookCode)}
+        title="Save"
+      />
+      <span>| </span>
+      <Copy
+        aria-label="Save-Icon"
+        className="h-5 mr-2 w-5 text-white cursor-pointer"
+        aria-hidden="true"
+        onClick={() => copyText()}
+        title="Save"
+      />
+      <Paste
+        aria-label="Paste-Icon"
+        className="h-5 mr-2 w-5 text-white cursor-pointer"
+        aria-hidden="true"
+        onClick={() => pasteText(true)}
         title="Save"
       />
     </>

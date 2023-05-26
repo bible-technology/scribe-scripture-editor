@@ -8,9 +8,11 @@ import SaveIndicator from '@/components/Loading/SaveIndicator';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import { insertVerseNumber, insertChapterNumber, insertFootnote } from '@/util/cursorUtils';
+import { insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef } from '@/util/cursorUtils';
 import RecursiveBlock from './RecursiveBlock';
-// import ContextWrapper from './ContextWrapper';
+import { copyText, pasteText } from '@/util/cursorUtils';
+import { useHotkeys } from 'react-hotkeys-hook';
+
 
 export default function Editor(props) {
   const {
@@ -37,9 +39,11 @@ export default function Editor(props) {
     newVerChapNumber,
     insertVerseRChapter,
     reference,
+    insertNewGraft,
   } = props;
 
   const [caretPosition, setCaretPosition] = useState();
+  const [graftInsert, setGraftInsert] = useState(false);
   const {
     state: { chapter },
   } = useContext(ReferenceContext);
@@ -51,6 +55,7 @@ export default function Editor(props) {
   } = useContext(ProjectContext);
 
   const [chapters, setChapters] = useState();
+  const [selectedText, setSelectedText] = useState();
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
   const handlers = {
@@ -58,9 +63,16 @@ export default function Editor(props) {
       const _sequenceId = element.dataset.target;
       const { tagName } = element;
       if (_sequenceId) {
-        setGraftSequenceId(_sequenceId);
-        setOpenSideBar(!openSideBar);
-        setSideBarTab('footnotes');
+        if (tagName === 'SPAN' && element.dataset.subtype === 'footnote') {
+          setGraftSequenceId(_sequenceId);
+          setOpenSideBar(!openSideBar);
+          setSideBarTab('footnotes');
+        }
+        if (tagName === 'SPAN' && element.dataset.subtype === 'xref') {
+          setGraftSequenceId(_sequenceId);
+          setOpenSideBar(!openSideBar);
+          setSideBarTab('xref');
+        }
       } else {
         setSideBarTab('');
         setGraftSequenceId(null);
@@ -94,6 +106,20 @@ export default function Editor(props) {
     verse && setVerseNumber(verse);
   }
 
+  function getSelectedText() {
+    let selectedText = '';
+    if (window.getSelection) {
+      let selection = window.getSelection();
+
+      selectedText = selection.toString();
+      setSelectedText(selectedText);
+    } else if (document.selection && document.selection.type != 'Control') {
+      selectedText = document.selection.createRange().text;
+      setSelectedText(selectedText);
+    }
+    console.log(selectedText);
+  }
+
   useEffect(() => {
     if (insertVerseRChapter === 'Verse') {
       insertVerseNumber(caretPosition, newVerChapNumber);
@@ -102,9 +128,49 @@ export default function Editor(props) {
       insertChapterNumber(caretPosition, newVerChapNumber);
     }
     if (insertVerseRChapter === 'Footnote') {
+      setGraftInsert(true);
       insertFootnote(caretPosition, newVerChapNumber);
     }
+    if (insertVerseRChapter === 'Cross Reference') {
+      insertXRef(caretPosition, newVerChapNumber);
+    }
   }, [triggerVerseInsert]);
+
+  useEffect(() => {
+    let pressedKeys = [];
+    const handleKeyDown = (e) => {
+      const copyKeys = ['Control', 'c'];
+      const pasteKeys = ['Control', 'v'];
+      pressedKeys.push(e.key);
+      if (pressedKeys.join('+') === copyKeys.join('+')) {
+        e.preventDefault();
+        copyText();
+        pressedKeys = [];
+      }
+      if (pressedKeys.join('+') === pasteKeys.join('+')) {
+        e.preventDefault();
+        pasteText();
+        pressedKeys = [];
+      }
+      // if (e.key === 's') { console.log("savingssssssssss") }
+      // if (e.key === 'Control' && e.key === 'c') {
+      //   console.log("copying")
+      //   e.preventDefault();
+      //   // Call your custom copy function
+      //   copyText();
+      // } else if (e.metaKey && e.key === 'v') {
+      //   console.log("pasting")
+      //   e.preventDefault();
+      //   // Call your custom paste function
+      //   pasteText();
+      // }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const scrollReference = (chapterNumber) => {
     const refEditors = document.getElementsByClassName('ref-editor');
@@ -120,7 +186,6 @@ export default function Editor(props) {
   const onIntersection = (entries) => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        console.log({ entry })
         setChapterNumber(entry.target.dataset.attsNumber);
         scrollLock === false ? scrollReference(entry.target.dataset.attsNumber) : {};
       }
@@ -141,6 +206,7 @@ export default function Editor(props) {
 
   const _props = {
     htmlPerf,
+    // onHtmlPerf: graftInsert ? insertNewGraft : saveHtmlPerf,
     onHtmlPerf: saveHtmlPerf,
     chapterIndex: chapter,
     sequenceIds,

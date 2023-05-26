@@ -56,16 +56,16 @@ export default function RecursiveBlock({
       const range = document.getSelection().getRangeAt(0)
       // console.log({ range })
       const selectedNode = range.startContainer
-      console.log({ selectedNode })
+      // console.log({ selectedNode })
       const prevNode = selectedNode.previousSibling;
-      console.log({ prevNode })
+      // console.log({ prevNode })
       if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
-        console.log("crossing a verse")
+        // console.log("crossing a verse")
         // setCurrentVerse(0)
         event.preventDefault();
       }
       prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
-      console.log({ currentVerse })
+      // console.log({ currentVerse })
       const verse = getCurrentVerse(selectedNode)
       const chapter = getCurrentChapter(selectedNode)
     }
@@ -75,9 +75,9 @@ export default function RecursiveBlock({
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0)
-      console.log({ range })
+      // console.log({ range })
       const selectedNode = range.startContainer
-      console.log({ selectedNode })
+      // console.log({ selectedNode })
       const verse = getCurrentVerse(selectedNode)
       const chapter = getCurrentChapter(selectedNode)
       // if (onReferenceSelected) {

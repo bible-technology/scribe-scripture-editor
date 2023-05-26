@@ -6,12 +6,14 @@ const Popup = ({
   handleClose, handleButtonClick, title, isPopupOpen,
 }) => {
   const [number, setNumber] = useState('');
-  console.log({ title });
+  // console.log({ title }, "title");
   const handleInputChange = (event) => {
+    // console.log("changing")
     setNumber(event.target.value);
   };
 
   const handleSubmit = () => {
+    // console.log("submitting")
     handleButtonClick(number, title);
     handleClose();
   };
@@ -72,7 +74,7 @@ const Popup = ({
                   ) : (
                     <input
                       type="text"
-                      placeholder={`${title} Number...`}
+                      placeholder={`${title}`}
                       className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
                       value={number}
                       onChange={handleInputChange}
