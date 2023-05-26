@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
-export default function FootNoteEditor(props) {
+export default function GraftEditor(props) {
   const {
     sequenceIds,
     isLoading,

@@ -15,6 +15,7 @@ import { Menu, Transition } from '@headlessui/react';
 import Buttons from './Buttons';
 import Editor from './Editor';
 import PopupButton from './PopupButton';
+import InsertMenu from './InsertMenu';
 import PlusIcon from '@/icons/Xelah/Plus.svg';
 
 export default function Scribex(props) {
@@ -28,10 +29,6 @@ export default function Scribex(props) {
   const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
   const [newVerChapNumber, setInsertNumber] = useState('');
   const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
-
-  const handleChange = (event) => {
-    setVerseInsert(event.target.value);
-  };
 
   const handleClick = (number, title) => {
     setInsertNumber(number);
@@ -48,11 +45,13 @@ export default function Scribex(props) {
     newStateId,
     documents: usfmData,
   });
+
   const {
     state: {
       bookId, selectedFont, fontSize, projectScriptureDir,
     },
   } = useContext(ReferenceContext);
+
   const {
     states: { scrollLock },
     actions: { setScrollLock },
@@ -121,12 +120,17 @@ export default function Scribex(props) {
       <EditorSideBar
         isOpen={openSideBar}
         closeSideBar={closeSideBar}
-        footnoteProps={_props}
+        graftProps={_props}
       />
       <div className="flex flex-col bg-white border-b-2 border-secondary h-editor rounded-md shadow scrollbar-width">
         <div className="relative min-h-[66px] flex flex-col bg-secondary rounded-t-md overflow-hidden">
           <div className="flex min-h-[33px] items-center justify-between ">
-            <BibleNavigationX chapterNumber={chapterNumber} setChapterNumber={setChapterNumber} verseNumber={verseNumber} setVerseNumber={setVerseNumber} />
+            <BibleNavigationX
+              chapterNumber={chapterNumber}
+              setChapterNumber={setChapterNumber}
+              verseNumber={verseNumber}
+              setVerseNumber={setVerseNumber}
+            />
             <div
               aria-label="editor-pane"
               className="flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
@@ -206,6 +210,7 @@ export default function Scribex(props) {
                   </Menu.Items>
                 </Transition>
               </Menu>
+              {/* <InsertMenu handleClick={handleClick} /> */}
             </div>
           </div>
         </div>

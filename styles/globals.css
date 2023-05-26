@@ -31,7 +31,7 @@
 } */
 
 /* .section > .section-heading {
-  @apply hidden;
+	@apply hidden;
 } */
 
 .perf .title .section,
@@ -49,9 +49,9 @@
 	@apply my-2;
 }
 
-.sectionHeading {
+/* .sectionHeading> .expand {
 	@apply w-20 text-right uppercase tracking-wider text-xs font-semibold after:content-['_:'];
-}
+} */
 
 .title .mt,
 .heading .ms {
@@ -83,9 +83,17 @@ p.paragraph:has(.chapter) {
 	@apply text-primary text-sm align-super;
 }
 
-.perf .graft:before {
+.perf .footnote:before {
 	@apply cursor-pointer font-semibold;
 	content: ' ‡';
+}
+.perf .xref:before {
+	@apply cursor-pointer font-semibold;
+	content: ' x';
+}
+
+.perf .xq {
+	@apply text-primary text-sm;
 }
 
 .perf .verse:after {
@@ -116,13 +124,6 @@ p.paragraph:has(.chapter) {
 
 #offset {
   min-height: 4em;
-}
-
-.sectionHeading {
-  text-align: center;
-  width: 100%;
-  font-weight: 700;
-  text-transform: capitalize;
 }
 
 .MuiAccordionSummary-root.Mui-expanded {

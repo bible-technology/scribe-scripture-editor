@@ -25,7 +25,7 @@ import FootNotesIcon from '@/icons/footnotes.svg';
 import Search from './Search';
 import CrossReferences from './CrossReferences';
 // import FootNotes from './FootNotes';
-import FootNoteEditor from './FootNoteEditor';
+import GraftEditor from './GraftEditor';
 import Comments from './Comments';
 import Bookmarks from '../../components/EditorPage/BookMarks/Bookmarks';
 
@@ -35,7 +35,7 @@ function reducer(state, action) {
   switch (action.type) {
     case 'search':
       return { tabIndex: 0 };
-    case 'crossreference':
+    case 'xref':
       return { tabIndex: 1 };
     case 'footnotes':
       return { tabIndex: 2 };
@@ -54,7 +54,7 @@ export default function EditorSideBar(props) {
   const {
     isOpen,
     closeSideBar,
-    footnoteProps,
+    graftProps,
   } = props;
 
   const {
@@ -192,9 +192,9 @@ export default function EditorSideBar(props) {
                 {state.tabIndex === 0
                   && <Search />}
                 {state.tabIndex === 1
-                  && <CrossReferences />}
+                  && <CrossReferences {...graftProps} />}
                 {state.tabIndex === 2
-                  && <FootNoteEditor {...footnoteProps} />}
+                  && <GraftEditor {...graftProps} />}
                 {state.tabIndex === 3
                   && <Comments />}
                 {state.tabIndex === 4
