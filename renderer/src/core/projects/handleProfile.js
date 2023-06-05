@@ -5,7 +5,7 @@ import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 
 export const getorPutAppLangage = async (method, currentUser, appLang) => {
-  logger.error('handleProfile.js', 'In updateAppLang, for updating the App language Selection');
+  logger.debug('handleProfile.js', 'In updateAppLang, for updating the App language Selection');
   const newpath = localStorage.getItem('userPath');
   const fs = window.require('fs');
   const path = require('path');
