@@ -4829,6 +4829,11 @@
   "resolved" "https://registry.npmjs.org/async-limiter/-/async-limiter-1.0.1.tgz"
   "version" "1.0.1"
 
+"async-lock@^1.1.0":
+  "integrity" "sha512-coglx5yIWuetakm3/1dsX9hxCNox22h7+V80RQOu2XUUMidtArxKoZoOtHUPuR84SycKTXzgGzAUR5hJxujyJQ=="
+  "resolved" "https://registry.npmjs.org/async-lock/-/async-lock-1.4.0.tgz"
+  "version" "1.4.0"
+
 "async-mutex@^0.2.6":
   "integrity" "sha512-Hs4R+4SPgamu6rSGW8C7cV9gaWUKEHykfzCCvIRuaVv636Ju10ZdeUbvb4TBEW0INuq2DHZqXbK4Nd3yG4RaRw=="
   "resolved" "https://registry.npmjs.org/async-mutex/-/async-mutex-0.2.6.tgz"
@@ -6131,6 +6136,11 @@
   "version" "5.3.1"
   dependencies:
     "source-map" "~0.6.0"
+
+"clean-git-ref@^2.0.1":
+  "integrity" "sha512-bLSptAy2P0s6hU4PzuIMKmMJJSE6gLXGH1cntDu7bWJUksvuM+7ReOK61mozULErYvP6a15rnYl0zFDef+pyPw=="
+  "resolved" "https://registry.npmjs.org/clean-git-ref/-/clean-git-ref-2.0.1.tgz"
+  "version" "2.0.1"
 
 "clean-stack@^2.0.0":
   "integrity" "sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A=="
@@ -7450,6 +7460,11 @@
 
 "diff@^5.0.0":
   "version" "5.0.0"
+
+"diff3@0.0.3":
+  "integrity" "sha512-iSq8ngPOt0K53A6eVr4d5Kn6GNrM2nQZtC740pzIriHtn4pOQ2lyzEXQMBeVcWERN0ye7fhBsk9PbLLQOnUx/g=="
+  "resolved" "https://registry.npmjs.org/diff3/-/diff3-0.0.3.tgz"
+  "version" "0.0.3"
 
 "diffie-hellman@^5.0.0":
   "integrity" "sha512-kqag/Nl+f3GwyK25fhUMYj81BUOrZ9IuJsjIcDE5icNM9FJHAVm3VcUDxdLPoQtTuUylWm6ZIknYJwwaPxsUzg=="
@@ -10165,7 +10180,7 @@
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-3.3.10.tgz"
   "version" "3.3.10"
 
-"ignore@^5.2.0":
+"ignore@^5.1.4", "ignore@^5.2.0":
   "integrity" "sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ=="
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.2.0.tgz"
   "version" "5.2.0"
@@ -10908,6 +10923,23 @@
   dependencies:
     "node-fetch" "^1.0.1"
     "whatwg-fetch" ">=0.10.0"
+
+"isomorphic-git@^1.24.0":
+  "integrity" "sha512-4wV95pUr9kGTRZWB9a266bHfD3QAZzWWLIPxlTou4tgOaz4WKmaMOMKKHywudzigsU8h7YwbXyBLE4OEaK8F9Q=="
+  "resolved" "https://registry.npmjs.org/isomorphic-git/-/isomorphic-git-1.24.0.tgz"
+  "version" "1.24.0"
+  dependencies:
+    "async-lock" "^1.1.0"
+    "clean-git-ref" "^2.0.1"
+    "crc-32" "^1.2.0"
+    "diff3" "0.0.3"
+    "ignore" "^5.1.4"
+    "minimisted" "^2.0.0"
+    "pako" "^1.0.10"
+    "pify" "^4.0.1"
+    "readable-stream" "^3.4.0"
+    "sha.js" "^2.4.9"
+    "simple-get" "^4.0.1"
 
 "isstream@~0.1.2":
   "integrity" "sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g=="
@@ -13319,10 +13351,17 @@
   dependencies:
     "brace-expansion" "^1.1.7"
 
-"minimist@^1.1.1", "minimist@^1.2.0", "minimist@^1.2.3", "minimist@^1.2.6":
+"minimist@^1.1.1", "minimist@^1.2.0", "minimist@^1.2.3", "minimist@^1.2.5", "minimist@^1.2.6":
   "integrity" "sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g=="
   "resolved" "https://registry.npmjs.org/minimist/-/minimist-1.2.7.tgz"
   "version" "1.2.7"
+
+"minimisted@^2.0.0":
+  "integrity" "sha512-1oPjfuLQa2caorJUM8HV8lGgWCc0qqAO1MNv/k05G4qslmsndV/5WdNZrqCiyqiz3wohia2Ij2B7w2Dr7/IyrA=="
+  "resolved" "https://registry.npmjs.org/minimisted/-/minimisted-2.0.1.tgz"
+  "version" "2.0.1"
+  dependencies:
+    "minimist" "^1.2.5"
 
 "minipass-collect@^1.0.2":
   "integrity" "sha512-6T6lH0H8OG9kITm/Jm6tdooIbogG9e0tLgpY6mphXSm/A9u8Nq1ryBG+Qspiub9LjWlBPsPS3tWQ/Botq4FdxA=="
@@ -14500,7 +14539,7 @@
     "ssri" "^8.0.1"
     "tar" "^6.1.0"
 
-"pako@^1.0.5", "pako@~1.0.2", "pako@~1.0.5":
+"pako@^1.0.10", "pako@^1.0.5", "pako@~1.0.2", "pako@~1.0.5":
   "integrity" "sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw=="
   "resolved" "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
   "version" "1.0.11"
@@ -17282,7 +17321,7 @@
   "resolved" "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz"
   "version" "1.2.0"
 
-"sha.js@^2.4.0", "sha.js@^2.4.8":
+"sha.js@^2.4.0", "sha.js@^2.4.8", "sha.js@^2.4.9":
   "integrity" "sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ=="
   "resolved" "https://registry.npmjs.org/sha.js/-/sha.js-2.4.11.tgz"
   "version" "2.4.11"
