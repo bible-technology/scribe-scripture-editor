@@ -1,6 +1,7 @@
 // utility functions of isomorphics git
 import git from 'isomorphic-git';
 import PropTypes from 'prop-types';
+import http from 'isomorphic-git/http/web';
 import * as logger from '../../../logger';
 // to check a dir is git initialized or not
 export async function checkInitialize(fs, dir) {
@@ -20,12 +21,18 @@ export async function checkInitialize(fs, dir) {
 }
 
 // function for initialize git in Dir
-export async function initProject(fs, dir, defaultBranch = 'master') {
+export async function initProject(fs, dir, username, defaultBranch = 'master') {
   logger.debug('utils.js', 'in initProject - initialisation of git in a Dir');
   try {
     await git.init({ fs, dir, defaultBranch });
     logger.debug('utils.js', 'in initProject - Initialized repository');
-    console.log('Initialized empty repository');
+    console.log('Initialized repository');
+    await git.setConfig({
+      fs,
+      dir,
+      path: 'user.name',
+      value: username,
+    });
     return true;
   } catch (error) {
     logger.error('utils.js', `Error initializing repository:', ${error} `);
@@ -34,28 +41,72 @@ export async function initProject(fs, dir, defaultBranch = 'master') {
   }
 }
 
-// export async function commitChanges(fs, dir, author, message) {
-//   // const dir = '/path/to/repository'; // Replace with the actual path to the repository
-//   // const author = { name: 'Your Name', email: 'your.email@example.com' };
-//   // const message = 'Commit message';
-//   logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
-//   try {
-//     await git.add({ fs, dir, filepath: '.' });
-//     const sha = await git.commit({
-//       fs,
-//       dir,
-//       author,
-//       message,
-//     });
-//     logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
-//     console.log(`Changes committed with SHA: ${sha}`);
-//     return true;
-//   } catch (error) {
-//     console.error(`Error committing changes: ${error}`);
-//     console.error('Error committing changes:', error);
-//     return false;
-//   }
-// }
+// Add remote for a newly git initialted project
+export async function addGitRemote(fs, dir, url) {
+  // url: 'https://github.com/isomorphic-git/isomorphic-git',
+  logger.debug('utils.js', 'in addGitRemote - Push the changes to git from Dir');
+  try {
+    await git.addRemote({
+      fs,
+      dir,
+      remote: 'origin',
+      url,
+    });
+    logger.debug('utils.js', 'Added origin as remote');
+    console.log('Added origin as remote');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error creating remote changes: ${error}`);
+    console.error('Error creating remote changes:', error);
+    return false;
+  }
+}
+
+// Commit the changes
+export async function commitChanges(fs, dir, author, message) {
+  // const dir = '/path/to/repository'; // Replace with the actual path to the repository
+  // const author = { name: 'Your Name', email: 'your.email@example.com' };
+  // const message = 'Commit message';
+  logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
+  try {
+    await git.add({ fs, dir, filepath: '.' });
+    const sha = await git.commit({
+      fs,
+      dir,
+      author,
+      message,
+    });
+    logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
+    console.log(`Changes committed with SHA: ${sha}`);
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error committing changes: ${error}`);
+    console.error('Error committing changes:', error);
+    return false;
+  }
+}
+
+// Pushing the changes to git
+export async function pushTheChanges(fs, dir, branch, token) {
+  logger.debug('utils.js', 'in pushTheChanges - Push the changes to git from Dir');
+  try {
+    const pushResult = await git.push({
+      fs,
+      http,
+      dir,
+      remote: 'origin',
+      ref: branch,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'Pushed the changes');
+    console.log('Pushed the changes', pushResult);
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error pushing changes: ${error}`);
+    console.error('Error pushing changes:', error);
+    return false;
+  }
+}
 
 // commitChanges.propTypes = {
 //   dir: PropTypes.string.isRequired,
