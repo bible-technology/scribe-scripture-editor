@@ -5,7 +5,9 @@ import {
  handleCreateRepo, createFiletoServer, updateFiletoServer, getOrPutLastSyncInAgSettings,
 } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
-import { checkInitialize, commitChanges, initProject } from '../Isomorphic/utils';
+import {
+ addGitRemote, checkInitialize, commitChanges, initProject, pushTheChanges,
+} from '../Isomorphic/utils';
 import { createRepo } from '../Isomorphic/api';
 // upload project to gitea main function
 export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification) {
@@ -32,19 +34,32 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
     // Create A REPO for the project
     try {
       // Check whether the project is git initiallized or not
+      let remoteStatus = true;
       console.log(projectsMetaPath, branch);
       const checkInit = await checkInitialize(fs, projectsMetaPath);
       console.log(checkInit);
       if (!checkInit) {
-        const projectInitialized = initProject(fs, projectsMetaPath, branch);
+        remoteStatus = false;
+        const projectInitialized = await initProject(fs, projectsMetaPath, auth.user.username, branch);
         console.log(projectInitialized);
         if (projectInitialized) {
           console.log(repoName, auth.token.sha1);
-          const created = createRepo(repoName, auth.token.sha1);
+          // const created = await createRepo(repoName, auth.token.sha1);
+          const created = await handleCreateRepo(repoName, auth, repoName);
           console.log(created);
+          if (created.id) {
+            remoteStatus = await addGitRemote(fs, projectsMetaPath, created.clone_url);
+            console.log({ remoteStatus });
+          }
         }
-      // } else {
-      //   commitChanges(pro);
+      }
+      if (remoteStatus) {
+        const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
+        console.log({ commitStatus });
+        if (commitStatus) {
+          const pushResult = await pushTheChanges(fs, projectsMetaPath, branch, auth.token.sha1);
+          console.log({ pushResult });
+        }
       }
     } catch (err) {
       logger.debug('SyncToGitea.js', `Error on Sync create/update : ${err}`);
