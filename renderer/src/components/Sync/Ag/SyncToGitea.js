@@ -1,9 +1,7 @@
 import * as localForage from 'localforage';
 import { environment } from 'environment';
 import * as logger from '../../../logger';
-import {
- handleCreateRepo, createFiletoServer, updateFiletoServer, getOrPutLastSyncInAgSettings,
-} from './SyncToGiteaUtils';
+import { handleCreateRepo } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
 import {
  addGitRemote, checkInitialize, commitChanges, initProject, pushTheChanges,

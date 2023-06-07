@@ -6,19 +6,24 @@ import {
 } from 'gitea-react-toolkit';
 import { useTranslation } from 'react-i18next';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
+import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import { SyncContext } from '../SyncContextProvider';
 import * as logger from '../../../logger';
 import LoadingSpinner from '../LoadingSpinner';
 import GridRow from '../GridRow';
 import ProjectMergePop from './ProjectMerge/ProjectMergePopUp';
+import { environment } from '../../../../environment';
+import packageInfo from '../../../../../package.json';
 
 /* eslint-disable no-console */
 // eslint-disable-next-line react/prop-types
 const GiteaFileBrowser = ({ changeRepo }) => {
   const {
-    states: { selectedGiteaProject, syncProgress, refreshGiteaListUI },
+    states: {
+ selectedGiteaProject, syncProgress, refreshGiteaListUI, selectedGiteaProjectBranch,
+},
     action: {
-      setSelectedGiteaProject,
+      setSelectedGiteaProject, setSelectedGiteaProjectBranch,
     },
   } = useContext(SyncContext);
 
@@ -31,6 +36,8 @@ const GiteaFileBrowser = ({ changeRepo }) => {
   // active step is used in adavacned sync option future
   // eslint-disable-next-line no-unused-vars
   const [activeStep, setActiveStep] = React.useState();
+
+  const [pullBranchNames, setPullBranchNames] = React.useState([]);
 
   const [steps, setSteps] = React.useState([]);
   const { state: auth, component: authComponent } = useContext(
@@ -81,11 +88,26 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     changeRepo();
   };
 
+  const fetchBrachforDropdown = async () => {
+    const response = await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${repo?.owner?.username}/${repo?.name}/branches`);
+    const fetchBranches = await response.json();
+    // filter to get only user and mater branch
+    // regex is for old sync
+    const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
+    const finalBranches = [{ name: repo?.default_branch }];
+    await fetchBranches.filter((branch) => branch.name === `${auth.user.username}/${packageInfo.name}` || regex.test(branch.name))
+    .forEach((b) => { console.log({ b }); finalBranches.push({ name: b.name }); });
+    setPullBranchNames(finalBranches);
+  };
+
   useEffect(() => {
     if (files.length === 0 && projects.length === 0) {
       if (repo) {
         fetchTree(`${auth.config.server}/${repo?.tree_url}`, repo.name);
       }
+    }
+    if (repo?.name) {
+      fetchBrachforDropdown();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repo?.tree_url]);
@@ -134,13 +156,25 @@ const GiteaFileBrowser = ({ changeRepo }) => {
       {/* advanced and some of the functions are for future use - current sycn is project wise and future is file wise */}
       {!advacnedOption
         && (
-          <GridRow
-            title={`${repo?.name} (${repo.name.split('-').pop().replaceAll('_', ' ')})`}
-            lastSync={undefined}
-            selected
-            isUpload={selectedGiteaProject?.repo?.name === repo?.name && syncProgress.syncStarted}
-            uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
-          />
+          <div className="flex flex-row  border-2 border-red-600 items-center">
+            <GridRow
+              title={`${repo?.name} (${repo.name.split('-').pop().replaceAll('_', ' ')})`}
+              lastSync={undefined}
+              selected
+              isUpload={selectedGiteaProject?.repo?.name === repo?.name && syncProgress.syncStarted}
+              uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
+            />
+            <div className="">
+              {pullBranchNames.length > 0 && (
+              <CustomMultiComboBox
+                selectedList={[selectedGiteaProjectBranch]}
+                setSelectedList={setSelectedGiteaProjectBranch}
+                customData={pullBranchNames}
+                filterParams="name"
+              />
+              )}
+            </div>
+          </div>
       )}
     </>
     )

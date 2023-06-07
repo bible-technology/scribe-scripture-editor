@@ -1,6 +1,5 @@
 // utility functions of isomorphics git
 import git from 'isomorphic-git';
-import PropTypes from 'prop-types';
 import http from 'isomorphic-git/http/web';
 import * as logger from '../../../logger';
 // to check a dir is git initialized or not
@@ -108,12 +107,25 @@ export async function pushTheChanges(fs, dir, branch, token) {
   }
 }
 
-// commitChanges.propTypes = {
-//   dir: PropTypes.string.isRequired,
-//   filepath: PropTypes.string.isRequired,
-//   author: PropTypes.shape({
-//     name: PropTypes.name.isRequired,
-//     email: PropTypes.email.isRequired,
-//   }),
-//   message: PropTypes.string.isRequired,
-// };
+// clone a repo
+export async function cloneTheProject(fs, dir, url, token) {
+  logger.debug('utils.js', 'in cloneTheProject - clone a project to Dir from Door 43');
+  try {
+    await git.clone({
+      fs,
+      http,
+      dir,
+      url,
+      singleBranch: true,
+      depth: 1,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'Cloned the project');
+    console.log('cloned the repo ');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error cloning project: ${error}`);
+    console.error('Error cloning project:', error);
+    return false;
+  }
+}
