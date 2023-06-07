@@ -8,7 +8,7 @@ import { branch } from 'isomorphic-git';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
-import { cloneTheProject } from '../Isomorphic/utils';
+import { cloneTheProject, pullProject } from '../Isomorphic/utils';
 
 const md5 = require('md5');
 const path = require('path');
@@ -225,7 +225,9 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
     const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
     let fetchedRepo;
     if (duplicate) {
-      console.log('pull');
+      console.log('pull', gitprojectDir, userBranch, auth.token.sha1);
+      const pullStatus = await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1);
+      console.log({ pullStatus });
       fetchedRepo = true;
     } else {
       console.log('clone');

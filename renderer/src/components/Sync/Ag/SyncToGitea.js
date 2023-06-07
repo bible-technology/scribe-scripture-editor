@@ -4,9 +4,9 @@ import * as logger from '../../../logger';
 import { handleCreateRepo } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
 import {
- addGitRemote, checkInitialize, commitChanges, initProject, pushTheChanges,
+ addGitRemote, checkInitialize, checkoutToBranch, commitChanges, createBranch, initProject, pullProject, pushTheChanges,
 } from '../Isomorphic/utils';
-// import { createRepo } from '../Isomorphic/api';
+import { createRepo } from '../Isomorphic/api';
 // upload project to gitea main function
 export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification) {
   logger.debug('ToGiteaUtils.js', 'in uploadTOGitea');
@@ -17,7 +17,8 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
   // const projectCreated = projectData.meta.dateCreated.split('T')[0];
   const repoName = `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`;
   // const repo = { name: `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`, owner: { username: dcsOwners.length > 0 ? dcsOwners[0].username : auth.user.username } };
-  const branch = `${auth?.user?.username}/${packageInfo.name}`;
+  let branch = `${auth?.user?.username}/${packageInfo.name}`;
+  const newBranch = `${auth?.user?.username}/${packageInfo.name}`;
   localForage.getItem('userProfile').then(async (user) => {
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
@@ -31,6 +32,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       const checkInit = await checkInitialize(fs, projectsMetaPath);
       console.log(checkInit);
       if (!checkInit) {
+        branch = 'master';
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 6,
         }));
@@ -40,12 +42,13 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         if (projectInitialized) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           console.log(repoName, auth.token.sha1);
-          // const created = await createRepo(repoName, auth.token.sha1);
-          const created = await handleCreateRepo(repoName, auth, repoName);
+          const created = await createRepo(repoName, auth.token.sha1);
+          // const created = await handleCreateRepo(repoName, auth, repoName);
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           console.log(created);
           if (created.id) {
             remoteStatus = await addGitRemote(fs, projectsMetaPath, created.clone_url);
+            // remoteStatus = remoteStatus && await pullProject(fs, projectsMetaPath, 'master', auth.token.sha1);
             console.log({ remoteStatus });
             setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           }
@@ -62,6 +65,11 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           const pushResult = await pushTheChanges(fs, projectsMetaPath, branch, auth.token.sha1);
           console.log({ pushResult });
+          if (pushResult && branch === 'master') {
+            const createStatus = await createBranch(fs, projectsMetaPath, newBranch);
+            const checkoutStatus = createStatus && await checkoutToBranch(fs, projectsMetaPath, newBranch);
+            console.log({ createStatus }, { checkoutStatus });
+          }
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
         }
       }
