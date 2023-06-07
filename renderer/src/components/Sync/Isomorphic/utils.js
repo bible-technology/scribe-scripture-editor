@@ -108,7 +108,7 @@ export async function pushTheChanges(fs, dir, branch, token) {
 }
 
 // clone a repo
-export async function cloneTheProject(fs, dir, url, token) {
+export async function cloneTheProject(fs, dir, url, branch, token) {
   logger.debug('utils.js', 'in cloneTheProject - clone a project to Dir from Door 43');
   try {
     await git.clone({
@@ -116,8 +116,8 @@ export async function cloneTheProject(fs, dir, url, token) {
       http,
       dir,
       url,
+      ref: branch,
       singleBranch: true,
-      depth: 1,
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Cloned the project');

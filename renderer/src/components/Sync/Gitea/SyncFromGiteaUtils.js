@@ -4,55 +4,57 @@ import { updateVersion } from '@/core/burrito/updateTranslationSB';
 import {
   readContent,
 } from 'gitea-react-toolkit';
+import { branch } from 'isomorphic-git';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
+import { cloneTheProject } from '../Isomorphic/utils';
 
 const md5 = require('md5');
 const path = require('path');
 
-async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs) {
-  logger.debug('SyncFromGiteaUtils.js', 'in read and write ingredients function');
-  try {
-    // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const key in sbDataObject.ingredients) {
-      action?.setSyncProgress((prev) => ({
-        ...prev,
-        completedFiles: prev.completedFiles + 1,
-      }));
-      if (!ignoreFilesPaths.includes(key)) {
-        // eslint-disable-next-line no-await-in-loop
-        const readResult = await readContent(
-          {
-            config: auth.config,
-            owner: auth.user.login,
-            repo: repo.name,
-            ref: userBranch?.name,
-            filepath: key,
-          },
-          // eslint-disable-next-line no-loop-func
-          );
-          if (readResult) {
-            logger.debug('giteaUtils import.js', 'sending the data from Gitea with content');
-            if (readResult !== null) {
-              // eslint-disable-next-line no-await-in-loop
-              const rep1 = await fetch(readResult.download_url);
-              // eslint-disable-next-line no-await-in-loop
-              const ingredient = await rep1.text();
-              // eslint-disable-next-line no-await-in-loop
-              await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, key), ingredient);
-              logger.debug('SyncFromGiteaUtisl import.js', `Write File success ${key}`);
-            } else {
-              logger.debug('SyncFrom giteaUtils import.js', `Error in read ${key} from Server `);
-              throw new Error(`Error in read ${key} from Server `);
-            }
-          }
-      }
-    }
-} catch (err) {
-    throw new Error(err?.message || err);
-  }
-}
+// async function readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs) {
+//   logger.debug('SyncFromGiteaUtils.js', 'in read and write ingredients function');
+//   try {
+//     // eslint-disable-next-line no-restricted-syntax, guard-for-in
+//     for (const key in sbDataObject.ingredients) {
+//       action?.setSyncProgress((prev) => ({
+//         ...prev,
+//         completedFiles: prev.completedFiles + 1,
+//       }));
+//       if (!ignoreFilesPaths.includes(key)) {
+//         // eslint-disable-next-line no-await-in-loop
+//         const readResult = await readContent(
+//           {
+//             config: auth.config,
+//             owner: auth.user.login,
+//             repo: repo.name,
+//             ref: userBranch?.name,
+//             filepath: key,
+//           },
+//           // eslint-disable-next-line no-loop-func
+//           );
+//           if (readResult) {
+//             logger.debug('giteaUtils import.js', 'sending the data from Gitea with content');
+//             if (readResult !== null) {
+//               // eslint-disable-next-line no-await-in-loop
+//               const rep1 = await fetch(readResult.download_url);
+//               // eslint-disable-next-line no-await-in-loop
+//               const ingredient = await rep1.text();
+//               // eslint-disable-next-line no-await-in-loop
+//               await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, key), ingredient);
+//               logger.debug('SyncFromGiteaUtisl import.js', `Write File success ${key}`);
+//             } else {
+//               logger.debug('SyncFrom giteaUtils import.js', `Error in read ${key} from Server `);
+//               throw new Error(`Error in read ${key} from Server `);
+//             }
+//           }
+//       }
+//     }
+// } catch (err) {
+//     throw new Error(err?.message || err);
+//   }
+// }
 
 async function checkIngredientsMd5Values(sbDataObject, projectDir, projectName, id, fs) {
   logger.debug('SyncFromGiteaUtils.js', 'Inside md5 value update functions');
@@ -137,7 +139,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
 }
 
 // import gitea project to local
-export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, ignoreFilesPaths = []) => {
+export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, duplicate, ignoreFilesPaths = []) => {
   try {
     logger.debug('SyncFromGiteaUtils.js', 'Inside Import Project core');
     const fs = window.require('fs');
@@ -220,17 +222,28 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       projectName = ((repo.name.split('-').pop()).replace(/_/g, ' '));
     }
 
+    const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
+    let fetchedRepo;
+    if (duplicate) {
+      console.log('pull');
+      fetchedRepo = true;
+    } else {
+      console.log('clone');
+      const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
+      fetchedRepo = cloned;
+    }
+
     // get the directory name from ingredients list, fetch and create files
-    if (sbDataObject?.ingredients) {
+    if (sbDataObject?.ingredients && fetchedRepo) {
       const firstKey = Object.keys(sbDataObject?.ingredients)[0];
       const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
       const dirName = folderName[0];
       logger.debug('SyncFromGiteaUtils.js', 'Creating a directory if not exists.');
-      fs.mkdirSync(path.join(projectDir, `${projectName}_${id}`, dirName), { recursive: true });
+      // fs.mkdirSync(path.join(projectDir, `${projectName}_${id}`, dirName), { recursive: true });
 
       // call for start upload files =-======== trigger action.syncProgress - already started
       // loop thorugh ingredients , fetch file and write to local
-      await readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs);
+      // await readAndCreateIngredients(action, sbDataObject, ignoreFilesPaths, projectDir, projectName, id, auth, repo, userBranch, fs);
       // check and update Md5 of created files
       await checkIngredientsMd5Values(sbDataObject, projectDir, projectName, id, fs);
       // scribe-Settings File create / Update
@@ -268,6 +281,9 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         completedFiles: prev.completedFiles + 1,
       }));
       logger.debug('SyncFromGiteaUtils.js', 'Finished Importing project from Gitea to Scribe');
+    } else {
+      logger.debug('SyncFromGiteaUtils.js', 'Offline Sync failed');
+      throw new Error('Offline Sync failed');
     }
   } catch (err) {
     logger.debug('SyncFromGiteaUtils.js', `error called in import server project : ${err}`);

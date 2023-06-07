@@ -32,8 +32,8 @@ import packageInfo from '../../../../package.json';
 
   const {
     states: {
-    selectedAgProject, syncProgress,
-  },
+      selectedAgProject, syncProgress, selectedGiteaProjectBranch,
+    },
     action: {
       setSyncProgress, setSelectedGiteaProject,
     },
@@ -58,10 +58,13 @@ import packageInfo from '../../../../package.json';
   };
 
   const handleOfflineSync = async (currentRepo, currentAuth) => {
-    if (currentAuth && currentRepo) {
+    if (currentAuth && currentRepo && selectedGiteaProjectBranch?.name) {
       logger.debug('Sync.js', 'in offlineSync Started');
-      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification);
+      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, selectedGiteaProjectBranch.name);
       logger.debug('Sync.js', 'in offlineSync Finished');
+    } else if (!selectedGiteaProjectBranch?.name) {
+      logger.debug('Sync.js', 'Do select a branch');
+      notifyStatus('warning', 'Do select a branch');
     } else {
       logger.debug('Sync.js', 'in offlineSync Sync Failed , Something Wrong, may be internet issue');
       notifyStatus('failure', 'Something went wrong! , login and try again');
