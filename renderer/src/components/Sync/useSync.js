@@ -10,6 +10,7 @@ function useSync() {
   const [agProjects, setAgProjects] = useState([]);
   const [agProjectsMeta, setAgProjectsMeta] = useState([]);
   const [selectedAgProject, setSelectedAgProject] = useState(undefined);
+  const [selectedGiteaProjectBranch, setSelectedGiteaProjectBranch] = useState([]);
   const [selectedGiteaProject, setSelectedGiteaProject] = useState({
     repo: null,
     branch: null,
@@ -69,6 +70,7 @@ function useSync() {
       syncProgress,
       selectedGiteaProject,
       refreshGiteaListUI,
+      selectedGiteaProjectBranch,
     },
     actions: {
       fetchProjects,
@@ -76,6 +78,7 @@ function useSync() {
       setSyncProgress,
       setSelectedGiteaProject,
       setRefreshGiteaListUI,
+      setSelectedGiteaProjectBranch,
     },
   };
   return response;
