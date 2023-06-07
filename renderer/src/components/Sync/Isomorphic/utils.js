@@ -3,11 +3,11 @@ import git from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 import * as logger from '../../../logger';
 // to check a dir is git initialized or not
-export async function checkInitialize(fs, dir) {
+export async function checkInitialize(fs, dir, branch) {
   logger.debug('utils.js', 'in checkInitialize - check initialisation of git in a Dir');
   try {
     await git.log({
-      fs, dir, depth: 5, ref: 'master',
+      fs, dir, depth: 1, ref: branch,
     });
     logger.debug('utils.js', 'The directory is already initialized ');
     console.log('The directory is already initialized as a Git repository.');
@@ -126,6 +126,70 @@ export async function cloneTheProject(fs, dir, url, branch, token) {
   } catch (error) {
     logger.error('utils.js', `Error cloning project: ${error}`);
     console.error('Error cloning project:', error);
+    return false;
+  }
+}
+
+// Pull the repo
+export async function pullProject(fs, dir, remoteBranch, token) {
+  logger.debug('utils.js', 'in pullProject - pull the a project to Dir from Door 43');
+  try {
+    await git.pull({
+      fs,
+      http,
+      dir,
+      ref: remoteBranch,
+      remote: 'origin',
+      // remoteRef: remoteBranch,
+      singleBranch: true,
+      fastForwardOnly: true,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'Pulled the project');
+    console.log('pulled the repo ');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error in pulling project: ${error}`);
+    console.error('Error in pulling project:', error);
+    return false;
+  }
+}
+
+// create a new branch
+
+export async function createBranch(fs, dir, branch) {
+  logger.debug('utils.js', 'in createBranch - create a new branch from current');
+  try {
+    await git.branch({
+      fs,
+      dir,
+      ref: branch,
+    });
+    logger.debug('utils.js', 'created new branch');
+    console.log('branch created');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error create branch: ${error}`);
+    console.error('Error create Branch :', error);
+    return false;
+  }
+}
+
+// checkout to a branch
+export async function checkoutToBranch(fs, dir, branch) {
+  logger.debug('utils.js', 'in checkoutToBranch - checkout to a branch from current');
+  try {
+    await git.checkout({
+      fs,
+      dir,
+      ref: branch,
+    });
+    logger.debug('utils.js', 'checkout to branch');
+    console.log('checkout to branch');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error checkout to branch: ${error}`);
+    console.error('Error checkout to Branch :', error);
     return false;
   }
 }
