@@ -16,15 +16,17 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     console.log('try', branch);
     const currentUser = await localForage.getItem('userProfile');
     logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch metadata content from branch');
+    console.log({ repo });
     const readMetaData = await readContent(
       {
       config: auth.config,
-      owner: auth.user.login,
+      owner: repo.owner.username,
       repo: repo.name,
       ref: branch,
       filepath: 'metadata.json',
       },
     );
+    console.log('after read ---------', { readMetaData });
     const fetchMetaData = await fetch(readMetaData.download_url);
     const metaFile = await fetchMetaData.json();
     console.log(metaFile);
