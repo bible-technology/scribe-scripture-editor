@@ -8,7 +8,9 @@ import { branch } from 'isomorphic-git';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
-import { cloneTheProject, pullProject } from '../Isomorphic/utils';
+import {
+ checkoutToBranch, cloneTheProject, createBranch, pullProject, setUserConfig,
+} from '../Isomorphic/utils';
 
 const md5 = require('md5');
 const path = require('path');
@@ -222,6 +224,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       projectName = ((repo.name.split('-').pop()).replace(/_/g, ' '));
     }
 
+    // pull or clone section
     const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
     let fetchedRepo;
     if (duplicate) {
@@ -231,8 +234,15 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       fetchedRepo = true;
     } else {
       console.log('clone');
+      const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
       const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
-      fetchedRepo = cloned;
+      // add config for this user
+      const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
+      // create user branch and checkout
+      const createStatus = configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
+      const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
+      console.log({ createStatus }, { checkoutStatus });
+      fetchedRepo = checkoutStatus;
     }
 
     // get the directory name from ingredients list, fetch and create files

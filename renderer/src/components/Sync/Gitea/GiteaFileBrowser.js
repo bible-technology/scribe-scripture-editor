@@ -112,6 +112,8 @@ const GiteaFileBrowser = ({ changeRepo }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repo?.tree_url]);
 
+  console.log({ selectedGiteaProjectBranch, pullBranchNames });
+
   return (
     (!auth && authComponent)
     || (!repo && (

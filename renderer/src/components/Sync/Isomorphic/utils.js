@@ -19,6 +19,24 @@ export async function checkInitialize(fs, dir, branch) {
   }
 }
 
+// function for set user config
+export async function setUserConfig(fs, dir, username) {
+  logger.debug('utils.js', 'in setUserConfig - set user config');
+  try {
+    await git.setConfig({
+      fs,
+      dir,
+      path: 'user.name',
+      value: username,
+    });
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error setting config:', ${error} `);
+    console.error('Error setting config:', error);
+    return false;
+  }
+}
+
 // function for initialize git in Dir
 export async function initProject(fs, dir, username, defaultBranch = 'master') {
   logger.debug('utils.js', 'in initProject - initialisation of git in a Dir');
@@ -26,12 +44,7 @@ export async function initProject(fs, dir, username, defaultBranch = 'master') {
     await git.init({ fs, dir, defaultBranch });
     logger.debug('utils.js', 'in initProject - Initialized repository');
     console.log('Initialized repository');
-    await git.setConfig({
-      fs,
-      dir,
-      path: 'user.name',
-      value: username,
-    });
+    await setUserConfig(fs, dir, username);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error initializing repository:', ${error} `);
