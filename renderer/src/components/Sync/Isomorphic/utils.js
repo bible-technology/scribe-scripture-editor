@@ -108,6 +108,7 @@ export async function pushTheChanges(fs, dir, branch, token) {
       dir,
       remote: 'origin',
       ref: branch,
+      force: true,
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Pushed the changes');
@@ -143,33 +144,10 @@ export async function cloneTheProject(fs, dir, url, branch, token) {
   }
 }
 
-// Pull the repo
-export async function pullProject(fs, dir, remoteBranch, token) {
-  logger.debug('utils.js', 'in pullProject - pull the a project to Dir from Door 43');
-  try {
-    await git.pull({
-      fs,
-      http,
-      dir,
-      ref: remoteBranch,
-      remote: 'origin',
-      // remoteRef: remoteBranch,
-      singleBranch: true,
-      fastForwardOnly: true,
-      onAuth: () => ({ username: token }),
-    });
-    logger.debug('utils.js', 'Pulled the project');
-    console.log('pulled the repo ');
-    return true;
-  } catch (error) {
-    logger.error('utils.js', `Error in pulling project: ${error}`);
-    console.error('Error in pulling project:', error);
-    return false;
-  }
-}
+// // merge 2 local branches
+// export async function
 
 // create a new branch
-
 export async function createBranch(fs, dir, branch) {
   logger.debug('utils.js', 'in createBranch - create a new branch from current');
   try {
@@ -203,6 +181,112 @@ export async function checkoutToBranch(fs, dir, branch) {
   } catch (error) {
     logger.error('utils.js', `Error checkout to branch: ${error}`);
     console.error('Error checkout to Branch :', error);
+    return false;
+  }
+}
+
+// Function to delete a branch
+export async function deleteBranch(fs, dir, branch) {
+  logger.debug('utils.js', 'in deleteBranch - delete a new branch ');
+
+  try {
+    await git.deleteBranch({
+      fs,
+      dir,
+      ref: branch,
+    });
+    logger.debug('utils.js', 'delete the  branch');
+    console.log('branch deleted');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error delete branch: ${error}`);
+    console.error('Error delete Branch :', error);
+    return false;
+  }
+}
+
+// Pull the repo
+export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
+  logger.debug('utils.js', 'in pullProject - pull the a project to Dir from Door 43');
+  console.log('pull', remoteBranch, localBranch);
+  try {
+    await git.pull({
+      fs,
+      http,
+      dir,
+      ref: localBranch,
+      remote: 'origin',
+      remoteRef: remoteBranch,
+      singleBranch: true,
+      fastForwardOnly: true,
+      onAuth: () => ({ username: token }),
+    });
+    const branch = await git.currentBranch({
+      fs,
+      dir,
+      fullname: false,
+    });
+    console.log(branch);
+    console.log('done');
+    logger.debug('utils.js', 'Pulled the project');
+    console.log('pulled the repo ', localBranch);
+    // if (remoteBranch === 'master') {
+    //   console.log('master');
+    //   const deleteStatus = await deleteBranch(fs, dir, localBranch);
+    //   const createStatus = await createBranch(fs, dir, localBranch);
+    //   const checkoutStatus = createStatus && await checkoutToBranch(fs, dir, localBranch);
+    //   console.log({ checkoutStatus });
+    // }
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error in pulling project: ${error}`);
+    console.error('Error in pulling project:', error);
+    const status = await git.status({ fs, dir });
+    console.log(status);
+    return false;
+  }
+}
+export async function fub({ contents }) {
+  console.log(contents);
+}
+// Fetch function
+export async function fetchBranch(fs, dir, branch, token, url, localBranch) {
+  logger.debug('utils.js', 'in fetchBranch - delete a new branch ');
+  console.log(dir, branch, token, url);
+  try {
+    await git.fetch({
+      fs,
+      http,
+      dir,
+      url,
+      remoteRef: branch,
+      depth: 1,
+      singleBranch: true,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'fetch Branch');
+    console.log('branch fetched');
+    await git.merge({
+      fs,
+      dir,
+      ours: localBranch,
+      theirs: `origin/${branch}`,
+      abortOnConflict: false,
+      mergeDriver: fub,
+    }).catch((e) => {
+      console.log({ e });
+      if (e) {
+        console.log(
+          'Automatic merge failed for the following files: '
+          + `${e.data}. `
+          + 'Resolve these conflicts and then commit your changes.',
+        );
+      } else { throw e; }
+    });
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error delete branch: ${error}`);
+    console.error('Error delete Branch :', error);
     return false;
   }
 }

@@ -9,7 +9,7 @@ import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 import {
- checkoutToBranch, cloneTheProject, createBranch, pullProject, setUserConfig,
+ checkoutToBranch, cloneTheProject, createBranch, fetchBranch, pullProject, setUserConfig,
 } from '../Isomorphic/utils';
 
 const md5 = require('md5');
@@ -226,15 +226,16 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
 
     // pull or clone section
     const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
+    const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
     let fetchedRepo;
     if (duplicate) {
       console.log('pull', gitprojectDir, userBranch, auth.token.sha1);
-      const pullStatus = await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1);
-      console.log({ pullStatus });
-      fetchedRepo = true;
+      const pullStatus = await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
+      // const pullStatus = await fetchBranch(fs, gitprojectDir, userBranch, auth.token.sha1, repo.clone_url, checkoutBranch);
+      console.log('pulling status', { pullStatus });
+      // fetchedRepo = pullStatus;
     } else {
       console.log('clone');
-      const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
       const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
       // add config for this user
       const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
