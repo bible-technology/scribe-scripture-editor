@@ -11,11 +11,11 @@ import BibleNavigation from '@/modules/biblenavigation/BibleNavigation';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
 import LockClosedIcon from '@/icons/Gallery/LockClosed.svg';
 import LockOpenIcon from '@/icons/Gallery/LockOpen.svg';
 import BookmarkIcon from '@/icons/Book/Bookmark.svg';
 import * as logger from '../../logger';
+
 
 export default function Editor({
   children, callFrom, editor,
