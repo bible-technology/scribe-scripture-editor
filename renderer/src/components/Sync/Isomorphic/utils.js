@@ -355,3 +355,47 @@ export async function createGitIgnore(fs, dir) {
     return false;
   }
 }
+
+// Fetch and merge remote main to local
+export async function remoteMerge(fs, dir, branch, localBranch, token) {
+  logger.debug('utils.js', 'in remote merge - fetch and merge new branch ');
+  console.log(dir, branch, localBranch);
+  try {
+    await git.fetch({
+      fs,
+      http,
+      dir,
+      remote: 'origin',
+      remoteRef: branch,
+      depth: 1,
+      singleBranch: true,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'fetch Branch');
+    console.log('branch fetched');
+    await git.merge({
+      fs,
+      dir,
+      ours: localBranch,
+      theirs: `origin/${branch}`,
+      // ours: branch,
+      // theirs: localBranch,
+      abortOnConflict: false,
+    }).catch((e) => {
+      console.log({ e });
+      if (e) {
+        console.log(
+          'Automatic merge failed for the following files: '
+          + `${e.data}. `
+          + 'Resolve these conflicts and then commit your changes.',
+        );
+      } else { throw e; }
+    });
+    console.log('merge succeess remote/origin - local');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error merge branch: ${error}`);
+    console.error('Error merge Branch :', error);
+    return false;
+  }
+}
