@@ -85,6 +85,7 @@ export async function commitChanges(fs, dir, author, message, force = false) {
  fs, dir, filepath: '.', force,
 });
     await git.remove({ fs, dir, filepath: '.gitignore' });
+    await git.remove({ fs, dir, filepath: '.git/' });
     const sha = await git.commit({
       fs,
       dir,
@@ -253,29 +254,30 @@ export async function fub({ contents }) {
   console.log(contents);
 }
 // Fetch function
-export async function fetchBranch(fs, dir, branch, token, url, localBranch) {
-  logger.debug('utils.js', 'in fetchBranch - delete a new branch ');
-  console.log(dir, branch, token, url);
+export async function mergeBranches(fs, dir, branch, localBranch) {
+  logger.debug('utils.js', 'in mergeBranch - delete a new branch ');
+  console.log(dir, branch, localBranch);
   try {
-    await git.fetch({
-      fs,
-      http,
-      dir,
-      url,
-      remoteRef: branch,
-      depth: 1,
-      singleBranch: true,
-      onAuth: () => ({ username: token }),
-    });
-    logger.debug('utils.js', 'fetch Branch');
-    console.log('branch fetched');
+    // await git.fetch({
+    //   fs,
+    //   http,
+    //   dir,
+    //   url,
+    //   remoteRef: branch,
+    //   depth: 1,
+    //   singleBranch: true,
+    //   onAuth: () => ({ username: token }),
+    // });
+    // logger.debug('utils.js', 'fetch Branch');
+    // console.log('branch fetched');
     await git.merge({
       fs,
       dir,
-      ours: localBranch,
-      theirs: `origin/${branch}`,
+      // ours: localBranch,
+      // theirs: `origin/${branch}`,
+      ours: branch,
+      theirs: localBranch,
       abortOnConflict: false,
-      mergeDriver: fub,
     }).catch((e) => {
       console.log({ e });
       if (e) {
@@ -288,8 +290,8 @@ export async function fetchBranch(fs, dir, branch, token, url, localBranch) {
     });
     return true;
   } catch (error) {
-    logger.error('utils.js', `Error delete branch: ${error}`);
-    console.error('Error delete Branch :', error);
+    logger.error('utils.js', `Error merge branch: ${error}`);
+    console.error('Error merge Branch :', error);
     return false;
   }
 }

@@ -4,7 +4,7 @@ import * as logger from '../../../logger';
 import { handleCreateRepo } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
 import {
- addGitRemote, checkInitialize, checkoutToBranch, commitChanges, createBranch, getRepoOwner, ignorFiles, initProject, pullProject, pushTheChanges,
+ addGitRemote, checkInitialize, checkoutToBranch, commitChanges, createBranch, getRepoOwner, ignorFiles, initProject, mergeBranches, pullProject, pushTheChanges,
 } from '../Isomorphic/utils';
 import { createRepo } from '../Isomorphic/api';
 // upload project to gitea main function
@@ -74,14 +74,21 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         console.log({ commitStatus });
         if (commitStatus) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
+          // push changes to remote user branch from local user
           const pushResult = await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log({ pushResult });
+          // pull origin main to local user branch
           const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-          const pushMain = pullStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
+          // merge changes local user - main
+          const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
+          // push merged changes to main origin
+          const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           const repoOwner = await getRepoOwner(fs, projectsMetaPath);
           if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+            // force commit the ignored files (json) to remote user branch
             await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
           }
+          // push changes to remote user from local user
           const pushUser = pushMain && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log({ pushUser });
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
