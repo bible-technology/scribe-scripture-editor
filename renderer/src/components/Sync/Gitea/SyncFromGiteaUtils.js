@@ -9,7 +9,7 @@ import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 import {
- checkoutToBranch, cloneTheProject, createBranch, fetchBranch, pullProject, setUserConfig,
+ checkoutToBranch, cloneTheProject, createBranch, createGitIgnore, fetchBranch, getRepoOwner, pullProject, setUserConfig,
 } from '../Isomorphic/utils';
 
 const md5 = require('md5');
@@ -242,6 +242,11 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       // create user branch and checkout
       const createStatus = configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
       const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
+      // create gitignore file for for collabarators
+      const repoOwner = await getRepoOwner(fs, gitprojectDir);
+      if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+        await createGitIgnore(fs, gitprojectDir);
+      }
       console.log({ createStatus }, { checkoutStatus });
       fetchedRepo = checkoutStatus;
     }

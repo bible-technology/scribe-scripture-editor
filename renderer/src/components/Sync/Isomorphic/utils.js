@@ -338,3 +338,20 @@ export async function getRepoOwner(fs, dir) {
     return null;
   }
 }
+
+// create git ignore file in path
+export async function createGitIgnore(fs, dir) {
+  logger.debug('utils.js', 'in getRepoOwner - get repo owner');
+  const gitignoreContent = `
+  # Ignore .json files (scribe setting files)
+  *.json`;
+  try {
+    await fs.writeFileSync(`${dir}/.gitignore`, gitignoreContent);
+    console.log('.gitignore file created successfully.');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error getRepoOwner: ${error}`);
+    console.error('Error getRepoOwner :', error);
+    return false;
+  }
+}
