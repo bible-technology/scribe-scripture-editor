@@ -84,10 +84,10 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           // push merged changes to main origin
           const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           const repoOwner = await getRepoOwner(fs, projectsMetaPath);
-          if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-            // force commit the ignored files (json) to remote user branch
-            await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
-          }
+          // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+          //   // force commit the ignored files (json) to remote user branch
+          //   await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
+          // }
           // push changes to remote user from local user
           const pushUser = pushMain && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log({ pushUser });

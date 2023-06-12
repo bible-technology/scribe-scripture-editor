@@ -85,7 +85,7 @@ export async function commitChanges(fs, dir, author, message, force = false) {
  fs, dir, filepath: '.', force,
 });
     await git.remove({ fs, dir, filepath: '.gitignore' });
-    await git.remove({ fs, dir, filepath: '.git/' });
+    await git.remove({ fs, dir, filepath: '/.git' });
     const sha = await git.commit({
       fs,
       dir,
@@ -344,9 +344,7 @@ export async function getRepoOwner(fs, dir) {
 // create git ignore file in path
 export async function createGitIgnore(fs, dir) {
   logger.debug('utils.js', 'in getRepoOwner - get repo owner');
-  const gitignoreContent = `
-  # Ignore .json files (scribe setting files)
-  *.json`;
+  const gitignoreContent = '# Ignore .json files (scribe setting files)\n*.json';
   try {
     await fs.writeFileSync(`${dir}/.gitignore`, gitignoreContent);
     console.log('.gitignore file created successfully.');
