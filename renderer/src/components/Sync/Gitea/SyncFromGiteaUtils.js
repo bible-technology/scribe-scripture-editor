@@ -9,7 +9,7 @@ import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 import {
- checkoutToBranch, cloneTheProject, createBranch, createGitIgnore, fetchBranch, getRepoOwner, pullProject, setUserConfig,
+ checkoutToBranch, cloneTheProject, commitChanges, createBranch, createGitIgnore, fetchBranch, getRepoOwner, pullProject, pushTheChanges, setUserConfig,
 } from '../Isomorphic/utils';
 
 const md5 = require('md5');
@@ -229,9 +229,11 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
     const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
     let fetchedRepo;
     if (duplicate) {
+      // push changes to user branch and pull from scribe main
+      const commitStatus = await commitChanges(fs, gitprojectDir, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
+      const pushResult = commitStatus && await pushTheChanges(fs, gitprojectDir, checkoutBranch, auth.token.sha1);
       console.log('pull', gitprojectDir, userBranch, auth.token.sha1);
-      const pullStatus = await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-      // const pullStatus = await fetchBranch(fs, gitprojectDir, userBranch, auth.token.sha1, repo.clone_url, checkoutBranch);
+      const pullStatus = pushResult && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
       console.log('pulling status', { pullStatus });
       // fetchedRepo = pullStatus;
     } else {

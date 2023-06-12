@@ -27,6 +27,8 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', user?.username, 'projects', `${projectName}_${projectId}`);
     // Create A REPO for the project
     try {
+      // support for existing sync users - create scribe main with user branch content
+      // await supportForExistingSyncUsers();
       // Check whether the project is git initiallized or not
       let remoteStatus = true;
       console.log(projectsMetaPath, { mainBranch });
