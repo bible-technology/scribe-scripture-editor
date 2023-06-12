@@ -38,7 +38,7 @@ export async function setUserConfig(fs, dir, username) {
 }
 
 // function for initialize git in Dir
-export async function initProject(fs, dir, username, defaultBranch = 'master') {
+export async function initProject(fs, dir, username, defaultBranch) {
   logger.debug('utils.js', 'in initProject - initialisation of git in a Dir');
   try {
     await git.init({ fs, dir, defaultBranch });
@@ -75,13 +75,16 @@ export async function addGitRemote(fs, dir, url) {
 }
 
 // Commit the changes
-export async function commitChanges(fs, dir, author, message) {
+export async function commitChanges(fs, dir, author, message, force = false) {
   // const dir = '/path/to/repository'; // Replace with the actual path to the repository
   // const author = { name: 'Your Name', email: 'your.email@example.com' };
   // const message = 'Commit message';
   logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
   try {
-    await git.add({ fs, dir, filepath: '.' });
+    await git.add({
+ fs, dir, filepath: '.', force,
+});
+    await git.remove({ fs, dir, filepath: '.gitignore' });
     const sha = await git.commit({
       fs,
       dir,
@@ -288,5 +291,50 @@ export async function fetchBranch(fs, dir, branch, token, url, localBranch) {
     logger.error('utils.js', `Error delete branch: ${error}`);
     console.error('Error delete Branch :', error);
     return false;
+  }
+}
+
+// Git ignor files
+export async function ignorFiles(fs, dir) {
+  logger.debug('utils.js', 'in ignorFiles - create a new branch from current');
+  try {
+    await git.isIgnored({
+      fs,
+      dir,
+      filepath: 'metadata.json',
+    });
+    await git.isIgnored({
+      fs,
+      dir,
+      filepath: 'ingredients/scribe-settings.json',
+    });
+    logger.debug('utils.js', 'ignorFiles');
+    console.log('branch created');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error ignorFiles: ${error}`);
+    console.error('Error ignorFiles :', error);
+    return false;
+  }
+}
+
+// getConfig for repo owner
+export async function getRepoOwner(fs, dir) {
+  logger.debug('utils.js', 'in getRepoOwner - get repo owner');
+  try {
+    const value = await git.getConfig({
+      fs,
+      dir,
+      path: 'remote.origin.url',
+    });
+    console.log({ value });
+    const val = value.split('/');
+    console.log(val[val.length - 2]);
+    logger.debug('utils.js', 'getRepoOwner');
+    return val[val.length - 2];
+  } catch (error) {
+    logger.error('utils.js', `Error getRepoOwner: ${error}`);
+    console.error('Error getRepoOwner :', error);
+    return null;
   }
 }
