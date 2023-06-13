@@ -289,7 +289,6 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
       // theirs: `origin/${branch}`,
       ours: branch,
       theirs: localBranch,
-      fastForward: false,
       abortOnConflict: false,
     }).catch((e) => {
       console.log({ e });
