@@ -289,6 +289,7 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
       // theirs: `origin/${branch}`,
       ours: branch,
       theirs: localBranch,
+      fastForward: false,
       abortOnConflict: false,
     }).catch((e) => {
       console.log({ e });
@@ -298,7 +299,8 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
         );
-      } else { throw e; }
+        return false;
+      } throw e;
     });
     return true;
   } catch (error) {
