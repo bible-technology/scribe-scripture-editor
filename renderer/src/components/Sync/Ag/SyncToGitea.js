@@ -91,8 +91,12 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           // pull origin main to local user branch
           // const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
 
+          // test manual chekout to user
+          const checkStatus1 = pushResult && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
+          console.log(' 2.5 checkout to user------------', checkStatus1);
+
           // pull from remote main to local main
-          const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
+          const pullStatus = checkStatus1 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
           // checkout ----- to user branch
           console.log('3------------');
           // change this pull with FETCH AND MERGE - remote/origin -> local
@@ -105,11 +109,11 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log('5------------');
 
           // test manual chekout to user
-          const checkStatus = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
-          console.log(' 5.5 checkout to user------------', checkStatus);
+          const checkStatus2 = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
+          console.log(' 5.5 checkout to user------------', checkStatus2);
 
           // pull latest from origin main to local branch
-          const pullStatus2 = checkStatus && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
           console.log('6------------');
           if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
             // force commit the ignored files (json) to remote user branch
