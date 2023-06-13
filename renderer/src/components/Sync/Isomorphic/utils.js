@@ -233,7 +233,7 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
     console.log(branch);
     console.log('done');
     logger.debug('utils.js', 'Pulled the project');
-    console.log('pulled the repo ', localBranch);
+    // console.log('pulled the repo ', localBranch);
     // if (remoteBranch === 'master') {
     //   console.log('master');
     //   const deleteStatus = await deleteBranch(fs, dir, localBranch);
