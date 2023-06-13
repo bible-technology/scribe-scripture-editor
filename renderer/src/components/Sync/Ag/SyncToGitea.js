@@ -84,6 +84,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
 
           // pull from remote main to local main
           const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
+          // checkout ----- to user branch
           console.log('3------------');
           // change this pull with FETCH AND MERGE - remote/origin -> local
           // const pullStatus = await remoteMerge(fs, projectsMetaPath, mainBranch, localBranch, auth.token.sha1);
