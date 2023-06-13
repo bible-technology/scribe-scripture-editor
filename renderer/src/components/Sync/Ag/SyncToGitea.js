@@ -70,7 +70,16 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
         }));
-        const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
+        const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+        let commitStatus;
+        // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+        //   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
+        //   console.log('1--------- IF ');
+        // } else {
+        //   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
+        //   console.log('1--------- ELSE ');
+        // }
+        commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
         console.log('1---------');
         console.log({ commitStatus });
         if (commitStatus) {
@@ -95,10 +104,13 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           console.log('5------------');
 
+          // test manual chekout to user
+          const checkStatus = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
+          console.log(' 5.5 checkout to user------------', checkStatus);
+
           // pull latest from origin main to local branch
-          const pullStatus2 = pushMain && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          const pullStatus2 = checkStatus && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
           console.log('6------------');
-          const repoOwner = await getRepoOwner(fs, projectsMetaPath);
           if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
             // force commit the ignored files (json) to remote user branch
             await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
