@@ -81,9 +81,21 @@ export async function commitChanges(fs, dir, author, message, force = false) {
   // const message = 'Commit message';
   logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
   try {
+    // await git.add({
+    //   fs, dir, filepath: '.', force,
+    // });
     await git.add({
- fs, dir, filepath: '.', force,
-});
+      fs, dir, filepath: '.',
+    });
+    // check and find the ingredients / content folder
+    if (force) {
+      await git.add({
+        fs, dir, filepath: 'metadata.json', force,
+      });
+      await git.add({
+        fs, dir, filepath: 'ingredients/scribe-settings.json', force,
+      });
+    }
     await git.remove({ fs, dir, filepath: '.gitignore' });
     await git.remove({ fs, dir, filepath: '/.git' });
     const sha = await git.commit({
