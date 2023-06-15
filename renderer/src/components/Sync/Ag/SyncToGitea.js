@@ -6,7 +6,7 @@ import * as logger from '../../../logger';
 import { handleCreateRepo } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
 import {
- addGitRemote, checkInitialize, checkoutToBranch, commitChanges, createBranch, deleteTheBranch, getRepoOwner, ignorFiles, initProject, mergeBranches, pullProject, pushTheChanges, pushToMain, remoteMerge,
+ addGitRemote, checkInitialize, checkoutToBranch, commitChanges, commitJson, createBranch, deleteTheBranch, getRepoOwner, ignorFiles, initProject, mergeBranches, pullProject, pushTheChanges, pushToMain, remoteMerge,
 } from '../Isomorphic/utils';
 import { createRepo } from '../Isomorphic/api';
 // upload project to gitea main function
@@ -92,10 +92,10 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log({ pushResult });
           // pull origin main to local user branch
           // const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-          const commitStatus1 = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
+          // const commitStatus1 = pushResult && await commitJson(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 
           // test manual chekout to user
-          const checkStatus1 = commitStatus1 && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
+          const checkStatus1 = await checkoutToBranch(fs, projectsMetaPath, mainBranch);
           console.log(' 2.5 checkout to user------------', checkStatus1);
 
           // pull from remote main to local main
@@ -127,10 +127,10 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log('write done ------------');
 
           // may need a commit force
-          const commitStatus2 = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
+          // const commitStatus2 = pushResult && await commitJson(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 
           // push merged changes to main origin
-          const pushMain = commitStatus2 && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
+          const pushMain = await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           console.log('5------------');
 
           // delete local branch
