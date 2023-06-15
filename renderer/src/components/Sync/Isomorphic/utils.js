@@ -114,6 +114,44 @@ export async function commitChanges(fs, dir, author, message, force = false) {
   }
 }
 
+// Commit the changes
+export async function commitJson(fs, dir, author, message, force = false) {
+  // const dir = '/path/to/repository'; // Replace with the actual path to the repository
+  // const author = { name: 'Your Name', email: 'your.email@example.com' };
+  // const message = 'Commit message';
+  logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
+  try {
+    // await git.add({
+    //   fs, dir, filepath: '.', force,
+    // });
+
+    // check and find the ingredients / content folder
+    if (force) {
+      await git.add({
+        fs, dir, filepath: 'metadata.json', force,
+      });
+      await git.add({
+        fs, dir, filepath: 'ingredients/scribe-settings.json', force,
+      });
+    }
+    await git.remove({ fs, dir, filepath: '.gitignore' });
+    await git.remove({ fs, dir, filepath: '/.git' });
+    const sha = await git.commit({
+      fs,
+      dir,
+      author,
+      message,
+    });
+    logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
+    console.log(`Changes committed with SHA: ${sha}`);
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error committing changes: ${error}`);
+    console.error('Error committing changes:', error);
+    return false;
+  }
+}
+
 // Pushing the changes to git
 export async function pushTheChanges(fs, dir, branch, token) {
   logger.debug('utils.js', 'in pushTheChanges - Push the changes to git from Dir');
