@@ -1,6 +1,7 @@
 import * as localForage from 'localforage';
 import { environment } from 'environment';
 import { deleteBranch } from 'isomorphic-git';
+import { readJsonFiles, saveJsonFiles } from '@/core/projects/userSettings';
 import * as logger from '../../../logger';
 import { handleCreateRepo } from './SyncToGiteaUtils';
 import packageInfo from '../../../../../package.json';
@@ -102,9 +103,30 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log('3------------');
           // change this pull with FETCH AND MERGE - remote/origin -> local
           // const pullStatus = await remoteMerge(fs, projectsMetaPath, mainBranch, localBranch, auth.token.sha1);
+          // read metadata and settings json --------------------------------
+          const metadataFile = pullStatus && await readJsonFiles('metadata');
+          const firstKey = Object.keys(metadataFile.ingredients)[0];
+          const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
+          const dirName = folderName[0];
+          const settingsFile = pullStatus && await readJsonFiles('appsettings', dirName);
+
+          console.log('------------JSON READ SUCESS------', { metadataFile, settingsFile });
+
           // merge changes local user - main
           const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
           console.log('4------------');
+
+          // write files back JSON
+          if (mergeStatus) {
+            await saveJsonFiles(metadataFile, 'metadata');
+            await saveJsonFiles(settingsFile, 'appsettings', dirName);
+            console.log('write json sucess ---------');
+          }
+
+          console.log('write done ------------');
+
+          // may need a commit force
+
           // push merged changes to main origin
           const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           console.log('5------------');
