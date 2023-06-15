@@ -71,7 +71,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
         }));
-        // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+        const repoOwner = await getRepoOwner(fs, projectsMetaPath);
         // let commitStatus;
         // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
         //   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
@@ -85,48 +85,46 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         console.log({ commitStatus });
         if (commitStatus) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-          // push changes to remote main branch from local user branch
-          const pushResult = await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
+          // push changes to remote user branch from local user
+          const pushResult = await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log('2------------');
           console.log({ pushResult });
           // pull origin main to local user branch
           // const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-          // force commit to user branch
-          const commitForce = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
+
           // test manual chekout to user
-          const checkStatus1 = commitForce && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
+          const checkStatus1 = pushResult && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
           console.log(' 2.5 checkout to user------------', checkStatus1);
-          const deleteStatus = checkStatus1 && await deleteTheBranch(fs, projectsMetaPath, localBranch);
+
           // pull from remote main to local main
-          const pullStatus = deleteStatus && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
+          const pullStatus = checkStatus1 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
           // checkout ----- to user branch
           console.log('3------------');
           // change this pull with FETCH AND MERGE - remote/origin -> local
           // const pullStatus = await remoteMerge(fs, projectsMetaPath, mainBranch, localBranch, auth.token.sha1);
           // merge changes local user - main
-          // const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
+          const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
           console.log('4------------');
           // push merged changes to main origin
-          // const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
-          const createStatus = pullStatus && await createBranch(fs, projectsMetaPath, localBranch);
+          const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           console.log('5------------');
 
           // test manual chekout to user
-          const checkStatus2 = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
+          const checkStatus2 = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
           console.log(' 5.5 checkout to user------------', checkStatus2);
 
           // pull latest from origin main to local branch
-          // const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-          // console.log('6------------');
-          // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-          //   // force commit the ignored files (json) to remote user branch
-          //   await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
-          //   console.log('7------------');
-          // }
+          const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          console.log('6------------');
+          if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+            // force commit the ignored files (json) to remote user branch
+            await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
+            console.log('7------------');
+          }
           // push changes to remote user from local user
-          // const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+          const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log('8------------');
-          // console.log({ pushUser });
+          console.log({ pushUser });
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
         }
       }
@@ -147,8 +145,8 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
 //   setSyncProgress((prev) => ({
 //   ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
 //   }));
-//   const repoOwner = await getRepoOwner(fs, projectsMetaPath);
-//   let commitStatus;
+//   // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+//   // let commitStatus;
 //   // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
 //   //   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 //   //   console.log('1--------- IF ');
@@ -156,51 +154,53 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
 //   //   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
 //   //   console.log('1--------- ELSE ');
 //   // }
-//   commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
+//   const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
 //   console.log('1---------');
 //   console.log({ commitStatus });
 //   if (commitStatus) {
 //     setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-//     // push changes to remote user branch from local user
-//     const pushResult = await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+//     // push changes to remote main branch from local user branch
+//     const pushResult = await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
 //     console.log('2------------');
 //     console.log({ pushResult });
 //     // pull origin main to local user branch
 //     // const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-
+//     // force commit to user branch
+//     const commitForce = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 //     // test manual chekout to user
-//     const checkStatus1 = pushResult && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
+//     const checkStatus1 = commitForce && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
 //     console.log(' 2.5 checkout to user------------', checkStatus1);
-
+//     const deleteStatus = checkStatus1 && await deleteTheBranch(fs, projectsMetaPath, localBranch);
 //     // pull from remote main to local main
-//     const pullStatus = checkStatus1 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
+//     const pullStatus = deleteStatus && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, mainBranch);
 //     // checkout ----- to user branch
 //     console.log('3------------');
 //     // change this pull with FETCH AND MERGE - remote/origin -> local
 //     // const pullStatus = await remoteMerge(fs, projectsMetaPath, mainBranch, localBranch, auth.token.sha1);
 //     // merge changes local user - main
-//     const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
+//     // const mergeStatus = pullStatus && await mergeBranches(fs, projectsMetaPath, mainBranch, localBranch);
 //     console.log('4------------');
 //     // push merged changes to main origin
-//     const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
+//     // const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
+//     const createStatus = pullStatus && await createBranch(fs, projectsMetaPath, localBranch);
 //     console.log('5------------');
 
 //     // test manual chekout to user
-//     const checkStatus2 = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
+//     const checkStatus2 = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
 //     console.log(' 5.5 checkout to user------------', checkStatus2);
 
 //     // pull latest from origin main to local branch
-//     const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-//     console.log('6------------');
-//     if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-//       // force commit the ignored files (json) to remote user branch
-//       await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
-//       console.log('7------------');
-//     }
+//     // const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+//     // console.log('6------------');
+//     // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+//     //   // force commit the ignored files (json) to remote user branch
+//     //   await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
+//     //   console.log('7------------');
+//     // }
 //     // push changes to remote user from local user
-//     const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+//     // const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
 //     console.log('8------------');
-//     console.log({ pushUser });
+//     // console.log({ pushUser });
 //     setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
 //   }
 // }

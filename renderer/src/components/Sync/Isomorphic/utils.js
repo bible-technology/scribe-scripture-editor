@@ -147,7 +147,7 @@ export async function pushToMain(fs, dir, branch, token) {
       remote: 'origin',
       ref: branch,
       remoteRef: 'scribe-main',
-      force: true,
+      // force: true,
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Pushed the changes');
