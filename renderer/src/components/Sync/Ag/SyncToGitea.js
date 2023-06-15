@@ -92,9 +92,10 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log({ pushResult });
           // pull origin main to local user branch
           // const pullStatus = await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          const commitStatus1 = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 
           // test manual chekout to user
-          const checkStatus1 = pushResult && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
+          const checkStatus1 = commitStatus1 && await checkoutToBranch(fs, projectsMetaPath, mainBranch);
           console.log(' 2.5 checkout to user------------', checkStatus1);
 
           // pull from remote main to local main
@@ -117,37 +118,43 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log('4------------');
 
           // write files back JSON
-          if (mergeStatus) {
-            await saveJsonFiles(metadataFile, 'metadata');
-            await saveJsonFiles(settingsFile, 'appsettings', dirName);
-            console.log('write json sucess ---------');
-          }
+          // if (mergeStatus) {
+          await saveJsonFiles(metadataFile, 'metadata');
+          await saveJsonFiles(settingsFile, 'appsettings', dirName);
+          console.log('write json sucess ---------');
+          // }
 
           console.log('write done ------------');
 
           // may need a commit force
+          const commitStatus2 = pushResult && await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added force from scribe for collabarator', true);
 
           // push merged changes to main origin
-          const pushMain = mergeStatus && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
+          const pushMain = commitStatus2 && await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
           console.log('5------------');
 
+          // delete local branch
+          const deleteStatus = pushMain && await deleteTheBranch(fs, projectsMetaPath, localBranch);
+          // create local branch
+          const createStatus = deleteStatus && await createBranch(fs, projectsMetaPath, localBranch);
           // test manual chekout to user
-          const checkStatus2 = pushMain && await checkoutToBranch(fs, projectsMetaPath, localBranch);
+          const checkStatus2 = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
           console.log(' 5.5 checkout to user------------', checkStatus2);
+          console.log('ALL DONE-------------------------');
 
-          // pull latest from origin main to local branch
-          const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
-          console.log('6------------');
-          if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-            // force commit the ignored files (json) to remote user branch
-            await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
-            console.log('7------------');
-          }
-          // push changes to remote user from local user
-          const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
-          console.log('8------------');
-          console.log({ pushUser });
-          setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
+          // // pull latest from origin main to local branch
+          // const pullStatus2 = checkStatus2 && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          // console.log('6------------');
+          // if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+          //   // force commit the ignored files (json) to remote user branch
+          //   await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Forcely added scribe files', true);
+          //   console.log('7------------');
+          // }
+          // // push changes to remote user from local user
+          // const pushUser = pullStatus2 && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+          // console.log('8------------');
+          // console.log({ pushUser });
+          // setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
         }
       }
     } catch (err) {

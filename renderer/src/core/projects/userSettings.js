@@ -34,7 +34,7 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
         const newpath = localStorage.getItem('userPath');
         const fs = window.require('fs');
         const path = require('path');
-        const file = path.join(newpath, packageInfo.name, 'users', currentUser.username);
+        const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
         const currentProject = await localForage.getItem('currentProject');
         switch (fileType) {
@@ -49,7 +49,8 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
                 break;
             default:
                 break;
-        }
+            }
+        console.log({ filePath });
         if (fs.existsSync(filePath)) {
             const settingsFile = await fs.readFileSync(filePath);
             if (settingsFile) {
@@ -57,9 +58,9 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
                 const json = await JSON.parse(settingsFile);
                 return json;
             }
-            throw new Error('failed to read settings file');
+            throw new Error(`failed to read settings file - ${fileType}`);
         }
-        throw new Error('failed to read settings file');
+        throw new Error(`failed to read settings file - ${fileType}`);
     } catch (err) {
         throw new Error(err?.message || err);
     }
@@ -73,7 +74,7 @@ export const saveJsonFiles = async (data, fileType, dirName = 'ingredients') => 
         const newpath = localStorage.getItem('userPath');
         const fs = window.require('fs');
         const path = require('path');
-        const file = path.join(newpath, packageInfo.name, 'users', currentUser.username);
+        const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
         const currentProject = await localForage.getItem('currentProject');
         switch (fileType) {
