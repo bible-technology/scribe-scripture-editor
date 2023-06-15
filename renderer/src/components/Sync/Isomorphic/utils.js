@@ -136,7 +136,29 @@ export async function pushTheChanges(fs, dir, branch, token) {
     return false;
   }
 }
-
+// Pushing the changes to git
+export async function pushToMain(fs, dir, branch, token) {
+  logger.debug('utils.js', 'in pushTheChanges - Push the changes to git from Dir');
+  try {
+    const pushResult = await git.push({
+      fs,
+      http,
+      dir,
+      remote: 'origin',
+      ref: branch,
+      remoteRef: 'scribe-main',
+      force: true,
+      onAuth: () => ({ username: token }),
+    });
+    logger.debug('utils.js', 'Pushed the changes');
+    console.log('Pushed the changes', pushResult);
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error pushing changes: ${error}`);
+    console.error('Error pushing changes:', error);
+    return false;
+  }
+}
 // clone a repo
 export async function cloneTheProject(fs, dir, url, branch, token) {
   logger.debug('utils.js', 'in cloneTheProject - clone a project to Dir from Door 43');
@@ -202,7 +224,7 @@ export async function checkoutToBranch(fs, dir, branch) {
 }
 
 // Function to delete a branch
-export async function deleteBranch(fs, dir, branch) {
+export async function deleteTheBranch(fs, dir, branch) {
   logger.debug('utils.js', 'in deleteBranch - delete a new branch ');
 
   try {
