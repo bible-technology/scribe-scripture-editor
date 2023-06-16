@@ -91,16 +91,16 @@ export default function ReferenceContextProvider({ children }) {
                     switch (resources.type.flavorType.flavor.name) {
                       case 'textTranslation':
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
-                        setProjectScriptureDir(resources.project?.textTranslation.scriptDirection);
+                        setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                         break;
                       case 'textStories':
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
-                        setProjectScriptureDir(resources.project?.textStories.scriptDirection);
+                        setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
                         setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
                         break;
                       case 'audioTranslation':
                         setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
-                        setProjectScriptureDir(resources.project?.audioTranslation.scriptDirection);
+                        setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
                         break;
                       default:
                         break;
