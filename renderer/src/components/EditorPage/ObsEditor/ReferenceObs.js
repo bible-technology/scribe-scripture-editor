@@ -52,7 +52,7 @@ const { t } = useTranslation();
     if (stories && selectedStory !== undefined) {
       const currentRef = itemEls.current.filter((obj) => obj.id === selectedStory)[0]?.el;
       if (currentRef) {
-        currentRef.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+        currentRef.scrollIntoView({ block: 'center', inline: 'nearest' });
       }
     }
   }, [selectedStory, stories]);
