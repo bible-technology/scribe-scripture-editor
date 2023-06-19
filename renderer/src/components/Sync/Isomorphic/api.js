@@ -1,4 +1,4 @@
-import { environment } from 'environment';
+import { environment } from '../../../../environment';
 
 // api for creating a repo in git
 export const createRepo = async (repoName, token) => {

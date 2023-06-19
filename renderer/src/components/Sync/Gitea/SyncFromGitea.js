@@ -5,12 +5,9 @@ import {
 import { validate } from '@/util/validate';
 import { checkDuplicate } from '@/core/burrito/importBurrito';
 import * as logger from '../../../logger';
-import { environment } from '../../../../environment';
 import { importServerProject } from './SyncFromGiteaUtils';
-import { cloneTheProject } from '../Isomorphic/utils';
-import packageInfo from '../../../../../package.json';
 
-export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, branch) {
+export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, branch, setPullPopup, setPullData) {
   logger.debug('SyncFromGitea.js', 'in SyncFromGiea : onClick offline sync');
   try {
     console.log('try', branch);
@@ -67,7 +64,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
           // import call
           console.log({ duplicate });
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
-        await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate);
+        await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
         await notifyStatus('success', 'Project Sync to scribe successfull');
         await addNotification('Sync', 'Project Sync Successfull', 'success');
         // }

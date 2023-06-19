@@ -243,8 +243,31 @@ export async function createBranch(fs, dir, branch) {
 }
 
 // checkout to a branch
+export async function checkoutJsonFiles(fs, dir, branch) {
+  logger.debug('utils.js', 'in checkoutJsonFiles - checkout json fiels ');
+  try {
+    await git.checkout({
+      fs,
+      dir,
+      ref: branch,
+      filepath: ['metadata.json', 'ingredients/scribe-settings.json'],
+      noUpdateHead: true,
+      force: true,
+    }).then((data) => console.log({ data }))
+    .catch((e) => console.log({ e }));
+    logger.debug('utils.js', 'checkout JSON files');
+    console.log('checkout JSON files');
+    return true;
+  } catch (error) {
+    logger.error('utils.js', `Error checkout JSON files: ${error}`);
+    console.error('Error checkout JSON Files :', error);
+    return false;
+  }
+}
+
+// checkout to a branch
 export async function checkoutToBranch(fs, dir, branch) {
-  logger.debug('utils.js', 'in checkoutToBranch - checkout to a branch from current');
+  logger.debug('utils.js', 'in checkoutToBranch - checkout to a ');
   try {
     await git.checkout({
       fs,
@@ -257,6 +280,39 @@ export async function checkoutToBranch(fs, dir, branch) {
   } catch (error) {
     logger.error('utils.js', `Error checkout to branch: ${error}`);
     console.error('Error checkout to Branch :', error);
+    return false;
+  }
+}
+
+// Function to delete a branch
+export async function checkGitStatus(fs, dir) {
+  logger.debug('utils.js', 'in gitstatus - check git status ');
+
+  try {
+    const files = await git.listFiles({
+      fs,
+      dir,
+    });
+    const filteredFiles = await files.filter((file) => !file.endsWith('.json'));
+    let continuePull = true;
+    for (let index = 0; index < filteredFiles.length; index++) {
+      // eslint-disable-next-line no-await-in-loop
+      const status = await git.status({
+        fs,
+        dir,
+        filepath: filteredFiles[index],
+      });
+      console.log({ status });
+      if (status === '*modified') {
+        continuePull = false;
+        break;
+      }
+    }
+    logger.debug('utils.js', 'In checK git status');
+    return continuePull;
+  } catch (error) {
+    logger.error('utils.js', `Error check status : ${error}`);
+    console.error('Error check git status :', error);
     return false;
   }
 }
@@ -294,9 +350,9 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
       remote: 'origin',
       remoteRef: remoteBranch,
       singleBranch: true,
-      fastForwardOnly: true,
+      fastForward: true,
       onAuth: () => ({ username: token }),
-    });
+    }).catch((e) => console.log({ e }));
     const branch = await git.currentBranch({
       fs,
       dir,
@@ -358,8 +414,8 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
         );
-        return false;
-      } throw e;
+        throw e;
+      }
     });
     return true;
   } catch (error) {

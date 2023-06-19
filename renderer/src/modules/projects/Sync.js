@@ -17,6 +17,9 @@ import { SnackBar } from '@/components/SnackBar';
 import { uploadToGitea } from '@/components/Sync/Ag/SyncToGitea';
 import { downloadFromGitea } from '@/components/Sync/Gitea/SyncFromGitea';
 import useAddNotification from '@/components/hooks/useAddNotification';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { updateSettingsFiles } from '@/components/Sync/Gitea/SyncFromGiteaUtils';
+import { checkoutJsonFiles, pullProject } from '@/components/Sync/Isomorphic/utils';
 import Door43Logo from '@/icons/door43.svg';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
@@ -25,6 +28,8 @@ import packageInfo from '../../../../package.json';
   const { t } = useTranslation();
   const [auth, setAuth] = useState(undefined);
   const [repo, setRepo] = useState(undefined);
+  const [pullPopUp, setPullPopup] = useState(false);
+  const [pullData, setPullData] = useState();
 
   const [snackBar, setOpenSnackBar] = useState(false);
   const [snackText, setSnackText] = useState('');
@@ -60,7 +65,7 @@ import packageInfo from '../../../../package.json';
   const handleOfflineSync = async (currentRepo, currentAuth) => {
     if (currentAuth && currentRepo && selectedGiteaProjectBranch?.name) {
       logger.debug('Sync.js', 'in offlineSync Started');
-      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, selectedGiteaProjectBranch.name);
+      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, selectedGiteaProjectBranch.name, setPullPopup, setPullData);
       logger.debug('Sync.js', 'in offlineSync Finished');
     } else if (!selectedGiteaProjectBranch?.name) {
       logger.debug('Sync.js', 'Do select a branch');
@@ -70,6 +75,28 @@ import packageInfo from '../../../../package.json';
       notifyStatus('failure', 'Something went wrong! , login and try again');
     }
   };
+
+  const continuePullAction = async () => {
+    if (pullData) {
+      const checkoutFIles = await checkoutJsonFiles(pullData.fs, pullData.gitprojectDir, pullData.checkoutBranch);
+        const pullStatus = checkoutFIles && await pullProject(pullData.fs, pullData.gitprojectDir, pullData.userBranch, auth.token.sha1, pullData.checkoutBranch);
+        pullStatus && await updateSettingsFiles(
+          pullData.fs,
+          pullData.sbDataObject,
+          pullData.projectDir,
+          pullData.projectName,
+          pullData.id,
+          pullData.currentUser,
+          pullData.updateBurrito,
+          pullData.action,
+        );
+    } else {
+      logger.debug('error pullData not set from function');
+      console.log('error pullData not set from function');
+    }
+  };
+
+  console.log({ pullPopUp, pullData });
 
    return (
      <AuthenticationContextProvider>
@@ -167,6 +194,14 @@ import packageInfo from '../../../../package.json';
                setOpenSnackBar={setOpenSnackBar}
                setSnackText={setSnackText}
                error={notify}
+             />
+             <ConfirmationModal
+               openModal={pullPopUp}
+               title="Overwrite un synced Changes"
+               setOpenModal={setPullPopup}
+               confirmMessage="You have un synced changes in the project. This action will overwrite un synced changes"
+               buttonName="continue"
+               closeModal={continuePullAction}
              />
            </ProjectsLayout>
          </ReferenceContextProvider>
