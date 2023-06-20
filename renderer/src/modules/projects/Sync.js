@@ -28,7 +28,7 @@ import packageInfo from '../../../../package.json';
   const { t } = useTranslation();
   const [auth, setAuth] = useState(undefined);
   const [repo, setRepo] = useState(undefined);
-  const [pullPopUp, setPullPopup] = useState(false);
+  const [pullPopUp, setPullPopup] = useState({ status: false });
   const [pullData, setPullData] = useState();
 
   const [snackBar, setOpenSnackBar] = useState(false);
@@ -58,7 +58,7 @@ import packageInfo from '../../../../package.json';
     } else if (!projectData?.projectName) {
       notifyStatus('warning', 'select a project to sync');
     } else {
-      await uploadToGitea(projectData, authData, setSyncProgress, notifyStatus, addNotification);
+      await uploadToGitea(projectData, authData, setSyncProgress, notifyStatus, addNotification, setPullPopup);
     }
   };
 
@@ -90,6 +90,9 @@ import packageInfo from '../../../../package.json';
           pullData.updateBurrito,
           pullData.action,
         );
+        logger.debug('Project Sync to scribe successfull, overwirte with server changes');
+        await notifyStatus('success', 'Project Sync to scribe successfull');
+        await addNotification('Sync', 'Project Sync Successfull', 'success');
     } else {
       logger.debug('error pullData not set from function');
       console.log('error pullData not set from function');
@@ -196,12 +199,12 @@ import packageInfo from '../../../../package.json';
                error={notify}
              />
              <ConfirmationModal
-               openModal={pullPopUp}
-               title="Overwrite un synced Changes"
-               setOpenModal={setPullPopup}
-               confirmMessage="You have un synced changes in the project. This action will overwrite un synced changes"
-               buttonName="continue"
-               closeModal={continuePullAction}
+               openModal={pullPopUp?.status}
+               title={pullPopUp?.title}
+               setOpenModal={() => setPullPopup((prev) => ({ ...prev, status: false }))}
+               confirmMessage={pullPopUp?.confirmMessage}
+               buttonName={pullPopUp?.buttonName}
+               closeModal={pullPopUp?.type === 'conflcit' && continuePullAction}
              />
            </ProjectsLayout>
          </ReferenceContextProvider>

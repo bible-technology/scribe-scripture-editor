@@ -11,9 +11,16 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
   logger.debug('SyncFromGitea.js', 'in SyncFromGiea : onClick offline sync');
   try {
     console.log('try', branch);
+
     const currentUser = await localForage.getItem('userProfile');
     logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch metadata content from branch');
     console.log({ repo });
+    setSyncProgress((prev) => ({
+      ...prev,
+      syncStarted: true,
+      totalFiles: 6,
+      completedFiles: 1,
+    }));
     const readMetaData = await readContent(
       {
       config: auth.config,
@@ -39,13 +46,11 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       // if success proceed else raise error
       if (success) {
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : metaData SB validated');
+        // setProjectData
         setSyncProgress((prev) => ({
           ...prev,
-          syncStarted: true,
-          totalFiles: Object.keys(metaDataSB?.ingredients).length + 2,
-          completedFiles: 1,
+          completedFiles: prev.completedFiles + 1,
         }));
-        // setProjectData
         setSelectedGiteaProject({
           repo,
           branch,
@@ -56,18 +61,13 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
         });
         // check for project exising - true/ undefined
         const duplicate = await checkDuplicate(metaDataSB, currentUser?.username, 'projects');
-        // if (duplicate) {
-        //   logger.debug('SyncFromGitea.js', 'in SyncFromGiea : project exist and merge action');
-        //   // save all data and trigger merge
-        //   // setSelectedGiteaProject((prev) => ({ ...prev, mergeStatus: true }));
-        // } else {
-          // import call
-          console.log({ duplicate });
+        console.log({ duplicate });
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
-        await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
-        await notifyStatus('success', 'Project Sync to scribe successfull');
-        await addNotification('Sync', 'Project Sync Successfull', 'success');
-        // }
+        const status = await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
+        if (status) {
+          await notifyStatus('success', 'Project Sync to scribe successfull');
+          await addNotification('Sync', 'Project Sync Successfull', 'success');
+        }
       } else {
         logger.debug('SyncFromGitea.js', 'Burrito Validation Failed');
         throw new Error('Burrito Validation Failed');

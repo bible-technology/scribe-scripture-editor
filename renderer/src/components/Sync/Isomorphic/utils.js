@@ -246,6 +246,9 @@ export async function createBranch(fs, dir, branch) {
 export async function checkoutJsonFiles(fs, dir, branch) {
   logger.debug('utils.js', 'in checkoutJsonFiles - checkout json fiels ');
   try {
+    // NOTE : force added because isomorphic git not working as usual checkout .
+    // checkout is not working even we provide the list of file paths.
+    // It checkout all the indexed files, only work when force = true.
     await git.checkout({
       fs,
       dir,
@@ -341,6 +344,7 @@ export async function deleteTheBranch(fs, dir, branch) {
 export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
   logger.debug('utils.js', 'in pullProject - pull the a project to Dir from Door 43');
   console.log('pull', remoteBranch, localBranch);
+  const status = { status: true, data: undefined };
   try {
     await git.pull({
       fs,
@@ -352,13 +356,21 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
       singleBranch: true,
       fastForward: true,
       onAuth: () => ({ username: token }),
-    }).catch((e) => console.log({ e }));
-    const branch = await git.currentBranch({
-      fs,
-      dir,
-      fullname: false,
+    }).catch((e) => {
+      console.log('pull status ====> ', { e });
+      status.status = false;
+      status.data = {
+        type: 'conflict',
+        data: e?.data?.filepaths,
+    };
+      return false;
     });
-    console.log(branch);
+    // const branch = await git.currentBranch({
+    //   fs,
+    //   dir,
+    //   fullname: false,
+    // });
+    // console.log(branch);
     console.log('done');
     logger.debug('utils.js', 'Pulled the project');
     // console.log('pulled the repo ', localBranch);
@@ -369,13 +381,16 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
     //   const checkoutStatus = createStatus && await checkoutToBranch(fs, dir, localBranch);
     //   console.log({ checkoutStatus });
     // }
-    return true;
+    return status;
   } catch (error) {
     logger.error('utils.js', `Error in pulling project: ${error}`);
     console.error('Error in pulling project:', error);
-    const status = await git.status({ fs, dir });
-    console.log(status);
-    return false;
+    status.status = false;
+    status.data = {
+      type: 'other',
+      data: ['Please check your internet connection'],
+    };
+    return status;
   }
 }
 export async function fub({ contents }) {
@@ -488,6 +503,7 @@ export async function createGitIgnore(fs, dir) {
 // Fetch and merge remote main to local
 export async function remoteMerge(fs, dir, branch, localBranch, token) {
   logger.debug('utils.js', 'in remote merge - fetch and merge new branch ');
+  const returnData = { status: true, data: undefined };
   console.log(dir, branch, localBranch);
   try {
     await git.fetch({
@@ -513,6 +529,8 @@ export async function remoteMerge(fs, dir, branch, localBranch, token) {
     }).catch((e) => {
       console.log({ e });
       if (e) {
+        returnData.data = e.data;
+        returnData.status = false;
         console.log(
           'Automatic merge failed for the following files: '
           + `${e.data}. `
@@ -521,7 +539,8 @@ export async function remoteMerge(fs, dir, branch, localBranch, token) {
       } else { throw e; }
     });
     console.log('merge succeess remote/origin - local');
-    return true;
+    return returnData;
+    // return true;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);
     console.error('Error merge Branch :', error);

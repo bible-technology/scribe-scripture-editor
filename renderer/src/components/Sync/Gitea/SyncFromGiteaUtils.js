@@ -97,6 +97,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
 
 export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, projectName, id, currentUser, updateBurrito, action) => {
   try {
+    console.log({ sbDataObject1 });
     let sbDataObject = sbDataObject1;
     const firstKey = Object.keys(sbDataObject?.ingredients)[0];
     const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
@@ -232,7 +233,13 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       projectName = ((repo.name.split('-').pop()).replace(/_/g, ' '));
     }
 
+    action.setSyncProgress((prev) => ({
+      ...prev,
+      completedFiles: prev.completedFiles + 1,
+    }));
+
     // pull or clone section
+    let pullContinue = false;
     const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
     const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
     let fetchedRepo;
@@ -259,18 +266,32 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       // fetchedRepo = pullStatus;
 
       // check status
-      const pullContinue = await checkGitStatus(fs, gitprojectDir);
+      pullContinue = await checkGitStatus(fs, gitprojectDir);
       console.log({ pullContinue });
       if (!pullContinue) {
         // warning
         console.log('in not continue');
-        setPullPopup(true);
-      } else {
+        setPullPopup({
+          title: 'Overwrite un synced Changes',
+          status: true,
+          confirmMessage: 'You have un synced changes in the project. This action will overwrite un synced changes',
+          buttonName: 'continue',
+          type: 'overwrite',
+        });
+        action.setSyncProgress((prev) => ({
+          ...prev,
+          completedFiles: prev.completedFiles + 1,
+        }));
+        return false;
+      }
+        action.setSyncProgress((prev) => ({
+          ...prev,
+          completedFiles: prev.completedFiles + 1,
+        }));
         const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
         console.log({ pullStatus });
         fetchedRepo = pullStatus;
-      }
     } else {
       console.log('clone');
       const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
@@ -286,14 +307,23 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       }
       console.log({ createStatus }, { checkoutStatus });
       fetchedRepo = checkoutStatus;
+      action.setSyncProgress((prev) => ({
+        ...prev,
+        completedFiles: prev.completedFiles + 1,
+      }));
     }
 
     if (sbDataObject?.ingredients && fetchedRepo) {
-      await updateSettingsFiles();
-    } else {
+      await updateSettingsFiles(fs, sbDataObject, projectDir, projectName, id, currentUser, updateBurrito, action);
+      action.setSyncProgress((prev) => ({
+        ...prev,
+        completedFiles: prev.completedFiles + 1,
+      }));
+    } else if (!fetchedRepo && pullContinue) {
       logger.debug('SyncFromGiteaUtils.js', 'Offline Sync failed');
       throw new Error('Offline Sync failed');
     }
+    return true;
 
     // get the directory name from ingredients list, fetch and create files
   } catch (err) {

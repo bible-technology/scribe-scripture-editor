@@ -6,7 +6,8 @@ import {
 } from '../Isomorphic/utils';
 import { createRepo } from '../Isomorphic/api';
 // upload project to gitea main function
-export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification) {
+
+export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification, setPullPopup) {
   logger.debug('ToGiteaUtils.js', 'in uploadTOGitea');
   const projectData = projectDataAg.projectMeta;
   const projectId = Object.keys(projectData.identification.primary[packageInfo.name])[0];
@@ -83,10 +84,45 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           console.log({ pushResult });
           // pull from remote main to local main
           const pullStatus = pushResult && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
+          // show conflict message if pull fail and inform user about backup
+          console.log('2.5------------', { pullStatus });
+          if (pullStatus?.status === false) {
+            if (pullStatus?.data.type === 'conflict') {
+              const conflictHtmlText = `<div class="flex flex-col justify-center">
+                  <div class="text-center">
+                    You have conflict in <span class="text-red-600">${pullStatus.data.data}.</span>
+                    Connect your administrator to resolve this conflcit.
+                  </div>
+                  <div class="text-center font-extrabold">OR</div>
+                  <div class="text-center">
+                    You can do
+                    <span class="font-bold">OFFLINE SYNC</span>
+                    which will overwrite all unsynced changes with the data of Door43.
+                  </div>
+                  </div>`;
+              console.log('in conflcit error ............');
+              setPullPopup({
+                title: 'Conflict',
+                status: true,
+                confirmMessage: conflictHtmlText,
+                // buttonName: 'ok',
+                // type: 'overwrite',
+              });
+              throw new Error('Conflict Exist');
+            } else {
+              throw new Error(pullStatus?.data?.data[0]);
+            }
+          }
+          // if (!pullStatus) {
+          //   // show message
+          //   const conflictData = await remoteMerge(fs, projectsMetaPath, localBranch, auth.token.sha1);
+          //   console.log(conflictData);
+          //   throw new Error('Conflict Exist');
+          // }
           // checkout ----- to user branch
           console.log('3------------', { pullStatus });
           // push merged changes to main origin
-          const pushMain = await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
+          const pushMain = pullStatus?.status && await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log('4------------', { pushMain });
           console.log('ALL DONE-------------------------');
         }
