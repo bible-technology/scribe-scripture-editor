@@ -149,6 +149,21 @@ export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, project
   }
 };
 
+export const cloneAndSetProject = async (fs, gitprojectDir, repo, userBranch, auth, checkoutBranch) => {
+  const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
+    // add config for this user
+    const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
+    // create user branch and checkout
+    configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
+    const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
+    // create gitignore file for for collabarators
+    const repoOwner = await getRepoOwner(fs, gitprojectDir);
+    if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+      await createGitIgnore(fs, gitprojectDir);
+    }
+    return checkoutStatus;
+};
+
 // import gitea project to local
 export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, duplicate, setPullPopup, setPullData) => {
   try {
@@ -256,6 +271,8 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         userBranch,
         checkoutBranch,
         fs,
+        repo,
+        auth,
       });
       // push changes to user branch and pull from scribe main
       // const commitStatus = await commitChanges(fs, gitprojectDir, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
@@ -290,22 +307,35 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }));
         const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-        console.log({ pullStatus });
-        fetchedRepo = pullStatus;
+        console.log('pull for exisit pro --------------> ', { pullStatus });
+        if (pullStatus?.status === false) {
+          // show warning again to overwrite
+          const conflictHtmlText = `<div class="flex flex-col justify-center">
+                <div class="text-center">
+                  You have conflict in <span class="text-red-600">${pullStatus.data.data}.</span>
+                  Connect your administrator to resolve this conflcit.
+                </div>
+                <div class="text-center font-extrabold">OR</div>
+                <div class="text-center">
+                  You can click
+                  <span class="font-bold">OVERWRITE</span>
+                  which will overwrite all unsynced changes with the data of Door43.
+                </div>
+                </div>`;
+              console.log('in conflcit error ............');
+              setPullPopup({
+                title: 'Conflict',
+                status: true,
+                confirmMessage: conflictHtmlText,
+                buttonName: 'over-write',
+                // type: 'overwrite',
+              });
+        }
+        fetchedRepo = pullStatus?.status;
     } else {
       console.log('clone');
-      const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
-      // add config for this user
-      const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
-      // create user branch and checkout
-      const createStatus = configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
-      const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
-      // create gitignore file for for collabarators
-      const repoOwner = await getRepoOwner(fs, gitprojectDir);
-      if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-        await createGitIgnore(fs, gitprojectDir);
-      }
-      console.log({ createStatus }, { checkoutStatus });
+      const checkoutStatus = await cloneAndSetProject(fs, gitprojectDir, repo, userBranch, auth, checkoutBranch);
+      console.log({ checkoutStatus });
       fetchedRepo = checkoutStatus;
       action.setSyncProgress((prev) => ({
         ...prev,

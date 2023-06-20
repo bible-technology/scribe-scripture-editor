@@ -18,7 +18,7 @@ import { uploadToGitea } from '@/components/Sync/Ag/SyncToGitea';
 import { downloadFromGitea } from '@/components/Sync/Gitea/SyncFromGitea';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
-import { updateSettingsFiles } from '@/components/Sync/Gitea/SyncFromGiteaUtils';
+import { cloneAndSetProject, updateSettingsFiles } from '@/components/Sync/Gitea/SyncFromGiteaUtils';
 import { checkoutJsonFiles, pullProject } from '@/components/Sync/Isomorphic/utils';
 import Door43Logo from '@/icons/door43.svg';
 import * as logger from '../../logger';
@@ -77,10 +77,13 @@ import packageInfo from '../../../../package.json';
   };
 
   const continuePullAction = async () => {
+    // for pull without conflict
+    console.log({ pullData });
     if (pullData) {
+      if (pullPopUp?.type === 'overwrite') {
       const checkoutFIles = await checkoutJsonFiles(pullData.fs, pullData.gitprojectDir, pullData.checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(pullData.fs, pullData.gitprojectDir, pullData.userBranch, auth.token.sha1, pullData.checkoutBranch);
-        pullStatus && await updateSettingsFiles(
+        pullStatus?.status && await updateSettingsFiles(
           pullData.fs,
           pullData.sbDataObject,
           pullData.projectDir,
@@ -90,11 +93,44 @@ import packageInfo from '../../../../package.json';
           pullData.updateBurrito,
           pullData.action,
         );
-        logger.debug('Project Sync to scribe successfull, overwirte with server changes');
+        logger.debug('Sync.js', 'Project Sync to scribe successfull, overwirte with server changes');
         await notifyStatus('success', 'Project Sync to scribe successfull');
         await addNotification('Sync', 'Project Sync Successfull', 'success');
     } else {
-      logger.debug('error pullData not set from function');
+    // delete project + clone the project
+    await pullData?.fs.rmdir((pullData?.gitprojectDir), { recursive: true }, async (err) => {
+      if (err) {
+        logger.debug('Sync.js', 'Error removing project directory for clone');
+        // throw new Error(`Remove Resource failed :  ${err}`);
+      } else {
+        // call clone
+        const cloneStatus = await cloneAndSetProject(
+          pullData.fs,
+          pullData.gitprojectDir,
+          pullData.repo,
+          pullData.userBranch,
+          pullData.auth,
+          pullData.checkoutBranch,
+        );
+        // continue settings file writing
+        cloneStatus && await updateSettingsFiles(
+          pullData.fs,
+          pullData.sbDataObject,
+          pullData.projectDir,
+          pullData.projectName,
+          pullData.id,
+          pullData.currentUser,
+          pullData.updateBurrito,
+          pullData.action,
+        );
+      }
+      logger.debug('Sync.js', 'Project Sync to scribe successfull, clone successfull');
+      await notifyStatus('success', 'Project Sync to scribe successfull');
+      await addNotification('Sync', 'Project Sync Successfull', 'success');
+    });
+  }
+} else {
+      logger.debug('Sync.js', 'error pullData not set from function');
       console.log('error pullData not set from function');
     }
   };
@@ -204,7 +240,7 @@ import packageInfo from '../../../../package.json';
                setOpenModal={() => setPullPopup((prev) => ({ ...prev, status: false }))}
                confirmMessage={pullPopUp?.confirmMessage}
                buttonName={pullPopUp?.buttonName}
-               closeModal={pullPopUp?.type === 'conflcit' && continuePullAction}
+               closeModal={continuePullAction}
              />
            </ProjectsLayout>
          </ReferenceContextProvider>
