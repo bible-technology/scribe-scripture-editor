@@ -95,8 +95,10 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     // regex is for old sync
     const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
     const finalBranches = [{ name: repo?.default_branch }];
-    await fetchBranches.filter((branch) => branch.name === `${auth.user.username}/${packageInfo.name}` || regex.test(branch.name))
-    .forEach((b) => { console.log({ b }); finalBranches.push({ name: b.name }); });
+    if (repo?.default_branch !== 'scribe-main') {
+      await fetchBranches.filter((branch) => branch.name === `${auth.user.username}/${packageInfo.name}` || regex.test(branch.name))
+      .forEach((b) => { console.log({ b }); finalBranches.push({ name: b.name }); });
+    }
     setPullBranchNames(finalBranches);
   };
 
@@ -173,6 +175,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
                 setSelectedList={setSelectedGiteaProjectBranch}
                 customData={pullBranchNames}
                 filterParams="name"
+                placeholder="Select Branch"
               />
               )}
             </div>

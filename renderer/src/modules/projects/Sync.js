@@ -77,10 +77,9 @@ import packageInfo from '../../../../package.json';
   };
 
   const continuePullAction = async () => {
-    // for pull without conflict
-    console.log({ pullData });
     if (pullData) {
       if (pullPopUp?.type === 'overwrite') {
+        // for pull without conflict
       const checkoutFIles = await checkoutJsonFiles(pullData.fs, pullData.gitprojectDir, pullData.checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(pullData.fs, pullData.gitprojectDir, pullData.userBranch, auth.token.sha1, pullData.checkoutBranch);
         pullStatus?.status && await updateSettingsFiles(
@@ -134,8 +133,6 @@ import packageInfo from '../../../../package.json';
       console.log('error pullData not set from function');
     }
   };
-
-  console.log({ pullPopUp, pullData });
 
    return (
      <AuthenticationContextProvider>
