@@ -10,11 +10,8 @@ import { importServerProject } from './SyncFromGiteaUtils';
 export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, branch, setPullPopup, setPullData) {
   logger.debug('SyncFromGitea.js', 'in SyncFromGiea : onClick offline sync');
   try {
-    console.log('try', branch);
-
     const currentUser = await localForage.getItem('userProfile');
     logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch metadata content from branch');
-    console.log({ repo });
     setSyncProgress((prev) => ({
       ...prev,
       syncStarted: true,
@@ -30,19 +27,14 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       filepath: 'metadata.json',
       },
     );
-    console.log('after read ---------', { readMetaData });
     const fetchMetaData = await fetch(readMetaData.download_url);
     const metaFile = await fetchMetaData.json();
-    console.log(metaFile);
     if (metaFile) {
-      console.log('done');
       // const sb = Buffer.from(metaFile.data);
       const metaDataSB = metaFile;
       logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch and parse metaData Success');
       // Validate the burrito
-      console.log('validate');
       const success = await validate('metadata', 'gitea/metadata.json', JSON.stringify(metaDataSB), metaDataSB.meta.version);
-      console.log({ success });
       // if success proceed else raise error
       if (success) {
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : metaData SB validated');
@@ -61,7 +53,6 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
         });
         // check for project exising - true/ undefined
         const duplicate = await checkDuplicate(metaDataSB, currentUser?.username, 'projects');
-        console.log({ duplicate });
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
         const status = await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
         if (status) {

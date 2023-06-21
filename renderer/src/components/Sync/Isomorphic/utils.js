@@ -10,11 +10,9 @@ export async function checkInitialize(fs, dir, branch) {
       fs, dir, depth: 1, ref: branch,
     });
     logger.debug('utils.js', 'The directory is already initialized ');
-    console.log('The directory is already initialized as a Git repository.');
     return true;
   } catch (error) {
     logger.error('utils.js', 'The directory is not initialized ');
-    console.log('The directory is not initialized as a Git repository.');
     return false;
   }
 }
@@ -32,7 +30,6 @@ export async function setUserConfig(fs, dir, username) {
     return true;
   } catch (error) {
     logger.error('utils.js', `Error setting config:', ${error} `);
-    console.error('Error setting config:', error);
     return false;
   }
 }
@@ -43,12 +40,10 @@ export async function initProject(fs, dir, username, defaultBranch) {
   try {
     await git.init({ fs, dir, defaultBranch });
     logger.debug('utils.js', 'in initProject - Initialized repository');
-    console.log('Initialized repository');
     await setUserConfig(fs, dir, username);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error initializing repository:', ${error} `);
-    console.error('Error initializing repository:', error);
     return false;
   }
 }
@@ -65,11 +60,9 @@ export async function addGitRemote(fs, dir, url) {
       url,
     });
     logger.debug('utils.js', 'Added origin as remote');
-    console.log('Added origin as remote');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error creating remote changes: ${error}`);
-    console.error('Error creating remote changes:', error);
     return false;
   }
 }
@@ -81,9 +74,6 @@ export async function commitChanges(fs, dir, author, message, force = false) {
   // const message = 'Commit message';
   logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
   try {
-    // await git.add({
-    //   fs, dir, filepath: '.', force,
-    // });
     await git.add({
       fs, dir, filepath: '.',
     });
@@ -105,11 +95,9 @@ export async function commitChanges(fs, dir, author, message, force = false) {
       message,
     });
     logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
-    console.log(`Changes committed with SHA: ${sha}`);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error committing changes: ${error}`);
-    console.error('Error committing changes:', error);
     return false;
   }
 }
@@ -121,10 +109,6 @@ export async function commitJson(fs, dir, author, message, force = false) {
   // const message = 'Commit message';
   logger.debug('utils.js', 'in commitChanges - commitChanges of git in a Dir');
   try {
-    // await git.add({
-    //   fs, dir, filepath: '.', force,
-    // });
-
     // check and find the ingredients / content folder
     if (force) {
       await git.add({
@@ -143,11 +127,9 @@ export async function commitJson(fs, dir, author, message, force = false) {
       message,
     });
     logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
-    console.log(`Changes committed with SHA: ${sha}`);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error committing changes: ${error}`);
-    console.error('Error committing changes:', error);
     return false;
   }
 }
@@ -156,7 +138,7 @@ export async function commitJson(fs, dir, author, message, force = false) {
 export async function pushTheChanges(fs, dir, branch, token) {
   logger.debug('utils.js', 'in pushTheChanges - Push the changes to git from Dir');
   try {
-    const pushResult = await git.push({
+    await git.push({
       fs,
       http,
       dir,
@@ -166,11 +148,9 @@ export async function pushTheChanges(fs, dir, branch, token) {
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Pushed the changes');
-    console.log('Pushed the changes', pushResult);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error pushing changes: ${error}`);
-    console.error('Error pushing changes:', error);
     return false;
   }
 }
@@ -178,22 +158,19 @@ export async function pushTheChanges(fs, dir, branch, token) {
 export async function pushToMain(fs, dir, branch, token) {
   logger.debug('utils.js', 'in pushTheChanges - Push the changes to git from Dir');
   try {
-    const pushResult = await git.push({
+    await git.push({
       fs,
       http,
       dir,
       remote: 'origin',
       ref: branch,
       remoteRef: 'scribe-main',
-      // force: true,
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Pushed the changes');
-    console.log('Pushed the changes', pushResult);
     return true;
   } catch (error) {
     logger.error('utils.js', `Error pushing changes: ${error}`);
-    console.error('Error pushing changes:', error);
     return false;
   }
 }
@@ -211,11 +188,9 @@ export async function cloneTheProject(fs, dir, url, branch, token) {
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'Cloned the project');
-    console.log('cloned the repo ');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error cloning project: ${error}`);
-    console.error('Error cloning project:', error);
     return false;
   }
 }
@@ -233,11 +208,9 @@ export async function createBranch(fs, dir, branch) {
       ref: branch,
     });
     logger.debug('utils.js', 'created new branch');
-    console.log('branch created');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error create branch: ${error}`);
-    console.error('Error create Branch :', error);
     return false;
   }
 }
@@ -256,14 +229,11 @@ export async function checkoutJsonFiles(fs, dir, branch) {
       filepath: ['metadata.json', 'ingredients/scribe-settings.json'],
       noUpdateHead: true,
       force: true,
-    }).then((data) => console.log({ data }))
-    .catch((e) => console.log({ e }));
+    });
     logger.debug('utils.js', 'checkout JSON files');
-    console.log('checkout JSON files');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error checkout JSON files: ${error}`);
-    console.error('Error checkout JSON Files :', error);
     return false;
   }
 }
@@ -278,11 +248,9 @@ export async function checkoutToBranch(fs, dir, branch) {
       ref: branch,
     });
     logger.debug('utils.js', 'checkout to branch');
-    console.log('checkout to branch');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error checkout to branch: ${error}`);
-    console.error('Error checkout to Branch :', error);
     return false;
   }
 }
@@ -305,7 +273,6 @@ export async function checkGitStatus(fs, dir) {
         dir,
         filepath: filteredFiles[index],
       });
-      console.log({ status });
       if (status === '*modified') {
         continuePull = false;
         break;
@@ -315,7 +282,6 @@ export async function checkGitStatus(fs, dir) {
     return continuePull;
   } catch (error) {
     logger.error('utils.js', `Error check status : ${error}`);
-    console.error('Error check git status :', error);
     return false;
   }
 }
@@ -331,11 +297,9 @@ export async function deleteTheBranch(fs, dir, branch) {
       ref: branch,
     });
     logger.debug('utils.js', 'delete the  branch');
-    console.log('branch deleted');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error delete branch: ${error}`);
-    console.error('Error delete Branch :', error);
     return false;
   }
 }
@@ -343,7 +307,6 @@ export async function deleteTheBranch(fs, dir, branch) {
 // Pull the repo
 export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
   logger.debug('utils.js', 'in pullProject - pull the a project to Dir from Door 43');
-  console.log('pull', remoteBranch, localBranch);
   const status = { status: true, data: undefined };
   try {
     await git.pull({
@@ -357,7 +320,6 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
       fastForward: true,
       onAuth: () => ({ username: token }),
     }).catch((e) => {
-      console.log('pull status ====> ', { e });
       status.status = false;
       status.data = {
         type: 'conflict',
@@ -365,26 +327,10 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
     };
       return false;
     });
-    // const branch = await git.currentBranch({
-    //   fs,
-    //   dir,
-    //   fullname: false,
-    // });
-    // console.log(branch);
-    console.log('done');
     logger.debug('utils.js', 'Pulled the project');
-    // console.log('pulled the repo ', localBranch);
-    // if (remoteBranch === 'master') {
-    //   console.log('master');
-    //   const deleteStatus = await deleteBranch(fs, dir, localBranch);
-    //   const createStatus = await createBranch(fs, dir, localBranch);
-    //   const checkoutStatus = createStatus && await checkoutToBranch(fs, dir, localBranch);
-    //   console.log({ checkoutStatus });
-    // }
     return status;
   } catch (error) {
     logger.error('utils.js', `Error in pulling project: ${error}`);
-    console.error('Error in pulling project:', error);
     status.status = false;
     status.data = {
       type: 'other',
@@ -393,38 +339,21 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
     return status;
   }
 }
-export async function fub({ contents }) {
-  console.log(contents);
-}
+
 // Fetch function
 export async function mergeBranches(fs, dir, branch, localBranch) {
   logger.debug('utils.js', 'in mergeBranch - delete a new branch ');
-  console.log(dir, branch, localBranch);
   try {
-    // await git.fetch({
-    //   fs,
-    //   http,
-    //   dir,
-    //   url,
-    //   remoteRef: branch,
-    //   depth: 1,
-    //   singleBranch: true,
-    //   onAuth: () => ({ username: token }),
-    // });
-    // logger.debug('utils.js', 'fetch Branch');
-    // console.log('branch fetched');
     await git.merge({
       fs,
       dir,
-      // ours: localBranch,
-      // theirs: `origin/${branch}`,
       ours: branch,
       theirs: localBranch,
       abortOnConflict: false,
     }).catch((e) => {
-      console.log({ e });
       if (e) {
-        console.log(
+        logger.error(
+          'utils.js',
           'Automatic merge failed for the following files: '
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
@@ -435,7 +364,6 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
     return true;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);
-    console.error('Error merge Branch :', error);
     return false;
   }
 }
@@ -455,11 +383,9 @@ export async function ignorFiles(fs, dir) {
       filepath: 'ingredients/scribe-settings.json',
     });
     logger.debug('utils.js', 'ignorFiles');
-    console.log('branch created');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error ignorFiles: ${error}`);
-    console.error('Error ignorFiles :', error);
     return false;
   }
 }
@@ -473,14 +399,11 @@ export async function getRepoOwner(fs, dir) {
       dir,
       path: 'remote.origin.url',
     });
-    console.log({ value });
     const val = value.split('/');
-    console.log(val[val.length - 2]);
     logger.debug('utils.js', 'getRepoOwner');
     return val[val.length - 2];
   } catch (error) {
     logger.error('utils.js', `Error getRepoOwner: ${error}`);
-    console.error('Error getRepoOwner :', error);
     return null;
   }
 }
@@ -491,11 +414,9 @@ export async function createGitIgnore(fs, dir) {
   const gitignoreContent = '# Ignore .json files (scribe setting files)\n*.json';
   try {
     await fs.writeFileSync(`${dir}/.gitignore`, gitignoreContent);
-    console.log('.gitignore file created successfully.');
     return true;
   } catch (error) {
     logger.error('utils.js', `Error getRepoOwner: ${error}`);
-    console.error('Error getRepoOwner :', error);
     return false;
   }
 }
@@ -504,7 +425,6 @@ export async function createGitIgnore(fs, dir) {
 export async function remoteMerge(fs, dir, branch, localBranch, token) {
   logger.debug('utils.js', 'in remote merge - fetch and merge new branch ');
   const returnData = { status: true, data: undefined };
-  console.log(dir, branch, localBranch);
   try {
     await git.fetch({
       fs,
@@ -517,33 +437,27 @@ export async function remoteMerge(fs, dir, branch, localBranch, token) {
       onAuth: () => ({ username: token }),
     });
     logger.debug('utils.js', 'fetch Branch');
-    console.log('branch fetched');
     await git.merge({
       fs,
       dir,
       ours: localBranch,
       theirs: `origin/${branch}`,
-      // ours: branch,
-      // theirs: localBranch,
       abortOnConflict: false,
     }).catch((e) => {
-      console.log({ e });
       if (e) {
         returnData.data = e.data;
         returnData.status = false;
-        console.log(
+        logger.error(
+          'utils.js',
           'Automatic merge failed for the following files: '
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
         );
       } else { throw e; }
     });
-    console.log('merge succeess remote/origin - local');
     return returnData;
-    // return true;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);
-    console.error('Error merge Branch :', error);
     return false;
   }
 }

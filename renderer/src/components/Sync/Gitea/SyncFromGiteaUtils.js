@@ -97,7 +97,6 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
 
 export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, projectName, id, currentUser, updateBurrito, action) => {
   try {
-    console.log({ sbDataObject1 });
     let sbDataObject = sbDataObject1;
     const firstKey = Object.keys(sbDataObject?.ingredients)[0];
     const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
@@ -274,20 +273,11 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         repo,
         auth,
       });
-      // push changes to user branch and pull from scribe main
-      // const commitStatus = await commitChanges(fs, gitprojectDir, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
-      // const pushResult = commitStatus && await pushTheChanges(fs, gitprojectDir, checkoutBranch, auth.token.sha1);
-      // console.log('pull', gitprojectDir, userBranch, auth.token.sha1);
-      // const pullStatus = pushResult && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-      // console.log('pulling status', { pullStatus });
-      // fetchedRepo = pullStatus;
 
       // check status
       pullContinue = await checkGitStatus(fs, gitprojectDir);
-      console.log({ pullContinue });
       if (!pullContinue) {
         // warning
-        console.log('in not continue');
         setPullPopup({
           title: 'Overwrite un synced Changes',
           status: true,
@@ -307,7 +297,6 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }));
         const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-        console.log('pull for exisit pro --------------> ', { pullStatus });
         if (pullStatus?.status === false) {
           // show warning again to overwrite
           const conflictHtmlText = `<div class="flex flex-col justify-center">
@@ -322,7 +311,6 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
                   which will overwrite all unsynced changes with the data of Door43.
                 </div>
                 </div>`;
-              console.log('in conflcit error ............');
               setPullPopup({
                 title: 'Conflict',
                 status: true,
@@ -333,9 +321,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }
         fetchedRepo = pullStatus?.status;
     } else {
-      console.log('clone');
       const checkoutStatus = await cloneAndSetProject(fs, gitprojectDir, repo, userBranch, auth, checkoutBranch);
-      console.log({ checkoutStatus });
       fetchedRepo = checkoutStatus;
       action.setSyncProgress((prev) => ({
         ...prev,

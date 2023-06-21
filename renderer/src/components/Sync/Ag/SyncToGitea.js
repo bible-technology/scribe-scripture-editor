@@ -26,39 +26,27 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       // support for existing sync users - create scribe main with user branch content
       // await supportForExistingSyncUsers();
       // Check whether the project is git initiallized or not
-      let remoteStatus = true;
-      console.log(projectsMetaPath, { mainBranch });
       const checkInit = await checkInitialize(fs, projectsMetaPath);
-      console.log(checkInit);
       if (!checkInit) {
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 6,
         }));
-        remoteStatus = false;
         const projectInitialized = await initProject(fs, projectsMetaPath, auth.user.username, mainBranch);
-        console.log(projectInitialized);
         if (projectInitialized) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-          console.log(repoName, auth.token.sha1);
           const created = await createRepo(repoName, auth.token.sha1);
-          // const created = await handleCreateRepo(repoName, auth, repoName);
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-          console.log(created);
+
           if (created.id) {
-            remoteStatus = await addGitRemote(fs, projectsMetaPath, created.clone_url);
-            // remoteStatus = remoteStatus && await pullProject(fs, projectsMetaPath, 'master', auth.token.sha1);
-            console.log({ remoteStatus });
+            await addGitRemote(fs, projectsMetaPath, created.clone_url);
             setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
             const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
-            console.log({ commitStatus });
             if (commitStatus) {
               setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
               const pushMain = await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
               const createStatus = pushMain && await createBranch(fs, projectsMetaPath, localBranch);
               const checkoutStatus = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
-              const pushUser = checkoutStatus && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
-              console.log({ pushUser });
-              console.log({ createStatus }, { checkoutStatus });
+              checkoutStatus && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
             }
           }
         }
@@ -67,31 +55,23 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
         }));
         const repoOwner = await getRepoOwner(fs, projectsMetaPath);
-        // code or collabarator -----------------------------------
-        console.log('in collabarator mode ------>');
         const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
-        console.log('1---------');
-        console.log({ commitStatus });
         if (commitStatus) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
             // checkout json files
-            const checkoutFIles = await checkoutJsonFiles(fs, projectsMetaPath, localBranch);
-            console.log({ checkoutFIles });
+            await checkoutJsonFiles(fs, projectsMetaPath, localBranch);
           }
           // push changes to remote user branch from local user
           const pushResult = await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
-          console.log('2------------', pushResult);
           if (pushResult === false) {
             // Auth error / internet error
             logger.debug('ToGiteaUtils.js', 'Auth failed');
             throw new Error('Something went wrong!');
           }
-          console.log({ pushResult });
           // pull from remote main to local main
           const pullStatus = pushResult && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
           // show conflict message if pull fail and inform user about backup
-          console.log('2.5------------', { pullStatus });
           if (pullStatus?.status === false) {
             if (pullStatus?.data.type === 'conflict') {
               const conflictHtmlText = `<div class="flex flex-col justify-center">
@@ -109,25 +89,19 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
                   Your changes are been secured on your branch in Door43.
                   </div>
                   </div>`;
-              console.log('in conflcit error ............');
               setPullPopup({
                 title: 'Conflict',
                 status: true,
                 confirmMessage: conflictHtmlText,
-                // buttonName: 'ok',
-                // type: 'overwrite',
               });
               throw new Error('Conflict Exist');
             } else {
               throw new Error(pullStatus?.data?.data[0]);
             }
           }
-          console.log('3------------', { pullStatus });
           // push merged changes to main origin
           const pushMain = pullStatus?.status && await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
-          console.log('4------------', { pushMain });
           pushMain && await getOrPutLastSyncInAgSettings('put', projectData, auth?.user?.username);
-          console.log('ALL DONE-------------------------');
         }
       }
     } catch (err) {

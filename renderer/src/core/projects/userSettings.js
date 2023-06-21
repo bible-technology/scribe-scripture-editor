@@ -50,7 +50,7 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
             default:
                 break;
             }
-        console.log({ filePath });
+
         if (fs.existsSync(filePath)) {
             const settingsFile = await fs.readFileSync(filePath);
             if (settingsFile) {
