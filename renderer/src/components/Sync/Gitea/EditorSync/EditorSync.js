@@ -8,6 +8,7 @@ import { SnackBar } from '@/components/SnackBar';
 import menuStyles from '@/layouts/editor/MenuBar.module.css';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import PopUpModal from '@/layouts/Sync/PopUpModal';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import * as logger from '../../../../logger';
 import CloudUploadIcon from '@/icons/basil/Outline/Files/Cloud-upload.svg';
 import CloudCheckIcon from '@/icons/basil/Solid/Files/Cloud-check.svg';
@@ -25,10 +26,13 @@ function EditorSync({ selectedProject }) {
   const [snackBar, setOpenSnackBar] = useState(false);
   const [snackText, setSnackText] = useState('');
   const [notify, setNotify] = useState();
-  const [totalUploaded, setTotalUploaded] = useState(0);
-  const [uploadStart, setUploadstart] = useState(false);
-  const [uploadDone, setUploadDone] = useState(false);
-  const [totalFiles, settotalFiles] = useState(0);
+  const [pullPopUp, setPullPopup] = useState({ status: false });
+  const [syncProgress, setSyncProgress] = useState({
+    syncStarted: false,
+    totalFiles: 0,
+    completedFiles: 0,
+    uploadDone: false,
+  });
 
   const {
     state: { currentProjectMeta },
@@ -37,15 +41,21 @@ function EditorSync({ selectedProject }) {
 
   const { addNotification } = useAddNotification();
 
+  async function notifyStatus(status, message) {
+    setNotify(status);
+    setSnackText(message);
+    setOpenSnackBar(true);
+  }
+
   const callFunction = async () => {
       setIsOpen(false);
       try {
         if (selectedUsername) {
           logger.debug('EditorSync.js', 'Call handleEditorSync Function');
-          await handleEditorSync(selectedProject, currentProjectMeta, selectedUsername, {
-          settotalFiles, setTotalUploaded, setUploadstart, setUploadDone, addNotification,
-          });
-          setNotify('success'); setSnackText('Sync SuccessFull'); setOpenSnackBar(true);
+          const status = await handleEditorSync(currentProjectMeta, selectedUsername, notifyStatus, addNotification, setPullPopup, setSyncProgress);
+          console.log({ status });
+          setSyncProgress((prev) => ({ ...prev, uploadDone: status }));
+          await notifyStatus('success', 'Sync SuccessFull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
         } else {
           throw new Error('Please select a valid account to sync..');
@@ -60,12 +70,13 @@ function EditorSync({ selectedProject }) {
   };
 
   useEffect(() => {
-    if (uploadDone) {
+    if (syncProgress?.uploadDone) {
+      console.log('in useeffect done ');
       setTimeout(() => {
-        setUploadDone(false);
-      }, 3000);
+        setSyncProgress((prev) => ({ ...prev, uploadDone: false }));
+      }, 5000);
     }
-  }, [uploadDone]);
+  }, [syncProgress?.uploadDone]);
 
   useEffect(() => {
     (async () => {
@@ -90,11 +101,11 @@ function EditorSync({ selectedProject }) {
 
   return (
     <>
-      {uploadStart ? <ProgressCircle currentValue={totalUploaded} totalValue={totalFiles} />
+      {syncProgress.syncStarted ? <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} />
       : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-          {uploadDone ? (
+          {syncProgress?.uploadDone ? (
             <CloudCheckIcon
               fill="green"
               className="h-9 w-9 mx-1"
@@ -108,8 +119,8 @@ function EditorSync({ selectedProject }) {
               type="div"
             // className={`group ${menuStyles.btn} `}
               className={`group ${menuStyles.btn}
-            transition-all duration-[${uploadDone ? '0ms' : '2000ms' }]${
-              uploadDone ? 'opacity-0' : 'opacity-100'}`}
+            transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
+              syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
             >
               {/* <button type="button" onClick={() => openPopUpAndFetchSyncUsers()}> */}
               <button type="button" onClick={() => setIsOpen(true)}>
@@ -277,6 +288,15 @@ function EditorSync({ selectedProject }) {
         setOpenSnackBar={setOpenSnackBar}
         setSnackText={setSnackText}
         error={notify}
+      />
+
+      <ConfirmationModal
+        openModal={pullPopUp?.status}
+        title={pullPopUp?.title}
+        setOpenModal={() => setPullPopup((prev) => ({ ...prev, status: false }))}
+        confirmMessage={pullPopUp?.confirmMessage}
+        buttonName={pullPopUp?.buttonName}
+        closeModal={() => {}}
       />
 
     </>

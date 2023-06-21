@@ -5,6 +5,7 @@ import {
  addGitRemote, checkInitialize, checkoutJsonFiles, checkoutToBranch, commitChanges, createBranch, getRepoOwner, initProject, pullProject, pushTheChanges, pushToMain,
 } from '../Isomorphic/utils';
 import { createRepo } from '../Isomorphic/api';
+import { getOrPutLastSyncInAgSettings } from './SyncToGiteaUtils';
 // upload project to gitea main function
 
 export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notifyStatus, addNotification, setPullPopup) {
@@ -15,7 +16,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
   const repoName = `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`;
   const mainBranch = `${packageInfo.name}-main`;
   const localBranch = `${auth?.user?.username}/${packageInfo.name}`;
-  localForage.getItem('userProfile').then(async (user) => {
+  await localForage.getItem('userProfile').then(async (user) => {
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
     const path = require('path');
@@ -89,15 +90,18 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           if (pullStatus?.status === false) {
             if (pullStatus?.data.type === 'conflict') {
               const conflictHtmlText = `<div class="flex flex-col justify-center">
-                  <div class="text-center">
+                  <div class="">
                     You have conflict in <span class="text-red-600">${pullStatus.data.data}.</span>
                     Connect your administrator to resolve this conflcit.
                   </div>
                   <div class="text-center font-extrabold">OR</div>
-                  <div class="text-center">
+                  <div class="">
                     You can do
                     <span class="font-bold">OFFLINE SYNC</span>
                     which will overwrite all unsynced changes with the data of Door43.
+                  </div>
+                  <div class='text-green-600 mt-2'>
+                  Your changes are been secured on your branch in Door43.
                   </div>
                   </div>`;
               console.log('in conflcit error ............');
@@ -117,6 +121,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           // push merged changes to main origin
           const pushMain = pullStatus?.status && await pushToMain(fs, projectsMetaPath, localBranch, auth.token.sha1);
           console.log('4------------', { pushMain });
+          pushMain && await getOrPutLastSyncInAgSettings('put', projectData, auth?.user?.username);
           console.log('ALL DONE-------------------------');
         }
       }
@@ -125,11 +130,9 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       notifyStatus('failure', `Sync failed : ${err}`);
       await addNotification('Sync', err?.message || err, 'failure');
     } finally {
-      setSyncProgress({
-        syncStarted: false,
-        totalFiles: 0,
-        completedFiles: 0,
-      });
+      setSyncProgress((prev) => ({
+        ...prev, syncStarted: false, completedFiles: 0, totalFiles: 0,
+        }));
     }
   });
 }
