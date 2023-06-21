@@ -242,7 +242,9 @@ export default function SubMenuBar() {
             </div>
 
             {/* Editor sync 2 new one */}
-            <EditorSync selectedProject={selectedProject} />
+            <div className="z-50">
+              <EditorSync selectedProject={selectedProject} />
+            </div>
 
             <button aria-label="add-panels" title={t('tooltip-editor-layout')} type="button" onClick={() => handleResource()} className={`group ${menuStyles.btn}`}>
               <ColumnsIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />

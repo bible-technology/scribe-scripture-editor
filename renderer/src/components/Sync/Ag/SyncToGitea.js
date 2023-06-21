@@ -81,7 +81,12 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           }
           // push changes to remote user branch from local user
           const pushResult = await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
-          console.log('2------------');
+          console.log('2------------', pushResult);
+          if (pushResult === false) {
+            // Auth error / internet error
+            logger.debug('ToGiteaUtils.js', 'Auth failed');
+            throw new Error('Something went wrong!');
+          }
           console.log({ pushResult });
           // pull from remote main to local main
           const pullStatus = pushResult && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
@@ -127,8 +132,9 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       }
     } catch (err) {
       logger.debug('SyncToGitea.js', `Error on Sync create/update : ${err}`);
-      notifyStatus('failure', `Sync failed : ${err}`);
+      notifyStatus('failure', `Sync failed : ${err?.message || err}`);
       await addNotification('Sync', err?.message || err, 'failure');
+      throw new Error(err?.message || err);
     } finally {
       setSyncProgress((prev) => ({
         ...prev, syncStarted: false, completedFiles: 0, totalFiles: 0,
