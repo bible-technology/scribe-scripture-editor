@@ -48,9 +48,10 @@ function EditorSync({ selectedProject }) {
   }
 
   const callFunction = async () => {
+      console.log({ selectedUsername });
       setIsOpen(false);
       try {
-        if (selectedUsername) {
+        if (selectedUsername?.username) {
           logger.debug('EditorSync.js', 'Call handleEditorSync Function');
           const status = await handleEditorSync(currentProjectMeta, selectedUsername, notifyStatus, addNotification, setPullPopup, setSyncProgress);
           console.log({ status });
@@ -58,6 +59,7 @@ function EditorSync({ selectedProject }) {
           await notifyStatus('success', 'Sync SuccessFull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
         } else {
+          console.log('in else ----------');
           throw new Error('Please select a valid account to sync..');
         }
       } catch (err) {
@@ -71,7 +73,6 @@ function EditorSync({ selectedProject }) {
 
   useEffect(() => {
     if (syncProgress?.uploadDone) {
-      console.log('in useeffect done ');
       setTimeout(() => {
         setSyncProgress((prev) => ({ ...prev, uploadDone: false }));
       }, 5000);
@@ -91,7 +92,7 @@ function EditorSync({ selectedProject }) {
             const currentUserObj = syncUsers?.filter((element) => element.username === syncObj?.username);
             setselectedUsername(currentUserObj[0]);
           } else {
-            setselectedUsername({});
+            setselectedUsername(null);
           }
         }
       }
