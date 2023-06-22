@@ -75,7 +75,8 @@ function EditorSync({ selectedProject }) {
   }, [syncProgress?.uploadDone]);
 
   useEffect(() => {
-    (async () => {
+    if (isOpen) {
+      (async () => {
       if (!selectedUsername && selectedProject) {
         logger.debug('EditorSync.js', 'In useEffect - get meta, SyncUsersList , lastSyncUser/{}');
         await getProjectMeta(selectedProject);
@@ -92,8 +93,9 @@ function EditorSync({ selectedProject }) {
         }
       }
     })();
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProject, currentProjectMeta]);
+  }, [isOpen]);
 
   return (
     <>
@@ -278,13 +280,15 @@ function EditorSync({ selectedProject }) {
         </>
       </PopUpModal>
 
-      <SnackBar
-        openSnackBar={snackBar}
-        snackText={snackText}
-        setOpenSnackBar={setOpenSnackBar}
-        setSnackText={setSnackText}
-        error={notify}
-      />
+      <div className="z-50">
+        <SnackBar
+          openSnackBar={snackBar}
+          snackText={snackText}
+          setOpenSnackBar={setOpenSnackBar}
+          setSnackText={setSnackText}
+          error={notify}
+        />
+      </div>
 
       <ConfirmationModal
         openModal={pullPopUp?.status}
