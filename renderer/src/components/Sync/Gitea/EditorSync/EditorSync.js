@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Transition, Listbox } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import menuStyles from '@/layouts/editor/MenuBar.module.css';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import PopUpModal from '@/layouts/Sync/PopUpModal';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import * as logger from '../../../../logger';
 import CloudUploadIcon from '@/icons/basil/Outline/Files/Cloud-upload.svg';
 import CloudCheckIcon from '@/icons/basil/Solid/Files/Cloud-check.svg';
@@ -38,7 +39,7 @@ function EditorSync({ selectedProject }) {
     state: { currentProjectMeta },
     actions: { getProjectMeta },
   } = useGetCurrentProjectMeta();
-
+  const { actions: { setLoadData } } = useContext(ReferenceContext);
   const { addNotification } = useAddNotification();
 
   async function notifyStatus(status, message) {
@@ -56,6 +57,7 @@ function EditorSync({ selectedProject }) {
           setSyncProgress((prev) => ({ ...prev, uploadDone: status }));
           await notifyStatus('success', 'Sync SuccessFull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
+          setLoadData(true);
         } else {
           throw new Error('Please select a valid account to sync..');
         }
