@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
 import { updateVersion } from '@/core/burrito/updateTranslationSB';
+import { checkImportDuplicate } from '@/core/burrito/importBurrito';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
@@ -9,6 +10,7 @@ import {
  checkoutJsonFiles,
  checkoutToBranch, cloneTheProject, createBranch, createGitIgnore, getRepoOwner, pullProject, setUserConfig,
 } from '../Isomorphic/utils';
+import { createRemoteBranch } from '../Isomorphic/api';
 
 const md5 = require('md5');
 const path = require('path');
@@ -150,17 +152,24 @@ export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, project
 
 export const cloneAndSetProject = async (fs, gitprojectDir, repo, userBranch, auth, checkoutBranch) => {
   const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
-    // add config for this user
-    const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
-    // create user branch and checkout
-    configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
-    const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
-    // create gitignore file for for collabarators
-    const repoOwner = await getRepoOwner(fs, gitprojectDir);
-    if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
-      await createGitIgnore(fs, gitprojectDir);
-    }
-    return checkoutStatus;
+  // create an extra branch scribe-main, when sync from an old sync -project where
+  // branch name is in the below regex matching format
+  const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
+  if (regex.test(userBranch)) {
+    // create a branch named scribe-main in remote
+    await createRemoteBranch(auth, repo, userBranch, 'scribe-main');
+  }
+  // add config for this user
+  const configStatus = cloned && await setUserConfig(fs, gitprojectDir, auth.user.username);
+  // create user branch and checkout
+  configStatus && await createBranch(fs, gitprojectDir, checkoutBranch);
+  const checkoutStatus = await checkoutToBranch(fs, gitprojectDir, checkoutBranch);
+  // create gitignore file for for collabarators
+  const repoOwner = await getRepoOwner(fs, gitprojectDir);
+  if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+    await createGitIgnore(fs, gitprojectDir);
+  }
+  return checkoutStatus;
 };
 
 // import gitea project to local
@@ -178,7 +187,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       sbDataObject.meta.dateCreated = sbDataObject?.identification?.primary?.scribe[scribeId[0]].timestamp;
     }
     let projectName = sbDataObject.identification?.name?.en;
-    let id;
+    let id; let foundId = false;
     logger.debug('SyncFromGiteaUtils.js', 'Checking for scribe primary key');
     // getting unique project ID
     if (sbDataObject?.identification?.primary?.scribe !== undefined) {
@@ -220,26 +229,40 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         delete sbDataObject.identification?.upstream?.scribe;
       }
       sbDataObject.identification.primary.scribe = latest;
+    } else {
+      // if Id is undefined - trying to get id, if project already exist
+      const folderList = await fs.readdirSync(projectDir);
+      await checkImportDuplicate(folderList, projectName, sbDataObject, projectDir, fs)
+      .then((upstreamValue) => {
+        // The ID of the existing project, using it for over wriitting it.
+        if (upstreamValue.primaryId) {
+          id = upstreamValue.primaryId;
+          foundId = true;
+        }
+      });
     }
 
     // generating unique key if not exist or get
-    if (!id && sbDataObject?.identification?.primary) {
-      Object.entries(sbDataObject?.identification?.primary).forEach(([key]) => {
-      logger.debug('SyncFromGiteaUtils.js', 'Swapping data between primary and upstream');
-      if (key !== 'scribe') {
-        const identity = sbDataObject.identification.primary[key];
-        sbDataObject.identification.upstream[key] = [identity];
-        delete sbDataObject.identification.primary[key];
-      }
+    if (!id || foundId === true) {
+      Object.entries(sbDataObject.identification.primary).forEach(([key]) => {
+        logger.debug('SyncFromGiteaUtils.js', 'Swapping data between primary and upstream');
+        if (key !== 'scribe') {
+          const identity = sbDataObject.identification.primary[key];
+          sbDataObject.identification.upstream = {};
+          sbDataObject.identification.upstream[key] = [identity];
+          delete sbDataObject.identification.primary[key];
+        }
       });
-      logger.debug('SyncFromGiteaUtils.js', 'Creating a new key.');
-      const key = currentUser + sbDataObject.identification.name.en + moment().format();
-      id = uuidv5(key, environment.uuidToken);
+      if (!id) {
+        logger.debug('SyncFromGiteaUtils.js', 'Creating a new key.');
+        const key = currentUser + sbDataObject.identification.name.en + moment().format();
+        id = uuidv5(key, environment.uuidToken);
+      }
       sbDataObject.identification.primary.scribe = {
         [id]: {
-          revision: '0',
-          timestamp: moment().format(),
-      },
+        revision: '0',
+        timestamp: moment().format(),
+        },
       };
     }
     if (!projectName) {
@@ -257,23 +280,48 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
     const gitprojectDir = path.join(projectDir, `${projectName}_${id}`);
     const checkoutBranch = `${auth.user.username}/${packageInfo.name}`;
     let fetchedRepo;
-    if (duplicate) {
-      setPullData({
-        sbDataObject,
-        projectDir,
-        gitprojectDir,
-        projectName,
-        id,
-        currentUser,
-        updateBurrito,
-        action,
-        userBranch,
-        checkoutBranch,
-        fs,
-        repo,
-        auth,
+    // setting common data for clone / pull with overwrite etc.
+    setPullData({
+      sbDataObject,
+      projectDir,
+      gitprojectDir,
+      projectName,
+      id,
+      currentUser,
+      updateBurrito,
+      action,
+      userBranch,
+      checkoutBranch,
+      fs,
+      repo,
+      auth,
+    });
+    // for support old sync (till 0.3.2)
+    const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
+    if (regex.test(userBranch)) {
+      const oldSyncMessage = `<div class="flex flex-col justify-center">
+      <div class="">
+        We detected you are trying to sync a project from older version of sync.
+        <span class="text-red-600">Please check you have synced all the changes of this project from the older version sync.</span>
+      </div>
+      <div class="mt-2">
+        You can click
+        <span class="font-bold text-green-600">Accepted</span>, which will overwrite all your local changes with the data of selected branch.
+      </div>
+      </div>`;
+      setPullPopup({
+        title: 'Sync the Changes',
+        status: true,
+        confirmMessage: oldSyncMessage,
+        buttonName: 'Accepted',
       });
+      return false;
+    }
+    // offline sync from old user
+    // not exist direct clone and create remote scribe-main
+    // if duplicate show warning and continue call delete and clone with scribe main create in remote
 
+    if (duplicate) {
       // check status
       pullContinue = await checkGitStatus(fs, gitprojectDir);
       if (!pullContinue) {
@@ -297,15 +345,15 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }));
         const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-        if (pullStatus?.status === false) {
+        if (!pullStatus?.status) {
           // show warning again to overwrite
           const conflictHtmlText = `<div class="flex flex-col justify-center">
-                <div class="text-center">
-                  You have conflict in <span class="text-red-600">${pullStatus.data.data}.</span>
+                <div class="">
+                  You have conflict in <span class="text-red-600">${pullStatus?.data?.data}.</span>
                   Connect your administrator to resolve this conflcit.
                 </div>
                 <div class="text-center font-extrabold">OR</div>
-                <div class="text-center">
+                <div class="">
                   You can click
                   <span class="font-bold">OVERWRITE</span>
                   which will overwrite all unsynced changes with the data of Door43.

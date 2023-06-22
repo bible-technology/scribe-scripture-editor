@@ -31,7 +31,12 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     const metaFile = await fetchMetaData.json();
     if (metaFile) {
       // const sb = Buffer.from(metaFile.data);
-      const metaDataSB = metaFile;
+      let metaDataSB = metaFile;
+      // convert if type == bufer --> for old user support
+      if (metaFile?.type === 'Buffer') {
+        const sb = Buffer.from(metaFile.data);
+        metaDataSB = JSON.parse(sb);
+      }
       logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch and parse metaData Success');
       // Validate the burrito
       const success = await validate('metadata', 'gitea/metadata.json', JSON.stringify(metaDataSB), metaDataSB.meta.version);
@@ -65,12 +70,12 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       }
     } else { throw new Error('Failed to read MetaData'); }
   } catch (err) {
-    logger.debug('SyncFromGitea.js', `In error : ${err}`);
+    logger.debug('SyncFromGitea.js', `In error : ${err?.message || err} unable to find Burrito File`);
     setSelectedGiteaProject({
       repo: null, branch: null, metaDataSB: null, localUsername: null, auth: null, mergeStatus: false,
     });
-    notifyStatus('failure', `Sync Failed , ${err?.message || err}`);
-    await addNotification('Sync', err?.message || err, 'failure');
+    notifyStatus('failure', `Sync Failed , Unable to find Burrito File in ${branch} branch`);
+    await addNotification('Sync', `${err?.message || err} unable to find Burrito File`, 'failure');
   } finally {
     setSyncProgress({
         syncStarted: false,

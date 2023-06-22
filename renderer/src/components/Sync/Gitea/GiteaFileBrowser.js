@@ -13,7 +13,6 @@ import LoadingSpinner from '../LoadingSpinner';
 import GridRow from '../GridRow';
 import ProjectMergePop from './ProjectMerge/ProjectMergePopUp';
 import { environment } from '../../../../environment';
-import packageInfo from '../../../../../package.json';
 
 /* eslint-disable no-console */
 // eslint-disable-next-line react/prop-types
@@ -93,12 +92,15 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     const fetchBranches = await response.json();
     // filter to get only user and mater branch
     // regex is for old sync
-    const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
-    const finalBranches = [{ name: repo?.default_branch }];
-    if (repo?.default_branch !== 'scribe-main') {
-      await fetchBranches.filter((branch) => branch.name === `${auth.user.username}/${packageInfo.name}` || regex.test(branch.name))
-      .forEach((b) => { console.log({ b }); finalBranches.push({ name: b.name }); });
+    // const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
+    let finalBranches = [];
+      console.log('chedk  : ', fetchBranches.some((branch) => branch.name === 'scribe-main'));
+    if (fetchBranches.some((branch) => branch.name === 'scribe-main')) {
+      finalBranches.push({ name: 'scribe-main' });
+    } else {
+      finalBranches = fetchBranches;
     }
+    setSelectedGiteaProjectBranch(finalBranches[0]);
     setPullBranchNames(finalBranches);
   };
 
@@ -176,6 +178,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
                 customData={pullBranchNames}
                 filterParams="name"
                 placeholder="Select Branch"
+                dropArrow
               />
               )}
             </div>

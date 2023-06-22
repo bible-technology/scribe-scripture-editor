@@ -22,3 +22,23 @@ export const createRepo = async (repoName, token) => {
   const result = await fetchResult.json();
   return result;
 };
+
+export const createRemoteBranch = async (auth, repo, userBranch, newBranch) => {
+  const endpoint = `${environment.GITEA_API_ENDPOINT}/repos/${auth.user.username}/${repo.name}/branches`;
+  const myHeaders = new Headers();
+  myHeaders.append('Authorization', `Bearer ${auth.token.sha1}`);
+  myHeaders.append('Content-Type', 'application/json');
+  const payloadPr = JSON.stringify({
+    new_branch_name: newBranch,
+    old_branch_name: userBranch,
+  });
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: payloadPr,
+    redirect: 'follow',
+  };
+  const fetchResult = await fetch(endpoint, requestOptions);
+  const result = await fetchResult.json();
+  return result;
+};

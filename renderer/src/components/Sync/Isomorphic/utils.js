@@ -178,6 +178,7 @@ export async function pushToMain(fs, dir, branch, token) {
 export async function cloneTheProject(fs, dir, url, branch, token) {
   logger.debug('utils.js', 'in cloneTheProject - clone a project to Dir from Door 43');
   try {
+    const status = true;
     await git.clone({
       fs,
       http,
@@ -186,9 +187,9 @@ export async function cloneTheProject(fs, dir, url, branch, token) {
       ref: branch,
       singleBranch: true,
       onAuth: () => ({ username: token }),
-    });
+    }).catch((e) => { throw new Error(e); });
     logger.debug('utils.js', 'Cloned the project');
-    return true;
+    return status;
   } catch (error) {
     logger.error('utils.js', `Error cloning project: ${error}`);
     return false;
