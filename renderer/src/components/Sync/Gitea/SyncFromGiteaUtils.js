@@ -151,7 +151,9 @@ export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, project
 };
 
 export const cloneAndSetProject = async (fs, gitprojectDir, repo, userBranch, auth, checkoutBranch) => {
+  console.log(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
   const cloned = await cloneTheProject(fs, gitprojectDir, repo.clone_url, userBranch, auth.token.sha1);
+  console.log({ cloned });
   // create an extra branch scribe-main, when sync from an old sync -project where
   // branch name is in the below regex matching format
   const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
@@ -345,11 +347,12 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }));
         const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
+        console.log({ pullStatus });
         if (!pullStatus?.status) {
           // show warning again to overwrite
           const conflictHtmlText = `<div class="flex flex-col justify-center">
                 <div class="">
-                  You have conflict in <span class="text-red-600">${pullStatus?.data?.data}.</span>
+                  You have conflict in <span class="text-red-600">${pullStatus?.data?.data ? pullStatus?.data?.data : 'some files'}.</span>
                   Connect your administrator to resolve this conflcit.
                 </div>
                 <div class="text-center font-extrabold">OR</div>
@@ -385,7 +388,8 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       }));
     } else if (!fetchedRepo && pullContinue) {
       logger.debug('SyncFromGiteaUtils.js', 'Offline Sync failed');
-      throw new Error('Offline Sync failed');
+      // throw new Error('Offline Sync failed');
+      return false;
     }
     return true;
 

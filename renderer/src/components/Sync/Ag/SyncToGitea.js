@@ -108,7 +108,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       logger.debug('SyncToGitea.js', `Error on Sync create/update : ${err}`);
       notifyStatus('failure', `Sync failed : ${err?.message || err}`);
       await addNotification('Sync', err?.message || err, 'failure');
-      throw new Error(err?.message || err);
+      // throw new Error(err?.message || err);
     } finally {
       setSyncProgress((prev) => ({
         ...prev, syncStarted: false, completedFiles: 0, totalFiles: 0,

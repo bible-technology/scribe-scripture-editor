@@ -30,6 +30,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     const fetchMetaData = await fetch(readMetaData.download_url);
     const metaFile = await fetchMetaData.json();
     if (metaFile) {
+      console.log('inside meta if ');
       // const sb = Buffer.from(metaFile.data);
       let metaDataSB = metaFile;
       // convert if type == bufer --> for old user support
@@ -40,6 +41,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch and parse metaData Success');
       // Validate the burrito
       const success = await validate('metadata', 'gitea/metadata.json', JSON.stringify(metaDataSB), metaDataSB.meta.version);
+      console.log('success : ', { success });
       // if success proceed else raise error
       if (success) {
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : metaData SB validated');
@@ -58,8 +60,10 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
         });
         // check for project exising - true/ undefined
         const duplicate = await checkDuplicate(metaDataSB, currentUser?.username, 'projects');
+        console.log({ duplicate });
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
         const status = await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
+        console.log('after import server', { status });
         if (status) {
           await notifyStatus('success', 'Project Sync to scribe successfull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');

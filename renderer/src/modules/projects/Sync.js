@@ -98,15 +98,43 @@ export default function Sync() {
       } else {
         // delete project + clone the project
         const exist = await pullData?.fs.existsSync(pullData?.gitprojectDir);
-        let clone = true;
-        exist && await pullData?.fs.rmdir((pullData?.gitprojectDir), { recursive: true }, async (err) => {
-          if (err) {
-            logger.debug('Sync.js', 'Error removing project directory for clone');
-            // throw new Error(`Remove Resource failed :  ${err}`);
-            clone = false;
-          }
-        });
-        if (clone) {
+        // let clone = true;
+        if (exist) {
+          await pullData?.fs.rmdir((pullData?.gitprojectDir), { recursive: true }, async (err) => {
+            if (err) {
+              logger.debug('Sync.js', 'Error removing project directory for clone');
+              // throw new Error(`Remove Resource failed :  ${err}`);
+              // clone = false;
+              console.log('in err');
+            } else {
+                console.log('in lcone ');
+                // call clone
+                const cloneStatus = await cloneAndSetProject(
+                  pullData.fs,
+                  pullData.gitprojectDir,
+                  pullData.repo,
+                  pullData.userBranch,
+                  pullData.auth,
+                  pullData.checkoutBranch,
+                );
+                // continue settings file writing
+                cloneStatus && await updateSettingsFiles(
+                  pullData.fs,
+                  pullData.sbDataObject,
+                  pullData.projectDir,
+                  pullData.projectName,
+                  pullData.id,
+                  pullData.currentUser,
+                  pullData.updateBurrito,
+                  pullData.action,
+                );
+                logger.debug('Sync.js', 'Project Sync to scribe successfull, clone successfull');
+                await notifyStatus('success', 'Project Sync to scribe successfull');
+                await addNotification('Sync', 'Project Sync Successfull', 'success');
+              }
+          });
+        } else {
+          console.log('in lcone ');
           // call clone
           const cloneStatus = await cloneAndSetProject(
             pullData.fs,
