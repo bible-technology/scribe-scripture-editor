@@ -176,7 +176,6 @@ export async function pushToMain(fs, dir, branch, token) {
 }
 // clone a repo
 export async function cloneTheProject(fs, dir, url, branch, token) {
-  console.log('clone project');
   logger.debug('utils.js', 'in cloneTheProject - clone a project to Dir from Door 43');
   try {
     const status = true;
@@ -188,7 +187,7 @@ export async function cloneTheProject(fs, dir, url, branch, token) {
       ref: branch,
       singleBranch: true,
       onAuth: () => ({ username: token }),
-    }).catch((e) => { console.log({ e }); throw new Error(e); });
+    }).catch((e) => { throw new Error(e); });
     logger.debug('utils.js', 'Cloned the project');
     return status;
   } catch (error) {
@@ -322,7 +321,6 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
       fastForward: true,
       onAuth: () => ({ username: token }),
     }).catch((e) => {
-      console.log({ e });
       status.status = false;
       status.data = {
         type: 'conflict',
