@@ -225,7 +225,7 @@ function EditorSync({ selectedProject }) {
                     ? (
                       <div className="mt-3">
                         <p className="px-2 text-sm">
-                          don&apos;t find username, please login on
+                          Unable to find username? Please login
                           {' '}
                           <b className="text-primary underline">
                             <Link href="/sync">sync</Link>

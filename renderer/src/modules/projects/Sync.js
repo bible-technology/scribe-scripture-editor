@@ -105,9 +105,7 @@ export default function Sync() {
               logger.debug('Sync.js', 'Error removing project directory for clone');
               // throw new Error(`Remove Resource failed :  ${err}`);
               // clone = false;
-              console.log('in err');
             } else {
-                console.log('in lcone ');
                 // call clone
                 const cloneStatus = await cloneAndSetProject(
                   pullData.fs,
@@ -134,7 +132,6 @@ export default function Sync() {
               }
           });
         } else {
-          console.log('in lcone ');
           // call clone
           const cloneStatus = await cloneAndSetProject(
             pullData.fs,
@@ -177,6 +174,7 @@ export default function Sync() {
                   {/* <span className="font-semibold">Local Projects</span> */}
                   <span className="font-semibold">Sync</span>
                   <button
+                    title="This action will sync your data to Door43"
                     type="button"
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleCloudSync(selectedAgProject, auth, setSyncProgress)}
@@ -241,6 +239,7 @@ export default function Sync() {
                   {auth && repo && (
                   <button
                     type="button"
+                    title="This action will clone or update your local data with Door43 data"
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleOfflineSync(repo, auth)}
                     disabled={syncProgress.syncStarted}
