@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import { AutographaContext } from '@/components/context/AutographaContext';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import CustomMultiComboBox from './CustomMultiComboBox';
 import langJson from '../../../lib/lang/langNames.json';
 import { handleDownloadResources } from './createDownloadedResourceSB';
@@ -343,7 +343,14 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             // customData={langJson}
             filterParams="ang"
             multiSelect
+            dropArrow
           />
+          <button type="button" className="" title="type minimum 3 letter for search">
+            <InformationCircleIcon
+              className="h-5 w-5 mr-5"
+              aria-hidden="true"
+            />
+          </button>
           <div className="flex flex-wrap gap-2 mt-2 mb-2">
             {selectedLangFilter.map((language, idx) => (
               <div
