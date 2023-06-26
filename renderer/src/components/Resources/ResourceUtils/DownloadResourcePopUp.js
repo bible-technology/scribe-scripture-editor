@@ -339,7 +339,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
           <CustomMultiComboBox
             selectedList={selectedLangFilter}
             setSelectedList={setSelectedLangFilter}
-            customData={langJson}
+            customData={langJson.filter((lang) => lang?.ang.trim() !== '')}
+            // customData={langJson}
             filterParams="ang"
             multiSelect
           />
