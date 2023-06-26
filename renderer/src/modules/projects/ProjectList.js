@@ -19,6 +19,7 @@ import { getComparator, stableSort } from '@/components/ProjectsPage/Projects/So
 import ExportProjectPopUp from '@/layouts/projects/Export/ExportProjectPopUp';
 import ProjectContextProvider from '@/components/context/ProjectContext';
 import AuthenticationContextProvider from '@/components/Login/AuthenticationContextProvider';
+import LoadingScreen from '@/components/Loading/LoadingScreen';
 import SearchTags from './SearchTags';
 import NewProject from './NewProject';
 import * as logger from '../../logger';
@@ -471,6 +472,7 @@ export default function ProjectList() {
                               )}
                             </tbody>
                           </table>
+                          {(!starredrow || !unstarredrow) && <div><LoadingScreen /></div> }
                         </div>
                       </div>
                     </div>
