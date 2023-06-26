@@ -11,7 +11,7 @@ import { checkAndAddLanguageToCustom } from '../projects/languageUtil';
 const md5 = require('md5');
 const path = require('path');
 
-const checkImportDuplicate = async (folderList, projectName, metadata, projectDir, fs) => {
+export const checkImportDuplicate = async (folderList, projectName, metadata, projectDir, fs) => {
   // To avoid the duplication of exising project on re-importing
   // Checking project name, key and Id with the existing project's upstream
   let upstreamObj; let incomingId; let incomingKey; let primaryId;

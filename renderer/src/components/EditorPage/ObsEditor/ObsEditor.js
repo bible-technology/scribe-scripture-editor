@@ -34,7 +34,7 @@ export const getDetails = () => new Promise((resolve) => {
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
-  const { state: { obsNavigation } } = useContext(ReferenceContext);
+  const { state: { obsNavigation, loadData }, actions: { setLoadData } } = useContext(ReferenceContext);
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');
     setMdData(story);
@@ -64,6 +64,7 @@ const ObsEditor = () => {
   };
   // this function is used to fetch the content from the given story number
   const readContent = useCallback(() => {
+    setLoadData(false);
     getDetails()
     .then(({
       projectName, username, projectsDir, metaPath, path,
@@ -203,6 +204,7 @@ const ObsEditor = () => {
         });
       });
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [obsNavigation]);
 
   useEffect(() => {
@@ -210,6 +212,12 @@ const ObsEditor = () => {
       readContent();
     }
   }, [readContent]);
+  useEffect(() => {
+    if (loadData === true) {
+      readContent();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadData]);
   return (
     <Editor callFrom="obs">
       {mdData

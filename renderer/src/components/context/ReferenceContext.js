@@ -63,6 +63,8 @@ export default function ReferenceContextProvider({ children }) {
     referenceColumnTwoData1Reset: false,
     referenceColumnTwoData2Reset: false,
   });
+  // Trigger for updating the data after cloud sync from Editor pane
+  const [loadData, setLoadData] = useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -194,6 +196,7 @@ export default function ReferenceContextProvider({ children }) {
       audioPath,
       resetResourceOnDeleteOffline,
       updateWave,
+      loadData,
     },
     actions: {
       setLanguageId,
@@ -236,6 +239,7 @@ export default function ReferenceContextProvider({ children }) {
       setAudioPath,
       setResetResourceOnDeleteOffline,
       setUpdateWave,
+      setLoadData,
     },
   };
   // const goToChapter = (chapternum, versenum) => (

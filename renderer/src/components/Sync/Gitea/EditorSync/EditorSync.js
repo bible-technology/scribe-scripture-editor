@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Transition, Listbox } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,8 @@ import { SnackBar } from '@/components/SnackBar';
 import menuStyles from '@/layouts/editor/MenuBar.module.css';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import PopUpModal from '@/layouts/Sync/PopUpModal';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import * as logger from '../../../../logger';
 import CloudUploadIcon from '@/icons/basil/Outline/Files/Cloud-upload.svg';
 import CloudCheckIcon from '@/icons/basil/Solid/Files/Cloud-check.svg';
@@ -25,50 +27,58 @@ function EditorSync({ selectedProject }) {
   const [snackBar, setOpenSnackBar] = useState(false);
   const [snackText, setSnackText] = useState('');
   const [notify, setNotify] = useState();
-  const [totalUploaded, setTotalUploaded] = useState(0);
-  const [uploadStart, setUploadstart] = useState(false);
-  const [uploadDone, setUploadDone] = useState(false);
-  const [totalFiles, settotalFiles] = useState(0);
+  const [pullPopUp, setPullPopup] = useState({ status: false });
+  const [syncProgress, setSyncProgress] = useState({
+    syncStarted: false,
+    totalFiles: 0,
+    completedFiles: 0,
+    uploadDone: false,
+  });
 
   const {
     state: { currentProjectMeta },
     actions: { getProjectMeta },
   } = useGetCurrentProjectMeta();
-
+  const { actions: { setLoadData } } = useContext(ReferenceContext);
   const { addNotification } = useAddNotification();
+
+  async function notifyStatus(status, message) {
+    setNotify(status);
+    setSnackText(message);
+    setOpenSnackBar(true);
+  }
 
   const callFunction = async () => {
       setIsOpen(false);
       try {
-        if (selectedUsername) {
+        if (selectedUsername?.username) {
           logger.debug('EditorSync.js', 'Call handleEditorSync Function');
-          await handleEditorSync(selectedProject, currentProjectMeta, selectedUsername, {
-          settotalFiles, setTotalUploaded, setUploadstart, setUploadDone, addNotification,
-          });
-          setNotify('success'); setSnackText('Sync SuccessFull'); setOpenSnackBar(true);
+          const status = await handleEditorSync(currentProjectMeta, selectedUsername, notifyStatus, addNotification, setPullPopup, setSyncProgress);
+          setSyncProgress((prev) => ({ ...prev, uploadDone: status }));
+          await notifyStatus('success', 'Sync SuccessFull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');
+          setLoadData(true);
         } else {
           throw new Error('Please select a valid account to sync..');
         }
       } catch (err) {
         logger.debug('EditorSync.js', `Error Sync : ${err}`);
-        setNotify('failure');
-        setSnackText(err?.message || err);
-        setOpenSnackBar(true);
+        await notifyStatus('failure', err?.message || err);
         await addNotification('Sync', err?.message || err, 'failure');
       }
   };
 
   useEffect(() => {
-    if (uploadDone) {
+    if (syncProgress?.uploadDone) {
       setTimeout(() => {
-        setUploadDone(false);
-      }, 3000);
+        setSyncProgress((prev) => ({ ...prev, uploadDone: false }));
+      }, 5000);
     }
-  }, [uploadDone]);
+  }, [syncProgress?.uploadDone]);
 
   useEffect(() => {
-    (async () => {
+    if (isOpen) {
+      (async () => {
       if (!selectedUsername && selectedProject) {
         logger.debug('EditorSync.js', 'In useEffect - get meta, SyncUsersList , lastSyncUser/{}');
         await getProjectMeta(selectedProject);
@@ -80,21 +90,22 @@ function EditorSync({ selectedProject }) {
             const currentUserObj = syncUsers?.filter((element) => element.username === syncObj?.username);
             setselectedUsername(currentUserObj[0]);
           } else {
-            setselectedUsername({});
+            setselectedUsername(null);
           }
         }
       }
     })();
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProject, currentProjectMeta]);
+  }, [isOpen]);
 
   return (
     <>
-      {uploadStart ? <ProgressCircle currentValue={totalUploaded} totalValue={totalFiles} />
+      {syncProgress.syncStarted ? <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} />
       : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-          {uploadDone ? (
+          {syncProgress?.uploadDone ? (
             <CloudCheckIcon
               fill="green"
               className="h-9 w-9 mx-1"
@@ -108,8 +119,8 @@ function EditorSync({ selectedProject }) {
               type="div"
             // className={`group ${menuStyles.btn} `}
               className={`group ${menuStyles.btn}
-            transition-all duration-[${uploadDone ? '0ms' : '2000ms' }]${
-              uploadDone ? 'opacity-0' : 'opacity-100'}`}
+            transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
+              syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
             >
               {/* <button type="button" onClick={() => openPopUpAndFetchSyncUsers()}> */}
               <button type="button" onClick={() => setIsOpen(true)}>
@@ -214,7 +225,7 @@ function EditorSync({ selectedProject }) {
                     ? (
                       <div className="mt-3">
                         <p className="px-2 text-sm">
-                          don&apos;t find username, please login on
+                          Unable to find username? Please login
                           {' '}
                           <b className="text-primary underline">
                             <Link href="/sync">sync</Link>
@@ -271,12 +282,23 @@ function EditorSync({ selectedProject }) {
         </>
       </PopUpModal>
 
-      <SnackBar
-        openSnackBar={snackBar}
-        snackText={snackText}
-        setOpenSnackBar={setOpenSnackBar}
-        setSnackText={setSnackText}
-        error={notify}
+      <div className="z-50">
+        <SnackBar
+          openSnackBar={snackBar}
+          snackText={snackText}
+          setOpenSnackBar={setOpenSnackBar}
+          setSnackText={setSnackText}
+          error={notify}
+        />
+      </div>
+
+      <ConfirmationModal
+        openModal={pullPopUp?.status}
+        title={pullPopUp?.title}
+        setOpenModal={() => setPullPopup((prev) => ({ ...prev, status: false }))}
+        confirmMessage={pullPopUp?.confirmMessage}
+        buttonName={pullPopUp?.buttonName}
+        closeModal={() => {}}
       />
 
     </>

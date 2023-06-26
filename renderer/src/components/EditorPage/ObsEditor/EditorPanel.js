@@ -18,7 +18,7 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
   const { t } = useTranslation();
   const handleChange = (e) => {
     const index = e.target.getAttribute('data-id');
-    const value = e.target.value;
+    const value = (e.target.value).toString().replace(/[\n\r]/gm, '');
     const story = obsStory[index - 1];
     let newStory = {};
     if (Object.prototype.hasOwnProperty.call(story, 'title')) {
@@ -62,7 +62,6 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
             key={story.id}
           >
             <textarea
-              wrap="off"
               name={story.title}
               onChange={handleChange}
               onKeyDown={avoidEnter}
@@ -90,6 +89,7 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
             <textarea
               name={story.text}
               onChange={handleChange}
+              onKeyDown={avoidEnter}
               onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
               value={story.text}
               data-id={story.id}
@@ -111,6 +111,7 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
             <textarea
               name={story.end}
               onChange={handleChange}
+              onKeyDown={avoidEnter}
               onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
               value={story.end}
               data-id={story.id}
