@@ -155,7 +155,8 @@ const ProjectContextProvider = ({ children }) => {
                 : advanceSettings.canonSpecification);
               // concat static and custom languages
               const langFilter = await concatLanguages(json, staicLangJson);
-              setLanguages([...langFilter.concatedLang]);
+              const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang.trim() !== '');
+              setLanguages([...filteredLang]);
               setCustomLanguages(langFilter.userlanguages);
             } else {
               createSettingJson(fs, file);

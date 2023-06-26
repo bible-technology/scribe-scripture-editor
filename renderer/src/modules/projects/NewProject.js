@@ -14,6 +14,7 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { environment } from '../../../environment';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
@@ -383,6 +384,12 @@ export default function NewProject({ call, project, closeEdit }) {
                       showLangCode={{ show: true, langkey: 'lc' }}
                     />
                   </div>
+                  <button type="button" className="mt-6 -ml-2" title="type minimum 3 letter for search">
+                    <InformationCircleIcon
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </button>
                   <div className="mt-5">
                     <TargetLanguagePopover projectType={headerDropDown} />
                   </div>
