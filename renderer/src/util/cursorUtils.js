@@ -136,7 +136,6 @@ export function insertChapterNumber(caretPosition, chapterNumber) {
 }
 
 export function insertFootnote(caretPosition, footNote) {
-  console.log('insertFootnote', footNote);
   if (footNote && caretPosition) {
   const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
     pasteHtmlAtCaret(footnoteTag, false, caretPosition);
@@ -163,32 +162,31 @@ export function getSelectedText() {
   return selectedText;
 }
 // Copy text to clipboard
-export function copyText() {
-  const editor = document.getElementById('editor');
-  const selectedText = getSelectedText(editor);
+// export function copyText() {
+//   const editor = document.getElementById('editor');
+//   const selectedText = getSelectedText(editor);
 
-  if (selectedText !== '') {
-    navigator.clipboard.writeText(selectedText)
-      .then(() => {
-        console.log(`Text copied to clipboard:${ selectedText}`);
-      })
-      .catch((error) => {
-        console.error(`Unable to copy text: ${ error}`);
-      });
-  }
-}
+//   if (selectedText !== '') {
+//     navigator.clipboard.writeText(selectedText)
+//       .then(() => {
+//         console.log(`Text copied to clipboard:${ selectedText}`);
+//       })
+//       .catch((error) => {
+//         console.error(`Unable to copy text: ${ error}`);
+//       });
+//   }
+// }
 
 // Paste text from clipboard
-export function pasteText() {
-  const editor = document.getElementById('editor');
+// export function pasteText() {
+//   const editor = document.getElementById('editor');
 
-  navigator.clipboard.readText()
-    .then((text) => {
-      editor.focus();
-      document.execCommand('insertText', false, text);
-      console.log(`Text pasted from clipboard: ${ text}`);
-    })
-    .catch((error) => {
-      console.error(`Unable to paste text: ${ error}`);
-    });
-}
+//   navigator.clipboard.readText()
+//     .then((text) => {
+//       editor.focus();
+//       document.execCommand('insertText', false, text);
+//     })
+//     .catch((error) => {
+//       console.error(`Unable to paste text: ${ error}`);
+//     });
+// }

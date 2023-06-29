@@ -1,17 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 
-import {
-  RectangleStackIcon,
-  PencilIcon,
-  ArrowDownOnSquareIcon,
-  Bars2Icon,
-  Bars4Icon,
-  ArrowUturnLeftIcon,
-  ArrowUturnRightIcon,
-
-} from '@heroicons/react/24/outline';
-
 import RectangleStackIcon from '@/icons/Xelah/RectangleStack.svg';
 import ArrowDownOnSquareIcon from '@/icons/Xelah/ArrowDownOnSquare.svg';
 import Bars2Icon from '@/icons/Xelah/Bars2.svg';

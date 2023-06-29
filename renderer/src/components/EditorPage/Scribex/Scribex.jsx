@@ -179,41 +179,7 @@ export default function Scribex(props) {
             </div>
             <div className="flex ml-auto">
               <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle={"h-6 mr-2 w-6 text-white cursor-pointer"} />
-              <Menu as="div" className="relative flex flex-col">
-                <Menu.Button>
-                  <PlusIcon
-                    aria-label="Insert-Icon"
-                    className="h-6 mr-2 w-6 text-white cursor-pointer"
-                    aria-hidden="true"
-                    title="Insert"
-                  />
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="fixed top-[193px] right-5 min-w-[183px] z-50 bg-white shadow-lg rounded-md">
-                    <Menu.Item>
-                      <PopupButton handleClick={handleClick} title="Verse" roundedHover="hover:rounded-t-md" />
-                    </Menu.Item>
-                    <Menu.Item>
-                      <PopupButton handleClick={handleClick} title="Chapter" />
-                    </Menu.Item>
-                    <Menu.Item>
-                      <PopupButton handleClick={handleClick} title="Footnote" />
-                    </Menu.Item>
-                    <Menu.Item>
-                      <PopupButton handleClick={handleClick} title="Cross Reference" roundedHover="hover:rounded-b-md" />
-                    </Menu.Item>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-              {/* <InsertMenu handleClick={handleClick} /> */}
+              <InsertMenu handleClick={handleClick} />
             </div>
           </div>
         </div>

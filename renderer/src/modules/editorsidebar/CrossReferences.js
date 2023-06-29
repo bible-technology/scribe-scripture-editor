@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useTranslation } from 'react-i18next';
 import GraftEditor from './GraftEditor';
 
 export default function CrossReference(props) {

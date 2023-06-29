@@ -47,7 +47,6 @@ export default function usePerf({
     const usfmString = await epiteleteHtml?.readUsfm(bookCode);
     setUsfmText(usfmString);
     saveToFile(usfmString, bookCode);
-    console.log('reading after save');
     epiteleteHtml?.readHtml(bookCode, { cloning: false }, htmlMap).then((_htmlPerf) => { // remove htmlMap for default classes
       setHtmlPerf(_htmlPerf);
     });
@@ -83,7 +82,7 @@ export default function usePerf({
           { insertSequences: true },
         );
 
-        if (!isEqual(htmlPerf, newHtmlPerf)) { console.log('mismatch perf'); setHtmlPerf(newHtmlPerf); }
+        if (!isEqual(htmlPerf, newHtmlPerf)) { setHtmlPerf(newHtmlPerf); }
         exportUsfm(bookCode);
       });
     },

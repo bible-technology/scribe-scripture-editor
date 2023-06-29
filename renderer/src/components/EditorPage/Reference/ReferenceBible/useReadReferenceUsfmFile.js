@@ -5,6 +5,7 @@ import moment from 'moment';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { readIngredients } from '@/core/reference/readIngredients';
+import packageInfo from '../../../../../../package.json';
 
 //  hook to fetch usfmfile from system drive
 export const useReadReferenceUsfmFile = ({
@@ -59,7 +60,7 @@ export const useReadReferenceUsfmFile = ({
                 _books.push(_bookID);
                 if (Object.keys(ingredient.scope)[0].toLowerCase() === bookId.toLowerCase()) {
                   if (chosenResource.type === 'user') {
-                    const filePath = path.join(newpath, 'autographa', 'users', username, 'resources', refName, key);
+                    const filePath = path.join(newpath, packageInfo.name, 'users', username, 'resources', refName, key);
                     const fileIngredients = await readIngredients({ filePath });
                     const books = [{
                       selectors: { org: refName, lang: 'en', abbr: 'ult' },
@@ -79,7 +80,7 @@ export const useReadReferenceUsfmFile = ({
                     });
                     setCounter(4);
                   } else if (chosenResource.type === 'common') {
-                    const commonResourcePath = path.join(newpath, 'autographa', 'common', 'resources', refName, key);
+                    const commonResourcePath = path.join(newpath, packageInfo.name, 'common', 'resources', refName, key);
                     const commonResourceIngredients = await readIngredients({ filePath: commonResourcePath });
                     const books = [{
                       selectors: { org: refName, lang: 'en', abbr: 'ult' },
@@ -128,10 +129,11 @@ export const useReadReferenceUsfmFile = ({
           });
           setNotifications(temp);
         });
-        return console.log(err);
+        return console.error(err);
       }
     }
     readLocalFile();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, refName, scrollLock]);
   return { usfmData, bookAvailable };
 };

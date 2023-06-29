@@ -5,8 +5,8 @@ import PlusIcon from '@/icons/Xelah/Plus.svg';
 
 export default function InsertMenu({ handleClick: handleButtonClick }) {
   const [isOpen, setIsOpen] = useState(false);
-  const handleClick = () => {
-    handleButtonClick();
+  const handleClick = (number, title) => {
+    handleButtonClick(number, title);
     setIsOpen(false);
   }
   return (

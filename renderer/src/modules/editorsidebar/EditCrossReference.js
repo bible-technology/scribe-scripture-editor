@@ -1,8 +1,3 @@
-import { TrashIcon } from '@heroicons/react/24/outline';
-
-import {
-  XMarkIcon,
-} from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import XMarkIcon from '@/icons/Common/XMark.svg';
 import TrashIcon from '@/icons/Common/Trash.svg';
