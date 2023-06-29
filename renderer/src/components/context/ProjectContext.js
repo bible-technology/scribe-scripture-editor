@@ -16,32 +16,37 @@ const advanceSettings = require('../../lib/AdvanceSettings.json');
 export const ProjectContext = React.createContext();
 
 const ProjectContextProvider = ({ children }) => {
-    const [editorSave, setEditorSave] = useState('');
-    const [drawer, setDrawer] = useState(false);
-    const [scrollLock, setScrollLock] = useState(false);
-    const [sideTabTitle, setSideTabTitle] = useState('New');
-    const [languages, setLanguages] = useState(advanceSettings.languages);
-    const [language, setLanguage] = useState(advanceSettings.languages[0]);
-    const [licenceList, setLicenseList] = useState(advanceSettings.copyright);
-    const [copyright, setCopyRight] = useState(advanceSettings.copyright[0]);
-    const [canonList, setCanonList] = useState(advanceSettings.canonSpecification);
-    const [canonSpecification, setcanonSpecification] = useState(
-      advanceSettings.canonSpecification[0],
-    );
-    const [versification] = React.useState(advanceSettings.versification);
-    const [versificationScheme, setVersificationScheme] = React.useState(
-      advanceSettings.versification[0],
-    );
-    const [openSideBar, setOpenSideBar] = React.useState(false);
-    const [newProjectFields, setNewProjectFields] = React.useState({
-      projectName: '',
-      description: '',
-      abbreviation: '',
-    });
-    const [username, setUsername] = React.useState();
-    const [selectedProject, setSelectedProject] = React.useState();
-    const [importedFiles, setImportedFiles] = React.useState([]);
-    const [sideBarTab, setSideBarTab] = useState('');
+  const [editorSave, setEditorSave] = useState('');
+	const [drawer, setDrawer] = useState(false);
+	const [scrollLock, setScrollLock] = useState(false);
+	const [sideTabTitle, setSideTabTitle] = useState('New');
+	const [languages, setLanguages] = useState(staicLangJson);
+	const [language, setLanguage] = useState({});
+	const [customLanguages, setCustomLanguages] = useState([]);
+
+	const [licenceList, setLicenseList] = useState(advanceSettings.copyright);
+	const [copyright, setCopyRight] = useState(advanceSettings.copyright[0]);
+	const [canonList, setCanonList] = useState(
+		advanceSettings.canonSpecification,
+	);
+	const [canonSpecification, setcanonSpecification] = useState(
+		advanceSettings.canonSpecification[0],
+	);
+	const [versification] = useState(advanceSettings.versification);
+	const [versificationScheme, setVersificationScheme] = useState(
+		advanceSettings.versification[0],
+	);
+	const [openSideBar, setOpenSideBar] = useState(false);
+	const [newProjectFields, setNewProjectFields] = useState({
+		projectName: '',
+		description: '',
+		abbreviation: '',
+	});
+	const [username, setUsername] = useState();
+	const [selectedProject, setSelectedProject] = useState();
+	const [selectedProjectMeta, setSelectedProjectMeta] = useState();
+	const [importedFiles, setImportedFiles] = useState([]);
+	const [sideBarTab, setSideBarTab] = useState('');
 
     const handleProjectFields = (prop) => (event) => {
       setNewProjectFields({ ...newProjectFields, [prop]: event.target.value });

@@ -1,9 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  SquaresPlusIcon, XMarkIcon, AdjustmentsVerticalIcon,
-} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
