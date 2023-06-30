@@ -28,7 +28,7 @@ export default function ResourcesSidebar({
   };
   useEffect(() => {
     if (!selectResource) {
-      switch (selectedProjectMeta.type.flavorType.flavor.name) {
+      switch (selectedProjectMeta?.type.flavorType.flavor.name) {
         case 'textTranslation':
           setSelectResource('bible');
           break;

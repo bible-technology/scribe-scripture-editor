@@ -271,7 +271,7 @@ export default function EditorSection({
               type="button"
               title={t('tooltip-editor-add-section')}
               onClick={addRow}
-              className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
+              className="fixed p-2 bg-primary rounded bottom-3.5 right-[850px] invisible group-hover:visible"
             >
               <SquaresPlusIcon
                 className="h-6 w-6 text-white"
