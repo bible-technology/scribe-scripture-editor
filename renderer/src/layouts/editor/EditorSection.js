@@ -1,6 +1,9 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
+import {
+  SquaresPlusIcon, XMarkIcon, AdjustmentsVerticalIcon,
+} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
@@ -9,10 +12,6 @@ import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
 import TwNavigation from '@/components/EditorPage/Reference/TW/TwNavigation';
 import { getScriptureDirection } from '@/core/projects/languageUtil';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
-import AdjustmentsVerticalIcon from '@/icons/Common/AdjustmentsVertical.svg';
-import XMarkIcon from '@/icons/Common/XMark.svg';
-import SquaresPlusIcon from '@/icons/Common/SquaresPlus.svg';
 import ConfirmationModal from './ConfirmationModal';
 import * as logger from '../../logger';
 
@@ -37,8 +36,6 @@ export default function EditorSection({
   CustomNavigation,
   setRemovingSection,
   setAddingSection,
-  font,
-  setFont,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -172,19 +169,36 @@ export default function EditorSection({
       setProjectScriptureDir();
     }
   }, [referenceResources, title]);
-
   return (
     <>
-      <div aria-label="resources-panel" className={classNames(openResource ? 'hidden' : '', 'relative first:mt-0 pb-12 border bg-white border-gray-200 rounded shadow-sm group')}>
-        <div className="bg-gray-200 rounded-t text-center text-gray-600 relative sticky top-0 left-0 right-0 z-10">
-          <div className="flex">
-            {selectedResource === 'ta' || selectedResource === 'tw' ? (
-              <div className="h-12 relative flex">
-                {selectedResource === 'ta' ? (
-                  <TaNavigation
-                    languageId={languageId}
-                    referenceResources={referenceResources}
-                  />
+      <div aria-label="resources-panel" className={classNames(openResource ? 'hidden' : '', 'relative first:mt-0 pb-12 border bg-white border-gray-200 rounded shadow-sm overflow-hidden group')}>
+        <div className="bg-gray-200 rounded-t text-center text-gray-600 relative overflow-hidden">
+          {openResourcePopUp
+            && (
+              <div className="fixed z-50 ">
+                <ResourcesPopUp
+                  column={row}
+                  header={title}
+                  languageId={languageId}
+                  selectedResource={selectedResource}
+                  setReferenceResources={setReferenceResources}
+                  openResourcePopUp={openResourcePopUp}
+                  setOpenResourcePopUp={setOpenResourcePopUp}
+                  selectedProjectMeta={selectedProjectMeta}
+                />
+
+              </div>
+            )}
+
+          <div className="bg-gray-200 rounded-t overflow-hidden">
+            <div className="flex">
+              {selectedResource === 'ta' || selectedResource === 'tw' ? (
+                <div className="h-12 flex">
+                  {selectedResource === 'ta' ? (
+                    <TaNavigation
+                      languageId={languageId}
+                      referenceResources={referenceResources}
+                    />
                   ) : (
                     <TwNavigation
                       languageId={languageId}
@@ -193,16 +207,16 @@ export default function EditorSection({
                     />
                   )}
 
-                <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
-                  {title}
+                  <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                    {title}
+                  </div>
                 </div>
-              </div>
               ) : (
                 <>
                   {scrollLock ? (
                     <>
                       {CustomNavigation}
-                      <div className="mx-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                      <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
                         {title}
                       </div>
                     </>
@@ -218,35 +232,36 @@ export default function EditorSection({
                     )}
                 </>
               )}
-            <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
-              <MenuDropdown selectedFont={font} setSelectedFont={setFont} />
-              <button
-                aria-label="resources-selector"
-                type="button"
-                title={t('tooltip-editor-resource-selector')}
-                onClick={showResourcesPanel}
-                className="px-2"
-              >
-                <AdjustmentsVerticalIcon
-                  className="h-5 w-5 text-dark"
-                />
-              </button>
-              <button
-                type="button"
-                title={t('tooltip-editor-remove-section')}
-                onClick={removeResource}
-                className="px-2"
-              >
-                <XMarkIcon
-                  className="h-5 w-5 text-dark"
-                />
-              </button>
+              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
+                <button
+                  aria-label="resources-selector"
+                  type="button"
+                  title={t('tooltip-editor-resource-selector')}
+                  onClick={showResourcesPanel}
+                  className="px-2"
+                >
+                  <AdjustmentsVerticalIcon
+                    className="h-5 w-5 text-dark"
+                  />
+                </button>
+                <button
+                  type="button"
+                  title={t('tooltip-editor-remove-section')}
+                  onClick={removeResource}
+                  className="px-2"
+                >
+                  <XMarkIcon
+                    className="h-5 w-5 text-dark"
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
         <div
-          style={{ fontFamily: `${font}`, fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
-          className="h-full overflow-hidden scrollbars-width leading-8 overflow-auto"
+          style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem`, direction: `${projectScriptureDir?.toUpperCase() === 'RTL' ? 'rtl' : 'ltr'}` }}
+          className="prose-sm p-4 text-xl h-full overflow-auto scrollbars-width"
         >
           {
             (loadResource === false)
@@ -290,22 +305,6 @@ export default function EditorSection({
         buttonName={t('btn-remove')}
         closeModal={confirmRemove}
       />
-      {openResourcePopUp
-  && (
-    <div className="fixed z-50 ">
-      <ResourcesPopUp
-        column={row}
-        header={title}
-        languageId={languageId}
-        selectedResource={selectedResource}
-        setReferenceResources={setReferenceResources}
-        openResourcePopUp={openResourcePopUp}
-        setOpenResourcePopUp={setOpenResourcePopUp}
-        referenceResources={referenceResources}
-      />
-
-    </div>
-  )}
     </>
   );
 }
