@@ -23,7 +23,7 @@ const SelectFile = ({ openChapter, onChapterSelect }) => (
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <Disclosure.Panel className="grid py-5 grid-cols-10 gap-1 text-center bg-black text-white text-xs font-medium tracking-wide uppercase" static>
+        <Disclosure.Panel className="grid grid-cols-10 gap-x-7 gap-y-5 text-center bg-black text-white text-md font-medium tracking-wide uppercase" static>
           {Array.from(Array(50), (e, i) => (
             <div
               role="button"
@@ -65,7 +65,11 @@ export default function NavigationObs({ onChangeNumber, number }) {
     <>
       <div className="flex">
         <div className="bg-primary text-white py-2 uppercase tracking-wider text-xs font-semibold">
-          <span className="px-3">{number}</span>
+          <span className="px-3">
+            Story
+            {' '}
+            {number}
+          </span>
           <span
             className="focus:outline-none bg-white py-4 bg-opacity-10"
             onClick={selectBook}
@@ -90,17 +94,16 @@ export default function NavigationObs({ onChangeNumber, number }) {
       >
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="h-full fixed inset-0 z-10 overflow-y-auto"
           initialFocus={cancelButtonRef}
           static
           open={openVerse}
           onClose={closeVerses}
         >
-
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex items-center justify-center h-screen">
 
-            <div className="w-3/12 m-auto z-50 bg-black text-white shadow overflow-hidden sm:rounded-lg">
+            <div className="w-5/12 h-72 z-50 flex items-center justify-center bg-black text-white shadow overflow-hidden sm:rounded-lg">
               <SelectFile
                 openChapter={openChapter}
                 onChapterSelect={onChapterSelect}
