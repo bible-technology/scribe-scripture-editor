@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://burrito.bible/schema/source_metadata.schema.json",
+    "$$target": "source_metadata.schema.json",
+    "title": "Metadata (Default)",
+    "type": "object",
+    "description": "Scripture Burrito source kinda-variant root.",
+    "properties": {
+        "format": {
+            "type": "string",
+            "enum": ["scripture burrito"]
+        },
+        "meta": {
+            "$ref": "source_meta.schema.json"
+        },
+        "idAuthorities": {
+            "$ref": "id_authorities.schema.json"
+        },
+        "identification": {
+            "$ref": "identification.schema.json"
+        },
+        "confidential": {
+            "$ref": "confidential.schema.json"
+        },
+        "type": {
+            "$ref": "type.schema.json"
+        },
+        "relationships": {
+            "$ref": "relationships.schema.json"
+        },
+        "languages": {
+            "$ref": "languages.schema.json"
+        },
+        "targetAreas": {
+            "$ref": "target_areas.schema.json"
+        },
+        "agencies": {
+            "$ref": "agencies.schema.json"
+        },
+        "copyright": {
+            "$ref": "copyright.schema.json"
+        },
+        "ingredients": {
+            "$ref": "ingredients.schema.json"
+        },
+        "localizedNames": {
+            "$ref": "localized_names.schema.json"
+        },
+        "progress": {
+            "$ref": "progress.schema.json"
+        }
+    },
+    "required": ["format", "meta", "idAuthorities", "identification", "confidential", "type", "copyright", "ingredients"],
+    "additionalProperties": false,
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "type": "object",
+                        "properties": {
+                            "flavorType": {
+                                "enum": ["scripture", "gloss"]
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "required": ["languages"]
+            }
+        },
+        {
+            "$ref": "copyright_constraints.schema.json"
+        }
+    ]
+}
