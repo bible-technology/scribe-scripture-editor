@@ -6,6 +6,7 @@ const schemaIndex031 = require('../../vendor/scripture-burrito/v0.3.1/schema');
 const schemaIndex100rc1 = require('../../vendor/scripture-burrito/v1.0.0-rc1/schema');
 const schemaIndex100rc2 = require('../../vendor/scripture-burrito/v1.0.0-rc2/schema');
 const schemaIndex100 = require('../../vendor/scripture-burrito/v1.0.0/schema');
+
 export const validate = (schemaName, fn, data, version) => {
   // console.log(schemaName, fn, data, version);
   let schemaIndex;
