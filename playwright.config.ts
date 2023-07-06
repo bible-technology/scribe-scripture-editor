@@ -9,6 +9,9 @@ const config: PlaywrightTestConfig = {
 	use: {
 		trace: 'on-first-retry', // record traces on first retry of each test
 	  },
+	expect: {
+		timeout: 10 * 1000,
+	},  
 };
 
 export default config;

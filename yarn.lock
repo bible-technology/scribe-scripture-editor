@@ -3026,13 +3026,15 @@
   dependencies:
     "axios" "^0.21.4"
 
-"@playwright/test@^1.22.2":
-  "integrity" "sha512-mrL2q0an/7tVqniQQF6RBL2saskjljXzqNcCOVMUjRIgE6Y38nCNaP+Dc2FBW06bcpD3tqIws/HT9qiMHbNU0A=="
-  "resolved" "https://registry.npmjs.org/@playwright/test/-/test-1.27.1.tgz"
-  "version" "1.27.1"
+"@playwright/test@^1.35.1":
+  "integrity" "sha512-b5YoFe6J9exsMYg0pQAobNDR85T1nLumUYgUTtKm4d21iX2L7WqKq9dW8NGJ+2vX0etZd+Y7UeuqsxDXm9+5ZA=="
+  "resolved" "https://registry.npmjs.org/@playwright/test/-/test-1.35.1.tgz"
+  "version" "1.35.1"
   dependencies:
     "@types/node" "*"
-    "playwright-core" "1.27.1"
+    "playwright-core" "1.35.1"
+  optionalDependencies:
+    "fsevents" "2.3.2"
 
 "@pmmmwh/react-refresh-webpack-plugin@^0.5.3":
   "integrity" "sha512-wxXRwf+IQ6zvHSJZ+5T2RQNEsq+kx4jKRXfFvdt3nBIUzJUAvXEFsUeoaohDe/Kr84MTjGwcuIUPNcstNJORsA=="
@@ -14093,6 +14095,8 @@
     "write-file-atomic" "*"
 
 "npmlog@*":
+  "integrity" "sha512-AqZtDUWOMKs1G/8lwylVjrdYgqA4d9nu8hc+0gzRxlDb1I10+FHBGMXs6aiQHFdCUUlqH99MUMuLfzWDNDtfxw=="
+  "resolved" "https://registry.npmjs.org/npmlog/-/npmlog-5.0.1.tgz"
   "version" "5.0.1"
   dependencies:
     "are-we-there-yet" "^2.0.0"
@@ -14851,17 +14855,17 @@
   dependencies:
     "find-up" "^3.0.0"
 
-"playwright-core@1.27.1":
-  "integrity" "sha512-9EmeXDncC2Pmp/z+teoVYlvmPWUC6ejSSYZUln7YaP89Z6lpAaiaAnqroUt/BoLo8tn7WYShcfaCh+xofZa44Q=="
-  "resolved" "https://registry.npmjs.org/playwright-core/-/playwright-core-1.27.1.tgz"
-  "version" "1.27.1"
+"playwright-core@1.35.1":
+  "integrity" "sha512-pNXb6CQ7OqmGDRspEjlxE49w+4YtR6a3X6mT1hZXeJHWmsEz7SunmvZeiG/+y1yyMZdHnnn73WKYdtV1er0Xyg=="
+  "resolved" "https://registry.npmjs.org/playwright-core/-/playwright-core-1.35.1.tgz"
+  "version" "1.35.1"
 
-"playwright@^1.22.2":
-  "integrity" "sha512-xXYZ7m36yTtC+oFgqH0eTgullGztKSRMb4yuwLPl8IYSmgBM88QiB+3IWb1mRIC9/NNwcgbG0RwtFlg+EAFQHQ=="
-  "resolved" "https://registry.npmjs.org/playwright/-/playwright-1.27.1.tgz"
-  "version" "1.27.1"
+"playwright@^1.35.1":
+  "integrity" "sha512-NbwBeGJLu5m7VGM0+xtlmLAH9VUfWwYOhUi/lSEDyGg46r1CA9RWlvoc5yywxR9AzQb0mOCm7bWtOXV7/w43ZA=="
+  "resolved" "https://registry.npmjs.org/playwright/-/playwright-1.35.1.tgz"
+  "version" "1.35.1"
   dependencies:
-    "playwright-core" "1.27.1"
+    "playwright-core" "1.35.1"
 
 "plist@^3.0.1", "plist@^3.0.4":
   "integrity" "sha512-WiIVYyrp8TD4w8yCvyeIr+lkmrGRd5u0VbRnU+tP/aRLxP/YadJUYOMZJ/6hIa3oUyVCsycXvtNRgd5XBJIbiA=="

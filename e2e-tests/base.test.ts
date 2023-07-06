@@ -11,13 +11,23 @@ let electronApp;
 let appPath;
 let window;
 
-test('Check for Scribe Scripture app render', async () => {
-  electronApp = await electron.launch({ args: ['main/index.js'] });
-  appPath = await electronApp.evaluate(async ({ app }) => app.getAppPath());
-  window = await electronApp.firstWindow();
-  expect(await window.title()).toBe('Scribe Scripture');
-	//   await electronApp.close();
-});
+test.describe('Scribe scripture editor', async() => {
+  test.beforeAll(async() => {
+      electronApp = await electron.launch({ args: ['main/index.js']} );
+      window = await electronApp.firstWindow();
+      expect(await window.title()).toBe('Scribe Scripture');
+  });
+
+  // test.afterEach(async ({ page }, testInfo) => {
+  //     console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
+    
+  //     if (testInfo.status !== testInfo.expectedStatus)
+  //       console.log(`Did not run as expected, ended up at ${page.url()}`);
+  // });
+
+  test.afterAll(async() => {
+      await electronApp.close();
+  });
 
 test('Create a new user and Navigate the projects page', async () => {
   await window.getByRole('button', {name: 'Create New Account'}).click()
@@ -47,11 +57,19 @@ test('Click New and Fill translation project page details to create a new projec
 
 
 test('Star the project', async () => {
-  await window.getByRole('button', {name: 'unstar-project'}).click()
+  await window.getByRole('button', {name: 'unstar-project', exact:true}).click()
+  const projectname = await window.innerText(
+    '[aria-label=unstar-project-name]',
+    );
+    expect(projectname).toBe('translation project');
 });
 
 test('Untar the project', async () => {
-  await window.getByRole('button', {name: 'star-project'}).click()
+  await window.getByRole('button', {name: 'star-project', exact:true}).click()
+  const projectname = await window.innerText(
+    '[aria-label=unstar-project-name]',
+    );
+    expect(projectname).toBe('translation project');
 });
 
 test('Search and test translation for resulting project', async () => {
@@ -879,3 +897,5 @@ test('Restore the deleted user from Archive tab',async () => {
 //  await removeUser('playwright user')
 
 // })
+
+});
