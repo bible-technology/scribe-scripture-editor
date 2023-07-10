@@ -1,0 +1,23 @@
+name: Test Check
+on: [push, pull_request_target]
+jobs:
+    build:
+        name: Tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - run: |
+                  node --version
+                  npm --version
+            - name: set @bitregistry translation-help
+              run: npm config set '@bit:registry' https://node.bit.dev
+
+            - name: npm install
+              run: npm ci
+
+            - name: run tests
+              run: npm run test
