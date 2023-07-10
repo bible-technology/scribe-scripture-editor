@@ -17,6 +17,7 @@ import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
 import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
 import burrito from '../../lib/BurritoTemplete.json';
+import { mergeProject } from './Import/mergeProject';
 
 export default function ImportProjectPopUp(props) {
   const {
@@ -33,6 +34,8 @@ export default function ImportProjectPopUp(props) {
   const [notify, setNotify] = React.useState();
   const [show, setShow] = React.useState(false);
   const [sbData, setSbData] = React.useState({});
+  const [merge, setMerge] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState();
   const [model, setModel] = React.useState({
     openModel: false,
     title: '',
@@ -62,6 +65,7 @@ export default function ImportProjectPopUp(props) {
       logger.debug('ImportProjectPopUp.js', 'Selected a directory');
       await localforage.getItem('userProfile').then(async (value) => {
         setShow(true);
+        setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         const result = await viewBurrito(chosenFolder.filePaths[0], value.username, 'projects');
         setSbData(result);
@@ -109,12 +113,20 @@ export default function ImportProjectPopUp(props) {
       callImport(true);
     }
   };
+
+  const MergeFunction = async () => {
+    console.log("third button, merge call")
+    await mergeProject(folderPath, currentUser);
+    modelClose();
+  }
+
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
     if (folderPath) {
       setValid(false);
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
+        setMerge(true);
         setModel({
           openModel: true,
           title: t('modal-title-replace-resource'),
@@ -301,6 +313,12 @@ export default function ImportProjectPopUp(props) {
         confirmMessage={model.confirmMessage}
         buttonName={model.buttonName}
         closeModal={() => callFunction()}
+        buttonName2={{
+          active: merge,
+          name:'Merge',
+          action: () => MergeFunction(),
+          color: 'green'
+        }}
       />
     </>
   );
