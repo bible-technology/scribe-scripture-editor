@@ -11,6 +11,7 @@ function GridRow({
     <>
       <div className="flex gap-2 justify-between items-center px-5 py-4 border-b border-gray-100 cursor-pointer">
         <span
+          id={title}
           className={classNames(
                    selected ? 'text-primary' : 'text-gray-800',
                    'capitalize w-full flex items-center gap-5',
