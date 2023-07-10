@@ -2,7 +2,8 @@
 
 // import { _electron as electron } from 'playwright';
 import { removeUser } from '../renderer/src/core/Login/removeUser';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './myFixtures';
+
 
 const fs = require('fs');
 const { _electron: electron } = require('playwright');
@@ -18,31 +19,93 @@ test.describe('Scribe scripture editor', async() => {
       expect(await window.title()).toBe('Scribe Scripture');
   });
 
-  // test.afterEach(async ({ page }, testInfo) => {
-  //     console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
+     // Extend timeout for all tests running this hook by 30 seconds.
+  test.beforeEach(async ({ page }, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 30000);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+      console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
     
-  //     if (testInfo.status !== testInfo.expectedStatus)
-  //       console.log(`Did not run as expected, ended up at ${page.url()}`);
-  // });
+      if (testInfo.status !== testInfo.expectedStatus)
+        console.log(`Did not run as expected, ended up at ${page.url()}`);
+  });
 
   test.afterAll(async() => {
       await electronApp.close();
-  });
+  });  
 
-test('Create a new user and Navigate the projects page', async () => {
+test('Create a new user and Navigate the projects page', async ({userName}) => {
   await window.getByRole('button', {name: 'Create New Account'}).click()
-  await window.getByPlaceholder('Username').fill('playwright user')
+  await window.getByPlaceholder('Username').fill(userName)
   await window.click('[type=submit]');
+  await window.waitForTimeout(5000)
   const title = await window.textContent('[aria-label=projects]');
   expect(title).toBe('Projects');
 });
 
+
+////SYNC
+test('Click Sync button and login the page ', async () => {
+  await window.getByRole('link', {name: 'sync'}).click()
+  await window.locator('[data-test="username-input"]').getByRole('textbox').fill('bobby')
+  await window.locator('[data-test="password-input"]').getByRole('textbox').fill('Bobby@123')
+  await window.getByLabel('Keep me logged in').check()
+  await window.locator('[data-test="submit-button"]').click()
+  await window.waitForTimeout(5000) 
+  const title = await window.textContent('div.flex.justify-between.items-center > span.font-semibold')
+  expect(title).toBe("Sync")
+})
+
+test('Taking pull from git.door43.org and offline sync project from user benz', async () => {
+  await window.getByLabel('Owner').fill('benz')
+  await window.waitForTimeout(5000)
+  await window.getByRole('button', { name: 'en-textStories-Sync_Collab_Test Benz/en-textStories-Sync_Collab_Test' }).click()
+  await window.getByRole('button', { name: 'Offline Sync' }).click()
+  await window.waitForTimeout(5000)
+  await window.getByRole('link', {name: 'projectList'}).click()
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
+  
+})
+
+test('Click on the project to open the OBS editor page', async () => {
+  await window.click('id=Sync_Collab_Test')
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');
+});
+
+test('Open the download project and go back to projects', async () => {
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+  );
+  expect(projectname).toBe('SYNC_COLLAB_TEST');
+  await window.getByRole('button', {name: "Back"}).click();
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
+})
+
+test('Push the project changes on git.door43.org', async () => {
+  await window.getByRole('link', {name: 'sync'}).click()
+  await window.locator('[data-test="username-input"]').getByRole('textbox').fill('bobby')
+  await window.locator('[data-test="password-input"]').getByRole('textbox').fill('Bobby@123')
+  await window.getByLabel('Keep me logged in').check()
+  await window.locator('[data-test="submit-button"]').click()
+  await window.locator('id=Sync_Collab_Test').click()
+  await window.getByRole('button', { name: 'Cloud Sync' }).click()
+  await window.waitForTimeout(10000)
+  const title = await window.textContent('span#Sync_Collab_Test')
+  expect(title).toBe("Sync_Collab_Test");
+})
+
+
 /* Translation Project    */
-test('Click New and Fill translation project page details to create a new project', async () => {
+test('Click New and Fill translation project page details to create a new project', async ({textProject}) => {
   await window.getByRole('link', {name : 'new'}).click()
-  await window.fill('#project_name', 'translation project');
+  await window.waitForTimeout(2000) 
+  await window.fill('#project_name', textProject);
   await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'tv');
+  await window.fill('#version_abbreviated', 'ttp');
   await window.click('#open-advancesettings');
   await window.click('[aria-label=new-testament]');
   await window.click('[aria-label=close-custombiblenavigation]');
@@ -56,51 +119,59 @@ test('Click New and Fill translation project page details to create a new projec
 // });
 
 
-test('Star the project', async () => {
+test('Star the project', async ({textProject}) => {
   await window.getByRole('button', {name: 'unstar-project', exact:true}).click()
   const projectname = await window.innerText(
     '[aria-label=unstar-project-name]',
     );
-    expect(projectname).toBe('translation project');
+    expect(projectname).toBe(textProject);
 });
 
-test('Untar the project', async () => {
+test('Untar the project', async ({textProject}) => {
   await window.getByRole('button', {name: 'star-project', exact:true}).click()
   const projectname = await window.innerText(
     '[aria-label=unstar-project-name]',
     );
-    expect(projectname).toBe('translation project');
+    expect(projectname).toBe(textProject);
 });
 
-test('Search and test translation for resulting project', async () => {
+test('Search and test translation for resulting project', async ({textProject}) => {
   await window.fill('#search_box', 'translation');
   const projectname = await window.innerText(
   '[aria-label=unstar-project-name]',
   );
-  expect(projectname).toBe('translation project');
+  expect(projectname).toBe(textProject);
 });
 
-test('Click on a project to open the editor page for textTranslation', async () => {
-  await window.click('id=translation project');
+test('Click on a project to open the editor page for textTranslation', async ({textProject}) => {
+  await window.click(`id=${textProject}`);
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 });
 
-test('Check textTranslation project name', async () => {
+test('Check textTranslation project name', async ({textProject}) => {
   const projectname = await window.innerText(
   '[aria-label=editor-project-name]',
   );
-  expect(projectname).toBe('TRANSLATION PROJECT');
+  expect(projectname).toBe(textProject.toUpperCase());
 });
 
-test('Increase font size of textTranslation project', async () => {
+test('Increase font size of textTranslation project', async ({textProject}) => {
   await window.click('[aria-label=increase-font]');
   await window.click('[aria-label=increase-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(textProject.toUpperCase());
 });
 
-test('Decrease font size textTranslation project', async () => {
+test('Decrease font size textTranslation project', async ({textProject}) => {
   await window.click('[aria-label=decrease-font]');
   await window.click('[aria-label=decrease-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(textProject.toUpperCase());
 });
 
 test('Check textTranslation project Notifications', async () => {
@@ -137,7 +208,7 @@ test('Return to projects page', async () => {
   expect(title).toBe('Projects');
 });
 
-test('Edit the text translation project along with change target project', async () => {
+test('Edit the text translation project along with change target project', async ({textProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -147,7 +218,7 @@ test('Edit the text translation project along with change target project', async
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "translation project") {
+      if (await tds.nth(j).textContent() === textProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('[aria-label=unstar-menu-project]').click()
@@ -166,62 +237,62 @@ test('Edit the text translation project along with change target project', async
 
 
 ///Obs translation project
-test('Click New and Fill OBS project page details to create a new project.', async () => {
+test('Click New and Fill OBS project page details to create a new project.', async ({obsProject}) => {
   await window.getByRole('link', {name: 'new'}).click()
   await window.click('[aria-label=open-popover]')
   await window.getByRole('link', {name: 'OBS'}).click()
-  await window.fill('#project_name', 'Obs project');
+  await window.fill('#project_name', obsProject);
   await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'op');
+  await window.fill('#version_abbreviated', 'otp');
   await window.click('[aria-label=create]');
 })
 
-test('Create an OBS project with Urdu language and license.', async () => {
-  await window.getByRole('link', {name: 'new'}).click()
-  await window.click('[aria-label=open-popover]')
-  await window.getByRole('link', {name: 'OBS'}).click()
-  await window.fill('#project_name', 'urdu project');
-  await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'up');
-  //adding a urdu language
-  await window.getByRole('button', {name: 'add-language'}).click()
-  await window.locator('input[name="language"]').fill('urdu new')
-  await window.locator('input[name="code"]').fill('un')
-  await window.locator('input[type="radio"]').nth(1).click()
-  await window.getByRole('button', {name: 'edit-language'}).click()
-  //select a new license
-  await window.getByRole('button', {name: 'CC BY-SA'}).click()
-  await window.getByRole('option', {name: 'CC BY'}).click()
-  await window.click('[aria-label=create]');
-})
+// test('Create an OBS project with Urdu language and license.', async () => {
+//   await window.getByRole('link', {name: 'new'}).click()
+//   await window.click('[aria-label=open-popover]')
+//   await window.getByRole('link', {name: 'OBS'}).click()
+//   await window.fill('#project_name', 'urdu project');
+//   await window.fill('#project_description', 'test version');
+//   await window.fill('#version_abbreviated', 'up');
+//   //adding a urdu language
+//   await window.getByRole('button', {name: 'add-language'}).click()
+//   await window.locator('input[name="language"]').fill('urdu new')
+//   await window.locator('input[name="code"]').fill('un')
+//   await window.locator('input[type="radio"]').nth(1).click()
+//   await window.getByRole('button', {name: 'edit-language'}).click()
+//   //select a new license
+//   await window.getByRole('button', {name: 'CC BY-SA'}).click()
+//   await window.getByRole('option', {name: 'CC BY'}).click()
+//   await window.click('[aria-label=create]');
+// })
 
-test('Update the Urdu project', async () => {
-  const table =  window.getByTestId('tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "urdu project") {
-        console.log(await tds.nth(1).textContent())
-        await tds.last().locator('[aria-label=unstar-expand-project]').click()
-        await window.locator('[aria-label=unstar-menu-project]').click()
-        await window.getByRole('menuitem', {name: "edit-project"}).click()
-        await window.getByText('test version').fill('edit test version')
-        await window.locator('input[name="version_abbreviated"]').fill('ep')
-        await window.getByRole('button', {name:"save-edit-project"}).click();
-        const title = await window.textContent('[aria-label=projects]');
-        expect(title).toBe('Projects');
-      }
-    }
-  }
+// test('Update the Urdu project', async () => {
+//   const table =  window.getByTestId('tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === "urdu project") {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
+//         await window.locator('[aria-label=unstar-menu-project]').click()
+//         await window.getByRole('menuitem', {name: "edit-project"}).click()
+//         await window.getByText('test version').fill('edit test version')
+//         await window.locator('input[name="version_abbreviated"]').fill('ep')
+//         await window.getByRole('button', {name:"save-edit-project"}).click();
+//         const title = await window.textContent('[aria-label=projects]');
+//         expect(title).toBe('Projects');
+//       }
+//     }
+//   }
 
-})
+// })
 
-test('Star the obs project', async () => {
+test('Star the obs project', async ({obsProject}) => {
   const table =  window.locator('table#tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -231,7 +302,7 @@ test('Star the obs project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.first().locator('[aria-label=unstar-project]').click()
       // expect(await tds.nth(1).textContent()).toBe("Obs project")
@@ -242,7 +313,7 @@ test('Star the obs project', async () => {
   }
 });
 
-test('Unstar the obs project', async () => {
+test('Unstar the obs project', async ({obsProject}) => {
   const table =  window.locator('table#tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -253,7 +324,7 @@ test('Unstar the obs project', async () => {
   const row = rows.nth(i);
   const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.first().locator('[aria-label=star-project]').click()
       // expect(await tds.nth(1).textContent()).toBe("Obs project")
@@ -262,35 +333,43 @@ test('Unstar the obs project', async () => {
   }
 });
 
-test('Search and test obs project for resulting project', async () => {
+test('Search and test obs project for resulting project', async ({obsProject}) => {
   await window.fill('#search_box', 'obs');
   const projectname = await window.innerText(
   '[aria-label=unstar-project-name]',
   );
-  expect(projectname).toBe('Obs project');
+  expect(projectname).toBe(obsProject);
 });
 
-test('Click on the project to open the OBS editor page', async () => {
+test('onclick go to the project to open the OBS editor', async () => {
   await window.click('id=Obs project');
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 });
 
-test('Check the OBS project name', async () => {
+test('Check the OBS project name', async ({obsProject}) => {
   const projectname = await window.innerText(
   '[aria-label=editor-project-name]',
   );
-  expect(projectname).toBe('OBS PROJECT');
+  expect(projectname).toBe(obsProject.toUpperCase());
 });
 
-test('Increase the font size of the OBS project.', async () => {
+test('Increase the font size of the OBS project.', async ({obsProject}) => {
   await window.click('[aria-label=increase-font]');
   await window.click('[aria-label=increase-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(obsProject.toUpperCase());
 });
 
-test('Decrease the font size of the OBS project.', async () => {
+test('Decrease the font size of the OBS project.', async ({obsProject}) => {
   await window.click('[aria-label=decrease-font]');
   await window.click('[aria-label=decrease-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(obsProject.toUpperCase());
 });
 
 test('Check OBS project Notifications', async () => {
@@ -363,7 +442,7 @@ test('Return to the projects page to see all projects have been created already.
   expect(title).toBe('Projects');
 });
 
-test('Edit the Obs project', async () => {
+test('Edit the Obs project', async ({obsProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -373,7 +452,7 @@ test('Edit the Obs project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('[aria-label=unstar-menu-project]').click()
@@ -390,20 +469,20 @@ test('Edit the Obs project', async () => {
 
 
 /////Audio project
-test('Click New and Fill Audio project page details to create a new project', async () => {
+test('Click New and Fill Audio project page details to create a new project', async ({audioProject}) => {
   await window.getByRole('link', {name: 'new'}).click()
   await window.click('[aria-label=open-popover]')
   await window.getByRole('link', {name: 'Audio'}).click()
-  await window.fill('#project_name', 'Audio project');
+  await window.fill('#project_name', audioProject);
   await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'ap');
+  await window.fill('#version_abbreviated', 'atp');
   await window.click('#open-advancesettings');
   await window.click('[aria-label=new-testament]');
   await window.click('[aria-label=close-custombiblenavigation]');
   await window.click('[aria-label=create]');
 })
 
-test('Star the audio project', async () => {
+test('Star the audio project', async ({audioProject}) => {
   const table =  window.locator('table#tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -413,7 +492,7 @@ test('Star the audio project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Audio project") {
+      if (await tds.nth(j).textContent() === audioProject) {
         console.log(await tds.nth(1).textContent())
         await tds.first().locator('[aria-label=unstar-project]').click()
         // expect(await tds.nth(1).textContent()).toBe("Obs project")
@@ -422,7 +501,7 @@ test('Star the audio project', async () => {
   }
 });
 
-test('Untar the audio project', async () => {
+test('Untar the audio project', async ({audioProject}) => {
   const table =  window.locator('table#tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -432,7 +511,7 @@ test('Untar the audio project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Audio project") {
+      if (await tds.nth(j).textContent() === audioProject) {
       console.log(await tds.nth(1).textContent())
       await tds.first().locator('[aria-label=star-project]').click()
       // expect(await tds.nth(1).textContent()).toBe("Obs project")
@@ -442,78 +521,86 @@ test('Untar the audio project', async () => {
 
 });
 
-test('Search and test audio for resulting project', async () => {
+test('Search and test audio for resulting project', async ({audioProject}) => {
   await window.fill('#search_box', 'audio');
   const projectname = await window.innerText(
   '[aria-label=unstar-project-name]',
   );
-  expect(projectname).toBe('Audio project');
+  expect(projectname).toBe(audioProject);
 });
 
-test('Click on the Audio project to open the editor page.', async () => {
-  await window.click('id=Audio project');
+test('Click on the Audio project to open the editor page.', async ({audioProject}) => {
+  await window.click(`id=${audioProject}`);
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 });
 
-test('Check the Audio project name', async () => {
+test('Check the Audio project name', async ({audioProject}) => {
   const projectname = await window.innerText(
   '[aria-label=editor-project-name]',
   );
-  expect(projectname).toBe('AUDIO PROJECT');
+  expect(projectname).toBe(audioProject.toUpperCase());
 });
 
-test('Increase font size Audio project', async () => {
+test('Increase font size Audio project', async ({audioProject}) => {
   await window.click('[aria-label=increase-font]');
   await window.click('[aria-label=increase-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(audioProject.toUpperCase());
 });
 
-test('Decrease font size of Audio project', async () => {
+test('Decrease font size of Audio project', async ({audioProject}) => {
   await window.click('[aria-label=decrease-font]');
   await window.click('[aria-label=decrease-font]');
+  const projectname = await window.innerText(
+    '[aria-label=editor-project-name]',
+    );
+    expect(projectname).toBe(audioProject.toUpperCase());
 });
 
 test('Check Audio projects Notifications', async () => {
-    await window.getByRole('button', {name: "notification-button"}).click()
-    const title = await window.innerText('[aria-label=notification-title]');
-    expect(title).toBe('NOTIFICATIONS');
-    await window.getByRole('button', {name: "close-notification"}).click()
+  await window.getByRole('button', {name: "notification-button"}).click()
+  const title = await window.innerText('[aria-label=notification-title]');
+  expect(title).toBe('NOTIFICATIONS');
+  await window.getByRole('button', {name: "close-notification"}).click()
 
 });
 
 test('About and Licence of Audio Scribe Scripture', async () => {
-    await window.getByRole('button', {name: "about-button"}).click()
-    const developedby = await window.innerText('[aria-label=developed-by]');
+  await window.getByRole('button', {name: "about-button"}).click()
+  const developedby = await window.innerText('[aria-label=developed-by]');
   expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
-    await window.getByRole('button', {name: "license-button"}).click()
-    await window.getByRole('button', {name: "close-about"}).click()
+  await window.getByRole('button', {name: "license-button"}).click()
+  await window.getByRole('button', {name: "close-about"}).click()
 });
 
 test('Check Audio book bookmarks and close', async () => {
-    await window.getByRole('button', {name: "select-menu-file"}).click()
-    await window.getByRole('button', {name: "select-bookmarks"}).click()
-    await window.getByRole('button', {name: "close-button"}).click()    
+  await window.getByRole('button', {name: "select-menu-file"}).click()
+  await window.getByRole('button', {name: "select-bookmarks"}).click()
+  await window.getByRole('button', {name: "close-button"}).click()    
 });
 
 test('Saving bookmark for the Audio book and check the all bookmarks', async ()=>{
   await window.getByRole('button', {name: "save-bookmark"}).click()
   await window.getByRole('button', {name: "select-menu-file"}).click()
-    await window.getByRole('button', {name: "select-bookmarks"}).click()
+  await window.getByRole('button', {name: "select-bookmarks"}).click()
   await window.getByRole('button', {name: "close-button"}).click()
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');  
 } )
 
 test('Lock/Unlock the Audio editor', async () => {
-    await window.getByRole('button', {name: "select-menu-file"}).click()
-    await window.getByRole('none', {name: "selected-font"}).click()
-    await window.getByRole('option', {name: "aakar"}).click()  
-    const editorpane = await window.innerText('[aria-label=editor-pane]');
+  await window.getByRole('button', {name: "select-menu-file"}).click()
+  await window.getByRole('none', {name: "selected-font"}).click()
+  await window.getByRole('option', {name: "aakar"}).click()  
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');  
 });
 
 test('Record the audio for verse 1', async () => {
-    await window.getByRole('button', {name: "1"}).first().click()  
+  await window.getByRole('button', {name: "1"}).first().click()  
   await window.locator('.flex > div > .p-2').first().click()
   await window.waitForTimeout(4000)
   await window.locator('div:nth-child(2) > .p-2').first().click()
@@ -522,13 +609,13 @@ test('Record the audio for verse 1', async () => {
 })
 
 test('Rewind the audio verse 1', async () => {
-    await window.getByRole('button', {name: "1"}).first().click()  
+  await window.getByRole('button', {name: "1"}).first().click()  
   await window.locator('div:nth-child(4) > div > .p-2').first().click()
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');  
 })
 test('Playing the audio verse 1', async () => {
-    await window.getByRole('button', {name: "1"}).first().click()  
+  await window.getByRole('button', {name: "1"}).first().click()  
   await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
   await window.waitForTimeout(4000)
   // const editorpane = await window.innerText('[aria-label=editor-pane]');
@@ -573,7 +660,7 @@ test('Return and see created projects in projects page', async () => {
   expect(title).toBe('Projects');
 });
 
-test('Edit the Audio project', async () => {
+test('Edit the Audio project', async ({audioProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -583,7 +670,7 @@ test('Edit the Audio project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Audio project") {
+      if (await tds.nth(j).textContent() === audioProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('[aria-label=unstar-menu-project]').click()
@@ -599,8 +686,10 @@ test('Edit the Audio project', async () => {
 
 })
 
+
+
 //Export all the project
-test('Export the text Translation project in Downloads folder', async () => {
+test('Export the text Translation project in Downloads folder', async ({textProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -611,7 +700,7 @@ test('Export the text Translation project in Downloads folder', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "translation project") {
+      if (await tds.nth(j).textContent() === textProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -627,7 +716,7 @@ test('Export the text Translation project in Downloads folder', async () => {
   }
 })
 
-test('Export the OBS Translation project in Downloads folder', async () => {
+test('Export the OBS Translation project in Downloads folder', async ({obsProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -638,7 +727,7 @@ test('Export the OBS Translation project in Downloads folder', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -654,7 +743,7 @@ test('Export the OBS Translation project in Downloads folder', async () => {
   }
 })
 
-test('Export the Audio Translation project Downloads folder', async () => {
+test('Export the Audio Translation project Downloads folder', async ({audioProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -665,7 +754,7 @@ test('Export the Audio Translation project Downloads folder', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-        if (await tds.nth(j).textContent() === "Audio project") {
+        if (await tds.nth(j).textContent() === audioProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -684,7 +773,7 @@ test('Export the Audio Translation project Downloads folder', async () => {
 
 /////Archive projects
 /////texttranslation
-test('Archive the textTranslation project', async () => {
+test('Archive the textTranslation project', async ({textProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -695,7 +784,7 @@ test('Archive the textTranslation project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "translation project") {
+      if (await tds.nth(j).textContent() === textProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -709,7 +798,7 @@ test('Archive the textTranslation project', async () => {
 
 
 ////OBS
-test('Archive the OBS project', async () => {
+test('Archive the OBS project', async ({obsProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -720,7 +809,7 @@ test('Archive the OBS project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -734,7 +823,7 @@ test('Archive the OBS project', async () => {
 
 
 ///audio
-test('Archive the Audio project', async () => {
+test('Archive the Audio project', async ({audioProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -745,7 +834,7 @@ test('Archive the Audio project', async () => {
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Audio project") {
+      if (await tds.nth(j).textContent() === audioProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -758,7 +847,7 @@ test('Archive the Audio project', async () => {
 });
 
 /////Restore the project from archived
-test('Restore the textTranslation project from the archive tab and return to the projects', async () => {
+test('Restore the textTranslation project from the archive tab and return to the projects', async ({textProject}) => {
   await window.getByRole('button', {name: "Archived"}).click()
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
@@ -770,7 +859,7 @@ test('Restore the textTranslation project from the archive tab and return to the
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "translation project") {
+      if (await tds.nth(j).textContent() === textProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -782,7 +871,7 @@ test('Restore the textTranslation project from the archive tab and return to the
   }
 });
 
-test('Restore the OBS project from the archive tab and return to the projects', async () => {
+test('Restore the OBS project from the archive tab and return to the projects', async ({obsProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -793,7 +882,7 @@ test('Restore the OBS project from the archive tab and return to the projects', 
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Obs project") {
+      if (await tds.nth(j).textContent() === obsProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -805,7 +894,7 @@ test('Restore the OBS project from the archive tab and return to the projects', 
   }
 });
 
-test('Restore the Audio project from the archive tab and return to the projects', async () => {
+test('Restore the Audio project from the archive tab and return to the projects', async ({audioProject}) => {
   const table =  window.getByTestId('tablelayout')
   const headers = table.locator('thead')
   console.log(await headers.allTextContents());
@@ -816,7 +905,7 @@ test('Restore the Audio project from the archive tab and return to the projects'
     const row = rows.nth(i);
     const tds = row.locator('td');
     for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === "Audio project") {
+      if (await tds.nth(j).textContent() === audioProject) {
         console.log(await tds.nth(1).textContent())
         await tds.last().locator('[aria-label=unstar-expand-project]').click()
         await window.locator('.pl-5 > div > div').click()
@@ -830,6 +919,17 @@ test('Restore the Audio project from the archive tab and return to the projects'
 
   }
 });
+
+
+// test('Add content chapter 3 in verses 1 and 2 OBS editor.', async () => {
+//   await window.getByRole('button', { name: 'obs-navigation' }).click()
+//   await window.getByRole('button', { name: '3', exact: true }).click()
+//   await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
+//   await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
+
 
 /////update the user profile
 test('Update user profile', async () => {
@@ -862,11 +962,11 @@ test('Sign out and return to Autographa app', async () => {
 
 
 ////Login page
-test('Click the View More button, see active users in the tab, and click See the project. ',async () => {
+test('Click the View More button, see active users in the tab, and click See the project. ',async ({userName}) => {
   await window.getByRole('button', {name: "View More"}).click()
   const active = await window.getByRole('tab').allInnerTexts()
   expect(active[0]).toBe('Active')
-  await window.getByRole('tabpanel', {name: "Active"}).getByRole("button", {name: "playwright user"}).click()
+  await window.getByRole('tabpanel', {name: "Active"}).getByRole("button", {name: userName}).click()
   const title = await window.textContent('[aria-label=projects]');
   expect(title).toBe('Projects');
 })

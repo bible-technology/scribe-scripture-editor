@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
 	retries: 3,
 	use: {
 		trace: 'on-first-retry', // record traces on first retry of each test
-		headless: false
+		// headless: false
 	  },
 	expect: {
 		timeout: 10 * 1000,
