@@ -2,6 +2,7 @@ import moment from 'moment';
 import * as localforage from 'localforage';
 import { v5 as uuidv5 } from 'uuid';
 import { createAudioVersification } from '@/util/createAudioVersification';
+import { checkInitialize, commitChanges, initProject } from '@/components/Sync/Isomorphic/utils';
 import { createVersificationUSFM } from '../../util/createVersificationUSFM';
 import { createObsContent } from '../../util/createObsContent';
 import createTranslationSB from '../burrito/createTranslationSB';
@@ -13,6 +14,28 @@ import packageInfo from '../../../../package.json';
 
 const bookAvailable = (list, id) => list.some((obj) => obj === id);
 const checker = (arr, target) => target.every((v) => arr.includes(v));
+
+// function to check git init and commmit all files
+export const checkGitandCommitFiles = async (fs, projectPath, author, currentUser) => {
+  try {
+    const mainBranch = `${packageInfo.name}-main`;
+    const authorObj = (author?.username && author?.email) ? author : { email: '', username: currentUser };
+    const checkInit = await checkInitialize(fs, projectPath);
+    if (!checkInit) {
+      const projectInitialized = await initProject(fs, projectPath, currentUser, mainBranch);
+      const commited = projectInitialized && await commitChanges(fs, projectPath, authorObj, 'Initial Commit on Creation');
+      if (!commited) {
+        logger.error('saveProjectsMeta.js', 'Failed to commit changes');
+        throw new Error('Failed to Init and commit Project');
+      }
+    } else {
+      logger.error('saveProjectsMeta.js', 'Project Already Inited');
+    }
+  } catch (err) {
+    logger.error('saveProjectsMeta.js', `Error init git and commit ${err}`);
+    throw new Error(err?.message || err);
+  }
+};
 
 const saveProjectsMeta = async (projectMetaObj) => {
   logger.debug('saveProjectsMeta.js', 'In saveProjectsMeta');
@@ -122,6 +145,9 @@ const saveProjectsMeta = async (projectMetaObj) => {
           `${projectMetaObj.newProjectFields.projectName}_${id}`,
           'metadata.json',
         ), JSON.stringify(burritoFile));
+        // init git for the Project
+        const projectGitPath = path.join(projectDir, `${projectMetaObj.newProjectFields.projectName}_${id}`);
+        await checkGitandCommitFiles(fs, projectGitPath, null, currentUser);
       }).finally(() => {
         logger.debug('saveProjectsMeta.js', projectMetaObj.call === 'new' ? 'New project created successfully.' : 'Updated the Changes.');
         status.push({ type: 'success', value: (projectMetaObj.call === 'new' ? 'New project created' : 'Updated the changes') });
@@ -180,6 +206,9 @@ const saveProjectsMeta = async (projectMetaObj) => {
         `${projectMetaObj.newProjectFields.projectName}_${id}`,
         'metadata.json',
       ), JSON.stringify(burritoFile));
+      // init git for the Project
+      const projectGitPath = path.join(projectDir, `${projectMetaObj.newProjectFields.projectName}_${id}`);
+      await checkGitandCommitFiles(fs, projectGitPath, null, currentUser);
     }).finally(() => {
       logger.debug('saveProjectsMeta.js', projectMetaObj.call === 'new' ? 'New project created successfully.' : 'Updated the Changes.');
       status.push({ type: 'success', value: (projectMetaObj.call === 'new' ? 'New project created' : 'Updated the changes') });
@@ -313,6 +342,11 @@ const saveProjectsMeta = async (projectMetaObj) => {
             ), JSON.stringify(burritoFile));
           });
         }
+      })
+      .then(async () => {
+        // init git for the Project
+        const projectGitPath = path.join(projectDir, `${projectMetaObj.newProjectFields.projectName}_${id}`);
+        await checkGitandCommitFiles(fs, projectGitPath, null, currentUser);
       })
       .finally(() => {
         logger.debug('saveProjectsMeta.js', projectMetaObj.call === 'new' ? 'New project created successfully.' : 'Updated the Changes.');
