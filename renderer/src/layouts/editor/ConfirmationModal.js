@@ -12,6 +12,9 @@ export default function ConfirmationModal({
   confirmMessage,
   buttonName,
   closeModal,
+  buttonName2 = {
+    active: false,
+  },
 }) {
   const cancelButtonRef = useRef(null);
   const { t } = useTranslation();
@@ -69,6 +72,15 @@ export default function ConfirmationModal({
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                {buttonName2.active && (
+                <button
+                  type="button"
+                  className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-${buttonName2.color}-600 text-base font-medium text-white hover:bg-${buttonName2.color}-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${buttonName2.color}-500 sm:ml-3 sm:w-auto sm:text-sm`}
+                  onClick={buttonName2.action}
+                >
+                  {buttonName2.name}
+                </button>
+                )}
                 {buttonName && (
                 <button
                   type="button"

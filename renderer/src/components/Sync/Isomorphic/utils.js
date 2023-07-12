@@ -1,5 +1,5 @@
 // utility functions of isomorphics git
-import git from 'isomorphic-git';
+import git, { Errors } from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 import * as logger from '../../../logger';
 // to check a dir is git initialized or not
@@ -78,6 +78,7 @@ export async function commitChanges(fs, dir, author, message, force = false) {
       fs, dir, filepath: '.',
     });
     // check and find the ingredients / content folder
+    console.log('git added');
     if (force) {
       await git.add({
         fs, dir, filepath: 'metadata.json', force,
@@ -86,14 +87,17 @@ export async function commitChanges(fs, dir, author, message, force = false) {
         fs, dir, filepath: 'ingredients/scribe-settings.json', force,
       });
     }
+    console.log('git after force');
     await git.remove({ fs, dir, filepath: '.gitignore' });
     await git.remove({ fs, dir, filepath: '/.git' });
+    console.log('after remove');
     const sha = await git.commit({
       fs,
       dir,
       author,
       message,
     });
+    console.log({ sha });
     logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
     return true;
   } catch (error) {
@@ -344,15 +348,19 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
 // Fetch function
 export async function mergeBranches(fs, dir, branch, localBranch) {
   logger.debug('utils.js', 'in mergeBranch - delete a new branch ');
+  const returnData = { status: true, data: undefined };
   try {
-    await git.merge({
+    const MergeResult = await git.merge({
       fs,
       dir,
       ours: branch,
       theirs: localBranch,
       abortOnConflict: false,
     }).catch((e) => {
-      if (e) {
+      if (e instanceof Errors.MergeConflictError) {
+        returnData.data = e.data;
+        returnData.status = false;
+        console.log({ e });
         logger.error(
           'utils.js',
           'Automatic merge failed for the following files: '
@@ -360,12 +368,43 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
           + 'Resolve these conflicts and then commit your changes.',
         );
         throw e;
+      } else {
+        throw e;
       }
     });
-    return true;
+    console.log({ MergeResult });
+    return returnData;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);
+    return error;
+  }
+}
+
+// list branches in the local
+export async function listLocalBranches(fs, dir) {
+  logger.debug('utils.js', 'in listLocalBranches - list local branches');
+  try {
+    const branches = await git.listBranches({ fs, dir });
+    return branches;
+  } catch (error) {
+    logger.error('utils.js', `Error list local branches: ${error}`);
     return false;
+  }
+}
+
+// get current branch
+export async function getCurrentBranch(fs, dir) {
+  logger.debug('utils.js', 'in get branch - get current branch');
+  try {
+    const branchData = await git.currentBranch({
+      fs,
+      dir,
+    });
+    logger.debug('utils.js', 'get current branch name');
+    return { status: true, data: branchData };
+  } catch (error) {
+    logger.error('utils.js', `Error get current branch: ${error}`);
+    return { status: false, data: null };
   }
 }
 
