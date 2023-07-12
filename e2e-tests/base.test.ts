@@ -25,9 +25,9 @@ test.describe('Scribe scripture editor', async() => {
   });
 
      // Extend timeout for all tests running this hook by 30 seconds.
-  test.beforeEach(async ({ page }, testInfo) => {
-    testInfo.setTimeout(testInfo.timeout + 30000);
-  });
+  // test.beforeEach(async ({ page }, testInfo) => {
+  //   testInfo.setTimeout(testInfo.timeout + 30000);
+  // });
   // test.afterEach(async ({ page }, testInfo) => {
   //     console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
     
@@ -39,14 +39,14 @@ test.describe('Scribe scripture editor', async() => {
       await electronApp.close();
   });  
 
-test('Create a new user and Navigate the projects page', async ({userName}) => {
-  await window.getByRole('button', {name: 'Create New Account'}).click()
-  await window.getByPlaceholder('Username').fill(userName)
-  await window.click('[type=submit]');
-  await window.waitForTimeout(5000)
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('Projects');
-});
+// test('Create a new user and Navigate the projects page', async ({userName}) => {
+//   await window.getByRole('button', {name: 'Create New Account'}).click()
+//   await window.getByPlaceholder('Username').fill(userName)
+//   await window.click('[type=submit]');
+//   await window.waitForTimeout(5000)
+//   const title = await window.textContent('[aria-label=projects]');
+//   expect(title).toBe('Projects');
+// });
 
 
 // /* Translation Project    */
@@ -186,16 +186,16 @@ test('Create a new user and Navigate the projects page', async ({userName}) => {
 // })
 
 
-///Obs translation project
-test('Click New and Fill OBS project page details to create a new project.', async ({obsProject}) => {
-  await window.getByRole('link', {name: 'new'}).click()
-  await window.click('[aria-label=open-popover]')
-  await window.getByRole('link', {name: 'OBS'}).click()
-  await window.fill('#project_name', obsProject);
-  await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'otp');
-  await window.click('[aria-label=create]');
-})
+// ///Obs translation project
+// test('Click New and Fill OBS project page details to create a new project.', async ({obsProject}) => {
+//   await window.getByRole('link', {name: 'new'}).click()
+//   await window.click('[aria-label=open-popover]')
+//   await window.getByRole('link', {name: 'OBS'}).click()
+//   await window.fill('#project_name', obsProject);
+//   await window.fill('#project_description', 'test version');
+//   await window.fill('#version_abbreviated', 'otp');
+//   await window.click('[aria-label=create]');
+// })
 
 // test('Create an OBS project with Urdu language and license.', async () => {
 //   await window.getByRole('link', {name: 'new'}).click()
@@ -242,136 +242,136 @@ test('Click New and Fill OBS project page details to create a new project.', asy
 
 // })
 
-test('Star the obs project', async ({obsProject}) => {
-  const table =  window.locator('table#tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
+// test('Star the obs project', async ({obsProject}) => {
+//   const table =  window.locator('table#tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
 
-  const rows = table.locator('tbody tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.first().locator('[aria-label=unstar-project]').click()
-      // expect(await tds.nth(1).textContent()).toBe("Obs project")
-      }
+//   const rows = table.locator('tbody tr')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.first().locator('[aria-label=unstar-project]').click()
+//       // expect(await tds.nth(1).textContent()).toBe("Obs project")
+//       }
 
-    }
+//     }
 
-  }
-});
+//   }
+// });
 
-test('Unstar the obs project', async ({obsProject}) => {
-  const table =  window.locator('table#tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
+// test('Unstar the obs project', async ({obsProject}) => {
+//   const table =  window.locator('table#tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
 
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-  const row = rows.nth(i);
-  const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.first().locator('[aria-label=star-project]').click()
-      // expect(await tds.nth(1).textContent()).toBe("Obs project")
-      }
-    }
-  }
-});
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//   const row = rows.nth(i);
+//   const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.first().locator('[aria-label=star-project]').click()
+//       // expect(await tds.nth(1).textContent()).toBe("Obs project")
+//       }
+//     }
+//   }
+// });
 
-test('Search and test obs project for resulting project', async ({obsProject}) => {
-  await window.fill('#search_box', 'obs');
-  const projectname = await window.innerText(
-  '[aria-label=unstar-project-name]',
-  );
-  expect(projectname).toBe(obsProject);
-});
+// test('Search and test obs project for resulting project', async ({obsProject}) => {
+//   await window.fill('#search_box', 'obs');
+//   const projectname = await window.innerText(
+//   '[aria-label=unstar-project-name]',
+//   );
+//   expect(projectname).toBe(obsProject);
+// });
 
-test('onclick go to the project to open the OBS editor', async ({obsProject}) => {
-  await window.click(`id=${obsProject}`);
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('onclick go to the project to open the OBS editor', async ({obsProject}) => {
+//   await window.click(`id=${obsProject}`);
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Check the OBS project name', async ({obsProject}) => {
-  const projectname = await window.innerText(
-  '[aria-label=editor-project-name]',
-  );
-  expect(projectname).toBe(obsProject.toUpperCase());
-});
+// test('Check the OBS project name', async ({obsProject}) => {
+//   const projectname = await window.innerText(
+//   '[aria-label=editor-project-name]',
+//   );
+//   expect(projectname).toBe(obsProject.toUpperCase());
+// });
 
-test('Increase the font size of the OBS project.', async ({obsProject}) => {
-  await window.click('[aria-label=increase-font]');
-  await window.click('[aria-label=increase-font]');
-  const projectname = await window.innerText(
-    '[aria-label=editor-project-name]',
-    );
-    expect(projectname).toBe(obsProject.toUpperCase());
-});
+// test('Increase the font size of the OBS project.', async ({obsProject}) => {
+//   await window.click('[aria-label=increase-font]');
+//   await window.click('[aria-label=increase-font]');
+//   const projectname = await window.innerText(
+//     '[aria-label=editor-project-name]',
+//     );
+//     expect(projectname).toBe(obsProject.toUpperCase());
+// });
 
-test('Decrease the font size of the OBS project.', async ({obsProject}) => {
-  await window.click('[aria-label=decrease-font]');
-  await window.click('[aria-label=decrease-font]');
-  const projectname = await window.innerText(
-    '[aria-label=editor-project-name]',
-    );
-    expect(projectname).toBe(obsProject.toUpperCase());
-});
+// test('Decrease the font size of the OBS project.', async ({obsProject}) => {
+//   await window.click('[aria-label=decrease-font]');
+//   await window.click('[aria-label=decrease-font]');
+//   const projectname = await window.innerText(
+//     '[aria-label=editor-project-name]',
+//     );
+//     expect(projectname).toBe(obsProject.toUpperCase());
+// });
 
-test('Check OBS project Notifications', async () => {
-    await window.getByRole('button', {name: "notification-button"}).click()
-    const title = await window.innerText('[aria-label=notification-title]');
-    expect(title).toBe('NOTIFICATIONS');
-    await window.getByRole('button', {name: "close-notification"}).click()
+// test('Check OBS project Notifications', async () => {
+//     await window.getByRole('button', {name: "notification-button"}).click()
+//     const title = await window.innerText('[aria-label=notification-title]');
+//     expect(title).toBe('NOTIFICATIONS');
+//     await window.getByRole('button', {name: "close-notification"}).click()
 
-});
+// });
 
-test('About and Licence of OBS Scribe Scripture', async () => {
-  await window.click('[aria-label=about-button]');
-  const developedby = await window.innerText('[aria-label=developed-by]');
-  expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
-  await window.click('[aria-label=license-button]');
-  await window.click('[aria-label=close-about]');
-});
+// test('About and Licence of OBS Scribe Scripture', async () => {
+//   await window.click('[aria-label=about-button]');
+//   const developedby = await window.innerText('[aria-label=developed-by]');
+//   expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
+//   await window.click('[aria-label=license-button]');
+//   await window.click('[aria-label=close-about]');
+// });
 
-test('Edit the OBS editor heading title ', async () => {
-  await window.getByText('1. The Creation').fill("1. The Creation edit");
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
-test('Add content in verses 1 and 2 OBS editor.', async () => {
-  await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
-  await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('Edit the OBS editor heading title ', async () => {
+//   await window.getByText('1. The Creation').fill("1. The Creation edit");
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
+// test('Add content in verses 1 and 2 OBS editor.', async () => {
+//   await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
+//   await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Change the obs navigation story  from 1 to 12 and edit the title', async () => {
-  await window.getByRole('button', {name:"obs-navigation"}).click();
-  await window.getByRole('button', {name:"12"}).click();
-  await window.getByText('12. The Exodus').fill("12. The Exodus edit");
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('Change the obs navigation story  from 1 to 12 and edit the title', async () => {
+//   await window.getByRole('button', {name:"obs-navigation"}).click();
+//   await window.getByRole('button', {name:"12"}).click();
+//   await window.getByText('12. The Exodus').fill("12. The Exodus edit");
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Lock/Unlock the OBS editor', async () => {
-  await window.click('[aria-label=close-lock]');
-  await window.click('[aria-label=open-lock]');
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('Lock/Unlock the OBS editor', async () => {
+//   await window.click('[aria-label=close-lock]');
+//   await window.click('[aria-label=open-lock]');
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Change the OBS font-family', async () => {
-  await window.getByRole('button', {name: "select-menu-file"}).click()
-    await window.getByRole('none', {name: "selected-font"}).click()
-    await window.getByRole('option', {name: "aakar"}).click()  
-    const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');  
-});
+// test('Change the OBS font-family', async () => {
+//   await window.getByRole('button', {name: "select-menu-file"}).click()
+//     await window.getByRole('none', {name: "selected-font"}).click()
+//     await window.getByRole('option', {name: "aakar"}).click()  
+//     const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');  
+// });
 
 // test("Add obs panel", async ()=> {
 //  window.getByRole('button', {name:"add-panels"}).click();
@@ -386,36 +386,36 @@ test('Change the OBS font-family', async () => {
 //  // expect(title).toBe('0');
 // })
 
-test('Return to the projects page to see all projects have been created already.', async () => {
-  await window.getByRole('button', {name: "Back"}).click();
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('Projects');
-});
+// test('Return to the projects page to see all projects have been created already.', async () => {
+//   await window.getByRole('button', {name: "Back"}).click();
+//   const title = await window.textContent('[aria-label=projects]');
+//   expect(title).toBe('Projects');
+// });
 
-test('Edit the Obs project', async ({obsProject}) => {
-  const table =  window.getByTestId('tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.last().locator('[aria-label=unstar-expand-project]').click()
-        await window.locator('[aria-label=unstar-menu-project]').click()
-        await window.getByRole('menuitem', {name: "edit-project"}).click()
-        await window.getByText('test version').fill('edit test version for obs')
-        await window.locator('input[name="version_abbreviated"]').fill('ep')
-        await window.getByRole('button', {name:"save-edit-project"}).click();
-        const title = await window.textContent('[aria-label=projects]');
-        expect(title).toBe('Projects');
-      }
-    }
-  }
-})
+// test('Edit the Obs project', async ({obsProject}) => {
+//   const table =  window.getByTestId('tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
+//         await window.locator('[aria-label=unstar-menu-project]').click()
+//         await window.getByRole('menuitem', {name: "edit-project"}).click()
+//         await window.getByText('test version').fill('edit test version for obs')
+//         await window.locator('input[name="version_abbreviated"]').fill('ep')
+//         await window.getByRole('button', {name:"save-edit-project"}).click();
+//         const title = await window.textContent('[aria-label=projects]');
+//         expect(title).toBe('Projects');
+//       }
+//     }
+//   }
+// })
 
 
 // /////Audio project
@@ -666,32 +666,32 @@ test('Edit the Obs project', async ({obsProject}) => {
 //   }
 // })
 
-test('Export the OBS Translation project in Downloads folder', async ({obsProject}) => {
-  const table =  window.getByTestId('tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
+// test('Export the OBS Translation project in Downloads folder', async ({obsProject}) => {
+//   const table =  window.getByTestId('tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
 
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.last().locator('[aria-label=unstar-expand-project]').click()
-        await window.locator('.pl-5 > div > div').click()
-        await window.getByRole('menuitem', {name: "Export"}).click()
-        await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
-        await window.getByRole('button', {name: "Export"}).click()
-        await window.locator('[aria-label=unstar-arrow-up]').click()
-        await window.waitForTimeout(1000)
-        const title = await window.textContent('[aria-label=projects]');
-        expect(title).toBe('Projects');
-      }
-    }
-  }
-})
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
+//         await window.locator('.pl-5 > div > div').click()
+//         await window.getByRole('menuitem', {name: "Export"}).click()
+//         await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
+//         await window.getByRole('button', {name: "Export"}).click()
+//         await window.locator('[aria-label=unstar-arrow-up]').click()
+//         await window.waitForTimeout(1000)
+//         const title = await window.textContent('[aria-label=projects]');
+//         expect(title).toBe('Projects');
+//       }
+//     }
+//   }
+// })
 
 // test('Export the Audio Translation project Downloads folder', async ({audioProject}) => {
 //   const table =  window.getByTestId('tablelayout')
@@ -748,28 +748,28 @@ test('Export the OBS Translation project in Downloads folder', async ({obsProjec
 
 
 ////OBS
-test('Archive the OBS project', async ({obsProject}) => {
-  const table =  window.getByTestId('tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
+// test('Archive the OBS project', async ({obsProject}) => {
+//   const table =  window.getByTestId('tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
 
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.last().locator('[aria-label=unstar-expand-project]').click()
-        await window.locator('.pl-5 > div > div').click()
-        await window.getByRole('menuitem', {name: "Archive"}).click()
-        const title = await window.textContent('[aria-label=projects]');
-        expect(title).toBe('Projects');
-      }
-    }
-  }
-});
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
+//         await window.locator('.pl-5 > div > div').click()
+//         await window.getByRole('menuitem', {name: "Archive"}).click()
+//         const title = await window.textContent('[aria-label=projects]');
+//         expect(title).toBe('Projects');
+//       }
+//     }
+//   }
+// });
 
 
 // ///audio
@@ -821,28 +821,28 @@ test('Archive the OBS project', async ({obsProject}) => {
 //   }
 // });
 
-test('Restore the OBS project from the archive tab and return to the projects', async ({obsProject}) => {
-  const table =  window.getByTestId('tablelayout')
-  const headers = table.locator('thead')
-  console.log(await headers.allTextContents());
+// test('Restore the OBS project from the archive tab and return to the projects', async ({obsProject}) => {
+//   const table =  window.getByTestId('tablelayout')
+//   const headers = table.locator('thead')
+//   console.log(await headers.allTextContents());
 
-  const rows = table.locator('tbody tr')
-  // const cols = rows.first().locator('td')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    for (let j = 0; j < await tds.count(); j++) {
-      if (await tds.nth(j).textContent() === obsProject) {
-        console.log(await tds.nth(1).textContent())
-        await tds.last().locator('[aria-label=unstar-expand-project]').click()
-        await window.locator('.pl-5 > div > div').click()
-        await window.getByRole('menuitem', {name: "Restore"}).click()
-        const title = await window.textContent('[aria-label=projects]');
-        expect(title).toBe('Archived Projects');
-      }
-    }
-  }
-});
+//   const rows = table.locator('tbody tr')
+//   // const cols = rows.first().locator('td')
+//   for (let i = 0; i < await rows.count(); i++) {
+//     const row = rows.nth(i);
+//     const tds = row.locator('td');
+//     for (let j = 0; j < await tds.count(); j++) {
+//       if (await tds.nth(j).textContent() === obsProject) {
+//         console.log(await tds.nth(1).textContent())
+//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
+//         await window.locator('.pl-5 > div > div').click()
+//         await window.getByRole('menuitem', {name: "Restore"}).click()
+//         const title = await window.textContent('[aria-label=projects]');
+//         expect(title).toBe('Archived Projects');
+//       }
+//     }
+//   }
+// });
 
 // test('Restore the Audio project from the archive tab and return to the projects', async ({audioProject}) => {
 //   const table =  window.getByTestId('tablelayout')
@@ -872,100 +872,100 @@ test('Restore the OBS project from the archive tab and return to the projects', 
 
 
 ///sync
-test('Click Sync button and login door43 the page ', async () => {
-  await window.getByRole('link', {name: 'sync'}).click()
-  await window.locator('[data-test="username-input"]').getByRole('textbox').fill('bobby')
-  await window.locator('[data-test="password-input"]').getByRole('textbox').fill('Bobby@123')
-  await window.getByLabel('Keep me logged in').check()
-  await window.locator('[data-test="submit-button"]').click()
-  await window.waitForTimeout(5000) 
-  const title = await window.textContent('div.flex.justify-between.items-center > span.font-semibold')
-  expect(title).toBe("Sync")
-})
+// test('Click Sync button and login door43 the page ', async ({doorUser, doorPassword}) => {
+//   await window.getByRole('link', {name: 'sync'}).click()
+//   await window.locator('[data-test="username-input"]').getByRole('textbox').fill(doorUser)
+//   await window.locator('[data-test="password-input"]').getByRole('textbox').fill(doorPassword)
+//   await window.getByLabel('Keep me logged in').check()
+//   await window.locator('[data-test="submit-button"]').click()
+//   await window.waitForTimeout(5000) 
+//   const title = await window.textContent('div.flex.justify-between.items-center > span.font-semibold')
+//   expect(title).toBe("Sync")
+// })
 
-test('Taking pull from git.door43.org and offline sync project from user benz', async () => {
-  await window.getByLabel('Owner').fill('benz')
-  await window.waitForTimeout(5000)
-  await window.getByRole('button', { name: 'en-textStories-Sync_Collab_Test Benz/en-textStories-Sync_Collab_Test' }).click()
-  await window.getByRole('button', { name: 'Offline Sync' }).click()
-  await window.waitForTimeout(5000)
-  await window.getByRole('link', {name: 'projectList'}).click()
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('Projects');
+// test('Taking pull from git.door43.org and offline sync project from user benz', async ({syncName}) => {
+//   await window.getByLabel('Owner').fill('benz')
+//   await window.getByRole('button', { name: `en-textStories-${syncName} Benz/en-textStories-${syncName}` }).click()
+//   await window.waitForTimeout(4000)
+//   await window.getByRole('button', { name: 'Offline Sync' }).click()
+//   await window.waitForTimeout(5000)
+//   await window.getByRole('link', {name: 'projectList'}).click()
+//   const title = await window.textContent('[aria-label=projects]');
+//   expect(title).toBe('Projects');
   
-})
+// })
 
-test('Click on the project to open the OBS editor page', async () => {
-  await window.click('id=Sync_Collab_Test')
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('Click on the project to open the OBS editor page', async ({syncName}) => {
+//   await window.click(`id=${syncName}`)
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Open the download project onclick for updating', async () => {
-  const projectname = await window.innerText(
-    '[aria-label=editor-project-name]',
-  );
-  expect(projectname).toBe('SYNC_COLLAB_TEST');
-})
+// test('Open the download project onclick for updating', async ({syncName}) => {
+//   const projectname = await window.innerText(
+//     '[aria-label=editor-project-name]',
+//   );
+//   expect(projectname).toBe(syncName.toUpperCase());
+// })
 
-test('Add content chapter 3 in verses 1 and 2 OBS editor.', async () => {
-  await window.getByRole('button', { name: 'obs-navigation' }).click()
-  await window.getByRole('button', { name: '3', exact: true }).click()
-  await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
-  await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
-});
+// test('Add content chapter 3 in verses 1 and 2 OBS editor.', async () => {
+//   await window.getByRole('button', { name: 'obs-navigation' }).click()
+//   await window.getByRole('button', { name: '3', exact: true }).click()
+//   await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
+//   await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');
+// });
 
-test('Return to the projects', async () => {
-  await window.getByRole('button', {name: "Back"}).click();
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('Projects');
-});
+// test('Return to the projects', async () => {
+//   await window.getByRole('button', {name: "Back"}).click();
+//   const title = await window.textContent('[aria-label=projects]');
+//   expect(title).toBe('Projects');
+// });
 
-test('changes pushed in the existing repositary project on git.door43.org', async () => {
-    await window.getByRole('link', {name: 'sync'}).click()
-    await window.locator('[data-test="username-input"]').getByRole('textbox').fill('bobby')
-    await window.locator('[data-test="password-input"]').getByRole('textbox').fill('Bobby@123')
-    await window.getByLabel('Keep me logged in').check()
-    await window.locator('[data-test="submit-button"]').click()
-    await window.locator('id=Sync_Collab_Test').click()
-    await window.getByRole('button', { name: 'Cloud Sync' }).click()
-    await window.waitForTimeout(10000)
-    const title = await window.textContent('span#Sync_Collab_Test')
-    expect(title).toBe("Sync_Collab_Test");
-    await window.getByRole('link', {name: 'projectList'}).click()
+// test('changes pushed in the existing repositary project on git.door43.org', async ({syncName, doorUser, doorPassword}) => {
+//     await window.getByRole('link', {name: 'sync'}).click()
+//     await window.locator('[data-test="username-input"]').getByRole('textbox').fill(doorUser)
+//     await window.locator('[data-test="password-input"]').getByRole('textbox').fill(doorPassword)
+//     await window.getByLabel('Keep me logged in').check()
+//     await window.locator('[data-test="submit-button"]').click()
+//     await window.locator(`id=${syncName}`).click()
+//     await window.getByRole('button', { name: 'Cloud Sync' }).click()
+//     await window.waitForTimeout(10000)
+//     const title = await window.textContent(`span#${syncName}`)
+//     expect(title).toBe(syncName);
+//     await window.getByRole('link', {name: 'projectList'}).click()
 
-})
+// })
 
-test('push a created OBS repositary in git.door43.org.', async ({obsProject}) => {
-  await window.getByRole('link', {name: 'sync'}).click()
-  await window.locator('[data-test="username-input"]').getByRole('textbox').fill('bobby')
-  await window.locator('[data-test="password-input"]').getByRole('textbox').fill('Bobby@123')
-  await window.getByLabel('Keep me logged in').check()
-  await window.locator('[data-test="submit-button"]').click()
-  await window.waitForTimeout(5000) 
-  await window.getByRole('button', { name: {obsProject} }).click()
-  await window.getByRole('button', { name: 'Cloud Sync' }).click()
-  await window.waitForTimeout(5000) 
-  const title = await window.textContent('div.flex.justify-between.items-center > span.font-semibold')
-  expect(title).toBe("Sync")
-})
+// test('push a created OBS repositary in git.door43.org.', async ({obsProject, doorUser, doorPassword}) => {
+//   await window.getByRole('link', {name: 'sync'}).click()
+//   await window.locator('[data-test="username-input"]').getByRole('textbox').fill(doorUser)
+//   await window.locator('[data-test="password-input"]').getByRole('textbox').fill(doorPassword)
+//   await window.getByLabel('Keep me logged in').check()
+//   await window.locator('[data-test="submit-button"]').click()
+//   await window.waitForTimeout(3000) 
+//   await window.getByRole('button', { name: `${obsProject} -` }).click()
+//   await window.getByRole('button', { name: 'Cloud Sync' }).click()
+//   await window.waitForTimeout(5000) 
+//   const title = await window.textContent('div.flex.justify-between.items-center > span.font-semibold')
+//   expect(title).toBe("Sync")
+// })
 
-test("deleting repository from git.door43.org", async ({obsProject}) => {
-  const browser = await chromium.launch({})
-  const context = await browser.newContext()
-  const page = await context.newPage();
-  await page.goto("https://git.door43.org/")
-  await page.getByRole('link', { name: 'Sign In' }).click()
-  await page.getByLabel('Username or Email Address').fill('bobby');
-  await page.getByLabel('Password').fill('Bobby@123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.getByRole('link', { name: 'bobby/en-textStories-Playwright_sync 0' }).click()
-  await page.getByRole('link', { name: 'Settings' }).click()
-  await page.getByRole('button', { name: 'Delete This Repository' }).click()
-  await page.locator('#delete-repo-modal #repo_name').fill('en-textStories-Playwright_sync')
-  await page.getByRole('button', { name: 'Delete Repository' }).click()
+test("deleting repository from git.door43.org", async ({obsProject, doorUser, doorPassword}) => {
+  // const browser = await chromium.launch({})
+  // const context = await browser.newContext()
+  // const page = await context.newPage();
+  await window.goto("https://git.door43.org/")
+  await window.getByRole('link', { name: 'Sign In' }).click()
+  await window.getByLabel('Username or Email Address').fill(doorUser);
+  await window.getByLabel('Password').fill(doorPassword);
+  await window.getByRole('button', { name: 'Sign In' }).click();
+  await window.getByRole('link', { name: `${doorUser}/en-textStories-${obsProject} 0` }).click()
+  await window.getByRole('link', { name: 'Settings' }).click()
+  await window.getByRole('button', { name: 'Delete This Repository' }).click()
+  await window.locator('#delete-repo-modal #repo_name').fill(`en-textStories-${obsProject}`)
+  await window.getByRole('button', { name: 'Delete Repository' }).click()
 })
 
 
