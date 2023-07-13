@@ -49,8 +49,7 @@ const ReferenceBibleX = ({
     font,
   };
   return (
-
-    <span>
+    <>
       {
         isLoading === false && bookAvailable ? (
           <ReferenceScribex {...props} />
@@ -68,7 +67,7 @@ const ReferenceBibleX = ({
         setSnackText={setSnackText}
         error={notify}
       />
-    </span>
+    </>
   );
 };
 

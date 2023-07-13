@@ -9,6 +9,7 @@ import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
 import TwNavigation from '@/components/EditorPage/Reference/TW/TwNavigation';
 import { getScriptureDirection } from '@/core/projects/languageUtil';
+import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import AdjustmentsVerticalIcon from '@/icons/Common/AdjustmentsVertical.svg';
 import XMarkIcon from '@/icons/Common/XMark.svg';
 import SquaresPlusIcon from '@/icons/Common/SquaresPlus.svg';
@@ -36,6 +37,8 @@ export default function EditorSection({
   CustomNavigation,
   setRemovingSection,
   setAddingSection,
+  font,
+  setFont,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -103,10 +106,10 @@ export default function EditorSection({
     //   setLayout(2);
     // }
     if (
-      openResource1 === true
-      && openResource2 === true
-      && openResource3 === true
-      && openResource4 === true
+      openResource1 === true &&
+      openResource2 === true &&
+      openResource3 === true &&
+      openResource4 === true
     ) {
       if (layout === 1) {
         setLayout(0);
@@ -158,9 +161,9 @@ export default function EditorSection({
     // Looking for flavor from the flavours because flavor is only available for scripture and gloss(obs), not for Translation resources
     const flavours = ['obs', 'bible', 'audio'];
     if (
-      referenceResources.offlineResource.offline === false
-      && title
-      && flavours.includes(referenceResources.selectedResource)
+      referenceResources.offlineResource.offline === false &&
+      title &&
+      flavours.includes(referenceResources.selectedResource)
     ) {
       logger.debug(
         'EditorSection.js',
@@ -184,41 +187,27 @@ export default function EditorSection({
 
   return (
     <>
-      <div
-        aria-label="resources-panel"
+      <div //div 1
+        aria-label='resources-panel'
         className={classNames(
           openResource ? 'hidden' : '',
-          'relative first:mt-0 pb-12 border bg-white border-gray-200 rounded shadow-sm overflow-hidden group',
-        )}
-      >
-        <div className="bg-gray-200 rounded-t text-center text-gray-600 relative overflow-hidden">
-          {openResourcePopUp && (
-            <div className="fixed z-50 ">
-              <ResourcesPopUp
-                column={row}
-                header={title}
-                languageId={languageId}
-                selectedResource={selectedResource}
-                setReferenceResources={setReferenceResources}
-                openResourcePopUp={openResourcePopUp}
-                setOpenResourcePopUp={setOpenResourcePopUp}
-                selectedProjectMeta={selectedProjectMeta}
-              />
-            </div>
-          )}
-
-          <div className="bg-gray-200 rounded-t overflow-hidden">
-            <div className="flex">
-              {selectedResource === 'ta'
-                || selectedResource === 'tw' ? (
-                  <div className="h-12 flex">
-                    {selectedResource === 'ta' ? (
-                      <TaNavigation
-                        languageId={languageId}
-                        referenceResources={
+          'flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group  overflow-hidden',
+        )}>
+        <div
+          className='bg-gray-200 rounded-t text-center text-gray-600 relative'
+          aria-label='resources-panel'>
+          <div className='bg-gray-200 rounded-t '>
+            <div className='flex'>
+              {selectedResource === 'ta' ||
+                selectedResource === 'tw' ? (
+                <div className='h-12 flex'>
+                  {selectedResource === 'ta' ? (
+                    <TaNavigation
+                      languageId={languageId}
+                      referenceResources={
                         referenceResources
                       }
-                      />
+                    />
                   ) : (
                     <TwNavigation
                       languageId={languageId}
@@ -231,23 +220,23 @@ export default function EditorSection({
                     />
                   )}
 
-                    <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
-                      {title}
-                    </div>
+                  <div className='relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate'>
+                    {title}
                   </div>
+                </div>
               ) : (
                 <>
                   {scrollLock ? (
                     <>
                       {CustomNavigation}
-                      <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                      <div className='ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate'>
                         {title}
                       </div>
                     </>
                   ) : (
-                    <div className="flex">
-                      <div className="py-2 uppercase tracking-wider text-xs font-semibold">
-                        <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                    <div className='flex'>
+                      <div className='py-2 uppercase tracking-wider text-xs font-semibold'>
+                        <div className='ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate'>
                           {title}
                         </div>
                       </div>
@@ -255,86 +244,104 @@ export default function EditorSection({
                   )}
                 </>
               )}
-              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr invisible group-hover:visible ">
+              <div className='flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible '>
+                <MenuDropdown
+                  selectedFont={font}
+                  setSelectedFont={setFont}
+                />
                 <button
-                  aria-label="resources-selector"
-                  type="button"
+                  aria-label='resources-selector'
+                  type='button'
                   title={t(
                     'tooltip-editor-resource-selector',
                   )}
                   onClick={showResourcesPanel}
-                  className="px-2"
-                >
-                  <AdjustmentsVerticalIcon className="h-5 w-5 text-dark" />
+                  className='px-2'>
+                  <AdjustmentsVerticalIcon className='h-5 w-5 text-dark' />
                 </button>
                 <button
-                  type="button"
+                  type='button'
                   title={t('tooltip-editor-remove-section')}
                   onClick={removeResource}
-                  className="px-2"
-                >
-                  <XMarkIcon className="h-5 w-5 text-dark" />
+                  className='px-2'>
+                  <XMarkIcon className='h-5 w-5 text-dark' />
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div
-          style={{
-            fontFamily: 'sans-serif',
-            fontSize: `${fontSize}rem`,
-            direction: `${projectScriptureDir?.toUpperCase() === 'RTL'
-                ? 'rtl'
-                : 'ltr'
-              }`,
-          }}
-          className="prose-sm p-4 text-xl h-full overflow-auto scrollbars-width"
-        >
-          {loadResource === false ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-xs uppercase pb-4">
-                  {t('label-editor-load-module')}
-                </div>
-                <button
-                  type="button"
-                  className="p-4 bg-gray-200 rounded-lg ring-offset-1"
-                  onClick={showResourcesPanel}
-                >
-                  <SquaresPlusIcon
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
+        {loadResource === false ? (
+          <div className='w-full h-full  flex  items-center justify-center prose-sm p-4 text-xl'>
+            <div className='text-center'>
+              <div className='text-xs uppercase pb-4'>
+                {t('label-editor-load-module')}
               </div>
+              <button
+                type='button'
+                className='p-4 bg-gray-200 rounded-lg ring-offset-1'
+                onClick={showResourcesPanel}>
+                <SquaresPlusIcon
+                  className='h-5 w-5'
+                  aria-hidden='true'
+                />
+              </button>
             </div>
-          ) : (
-            children
-          )}
-          {hideAddition && (
+          </div>
+        ) : (
+          <div
+            style={{
+              fontFamily: 'sans-serif',
+              fontSize: `${fontSize}rem`,
+              direction: `${projectScriptureDir?.toUpperCase() === 'RTL'
+                  ? 'rtl'
+                  : 'ltr'
+                }`,
+            }}
+            className='prose-sm p-1 text-xl h-full overflow-auto scrollbars-width whitespace-nowrap leading-4'>
+            {children}
+          </div>
+        )}
+
+        {/* //div 12 */}
+        {openResourcePopUp && (
+          <div className='fixed z-50 '>
+            <ResourcesPopUp
+              column={row}
+              header={title}
+              languageId={languageId}
+              selectedResource={selectedResource}
+              setReferenceResources={setReferenceResources}
+              openResourcePopUp={openResourcePopUp}
+              setOpenResourcePopUp={setOpenResourcePopUp}
+              selectedProjectMeta={selectedProjectMeta}
+            />
+          </div>
+        )}
+        {/* //div 13 */}
+        {hideAddition && (
+          <div className=' invisible group-hover:visible'>
             <button
-              type="button"
+              type='button'
               title={t('tooltip-editor-add-section')}
               onClick={addRow}
-              className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
-            >
+              className='absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible'>
               <SquaresPlusIcon
-                className="h-6 w-6 text-white"
-                aria-hidden="true"
+                className='h-6 w-6 text-white'
+                aria-hidden='true'
               />
             </button>
-          )}
-        </div>
+          </div>
+        )}
+        <ConfirmationModal
+          openModal={openModal}
+          title={t('modal-title-remove-resource')}
+          setOpenModal={setOpenModal}
+          confirmMessage='Are you sure you want to remove this resource?'
+          buttonName={t('btn-remove')}
+          closeModal={confirmRemove}
+        />
       </div>
-      <ConfirmationModal
-        openModal={openModal}
-        title={t('modal-title-remove-resource')}
-        setOpenModal={setOpenModal}
-        confirmMessage="Are you sure you want to remove this resource?"
-        buttonName={t('btn-remove')}
-        closeModal={confirmRemove}
-      />
     </>
   );
 }

@@ -111,7 +111,7 @@ export default function Buttons(props) {
         onClick={() => exportUsfm(bookCode)}
         title="Save"
       />
-      <span>| </span>
+      {/* <span>| </span>
       <Copy
         aria-label="Save-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"
@@ -125,7 +125,7 @@ export default function Buttons(props) {
         aria-hidden="true"
         onClick={() => pasteText(true)}
         title="Save"
-      />
+      /> */}
     </>
   );
 }
