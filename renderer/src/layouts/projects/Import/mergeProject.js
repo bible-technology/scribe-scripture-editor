@@ -7,6 +7,7 @@ import {
   commitChanges,
   commitJson,
   createBranch,
+  deleteTheBranch,
   getCurrentBranch,
   initProject,
   listLocalBranches,
@@ -160,8 +161,9 @@ const path = require('path');
 // };
 
 export const mergeProject = async (sourcePath, currentUser) => {
-  console.log('inside merge project');
+  const mergeBranch = 'offlinemerge-scribe';
   const fs = window.require('fs');
+  console.log('inside merge project');
   const fse = window.require('fs-extra');
   // read source metadata
   let sourceMeta = await readIngredients({
@@ -177,103 +179,101 @@ export const mergeProject = async (sourcePath, currentUser) => {
   console.log('2');
   const projectName = sourceMeta.identification.name.en;
   const newpath = localStorage.getItem('userPath');
-  const targetPath = path.join(
-    newpath,
-    packageInfo.name,
-    'users',
-    currentUser,
-    'projects',
-    `${projectName}_${projectId}`,
-  );
+  const targetPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', `${projectName}_${projectId}`);
   const mainBranch = `${packageInfo.name}-main`;
   let currentActiveBranch = mainBranch;
-  const mergeBranch = 'offlinemerge-scribe';
   const author = { email: '', username: currentUser };
-
-  // git check for init or not
-  const checkInit = await checkInitialize(fs, targetPath, mainBranch);
-  if (checkInit) {
-    // supported project
-    // already init for offline merge or online sync : identify which branch need to choose
-    // user branch / scribe main
-    const localBranches = await listLocalBranches(fs, targetPath);
-    if (localBranches.length > 0) {
-      const userSettings = await readUserSettings();
-      if (localBranches.includes(`${userSettings?.sync?.services?.door43[0]?.username}/scribe`)) {
-        currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
-        author.email = userSettings.sync.services.door43[0].token.user.email;
-        author.username = userSettings.sync.services.door43[0].username;
+  try {
+    // git check for init or not
+    const checkInit = await checkInitialize(fs, targetPath, mainBranch);
+    if (checkInit) {
+      // supported project
+      // already init for offline merge or online sync : identify which branch need to choose
+      // user branch / scribe main
+      const localBranches = await listLocalBranches(fs, targetPath);
+      if (localBranches.length > 0) {
+        const userSettings = await readUserSettings();
+        if (localBranches.includes(`${userSettings?.sync?.services?.door43[0]?.username}/scribe`)) {
+          currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
+          author.email = userSettings.sync.services.door43[0].token.user.email;
+          author.username = userSettings.sync.services.door43[0].username;
+        }
+      } else {
+        throw new Error('failed to read local branches');
       }
+      console.log({ localBranches });
+
+      // // create offine merge branch
+      // const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
+      // console.log({ createBranchStatus });
+      // // commit all existing changes in currentActiveBranch
+      // const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
+      // console.log({ commitStatus });
+      // // checkout tot offline branch
+      // const checkoutStatus = commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
+      // console.log({ checkoutStatus });
+      // // replace files
+      // checkoutStatus && fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' }, async (err) => {
+      //   if (!err) {
+      //     console.log('after copy success');
+      //     // commit in offline-merge
+      //     const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
+      //     console.log({ mergeCommitStatus });
+      //     // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
+      //     console.log({ mergeCommitStatus });
+      //     // checkout main branch
+      //     const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
+      //     console.log({ checkoutStatus2 });
+      //     // merge offline - main
+      //     const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
+      //     console.log({ mergeStatus });
+      //     if (mergeStatus.status) {
+      //       const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
+      //       console.log({ checkoutFilesStatus });
+      //     }
+      //     }
+      // });
+
+      // ------------------------------------------ code with delay -------------------------------
+      // create offine merge branch
+      const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
+      console.log({ createBranchStatus });
+      // commit all existing changes in currentActiveBranch
+      const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
+      console.log({ commitStatus });
+      // checkout tot offline branch
+      const checkoutStatus = commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
+      console.log({ checkoutStatus });
+      // replace files
+      checkoutStatus && fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' }, async (err) => {
+        if (!err) {
+          setTimeout(async () => {
+            console.log('after copy success');
+            // commit in offline-merge
+            const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
+            console.log({ mergeCommitStatus });
+            // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
+            console.log({ mergeCommitStatus });
+            // checkout main branch
+            const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
+            console.log({ checkoutStatus2 });
+            // merge offline - main
+            const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
+            console.log({ mergeStatus });
+            if (mergeStatus.status) {
+              const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
+              console.log({ checkoutFilesStatus });
+            }
+          }, '1000');
+        }
+      });
     } else {
-      throw new Error('failed to read local branches');
+      // throw error notify non git porject
     }
-    console.log({ localBranches });
-
-    // // create offine merge branch
-    // const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
-    // console.log({ createBranchStatus });
-    // // commit all existing changes in currentActiveBranch
-    // const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
-    // console.log({ commitStatus });
-    // // checkout tot offline branch
-    // const checkoutStatus = commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
-    // console.log({ checkoutStatus });
-    // // replace files
-    // checkoutStatus && fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' }, async (err) => {
-    //   if (!err) {
-    //     console.log('after copy success');
-    //     // commit in offline-merge
-    //     const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-    //     console.log({ mergeCommitStatus });
-    //     // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-    //     console.log({ mergeCommitStatus });
-    //     // checkout main branch
-    //     const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
-    //     console.log({ checkoutStatus2 });
-    //     // merge offline - main
-    //     const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
-    //     console.log({ mergeStatus });
-    //     if (mergeStatus.status) {
-    //       const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
-    //       console.log({ checkoutFilesStatus });
-    //     }
-    //     }
-    // });
-
-    // ------------------------------------------ code with delay -------------------------------
-    // create offine merge branch
-    const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
-    console.log({ createBranchStatus });
-    // commit all existing changes in currentActiveBranch
-    const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
-    console.log({ commitStatus });
-    // checkout tot offline branch
-    const checkoutStatus = commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
-    console.log({ checkoutStatus });
-    // replace files
-    checkoutStatus && fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' }, async (err) => {
-      if (!err) {
-        setTimeout(async () => {
-          console.log('after copy success');
-          // commit in offline-merge
-          const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-          console.log({ mergeCommitStatus });
-          // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-          console.log({ mergeCommitStatus });
-          // checkout main branch
-          const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
-          console.log({ checkoutStatus2 });
-          // merge offline - main
-          const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
-          console.log({ mergeStatus });
-          if (mergeStatus.status) {
-            const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
-            console.log({ checkoutFilesStatus });
-          }
-        }, '1000');
-      }
-    });
-  } else {
-		// throw error notify non git porject
+  } catch (err) {
+    console.log('Error happended : ', err);
+  } finally {
+    // delete offline merge branch in all cases on finally
+    await deleteTheBranch(fs, targetPath, mergeBranch);
   }
 };
