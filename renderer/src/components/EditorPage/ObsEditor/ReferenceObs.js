@@ -4,7 +4,10 @@ import {
 } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import { checkandDownloadObsImages } from '@/components/Resources/DownloadObsImages/checkandDownloadObsImages';
+import useNetwork from '@/components/hooks/useNetowrk';
 import LoadingScreen from '../../Loading/LoadingScreen';
+import ObsImage from './ObsImage';
 
 const style = {
   bold: {
@@ -29,6 +32,7 @@ const ReferenceObs = ({ stories }) => {
 
 const itemEls = useRef([]);
 const { t } = useTranslation();
+const networkState = useNetwork();
 
   useEffect(() => {
     if (stories === undefined) {
@@ -56,6 +60,19 @@ const { t } = useTranslation();
       }
     }
   }, [selectedStory, stories]);
+
+  useEffect(() => {
+    (async () => {
+      if (networkState.online) {
+        await checkandDownloadObsImages(networkState);
+      }
+      // else {
+      //   console.log('No internet connection');
+      // }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div>
       { isLoading === false ? (
@@ -80,7 +97,8 @@ const { t } = useTranslation();
                     {/* {index} */}
                     {index.toString().split('').map((num) => t(`n-${num}`))}
                   </span>
-                  <img className="w-1/4 rounded-lg" src={story.img} alt="" />
+                  {/* <img className="w-1/4 rounded-lg" src={story.img} alt="" /> */}
+                  <ObsImage story={story} online={networkState.online} />
                   <p
                     className="text-sm text-gray-600 text-justify"
                     style={{
