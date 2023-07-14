@@ -154,7 +154,7 @@ export default function ProjectList() {
                     <div className="-my-2 sm:-mx-6 lg:-mx-8">
                       <div className="align-middle inline-block min-w-full sm:px-6 lg:px-8">
                         <div className="shadow border-b border-gray-200 sm:rounded-lg">
-                          <table data-testid="tablelayout" className="min-w-full divide-y divide-gray-200 mb-9">
+                          <table id="tablelayout" className="min-w-full divide-y divide-gray-200 mb-9">
                             <EnhancedTableHead
                               order={order}
                               orderBy={orderBy}
