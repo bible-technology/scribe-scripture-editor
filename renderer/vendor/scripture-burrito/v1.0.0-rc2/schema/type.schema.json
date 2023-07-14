@@ -67,7 +67,7 @@
                         "$ref": "scope.schema.json"
                     }
                 },
-                "required": ["name", "flavor", "currentScope"],
+                "required": ["flavor", "currentScope"],
                 "additionalProperties": false
             }
         },

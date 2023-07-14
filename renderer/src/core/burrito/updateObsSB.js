@@ -7,7 +7,7 @@ const path = require('path');
 const md5 = require('md5');
 
 export const updateVersion = (metadata) => {
-  // Upadting the burrito version from 0.3.0 to 1.0.0-rc2
+  // Upadting the burrito version from 0.3.0 to 1.0.0
   logger.debug('updateObsSB.js', 'In updateVersion for updating the burrito version.');
   const sb = metadata;
   sb.format = 'scripture burrito';
