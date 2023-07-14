@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { checkandDownloadObsImages } from '@/components/Resources/DownloadObsImages/checkandDownloadObsImages';
-import useNetwork from '@/components/hooks/useNetowrk';
+// import useNetwork from '@/components/hooks/useNetowrk';
 import LoadingScreen from '../../Loading/LoadingScreen';
 import ObsImage from './ObsImage';
 
@@ -19,6 +19,7 @@ const style = {
 };
 const ReferenceObs = ({ stories }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [networkState, setNetworkState] = useState({ online: true });
   const {
  state: {
     selectedStory,
@@ -32,7 +33,7 @@ const ReferenceObs = ({ stories }) => {
 
 const itemEls = useRef([]);
 const { t } = useTranslation();
-const networkState = useNetwork();
+// const networkState = useNetwork();
 
   useEffect(() => {
     if (stories === undefined) {
@@ -54,6 +55,7 @@ const networkState = useNetwork();
 
   useEffect(() => {
     if (stories && selectedStory !== undefined) {
+      setNetworkState({ online: window?.navigator?.onLine });
       const currentRef = itemEls.current.filter((obj) => obj.id === selectedStory)[0]?.el;
       if (currentRef) {
         currentRef.scrollIntoView({ block: 'center', inline: 'nearest' });
@@ -63,8 +65,8 @@ const networkState = useNetwork();
 
   useEffect(() => {
     (async () => {
-      if (networkState.online) {
-        await checkandDownloadObsImages(networkState);
+      if (window?.navigator?.onLine) {
+        await checkandDownloadObsImages(window?.navigator?.onLine);
       }
       // else {
       //   console.log('No internet connection');
