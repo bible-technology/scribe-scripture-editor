@@ -8,7 +8,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNofications from '@/components/Notification/CustomNofications';
 import localforage from 'localforage';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
-import useNetwork from '@/components/hooks/useNetowrk';
+// import useNetwork from '@/components/hooks/useNetowrk';
 import Font from '@/icons/font.svg';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
 import AboutModal from './AboutModal';
@@ -16,7 +16,7 @@ import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import menuStyles from './MenuBar.module.css';
 import styles from './SubMenuBar.module.css';
 import packageInfo from '../../../../package.json';
-import WifiIcon from '@/icons/wifi.svg';
+// import WifiIcon from '@/icons/wifi.svg';
 
 const activate = () => {
   // console.log('rename');
@@ -57,7 +57,7 @@ export default function SubMenuBar() {
     setOpenSideBar(true);
   };
   const { t } = useTranslation();
-  const networkState = useNetwork();
+  // const networkState = useNetwork();
   const FileMenuItems = [
     {
       itemname: t('label-bookmarks'),
@@ -245,9 +245,9 @@ export default function SubMenuBar() {
             </div>
 
             {/* Network Status */}
-            <div className={`group ${menuStyles.saved}`} title={`Network status : ${networkState.online ? 'Online' : 'Offline' }`}>
+            {/* <div className={`group ${menuStyles.saved}`} title={`Network status : ${networkState.online ? 'Online' : 'Offline' }`}>
               <WifiIcon className={`w-6 h-6 ${networkState.online ? 'fill-green-500' : 'fill-red-500'}`} />
-            </div>
+            </div> */}
 
             {/* Editor sync 2 new one */}
             <EditorSync selectedProject={selectedProject} />
