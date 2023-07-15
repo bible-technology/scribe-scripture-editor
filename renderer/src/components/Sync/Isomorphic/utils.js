@@ -367,7 +367,6 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
         );
-        throw e;
       } else {
         throw e;
       }

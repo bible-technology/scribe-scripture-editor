@@ -1,15 +1,10 @@
 import { readIngredients } from '@/core/reference/readIngredients';
-import localforage from 'localforage';
 import {
   checkInitialize,
   checkoutJsonFiles,
   checkoutToBranch,
   commitChanges,
-  commitJson,
   createBranch,
-  deleteTheBranch,
-  getCurrentBranch,
-  initProject,
   listLocalBranches,
   mergeBranches,
 } from '@/components/Sync/Isomorphic/utils';
@@ -160,7 +155,7 @@ const path = require('path');
 //   // No Conflcit :
 // };
 
-export const mergeProject = async (sourcePath, currentUser) => {
+export const mergeProject = async (sourcePath, currentUser, setConflictPopup) => {
   const mergeBranch = 'offlinemerge-scribe';
   const fs = window.require('fs');
   console.log('inside merge project');
@@ -263,6 +258,22 @@ export const mergeProject = async (sourcePath, currentUser) => {
             if (mergeStatus.status) {
               const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
               console.log({ checkoutFilesStatus });
+            } else if (mergeStatus.status === false && mergeStatus?.data) {
+              // conflcit section
+              console.log('in conflict section -------------------------- ');
+              setConflictPopup({
+                open: true,
+                data: {
+                  files: mergeStatus.data,
+                  targetPath,
+                  sourcePath,
+                  sourceMeta,
+                  author,
+                  currentActiveBranch,
+                  currentUser,
+                  projectName: `${projectName}_${projectId}`,
+                },
+              });
             }
           }, '1000');
         }
@@ -274,6 +285,6 @@ export const mergeProject = async (sourcePath, currentUser) => {
     console.log('Error happended : ', err);
   } finally {
     // delete offline merge branch in all cases on finally
-    await deleteTheBranch(fs, targetPath, mergeBranch);
+    // await deleteTheBranch(fs, targetPath, mergeBranch);
   }
 };

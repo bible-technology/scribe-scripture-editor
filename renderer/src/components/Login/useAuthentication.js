@@ -14,15 +14,10 @@ function useAuthentication() {
   const [currentUser, setCurrentUser] = React.useState();
   const [config, setConfig] = React.useState();
   const router = useRouter();
-  const getToken = () => {
-    logger.debug('useAuthentication.js', 'In getToken to check any token stored in localStorage');
-    localForage.getItem('sessionToken').then((value) => {
-      setaccessToken(value);
-    });
-  };
-  const handleUser = () => {
+  
+  const handleUser = (token) => {
     logger.debug('useAuthentication.js', 'In handleUser to retrieve the user from the Token');
-    const tokenDecodablePart = accessToken.split('.')[1];
+    const tokenDecodablePart = token.split('.')[1];
     const decoded = Buffer.from(tokenDecodablePart, 'base64').toString();
     const data=JSON.parse(decoded)
     localForage.getItem('users').then((user) => {
@@ -30,8 +25,15 @@ function useAuthentication() {
         (u) => u.username === data.sessionData.user,
       );
       setCurrentUser(obj);
+      setaccessToken(token);
       localForage.setItem('userProfile',obj);
       localForage.setItem('appMode','offline');
+    });
+  };
+  const getToken = () => {
+    logger.debug('useAuthentication.js', 'In getToken to check any token stored in localStorage');
+    localForage.getItem('sessionToken').then((value) => {
+      value && handleUser(value);
     });
   };
   const generateToken = (user) => {
@@ -50,17 +52,17 @@ function useAuthentication() {
     const token = `${base64Header}.${base64Data}.${signature}`;
     if (token) {
       localForage.setItem('sessionToken', token);
-      setaccessToken(token);
+      handleUser(token);
     }
   };
-  const logout = () => {
+  const logout = async () => {
     logger.debug('useAuthentication.js', 'Logging out');
     setaccessToken();
     setCurrentUser();
-    localForage.removeItem('sessionToken');
-    localForage.removeItem('userProfile');
-    localForage.setItem('appMode','online');
-    getToken();
+    await localForage.removeItem('sessionToken');
+    await localForage.removeItem('userProfile');
+    await localForage.setItem('appMode','online');
+    router.push('/logout');
   };
   const getConfig = (flowId) => {
     logger.debug('useAuthentication.js', 'getConfig fetch the config from the Kratos using flowID');
@@ -78,12 +80,6 @@ function useAuthentication() {
   //     });
   //   }
   // }, []);
-  
-  React.useEffect(() => {
-    if(accessToken){
-      handleUser(); 
-    }
-  });
   const response = {
     state: { accessToken,currentUser, config },
     actions: {

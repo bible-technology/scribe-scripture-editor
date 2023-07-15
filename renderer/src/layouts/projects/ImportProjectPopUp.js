@@ -23,6 +23,7 @@ export default function ImportProjectPopUp(props) {
   const {
     open,
     closePopUp,
+    setConflictPopup,
   } = props;
   const router = useRouter();
   const { t } = useTranslation();
@@ -116,8 +117,9 @@ export default function ImportProjectPopUp(props) {
 
   const MergeFunction = async () => {
     console.log("third button, merge call")
-    await mergeProject(folderPath, currentUser);
+    await mergeProject(folderPath, currentUser, setConflictPopup);
     modelClose();
+    close()
   }
 
   const importProject = async () => {
@@ -267,7 +269,7 @@ export default function ImportProjectPopUp(props) {
                               ? <span className="ml-2">{t('dynamic-msg-burrito-validate-import-project')}</span>
                             : <span className="ml-2 text-red-500">{(sbData?.version) ? t('dynamic-msg-burrito-validation-expected', { version: sbData.version }) : t('dynamic-msg-burrito-validation-failed')}</span>}
                           </label>
-)}
+                        )}
                         </div>
                       )}
 
@@ -299,6 +301,7 @@ export default function ImportProjectPopUp(props) {
           </div>
         </Dialog>
       </Transition>
+
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}
