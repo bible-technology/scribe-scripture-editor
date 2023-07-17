@@ -13,6 +13,7 @@ type scribeTest = {
     flavorObs:string
     textUnderscore:string,
     obsUnderscore:string,
+    obsUrduProject:string
 
 }
 const myFixtureTest = myTest.extend<scribeTest>({
@@ -26,7 +27,8 @@ const myFixtureTest = myTest.extend<scribeTest>({
     doorUser:"bobby",
     doorPassword:"Bobby@123",
     flavorText: "textTranslation",
-    flavorObs: "textStories"
+    flavorObs: "textStories",
+    obsUrduProject: "Obs urdu project"
 
 })
 

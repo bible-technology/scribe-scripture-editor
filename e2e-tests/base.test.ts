@@ -4,6 +4,7 @@ import { removeUser } from '../renderer/src/core/Login/removeUser';
 import { test, expect } from './myFixtures';
 
 
+
 const fs = require('fs');
 const { _electron: electron,chromium } = require('playwright');
 
@@ -60,6 +61,8 @@ test('Click New and Fill translation project page details to create a new projec
   await window.click('[aria-label=new-testament]');
   await window.click('[aria-label=close-custombiblenavigation]');
   await window.click('[aria-label=create]');
+  await window.waitForTimeout(5000) 
+
 });
 
 // // test('Click user and Navigate all the projects', async () => {
@@ -111,6 +114,7 @@ test('Untar text project', async ({textProject}) => {
 });
 
 test('Search a text project in all projects list', async ({textProject}) => {
+  test.slow()
   await window.fill('#search_box', 'translation');
   const projectname = await window.innerText(
   '[aria-label=unstar-project-name]',
@@ -120,6 +124,7 @@ test('Search a text project in all projects list', async ({textProject}) => {
 
 test('Click on a project to open the editor page for text Translation', async ({textProject}) => {
   await window.click(`id=${textProject}`);
+  test.setTimeout(60*1000)
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 });
@@ -203,60 +208,30 @@ test('Update/Edit the text translation project description along with abbreviate
 
 
 // // ///Obs translation project
-test('Click New and Fill in the OBS project page details to create a new project.', async ({obsProject}) => {
+test('Click New and Fill in the OBS project page details to create urdu project.', async ({obsProject}) => {
   await window.getByRole('link', {name: 'new'}).click()
   await window.click('[aria-label=open-popover]')
   await window.getByRole('link', {name: 'OBS'}).click()
   await window.fill('#project_name', obsProject);
   await window.fill('#project_description', 'test version');
-  await window.fill('#version_abbreviated', 'otp');
+  await window.getByPlaceholder('Select Language').fill('Persian')
   await window.click('[aria-label=create]');
 })
 
-// test('Create an OBS project with Urdu language and license.', async () => {
-//   await window.getByRole('link', {name: 'new'}).click()
-//   await window.click('[aria-label=open-popover]')
-//   await window.getByRole('link', {name: 'OBS'}).click()
-//   await window.fill('#project_name', 'urdu project');
-//   await window.fill('#project_description', 'test version');
-//   await window.fill('#version_abbreviated', 'up');
-//   //adding a urdu language
-//   await window.getByRole('button', {name: 'add-language'}).click()
-//   await window.locator('input[name="language"]').fill('urdu new')
-//   await window.locator('input[name="code"]').fill('un')
-//   await window.locator('input[type="radio"]').nth(1).click()
-//   await window.getByRole('button', {name: 'edit-language'}).click()
-//   //select a new license
-//   await window.getByRole('button', {name: 'CC BY-SA'}).click()
-//   await window.getByRole('option', {name: 'CC BY'}).click()
-//   await window.click('[aria-label=create]');
-// })
-
-// test('Update the Urdu project', async () => {
-//   const table =  window.locator('table#tablelayout')
-//   const headers = table.locator('thead')
-//   console.log(await headers.allTextContents());
-//   const rows = table.locator('tbody tr')
-//   // const cols = rows.first().locator('td')
-//   for (let i = 0; i < await rows.count(); i++) {
-//     const row = rows.nth(i);
-//     const tds = row.locator('td');
-//     for (let j = 0; j < await tds.count(); j++) {
-//       if (await tds.nth(j).textContent() === "urdu project") {
-//         console.log(await tds.nth(1).textContent())
-//         await tds.last().locator('[aria-label=unstar-expand-project]').click()
-//         await window.locator('[aria-label=unstar-menu-project]').click()
-//         await window.getByRole('menuitem', {name: "edit-project"}).click()
-//         await window.getByText('test version').fill('edit test version')
-//         await window.locator('input[name="version_abbreviated"]').fill('ep')
-//         await window.getByRole('button', {name:"save-edit-project"}).click();
-//         const title = await window.textContent('[aria-label=projects]');
-//         expect(title).toBe('Projects');
-//       }
-//     }
-//   }
-
-// })
+test('Create an OBS project with custom language.', async ({obsUrduProject}) => {
+  await window.getByRole('link', {name: 'new'}).click()
+  await window.click('[aria-label=open-popover]')
+  await window.getByRole('link', {name: 'OBS'}).click()
+  await window.fill('#project_name', obsUrduProject);
+  await window.fill('#project_description', 'test version');
+  //adding a urdu language
+  await window.getByRole('button', {name: 'add-language'}).click()
+  await window.locator('input[name="language"]').fill('custom language')
+  await window.locator('input[name="code"]').fill('cls')
+  await window.locator('input[type="radio"]').nth(1).click()
+  await window.getByRole('button', {name: 'edit-language'}).click()
+  await window.click('[aria-label=create]');
+})
 
 test('Star the obs project', async ({obsProject}) => {
   const table =  window.locator('table#tablelayout')
@@ -594,16 +569,6 @@ test('Increase/Decrease the volume of the audio verse 1', async () => {
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 })
-
-
-// // test('Delete the audio verse 1', async () => {
-// //     await window.getByRole('button', {name: "1"}).first().click()  
-// //  await window.locator('.flex div:nth-child(4) > div:nth(2) > .p-2').first().click()
-// //  await window.getByRole('button', {name:"Delete"})
-// //  const editorpane = await window.innerText('[aria-label=editor-pane]');
-// //  expect(editorpane).toBe('EDITOR');
-// // })
-
 
 
 test('Return and see created projects in projects page', async () => {
@@ -1053,9 +1018,29 @@ test("Deleting all the created repository from git.door43.org", async ({textProj
   await window.getByRole('button', { name: 'Delete Repository' }).click()
 })
 
-// test('Removing user from backend', async () => {
-//     // const newpath = await localStorage.getItem('userPath');
-//  await removeUser('playwright user')
-
+// test('Delete user from the json and and created project', async ({userName}) => {
+//   // const path = require('path')
+//   const local = await window.evaluate(() => JSON.stringify(window.localStorage));
+//   const newpath = JSON.parse(local)
+//   // const getKey = Object.keys(path)
+//   // const newPath = getKey[1]
+//   const path = require('path');
+//   const fs = require('fs')
+//   const folder = path.join(local, packageInfo.name, 'users', `${userName}`);
+//   const file = path.join(local, packageInfo.name, 'users', 'users.json');
+//   if (fs.existsSync(folder)) {
+//     await fs.rmdir(folder, (err) => {
+//       if (err) { throw err; }
+//       logger.error('users.json', 'Directory removed');
+//     });
+//   logger.error('users.json', 'removing data from json');
+//   const data = await fs.readFileSync(file);
+//   const json = JSON.parse(data);
+//   const filtered = json.filter((item) => item.username.toLowerCase() !== userName.toLowerCase())
+//   await fs.writeFileSync(file, JSON.stringify(json));
+//   return filtered;
+//   }
+//   // console.log(getKey[1], 'local')
 // })
+
 });
