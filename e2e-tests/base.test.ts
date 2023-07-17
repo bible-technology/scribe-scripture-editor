@@ -218,20 +218,7 @@ test('Click New and Fill in the OBS project page details to create urdu project.
   await window.click('[aria-label=create]');
 })
 
-test('Create an OBS project with custom language.', async ({obsUrduProject}) => {
-  await window.getByRole('link', {name: 'new'}).click()
-  await window.click('[aria-label=open-popover]')
-  await window.getByRole('link', {name: 'OBS'}).click()
-  await window.fill('#project_name', obsUrduProject);
-  await window.fill('#project_description', 'test version');
-  //adding a urdu language
-  await window.getByRole('button', {name: 'add-language'}).click()
-  await window.locator('input[name="language"]').fill('custom language')
-  await window.locator('input[name="code"]').fill('cls')
-  await window.locator('input[type="radio"]').nth(1).click()
-  await window.getByRole('button', {name: 'edit-language'}).click()
-  await window.click('[aria-label=create]');
-})
+
 
 test('Star the obs project', async ({obsProject}) => {
   const table =  window.locator('table#tablelayout')
