@@ -78,7 +78,6 @@ export async function commitChanges(fs, dir, author, message, force = false) {
       fs, dir, filepath: '.',
     });
     // check and find the ingredients / content folder
-    console.log('git added');
     if (force) {
       await git.add({
         fs, dir, filepath: 'metadata.json', force,
@@ -87,17 +86,14 @@ export async function commitChanges(fs, dir, author, message, force = false) {
         fs, dir, filepath: 'ingredients/scribe-settings.json', force,
       });
     }
-    console.log('git after force');
     await git.remove({ fs, dir, filepath: '.gitignore' });
     await git.remove({ fs, dir, filepath: '/.git' });
-    console.log('after remove');
     const sha = await git.commit({
       fs,
       dir,
       author,
       message,
     });
-    console.log({ sha });
     logger.debug('utils.js', `Changes committed with SHA: ${sha}`);
     return true;
   } catch (error) {
@@ -350,7 +346,7 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
   logger.debug('utils.js', 'in mergeBranch - delete a new branch ');
   const returnData = { status: true, data: undefined };
   try {
-    const MergeResult = await git.merge({
+    await git.merge({
       fs,
       dir,
       ours: branch,
@@ -360,7 +356,6 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
       if (e instanceof Errors.MergeConflictError) {
         returnData.data = e.data;
         returnData.status = false;
-        console.log({ e });
         logger.error(
           'utils.js',
           'Automatic merge failed for the following files: '
@@ -371,7 +366,6 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
         throw e;
       }
     });
-    console.log({ MergeResult });
     return returnData;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);

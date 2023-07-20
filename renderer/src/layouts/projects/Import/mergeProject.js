@@ -158,7 +158,6 @@ const path = require('path');
 export const mergeProject = async (sourcePath, currentUser, setConflictPopup) => {
   const mergeBranch = 'offlinemerge-scribe';
   const fs = window.require('fs');
-  console.log('inside merge project');
   const fse = window.require('fs-extra');
   // read source metadata
   let sourceMeta = await readIngredients({
@@ -166,12 +165,9 @@ export const mergeProject = async (sourcePath, currentUser, setConflictPopup) =>
   });
   sourceMeta = JSON.parse(sourceMeta);
 
-  console.log('1', { sourceMeta });
-
   const projectId = Object.keys(
     sourceMeta.identification.primary[packageInfo.name],
   )[0];
-  console.log('2');
   const projectName = sourceMeta.identification.name.en;
   const newpath = localStorage.getItem('userPath');
   const targetPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', `${projectName}_${projectId}`);
@@ -196,7 +192,6 @@ export const mergeProject = async (sourcePath, currentUser, setConflictPopup) =>
       } else {
         throw new Error('failed to read local branches');
       }
-      console.log({ localBranches });
 
       // // create offine merge branch
       // const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);

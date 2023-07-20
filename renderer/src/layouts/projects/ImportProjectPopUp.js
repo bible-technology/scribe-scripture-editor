@@ -69,6 +69,7 @@ export default function ImportProjectPopUp(props) {
         setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         const result = await viewBurrito(chosenFolder.filePaths[0], value.username, 'projects');
+        console.log({result});
         setSbData(result);
       });
     } else {
@@ -128,7 +129,11 @@ export default function ImportProjectPopUp(props) {
       setValid(false);
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
-        setMerge(true)
+        // currently MERGE feature only Enabled for OBS projects
+        console.log({sbData});
+        if (sbData?.burritoType === 'gloss / textStories'){
+          setMerge(true)
+        }
         setModel({
           openModel: true,
           title: t('modal-title-replace-resource'),
@@ -320,7 +325,6 @@ export default function ImportProjectPopUp(props) {
           active: merge,
           name:'Merge',
           action: () => MergeFunction(),
-          color: 'green'
         }}
       />
     </>

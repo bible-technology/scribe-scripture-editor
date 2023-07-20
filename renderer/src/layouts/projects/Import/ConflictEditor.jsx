@@ -1,4 +1,4 @@
-  import React from 'react';
+  import React, { useEffect, useState } from 'react';
 
   const ConflictComponent = ({
  text, index, setSelectedFileContent, selectedFileContent,
@@ -106,7 +106,14 @@
     selectedFileContent[index].conflict && selectedFileContent[index].conflictResolved
     ? (
       <div>
-        <textarea className="w-full" onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}>{text}</textarea>
+        <textarea
+          className="w-full"
+          rows={3}
+          onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
+        >
+          {text}
+
+        </textarea>
       </div>
     )
     : (
@@ -115,11 +122,126 @@
   );
   };
 
-  function ConflictEditor({ selectedFileContent, setSelectedFileContent }) {
-  console.log({ selectedFileContent });
+  // all logic are based on OBS Parsed Array
+  function ConflictEditor({
+ selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave,
+}) {
+  const [resolveAllActive, setResolveALlActive] = useState();
+  const [resetAlll, setResetAll] = useState();
+
+  useEffect(() => {
+    setResolveALlActive(true);
+    setResetAll(false);
+  }, [selectedFileName]);
+
+  useEffect(() => {
+    let save = false;
+    for (let index = 0; index < selectedFileContent.length; index++) {
+      if (selectedFileContent[index]?.conflict) {
+        if (selectedFileContent[index].conflictResolved) {
+          save = true;
+        } else {
+          save = false;
+        }
+      }
+    }
+    setEnableSave(save);
+    if (save) {
+      setResolveALlActive(false);
+      setResetAll(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFileContent]);
+
+  const resolveAllTogether = (data, type) => {
+    if (resolveAllActive) {
+      const conflictedData = [...data];
+      // loop check for conflcit lines
+      for (let i = 0; i < conflictedData.length; i++) {
+        const currentText = conflictedData[i]?.title || conflictedData[i]?.text || conflictedData[i]?.end;
+        if (currentText) {
+          // eslint-disable-next-line prefer-regex-literals
+          const conflictRegex = new RegExp(
+            /^<{7}([^=]*)\n([\s\S]*)\n={7}\n([\s\S]*)\n>{7}[^=]*$/,
+            );
+            const matchArr = currentText.match(conflictRegex);
+            if (matchArr?.length > 3) {
+              let resolvedText;
+              if (type === 'current') {
+                resolvedText = matchArr[2];
+              } else if (type === 'incoming') {
+                resolvedText = matchArr[3];
+              } else if (type === 'both') {
+                resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
+              }
+              if (resolvedText) {
+                conflictedData[i].conflictResolved = true;
+                if ('text' in conflictedData[i]) {
+                  conflictedData[i].text = resolvedText;
+                } else if ('title' in conflictedData[i]) {
+                  conflictedData[i].title = resolvedText;
+                } else if ('end' in conflictedData[i]) {
+                  conflictedData[i].end = resolvedText;
+                }
+              }
+            }
+        }
+      }
+      // update state
+      setResolveALlActive(false);
+      setResetAll(true);
+      // update line with current | incoming | both based on selection
+      setSelectedFileContent(conflictedData);
+    }
+  };
+
+  const resetAllResolved = () => {
+    setResetAll(false);
+    setResolveALlActive(true);
+    // update state with copy of conflcited data
+    setSelectedFileContent(JSON.parse(FileContentOrginal));
+  };
 
   return (
     <div className="pl-2 pt-5 pr-5">
+      {/* headign with reset and all select section */}
+      <div className="w-full justify-between flex items-center px-10">
+        <div />
+        <div className="flex gap-5">
+          <button
+            type="button"
+            onClick={() => resolveAllTogether(selectedFileContent, 'current')}
+            disabled={resolveAllActive === false}
+            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+          >
+            All Current
+          </button>
+          <button
+            type="button"
+            onClick={() => resolveAllTogether(selectedFileContent, 'incoming')}
+            disabled={resolveAllActive === false}
+            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+          >
+            All Incoming
+          </button>
+          <button
+            type="button"
+            onClick={() => resolveAllTogether(selectedFileContent, 'both')}
+            disabled={resolveAllActive === false}
+            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+          >
+            All Both
+          </button>
+          <button
+            type="button"
+            disabled={resetAlll === false}
+            onClick={() => resetAllResolved()}
+            className={` ${resetAlll ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
       <div className=" min-h-[72vh] p-5 flex flex-col gap-5">
         {selectedFileContent?.map((content, index) => (
           // eslint-disable-next-line react/no-array-index-key
