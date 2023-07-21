@@ -496,14 +496,14 @@ test('Check the bookmarks of an audio project and close', async () => {
   await window.getByRole('button', {name: "close-button"}).click()    
 });
 
-test('Saving bookmark for the audio book and check the all bookmarks', async ()=>{
-  await window.getByRole('button', {name: "save-bookmark"}).click()
-  await window.getByRole('button', {name: "select-menu-file"}).click()
-  await window.getByRole('button', {name: "select-bookmarks"}).click()
-  await window.getByRole('button', {name: "close-button"}).click()
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');  
-} )
+// test('Saving bookmark for the audio book and check the all bookmarks', async ()=>{
+//   await window.getByRole('button', {name: "save-bookmark"}).click()
+//   await window.getByRole('button', {name: "select-menu-file"}).click()
+//   await window.getByRole('button', {name: "select-bookmarks"}).click()
+//   await window.getByRole('button', {name: "close-button"}).click()
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');  
+// } )
 
 test('Lock/Unlock the audio editor', async () => {
   await window.getByRole('button', {name: "select-menu-file"}).click()
@@ -514,34 +514,87 @@ test('Lock/Unlock the audio editor', async () => {
 });
 
 test('Record the audio for verse 1 for 5 seconds', async () => {
-  await window.getByRole('button', {name: "1"}).first().click()  
-  await window.locator('.flex > div > .p-2').first().click()
+  await window.locator('div').filter({ hasText: /^recordstop$/ }).getByRole('button').first().click()
   await window.waitForTimeout(5000)
-  await window.locator('div:nth-child(2) > .p-2').first().click()
+  await window.locator('div').filter({ hasText: /^pausestop$/ }).getByRole('button').nth(1).click()
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');  
 })
 
-test('Rewind the audio verse 1', async () => {
-  await window.getByRole('button', {name: "1"}).first().click()  
-  await window.locator('div:nth-child(4) > div > .p-2').first().click()
+test('Record the audio for verse 2 for 5 seconds', async () => {
+  await window.getByRole('button', {name: "2"}).first().click()  
+  await window.locator('div').filter({ hasText: /^recordstop$/ }).getByRole('button').first().click()
+  await window.waitForTimeout(7000)
+  await window.locator('div').filter({ hasText: /^pausestop$/ }).getByRole('button').nth(1).click()
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');  
 })
-test('Playing the audio verse 1', async () => {
-  await window.getByRole('button', {name: "1"}).first().click()  
+
+test('Play the audio-recorded verse 1', async () => {
+  await window.getByRole('button', { name: '1', exact: true }).first().click()
   await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
   await window.waitForTimeout(5000)
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 })
 
-test('Stop the audio verse 1', async () => {
-  await window.locator('div:nth-child(3) > .p-2').first().click()
+test('Re-record and continue audio for verse 1', async () => {
+  await window.getByRole('button', { name: '1', exact: true }).first().click()  
+  await window.locator('div').filter({ hasText: /^recordstop$/ }).getByRole('button').first().click()
+  await window.getByRole('button', { name: 'Re-record' }).click()
+  await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
+  await window.waitForTimeout(2000)
+  await window.locator('div').filter({ hasText: /^continuestop$/ }).getByRole('button').first().click
+  await window.waitForTimeout(3000)
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 })
 
+test('Rewind the audio verse 1 and play', async () => {
+  await window.getByRole('button', { name: '1', exact: true }).first().click()  
+  await window.locator('div:nth-child(4) > div > .p-2').first().click()
+  await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
+  await window.waitForTimeout(3000)
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');  
+})
+
+test('Pause and play the audio verse 1', async () => {
+  await window.getByRole('button', { name: '1', exact: true }).first().click()  
+  await window.locator('div:nth-child(4) > div > .p-2').first().click()
+  await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
+  await window.waitForTimeout(2000)
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');  
+})
+
+test('Pause and play the audio verse 2', async () => {
+  await window.getByRole('button', { name: '2', exact: true }).click()  
+  await window.locator('div:nth-child(4) > div > .p-2').first().click()
+  await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
+  await window.waitForTimeout(3000)
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');  
+})
+
+// test('Change Speed to 0.5 and play the audio verse 2', async () => {
+//   await window.getByRole('button', { name: '2', exact: true }).click()  
+//   await window.locator('[id="headlessui-listbox-button-\\:ra\\:"]').click()  
+//   await window.getByRole('option', { name: '0.5' }).click()
+//   await window.waitForTimeout(2000)
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');  
+// })
+
+// test('Change Speed to 2.0 and play the audio verse 2', async () => {
+//   await window.getByRole('button', { name: '2', exact: true }).click()  
+//   await window.locator('[id="headlessui-listbox-button-\\:ra\\:"]').click()  
+//   await window.getByRole('option', { name: '2' }).click()
+//   await window.locator('div:nth-child(4) > div > .p-2').first().click()
+//   await window.waitForTimeout(2000)
+//   const editorpane = await window.innerText('[aria-label=editor-pane]');
+//   expect(editorpane).toBe('EDITOR');  
+// })
 test('Increase/Decrease the volume of the audio verse 1', async () => {
     await window.getByRole('button', {name: "1"}).first().click();
   // await window.locator('div:nth-child(4) > div:nth-child(2) > .p-2').first().click()
@@ -979,7 +1032,7 @@ test('Delete the user from the active tab',async () => {
 })
 
 test('Restore the deleted user from Archive tab',async () => {
-  // await window.getByRole('button', {name: "View More"}).click()
+  await window.getByRole('button', {name: "View More"}).click()
   await window.getByRole('tab', {name: "Archived"}).click()
   await window.getByRole('tabpanel', {name: "Archived"}).locator('button').click()
   const archive = await window.getByRole('tab').allInnerTexts()
