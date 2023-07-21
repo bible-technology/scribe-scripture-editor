@@ -124,15 +124,22 @@
 
   // all logic are based on OBS Parsed Array
   function ConflictEditor({
- selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave,
+ selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
 
+  console.log({ resolvedFileNames, resetAlll }, resolvedFileNames?.includes(selectedFileName));
+
   useEffect(() => {
-    setResolveALlActive(true);
-    setResetAll(false);
-  }, [selectedFileName]);
+    if (resolvedFileNames?.includes(selectedFileName)) {
+      setResolveALlActive(false);
+      setResetAll(false);
+    } else {
+      setResolveALlActive(true);
+      setResetAll(false);
+    }
+  }, [selectedFileName, resolvedFileNames]);
 
   useEffect(() => {
     let save = false;
@@ -205,6 +212,7 @@
   return (
     <div className="pl-2 pt-5 pr-5">
       {/* headign with reset and all select section */}
+      {/* !resolvedFileNames?.includes(selectedFileName) */}
       <div className="w-full justify-between flex items-center px-10">
         <div />
         <div className="flex gap-5">
@@ -236,7 +244,7 @@
             type="button"
             disabled={resetAlll === false}
             onClick={() => resetAllResolved()}
-            className={` ${resetAlll ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+            className={` ${(resetAlll) ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
           >
             Reset
           </button>

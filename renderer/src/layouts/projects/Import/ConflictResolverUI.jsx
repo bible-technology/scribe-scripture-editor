@@ -30,6 +30,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
       conflictData.data.targetPath,
       selectedFileName,
     );
+    console.log('in save----');
     setResolvedFileNames((prev) => [...prev, selectedFileName]);
   };
 
@@ -96,6 +97,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                   selectedFileName={selectedFileName}
                   FileContentOrginal={FileContentOrginal}
                   setEnableSave={setEnableSave}
+                  resolvedFileNames={resolvedFileNames}
                 />
               </div>
               <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
