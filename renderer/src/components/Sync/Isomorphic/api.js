@@ -42,3 +42,12 @@ export const createRemoteBranch = async (auth, repo, userBranch, newBranch) => {
   const result = await fetchResult.json();
   return result;
 };
+
+export const getRepoByOwner = async (owner, repoName) => {
+  const endpoint = `${environment.GITEA_API_ENDPOINT}/repos/${owner}/${repoName}`;
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  const fetchResult = await fetch(endpoint);
+  const result = await fetchResult.json();
+  return result;
+};

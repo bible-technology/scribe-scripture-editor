@@ -4,7 +4,7 @@ import packageInfo from '../../../../../package.json';
 import {
  addGitRemote, checkInitialize, checkoutJsonFiles, checkoutToBranch, commitChanges, createBranch, getRepoOwner, initProject, pullProject, pushTheChanges, pushToMain,
 } from '../Isomorphic/utils';
-import { createRepo } from '../Isomorphic/api';
+import { createRepo, getRepoByOwner } from '../Isomorphic/api';
 import { getOrPutLastSyncInAgSettings } from './SyncToGiteaUtils';
 // upload project to gitea main function
 
@@ -27,12 +27,20 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       // await supportForExistingSyncUsers();
       // Check whether the project is git initiallized or not
       const checkInit = await checkInitialize(fs, projectsMetaPath);
-      if (!checkInit) {
+
+      // check for repo exist or not
+      const checkForRepo = await getRepoByOwner(auth?.user?.username, repoName);
+
+      if (!checkInit || !checkForRepo?.id) {
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 6,
         }));
-        const projectInitialized = await initProject(fs, projectsMetaPath, auth.user.username, mainBranch);
-        if (projectInitialized) {
+        let projectInitialized;
+        if (!checkInit) {
+          projectInitialized = await initProject(fs, projectsMetaPath, auth.user.username, mainBranch);
+        }
+        if (projectInitialized || !checkForRepo?.id) {
+          // common process for init but not synced / not inited
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           const created = await createRepo(repoName, auth.token.sha1);
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));

@@ -116,10 +116,13 @@ export default function ImportProjectPopUp(props) {
     }
   };
 
+  console.log({model});
+
   const MergeFunction = async () => {
     console.log("third button, merge call")
-    await mergeProject(folderPath, currentUser, setConflictPopup);
     modelClose();
+    setMerge(false)
+    await mergeProject(folderPath, currentUser, setConflictPopup, setModel);
     close()
   }
 
