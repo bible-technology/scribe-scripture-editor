@@ -29,6 +29,7 @@ export default function RecursiveBlock({
   bookId,
   onReferenceSelected,
   setCaretPosition,
+  setSelectedText,
   ...props
 }) {
   const [currentVerse, setCurrentVerse] = useState(null)
@@ -51,25 +52,28 @@ export default function RecursiveBlock({
     }
     //BACKSPACE DISABLE
     if (event.keyCode == 8) {
-      // console.log({ activeTextArea })
       const range = document.getSelection().getRangeAt(0)
-      // console.log({ range })
       const selectedNode = range.startContainer
-      // console.log({ selectedNode })
       const prevNode = selectedNode.previousSibling;
-      // console.log({ prevNode })
       if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
-        // console.log("crossing a verse")
-        // setCurrentVerse(0)
         event.preventDefault();
       }
       prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
-      // console.log({ currentVerse })
-      const verse = getCurrentVerse(selectedNode)
-      const chapter = getCurrentChapter(selectedNode)
     }
     updateCursorPosition();
   };
+
+  function handleSelection() {
+    let selectedText = "";
+    if (window.getSelection) {
+      selectedText = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+      selectedText = document.selection.createRange().text;
+    }
+    if (selectedText) {
+      setSelectedText(selectedText);
+    }
+  }
 
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
@@ -84,27 +88,13 @@ export default function RecursiveBlock({
       // }
     }
     updateCursorPosition()
+    handleSelection();
   }
 
   const updateCursorPosition = () => {
     let cursorPosition = getCurrentCursorPosition('editor');
     setCaretPosition(cursorPosition)
   }
-  // const updateVerseNumber = () => {
-  //   const selectedNode = document.getSelection().getRangeAt(0).startContainer
-  //   console.log({ selectedNode })
-  //   selectedNode.previousElementSibling ? setCurrentVerse(document.getSelection().getRangeAt(0).startContainer?.previousElementSibling?.dataset.attsNumber) : setCurrentVerse(null)
-  //   if (selectedNode.previousElementSibling) {
-  //     console.log("no prev sibling")
-  //   }
-  //   console.log("mouse click", { currentVerse })
-  // }
-  // const diableBackspace = (event) => {
-  //   if (event.keyCode == 8) {
-  //     console.log("BACKSPACE")
-  //     event.preventDefault()
-  //   }
-  // }
   let component;
 
   let editable = !!content.match(/data-type="paragraph"/);

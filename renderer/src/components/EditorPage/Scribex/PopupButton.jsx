@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Popup from './Popup';
 
-const PopupButton = ({ handleClick, title, roundedHover }) => {
+const PopupButton = ({ handleClick, title, roundedHover, selectedText }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handlePopupOpen = () => {
@@ -28,7 +28,7 @@ const PopupButton = ({ handleClick, title, roundedHover }) => {
         {title}
       </button>
       {isPopupOpen && (
-        <Popup handleClose={handlePopupClose} handleButtonClick={handleButtonClick} title={title} isPopupOpen={isPopupOpen} />
+        <Popup handleClose={handlePopupClose} handleButtonClick={handleButtonClick} title={title} isPopupOpen={isPopupOpen} selectedText={selectedText} />
       )}
     </div>
   );

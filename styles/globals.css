@@ -53,11 +53,13 @@
 	@apply w-20 text-right uppercase tracking-wider text-xs font-semibold after:content-['_:'];
 } */
 
-.title .mt,
+/* .title .mt, */
 .heading .ms {
 	@apply uppercase text-lg tracking-wider text-primary;
 }
-
+.title .mt {
+	@apply hidden;
+}
 .editor *[contenteditable='true']:focus {
 	@apply bg-primary-50 outline-none rounded-sm;
 }
@@ -92,7 +94,8 @@ p.paragraph:has(.chapter) {
 	content: ' x';
 }
 
-.perf .xq {
+.perf .xq,
+.perf .fq {
 	@apply text-primary text-sm;
 }
 

@@ -30,6 +30,7 @@ export default function Scribex(props) {
   const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
   const [newVerChapNumber, setInsertNumber] = useState('');
   const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
+  const [selectedText, setSelectedText] = useState();
 
   const handleClick = (number, title) => {
     setInsertNumber(number);
@@ -116,6 +117,8 @@ export default function Scribex(props) {
     setVerseNumber,
     newVerChapNumber,
     insertVerseRChapter,
+    selectedText,
+    setSelectedText,
   };
   return (
     <>
@@ -179,7 +182,7 @@ export default function Scribex(props) {
             </div>
             <div className="flex ml-auto">
               <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle={"h-6 mr-2 w-6 text-white cursor-pointer"} />
-              <InsertMenu handleClick={handleClick} />
+              <InsertMenu handleClick={handleClick} selectedText={selectedText} />
             </div>
           </div>
         </div>

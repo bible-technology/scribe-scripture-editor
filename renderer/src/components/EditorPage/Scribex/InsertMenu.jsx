@@ -3,7 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import PopupButton from './PopupButton';
 import PlusIcon from '@/icons/Xelah/Plus.svg';
 
-export default function InsertMenu({ handleClick: handleButtonClick }) {
+export default function InsertMenu({ handleClick: handleButtonClick, selectedText }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = (number, title) => {
     handleButtonClick(number, title);
@@ -44,10 +44,10 @@ export default function InsertMenu({ handleClick: handleButtonClick }) {
               <PopupButton handleClick={handleClick} title="Chapter" />
             </Menu.Item>
             <Menu.Item>
-              <PopupButton handleClick={handleClick} title="Footnote" />
+              <PopupButton handleClick={handleClick} title="Footnote" selectedText={selectedText} />
             </Menu.Item>
             <Menu.Item>
-              <PopupButton handleClick={handleClick} title="Cross Reference" roundedHover="hover:rounded-b-md" />
+              <PopupButton handleClick={handleClick} title="Cross Reference" selectedText={selectedText} roundedHover="hover:rounded-b-md" />
             </Menu.Item>
           </Menu.Items>
         </Transition>

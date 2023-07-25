@@ -40,6 +40,8 @@ export default function Editor(props) {
     insertVerseRChapter,
     reference,
     insertNewGraft,
+    selectedText,
+    setSelectedText,
   } = props;
 
   const [caretPosition, setCaretPosition] = useState();
@@ -55,7 +57,7 @@ export default function Editor(props) {
   } = useContext(ProjectContext);
 
   const [chapters, setChapters] = useState();
-  const [selectedText, setSelectedText] = useState();
+  // const [selectedText, setSelectedText] = useState();
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
   const handlers = {
@@ -121,6 +123,7 @@ export default function Editor(props) {
   }
 
   useEffect(() => {
+
     if (insertVerseRChapter === 'Verse') {
       insertVerseNumber(caretPosition, newVerChapNumber);
     }
@@ -128,49 +131,49 @@ export default function Editor(props) {
       insertChapterNumber(caretPosition, newVerChapNumber);
     }
     if (insertVerseRChapter === 'Footnote') {
-      setGraftInsert(true);
-      insertFootnote(caretPosition, newVerChapNumber);
+      // setGraftInsert(true);
+      insertFootnote(caretPosition, newVerChapNumber, selectedText);
     }
     if (insertVerseRChapter === 'Cross Reference') {
-      insertXRef(caretPosition, newVerChapNumber);
+      insertXRef(caretPosition, newVerChapNumber, selectedText);
     }
   }, [triggerVerseInsert]);
 
-  useEffect(() => {
-    let pressedKeys = [];
-    const handleKeyDown = (e) => {
-      const copyKeys = ['Control', 'c'];
-      const pasteKeys = ['Control', 'v'];
-      pressedKeys.push(e.key);
-      if (pressedKeys.join('+') === copyKeys.join('+')) {
-        e.preventDefault();
-        copyText();
-        pressedKeys = [];
-      }
-      if (pressedKeys.join('+') === pasteKeys.join('+')) {
-        e.preventDefault();
-        pasteText();
-        pressedKeys = [];
-      }
-      // if (e.key === 's') { console.log("savingssssssssss") }
-      // if (e.key === 'Control' && e.key === 'c') {
-      //   console.log("copying")
-      //   e.preventDefault();
-      //   // Call your custom copy function
-      //   copyText();
-      // } else if (e.metaKey && e.key === 'v') {
-      //   console.log("pasting")
-      //   e.preventDefault();
-      //   // Call your custom paste function
-      //   pasteText();
-      // }
-    };
+  // useEffect(() => {
+  //   let pressedKeys = [];
+  //   const handleKeyDown = (e) => {
+  //     const copyKeys = ['Control', 'c'];
+  //     const pasteKeys = ['Control', 'v'];
+  //     pressedKeys.push(e.key);
+  //     if (pressedKeys.join('+') === copyKeys.join('+')) {
+  //       e.preventDefault();
+  //       copyText();
+  //       pressedKeys = [];
+  //     }
+  //     if (pressedKeys.join('+') === pasteKeys.join('+')) {
+  //       e.preventDefault();
+  //       pasteText();
+  //       pressedKeys = [];
+  //     }
+  //     // if (e.key === 's') { console.log("savingssssssssss") }
+  //     // if (e.key === 'Control' && e.key === 'c') {
+  //     //   console.log("copying")
+  //     //   e.preventDefault();
+  //     //   // Call your custom copy function
+  //     //   copyText();
+  //     // } else if (e.metaKey && e.key === 'v') {
+  //     //   console.log("pasting")
+  //     //   e.preventDefault();
+  //     //   // Call your custom paste function
+  //     //   pasteText();
+  //     // }
+  //   };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  //   document.addEventListener('keydown', handleKeyDown);
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []);
 
   const scrollReference = (chapterNumber) => {
     const refEditors = document.getElementsByClassName('ref-editor');
@@ -213,7 +216,7 @@ export default function Editor(props) {
     addSequenceId,
     components: {
       block: (__props) => RecursiveBlock({
-        htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, ...__props,
+        htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, setSelectedText, ...__props,
       }),
     },
     options: {
