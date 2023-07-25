@@ -58,26 +58,27 @@ export function getCurrentCursorPosition(parentId) {
     let node;
 
   if (selection.focusNode) {
-    if (isChildOf(selection.focusNode, parentId)) {
-      node = selection.focusNode;
-      charCount = selection.focusOffset;
+		if (isChildOf(selection.focusNode, parentId)) {
+			node = selection.focusNode;
+			charCount = selection.focusOffset;
 
-      while (node) {
-        if (node.id === parentId) {
-          break;
-        }
+			while (node) {
+				if (node.id === parentId) {
+					break;
+				}
 
-        if (node.previousSibling) {
-          node = node.previousSibling;
-          charCount += node.textContent.length;
-        } else {
-          node = node.parentNode;
-          if (node === null) {
-            break;
-          }
-        }
-      }
-    }
+				if (node.previousSibling) {
+					node = node.previousSibling;
+					charCount += node.textContent.length;
+          console.log({ charCount },node);
+				} else {
+					node = node.parentNode;
+					if (node === null) {
+						break;
+					}
+				}
+			}
+		}
   }
   return charCount;
 }
@@ -178,15 +179,60 @@ export function getSelectedText() {
 // }
 
 // Paste text from clipboard
-// export function pasteText() {
-//   const editor = document.getElementById('editor');
+export function pasteText() {
+  const editor = document.getElementById('editor');
 
-//   navigator.clipboard.readText()
-//     .then((text) => {
-//       editor.focus();
-//       document.execCommand('insertText', false, text);
-//     })
-//     .catch((error) => {
-//       console.error(`Unable to paste text: ${ error}`);
-//     });
-// }
+  navigator.clipboard.readText()
+    .then((text) => {
+      editor.focus();
+      document.execCommand('insertText', false, text);
+      console.log(`Text pasted from clipboard: ${ text}`);
+    })
+    .catch((error) => {
+      console.error(`Unable to paste text: ${ error}`);
+    });
+}
+export class Clipboard {
+	static copyText(text) {
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				console.log('Text copied to clipboard');
+			})
+			.catch((error) => {
+				console.error('Failed to copy text:', error);
+			});
+	}
+
+	static pasteText(element) {
+		navigator.clipboard
+			.readText()
+			.then((pastedText) => {
+				element.focus();
+				document.execCommand('insertText', false, pastedText);
+				console.log('Text pasted from clipboard');
+			})
+			.catch((error) => {
+				console.error('Failed to paste text:', error);
+			});
+	}
+}
+
+export function  getWordAtCursor(parentElement) {
+    const cursorPosition = Cursor.getCurrentCursorPosition(parentElement);
+    const textContent = parentElement.textContent;
+    const words = textContent.trim().split(/\s+/);
+    let charCount = 0;
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const wordLength = word.length;
+      charCount += wordLength + 1; // +1 for the space after the word
+
+      if (charCount > cursorPosition) {
+        return word;
+      }
+    }
+
+    return null;
+  }

@@ -83,7 +83,7 @@ export default function RecursiveBlock({
       onReferenceSelected({ bookId, chapter, verse })
       // }
     }
-
+    updateCursorPosition()
   }
 
   const updateCursorPosition = () => {

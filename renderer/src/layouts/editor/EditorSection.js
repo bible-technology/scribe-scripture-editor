@@ -298,7 +298,7 @@ export default function EditorSection({
                   : 'ltr'
                 }`,
             }}
-            className='prose-sm p-1 text-xl h-full overflow-auto scrollbars-width whitespace-nowrap leading-4'>
+            className='prose-sm p-1 text-xl h-full overflow-auto scrollbars-width'>
             {children}
           </div>
         )}
