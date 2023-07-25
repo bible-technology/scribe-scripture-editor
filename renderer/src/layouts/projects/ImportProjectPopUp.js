@@ -69,7 +69,6 @@ export default function ImportProjectPopUp(props) {
         setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         const result = await viewBurrito(chosenFolder.filePaths[0], value.username, 'projects');
-        console.log({result});
         setSbData(result);
       });
     } else {
@@ -108,6 +107,7 @@ export default function ImportProjectPopUp(props) {
       callImport(false);
     }
   };
+  
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       checkBurritoVersion();
@@ -116,7 +116,6 @@ export default function ImportProjectPopUp(props) {
     }
   };
 
-  console.log({model});
 
   const MergeFunction = async () => {
     console.log("third button, merge call")

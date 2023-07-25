@@ -20,6 +20,11 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
       open: false,
       data: undefined,
     });
+    setSelectedFileContent();
+    setSelectedFileName();
+    setFileContentOrginal();
+    setResolvedFileNames();
+    setEnableSave();
   };
 
   const saveCurrentStory = async () => {
@@ -30,7 +35,6 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
       conflictData.data.targetPath,
       selectedFileName,
     );
-    console.log('in save----');
     setResolvedFileNames((prev) => [...prev, selectedFileName]);
   };
 
