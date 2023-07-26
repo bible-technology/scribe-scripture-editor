@@ -72,6 +72,17 @@ export default function ExportProjectPopUp(props) {
     setFolderPath(chosenFolder.filePaths[0]);
   };
 
+  const deleteGitAfterCopy = async (fs, destinationPath, path) => {
+    const folders = await fs.readdirSync(destinationPath);
+    if (folders.includes('.git')) {
+      await fs.rmdir(path.join(destinationPath, '.git'), { recursive: true }, async (err) => {
+        if (err) {
+          throw new Error(`Remove Git failed :  ${err}`);
+        }
+      });
+    }
+  };
+
   const updateCommon = (fs, path, folder, project) => {
     const fse = window.require('fs-extra');
     logger.debug('ExportProjectPopUp.js', 'Updated Scripture burrito');
@@ -86,12 +97,15 @@ export default function ExportProjectPopUp(props) {
             logger.debug('ExportProjectPopUp.js', 'Burrito validated successfully');
             fse.copy(folder, path.join(folderPath, project.name))
               .then(() => {
-                resetExportProgress(); // reset export states
-                logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
-                setNotify('success');
-                setSnackText(t('dynamic-msg-export-success'));
-                setOpenSnackBar(true);
-                closePopUp(false);
+                deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
+                .then(() => {
+                  resetExportProgress(); // reset export states
+                  logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
+                  setNotify('success');
+                  setSnackText(t('dynamic-msg-export-success'));
+                  setOpenSnackBar(true);
+                  closePopUp(false);
+                });
               })
               .catch((err) => {
                 resetExportProgress(); // reset export states
