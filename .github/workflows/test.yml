@@ -17,7 +17,7 @@ jobs:
               run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: yarn install
-              run: yarn ci
+              run: yarn install
 
             - name: run tests
               run: yarn test

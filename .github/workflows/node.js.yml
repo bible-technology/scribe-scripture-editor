@@ -30,7 +30,7 @@ jobs:
               run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: yarn install
-              run: yarn ci
+              run: yarn install
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=–max_old_space_size=4096
@@ -79,7 +79,7 @@ jobs:
               run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: yarn install
-              run: yarn ci
+              run: yarn install
 
             - name: set max memory allocation
               run: set NODE_OPTIONS=–max_old_space_size=4096
@@ -135,7 +135,7 @@ jobs:
               run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: yarn install
-              run: yarn ci
+              run: yarn install
 
             - name: install dmg-license
               run: yarn i dmg-license
