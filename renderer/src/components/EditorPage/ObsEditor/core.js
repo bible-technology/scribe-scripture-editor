@@ -100,7 +100,7 @@ const core = (fs, num, projectName, username) => {
           id += 1;
         } else {
           // Reading other lines and appending with previous line data
-          stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
+          stories[id - 2].text = `${stories[id - 2]?.text}\n${line}`;
         }
       }
     }

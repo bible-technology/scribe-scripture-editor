@@ -374,7 +374,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         settings.project[metadata.type.flavorType.flavor.name].lastSeen = moment().format();
         await fs.writeFileSync(path.join(audioDir, dirName, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
       }
-      if (metadata.copyright.fullStatementPlain) {
+      if (metadata.copyright?.fullStatementPlain) {
         const newLicence1 = (metadata.copyright.fullStatementPlain.en).replace(/\\n/gm, '\n');
         const newLicence = newLicence1?.replace(/\\r/gm, '\r');
         const licence = newLicence?.replace(/'/gm, '"');

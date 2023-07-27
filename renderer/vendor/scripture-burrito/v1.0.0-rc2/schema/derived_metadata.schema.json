@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://burrito.bible/schema/derived_metadata.schema.json",
+    "$$target": "derived_metadata.schema.json",
+    "title": "Metadata (Derived)",
+    "type": "object",
+    "description": "Scripture Burrito derived variant root.",
+    "properties": {
+        "format": {
+            "type": "string",
+            "enum": ["scripture burrito"]
+        },
+        "meta": {
+            "$ref": "derived_meta.schema.json"
+        },
+        "idAuthorities": {
+            "$ref": "id_authorities.schema.json"
+        },
+        "identification": {
+            "$ref": "identification.schema.json"
+        },
+        "confidential": {
+            "$ref": "confidential.schema.json"
+        },
+        "type": {
+            "$ref": "type.schema.json"
+        },
+        "relationships": {
+            "$ref": "relationships.schema.json"
+        },
+        "languages": {
+            "$ref": "languages.schema.json"
+        },
+        "targetAreas": {
+            "$ref": "target_areas.schema.json"
+        },
+        "agencies": {
+            "$ref": "agencies.schema.json"
+        },
+        "copyright": {
+            "$ref": "copyright.schema.json"
+        },
+        "promotion": {
+            "$ref": "promotion.schema.json"
+        },
+        "ingredients": {
+            "$ref": "ingredients.schema.json"
+        },
+        "localizedNames": {
+            "$ref": "localized_names.schema.json"
+        },
+        "recipe": {
+            "$ref": "recipe.schema.json"
+        }
+    },
+    "required": ["format", "meta", "idAuthorities", "identification", "confidential", "copyright", "type", "recipe"],
+    "additionalProperties": false,
+    "if": {
+        "properties": {
+            "type": {
+                "type": "object",
+                "properties": {
+                    "flavorType": {
+                        "enum": ["scripture", "gloss"]
+                    }
+                }
+            }
+        }
+    },
+    "then": {
+        "required": ["languages"]
+    }
+}

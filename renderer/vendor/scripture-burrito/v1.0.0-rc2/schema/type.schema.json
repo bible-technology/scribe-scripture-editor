@@ -1,0 +1,351 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://burrito.bible/schema/type.schema.json",
+    "$$target": "type.schema.json",
+    "title": "Type",
+    "description": "Contains properties describing the burrito flavor type.",
+    "type": "object",
+    "properties": {
+        "flavorType": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "enum": [
+                        "scripture",
+                        "gloss",
+                        "parascriptural",
+                        "peripheral"
+                    ]
+                }
+            }
+        }
+    },
+    "if" : {
+        "properties": {
+            "flavorType": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "const": "scripture"
+                    }
+                }
+            }
+        }
+    },
+    "then": {
+        "properties": {
+            "flavorType": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "const": "scripture"
+                    },
+                    "flavor": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "oneOf": [
+                                    {
+                                        "enum": [
+                                            "textTranslation",
+                                            "audioTranslation",
+                                            "typesetScripture",
+                                            "embossedBrailleScripture",
+                                            "signLanguageVideoTranslation"
+                                        ]
+                                    },
+                                    {
+                                        "pattern": "^x-"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "currentScope": {
+                        "$ref": "scope.schema.json"
+                    }
+                },
+                "required": ["flavor", "currentScope"],
+                "additionalProperties": false
+            }
+        },
+        "required": ["flavorType"],
+        "if": {
+            "properties": {
+                "flavorType" : {
+                    "type": "object",
+                    "properties": {
+                        "flavor": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "const": "textTranslation"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "then":
+        {
+            "properties": {
+                "flavorType" : {
+                    "type": "object",
+                    "properties": {
+                        "flavor" : {
+                            "$ref": "scripture/text_translation.schema.json"
+                        }
+                    }
+                }
+            }
+        },
+        "else": {
+            "if": {
+                "properties": {
+                    "flavorType" : {
+                        "type": "object",
+                        "properties": {
+                            "flavor": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "const": "audioTranslation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "flavorType" : {
+                        "type": "object",
+                        "properties": {
+                            "flavor" : {
+                                "$ref": "scripture/audio_translation.schema.json"
+                            }
+                        }
+                    }
+                }
+            },
+            "else": {
+                "if": {
+                    "properties": {
+                        "flavorType" : {
+                            "type": "object",
+                            "properties": {
+                                "flavor": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "const": "typesetScripture"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "then": {
+                    "properties": {
+                        "flavorType" : {
+                            "type": "object",
+                            "properties": {
+                                "flavor" : {
+                                    "$ref": "scripture/typeset_scripture.schema.json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "else": {
+                    "if": {
+                        "properties": {
+                            "flavorType" : {
+                                "type": "object",
+                                "properties": {
+                                    "flavor": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "const": "embossedBrailleScripture"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "flavorType" : {
+                                "type": "object",
+                                "properties": {
+                                    "flavor" : {
+                                        "$ref": "scripture/embossed_braille_scripture.schema.json"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "else": {
+                        "if": {
+                            "properties": {
+                                "flavorType" : {
+                                    "type": "object",
+                                    "properties": {
+                                        "flavor": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "const": "signLanguageVideoTranslation"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "then": {
+                            "properties": {
+                                "flavorType" : {
+                                    "type": "object",
+                                    "properties": {
+                                        "flavor" : {
+                                            "$ref": "scripture/sign_language_video_translation.schema.json"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "else": {
+                            "properties": {
+                                "flavorType" : {
+                                    "type": "object",
+                                    "properties": {
+                                        "flavor" : {
+                                            "$ref": "x_flavor.schema.json"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "else": {
+        "if" : {
+            "properties": {
+                "flavorType": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "const": "gloss"
+                        }
+                    }
+                }
+            }
+        },
+        "then": {
+            "properties": {
+                "flavorType": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "const": "gloss"
+                        },
+                        "flavor": {
+                            "type": "object",
+                            "oneOf": [
+                                {
+                                    "$ref": "gloss/text_stories.schema.json"
+                                },
+                                {
+                                    "$ref": "x_flavor.schema.json"
+                                }
+                            ]
+                        },
+                        "currentScope": {
+                            "$ref": "scope.schema.json"
+                        }
+                    },
+                    "required": ["name", "flavor", "currentScope"],
+                    "additionalProperties": false
+                }
+            }
+        },
+        "else": {
+            "if" : {
+                "properties": {
+                    "flavorType": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "const": "parascriptural"
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "flavorType": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "const": "parascriptural"
+                            },
+                            "flavor": {
+                                "type": "object",
+                                "oneOf": [
+                                    {
+                                        "$ref": "x_flavor.schema.json"
+                                    }
+                                ]
+                            },
+                            "currentScope": {
+                                "$ref": "scope.schema.json"
+                            }
+                        },
+                        "required": ["name", "flavor"],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "else": {
+                "properties": {
+                    "flavorType": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "const": "peripheral"
+                            },
+                            "flavor": {
+                                "type": "object",
+                                "oneOf": [
+                                    {
+                                        "$ref": "x_flavor.schema.json"
+                                    }
+                                ]
+                            },
+                            "currentScope": {
+                                "$ref": "scope.schema.json"
+                            }
+                        },
+                        "required": ["name", "flavor"],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        }
+    }
+}

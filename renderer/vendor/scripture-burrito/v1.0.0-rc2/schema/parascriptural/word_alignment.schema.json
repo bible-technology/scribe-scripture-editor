@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://burrito.bible/schema/parascriptural/word_alignment.schema.json",
+    "title": "Flavor Details: Parascriptural Word Alignment",
+    "type": "object",
+    "description": "Schema of flavor field for word alignment flavor",
+    "properties": {
+        "name": {
+            "const": "wordAlignment"
+        },
+        "autoAlignerVersion": { "type": "string" },
+        "stopWords": { "type": "boolean" },
+        "stemmer": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "version": { "type": "string" },
+                "affixes": { "type": "boolean" }
+            },
+            "additionalProperties": false
+        },
+        "manualAlignment": {
+            "type": "object",
+            "properties": {
+                "user": { "type": "string" },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "start": {
+                                "type": "number",
+                                "minimum": 0,
+                                "multipleOf": 1.0
+                            },
+                            "end": {
+                                "type": "number",
+                                "minimum": 0,
+                                "multipleOf": 1.0
+                            }
+                        },
+                        "required": ["start"],
+                        "additionalProperties": false
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": ["user", "references"],
+            "additionalProperties": false
+        }
+    },
+    "required": ["name", "autoAlignerVersion", "stopWords", "stemmer", "manualAlignment"],
+    "additionalProperties": false
+}
