@@ -138,7 +138,7 @@ jobs:
               run: yarn install
 
             - name: install dmg-license
-              run: yarn i dmg-license
+              run: yarn add dmg-license
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=–max_old_space_size=4096
