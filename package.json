@@ -132,6 +132,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@xelah/type-perf-html": "^1.0.1",
     "adm-zip": "^0.5.9",
+    "audiobuffer-to-wav": "^1.0.0",
     "bible-reference-rcl": "^1.1.0",
     "clsx": "1.1.1",
     "crypto-js": "^4.1.1",
