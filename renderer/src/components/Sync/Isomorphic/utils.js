@@ -1,5 +1,5 @@
 // utility functions of isomorphics git
-import git from 'isomorphic-git';
+import git, { Errors } from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 import * as logger from '../../../logger';
 // to check a dir is git initialized or not
@@ -344,6 +344,7 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
 // Fetch function
 export async function mergeBranches(fs, dir, branch, localBranch) {
   logger.debug('utils.js', 'in mergeBranch - delete a new branch ');
+  const returnData = { status: true, data: undefined };
   try {
     await git.merge({
       fs,
@@ -352,20 +353,51 @@ export async function mergeBranches(fs, dir, branch, localBranch) {
       theirs: localBranch,
       abortOnConflict: false,
     }).catch((e) => {
-      if (e) {
+      if (e instanceof Errors.MergeConflictError) {
+        returnData.data = e.data;
+        returnData.status = false;
         logger.error(
           'utils.js',
           'Automatic merge failed for the following files: '
           + `${e.data}. `
           + 'Resolve these conflicts and then commit your changes.',
         );
+      } else {
         throw e;
       }
     });
-    return true;
+    return returnData;
   } catch (error) {
     logger.error('utils.js', `Error merge branch: ${error}`);
+    return error;
+  }
+}
+
+// list branches in the local
+export async function listLocalBranches(fs, dir) {
+  logger.debug('utils.js', 'in listLocalBranches - list local branches');
+  try {
+    const branches = await git.listBranches({ fs, dir });
+    return branches;
+  } catch (error) {
+    logger.error('utils.js', `Error list local branches: ${error}`);
     return false;
+  }
+}
+
+// get current branch
+export async function getCurrentBranch(fs, dir) {
+  logger.debug('utils.js', 'in get branch - get current branch');
+  try {
+    const branchData = await git.currentBranch({
+      fs,
+      dir,
+    });
+    logger.debug('utils.js', 'get current branch name');
+    return { status: true, data: branchData };
+  } catch (error) {
+    logger.error('utils.js', `Error get current branch: ${error}`);
+    return { status: false, data: null };
   }
 }
 

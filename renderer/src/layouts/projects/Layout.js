@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import SideBar from './SideBar';
 import TopMenuBar from './TopMenuBar';
 import ImportProjectPopUp from './ImportProjectPopUp';
+import ConflictResolverUI from './Import/ConflictResolverUI';
 
 export default function ProjectsLayout(props) {
   const {
@@ -26,6 +27,11 @@ export default function ProjectsLayout(props) {
   } = props;
 
   const [openPopUp, setOpenPopUp] = useState(false);
+
+  const [conflictPopup, setConflictPopup] = useState({
+    open: false,
+    data: undefined,
+  });
 
   const { t } = useTranslation();
   function openImportPopUp() {
@@ -73,9 +79,16 @@ export default function ProjectsLayout(props) {
                           <ArrowDownTrayIcon className="h-4 mr-2 text-white" />
                           {t('btn-import')}
                         </button>
-                        <ImportProjectPopUp open={openPopUp} closePopUp={closeImportPopUp} />
+                        <ImportProjectPopUp open={openPopUp} closePopUp={closeImportPopUp} setConflictPopup={setConflictPopup} />
                       </>
                     )}
+
+                  {conflictPopup.open
+                    && (
+                    <div className="fixed z-50 ">
+                      <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />
+                    </div>
+                  )}
 
                   {/* Archived projects button */}
                   {archive === 'enable' && (

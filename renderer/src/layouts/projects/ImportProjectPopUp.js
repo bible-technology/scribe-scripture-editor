@@ -17,23 +17,27 @@ import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
 import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
 import burrito from '../../lib/BurritoTemplete.json';
+import { mergeProject } from './Import/mergeProject';
 
 export default function ImportProjectPopUp(props) {
   const {
     open,
     closePopUp,
+    setConflictPopup,
   } = props;
   const router = useRouter();
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
-  const [folderPath, setFolderPath] = useState();
-  const [valid, setValid] = useState(false);
-  const [snackBar, setOpenSnackBar] = useState(false);
-  const [snackText, setSnackText] = useState('');
-  const [notify, setNotify] = useState();
-  const [show, setShow] = useState(false);
-  const [sbData, setSbData] = useState({});
-  const [model, setModel] = useState({
+  const [folderPath, setFolderPath] = React.useState();
+  const [valid, setValid] = React.useState(false);
+  const [snackBar, setOpenSnackBar] = React.useState(false);
+  const [snackText, setSnackText] = React.useState('');
+  const [notify, setNotify] = React.useState();
+  const [show, setShow] = React.useState(false);
+  const [merge, setMerge] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState();
+  const [sbData, setSbData] = React.useState({});
+  const [model, setModel] = React.useState({
     openModel: false,
     title: '',
     confirmMessage: '',
@@ -70,6 +74,7 @@ export default function ImportProjectPopUp(props) {
       logger.debug('ImportProjectPopUp.js', 'Selected a directory');
       await localforage.getItem('userProfile').then(async (value) => {
         setShow(true);
+        setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         const result = await viewBurrito(chosenFolder.filePaths[0], value.username, 'projects');
         setSbData(result);
@@ -125,6 +130,7 @@ export default function ImportProjectPopUp(props) {
       callImport(false);
     }
   };
+  
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       checkBurritoVersion();
@@ -132,6 +138,16 @@ export default function ImportProjectPopUp(props) {
       callImport(true);
     }
   };
+
+
+  const MergeFunction = async () => {
+    console.log("third button, merge call")
+    modelClose();
+    setMerge(false)
+    await mergeProject(folderPath, currentUser, setConflictPopup, setModel);
+    close()
+  }
+
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
     if (folderPath) {
@@ -139,6 +155,11 @@ export default function ImportProjectPopUp(props) {
       setValid(false);
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
+        // currently MERGE feature only Enabled for OBS projects
+        console.log({sbData});
+        if (sbData?.burritoType === 'gloss / textStories'){
+          setMerge(true)
+        }
         setModel({
           openModel: true,
           title: t('modal-title-replace-resource'),
@@ -281,7 +302,7 @@ export default function ImportProjectPopUp(props) {
                               ? <span className="ml-2">{t('dynamic-msg-burrito-validate-import-project')}</span>
                             : <span className="ml-2 text-red-500">{(sbData?.version) ? t('dynamic-msg-burrito-validation-expected', { version: sbData.version }) : t('dynamic-msg-burrito-validation-failed')}</span>}
                           </label>
-)}
+                        )}
                         </div>
                       )}
 
@@ -313,6 +334,7 @@ export default function ImportProjectPopUp(props) {
           </div>
         </Dialog>
       </Transition>
+
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}
@@ -327,6 +349,11 @@ export default function ImportProjectPopUp(props) {
         confirmMessage={model.confirmMessage}
         buttonName={model.buttonName}
         closeModal={() => callFunction()}
+        buttonName2={{
+          active: merge,
+          name:'Merge',
+          action: () => MergeFunction(),
+        }}
       />
     </>
   );

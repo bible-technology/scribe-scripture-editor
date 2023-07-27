@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
-import * as localForage from 'localforage';
 import Login from './components/Login/Login';
 import AuthenticationContextProvider, { AuthenticationContext } from './components/Login/AuthenticationContextProvider';
 import { loadUsers } from './core/Login/handleJson';
@@ -16,36 +15,36 @@ const Home = () => {
   const { states, action } = React.useContext(AuthenticationContext);
   const [token, setToken] = React.useState();
   const [user, setUser] = React.useState();
+
   React.useEffect(() => {
     logger.debug('Home.js', 'Triggers loadUsers for the users list');
     loadUsers();
   }, []);
 
-  React.useEffect(() => {
-    localForage.getItem('userProfile').then(async (user) => {
-      setUser(user);
-      // // set app language from saved user data on start up
-      if (user?.username) {
-        const appLangCode = await getorPutAppLangage('get', user.username);
-        if (i18n.language !== appLangCode) {
-          i18n.changeLanguage(appLangCode);
-        }
-      }
-    });
+  const validateUser = async () => {
     if (!states.accessToken) {
       logger.debug('Home.js', 'Triggers getToken to fetch the Token if not available');
       action.getToken();
       setToken();
     } else {
-      logger.debug('Home.js', 'Token is available');
-      localForage.getItem('sessionToken').then((value) => {
-        if (!value) {
-          action.setaccessToken();
+      logger.debug('Home.js', `Token is available ${states.accessToken}`);
+      logger.debug('Home.js', `user ${user}`);
+      setToken(states.accessToken);
+      setUser(states?.currentUser);
+      // // set app language from saved user data on start up
+      if (states?.currentUser?.username) {
+        const appLangCode = await getorPutAppLangage('get', states.currentUser.username);
+        if (i18n.language !== appLangCode) {
+          i18n.changeLanguage(appLangCode);
         }
-        setToken(value);
-      });
+      }
     }
-  }, [token, user, setUser, setToken, action, states.accessToken]);
+  };
+
+  React.useEffect(() => {
+    validateUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [states.accessToken]);
 
   return (
     <>
