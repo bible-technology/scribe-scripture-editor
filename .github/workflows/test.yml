@@ -20,4 +20,4 @@ jobs:
               run: yarn ci
 
             - name: run tests
-              run: yarn run test
+              run: yarn test
