@@ -25,12 +25,12 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: |
                   node --version
-                  npm --version
+                  yarn --version
             - name: set @bitregistry translation-help
-              run: npm config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: npm install
-              run: npm ci
+            - name: yarn install
+              run: yarn install
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=–max_old_space_size=4096
@@ -46,7 +46,7 @@ jobs:
             - name: package
               id: package
               run: |
-                  npm run dist
+                  yarn dist
 
             - name: Cleanup artifacts
               run: |
@@ -73,13 +73,13 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: |
                   node --version
-                  npm --version
+                  yarn --version
 
             - name: set @bitregistry translation-help
-              run: npm config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: npm install
-              run: npm ci
+            - name: yarn install
+              run: yarn install
 
             - name: set max memory allocation
               run: set NODE_OPTIONS=–max_old_space_size=4096
@@ -95,7 +95,7 @@ jobs:
             - name: packaging
               id: packaging
               run: |
-                  npm run dist
+                  yarn dist
 
             - name: Cleanup artifacts
               if: matrix.os != 'windows-latest'
@@ -130,15 +130,15 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: |
                   node --version
-                  npm --version
+                  yarn --version
             - name: set @bitregistry translation-help
-              run: npm config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: npm install
-              run: npm ci
+            - name: yarn install
+              run: yarn install
 
             - name: install dmg-license
-              run: npm i dmg-license
+              run: yarn add dmg-license
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=–max_old_space_size=4096
@@ -153,7 +153,7 @@ jobs:
             - name: package
               id: package
               run: |
-                  npm run dist
+                  yarn dist
 
             - name: Cleanup artifacts
               run: |
