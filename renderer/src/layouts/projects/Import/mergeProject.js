@@ -11,6 +11,7 @@ import {
 } from '@/components/Sync/Isomorphic/utils';
 import { readUserSettings } from '@/core/projects/userSettings';
 import packageInfo from '../../../../../package.json';
+import * as logger from '../../../logger';
 
 const path = require('path');
 
@@ -59,36 +60,25 @@ export const mergeProject = async (sourcePath, currentUser, setConflictPopup, se
 
       // create offine merge branch
       const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
-      console.log({ createBranchStatus });
       // commit all existing changes in currentActiveBranch
       const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
-      console.log({ commitStatus });
       // checkout tot offline branch
-      const checkoutStatus = commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
-      console.log({ checkoutStatus });
-      console.log('before copy start -------------');
+      commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
       await fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' });
-      console.log('After copy Done ---------');
       setTimeout(async () => {
-        console.log('after copy success');
         // commit in offline-merge
         const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-        console.log({ mergeCommitStatus });
         // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-        console.log({ mergeCommitStatus });
         // checkout main branch
         const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
-        console.log({ checkoutStatus2 });
         // merge offline - main
         const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
-        console.log({ mergeStatus });
+
         if (mergeStatus.status) {
           // Isomorphic git is doing an extra merge or logic cause deletion of the merged data at staging state
-          const checkoutFilesStatus = await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
-          console.log({ checkoutFilesStatus }, 'merge success------');
+          await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
         } else if (mergeStatus.status === false && mergeStatus?.data) {
           // conflcit section
-          console.log('in conflict section -------------------------- ');
           setConflictPopup({
             open: true,
             data: {
@@ -106,7 +96,6 @@ export const mergeProject = async (sourcePath, currentUser, setConflictPopup, se
       }, '1000');
     } else {
       // throw error notify non git porject . Proejcts < 0.5.0 or not synced projects
-      console.log('here ----------');
       setModel({
         openModel: true,
         title: 'Merge Not Supported',
@@ -117,6 +106,6 @@ export const mergeProject = async (sourcePath, currentUser, setConflictPopup, se
       });
     }
   } catch (err) {
-    console.log('Error happended : ', err);
+    logger.error('mergeProject.js', `Error happended ${err}`);
   }
 };
