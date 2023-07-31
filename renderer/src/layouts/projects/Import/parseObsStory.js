@@ -136,6 +136,5 @@ export async function updateAndSaveStory(story, currentUser, projectName, target
     const filePath = path.join(targetPath, selectedFileName);
     await fs.writeFileSync(filePath, storyStr);
 
-    console.log('story updated : ', selectedFileName);
     logger.debug('parseObsStory.js', `Updated Story after resolve conflcit ${selectedFileName}`);
 }
