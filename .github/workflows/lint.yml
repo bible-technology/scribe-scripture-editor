@@ -12,15 +12,15 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: |
                   node --version
-                  yarn --version
+                  npm --version
             - name: set @bitregistry translation-help
-              run: yarn config set '@bit:registry' https://node.bit.dev
+              run: npm config set '@bit:registry' https://node.bit.dev
 
-            - name: yarn install
-              run: yarn install
+            - name: npm install
+              run: npm ci
 
             - name: run lint
-              run: yarn lint
+              run: npm run lint
 
             - name: run lint-fix
-              run: yarn lint:fix
+              run: npm run lint:fix
