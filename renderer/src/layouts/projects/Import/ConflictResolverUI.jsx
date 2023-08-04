@@ -4,7 +4,7 @@ import React, {
 import { Dialog, Transition } from '@headlessui/react';
 // import * as logger from '../../../logger';
 import ConflictSideBar from './ConflictSideBar';
-import { parseObs, updateAndSaveStory } from './parseObsStory';
+import { parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
 
 function ConflictResolverUI({ conflictData, setConflictPopup }) {

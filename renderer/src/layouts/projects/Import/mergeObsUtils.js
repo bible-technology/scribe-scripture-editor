@@ -1,5 +1,9 @@
 // parse obs story based on the story number
+import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 import * as logger from '../../../logger';
+import OBSData from '../../../lib/OBSData.json';
+
+const path = require('path');
 
 export async function parseObs(conflictData, selectedFileName) {
     // conflictData : {
@@ -137,4 +141,27 @@ export async function updateAndSaveStory(story, currentUser, projectName, target
     await fs.writeFileSync(filePath, storyStr);
 
     logger.debug('parseObsStory.js', `Updated Story after resolve conflcit ${selectedFileName}`);
+}
+
+export async function createAllMdInDir(dirPath) {
+  try {
+    // function to create 50 md story in a dir
+    logger.debug('mergeObsUtils.js', 'Inside createAllMd - create empty md in a dir');
+    const fs = window.require('fs');
+    await OBSData.forEach(async (storyJson) => {
+      const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
+      const file = await JsonToMd(storyJson, '');
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+        logger.debug('mergeObsUtils.js', 'Inside createAllMd - Dir is created');
+        console.log('inside create Dir', { dirPath });
+      }
+      fs.writeFileSync(path.join(dirPath, currentFileName), file);
+    });
+    logger.debug('mergeObsUtils.js', 'Inside createAllMd - successfully created base files');
+    return true;
+  } catch (err) {
+    logger.error('mergeObsUtils.js', `error in write files ${err}`);
+    return false;
+  }
 }
