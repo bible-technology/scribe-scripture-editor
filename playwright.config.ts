@@ -2,12 +2,12 @@ import { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
 	testDir: './e2e-tests',
-	maxFailures: process.env.CI ? 2 : 0,
+	maxFailures: 2,
 	timeout: 5 * 60 * 1000,
-	globalTimeout: process.env.CI ? 60 * 60 * 1000 : undefined,
+	globalTimeout: 60 * 60 * 1000,
 	// Run all tests in parallel.
 	fullyParallel: true,
-	retries: 3,
+	retries: 3,	
 	use: {
 		// trace: 'on-first-retry', // record traces on first retry of each test
 		 
