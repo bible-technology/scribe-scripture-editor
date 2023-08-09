@@ -151,7 +151,7 @@ export const Fr = {
     'dynamic-msg-import-resource-snack': 'Téléchargement de la ressource réussi ! S\'il vous plaît vérifier la liste des ressources',
     'dynamic-msg-unable-find-buritto-snack': 'Impossible de trouver le fichier burrito (metadata.json).',
     'dynamic-msg-unable-invalid-buritto-snack': 'Fichier burrito invalide (metadata.json).',
-    'dynamic-msg-confirm-replace-resource': 'Un projet existant portant le même nom a été trouvé. Cochez "Onglet Archivé" ou "Onglet Projets". Appuyez sur "Remplacer" si vous souhaitez le remplacer. Cela écraserait tout contenu existant dans les livres qui se chevauchent. Sinon, appuyez sur "Annuler" pour revenir en arrière.',
+    'dynamic-msg-confirm-replace-resource': 'Un projet existant portant le même nom a été trouvé ! Cochez "Onglet Archivé" ou "Onglet Projets". Appuyez sur "Remplacer" pour écraser tout contenu existant dans les livres qui se chevauchent. Appuyez sur "Fusionner" pour combiner le projet avec le projet en cours. Appuyez sur "Annuler" pour éviter les modifications.',
     'dynamic-msg-resource-added': 'ressource ajoutée avec succès',
     'dynamic-msg-resource-unable-fetch-url': 'impossible d\'extraire la ressource sélectionnée à partir de l\'url donnée',
     'dynamic-msg-load-ref-bible-snack': 'chargé avec succès {{refName}} des dossiers',

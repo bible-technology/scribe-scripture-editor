@@ -1,7 +1,10 @@
 // parse obs story based on the story number
 import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 import * as logger from '../../../logger';
-import OBSData from '../../../lib/OBSData.json';
+// import OBSData from '../../../lib/OBSData.json';
+import OBSData from '../../../lib/OBSDataForMerge.json';
+import OBSFront from '../../../lib/OBSfront.md';
+import OBSBack from '../../../lib/OBSback.md';
 
 const path = require('path');
 
@@ -10,11 +13,14 @@ export async function parseObs(conflictData, selectedFileName) {
     //     open: true,
     //     data: {
     //       files: mergeStatus.data,
-    //       targetPath,
-    //       sourcePath,
-    //       sourceMeta,
+    //       mergeDirPath,
+    //       projectPath,
+    //        projectContentDirName
+    //        incomingPath
+    //       incomingMeta,
     //       author,
-    //       currentActiveBranch,
+    //       currentBranch,
+    //        projectMainBranch
     //       currentUser,
     //       projectName
     //     },
@@ -23,17 +29,12 @@ export async function parseObs(conflictData, selectedFileName) {
     // const username = conflictData.currentUser;
     // const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
-    const path = require('path');
 
-    // get internal folder name --> dir coming in file name
-    // const firstKey = Object.keys(conflictData.sourceMeta.ingredients)[0];
-    // const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
-    // const contentDirName = folderName[0];
-
-    const filePath = path.join(conflictData.data.targetPath, selectedFileName);
+    const filePath = path.join(conflictData.data.mergeDirPath, selectedFileName);
 
     if (fs.existsSync(filePath)) {
         const fileContent = await fs.readFileSync(filePath, 'utf8');
+        console.log({ filePath, fileContent });
         if (fileContent) {
             const stories = [];
             // eslint-disable-next-line prefer-const
@@ -42,11 +43,46 @@ export async function parseObs(conflictData, selectedFileName) {
             const allLines = fileContent.split(/\r\n|\n/);
             logger.debug('ObsEditor.js', 'Spliting the stories line by line and storing into an array.');
             // Reading line by line
-            allLines.forEach((line) => {
+
+            // parse handling HEADER and Footer Conflicts
+            let headerConflcit = false;
+            let footerConflcit = false;
+
+            if (allLines[0].startsWith('<<<<<')) {
+              headerConflcit = true;
+            }
+
+            allLines.forEach((line, index) => {
               // To avoid the values after footer, we have added id=0
               if (line && id !== 0) {
-                if (line.match(/^(\s)*#/gm)) {
-                  // Fetching the header content
+                if (headerConflcit) {
+                  // handling header with conflcit
+                  const objIndex = stories.findIndex(((obj) => obj.id === id));
+                  const splitData = line.split('#');
+                  if (objIndex === -1) {
+                    // object first time push
+                    stories.push({
+                      id, title: splitData.length > 1 ? splitData[1] : splitData[0],
+                    });
+                  } else {
+                    // Reading other header total 5 lines and appending with previous line data
+                    stories[objIndex].title = `${stories[objIndex].title}\n${splitData.length > 1 ? splitData[1] : splitData[0]}`;
+                  }
+                  // reset header conflcit after 5 lines
+                  if (index === 4) {
+                    headerConflcit = false;
+                    id += 1;
+                  }
+
+                // } else if (footerConflcit && !headerConflcit && line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
+                } else if (footerConflcit) {
+                  // handle footer conflcit
+                  // check for footer and no header is this section need execute only after headerconflcit  resolved
+                  const splitData = line.split('_').join('');
+                  const objIndex = stories.findIndex(((obj) => obj.id === id));
+                  stories[objIndex].end = `${stories[objIndex].end}\n${splitData}`;
+                } else if (line.match(/^(\s)*#/gm)) {
+                  // Fetching the header content - No conflict
                   const hash = line.match(/# (.*)/);
                   stories.push({
                     id, title: hash[1],
@@ -98,27 +134,40 @@ export async function parseObs(conflictData, selectedFileName) {
                   stories.push({
                     id, img: imgUrl[1],
                   });
-                } else {
-                  // Reading the content line by line
-                  const objIndex = stories.findIndex(((obj) => obj.id === id));
-                  if (objIndex !== -1) {
-                    // Reading first line after img
-                    stories[objIndex].text = line;
-                    id += 1;
+                } else if (!footerConflcit && index + 1 <= allLines.length && allLines[index].startsWith(('<<<<<')) && allLines[index + 1].startsWith('_')) {
+                    footerConflcit = true;
+                    // const splitData = line.split('_').join(' ');
+                    stories.push({
+                      id, end: line,
+                    });
                   } else {
-                    // Reading other lines and appending with previous line data
-                    stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
+                    // Reading the content line by line
+                    const objIndex = stories.findIndex(((obj) => obj.id === id));
+                    if (objIndex !== -1) {
+                      // Reading first line after img
+                      stories[objIndex].text = line;
+                      id += 1;
+                    } else {
+                      // Reading other lines and appending with previous line data
+                      stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
+                    }
                   }
-                }
               }
             });
             logger.debug('ObsEditor.js', 'Story for selected navigation is been set to the array for Editor');
+            // if footer have conflict need to add new lines there
+            // when at last line inserted , need to format the footer conlcit string .
+            // all things are coming in a single line without newline. need to put newline after each underscore
+            if (footerConflcit) {
+              stories[stories.length - 1].end = stories[stories.length - 1].end.replace('>>>>>>>', '\n>>>>>>>');
+              footerConflcit = false;
+            }
             return stories;
           }
     }
 }
 
-export async function updateAndSaveStory(story, currentUser, projectName, targetPath, selectedFileName) {
+export async function updateAndSaveStory(story, currentUser, projectName, mergeDirPath, selectedFileName) {
   let title; let body = ''; let end;
 
   const path = require('path');
@@ -126,18 +175,18 @@ export async function updateAndSaveStory(story, currentUser, projectName, target
 
     story.forEach((s) => {
       if (Object.prototype.hasOwnProperty.call(s, 'title')) {
-        title = `# ${s.title}\n\n`;
+        title = `# ${s.title}\n\n`.trim();
       }
       if (Object.prototype.hasOwnProperty.call(s, 'end')) {
         const foot = ((s.end).trim());
         end = `_${foot}_`;
       }
       if (Object.prototype.hasOwnProperty.call(s, 'text')) {
-        body += `![OBS Image](${s.img})\n\n${s.text}\n\n`;
+        body += `![OBS Image](${s.img})\n\n${s.text}\n\n`.trim();
       }
     });
     const storyStr = title + body + end;
-    const filePath = path.join(targetPath, selectedFileName);
+    const filePath = path.join(mergeDirPath, selectedFileName);
     await fs.writeFileSync(filePath, storyStr);
 
     logger.debug('parseObsStory.js', `Updated Story after resolve conflcit ${selectedFileName}`);
@@ -158,6 +207,10 @@ export async function createAllMdInDir(dirPath) {
       }
       fs.writeFileSync(path.join(dirPath, currentFileName), file);
     });
+    // write front
+    fs.writeFileSync(path.join(dirPath, 'front.md'), OBSFront);
+    // write back
+    fs.writeFileSync(path.join(dirPath, 'back.md'), OBSBack);
     logger.debug('mergeObsUtils.js', 'Inside createAllMd - successfully created base files');
     return true;
   } catch (err) {

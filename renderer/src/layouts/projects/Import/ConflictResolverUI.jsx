@@ -3,6 +3,9 @@ import React, {
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 // import * as logger from '../../../logger';
+import { commitChanges } from '@/components/Sync/Isomorphic/utils';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import ConflictSideBar from './ConflictSideBar';
 import { parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
@@ -14,12 +17,50 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   const [FileContentOrginal, setFileContentOrginal] = useState([]);
   const [resolvedFileNames, setResolvedFileNames] = useState([]);
   const [enableSave, setEnableSave] = useState();
-
-  const removeSection = () => {
-    setConflictPopup({
-      open: false,
-      data: undefined,
+  const [finishingMerge, setFinishingMerge] = useState(false);
+  const [model, setModel] = React.useState({
+    openModel: false,
+    title: '',
+    confirmMessage: '',
+    buttonName: '',
     });
+
+  const finishMergeMoveFiletoProject = async (conflictData) => {
+    setFinishingMerge(true);
+    console.log('in finishing merge - true');
+    const path = require('path');
+    const fs = window.require('fs');
+    const fse = window.require('fs-extra');
+    // copy all md from merge main to project main
+    await fse.copy(
+conflictData.data.mergeDirPath,
+      path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
+      { filter: (file) => path.extname(file) !== '.git' },
+    );
+    // commit changes in project Dir
+    await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
+    // delete tempDir
+    // await fs.rmdir(conflictData.data.mergeDirPath, { recursive: true });
+    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
+      console.log('final delete done for .merge------>>> ---');
+      if (err) {
+        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
+      }
+    });
+    console.log('in finishing merge - false');
+    setFinishingMerge(false);
+  };
+
+  const modelClose = () => {
+    setModel({
+      openModel: false,
+      title: '',
+      confirmMessage: '',
+      buttonName: '',
+    });
+  };
+
+  const resetStates = async () => {
     setSelectedFileContent();
     setSelectedFileName();
     setFileContentOrginal();
@@ -27,12 +68,49 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     setEnableSave();
   };
 
+  const abortConflictResolution = async (conflictData) => {
+    console.log('in abort conflcit ', { conflictData });
+    const fs = window.require('fs');
+    modelClose();
+    setConflictPopup({
+      open: false,
+      data: undefined,
+    });
+    await resetStates();
+    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
+      if (err) {
+        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
+      }
+    });
+  };
+
+  const removeSection = async (abort = false) => {
+    if (abort === false) {
+      await finishMergeMoveFiletoProject(
+        conflictData,
+      );
+      setConflictPopup({
+        open: false,
+        data: undefined,
+      });
+      await resetStates();
+    } else {
+      // popup with warning
+      setModel({
+        openModel: true,
+        title: 'Abort Conflict Resolution',
+        confirmMessage: 'Do you want to abort conflict Resolution process. If you abort , you will loose all your progress and need to start over.',
+        buttonName: 'Abort',
+      });
+    }
+  };
+
   const saveCurrentStory = async () => {
     await updateAndSaveStory(
       selectedFileContent,
       conflictData.data.currentUser,
       conflictData.data.projectName,
-      conflictData.data.targetPath,
+      conflictData.data.mergeDirPath,
       selectedFileName,
     );
     setResolvedFileNames((prev) => [...prev, selectedFileName]);
@@ -48,6 +126,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     if (selectedFileName && conflictData) {
       (async () => {
         const data = await parseObs(conflictData, selectedFileName);
+        // console.log({ data });
         if (data) {
           setSelectedFileContent(data);
           setEnableSave(false);
@@ -58,78 +137,104 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   }, [conflictData, selectedFileName]);
 
   return (
-    <Transition
-      show={conflictData.open}
-      as={Fragment}
-      enter="transition duration-100 ease-out"
-      enterFrom="transform scale-95 opacity-0"
-      enterTo="transform scale-100 opacity-100"
-      leave="transition duration-75 ease-out"
-      leaveFrom="transform scale-100 opacity-100"
-      leaveTo="transform scale-95 opacity-0"
-    >
-      <Dialog
-        as="div"
-        className="fixed inset-0 z-10 overflow-y-auto"
-        initialFocus={cancelButtonRef}
-        static
-        open={conflictData.status}
-        onClose={removeSection}
+    <>
+
+      <Transition
+        show={conflictData.open}
+        as={Fragment}
+        enter="transition duration-100 ease-out"
+        enterFrom="transform scale-95 opacity-0"
+        enterTo="transform scale-100 opacity-100"
+        leave="transition duration-75 ease-out"
+        leaveFrom="transform scale-100 opacity-100"
+        leaveTo="transform scale-95 opacity-0"
       >
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          initialFocus={cancelButtonRef}
+          static
+          open={conflictData.open}
+          onClose={() => removeSection(true)}
+        >
 
-        <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-        <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
-          <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
-            <h1 className="text-white font-bold text-sm">RESOLVE CONFLICT</h1>
-            <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
-            {/* close btn section */}
-          </div>
+          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
+            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
+              <h1 className="text-white font-bold text-sm">RESOLVE CONFLICT</h1>
+              <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
+              {/* close btn section */}
+              <button
+                type="button"
+                className="focus:outline-none w-9 h-9 bg-black text-white p-2"
+                onClick={() => removeSection(true)}
+              >
+                <XMarkIcon />
+              </button>
+            </div>
 
-          {/* contents section */}
-          <div className="flex border bg-white">
-            <ConflictSideBar
-              conflictData={conflictData}
-              setSelectedFileName={setSelectedFileName}
-              selectedFileName={selectedFileName}
-              resolvedFileNames={resolvedFileNames}
-            />
-            <div className="w-full">
-              <div className="h-[80vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
-                <ConflictEditor
-                  selectedFileContent={selectedFileContent}
-                  setSelectedFileContent={setSelectedFileContent}
-                  selectedFileName={selectedFileName}
-                  FileContentOrginal={FileContentOrginal}
-                  setEnableSave={setEnableSave}
-                  resolvedFileNames={resolvedFileNames}
-                />
-              </div>
-              <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
-                {conflictData?.data?.files?.filepaths?.length === resolvedFileNames.length && (
+            {/* contents section */}
+            <div className="flex border bg-white">
+              <ConflictSideBar
+                conflictData={conflictData}
+                setSelectedFileName={setSelectedFileName}
+                selectedFileName={selectedFileName}
+                resolvedFileNames={resolvedFileNames}
+              />
+              <div className="w-full">
+                <div className="h-[80vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
+                  <ConflictEditor
+                    selectedFileContent={selectedFileContent}
+                    setSelectedFileContent={setSelectedFileContent}
+                    selectedFileName={selectedFileName}
+                    FileContentOrginal={FileContentOrginal}
+                    setEnableSave={setEnableSave}
+                    resolvedFileNames={resolvedFileNames}
+                  />
+                </div>
+                <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
+                  {conflictData?.data?.files?.filepaths?.length === resolvedFileNames?.length && (
                   <div
                     className="px-10 py-2 rounded-md bg-green-500 cursor-pointer hover:bg-green-600"
                     role="button"
                     tabIndex={-2}
-                    onClick={removeSection}
+                    onClick={() => removeSection()}
                   >
-                    All conflicts Resolved : Done
+                    {finishingMerge
+                    ? (
+                      <div
+                        className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        role="status"
+                      />
+                      )
+                    : <>All conflicts Resolved : Finish</>}
                   </div>
                 )}
 
-                <button
-                  className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600' } `}
-                  onClick={saveCurrentStory}
-                  type="button"
-                  disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}
-                >
-                  {resolvedFileNames.includes(selectedFileName) ? 'Resolved' : 'Save'}
-                </button>
+                  <button
+                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600' } `}
+                    onClick={saveCurrentStory}
+                    type="button"
+                    disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}
+                  >
+                    {resolvedFileNames?.includes(selectedFileName) ? 'Resolved' : 'Save'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Dialog>
-    </Transition>
+        </Dialog>
+      </Transition>
+
+      <ConfirmationModal
+        openModal={model.openModel}
+        title={model.title}
+        setOpenModal={() => modelClose()}
+        confirmMessage={model.confirmMessage}
+        buttonName={model.buttonName}
+        closeModal={() => abortConflictResolution(conflictData)}
+      />
+    </>
   );
 }
 

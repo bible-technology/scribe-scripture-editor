@@ -75,7 +75,7 @@ export default function ExportProjectPopUp(props) {
   const deleteGitAfterCopy = async (fs, destinationPath, path) => {
     const folders = await fs.readdirSync(destinationPath);
     if (folders.includes('.git')) {
-      await fs.rmdir(path.join(destinationPath, '.git'), { recursive: true }, async (err) => {
+      await fs.rmdirSync(path.join(destinationPath, '.git'), { recursive: true }, async (err) => {
         if (err) {
           throw new Error(`Remove Git failed :  ${err}`);
         }

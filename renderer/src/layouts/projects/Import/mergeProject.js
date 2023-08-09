@@ -5,7 +5,6 @@ import {
   checkoutToBranch,
   commitChanges,
   createBranch,
-  deleteTheBranch,
   initProject,
   listLocalBranches,
   mergeBranches,
@@ -18,7 +17,7 @@ import { createAllMdInDir } from './mergeObsUtils';
 
 const path = require('path');
 
-export const mergeProject = async (incomingPath, currentUser, setConflictPopup, setModel) => {
+export const mergeProject = async (incomingPath, currentUser, setConflictPopup, setModel, setProcessMerge) => {
   // CURRENT MERGE IS ONLY FOR OBS
 
   // 1. setting up basic things needed for merging
@@ -40,11 +39,15 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
   //     ELSE : Conflcit --> show conflcit resolver and do all in merge-main branch
   //      After finish all conflcits and finish copy files to ORG PROJECTS
 
+  // Notes : when merge all files need to be in base commit , otherwsie we will not get the conflcit filename \
+  // after merge.
+
   try {
     // --> setting up basic things needed for merging
     const tempMergeMain = 'merge-main';
     const tempMergeIncoming = 'merge-incoming';
     const mainBranch = `${packageInfo.name}-main`;
+    let currentActiveBranch = mainBranch;
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
     // read incoming meta
@@ -60,16 +63,50 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     const targetPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', `${projectName}_${projectId}`);
     const author = { email: '', username: currentUser };
 
+    // check git git inited and if yes get door43 sync user
+    const checkInit = await checkInitialize(fs, targetPath, mainBranch);
+    if (checkInit) {
+      const localBranches = await listLocalBranches(fs, targetPath);
+      if (localBranches.length > 0) {
+        const userSettings = await readUserSettings();
+        if (localBranches.includes(`${userSettings?.sync?.services?.door43[0]?.username}/scribe`)) {
+            currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
+            author.email = userSettings.sync.services.door43[0].token.user.email;
+            author.username = userSettings.sync.services.door43[0].username;
+          }
+      }
+    } else {
+      // init git
+      // create scribe main (current acive branch)
+      const projectInitialized = await initProject(fs, targetPath, currentUser, currentActiveBranch);
+      // initial commit
+      projectInitialized && await commitChanges(fs, targetPath, author, 'Initial Commit on Offline Merge');
+    }
+
     // --> create a new dir for merge , Dir path take from env file
     const mergeDirPath = path.join(newpath, packageInfo.name, 'common', environment.MERGE_DIR_NAME);
     console.log('merge dir path : ', mergeDirPath);
+    // delete mergeDir if exist
+    const existMergePath = await fs.existsSync(mergeDirPath);
+    if (existMergePath) {
+      console.log('existing path =====');
+      await fs.rmdirSync(mergeDirPath, { recursive: true }, (err) => {
+        console.log('inside delete exist ---');
+        if (err) {
+          throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
+        }
+      });
+    }
+
+    setTimeout(async () => {
+      console.log('finish delete .merge ------------');
     // create DIR and files in the directory
     // FOR OBS ONLY -> Add condition here to call usfm
     const contentCreated = await createAllMdInDir(mergeDirPath);
     console.log('base content crated :', { contentCreated });
     //  init git
     const gitInitialized = contentCreated && await initProject(fs, mergeDirPath, currentUser, tempMergeMain);
-    console.log('git inited : ', { gitInitialized });
+    console.log('git inited temp : ', { gitInitialized });
     // commit base setup in main branch
     const commitedMain = gitInitialized && await commitChanges(fs, mergeDirPath, author, 'Base files commit in merge repo - main branch');
     console.log('base commit done ', { commitedMain });
@@ -89,6 +126,9 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       // { filter: (file) => path.extname(file) !== '.json' || !['LICENSE'].some((val) => file.includes(val)) },
       { filter: (file) => path.extname(file) !== '.json' },
     );
+    // remove license,
+    await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
+
     console.log('finish copy in main to main', { createBranchIncomingStatus });
     // commit all in merge
     const commitMergeMain = createBranchIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit app changes in mergemain');
@@ -102,6 +142,10 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       mergeDirPath,
       { filter: (file) => (path.extname(file) !== '.json') },
     );
+
+    // remove license
+    await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
+
     console.log('finish copy data from incoming to incoming =======');
     // commit all in merge
     const commitMergeIncoming = checkoutIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit importing changes in mergeIncoming');
@@ -118,25 +162,29 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     } else if (mergeStatus.status === false && mergeStatus?.data) {
       console.log({ mergeStatus });
       // conflcit section
-      // ============================> Conflict is not showing
       setConflictPopup({
-        open: false,
+        open: true,
         data: {
           files: mergeStatus.data,
           mergeDirPath,
           projectPath: targetPath,
+          projectContentDirName: dirName,
           incomingPath,
           incomingMeta,
           author,
           currentBranch: tempMergeMain,
-          projectMainBranch: mainBranch,
+          projectMainBranch: currentActiveBranch,
           currentUser,
           projectName: `${projectName}_${projectId}`,
         },
       });
     }
+    setProcessMerge(false);
+    }, 1000);
   } catch (err) {
     logger.error('mergeProject.js', `Error happended ${err}`);
+    console.log('mergeProject.js', `Error happended ${err}`);
+    setProcessMerge(false);
   }
 };
 
