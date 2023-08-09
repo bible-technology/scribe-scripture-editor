@@ -9,6 +9,7 @@ import * as localforage from 'localforage';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
+import packageInfo from '../../../../package.json';
 
 export const ReferenceContext = createContext({});
 
@@ -89,7 +90,8 @@ export default function ReferenceContextProvider({ children }) {
             ([, _value]) => {
               Object?.entries(_value).forEach(
                 ([, resources]) => {
-                  if (resources.identification.name.en === _projectname[0]) {
+                  const id = Object.keys(resources.identification.primary[packageInfo.name]);
+                  if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
                       case 'textTranslation':
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
