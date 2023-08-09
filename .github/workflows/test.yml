@@ -12,12 +12,12 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: |
                   node --version
-                  npm --version
+                  yarn --version
             - name: set @bitregistry translation-help
-              run: npm config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: npm install
-              run: npm ci
+            - name: yarn install
+              run: yarn install
 
             - name: run tests
-              run: npm run test
+              run: yarn test
