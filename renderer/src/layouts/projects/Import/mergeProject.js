@@ -85,40 +85,39 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
 
     // --> create a new dir for merge , Dir path take from env file
     const mergeDirPath = path.join(newpath, packageInfo.name, 'common', environment.MERGE_DIR_NAME);
-    console.log('merge dir path : ', mergeDirPath);
+    // console.log('merge dir path : ', mergeDirPath);
     // delete mergeDir if exist
     const existMergePath = await fs.existsSync(mergeDirPath);
     if (existMergePath) {
-      console.log('existing path =====');
+      // console.log('existing path =====');
       await fs.rmdirSync(mergeDirPath, { recursive: true }, (err) => {
-        console.log('inside delete exist ---');
+        // console.log('inside delete exist ---');
         if (err) {
           throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
         }
       });
     }
 
-    setTimeout(async () => {
-      console.log('finish delete .merge ------------');
+      // console.log('finish delete .merge ------------');
     // create DIR and files in the directory
     // FOR OBS ONLY -> Add condition here to call usfm
     const contentCreated = await createAllMdInDir(mergeDirPath);
-    console.log('base content crated :', { contentCreated });
+    // console.log('base content crated :', { contentCreated });
     //  init git
     const gitInitialized = contentCreated && await initProject(fs, mergeDirPath, currentUser, tempMergeMain);
-    console.log('git inited temp : ', { gitInitialized });
+    // console.log('git inited temp : ', { gitInitialized });
     // commit base setup in main branch
     const commitedMain = gitInitialized && await commitChanges(fs, mergeDirPath, author, 'Base files commit in merge repo - main branch');
-    console.log('base commit done ', { commitedMain });
+    // console.log('base commit done ', { commitedMain });
     // create new branch from main
     const createBranchIncomingStatus = commitedMain && await createBranch(fs, mergeDirPath, tempMergeIncoming);
-    console.log('incoming branch created', { createBranchIncomingStatus });
+    // console.log('incoming branch created', { createBranchIncomingStatus });
     // copy all 1-50 md or 66 usfm from app project ingredients to merge main .
     // Now Not handling merge for front , back and license of story
     const firstKey = Object.keys(incomingMeta.ingredients)[0];
     const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
     const dirName = folderName[0];
-    console.log('ingred : ', { dirName });
+    // console.log('ingred : ', { dirName });
     // copy files
     createBranchIncomingStatus && await fse.copy(
       path.join(targetPath, dirName),
@@ -129,13 +128,13 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     // remove license,
     await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
 
-    console.log('finish copy in main to main', { createBranchIncomingStatus });
+    // console.log('finish copy in main to main', { createBranchIncomingStatus });
     // commit all in merge
     const commitMergeMain = createBranchIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit app changes in mergemain');
-    console.log('commit in merge main', { commitMergeMain });
+    // console.log('commit in merge main', { commitMergeMain });
     // checkout to mergeIncoming
     const checkoutIncomingStatus = commitMergeMain && await checkoutToBranch(fs, mergeDirPath, tempMergeIncoming);
-    console.log('checkout to incoming', { checkoutIncomingStatus });
+    // console.log('checkout to incoming', { checkoutIncomingStatus });
     // copy all contents from incoming dir to incoming branch
     checkoutIncomingStatus && await fse.copy(
       path.join(incomingPath, dirName),
@@ -146,21 +145,21 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     // remove license
     await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
 
-    console.log('finish copy data from incoming to incoming =======');
+    // console.log('finish copy data from incoming to incoming =======');
     // commit all in merge
     const commitMergeIncoming = checkoutIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit importing changes in mergeIncoming');
     // checkout to main
-    console.log('commit on incoming', { commitMergeIncoming });
+    // console.log('commit on incoming', { commitMergeIncoming });
     const checkoutMainStatus = commitMergeIncoming && await checkoutToBranch(fs, mergeDirPath, tempMergeMain);
     // merge incoming - main
-    console.log('checkout main from incoming', { checkoutMainStatus });
+    // console.log('checkout main from incoming', { checkoutMainStatus });
     const mergeStatus = checkoutMainStatus && await mergeBranches(fs, mergeDirPath, tempMergeMain, tempMergeIncoming);
     console.log('merge done', { mergeStatus });
     if (mergeStatus.status) {
       // Isomorphic git is doing an extra merge or logic cause deletion of the merged data at staging state
       await checkoutJsonFiles(fs, targetPath, tempMergeMain);
     } else if (mergeStatus.status === false && mergeStatus?.data) {
-      console.log({ mergeStatus });
+      // console.log({ mergeStatus });
       // conflcit section
       setConflictPopup({
         open: true,
@@ -180,7 +179,6 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       });
     }
     setProcessMerge(false);
-    }, 1000);
   } catch (err) {
     logger.error('mergeProject.js', `Error happended ${err}`);
     console.log('mergeProject.js', `Error happended ${err}`);

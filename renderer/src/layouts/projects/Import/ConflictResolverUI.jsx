@@ -33,10 +33,16 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     const fse = window.require('fs-extra');
     // copy all md from merge main to project main
     await fse.copy(
-conflictData.data.mergeDirPath,
+      conflictData.data.mergeDirPath,
       path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
-      { filter: (file) => path.extname(file) !== '.git' },
     );
+    // remove .git dir from the copied files
+    await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
+      console.log('final delete done for .git after copy to project------>>> ---');
+      if (err) {
+        throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
+      }
+    });
     // commit changes in project Dir
     await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
     // delete tempDir

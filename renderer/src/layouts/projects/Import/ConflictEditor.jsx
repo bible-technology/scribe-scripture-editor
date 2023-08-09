@@ -61,7 +61,7 @@
           onMouseEnter={() => setHoveredId('current')}
           onMouseLeave={() => setHoveredId('')}
         >
-          Current
+          Ours
         </span>
 
         <span>|</span>
@@ -74,7 +74,7 @@
           onMouseEnter={() => setHoveredId('incoming')}
           onMouseLeave={() => setHoveredId('')}
         >
-          Incoming
+          Theirs
         </span>
 
         <span>|</span>
@@ -92,7 +92,6 @@
 
       </div>
       {/* conflict content section */}
-      {/* <div className="bg-gray-200 flex flex-col w-full p-2 rounded-md"> */}
       <div className="border-2 flex flex-col w-full p-2 rounded-md gap-2">
 
         {/* <div className="text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 hover:bg-red-200"> */}
@@ -165,15 +164,22 @@
   }, [selectedFileName, resolvedFileNames]);
 
   useEffect(() => {
+    let conflcitCount = 0;
+    let resolvedCount = 0;
     let save = false;
     for (let index = 0; index < selectedFileContent.length; index++) {
       if (selectedFileContent[index]?.conflict) {
+          conflcitCount += 1;
         if (selectedFileContent[index].conflictResolved) {
-          save = true;
-        } else {
-          save = false;
+          resolvedCount += 1;
         }
       }
+    }
+    if (conflcitCount > 0 && conflcitCount === resolvedCount) {
+      save = true;
+    } else {
+      setResolveALlActive(true);
+      setResetAll(false);
     }
     setEnableSave(save);
     if (save) {

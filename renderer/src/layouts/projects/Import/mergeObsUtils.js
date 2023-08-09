@@ -34,7 +34,6 @@ export async function parseObs(conflictData, selectedFileName) {
 
     if (fs.existsSync(filePath)) {
         const fileContent = await fs.readFileSync(filePath, 'utf8');
-        console.log({ filePath, fileContent });
         if (fileContent) {
             const stories = [];
             // eslint-disable-next-line prefer-const
@@ -47,6 +46,7 @@ export async function parseObs(conflictData, selectedFileName) {
             // parse handling HEADER and Footer Conflicts
             let headerConflcit = false;
             let footerConflcit = false;
+            let footerConflcitFoundIndex;
 
             if (allLines[0].startsWith('<<<<<')) {
               headerConflcit = true;
@@ -54,7 +54,8 @@ export async function parseObs(conflictData, selectedFileName) {
 
             allLines.forEach((line, index) => {
               // To avoid the values after footer, we have added id=0
-              if (line && id !== 0) {
+              // console.log({ line, id, footerConflcit }, line && id !== 0 && footerConflcit === false);
+              if (line && id !== 0 && footerConflcit === false) {
                 if (headerConflcit) {
                   // handling header with conflcit
                   const objIndex = stories.findIndex(((obj) => obj.id === id));
@@ -75,12 +76,10 @@ export async function parseObs(conflictData, selectedFileName) {
                   }
 
                 // } else if (footerConflcit && !headerConflcit && line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
-                } else if (footerConflcit) {
-                  // handle footer conflcit
-                  // check for footer and no header is this section need execute only after headerconflcit  resolved
-                  const splitData = line.split('_').join('');
-                  const objIndex = stories.findIndex(((obj) => obj.id === id));
-                  stories[objIndex].end = `${stories[objIndex].end}\n${splitData}`;
+                } else if (line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
+                  // footer coflcit found from this line onwards pass execution to else
+                  footerConflcitFoundIndex = index;
+                  footerConflcit = true;
                 } else if (line.match(/^(\s)*#/gm)) {
                   // Fetching the header content - No conflict
                   const hash = line.match(/# (.*)/);
@@ -89,7 +88,7 @@ export async function parseObs(conflictData, selectedFileName) {
                   });
                   id += 1;
                 } else if (line.match(/^(\s)*_/gm) || footer === true) {
-                  // Fetching the footer
+                  // Fetching the footer - NO Conflict
                   const objIndex = stories.findIndex(((obj) => obj.id === id));
                   if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
                     stories[objIndex].text = '';
@@ -134,13 +133,7 @@ export async function parseObs(conflictData, selectedFileName) {
                   stories.push({
                     id, img: imgUrl[1],
                   });
-                } else if (!footerConflcit && index + 1 <= allLines.length && allLines[index].startsWith(('<<<<<')) && allLines[index + 1].startsWith('_')) {
-                    footerConflcit = true;
-                    // const splitData = line.split('_').join(' ');
-                    stories.push({
-                      id, end: line,
-                    });
-                  } else {
+                } else {
                     // Reading the content line by line
                     const objIndex = stories.findIndex(((obj) => obj.id === id));
                     if (objIndex !== -1) {
@@ -155,13 +148,26 @@ export async function parseObs(conflictData, selectedFileName) {
               }
             });
             logger.debug('ObsEditor.js', 'Story for selected navigation is been set to the array for Editor');
-            // if footer have conflict need to add new lines there
-            // when at last line inserted , need to format the footer conlcit string .
-            // all things are coming in a single line without newline. need to put newline after each underscore
-            if (footerConflcit) {
-              stories[stories.length - 1].end = stories[stories.length - 1].end.replace('>>>>>>>', '\n>>>>>>>');
-              footerConflcit = false;
+
+            // Handle conflcit in footer -- brark the loop when footer conflcit found
+            if (allLines && footerConflcit && footerConflcitFoundIndex) {
+                // handle footer with conflcit
+                  const footerConflcitArr = allLines.slice(footerConflcitFoundIndex, allLines.length);
+                  // add text field in last section -> normaly handled in footer section
+                  if (!('text' in stories[stories.length - 1])) {
+                    stories[stories.length - 1].text = '';
+                  }
+                  // manipulate text
+                  const footerConflcitStr = footerConflcitArr.join('').replace('_', '\n_').replace('=======', '\n=======\n').replace('>>>>>>>', '\n>>>>>>>')
+                        .replaceAll('_', '');
+                  stories.push({
+                    id: stories.length + 1,
+                    end: footerConflcitStr,
+                  });
+                  footerConflcit = false;
+                  footerConflcitFoundIndex = undefined;
             }
+
             return stories;
           }
     }
@@ -175,18 +181,19 @@ export async function updateAndSaveStory(story, currentUser, projectName, mergeD
 
     story.forEach((s) => {
       if (Object.prototype.hasOwnProperty.call(s, 'title')) {
-        title = `# ${s.title}\n\n`.trim();
+        title = `# ${s.title.trim()}\n\n`;
       }
       if (Object.prototype.hasOwnProperty.call(s, 'end')) {
         const foot = ((s.end).trim());
         end = `_${foot}_`;
       }
       if (Object.prototype.hasOwnProperty.call(s, 'text')) {
-        body += `![OBS Image](${s.img})\n\n${s.text}\n\n`.trim();
+        body += `![OBS Image](${s.img})\n\n${s.text.trim()}\n\n`;
       }
     });
     const storyStr = title + body + end;
     const filePath = path.join(mergeDirPath, selectedFileName);
+    console.log({ storyStr });
     await fs.writeFileSync(filePath, storyStr);
 
     logger.debug('parseObsStory.js', `Updated Story after resolve conflcit ${selectedFileName}`);
@@ -218,3 +225,115 @@ export async function createAllMdInDir(dirPath) {
     return false;
   }
 }
+
+// allLines.forEach((line, index) => {
+//               // To avoid the values after footer, we have added id=0
+//               if (line && id !== 0) {
+//                 if (headerConflcit) {
+//                   // handling header with conflcit
+//                   const objIndex = stories.findIndex(((obj) => obj.id === id));
+//                   const splitData = line.split('#');
+//                   if (objIndex === -1) {
+//                     // object first time push
+//                     stories.push({
+//                       id, title: splitData.length > 1 ? splitData[1] : splitData[0],
+//                     });
+//                   } else {
+//                     // Reading other header total 5 lines and appending with previous line data
+//                     stories[objIndex].title = `${stories[objIndex].title}\n${splitData.length > 1 ? splitData[1] : splitData[0]}`;
+//                   }
+//                   // reset header conflcit after 5 lines
+//                   if (index === 4) {
+//                     headerConflcit = false;
+//                     id += 1;
+//                   }
+
+//                 // } else if (footerConflcit && !headerConflcit && line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
+//                 } else if (footerConflcit) {
+//                   // handle footer conflcit
+//                   // check for footer and no header is this section need execute only after headerconflcit  resolved
+//                   console.log('in footer conflcit : -------------------------------------------------------------------- ');
+//                   const splitData = line.split('_').join('');
+//                   console.log({ id });
+//                   const objIndex = stories.findIndex(((obj) => obj.id === id));
+//                   console.log({ objIndex });
+//                   stories[objIndex].end = `${stories[objIndex].end}\n${splitData}`;
+//                   console.log('in footer conflcit : ', {
+//                     index, stories, line, id,
+//                   }, `${stories[objIndex].end}\n${splitData}`);
+//                   // ----------------------------------------------------------------------------
+//                 } else if (line.match(/^(\s)*#/gm)) {
+//                   // Fetching the header content - No conflict
+//                   const hash = line.match(/# (.*)/);
+//                   stories.push({
+//                     id, title: hash[1],
+//                   });
+//                   id += 1;
+//                 } else if (line.match(/^(\s)*_/gm) || footer === true) {
+//                   // Fetching the footer - NO Conflict
+//                   const objIndex = stories.findIndex(((obj) => obj.id === id));
+//                   if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
+//                     stories[objIndex].text = '';
+//                     id += 1;
+//                   }
+//                   if (line.match(/_(.*)_/g) && footer === false) {
+//                     // single line footer
+//                     const underscore = line.match(/_(.*)_/);
+//                     stories.push({
+//                       id, end: underscore[1],
+//                     });
+//                     // Logically footer is the last line of the story
+//                     id = 0;
+//                   } else {
+//                     // To get multi-line footer (footer=true)
+//                     footer = true;
+//                     if (line.match(/^(\s)*_/gm)) {
+//                       // starting of footer
+//                       const underscore = line.match(/^(\s)*_(.*)/);
+//                       stories.push({
+//                         id, end: underscore[2],
+//                       });
+//                     } else if (line.match(/_$/gm)) {
+//                       // end of footer
+//                       const underscore = line.match(/(.*)_$/);
+//                       stories[id - 1].end = `${stories[id - 1].end}\n${underscore[1]}`;
+//                       // Logically footer is the last line of the story
+//                       id = 0;
+//                     } else {
+//                       // middle lines of footer if available
+//                       stories[id - 1].end = `${stories[id - 1].end}\n${line}`;
+//                     }
+//                   }
+//                 } else if (line.match(/^(\s)*!/gm)) {
+//                   // Fetching the IMG url
+//                   const objIndex = stories.findIndex(((obj) => obj.id === id));
+//                   if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
+//                     stories[objIndex].text = '';
+//                     id += 1;
+//                   }
+//                   const imgUrl = line.match(/\((.*)\)/);
+//                   stories.push({
+//                     id, img: imgUrl[1],
+//                   });
+//                 } else if (!footerConflcit && index + 1 <= allLines.length - 1 && allLines[index].startsWith(('<<<<<')) && allLines[index + 1].startsWith('_')) {
+//                     console.log('after conflcit ==> ', { footerConflcit, id });
+//                     footerConflcit = true;
+//                     console.log('after conflcit ==> ', { footerConflcit, line, id });
+//                     // const splitData = line.split('_').join(' ');
+//                     stories.push({
+//                       id, end: line,
+//                     });
+//                 } else {
+//                     // Reading the content line by line
+//                     const objIndex = stories.findIndex(((obj) => obj.id === id));
+//                     if (objIndex !== -1) {
+//                       // Reading first line after img
+//                       stories[objIndex].text = line;
+//                       id += 1;
+//                     } else {
+//                       // Reading other lines and appending with previous line data
+//                       stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
+//                     }
+//                   }
+//               }
+//             });
