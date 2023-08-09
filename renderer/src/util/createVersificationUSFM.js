@@ -79,6 +79,7 @@ export const createVersificationUSFM = (
                   verses.push({
                     verseNumber: i.toString(),
                     verseText: '',
+                    contents: ['...'], // adding default text to verses to show the beginning of verse.
                   });
                 }
                 contents = contents.concat(verses);

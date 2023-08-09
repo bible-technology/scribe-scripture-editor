@@ -17,7 +17,11 @@ const PopupButton = ({ handleClick, title, roundedHover, selectedText }) => {
   };
 
   return (
-    <div>
+    <div
+      onKeyDown={e => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
+      onFocus={e => e.stopPropagation()}
+      onMouseOver={e => e.stopPropagation()}> // to allow space in an input within a modal
       <button
         type="button"
         className={`flex w-full border py-2 px-3 border-transparent text-sm font-medium text-black hover:bg-primary hover:text-white ${roundedHover}`}

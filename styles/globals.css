@@ -60,6 +60,10 @@
 .title .mt {
 	@apply hidden;
 }
+
+.sectionBody .s {
+	@apply hidden;
+}
 .editor *[contenteditable='true']:focus {
 	@apply bg-primary-50 outline-none rounded-sm;
 }
@@ -99,17 +103,17 @@ p.paragraph:has(.chapter) {
 	@apply text-primary text-sm;
 }
 
-.perf .verse:after {
+/* .perf .verse:after {
 	visibility: visible;
 	position: absolute;
 	top: 0;
 	left: 0;
 	content: ' ' attr(data-atts-number);
-}
-.perf .verse {
+} */
+/* .perf .verse {
 	visibility: hidden;
 	position: relative;
-}
+} */
 
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
