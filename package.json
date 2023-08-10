@@ -52,17 +52,17 @@
       "target": [
         "deb"
       ],
-      "icon": "styles/icon.icns"
+      "icon": "styles/scribe.icns"
     },
     "mac": {
       "category": "public.app-category.Utilities",
       "target": "dmg",
-      "icon": "styles/icon.icns",
+      "icon": "styles/scribe.icns",
       "type": "distribution"
     },
     "win": {
       "target": "nsis",
-      "icon": "styles/Logo.png",
+      "icon": "styles/scribe-logo.png",
       "publish": [
         "github"
       ]
@@ -84,7 +84,7 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@netlify/plugin-nextjs": "^4.8.0",
-    "@playwright/test": "^1.22.2",
+    "@playwright/test": "^1.36.2",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/jest-dom": "^5.16.4",

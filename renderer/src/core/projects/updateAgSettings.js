@@ -35,7 +35,8 @@ export const saveReferenceResource = () => {
         ([, _value]) => {
           Object.entries(_value).forEach(
             ([, resources]) => {
-              if (resources.identification.name.en === _projectname[0]) {
+              const id = Object.keys(resources.identification.primary[packageInfo.name]);
+              if (id[0] === _projectname[1]) {
                 localforage.getItem('userProfile').then(async (value) => {
                   await updateAgSettings(value?.username, projectName, resources);
                 });
