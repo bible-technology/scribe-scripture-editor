@@ -318,7 +318,7 @@ export default function ProjectList() {
                                 orderBy,
                                 order,
                               ).filter(filterArchive).map((project) => (
-                                <Disclosure key={project.name}>
+                                <Disclosure key={project.id[0]}>
                                   {({ open }) => (
                                     <>
                                       <tr className="hover:bg-gray-100 focus:outline-none cursor-pointer">
