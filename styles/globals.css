@@ -89,11 +89,11 @@ p.paragraph:has(.chapter) {
 	@apply text-primary text-sm align-super;
 }
 
-.perf .footnote:before {
+.editor .perf .footnote:before {
 	@apply cursor-pointer font-semibold;
 	content: ' ‡';
 }
-.perf .xref:before {
+.editor .perf .xref:before {
 	@apply cursor-pointer font-semibold;
 	content: ' x';
 }

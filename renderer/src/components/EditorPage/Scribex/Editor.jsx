@@ -10,8 +10,6 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import { insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef } from '@/util/cursorUtils';
 import RecursiveBlock from './RecursiveBlock';
-import { copyText, pasteText } from '@/util/cursorUtils';
-import { useHotkeys } from 'react-hotkeys-hook';
 
 
 export default function Editor(props) {

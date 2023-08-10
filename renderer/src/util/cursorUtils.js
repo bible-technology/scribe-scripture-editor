@@ -54,30 +54,30 @@ function isChildOf(node, parentId) {
 }
 export function getCurrentCursorPosition(parentId) {
   const selection = window.getSelection();
-    let charCount = -1;
-    let node;
+  let charCount = -1;
+  let node;
 
   if (selection.focusNode) {
-		if (isChildOf(selection.focusNode, parentId)) {
-			node = selection.focusNode;
-			charCount = selection.focusOffset;
+    if (isChildOf(selection.focusNode, parentId)) {
+      node = selection.focusNode;
+      charCount = selection.focusOffset;
 
-			while (node) {
-				if (node.id === parentId) {
-					break;
-				}
+      while (node) {
+        if (node.id === parentId) {
+          break;
+        }
 
-				if (node.previousSibling) {
-					node = node.previousSibling;
-					charCount += node.textContent.length;
-				} else {
-					node = node.parentNode;
-					if (node === null) {
-						break;
-					}
-				}
-			}
-		}
+        if (node.previousSibling) {
+          node = node.previousSibling;
+          charCount += node.textContent.length;
+        } else {
+          node = node.parentNode;
+          if (node === null) {
+            break;
+          }
+        }
+      }
+    }
   }
   return charCount;
 }
@@ -85,7 +85,7 @@ export function getCurrentCursorPosition(parentId) {
 export function pasteHtmlAtCaret(html, selectPastedContent, cursorPosition) {
   setCurrentCursorPosition(cursorPosition);
   const sel = window.getSelection(); let
-range;
+    range;
   if (sel.getRangeAt && sel.rangeCount) {
     range = sel.getRangeAt(0);
     range.deleteContents();
@@ -137,20 +137,20 @@ export function insertChapterNumber(caretPosition, chapterNumber) {
 
 export function insertFootnote(caretPosition, footNote, selectedText) {
   if (footNote && caretPosition) {
-  const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
-  const footnoteTagWithSelection = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="fq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
-  selectedText && selectedText.length !=0 ? pasteHtmlAtCaret(footnoteTagWithSelection, false, caretPosition) :pasteHtmlAtCaret(footnoteTag, false, caretPosition);
+    const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
+    const footnoteTagWithSelection = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="fq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
+    selectedText && selectedText.length !== 0 ? pasteHtmlAtCaret(footnoteTagWithSelection, false, caretPosition) : pasteHtmlAtCaret(footnoteTag, false, caretPosition);
   }
 }
 
 export function insertXRef(caretPosition, references, selectedText) {
-	if (insertXRef && caretPosition) {
-		const xRefTag = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
-		const xRefTagWithSelection = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
-	selectedText && selectedText.length != 0
-		? pasteHtmlAtCaret(xRefTagWithSelection, false, caretPosition)
-		: pasteHtmlAtCaret(xRefTag, false, caretPosition);
-	}
+  if (insertXRef && caretPosition) {
+    const xRefTag = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
+    const xRefTagWithSelection = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
+    selectedText && selectedText.length !== 0
+      ? pasteHtmlAtCaret(xRefTagWithSelection, false, caretPosition)
+      : pasteHtmlAtCaret(xRefTag, false, caretPosition);
+  }
 }
 
 // Helper function to get selected text within the editor
@@ -188,53 +188,53 @@ export function pasteText() {
     .then((text) => {
       editor.focus();
       document.execCommand('insertText', false, text);
-      console.log(`Text pasted from clipboard: ${ text}`);
+      console.log(`Text pasted from clipboard: ${text}`);
     })
     .catch((error) => {
-      console.error(`Unable to paste text: ${ error}`);
+      console.error(`Unable to paste text: ${error}`);
     });
 }
 export class Clipboard {
-	static copyText(text) {
-		navigator.clipboard
-			.writeText(text)
-			.then(() => {
-				console.log('Text copied to clipboard');
-			})
-			.catch((error) => {
-				console.error('Failed to copy text:', error);
-			});
-	}
+  static copyText(text) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log('Text copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Failed to copy text:', error);
+      });
+  }
 
-	static pasteText(element) {
-		navigator.clipboard
-			.readText()
-			.then((pastedText) => {
-				element.focus();
-				document.execCommand('insertText', false, pastedText);
-				console.log('Text pasted from clipboard');
-			})
-			.catch((error) => {
-				console.error('Failed to paste text:', error);
-			});
-	}
+  static pasteText(element) {
+    navigator.clipboard
+      .readText()
+      .then((pastedText) => {
+        element.focus();
+        document.execCommand('insertText', false, pastedText);
+        console.log('Text pasted from clipboard');
+      })
+      .catch((error) => {
+        console.error('Failed to paste text:', error);
+      });
+  }
 }
 
-export function  getWordAtCursor(parentElement) {
-    const cursorPosition = Cursor.getCurrentCursorPosition(parentElement);
-    const textContent = parentElement.textContent;
-    const words = textContent.trim().split(/\s+/);
-    let charCount = 0;
+// export function getWordAtCursor(parentElement) {
+//   const cursorPosition = Cursor.getCurrentCursorPosition(parentElement);
+//   const textContent = parentElement.textContent;
+//   const words = textContent.trim().split(/\s+/);
+//   let charCount = 0;
 
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      const wordLength = word.length;
-      charCount += wordLength + 1; // +1 for the space after the word
+//   for (let i = 0; i < words.length; i++) {
+//     const word = words[i];
+//     const wordLength = word.length;
+//     charCount += wordLength + 1; // +1 for the space after the word
 
-      if (charCount > cursorPosition) {
-        return word;
-      }
-    }
+//     if (charCount > cursorPosition) {
+//       return word;
+//     }
+//   }
 
-    return null;
-  }
+//   return null;
+// }

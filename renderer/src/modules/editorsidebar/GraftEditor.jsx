@@ -58,7 +58,7 @@ export default function GraftEditor(props) {
   );
 
   return (
-    <div className="editor" style={style}>
+    <div className="grafteditor" style={style}>
       {graftSequenceId ? graftSequenceEditor : ''}
     </div>
   );

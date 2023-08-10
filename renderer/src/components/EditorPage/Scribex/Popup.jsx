@@ -11,6 +11,9 @@ const Popup = ({
     setNumber(event.target.value);
   };
 
+  const handleNumberInputChange = (e) => {
+    setNumber(e.target.value.replace(/[^0-9]/g, ""))
+  }
   const handleSubmit = () => {
     handleButtonClick(number, title);
     handleClose();
@@ -57,7 +60,7 @@ const Popup = ({
               >
                 {title}
                 {' '}
-                {title === 'Verse' || 'Chapter' ? Number : ''}
+                {title === 'Verse' || title === 'Chapter' ? Number : ''}
               </Dialog.Title>
               <div className="mt-2">
                 {selectedText && selectedText.length > 0
@@ -67,14 +70,14 @@ const Popup = ({
 
               </div>
               <div className="mt-2">
-                {title === ('Verse' || 'Chapter')
+                {title === 'Verse' || title === 'Chapter'
                   ? (
                     <input
-                      type="number"
+                      type="text"
                       placeholder={`${title} Number...`}
                       className="block w-full border-gray-300 rounded-md shadow-sm appearance-none"
                       value={number}
-                      onChange={handleInputChange}
+                      onChange={handleNumberInputChange}
                     />
                   ) : (
                     <input

@@ -172,7 +172,6 @@
     "raw-loader": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hotkeys-hook": "^4.4.0",
     "react-i18next": "^11.17.1",
     "react-media-recorder": "^1.6.6",
     "react-scripts": "5.0.1",
