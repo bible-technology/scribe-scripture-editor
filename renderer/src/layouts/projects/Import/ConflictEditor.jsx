@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-  import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-  const ConflictComponent = ({
- text, index, setSelectedFileContent, selectedFileContent, handleResetSingle, resolvedFileNames, selectedFileName,
+const ConflictComponent = ({
+  text, index, setSelectedFileContent, selectedFileContent, handleResetSingle, resolvedFileNames, selectedFileName,
 }) => {
   // expecting 4 item in array
   // 1. input text
@@ -95,7 +95,7 @@
       <div className="border-2 flex flex-col w-full p-2 rounded-md gap-2">
 
         {/* <div className="text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 hover:bg-red-200"> */}
-        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/25' : '' }`}>
+        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/25' : ''}`}>
           {/* <div className="">
             {'<<<<<<<'}
             {' '}
@@ -107,7 +107,7 @@
         {/* <div>=======</div> */}
 
         {/* <div className="text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 hover:bg-green-200"> */}
-        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/25' : '' } `}>
+        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/25' : ''} `}>
           <div>{matchedData.incoming}</div>
           {/* <div>
             {'>>>>>>>'}
@@ -120,35 +120,35 @@
     </div>
   ) : (
     selectedFileContent[index].conflict && selectedFileContent[index].conflictResolved && !resolvedFileNames.includes(selectedFileName)
-    ? (
-      <div className="flex flex-col gap-1">
-        <span
-          role="button"
-          tabIndex={-1}
-          className="hover:text-primary cursor-pointer text-gray-600 text-sm"
-          onClick={() => handleResetSingle(selectedFileContent, index)}
-        >
-          Reset
-        </span>
-        <textarea
-          className="w-full"
-          rows={3}
-          onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
-        >
-          {text}
+      ? (
+        <div className="flex flex-col gap-1">
+          <span
+            role="button"
+            tabIndex={-1}
+            className="hover:text-primary cursor-pointer text-gray-600 text-sm"
+            onClick={() => handleResetSingle(selectedFileContent, index)}
+          >
+            Reset
+          </span>
+          <textarea
+            className="w-full"
+            rows={3}
+            onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
+          >
+            {text}
 
-        </textarea>
-      </div>
-    )
-    : (
-      <div className="border bg-gray-100 flex flex-col w-full p-2 rounded-md min-h-[3rem] justify-center">{text}</div>
-    )
+          </textarea>
+        </div>
+      )
+      : (
+        <div className="border bg-gray-100 flex flex-col w-full p-2 rounded-md min-h-[3rem] justify-center">{text}</div>
+      )
   );
-  };
+};
 
-  // all logic are based on OBS Parsed Array
-  function ConflictEditor({
- selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
+// all logic are based on OBS Parsed Array
+function ConflictEditor({
+  selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
@@ -169,7 +169,7 @@
     let save = false;
     for (let index = 0; index < selectedFileContent.length; index++) {
       if (selectedFileContent[index]?.conflict) {
-          conflcitCount += 1;
+        conflcitCount += 1;
         if (selectedFileContent[index].conflictResolved) {
           resolvedCount += 1;
         }
@@ -186,7 +186,7 @@
       setResolveALlActive(false);
       setResetAll(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFileContent]);
 
   const resolveAllTogether = (data, type) => {
@@ -199,28 +199,28 @@
           // eslint-disable-next-line prefer-regex-literals
           const conflictRegex = new RegExp(
             /^<{7}([^=]*)\n([\s\S]*)\n={7}\n([\s\S]*)\n>{7}[^=]*$/,
-            );
-            const matchArr = currentText.match(conflictRegex);
-            if (matchArr?.length > 3) {
-              let resolvedText;
-              if (type === 'current') {
-                resolvedText = matchArr[2];
-              } else if (type === 'incoming') {
-                resolvedText = matchArr[3];
-              } else if (type === 'both') {
-                resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
-              }
-              if (resolvedText) {
-                conflictedData[i].conflictResolved = true;
-                if ('text' in conflictedData[i]) {
-                  conflictedData[i].text = resolvedText;
-                } else if ('title' in conflictedData[i]) {
-                  conflictedData[i].title = resolvedText;
-                } else if ('end' in conflictedData[i]) {
-                  conflictedData[i].end = resolvedText;
-                }
+          );
+          const matchArr = currentText.match(conflictRegex);
+          if (matchArr?.length > 3) {
+            let resolvedText;
+            if (type === 'current') {
+              resolvedText = matchArr[2];
+            } else if (type === 'incoming') {
+              resolvedText = matchArr[3];
+            } else if (type === 'both') {
+              resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
+            }
+            if (resolvedText) {
+              conflictedData[i].conflictResolved = true;
+              if ('text' in conflictedData[i]) {
+                conflictedData[i].text = resolvedText;
+              } else if ('title' in conflictedData[i]) {
+                conflictedData[i].title = resolvedText;
+              } else if ('end' in conflictedData[i]) {
+                conflictedData[i].end = resolvedText;
               }
             }
+          }
         }
       }
       // update state
@@ -244,8 +244,6 @@
     // update state with copy of conflcited data
     setSelectedFileContent(JSON.parse(FileContentOrginal));
   };
-
-  console.log({ selectedFileContent }, selectedFileContent.length);
 
   return (
     <div className="pl-2 pt-5 pr-5">
@@ -301,10 +299,10 @@
               <div className={`w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-16'}`}>
                 <ConflictComponent
                   text={
-                  content?.title
-                  || content?.text
-                  || content?.end
-                }
+                    content?.title
+                    || content?.text
+                    || content?.end
+                  }
                   index={index}
                   setSelectedFileContent={setSelectedFileContent}
                   selectedFileContent={selectedFileContent}
@@ -319,6 +317,6 @@
       </div>
     </div>
   );
-  }
+}
 
-  export default ConflictEditor;
+export default ConflictEditor;

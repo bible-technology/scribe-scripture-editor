@@ -1,11 +1,11 @@
 import React, {
- useRef, Fragment, useState, useEffect,
+  useRef, Fragment, useState, useEffect,
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-// import * as logger from '../../../logger';
 import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import * as logger from '../../../logger';
 import ConflictSideBar from './ConflictSideBar';
 import { parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
@@ -23,11 +23,11 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     title: '',
     confirmMessage: '',
     buttonName: '',
-    });
+  });
 
   const finishMergeMoveFiletoProject = async (conflictData) => {
+    logger.debug('conflictResolverUI.jsx', 'in finish merge process and copy final data to project');
     setFinishingMerge(true);
-    console.log('in finishing merge - true');
     const path = require('path');
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
@@ -38,7 +38,6 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     );
     // remove .git dir from the copied files
     await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
-      console.log('final delete done for .git after copy to project------>>> ---');
       if (err) {
         throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
       }
@@ -46,15 +45,13 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     // commit changes in project Dir
     await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
     // delete tempDir
-    // await fs.rmdir(conflictData.data.mergeDirPath, { recursive: true });
     await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
-      console.log('final delete done for .merge------>>> ---');
       if (err) {
         throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
       }
     });
-    console.log('in finishing merge - false');
     setFinishingMerge(false);
+    logger.debug('conflictResolverUI.jsx', 'finished merge . copy done. delete temp dir and .git');
   };
 
   const modelClose = () => {
@@ -75,7 +72,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   };
 
   const abortConflictResolution = async (conflictData) => {
-    console.log('in abort conflcit ', { conflictData });
+    logger.debug('conflictResolverUI.jsx', 'in abort conflict');
     const fs = window.require('fs');
     modelClose();
     setConflictPopup({
@@ -112,6 +109,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   };
 
   const saveCurrentStory = async () => {
+    logger.debug('conflictResolverUI.jsx', `saving current story after conflict resolution ${selectedFileName}`);
     await updateAndSaveStory(
       selectedFileContent,
       conflictData.data.currentUser,
@@ -132,8 +130,8 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
     if (selectedFileName && conflictData) {
       (async () => {
         const data = await parseObs(conflictData, selectedFileName);
-        // console.log({ data });
         if (data) {
+          logger.debug('conflictResolverUI.jsx', `fetching conflict data for file  ${selectedFileName} done`);
           setSelectedFileContent(data);
           setEnableSave(false);
           setFileContentOrginal(JSON.stringify(data));
@@ -200,25 +198,25 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                 </div>
                 <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
                   {conflictData?.data?.files?.filepaths?.length === resolvedFileNames?.length && (
-                  <div
-                    className="px-10 py-2 rounded-md bg-green-500 cursor-pointer hover:bg-green-600"
-                    role="button"
-                    tabIndex={-2}
-                    onClick={() => removeSection()}
-                  >
-                    {finishingMerge
-                    ? (
-                      <div
-                        className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                        role="status"
-                      />
-                      )
-                    : <>All conflicts Resolved : Finish</>}
-                  </div>
-                )}
+                    <div
+                      className="px-10 py-2 rounded-md bg-green-500 cursor-pointer hover:bg-green-600"
+                      role="button"
+                      tabIndex={-2}
+                      onClick={() => removeSection()}
+                    >
+                      {finishingMerge
+                        ? (
+                          <div
+                            className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status"
+                          />
+                        )
+                        : <>All conflicts Resolved : Finish</>}
+                    </div>
+                  )}
 
                   <button
-                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600' } `}
+                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600'} `}
                     onClick={saveCurrentStory}
                     type="button"
                     disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}

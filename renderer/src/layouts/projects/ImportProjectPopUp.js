@@ -142,12 +142,13 @@ export default function ImportProjectPopUp(props) {
 
 
   const MergeFunction = async () => {
-    console.log("third button, merge call")
+    logger.debug('importProjectPopUp.js', 'call for merge');
     setProcessMerge(true)
     modelClose();
     await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
     setMerge(false)
     close()
+    logger.debug('importProjectPopUp.js', 'git merge process done');
   }
 
   const importProject = async () => {

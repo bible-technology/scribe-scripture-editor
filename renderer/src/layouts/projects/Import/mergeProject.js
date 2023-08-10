@@ -43,6 +43,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
   // after merge.
 
   try {
+    logger.debug('mergeProject.js', 'start merge projects with git and temp dir');
     // --> setting up basic things needed for merging
     const tempMergeMain = 'merge-main';
     const tempMergeIncoming = 'merge-incoming';
@@ -63,9 +64,12 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     const targetPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', `${projectName}_${projectId}`);
     const author = { email: '', username: currentUser };
 
+    logger.debug('mergeProject.js', 'Read incoming meta done');
+
     // check git git inited and if yes get door43 sync user
     const checkInit = await checkInitialize(fs, targetPath, mainBranch);
     if (checkInit) {
+      logger.debug('mergeProject.js', 'project initialised and check for current active branch');
       const localBranches = await listLocalBranches(fs, targetPath);
       if (localBranches.length > 0) {
         const userSettings = await readUserSettings();
@@ -78,6 +82,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     } else {
       // init git
       // create scribe main (current acive branch)
+      logger.debug('mergeProject.js', 'project not init. init and creare branch');
       const projectInitialized = await initProject(fs, targetPath, currentUser, currentActiveBranch);
       // initial commit
       projectInitialized && await commitChanges(fs, targetPath, author, 'Initial Commit on Offline Merge');
@@ -85,39 +90,33 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
 
     // --> create a new dir for merge , Dir path take from env file
     const mergeDirPath = path.join(newpath, packageInfo.name, 'common', environment.MERGE_DIR_NAME);
-    // console.log('merge dir path : ', mergeDirPath);
     // delete mergeDir if exist
     const existMergePath = await fs.existsSync(mergeDirPath);
     if (existMergePath) {
-      // console.log('existing path =====');
       await fs.rmdirSync(mergeDirPath, { recursive: true }, (err) => {
-        // console.log('inside delete exist ---');
         if (err) {
           throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
         }
+        logger.debug('mergeProject.js', 'deleted temp dir . because existing');
       });
     }
 
-      // console.log('finish delete .merge ------------');
     // create DIR and files in the directory
     // FOR OBS ONLY -> Add condition here to call usfm
     const contentCreated = await createAllMdInDir(mergeDirPath);
-    // console.log('base content crated :', { contentCreated });
+    logger.debug('mergeProject.js', 'created base file content in the temp Dir');
     //  init git
     const gitInitialized = contentCreated && await initProject(fs, mergeDirPath, currentUser, tempMergeMain);
-    // console.log('git inited temp : ', { gitInitialized });
     // commit base setup in main branch
     const commitedMain = gitInitialized && await commitChanges(fs, mergeDirPath, author, 'Base files commit in merge repo - main branch');
-    // console.log('base commit done ', { commitedMain });
     // create new branch from main
     const createBranchIncomingStatus = commitedMain && await createBranch(fs, mergeDirPath, tempMergeIncoming);
-    // console.log('incoming branch created', { createBranchIncomingStatus });
+    logger.debug('mergeProject.js', 'init temp git, commit base files');
     // copy all 1-50 md or 66 usfm from app project ingredients to merge main .
     // Now Not handling merge for front , back and license of story
     const firstKey = Object.keys(incomingMeta.ingredients)[0];
     const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
     const dirName = folderName[0];
-    // console.log('ingred : ', { dirName });
     // copy files
     createBranchIncomingStatus && await fse.copy(
       path.join(targetPath, dirName),
@@ -127,14 +126,11 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     );
     // remove license,
     await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
-
-    // console.log('finish copy in main to main', { createBranchIncomingStatus });
+    logger.debug('mergeProject.js', 'copy project data and delete License - done');
     // commit all in merge
     const commitMergeMain = createBranchIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit app changes in mergemain');
-    // console.log('commit in merge main', { commitMergeMain });
     // checkout to mergeIncoming
     const checkoutIncomingStatus = commitMergeMain && await checkoutToBranch(fs, mergeDirPath, tempMergeIncoming);
-    // console.log('checkout to incoming', { checkoutIncomingStatus });
     // copy all contents from incoming dir to incoming branch
     checkoutIncomingStatus && await fse.copy(
       path.join(incomingPath, dirName),
@@ -144,22 +140,20 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
 
     // remove license
     await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
-
-    // console.log('finish copy data from incoming to incoming =======');
+    logger.debug('mergeProject.js', 'commit main, checkout , copy file from incoming done');
     // commit all in merge
     const commitMergeIncoming = checkoutIncomingStatus && await commitChanges(fs, mergeDirPath, author, 'commit importing changes in mergeIncoming');
     // checkout to main
-    // console.log('commit on incoming', { commitMergeIncoming });
     const checkoutMainStatus = commitMergeIncoming && await checkoutToBranch(fs, mergeDirPath, tempMergeMain);
     // merge incoming - main
-    // console.log('checkout main from incoming', { checkoutMainStatus });
+    logger.debug('mergeProject.js', 'commit temp branch 2, checkout temp-main done');
     const mergeStatus = checkoutMainStatus && await mergeBranches(fs, mergeDirPath, tempMergeMain, tempMergeIncoming);
-    console.log('merge done', { mergeStatus });
     if (mergeStatus.status) {
       // Isomorphic git is doing an extra merge or logic cause deletion of the merged data at staging state
       await checkoutJsonFiles(fs, targetPath, tempMergeMain);
+      logger.debug('mergeProject.js', 'merge done - No conflcit');
     } else if (mergeStatus.status === false && mergeStatus?.data) {
-      // console.log({ mergeStatus });
+      logger.debug('mergeProject.js', 'merge done - conflcit. Opening resolver window');
       // conflcit section
       setConflictPopup({
         open: true,
@@ -181,102 +175,6 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     setProcessMerge(false);
   } catch (err) {
     logger.error('mergeProject.js', `Error happended ${err}`);
-    console.log('mergeProject.js', `Error happended ${err}`);
     setProcessMerge(false);
   }
 };
-
-// export const mergeProject = async (sourcePath, currentUser, setConflictPopup, setModel) => {
-//   const mergeBranch = 'offlinemerge-scribe';
-//   const fs = window.require('fs');
-//   const fse = window.require('fs-extra');
-//   // read source metadata
-//   let sourceMeta = await readIngredients({
-//     filePath: path.join(sourcePath, 'metadata.json'),
-//   });
-//   sourceMeta = JSON.parse(sourceMeta);
-
-//   const projectId = Object.keys(
-//     sourceMeta.identification.primary[packageInfo.name],
-//   )[0];
-//   const projectName = sourceMeta.identification.name.en;
-//   const newpath = localStorage.getItem('userPath');
-//   const targetPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', `${projectName}_${projectId}`);
-//   const mainBranch = `${packageInfo.name}-main`;
-//   let currentActiveBranch = mainBranch;
-//   const author = { email: '', username: currentUser };
-
-//   try {
-//     // git check for init or not
-//     const checkInit = await checkInitialize(fs, targetPath, mainBranch);
-//     if (checkInit) {
-//       // supported project
-//       // already init for offline merge or online sync : identify which branch need to choose
-//       // user branch / scribe main
-//       const localBranches = await listLocalBranches(fs, targetPath);
-//       if (localBranches.length > 0) {
-//         // delete offline branch if exist
-//         if (localBranches.includes(mergeBranch)) {
-//           await deleteTheBranch(fs, targetPath, mergeBranch);
-//         }
-//         const userSettings = await readUserSettings();
-//         if (localBranches.includes(`${userSettings?.sync?.services?.door43[0]?.username}/scribe`)) {
-//           currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
-//           author.email = userSettings.sync.services.door43[0].token.user.email;
-//           author.username = userSettings.sync.services.door43[0].username;
-//         }
-//       } else {
-//         throw new Error('failed to read local branches');
-//       }
-
-//       // create offine merge branch
-//       const createBranchStatus = await createBranch(fs, targetPath, mergeBranch);
-//       // commit all existing changes in currentActiveBranch
-//       const commitStatus = createBranchStatus && await commitChanges(fs, targetPath, author, 'commit existing changes in scribe-main');
-//       // checkout tot offline branch
-//       commitStatus && await checkoutToBranch(fs, targetPath, mergeBranch);
-//       await fse.copy(sourcePath, targetPath, { filter: (file) => path.extname(file) !== '.json' });
-//       setTimeout(async () => {
-//         // commit in offline-merge
-//         const mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-//         // checkout main branchnst mergeCommitStatus = await commitChanges(fs, targetPath, author, 'commit New changes in offline-branch ');
-//         // checkout main branch
-//         const checkoutStatus2 = mergeCommitStatus && await checkoutToBranch(fs, targetPath, currentActiveBranch);
-//         // merge offline - main
-//         const mergeStatus = checkoutStatus2 && await mergeBranches(fs, targetPath, currentActiveBranch, mergeBranch);
-
-//         if (mergeStatus.status) {
-//           // Isomorphic git is doing an extra merge or logic cause deletion of the merged data at staging state
-//           await checkoutJsonFiles(fs, targetPath, currentActiveBranch);
-//         } else if (mergeStatus.status === false && mergeStatus?.data) {
-//           // conflcit section
-//           setConflictPopup({
-//             open: true,
-//             data: {
-//               files: mergeStatus.data,
-//               targetPath,
-//               sourcePath,
-//               sourceMeta,
-//               author,
-//               currentActiveBranch,
-//               currentUser,
-//               projectName: `${projectName}_${projectId}`,
-//             },
-//           });
-//         }
-//       }, '1000');
-//     } else {
-//       // throw error notify non git porject . Proejcts < 0.5.0 or not synced projects
-//       setModel({
-//         openModel: true,
-//         title: 'Merge Not Supported',
-//         confirmMessage: `This project is not supported for Offline Merge Since the
-//         project is from the previous version of Scribe (below 0.5.0). If you want to make this project compatable,
-//         Then create a new Project in the latest version of Scribe and Import all the files OR Sync the current project Online.`,
-//         // buttonName: 'Ok',
-//       });
-//     }
-//   } catch (err) {
-//     logger.error('mergeProject.js', `Error happended ${err}`);
-//   }
-// };
