@@ -231,7 +231,6 @@ export default function ProjectList() {
                                         leaveTo="transform scale-95 opacity-0"
                                       >
                                         <Disclosure.Panel as="tr" key={project.name}>
-                                          <td />
                                           <td className="px-6 py-4">
                                             <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">description</div>
                                             <div className="text-sm tracking-wide p-1">{project.description}</div>
@@ -390,7 +389,6 @@ export default function ProjectList() {
                                         leaveTo="transform scale-95 opacity-0"
                                       >
                                         <Disclosure.Panel as="tr" key={project.name}>
-                                          <td />
                                           <td className="px-6 py-4">
                                             <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">description</div>
                                             <div aria-label="project-description-display" className="text-sm tracking-wide p-1">{project.description}</div>

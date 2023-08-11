@@ -37,7 +37,7 @@ export default function ProjectFileBrowser() {
       agProjects.filter((project) => projectMeta?.identification?.name?.en === project && projectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation'
       && !projectMeta?.project[projectMeta?.type?.flavorType?.flavor?.name]?.isArchived).length > 0
       && (
-        <div role="button" onClick={() => handleSelectProject(projectMeta?.identification?.name?.en)} tabIndex={-1}>
+        <div key={projectMeta?.identification?.name?.en} role="button" onClick={() => handleSelectProject(projectMeta?.identification?.name?.en)} tabIndex={-1}>
           <GridRow
             key={projectMeta?.identification?.name?.en}
             title={projectMeta?.identification?.name?.en}

@@ -2,7 +2,6 @@ import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 
 function ObsImage({ story, online }) {
-  console.log({ online });
   const path = require('path');
   const newpath = localStorage.getItem('userPath');
   const imageName = story.img.split('/');

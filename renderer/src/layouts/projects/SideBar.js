@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import * as localForage from 'localforage';
+import { useState } from 'react';
+// import * as localForage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import LogoIcon from '@/icons/logo.svg';
@@ -12,14 +12,14 @@ import AboutModal from '../editor/AboutModal';
 
 export default function SideBar() {
   const [open, setOpen] = useState(false);
-  const [appMode, setAppMode] = useState();
+  // const [appMode, setAppMode] = useState();
   const { t } = useTranslation();
-  useEffect(() => {
-    localForage.getItem('appMode')
-      .then((value) => {
-        setAppMode(value);
-      });
-  }, []);
+  // useEffect(() => {
+  //   localForage.getItem('appMode')
+  //     .then((value) => {
+  //       setAppMode(value);
+  //     });
+  // }, []);
 
   function openModal(isOpen) {
     setOpen(isOpen);
