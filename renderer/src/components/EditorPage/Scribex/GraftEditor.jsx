@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
-export default function FootNoteEditor(props) {
+export default function GraftEditor(props) {
   const {
     sequenceIds,
     isLoading,
@@ -17,7 +17,7 @@ export default function FootNoteEditor(props) {
     setGraftSequenceId,
   } = props;
 
-  const sequenceId = sequenceIds && sequenceIds.at(-1);
+  const sequenceId = sequenceIds.at(-1);
 
   const style = isLoading || !sequenceId ? { cursor: 'progress' } : {};
 
@@ -38,10 +38,10 @@ export default function FootNoteEditor(props) {
     sequenceId,
     addSequenceId,
     options: {
-    sectionable,
-    blockable,
-    editable,
-    preview,
+      sectionable,
+      blockable,
+      editable,
+      preview,
     },
     decorators: {},
     verbose,

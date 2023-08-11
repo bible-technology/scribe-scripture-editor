@@ -11,10 +11,8 @@ import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
 // import useNetwork from '@/components/hooks/useNetowrk';
 import Font from '@/icons/font.svg';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
-import AboutModal from './AboutModal';
 import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import menuStyles from './MenuBar.module.css';
-import styles from './SubMenuBar.module.css';
 import packageInfo from '../../../../package.json';
 // import WifiIcon from '@/icons/wifi.svg';
 
@@ -29,7 +27,6 @@ const EditorTools = [
 ];
 
 export default function SubMenuBar() {
-  const [open, setOpen] = useState(false);
   // const [snackBar, setSnackBar] = useState(true);
   const {
     state: {
@@ -92,29 +89,6 @@ export default function SubMenuBar() {
     // if (layout === 2) { setLayout(0); }
   };
 
-  // Third Attempts
-  // useEffect(() => {
-  //   const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
-  //   if (counter <= 0) {
-  //     // setNotification(refernceLoading.text);
-  //     setRefernceLoading({
-  //       status: false,
-  //       text: '',
-  //     });
-  //   }
-  //   return () => clearInterval(timer);
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [counter]);
-
-  // function timeOutClose() {
-  //   if (counter <= 0) {
-  //     setSnackBar(false);
-  //   }
-  // }
-
-  function openModal(isOpen) {
-    setOpen(isOpen);
-  }
   // This below code is for identifying the type of resource to remove Bookmarks from OBS
   const [resourceType, setResourceType] = useState();
   useEffect(() => {
@@ -134,8 +108,6 @@ export default function SubMenuBar() {
 
   return (
     <>
-
-      <AboutModal openModal={openModal} open={open} />
 
       {/* <StatsModal openModal={openStatsModal} open={openStats} /> */}
 
@@ -221,15 +193,6 @@ export default function SubMenuBar() {
           <span>
             <MenuBar header={t('label-menu-edit')} MenuItems={EditorTools} style={{ left: '-60px', height: '65px' }} />
           </span>
-          <button
-            aria-label="about-button"
-            type="button"
-            onClick={() => setOpen(true)}
-            className={styles.menu}
-            aria-expanded="false"
-          >
-            <span>{t('label-menu-about')}</span>
-          </button>
         </div>
         {/* <div className="w-2/3">
           <div className="flex-1 items-center text-center place-self-center" />

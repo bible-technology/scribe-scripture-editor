@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
-export default function FootNoteEditor(props) {
+export default function GraftEditor(props) {
   const {
     sequenceIds,
     isLoading,
@@ -17,17 +16,18 @@ export default function FootNoteEditor(props) {
     setGraftSequenceId,
   } = props;
 
-  const sequenceId = sequenceIds.at(-1);
+  const sequenceId = sequenceIds && sequenceIds.at(-1);
 
   const style = isLoading || !sequenceId ? { cursor: 'progress' } : {};
 
   const handlers = {
     onBlockClick: ({ content: _content, element }) => {
+      console.log({ element })
       const _sequenceId = element.dataset.target;
       const { tagName } = element;
       const isInline = tagName === 'SPAN';
-      // if (_sequenceId && !isInline) addSequenceId(_sequenceId);
-      if (_sequenceId) { setGraftSequenceId(_sequenceId); }
+      // // if (_sequenceId && !isInline) addSequenceId(_sequenceId);
+      // if (_sequenceId) { setGraftSequenceId(_sequenceId); }
     },
   };
 
@@ -58,7 +58,7 @@ export default function FootNoteEditor(props) {
   );
 
   return (
-    <div className="editor" style={style}>
+    <div className="grafteditor" style={style}>
       {graftSequenceId ? graftSequenceEditor : ''}
     </div>
   );

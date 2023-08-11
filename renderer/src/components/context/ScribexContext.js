@@ -4,18 +4,26 @@ import PropTypes from 'prop-types';
 
 export const ScribexContext = React.createContext();
 
-const ScribexContextProvider = ({ children }) => {
+const ScribexContextProvider = ({
+ children, editable = true, reference = false, font,
+}) => {
   const initialState = {
     sequenceIds: [],
     sectionable: false,
     blockable: true,
-    editable: true,
+    editable,
     preview: false,
     verbose: false,
     graftSequenceId: null,
+    reference,
+    font,
   };
 
   const [state, setState] = useState(initialState);
+
+  const setFont = useCallback((font) => {
+    setState((prev) => ({ ...prev, font }));
+  }, []);
 
   const setSectionable = useCallback((sectionable) => {
     setState((prev) => ({ ...prev, sectionable }));
@@ -52,6 +60,7 @@ const ScribexContextProvider = ({ children }) => {
     [state.sequenceIds, setSequenceIds],
   );
   const actions = {
+    setFont,
     setSectionable,
     setBlockable,
     setEditable,

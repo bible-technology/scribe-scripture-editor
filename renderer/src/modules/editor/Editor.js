@@ -181,7 +181,7 @@ export default function Editor({
           lineHeight: (fontSize > 1.3) ? 1.5 : '',
           direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
         }}
-        className="border-l-2 border-r-2 border-secondary pb-16 prose-sm max-w-none overflow-auto h-full scrollbars-width"
+        className="border-l-2 border-r-2 border-secondary pb-16 max-w-none overflow-auto h-full scrollbars-width"
       >
         {children}
 

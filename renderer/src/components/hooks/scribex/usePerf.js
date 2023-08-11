@@ -16,6 +16,7 @@ export default function usePerf({
   bookCode,
   verbose,
   htmlMap,
+  refName,
 }) {
   const [isSaving, startSaving] = useTransition();
   const [htmlPerf, setHtmlPerf] = useState();
@@ -29,12 +30,12 @@ export default function usePerf({
         htmlMap,
         options: { historySize: 100 },
       }),
-    [proskomma, ready, docSetId],
+    [proskomma, ready, docSetId, refName],
   );
 
   useDeepCompareEffect(() => {
     if (epiteleteHtml) {
-      epiteleteHtml.readHtml(bookCode, { safe: true }, htmlMap).then((_htmlPerf) => {
+      epiteleteHtml.readHtml(bookCode, { cloning: false }, htmlMap).then((_htmlPerf) => {
         // remove htmlMap for default classes
         setHtmlPerf(_htmlPerf);
       });
@@ -46,28 +47,44 @@ export default function usePerf({
     const usfmString = await epiteleteHtml?.readUsfm(bookCode);
     setUsfmText(usfmString);
     saveToFile(usfmString, bookCode);
+    epiteleteHtml?.readHtml(bookCode, { cloning: false }, htmlMap).then((_htmlPerf) => { // remove htmlMap for default classes
+      setHtmlPerf(_htmlPerf);
+    });
   };
 
   const saveHtmlPerf = useDeepCompareCallback(
     (_htmlPerf, { sequenceId }) => {
-      // (_htmlPerf, { sequenceId, sequenceHtml }) => {
-      // _perfHtml.sequencesHtml[sequenceId] = sequenceHtml;
-
       if (!isEqual(htmlPerf, _htmlPerf)) { setHtmlPerf(_htmlPerf); }
 
       startSaving(async () => {
-        // const startSaving = async () => {
         const newHtmlPerf = await epiteleteHtml?.writeHtml(
           bookCode,
           sequenceId,
           _htmlPerf,
+          { insertSequences: true },
         );
-        // if (verbose) { console.log({ info: 'Saved sequenceId', bookCode, sequenceId }); }
+        if (!isEqual(htmlPerf, newHtmlPerf)) { setHtmlPerf(newHtmlPerf); }
+        exportUsfm(bookCode);
+      });
+    },
+    [htmlPerf, bookCode],
+  );
+
+  const insertNewGraft = useDeepCompareCallback(
+    (_htmlPerf, { sequenceId }) => {
+      if (!isEqual(htmlPerf, _htmlPerf)) { setHtmlPerf(_htmlPerf); }
+
+      startSaving(async () => {
+        const newHtmlPerf = await epiteleteHtml?.writeHtml(
+          bookCode,
+          sequenceId,
+          _htmlPerf,
+          { insertSequences: true },
+        );
 
         if (!isEqual(htmlPerf, newHtmlPerf)) { setHtmlPerf(newHtmlPerf); }
         exportUsfm(bookCode);
       });
-      // startSaving();
     },
     [htmlPerf, bookCode],
   );
@@ -95,6 +112,7 @@ export default function usePerf({
   };
 
   const actions = {
+    insertNewGraft,
     saveHtmlPerf,
     exportUsfm,
     undo,

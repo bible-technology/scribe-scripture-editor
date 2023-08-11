@@ -5,7 +5,6 @@ import localforage from 'localforage';
 import PropTypes from 'prop-types';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import EditorSection from '@/layouts/editor/EditorSection';
-import ReferenceBible from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBible';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNavigation from '@/components/EditorPage/Navigation/CustomNavigation';
 import NavigationObs from '@/components/EditorPage/ObsEditor/NavigationObs';
@@ -17,6 +16,9 @@ import { SnackBar } from '@/components/SnackBar';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import { fetchSettingsResourceHistory } from '@/core/editor/fetchSettingsResourceHistory';
 import { saveSettingsResourceHistory } from '@/core/editor/saveSettingsResourceHistory';
+import ReferenceBibleX from '@/components/EditorPage/Reference/ReferenceBible/ReferenceBibleX';
+
+import ScribexContextProvider from '@/components/context/ScribexContext';
 import * as logger from '../../logger';
 
 const TranslationHelps = dynamic(
@@ -60,12 +62,16 @@ const SectionPlaceholder1 = ({ editor }) => {
       verse,
       obsNavigation,
       resetResourceOnDeleteOffline,
+      font1,
+      font2,
     },
     actions: {
       setRow,
       setLayout,
       setOpenResource1,
       setOpenResource2,
+      setFont1,
+      setFont2,
       // applyBooksFilter,
       setResetResourceOnDeleteOffline,
     },
@@ -298,6 +304,8 @@ const SectionPlaceholder1 = ({ editor }) => {
                   setOpenResource2={setOpenResource2}
                   setRemovingSection={setRemovingSection}
                   setAddingSection={setAddingSection}
+                  font={font1}
+                  setFont={setFont1}
                 >
                   {
                   (loadResource1 === true)
@@ -305,13 +313,16 @@ const SectionPlaceholder1 = ({ editor }) => {
                 <>
                   {referenceColumnOneData1?.languageId
                   && (
-                    <ReferenceBible
-                      languageId={referenceColumnOneData1.languageId}
-                      refName={referenceColumnOneData1.refName}
-                      bookId={_bookId1}
-                      chapter={_chapter1}
-                      verse={_verse1}
-                    />
+                    <ScribexContextProvider editable={false} reference>
+                      <ReferenceBibleX
+                        languageId={referenceColumnOneData1.languageId}
+                        refName={referenceColumnOneData1.refName}
+                        bookId={_bookId1}
+                        chapter={_chapter1}
+                        verse={_verse1}
+                        font={font1}
+                      />
+                    </ScribexContextProvider>
                   )}
                 </>
               )) || (referenceColumnOneData1.selectedResource === 'obs' && (
@@ -366,40 +377,45 @@ const SectionPlaceholder1 = ({ editor }) => {
                 CustomNavigation={(referenceColumnOneData2.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation2 : CustomNavigation2}
                 setRemovingSection={setRemovingSection}
                 setAddingSection={setAddingSection}
+                font={font2}
+                setFont={setFont2}
               >
                 {
-              (loadResource2 === true)
-              && ((referenceColumnOneData2.selectedResource === 'bible' && (
-                <>
-                  {referenceColumnOneData2?.languageId
-                  && (
-                  <ReferenceBible
-                    languageId={referenceColumnOneData2.languageId}
-                    refName={referenceColumnOneData2.refName}
-                    bookId={_bookId2}
-                    chapter={_chapter2}
-                    verse={_verse2}
-                  />
-                  )}
-                </>
-                )) || (referenceColumnOneData2.selectedResource === 'obs' && (
-                  <>
-                    {referenceColumnOneData2?.languageId
-                  && (
-                  <ReferenceObs
-                    stories={stories2}
-                  />
-                  )}
-                  </>
-                )) || (referenceColumnOneData2.selectedResource === 'audio' && (
-                <ReferenceAudio
-                  languageId={referenceColumnOneData2.languageId}
-                  refName={referenceColumnOneData2.refName}
-                  bookId={_bookId1}
-                  chapter={_chapter1}
-                  verse={_verse1}
-                />
-                )) || (
+                  (loadResource2 === true)
+                  && ((referenceColumnOneData2.selectedResource === 'bible' && (
+                    <>
+                      {referenceColumnOneData2?.languageId
+                        && (
+                          <ScribexContextProvider editable={false} reference>
+                            <ReferenceBibleX
+                              languageId={referenceColumnOneData2.languageId}
+                              refName={referenceColumnOneData2.refName}
+                              bookId={_bookId2}
+                              chapter={_chapter2}
+                              verse={_verse2}
+                              font={font2}
+                            />
+                          </ScribexContextProvider>
+                        )}
+                    </>
+                  )) || (referenceColumnOneData2.selectedResource === 'obs' && (
+                    <>
+                      {referenceColumnOneData2?.languageId
+                        && (
+                          <ReferenceObs
+                            stories={stories2}
+                          />
+                        )}
+                    </>
+                  )) || (referenceColumnOneData2.selectedResource === 'audio' && (
+                    <ReferenceAudio
+                      languageId={referenceColumnOneData2.languageId}
+                      refName={referenceColumnOneData2.refName}
+                      bookId={_bookId1}
+                      chapter={_chapter1}
+                      verse={_verse1}
+                    />
+                  )) || (
                   <TranslationHelps
                     selectedResource={referenceColumnOneData2.selectedResource}
                     languageId={referenceColumnOneData2.languageId}
@@ -410,13 +426,13 @@ const SectionPlaceholder1 = ({ editor }) => {
                     story={_obsNavigation2}
                     offlineResource={referenceColumnOneData2.offlineResource}
                   />
-                )
-              )
-            }
+                    )
+                  )
+                }
               </EditorSection>
           )}
             </div>
-        )}
+          )}
         </>
       )}
       <SnackBar
