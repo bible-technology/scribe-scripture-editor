@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
-import { HtmlPerfEditor } from '@xelah/type-perf-html'
-import { getCurrentVerse, getCurrentChapter } from './getReferences'
+import React, { useEffect, useState } from 'react';
+import { HtmlPerfEditor } from '@xelah/type-perf-html';
 import { getCurrentCursorPosition } from '@/util/cursorUtils';
+import { getCurrentVerse, getCurrentChapter } from './getReferences';
 
 const getTarget = ({ content }) => {
-  const div = document.createElement("div");
+  const div = document.createElement('div');
   div.innerHTML = content;
 
   const { target } = div.firstChild?.dataset || {};
@@ -32,28 +32,25 @@ export default function RecursiveBlock({
   setSelectedText,
   ...props
 }) {
-  const [currentVerse, setCurrentVerse] = useState(null)
-  useEffect(() => {
-    if (verbose) console.log("Block: Mount/First Render", index);
-    return () => {
+  const [currentVerse, setCurrentVerse] = useState(null);
 
-      if (verbose) console.log("Block: UnMount/Destroyed", index);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const updateCursorPosition = () => {
+    const cursorPosition = getCurrentCursorPosition('editor');
+    setCaretPosition(cursorPosition);
+  };
 
   const checkReturnKeyPress = (event) => {
-    let activeTextArea = document.activeElement;
-    if (event.key === "Enter") {
+    const activeTextArea = document.activeElement;
+    if (event.key === 'Enter') {
       if (activeTextArea.children.length > 1) {
         const lineBreak = activeTextArea.children[1]?.outerHTML;
-        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, "&nbsp");
+        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, '&nbsp');
       }
     }
-    //BACKSPACE DISABLE
-    if (event.keyCode == 8) {
-      const range = document.getSelection().getRangeAt(0)
-      const selectedNode = range.startContainer
+    // BACKSPACE DISABLE
+    if (event.keyCode === 8) {
+      const range = document.getSelection().getRangeAt(0);
+      const selectedNode = range.startContainer;
       const prevNode = selectedNode.previousSibling;
       if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
         event.preventDefault();
@@ -64,10 +61,10 @@ export default function RecursiveBlock({
   };
 
   function handleSelection() {
-    let selectedText = "";
+    let selectedText = '';
     if (window.getSelection) {
       selectedText = window.getSelection().toString();
-    } else if (document.selection && document.selection.type != "Control") {
+    } else if (document.selection && document.selection.type !== 'Control') {
       selectedText = document.selection.createRange().text;
     }
     if (selectedText) {
@@ -77,32 +74,29 @@ export default function RecursiveBlock({
 
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
-      const range = document.getSelection().getRangeAt(0)
+      const range = document.getSelection().getRangeAt(0);
       // console.log({ range })
-      const selectedNode = range.startContainer
+      const selectedNode = range.startContainer;
       // console.log({ selectedNode })
-      const verse = getCurrentVerse(selectedNode)
-      const chapter = getCurrentChapter(selectedNode)
+      const verse = getCurrentVerse(selectedNode);
+      const chapter = getCurrentChapter(selectedNode);
       // if (onReferenceSelected) {
-      onReferenceSelected({ bookId, chapter, verse })
+      onReferenceSelected({ bookId, chapter, verse });
       // }
     }
-    updateCursorPosition()
+    updateCursorPosition();
     handleSelection();
-  }
+  };
 
-  const updateCursorPosition = () => {
-    let cursorPosition = getCurrentCursorPosition('editor');
-    setCaretPosition(cursorPosition)
-  }
   let component;
 
-  let editable = !!content.match(/data-type="paragraph"/);
+  const editable = !!content.match(/data-type="paragraph"/);
 
   if (editable) {
     component = (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
-        className='editor-paragraph'
+        className="editor-paragraph"
         contentEditable={contentEditable}
         onKeyDown={checkReturnKeyPress}
         onMouseUp={checkCurrentVerse}
@@ -127,5 +121,6 @@ export default function RecursiveBlock({
     component ||= <div {...props} contentEditable={false} />;
   }
 
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{component}</>;
 }

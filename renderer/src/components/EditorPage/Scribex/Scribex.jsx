@@ -11,13 +11,10 @@ import { ScribexContext } from '@/components/context/ScribexContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
-import { Menu, Transition } from '@headlessui/react';
+import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import Buttons from './Buttons';
 import Editor from './Editor';
-import PopupButton from './PopupButton';
 import InsertMenu from './InsertMenu';
-import PlusIcon from '@/icons/Xelah/Plus.svg';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 
 export default function Scribex(props) {
   const { state, actions } = useContext(ScribexContext);
@@ -52,7 +49,7 @@ export default function Scribex(props) {
     state: {
       bookId, selectedFont, fontSize, projectScriptureDir,
     },
-    actions: { setSelectedFont }
+    actions: { setSelectedFont },
   } = useContext(ReferenceContext);
 
   const {
@@ -181,7 +178,7 @@ export default function Scribex(props) {
               <Buttons {..._props} />
             </div>
             <div className="flex ml-auto">
-              <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle={"h-6 mr-2 w-6 text-white cursor-pointer"} />
+              <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
               <InsertMenu handleClick={handleClick} selectedText={selectedText} />
             </div>
           </div>

@@ -1,5 +1,5 @@
-import { Fragment, useState } from 'react'
-import { Menu, Transition } from '@headlessui/react'
+import { Fragment, useState } from 'react';
+import { Menu, Transition } from '@headlessui/react';
 import PopupButton from './PopupButton';
 import PlusIcon from '@/icons/Xelah/Plus.svg';
 
@@ -8,7 +8,7 @@ export default function InsertMenu({ handleClick: handleButtonClick, selectedTex
   const handleClick = (number, title) => {
     handleButtonClick(number, title);
     setIsOpen(false);
-  }
+  };
   return (
     <div>
       <Menu as="div" className="relative inline-block text-left">
@@ -53,5 +53,5 @@ export default function InsertMenu({ handleClick: handleButtonClick, selectedTex
         </Transition>
       </Menu>
     </div>
-  )
+  );
 }

@@ -8,9 +8,10 @@ import SaveIndicator from '@/components/Loading/SaveIndicator';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import { insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef } from '@/util/cursorUtils';
+import {
+ insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
+} from '@/util/cursorUtils';
 import RecursiveBlock from './RecursiveBlock';
-
 
 export default function Editor(props) {
   const {
@@ -109,19 +110,17 @@ export default function Editor(props) {
   function getSelectedText() {
     let selectedText = '';
     if (window.getSelection) {
-      let selection = window.getSelection();
+      const selection = window.getSelection();
 
       selectedText = selection.toString();
       setSelectedText(selectedText);
-    } else if (document.selection && document.selection.type != 'Control') {
+    } else if (document.selection && document.selection.type !== 'Control') {
       selectedText = document.selection.createRange().text;
       setSelectedText(selectedText);
     }
-    console.log(selectedText);
   }
 
   useEffect(() => {
-
     if (insertVerseRChapter === 'Verse') {
       insertVerseNumber(caretPosition, newVerChapNumber);
     }
@@ -135,6 +134,7 @@ export default function Editor(props) {
     if (insertVerseRChapter === 'Cross Reference') {
       insertXRef(caretPosition, newVerChapNumber, selectedText);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
 
   // useEffect(() => {
@@ -185,6 +185,7 @@ export default function Editor(props) {
   };
 
   const onIntersection = (entries) => {
+    // eslint-disable-next-line no-restricted-syntax
     for (const entry of entries) {
       if (entry.isIntersecting) {
         setChapterNumber(entry.target.dataset.attsNumber);
@@ -230,7 +231,7 @@ export default function Editor(props) {
   };
 
   return (
-    <div className="editor" id="editor" style={style} >
+    <div className="editor" id="editor" style={style}>
       {!bookAvailable && <EmptyScreen />}
       {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
       {bookAvailable && sequenceId && !bookChange && (
