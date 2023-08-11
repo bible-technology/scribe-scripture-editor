@@ -10,7 +10,6 @@ import ArrowUturnRightIcon from '@/icons/Xelah/ArrowUturnRight.svg';
 import PencilIcon from '@/icons/Common/Pencil.svg';
 import Copy from '@/icons/Xelah/Copy.svg';
 import Paste from '@/icons/Xelah/Paste.svg';
-import { copyText, pasteText } from '@/util/cursorUtils';
 
 export const classNames = (...classes) => classes.filter(Boolean).join(' ');
 

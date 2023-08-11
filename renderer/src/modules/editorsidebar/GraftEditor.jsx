@@ -21,13 +21,9 @@ export default function GraftEditor(props) {
   const style = isLoading || !sequenceId ? { cursor: 'progress' } : {};
 
   const handlers = {
-    onBlockClick: ({ content: _content, element }) => {
-      console.log({ element })
+    onBlockClick: ({ element }) => {
       const _sequenceId = element.dataset.target;
-      const { tagName } = element;
-      const isInline = tagName === 'SPAN';
-      // // if (_sequenceId && !isInline) addSequenceId(_sequenceId);
-      // if (_sequenceId) { setGraftSequenceId(_sequenceId); }
+      if (_sequenceId) { setGraftSequenceId(_sequenceId); }
     },
   };
 

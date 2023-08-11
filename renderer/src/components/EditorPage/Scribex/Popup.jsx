@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
 
 const Popup = ({
-  handleClose, handleButtonClick, title, isPopupOpen, selectedText
+  handleClose, handleButtonClick, title, isPopupOpen, selectedText,
 }) => {
   const [number, setNumber] = useState('');
   // console.log({ title }, "title");
@@ -12,8 +12,8 @@ const Popup = ({
   };
 
   const handleNumberInputChange = (e) => {
-    setNumber(e.target.value.replace(/[^0-9]/g, ""))
-  }
+    setNumber(e.target.value.replace(/[^0-9]/g, ''));
+  };
   const handleSubmit = () => {
     handleButtonClick(number, title);
     handleClose();
@@ -64,9 +64,14 @@ const Popup = ({
               </Dialog.Title>
               <div className="mt-2">
                 {selectedText && selectedText.length > 0
-                  ? (
-                    <div><span className="font-medium text-gray-600">Selected Text :</span> <span className='text-primary'>{selectedText}</span> </div>
-                  ) : <></>}
+                  && (
+                    <div>
+                      <span className="font-medium text-gray-600">Selected Text :</span>
+                      {' '}
+                      <span className="text-primary">{selectedText}</span>
+                      {' '}
+                    </div>
+                  )}
 
               </div>
               <div className="mt-2">
