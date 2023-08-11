@@ -35,6 +35,7 @@ export default function ImportProjectPopUp(props) {
   const [notify, setNotify] = React.useState();
   const [show, setShow] = React.useState(false);
   const [merge, setMerge] = React.useState(false);
+  const [processMerge, setProcessMerge] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState();
   const [sbData, setSbData] = React.useState({});
   const [model, setModel] = React.useState({
@@ -141,11 +142,13 @@ export default function ImportProjectPopUp(props) {
 
 
   const MergeFunction = async () => {
-    console.log("third button, merge call")
+    logger.debug('importProjectPopUp.js', 'call for merge');
+    setProcessMerge(true)
     modelClose();
+    await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
     setMerge(false)
-    await mergeProject(folderPath, currentUser, setConflictPopup, setModel);
     close()
+    logger.debug('importProjectPopUp.js', 'git merge process done');
   }
 
   const importProject = async () => {
@@ -351,6 +354,7 @@ export default function ImportProjectPopUp(props) {
         closeModal={() => callFunction()}
         buttonName2={{
           active: merge,
+          loading: processMerge,
           name:'Merge',
           action: () => MergeFunction(),
         }}

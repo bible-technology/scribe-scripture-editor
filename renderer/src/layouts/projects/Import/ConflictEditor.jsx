@@ -1,13 +1,16 @@
-  import React, { useEffect, useState } from 'react';
+/* eslint-disable no-nested-ternary */
+import React, { useEffect, useState } from 'react';
 
-  const ConflictComponent = ({
- text, index, setSelectedFileContent, selectedFileContent,
+const ConflictComponent = ({
+  text, index, setSelectedFileContent, selectedFileContent, handleResetSingle, resolvedFileNames, selectedFileName,
 }) => {
   // expecting 4 item in array
   // 1. input text
   // 2. HEAD change / current change
   // 3. Incoming Change
   // 4. mixed data
+
+  const [hoveredId, setHoveredId] = useState('');
 
   const handleSelection = (content, index) => {
     const contents = [...selectedFileContent];
@@ -35,6 +38,7 @@
       /^<{7}([^=]*)\n([\s\S]*)\n={7}\n([\s\S]*)\n>{7}[^=]*$/,
     );
     const matchArr = text.match(conflictRegex);
+    // console.log({ matchArr });
     if (matchArr?.length > 3) {
       matchedData = { current: matchArr[2], incoming: matchArr[3] };
       selectedFileContent[index].conflict = true;
@@ -46,14 +50,18 @@
   return matchedData?.current && matchedData?.incoming ? (
 
     <div className="flex flex-col gap-2 w-full">
+      {/* resolve button section */}
       <div className="flex gap-3 text-gray-600 text-sm">
         <span
           role="button"
           tabIndex={-1}
-          className="hover:text-primary cursor-pointer"
+          className="hover:text-red-600 cursor-pointer"
+          // className="hover:text-primary cursor-pointer"
           onClick={() => handleSelection(matchedData.current, index)}
+          onMouseEnter={() => setHoveredId('current')}
+          onMouseLeave={() => setHoveredId('')}
         >
-          Current
+          Ours
         </span>
 
         <span>|</span>
@@ -61,10 +69,12 @@
         <span
           role="button"
           tabIndex={-1}
-          className="hover:text-primary cursor-pointer"
+          className="hover:text-green-600 cursor-pointer group/incoming"
           onClick={() => handleSelection(matchedData.incoming, index)}
+          onMouseEnter={() => setHoveredId('incoming')}
+          onMouseLeave={() => setHoveredId('')}
         >
-          Incoming
+          Theirs
         </span>
 
         <span>|</span>
@@ -74,62 +84,74 @@
           tabIndex={-1}
           className="hover:text-primary cursor-pointer"
           onClick={() => handleSelection(`${matchedData.current}\t${matchedData.incoming}`, index)}
+          onMouseEnter={() => setHoveredId('both')}
+          onMouseLeave={() => setHoveredId('')}
         >
           Both
         </span>
-      </div>
-      <div className="bg-gray-200 flex flex-col w-full p-2 rounded-md">
 
-        <div className="text-red-600">
-          <div className="">
+      </div>
+      {/* conflict content section */}
+      <div className="border-2 flex flex-col w-full p-2 rounded-md gap-2">
+
+        {/* <div className="text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 hover:bg-red-200"> */}
+        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/25' : ''}`}>
+          {/* <div className="">
             {'<<<<<<<'}
             {' '}
             current
-          </div>
+          </div> */}
           <div>{matchedData.current}</div>
         </div>
 
-        <div>=======</div>
+        {/* <div>=======</div> */}
 
-        <div className="text-green-600">
+        {/* <div className="text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 hover:bg-green-200"> */}
+        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/25' : ''} `}>
           <div>{matchedData.incoming}</div>
-          <div>
+          {/* <div>
             {'>>>>>>>'}
             {' '}
             incoming
-          </div>
+          </div> */}
         </div>
       </div>
 
     </div>
   ) : (
-    selectedFileContent[index].conflict && selectedFileContent[index].conflictResolved
-    ? (
-      <div>
-        <textarea
-          className="w-full"
-          rows={3}
-          onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
-        >
-          {text}
+    selectedFileContent[index].conflict && selectedFileContent[index].conflictResolved && !resolvedFileNames.includes(selectedFileName)
+      ? (
+        <div className="flex flex-col gap-1">
+          <span
+            role="button"
+            tabIndex={-1}
+            className="hover:text-primary cursor-pointer text-gray-600 text-sm"
+            onClick={() => handleResetSingle(selectedFileContent, index)}
+          >
+            Reset
+          </span>
+          <textarea
+            className="w-full"
+            rows={3}
+            onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
+          >
+            {text}
 
-        </textarea>
-      </div>
-    )
-    : (
-      <div className="bg-gray-200 flex flex-col w-full p-2 rounded-md min-h-[3rem] justify-center">{text}</div>
-    )
+          </textarea>
+        </div>
+      )
+      : (
+        <div className="border bg-gray-100 flex flex-col w-full p-2 rounded-md min-h-[3rem] justify-center">{text}</div>
+      )
   );
-  };
+};
 
-  // all logic are based on OBS Parsed Array
-  function ConflictEditor({
- selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
+// all logic are based on OBS Parsed Array
+function ConflictEditor({
+  selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
-
-  console.log({ resolvedFileNames, resetAlll }, resolvedFileNames?.includes(selectedFileName));
 
   useEffect(() => {
     if (resolvedFileNames?.includes(selectedFileName)) {
@@ -142,22 +164,29 @@
   }, [selectedFileName, resolvedFileNames]);
 
   useEffect(() => {
+    let conflcitCount = 0;
+    let resolvedCount = 0;
     let save = false;
     for (let index = 0; index < selectedFileContent.length; index++) {
       if (selectedFileContent[index]?.conflict) {
+        conflcitCount += 1;
         if (selectedFileContent[index].conflictResolved) {
-          save = true;
-        } else {
-          save = false;
+          resolvedCount += 1;
         }
       }
+    }
+    if (conflcitCount > 0 && conflcitCount === resolvedCount) {
+      save = true;
+    } else {
+      setResolveALlActive(true);
+      setResetAll(false);
     }
     setEnableSave(save);
     if (save) {
       setResolveALlActive(false);
       setResetAll(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFileContent]);
 
   const resolveAllTogether = (data, type) => {
@@ -170,28 +199,28 @@
           // eslint-disable-next-line prefer-regex-literals
           const conflictRegex = new RegExp(
             /^<{7}([^=]*)\n([\s\S]*)\n={7}\n([\s\S]*)\n>{7}[^=]*$/,
-            );
-            const matchArr = currentText.match(conflictRegex);
-            if (matchArr?.length > 3) {
-              let resolvedText;
-              if (type === 'current') {
-                resolvedText = matchArr[2];
-              } else if (type === 'incoming') {
-                resolvedText = matchArr[3];
-              } else if (type === 'both') {
-                resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
-              }
-              if (resolvedText) {
-                conflictedData[i].conflictResolved = true;
-                if ('text' in conflictedData[i]) {
-                  conflictedData[i].text = resolvedText;
-                } else if ('title' in conflictedData[i]) {
-                  conflictedData[i].title = resolvedText;
-                } else if ('end' in conflictedData[i]) {
-                  conflictedData[i].end = resolvedText;
-                }
+          );
+          const matchArr = currentText.match(conflictRegex);
+          if (matchArr?.length > 3) {
+            let resolvedText;
+            if (type === 'current') {
+              resolvedText = matchArr[2];
+            } else if (type === 'incoming') {
+              resolvedText = matchArr[3];
+            } else if (type === 'both') {
+              resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
+            }
+            if (resolvedText) {
+              conflictedData[i].conflictResolved = true;
+              if ('text' in conflictedData[i]) {
+                conflictedData[i].text = resolvedText;
+              } else if ('title' in conflictedData[i]) {
+                conflictedData[i].title = resolvedText;
+              } else if ('end' in conflictedData[i]) {
+                conflictedData[i].end = resolvedText;
               }
             }
+          }
         }
       }
       // update state
@@ -200,6 +229,13 @@
       // update line with current | incoming | both based on selection
       setSelectedFileContent(conflictedData);
     }
+  };
+
+  const handleResetSingle = (data, index) => {
+    const orginalFileContent = JSON.parse(FileContentOrginal)[index];
+    const conflictedData = [...data];
+    conflictedData[index] = orginalFileContent;
+    setSelectedFileContent(conflictedData);
   };
 
   const resetAllResolved = () => {
@@ -220,7 +256,7 @@
             type="button"
             onClick={() => resolveAllTogether(selectedFileContent, 'current')}
             disabled={resolveAllActive === false}
-            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+            className={` ${resolveAllActive ? 'cursor-pointer hover:text-red-600' : 'text-gray-500'}`}
           >
             All Current
           </button>
@@ -228,7 +264,7 @@
             type="button"
             onClick={() => resolveAllTogether(selectedFileContent, 'incoming')}
             disabled={resolveAllActive === false}
-            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
+            className={` ${resolveAllActive ? 'cursor-pointer hover:text-green-600' : 'text-gray-500'}`}
           >
             All Incoming
           </button>
@@ -253,21 +289,26 @@
       <div className=" min-h-[72vh] p-5 flex flex-col gap-5">
         {selectedFileContent?.map((content, index) => (
           // eslint-disable-next-line react/no-array-index-key
-          <div key={index}>
+          <div key={content?.id}>
             <div className="flex gap-5 items-center">
-              <div className="bg-gray-200 min-w-[3rem] h-[3rem] flex justify-center items-center rounded-full">
-                {content?.id}
-              </div>
-              <div className="w-full">
+              {(index !== 0 && index !== selectedFileContent.length - 1) && (
+                <div className="bg-gray-200 min-w-[3rem] h-[3rem] flex justify-center items-center rounded-full">
+                  {index}
+                </div>
+              )}
+              <div className={`w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-16'}`}>
                 <ConflictComponent
                   text={
-                  content?.title
-                  || content?.text
-                  || content?.end
-                }
+                    content?.title
+                    || content?.text
+                    || content?.end
+                  }
                   index={index}
                   setSelectedFileContent={setSelectedFileContent}
                   selectedFileContent={selectedFileContent}
+                  handleResetSingle={handleResetSingle}
+                  resolvedFileNames={resolvedFileNames}
+                  selectedFileName={selectedFileName}
                 />
               </div>
             </div>
@@ -276,6 +317,6 @@
       </div>
     </div>
   );
-  }
+}
 
-  export default ConflictEditor;
+export default ConflictEditor;

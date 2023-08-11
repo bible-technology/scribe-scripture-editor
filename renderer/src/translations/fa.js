@@ -152,7 +152,7 @@ export const Fa = {
     'dynamic-msg-import-resource-snack': 'Resource upload successful! Please check the resource list',
     'dynamic-msg-unable-find-buritto-snack': 'Unable to find burrito file (metadata.json).',
     'dynamic-msg-unable-invalid-buritto-snack': 'Invalid burrito file (metadata.json).',
-    'dynamic-msg-confirm-replace-resource': 'An existing project with the same name was found. Check "Archived tab" or "Projects tab". Press "Replace" if you want to replace it. This would overwrite any existing content in overlapping books. Otherwise, press "Cancel" to go back.',
+    'dynamic-msg-confirm-replace-resource': 'An existing project with the same name was found! Check "Archived tab" or "Projects tab". Press "Replace" to overwrite any existing content in overlapping books. Press "Merge" to combine the project with the current project. Press "Cancel" to avoid changes.',
     'dynamic-msg-resource-added': 'resource added successfully',
     'dynamic-msg-resource-unable-fetch-url': 'unable to fetch selected resource from the given url',
     'dynamic-msg-load-ref-bible-snack': 'successfully loaded {{refName}} files',
