@@ -95,7 +95,7 @@ const ConflictComponent = ({
       <div className="border-2 flex flex-col w-full p-2 rounded-md gap-2">
 
         {/* <div className="text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 hover:bg-red-200"> */}
-        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/25' : ''}`}>
+        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/[.70]' : ''}`}>
           {/* <div className="">
             {'<<<<<<<'}
             {' '}
@@ -107,7 +107,7 @@ const ConflictComponent = ({
         {/* <div>=======</div> */}
 
         {/* <div className="text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 hover:bg-green-200"> */}
-        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/25' : ''} `}>
+        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/[.70]' : ''} `}>
           <div>{matchedData.incoming}</div>
           {/* <div>
             {'>>>>>>>'}
@@ -258,7 +258,7 @@ function ConflictEditor({
             disabled={resolveAllActive === false}
             className={` ${resolveAllActive ? 'cursor-pointer hover:text-red-600' : 'text-gray-500'}`}
           >
-            All Current
+            All ours
           </button>
           <button
             type="button"
@@ -266,7 +266,7 @@ function ConflictEditor({
             disabled={resolveAllActive === false}
             className={` ${resolveAllActive ? 'cursor-pointer hover:text-green-600' : 'text-gray-500'}`}
           >
-            All Incoming
+            All theirs
           </button>
           <button
             type="button"
@@ -274,7 +274,7 @@ function ConflictEditor({
             disabled={resolveAllActive === false}
             className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
           >
-            All Both
+            All both
           </button>
           <button
             type="button"
@@ -282,7 +282,7 @@ function ConflictEditor({
             onClick={() => resetAllResolved()}
             className={` ${(resetAlll) ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
           >
-            Reset
+            Reset all
           </button>
         </div>
       </div>
