@@ -129,6 +129,7 @@ export const useReadReferenceUsfmFile = ({
           });
           setNotifications(temp);
         });
+        // eslint-disable-next-line no-console
         return console.error(err);
       }
     }

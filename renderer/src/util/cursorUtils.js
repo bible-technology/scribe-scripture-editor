@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 function createRange(node, chars, range) {
   if (!range) {
     range = document.createRange(); // eslint-disable-line no-param-reassign
