@@ -19,6 +19,7 @@ import CustomMultiComboBox from './CustomMultiComboBox';
 import langJson from '../../../lib/lang/langNames.json';
 import { handleDownloadResources } from './createDownloadedResourceSB';
 import * as logger from '../../../logger';
+import { environment } from '../../../../environment';
 
 const subjectTypeArray = {
   bible: [
@@ -107,26 +108,18 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     logger.debug('DownloadResourcePopUp.js', 'fetching resource as per filter applied');
     setLoading(true);
     // subject = bible and lang = en - if not custom filter or initial loading
-    const baseUrl = 'https://git.door43.org/api/catalog/v5/search';
+    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc`;
     let url = '';
     if (filter) {
       url = `${baseUrl}?`;
       if (selectedLangFilter.length > 0) {
         selectedLangFilter.forEach((row) => {
-          if (url.slice(-1) === '?') {
-            url += `lang=${row?.lc ? row?.lc : row?.code}`;
-          } else {
-            url += `&lang=${row?.lc ? row?.lc : row?.code}`;
-          }
+          url += `&lang=${row?.lc ? row?.lc : row?.code}`;
         });
       }
       if (selectedTypeFilter.length > 0) {
         selectedTypeFilter.forEach((row) => {
-          if (url.slice(-1) === '?') {
-            url += `subject=${row.name}`;
-          } else {
-            url += `&subject=${row.name}`;
-          }
+          url += `&subject=${row.name}`;
         });
       } else {
         // nothing selected default will be bible || obs
@@ -145,10 +138,10 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       // initial load
       switch (selectResource) {
         case 'bible':
-          url = `${baseUrl}?subject=Bible&lang=en`;
+          url = `${baseUrl}&subject=Bible&lang=en`;
           break;
         case 'obs':
-          url = `${baseUrl}?subject=${subjectTypeArray.obs[0].name}&lang=en`;
+          url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
           break;
         default:
           break;
@@ -159,7 +152,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     if (selectedPreProd) {
       url += '&stage=preprod';
     }
-    // url = 'https://git.door43.org/api/catalog/v5/search?subject=Aligned%20Bible&subject=Bible&lang=en&lang=ml&lang=hi';
+    // url = '${environment.GITEA_API_ENDPOINT}/search?metadataType=rc&subject=Aligned%20Bible&subject=Bible&lang=en&lang=ml&lang=hi';
     const temp_resource = {};
     selectedLangFilter.forEach((langObj) => {
       temp_resource[langObj.lc] = [];

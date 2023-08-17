@@ -7,6 +7,7 @@ import { SnackBar } from '@/components/SnackBar';
 import * as logger from '../../../../logger';
 import MultiComboBox from '../MultiComboBox';
 import packageInfo from '../../../../../../package.json';
+import { environment } from '../../../../../environment';
 
 export default function TwNavigation({ languageId, referenceResources, setReferenceResources }) {
   const [selected, setSelected] = useState('');
@@ -81,7 +82,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
     } else {
       // online
       // get options
-      fetch(`https://git.door43.org/api/catalog/v5/search?subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
+      fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
       .then((res) => res.json())
       .then((meta) => {
         // console.log('meta : ', { meta });

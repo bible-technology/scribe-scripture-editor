@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import * as logger from '../../logger';
+import { environment } from '../../../environment';
 
 function createData(name, language, owner) {
   return {
@@ -8,7 +9,7 @@ function createData(name, language, owner) {
 }
 export const fetchTranslationResource = async (urlpath, setResource, selectResource, selectedPreProd, snackBarAction) => {
   logger.debug('ResourcesPopUp.js', `fetchTranslationResource :  ${selectResource}`);
-  const baseUrl = 'https://git.door43.org/api/catalog/v5/search?';
+  const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&`;
   let url = `${baseUrl}subject=${urlpath}`;
   if (selectedPreProd) {
     url += '&stage=preprod';
