@@ -4,7 +4,6 @@ import {
   RepositoryContext,
   get,
 } from 'gitea-react-toolkit';
-import { useTranslation } from 'react-i18next';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import { SyncContext } from '../SyncContextProvider';
@@ -25,8 +24,6 @@ const GiteaFileBrowser = ({ changeRepo }) => {
       setSelectedGiteaProject, setSelectedGiteaProjectBranch,
     },
   } = useContext(SyncContext);
-
-  const { t } = useTranslation();
 
   // eslint-disable-next-line no-unused-vars
   const [advacnedOption, setAdvacnedOption] = React.useState(false);

@@ -22,7 +22,6 @@ import { cloneAndSetProject, updateSettingsFiles } from '@/components/Sync/Gitea
 import { checkoutJsonFiles, pullProject } from '@/components/Sync/Isomorphic/utils';
 import Door43Logo from '@/icons/door43.svg';
 import * as logger from '../../logger';
-import packageInfo from '../../../../package.json';
 
 export default function Sync() {
   const { t } = useTranslation();
