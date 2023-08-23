@@ -4,7 +4,6 @@ import {
   RepositoryContext,
   get,
 } from 'gitea-react-toolkit';
-import { useTranslation } from 'react-i18next';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import { SyncContext } from '../SyncContextProvider';
@@ -25,8 +24,6 @@ const GiteaFileBrowser = ({ changeRepo }) => {
       setSelectedGiteaProject, setSelectedGiteaProjectBranch,
     },
   } = useContext(SyncContext);
-
-  const { t } = useTranslation();
 
   // eslint-disable-next-line no-unused-vars
   const [advacnedOption, setAdvacnedOption] = React.useState(false);
@@ -131,9 +128,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     <>
       <div className="flex flex-row mx-5 my-3 border-b-1 border-primary">
         <span className="font-semibold" onClick={cleanRepo} role="button" tabIndex={-1}>
-          {t('label-Gitea')}
-          {' '}
-          {t('label-project')}
+          {repo.owner.username}
         </span>
         {steps.map((label, index) => (
           (steps.length - 1 === index)
