@@ -7,6 +7,7 @@ import localForage from 'localforage';
 import * as logger from '../../../../logger';
 import MultiComboBox from '../MultiComboBox';
 import packageInfo from '../../../../../../package.json';
+import { environment } from '../../../../../environment';
 
 export default function TaNavigation({ languageId, referenceResources }) {
   const [selected, setSelected] = useState('');
@@ -15,15 +16,7 @@ export default function TaNavigation({ languageId, referenceResources }) {
 
   // const [hovered, setHovered] = useState(null);
   const [taList, setTaList] = useState([]);
-  const BaseUrl = 'https://git.door43.org/api/v1/repos/';
-
-  // const setHover = (index) => {
-  //   setHovered(index);
-  // };
-
-  // const unsetHover = () => {
-  //   setHovered(null);
-  // };
+  const BaseUrl = `${environment.GITEA_API_ENDPOINT}/repos/`;
 
   const {
     state: {
@@ -35,7 +28,7 @@ export default function TaNavigation({ languageId, referenceResources }) {
     },
   } = useContext(ReferenceContext);
 
-useEffect(() => {
+  useEffect(() => {
     if (referenceResources && referenceResources?.offlineResource?.offline) {
       // offline
       const taArrayOffline = [];
@@ -50,8 +43,8 @@ useEffect(() => {
         const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'resources');
         const projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
         // multiple books or options
-        if (offlineResource?.data?.value?.books.length > 0) {
-          setoptions(offlineResource?.data?.value?.books);
+        if (offlineResource?.data?.value?.meta?.books.length > 0) {
+          setoptions(offlineResource.data.value.meta.books);
         }
         // if (fs.existsSync(path.join(folder, projectName, 'translate'))) {
         if (selectedOption && fs.existsSync(path.join(folder, projectName, selectedOption))) {
@@ -85,7 +78,7 @@ useEffect(() => {
       fetch(`${BaseUrl}${owner}/${languageId}_ta/`)
         .then((response) => response.json())
         .then((actualData) => {
-          // get avaialble books
+          // get avaialble books/ingredients
           if (actualData?.books?.length > 0 && !options.length > 0) {
             setoptions(actualData?.books);
           }
@@ -111,7 +104,6 @@ useEffect(() => {
                         tempObj.subTitle = data;
                       });
                     taArray.push(tempObj);
-                    // console.log("array : ", taArray);
                   }
                 });
               });
@@ -129,7 +121,7 @@ useEffect(() => {
           logger.debug('In Fetch TA Content.js', `Error in Fetch : ${err.message}`);
         });
     }
-  }, [languageId, options, owner, referenceResources, selectedOption]);
+  }, [BaseUrl, languageId, options, owner, referenceResources, selectedOption]);
 
   useEffect(() => {
     if (referenceResources?.offlineResource?.offline) {
