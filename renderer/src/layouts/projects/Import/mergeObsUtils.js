@@ -1,4 +1,5 @@
 // parse obs story based on the story number
+import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 import * as logger from '../../../logger';
 // import OBSData from '../../../lib/OBSData.json';
@@ -200,6 +201,37 @@ export async function createAllMdInDir(dirPath) {
     return true;
   } catch (err) {
     logger.error('mergeObsUtils.js', `error in write files ${err}`);
+    return false;
+  }
+}
+
+export async function copyFilesTempToOrginal(conflictData) {
+  try {
+    const path = require('path');
+    const fs = window.require('fs');
+    const fse = window.require('fs-extra');
+
+    // copy all md from merge main to project main
+    await fse.copy(
+      conflictData.data.mergeDirPath,
+      path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
+    );
+    // remove .git dir from the copied files
+    await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
+      if (err) {
+        throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
+      }
+    });
+    // commit changes in project Dir
+    await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
+    // delete tempDir
+    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
+      if (err) {
+        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
+      }
+    });
+    return true;
+  } catch (err) {
     return false;
   }
 }

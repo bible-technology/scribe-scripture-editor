@@ -2,12 +2,11 @@ import React, {
   useRef, Fragment, useState, useEffect,
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import * as logger from '../../../logger';
 import ConflictSideBar from './ConflictSideBar';
-import { parseObs, updateAndSaveStory } from './mergeObsUtils';
+import { copyFilesTempToOrginal, parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
 
 function ConflictResolverUI({ conflictData, setConflictPopup }) {
@@ -28,28 +27,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   const finishMergeMoveFiletoProject = async (conflictData) => {
     logger.debug('conflictResolverUI.jsx', 'in finish merge process and copy final data to project');
     setFinishingMerge(true);
-    const path = require('path');
-    const fs = window.require('fs');
-    const fse = window.require('fs-extra');
-    // copy all md from merge main to project main
-    await fse.copy(
-      conflictData.data.mergeDirPath,
-      path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
-    );
-    // remove .git dir from the copied files
-    await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
-      if (err) {
-        throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
-      }
-    });
-    // commit changes in project Dir
-    await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
-    // delete tempDir
-    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
-      if (err) {
-        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
-      }
-    });
+    await copyFilesTempToOrginal(conflictData);
     setFinishingMerge(false);
     logger.debug('conflictResolverUI.jsx', 'finished merge . copy done. delete temp dir and .git');
   };
