@@ -22,15 +22,6 @@ export default function ProjectFileBrowser() {
     // eslint-disable-next-line
   }, []);
 
-  // const handleSelectProject = (currentProject) => {
-  //   if (selectedAgProject?.projectName === currentProject) {
-  //     setSelectedAgProject(undefined);
-  //   } else {
-  //     const currentMeta = agProjectsMeta.filter((projectData) => projectData?.identification?.name?.en === currentProject);
-  //     setSelectedAgProject({ projectName: currentProject, projectMeta: currentMeta[0] });
-  //   }
-  // };
-
   const handleSelectProject = (currentProject, meta) => {
     const currentId = Object.keys(meta.identification.primary.scribe)[0];
     const prevSelectedId = selectedAgProject?.projectId || undefined;
