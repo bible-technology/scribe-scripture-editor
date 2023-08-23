@@ -22,12 +22,22 @@ export default function ProjectFileBrowser() {
     // eslint-disable-next-line
   }, []);
 
-  const handleSelectProject = (currentProject) => {
-    if (selectedAgProject?.projectName === currentProject) {
+  // const handleSelectProject = (currentProject) => {
+  //   if (selectedAgProject?.projectName === currentProject) {
+  //     setSelectedAgProject(undefined);
+  //   } else {
+  //     const currentMeta = agProjectsMeta.filter((projectData) => projectData?.identification?.name?.en === currentProject);
+  //     setSelectedAgProject({ projectName: currentProject, projectMeta: currentMeta[0] });
+  //   }
+  // };
+
+  const handleSelectProject = (currentProject, meta) => {
+    const currentId = Object.keys(meta.identification.primary.scribe)[0];
+    const prevSelectedId = selectedAgProject?.projectId || undefined;
+    if (selectedAgProject?.projectName === currentProject && prevSelectedId === currentId) {
       setSelectedAgProject(undefined);
     } else {
-      const currentMeta = agProjectsMeta.filter((projectData) => projectData?.identification?.name?.en === currentProject);
-      setSelectedAgProject({ projectName: currentProject, projectMeta: currentMeta[0] });
+      setSelectedAgProject({ projectName: currentProject, projectMeta: meta, projectId: currentId });
     }
   };
 
@@ -37,12 +47,20 @@ export default function ProjectFileBrowser() {
       agProjects.filter((project) => projectMeta?.identification?.name?.en === project && projectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation'
       && !projectMeta?.project[projectMeta?.type?.flavorType?.flavor?.name]?.isArchived).length > 0
       && (
-        <div key={projectMeta?.identification?.name?.en} role="button" onClick={() => handleSelectProject(projectMeta?.identification?.name?.en)} tabIndex={-1}>
+        <div
+          // key={projectMeta?.identification?.name?.en}
+          key={Object.keys(projectMeta?.identification.primary.scribe)[0]}
+          role="button"
+          onClick={() => handleSelectProject(projectMeta?.identification?.name?.en, projectMeta)}
+          tabIndex={-1}
+        >
           <GridRow
-            key={projectMeta?.identification?.name?.en}
+            // key={projectMeta?.identification?.name?.en}
+            key={Object.keys(projectMeta?.identification.primary.scribe)[0]}
             title={projectMeta?.identification?.name?.en}
             lastSync={projectMeta?.lastSync}
-            selected={selectedAgProject?.projectName === projectMeta?.identification?.name?.en}
+            // selected={selectedAgProject?.projectName === projectMeta?.identification?.name?.en}
+            selected={selectedAgProject?.projectId === Object.keys(projectMeta?.identification.primary.scribe)[0]}
             isUpload={selectedAgProject?.projectName === projectMeta?.identification?.name?.en && syncProgress.syncStarted}
             uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
           />
