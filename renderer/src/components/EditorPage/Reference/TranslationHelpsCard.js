@@ -52,6 +52,8 @@ export default function TranslationHelpsCard({
     },
   } = useCardState({ items });
 
+  console.log({ item });
+
   useEffect(() => {
     if (offlineResource && offlineResource.offline) {
       // console.log('offline in Helpscard : ', offlineResource);
@@ -153,6 +155,8 @@ export default function TranslationHelpsCard({
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
+
+  console.log({ items }, offlineResource?.offline);
 
   return (
     <>
