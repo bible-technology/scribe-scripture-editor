@@ -54,11 +54,10 @@ test('Start with the new user created', async ({userName}) => {
     if (await fs.existsSync(folder)) {
       fs.rmdirSync(folder, {recursive: true})
     }
-    console.error('users.json', `${userName} data removed from json`);
+    console.error('users.json', `${currentUser} data removed from json`);
     const filtered = json.filter((item) => 
       item.username.toLowerCase() !== currentUser.toLowerCase()
     )
-    console.log(filtered)
     return await fs.writeFileSync(file, JSON.stringify(filtered))
   }else{
     await window.getByRole('button', {name: 'Create New Account'}).click()
@@ -73,8 +72,27 @@ test('Start with the new user created', async ({userName}) => {
     
   });
 
-  test('Delete playwright user', async ({userName}) => {
-
+  test("Delete playwright test user", async ({userName}) => {
+    const newpath = await window.evaluate(() =>  Object.assign({}, window.localStorage))
+    const path = require('path');
+    const folder = path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase());
+    const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
+    const data = await fs.readFileSync(file);
+    const json = JSON.parse(data);
+    const title = await window.textContent('[aria-label=projects]');
+    await expect(title).toBe('Projects')
+    await window.getByRole('button', {name: "Open user menu"}).click()
+    const currentUser = await window.textContent('[aria-label="userName"]')
+    await window.getByRole('menuitem', {name: "Sign out"}).click()
+    expect(await window.title()).toBe('Scribe Scripture');
+    if (await fs.existsSync(folder)) {
+      fs.rmdirSync(folder, {recursive: true})
+    }
+    console.error('users.json', `${currentUser} data removed from json`);
+    const filtered = json.filter((item) => 
+      item.username.toLowerCase() !== currentUser.toLowerCase()
+    )
+    return await fs.writeFileSync(file, JSON.stringify(filtered))
   })
 
 })
