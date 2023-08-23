@@ -22,6 +22,8 @@ const TranslationHelps = ({
 
   const filePathTa = `${taNavigationPath?.path}/01.md`;
 
+  console.log({ selectedResource, languageId });
+
   return (
     <>
       {(() => {

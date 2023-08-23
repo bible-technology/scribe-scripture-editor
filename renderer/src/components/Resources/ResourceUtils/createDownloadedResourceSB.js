@@ -98,9 +98,10 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
             statement: resourceMeta?.dublin_core?.rights,
           },
         ];
+        console.log({ resourceMeta });
         json.copyright.licenses[0].ingredient = 'LICENSE.md';
         if (selectResource === 'bible') {
-          resourceMeta.books.forEach((scope) => {
+          resourceMeta.projects.forEach(({ identifier: scope }) => {
             json.type.flavorType.currentScope[scope.toUpperCase()] = [];
             localizedNames[scope.toUpperCase()] = json.localizedNames[scope.toUpperCase()];
           });
@@ -208,6 +209,7 @@ export const generateResourceIngredientsOBS = async (currentResourceMeta, path, 
 };
 
 export const handleDownloadResources = async (resourceData, selectResource, action, update = false) => {
+  console.log(resourceData, selectResource, action);
   logger.debug('DownloadResourcePopUp.js', 'In resource download - started : ');
   const newpath = localStorage.getItem('userPath');
 //   console.log({
@@ -266,6 +268,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                   currentResourceProject = resource;
                   // creating burrito template
                   resourceBurritoFile = await createDownloadedResourceSB(user?.username, currentResourceMeta, currentResourceProject, selectResource);
+                  console.log({ resourceBurritoFile });
                   // adding online fetch response meta as resourceMeta
                   resourceBurritoFile.resourceMeta = currentResourceProject;
                   resourceBurritoFile.resourceMeta.lastUpdatedAg = moment().format();

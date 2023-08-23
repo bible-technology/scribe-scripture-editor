@@ -9,8 +9,6 @@ import moment from 'moment';
 import localForage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import { SnackBar } from '@/components/SnackBar';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import { AutographaContext } from '@/components/context/AutographaContext';
@@ -19,6 +17,7 @@ import CustomMultiComboBox from './CustomMultiComboBox';
 import langJson from '../../../lib/lang/langNames.json';
 import { handleDownloadResources } from './createDownloadedResourceSB';
 import * as logger from '../../../logger';
+import { environment } from '../../../../environment';
 
 const subjectTypeArray = {
   bible: [
@@ -32,30 +31,12 @@ const subjectTypeArray = {
   ],
 };
 
-// mui styles for accordion
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: '#fff',
-    color: '#000',
-    boxShadow: '0px 0px 15px 1px rgba(0,0,0,0.43);',
-
-  },
-  summary: {
-    backgroundColor: '#fff',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(12),
-    fontWeight: '500',
-    color: '#000',
-  },
-}));
-
 function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenDonwloadPopUp }) {
   logger.debug('DownloadResourcePopUp.js', 'in download resource pop up');
   const { t } = useTranslation();
   const [snackBar, setOpenSnackBar] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadFilterDiv, setLoadFilterDiv] = useState(false);
+  // const [loadFilterDiv, setLoadFilterDiv] = useState(false);
   const [snackText, setSnackText] = useState('');
   // eslint-disable-next-line no-unused-vars
   const [notify, setNotify] = useState();
@@ -68,7 +49,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
   const [totalDownload, setTotalDownload] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const [downloadCount, setDownloadCount] = useState(0);
-  const [expandAccordion, setExpandAccordion] = useState('');
 
   const {
     // states: { resourceDownload },
@@ -77,17 +57,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       // setResourceDownload,
     },
   } = React.useContext(AutographaContext);
-
-  const modalClose = () => {
-    if (!downloadStarted) {
-      setIsOpenDonwloadPopUp(false);
-    }
-  };
-
-  const toggleAcordion = (element) => {
-    if (expandAccordion === element) { setExpandAccordion(''); }
-    if (expandAccordion !== element) { setExpandAccordion(element); }
-  };
 
   const addNewNotification = async (title, text, type) => {
     localForage.getItem('notification').then((value) => {
@@ -107,26 +76,19 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     logger.debug('DownloadResourcePopUp.js', 'fetching resource as per filter applied');
     setLoading(true);
     // subject = bible and lang = en - if not custom filter or initial loading
-    const baseUrl = 'https://git.door43.org/api/catalog/v5/search';
+    // const baseUrl = 'https://git.door43.org/api/catalog/v5/search';
+    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc`;
     let url = '';
     if (filter) {
-      url = `${baseUrl}?`;
+      url = `${baseUrl}`;
       if (selectedLangFilter.length > 0) {
         selectedLangFilter.forEach((row) => {
-          if (url.slice(-1) === '?') {
-            url += `lang=${row?.lc ? row?.lc : row?.code}`;
-          } else {
-            url += `&lang=${row?.lc ? row?.lc : row?.code}`;
-          }
+          url += `&lang=${row?.lc ? row?.lc : row?.code}`;
         });
       }
       if (selectedTypeFilter.length > 0) {
         selectedTypeFilter.forEach((row) => {
-          if (url.slice(-1) === '?') {
-            url += `subject=${row.name}`;
-          } else {
-            url += `&subject=${row.name}`;
-          }
+          url += `&subject=${row.name}`;
         });
       } else {
         // nothing selected default will be bible || obs
@@ -145,15 +107,14 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       // initial load
       switch (selectResource) {
         case 'bible':
-          url = `${baseUrl}?subject=Bible&lang=en`;
+          url = `${baseUrl}&subject=Bible&lang=en`;
           break;
         case 'obs':
-          url = `${baseUrl}?subject=${subjectTypeArray.obs[0].name}&lang=en`;
+          url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
           break;
         default:
           break;
       }
-      // url = `${baseUrl}?subject=Bible&subject=Aligned Bible&lang=en&lang=ml`;
     }
     // pre-release items
     if (selectedPreProd) {
@@ -207,7 +168,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
   const handleSaveFilter = async () => {
     logger.debug('DownloadResourcePopUp.js', 'save filter and call fetch');
     if (!downloadStarted) {
-      setLoadFilterDiv(!loadFilterDiv);
+      // setLoadFilterDiv(!loadFilterDiv);
       if (selectedLangFilter.length > 0 || selectedTypeFilter.length > 0) {
         await fetchResource(true);
       } else {
@@ -325,7 +286,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const classes = useStyles();
+  // const classes = useStyles();
+
   const removeLanguage = (idx) => {
     selectedLangFilter.splice(idx, 1);
     setSelectedLangFilter([...selectedLangFilter]);
@@ -447,7 +409,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                       </td>
                       <td className="p-2 bg-primary-50 rounded-r-lg">
                         <div className="flex items-center justify-center gap-4">
-                          <button
+                          {/* disable all download together - added because earlier have checkboxs to select multi resources */}
+                          {/* <button
                             className="text-xs flex w-6 h-6 items-center gap-2 bg-gray-700 text-white cursor-pointer p-1 rounded-full"
                             type="button"
                             title="download"
@@ -456,7 +419,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                             <ArrowDownTrayIcon
                               className="w-4 h-4"
                             />
-                          </button>
+                          </button> */}
                           <div className="flex w-6 h-6 items-center gap-2 bg-red-200 text-red-600 cursor-pointer p-1 rounded-full">
                             <XMarkIcon
                               className="h-4 w-4 transform transition duration-200 hover:scale-[1.5]"

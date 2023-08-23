@@ -43,7 +43,9 @@ export default function TranslationHelpsCard({
     server,
   });
 
-  // console.log('online data structure : ', { items, markdown, isLoading });
+  console.log('online data structure : ', {
+ items, markdown, isLoading, offlineResource, languageId, resourceId, projectId,
+});
 
   const {
     state: {
@@ -59,6 +61,7 @@ export default function TranslationHelpsCard({
       // console.log('offline in Helpscard : ', offlineResource);
       // read tn tsv contents and pass to items
       try {
+        console.log('inisde offline ---');
         setOfflineMarkdown('');
         setOfflineItems('');
         localForage.getItem('userProfile').then(async (user) => {
