@@ -27,9 +27,11 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       // await supportForExistingSyncUsers();
       // Check whether the project is git initiallized or not
       const checkInit = await checkInitialize(fs, projectsMetaPath);
+      const repoOwner = await getRepoOwner(fs, projectsMetaPath);
 
       // check for repo exist or not
-      const checkForRepo = await getRepoByOwner(auth?.user?.username, repoName);
+      const checkForRepo = await getRepoByOwner(repoOwner || auth.user.username, repoName);
+      // const checkForRepo = await getRepoByOwner(auth?.user?.username, repoName);
 
       if (!checkInit || !checkForRepo?.id) {
         setSyncProgress((prev) => ({
@@ -62,7 +64,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         setSyncProgress((prev) => ({
         ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
         }));
-        const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+        // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
         const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
         if (commitStatus) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
