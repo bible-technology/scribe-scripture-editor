@@ -385,15 +385,17 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
               <thead>
                 <tr>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider w-8" />
-                  <th className="p-2 font-bold text-gray-700 uppercase tracking-wider" />
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
                     Resource
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    Type
+                    SUBJECT
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
                     Organization
+                  </th>
+                  <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
+                    release/Version
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider" />
                 </tr>
@@ -458,8 +460,24 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={6}>
-                          No Content Available
+                        <td colSpan={6} className="text-center ">
+                          <div className="flex flex-col items-center gap-1 mt-3">
+
+                            <div>This content is unavailable for this language</div>
+                            <div>
+                              You can Import Own
+                              {' '}
+                              <span className="font-medium">Scripture Burrito</span>
+                              {' '}
+                              Resources through
+                              <span className="font-medium"> Collection </span>
+                              tab.
+                            </div>
+                            <div>
+                              Learn more about creating Scripture Burrito projects with Scribe. Refer Scribe Docs.
+                            </div>
+                          </div>
+
                         </td>
                       </tr>
                     )}
