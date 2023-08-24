@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
 	timeout: 5 * 60 * 1000,
 	globalTimeout: 60 * 60 * 1000,
 	// Run all tests in parallel.
-	fullyParallel: true,
+	fullyParallel: false,
 	retries: 3,	
 	use: {
 		// trace: 'on-first-retry', // record traces on first retry of each test
