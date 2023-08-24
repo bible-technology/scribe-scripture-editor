@@ -23,18 +23,20 @@ export async function parseObs(conflictData, selectedFileName) {
             // eslint-disable-next-line react/prop-types
             const allLines = fileContent.split(/\r\n|\n/);
             logger.debug('ObsEditor.js', 'Spliting the stories line by line and storing into an array.');
-            // Reading line by line
+
+            // filter alllines to remove empty lines from the array
+            const allLineFiltered = allLines.filter((line) => line !== '');
 
             // parse handling HEADER and Footer Conflicts
             let headerConflcit = false;
             let footerConflcit = false;
             let footerConflcitFoundIndex;
 
-            if (allLines[0].startsWith('<<<<<')) {
+            if (allLineFiltered[0].startsWith('<<<<<')) {
               headerConflcit = true;
             }
 
-            allLines.forEach((line, index) => {
+            allLineFiltered.forEach((line, index) => {
               // To avoid the values after footer, we have added id=0
               if (line && id !== 0 && footerConflcit === false) {
                 if (headerConflcit) {
@@ -57,7 +59,7 @@ export async function parseObs(conflictData, selectedFileName) {
                   }
 
                 // } else if (footerConflcit && !headerConflcit && line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
-                } else if (line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
+                } else if (line.startsWith('<<<<<') && allLineFiltered[index + 1].startsWith('_')) {
                   // footer coflcit found from this line onwards pass execution to else
                   footerConflcitFoundIndex = index;
                   footerConflcit = true;
@@ -131,10 +133,10 @@ export async function parseObs(conflictData, selectedFileName) {
             logger.debug('mergeObsUtils.js', 'Story for selected navigation is been set to the array for Editor');
 
             // Handle conflcit in footer -- brark the loop when footer conflcit found
-            if (allLines && footerConflcit && footerConflcitFoundIndex) {
+            if (allLineFiltered && footerConflcit && footerConflcitFoundIndex) {
                 logger.debug('mergeObsUtils.js', 'conflcit for footer section. Handling');
                 // handle footer with conflcit
-                const footerConflcitArr = allLines.slice(footerConflcitFoundIndex, allLines.length);
+                const footerConflcitArr = allLineFiltered.slice(footerConflcitFoundIndex, allLineFiltered.length);
                 // add text field in last section -> normaly handled in footer section
                 if (!('text' in stories[stories.length - 1])) {
                   stories[stories.length - 1].text = '';
