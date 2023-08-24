@@ -228,7 +228,7 @@ export default function EditorSection({
                   </div>
               ) : (
                 <>
-                  {scrollLock ? (
+                  {scrollLock && title ? (
                     <>
                       {CustomNavigation}
                       <div className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
