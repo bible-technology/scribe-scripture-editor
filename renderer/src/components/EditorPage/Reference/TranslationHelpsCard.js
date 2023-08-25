@@ -41,6 +41,7 @@ export default function TranslationHelpsCard({
     filePath,
     owner,
     server,
+    readyToFetch: true,
   });
 
   const {
