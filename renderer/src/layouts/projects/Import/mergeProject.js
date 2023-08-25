@@ -13,7 +13,7 @@ import { readUserSettings } from '@/core/projects/userSettings';
 import packageInfo from '../../../../../package.json';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
-import { createAllMdInDir } from './mergeObsUtils';
+import { copyFilesTempToOrginal, createAllMdInDir } from './mergeObsUtils';
 
 const path = require('path');
 
@@ -150,8 +150,17 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     const mergeStatus = checkoutMainStatus && await mergeBranches(fs, mergeDirPath, tempMergeMain, tempMergeIncoming);
     if (mergeStatus.status) {
       // Isomorphic git is doing an extra merge or logic cause deletion of the merged data at staging state
-      await checkoutJsonFiles(fs, targetPath, tempMergeMain);
-      logger.debug('mergeProject.js', 'merge done - No conflcit');
+      await checkoutJsonFiles(fs, mergeDirPath, tempMergeMain);
+      const conflictData = {
+        data: {
+          mergeDirPath,
+          projectPath: targetPath,
+          projectContentDirName: dirName,
+          author,
+        },
+      };
+      const finalCopy = await copyFilesTempToOrginal(conflictData);
+      logger.debug('mergeProject.js', 'merge done - No conflcit', finalCopy);
     } else if (mergeStatus.status === false && mergeStatus?.data) {
       logger.debug('mergeProject.js', 'merge done - conflcit. Opening resolver window');
       // conflcit section

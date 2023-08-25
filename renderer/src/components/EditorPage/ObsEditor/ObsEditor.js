@@ -41,14 +41,14 @@ const ObsEditor = () => {
     let title; let body = ''; let end;
     story.forEach((s) => {
       if (Object.prototype.hasOwnProperty.call(s, 'title')) {
-        title = `# ${s.title}\n\n`;
+        title = `# ${s.title.trim()}\n\n`;
       }
       if (Object.prototype.hasOwnProperty.call(s, 'end')) {
         const foot = ((s.end).trim());
         end = `_${foot}_`;
       }
       if (Object.prototype.hasOwnProperty.call(s, 'text')) {
-        body += `![OBS Image](${s.img})\n\n${s.text}\n\n`;
+        body += `![OBS Image](${s.img})\n\n${s.text.trim()}\n\n`;
       }
     });
     const storyStr = title + body + end;
