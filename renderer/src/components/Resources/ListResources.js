@@ -193,6 +193,7 @@ export const ListResources = ({
                         `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
                         resource?.value?.meta?.owner,
                         resource?.value?.meta?.subject,
+                        '',
                         resource,
                       )}
                       role="button"
@@ -207,7 +208,15 @@ export const ListResources = ({
                   <td className="p-2 uppercase">
                     <div
                       // className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                        e,
+                        resource?.value?.meta?.language,
+                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner,
+                        resource?.value?.meta?.subject,
+                        '',
+                        resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >
@@ -217,7 +226,15 @@ export const ListResources = ({
                   <td className="p-2 text-gray-600">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                      e,
+                      resource?.value?.meta?.language,
+                      `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                      resource?.value?.meta?.owner,
+                      resource?.value?.meta?.subject,
+                      '',
+                      resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >
@@ -227,7 +244,15 @@ export const ListResources = ({
                   <td className="p-2 text-gray-600">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                        e,
+                        resource?.value?.meta?.language,
+                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner,
+                        resource?.value?.meta?.subject,
+                        '',
+                        resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >

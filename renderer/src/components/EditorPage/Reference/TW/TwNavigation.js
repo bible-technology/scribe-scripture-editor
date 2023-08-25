@@ -7,6 +7,7 @@ import { SnackBar } from '@/components/SnackBar';
 import * as logger from '../../../../logger';
 import MultiComboBox from '../MultiComboBox';
 import packageInfo from '../../../../../../package.json';
+import { environment } from '../../../../../environment';
 
 export default function TwNavigation({ languageId, referenceResources, setReferenceResources }) {
   const [selected, setSelected] = useState('');
@@ -17,7 +18,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
   const [snackText, setSnackText] = useState('');
   const [error, setError] = useState('');
 
-  const baseUrl = 'https://git.door43.org/api/v1/repos';
+  // const baseUrl = 'https://git.door43.org/api/v1/repos';
   const owner = referenceResources?.owner;
 
   useEffect(() => {
@@ -81,7 +82,8 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
     } else {
       // online
       // get options
-      fetch(`https://git.door43.org/api/catalog/v5/search?subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
+      // fetch(`https://git.door43.org/api/catalog/v5/search?subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
+      fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
       .then((res) => res.json())
       .then((meta) => {
         // console.log('meta : ', { meta });
@@ -112,7 +114,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
         });
 
         const fetchData = async () => {
-          await fetch(`${baseUrl}/${owner}/${languageId}_tw/contents/bible/${selectedOption}?ref=${meta?.data[0]?.release?.tag_name}`)
+          await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${owner}/${languageId}_tw/contents/bible/${selectedOption}?ref=${meta?.data[0]?.release?.tag_name}`)
           .then((response) => response.json())
           .then((twData) => {
             twData && twData?.forEach((data) => {

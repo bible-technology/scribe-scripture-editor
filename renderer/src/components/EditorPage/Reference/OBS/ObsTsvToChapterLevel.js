@@ -38,7 +38,7 @@ const getValue = async (filteredData, twURL, repoName, scrollLock, flavor = '') 
   } else {
     // Fetching the content for Translation Notes & Questions
     let mdstring = '';
-    mdstring += `# ${ tsvObj.Quote }\n\n${ tsvObj.Note }\n`;
+    mdstring += `# ${ tsvObj.Quote ? tsvObj.Quote : tsvObj.Question }\n\n${ tsvObj.Note ? tsvObj.Note : tsvObj.Response }\n`;
     if (tsvObj.Reference.split(':')[1] in notesObj) {
       notesObj[tsvObj.Reference.split(':')[1]].OccurrenceNote += mdstring;
     } else {

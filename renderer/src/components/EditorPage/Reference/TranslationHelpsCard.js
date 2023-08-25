@@ -41,9 +41,8 @@ export default function TranslationHelpsCard({
     filePath,
     owner,
     server,
+    readyToFetch: true,
   });
-
-  // console.log('online data structure : ', { items, markdown, isLoading });
 
   const {
     state: {
