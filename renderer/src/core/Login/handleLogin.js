@@ -1,7 +1,12 @@
 import * as localforage from 'localforage';
-import { handleJson } from './handleJson';
+import { environment } from '../../../environment';
+import { handleJson, handleJsonWeb } from './handleJson';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
+import { supabaseStorage } from '../../../../supabase';
+// if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
+//   const supabaseStorage = require('../../../../supabase').supabaseStorage
+// }
 
 export const createUser = (values, fs) => {
   logger.debug('handleLogin.js', 'In createUser to create a new user');
@@ -18,6 +23,20 @@ export const createUser = (values, fs) => {
   return handleJson(obj, fs).then(() => obj);
 };
 
+export const createWebUser = async (values) => {
+  logger.debug('handleLogin.js', 'In createWebUser to create a new user');
+  const obj = {
+    email: values?.email,
+    firstname: '',
+    lastname: '',
+    organization: '',
+    selectedregion: '',
+    lastSeen: new Date(),
+    isArchived: false,
+  };
+  console.log('passed obj', { obj });
+  return handleJsonWeb(obj).then(() => obj);
+};
 /**
  * It writes the users to a file.
  * @param users - [{
@@ -55,4 +74,43 @@ export const handleLogin = async (users, values) => {
     }
   }
   return null;
+};
+
+export const createSupabaseSettingJson = async (path) => {
+  const json = {
+    version: environment.AG_USER_SETTING_VERSION,
+    history: {
+      copyright: [{
+        id: 'Other', title: 'Custom', licence: '', locked: false,
+      }],
+      languages: [],
+      textTranslation: {
+        canonSpecification: [{
+          id: 4, title: 'Other', currentScope: [], locked: false,
+        }],
+      },
+    },
+    appLanguage: 'en',
+    theme: 'light',
+    userWorkspaceLocation: '',
+    commonWorkspaceLocation: '',
+    resources: {
+      door43: {
+        translationNotes: [],
+        translationQuestions: [],
+        translationWords: [],
+        obsTranslationNotes: [],
+      },
+    },
+    sync: { services: { door43: [] } },
+  };
+  const { data, error } = await supabaseStorage
+    .upload(path, JSON.stringify(json), {
+      cacheControl: '3600',
+      upsert: true,
+    });
+  if (data) {
+    console.log('success, ag-user.json', data);
+  }
+  console.log({ error });
 };

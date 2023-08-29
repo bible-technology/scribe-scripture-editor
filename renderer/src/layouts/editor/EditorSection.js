@@ -58,7 +58,6 @@ export default function EditorSection({
   const {
     states: { scrollLock, selectedProjectMeta },
   } = useContext(ProjectContext);
-
   function removeResource() {
     setOpenModal(true);
   }

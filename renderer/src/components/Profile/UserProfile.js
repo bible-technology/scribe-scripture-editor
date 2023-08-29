@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { useContext, Fragment } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,16 +10,38 @@ import {
 import { classNames } from '@/util/classNames';
 import { AuthenticationContext } from '@/components/Login/AuthenticationContextProvider';
 import { useGetUserName } from '@/components/hooks/useGetUserName';
+import { useRouter } from 'next/navigation';
+import { isElectron } from '@/core/handleElectron';
+import * as localforage from 'localforage';
+import { supabaseSignout } from '../../../../supabase';
 
-const UserProfile = (_username) => {
-  const { action: { logout } } = React.useContext(AuthenticationContext);
+const UserProfile = () => {
+  const { action: { logout } } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const profile = [t('label-your-profile')];
   const userPic = true;
+  const router = useRouter();
+
+  const signOut = async () => {
+    // if(!process.env.NEXT_PUBLIC_IS_ELECTRON){
+    const { error } = await supabaseSignout();
+    localforage.removeItem('userProfile');
+    error ? console.log({ error }) : router.push('/login');
+  };
+// }
 
   // get username from custom hook
-  const { username } = useGetUserName(_username);
-
+  const { username } = useGetUserName();
+  function truncateUsername(username) {
+    if (username) {
+      const atIndex = username.indexOf('@');
+      if (atIndex !== -1) {
+        const userName = username.slice(0, atIndex);
+        return userName;
+      }
+      return null;
+    }
+  }
   return (
     <div>
       <Menu as="div" className="ml-3 relative z-10">
@@ -66,7 +88,7 @@ const UserProfile = (_username) => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {username}
+                  {isElectron() ? username : truncateUsername(username)}
                 </div>
                 {profile.map((item) => (
                   <Menu.Item key={item}>
@@ -76,15 +98,15 @@ const UserProfile = (_username) => {
                           href="/profile"
                           id="profile"
                           className={classNames(
-                          active ? 'bg-gray-100' : '',
-                          'block px-4 py-2 text-sm text-gray-700',
-                        )}
+                            active ? 'bg-gray-100' : '',
+                            'block px-4 py-2 text-sm text-gray-700',
+                          )}
                         >
 
                           {item}
 
                         </Link>
-)
+                      )
                     )}
                   </Menu.Item>
                 ))}
@@ -94,19 +116,19 @@ const UserProfile = (_username) => {
                       <Link
                         href="/"
                         id="signout"
-                        onClick={() => logout()}
+                        onClick={() => (isElectron() ? logout() : signOut())}
                         role="button"
                         tabIndex={0}
                         className={classNames(
-                        active ? 'bg-gray-100' : '',
-                        'block px-4 py-2 text-sm text-gray-700',
-                      )}
+                          active ? 'bg-gray-100' : '',
+                          'block px-4 py-2 text-sm text-gray-700',
+                        )}
                       >
 
                         {t('btn-signout')}
 
                       </Link>
-)
+                    )
 
                   )}
                 </Menu.Item>

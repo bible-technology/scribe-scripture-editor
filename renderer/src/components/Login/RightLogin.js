@@ -1,8 +1,8 @@
 import LogoIcon from '@/icons/logo.svg';
-import GroupIcon from '@/illustrations/group.svg';
+// import GroupIcon from '@/illustrations/group.svg';
 
-import VectorOne from '@/illustrations/vector-one.svg';
-import HalfMoon from '@/illustrations/half-moon.svg';
+// import VectorOne from '@/illustrations/vector-one.svg';
+// import HalfMoon from '@/illustrations/half-moon.svg';
 // import Quote from '@/illustrations/quote.svg';
 
 export default function RightLogin() {
@@ -20,11 +20,11 @@ export default function RightLogin() {
       <div className="flex flex-col justify-center items-center relative">
 
         <div className="mx-auto my-10">
-          <GroupIcon
+          {/* <GroupIcon
             fill="#FF4A4A"
             width={52}
             height={42}
-          />
+          /> */}
         </div>
 
         <div className="mx-10 md:mx-20 lg:mx-32 text-xl text-white leading-9 relative">
@@ -49,11 +49,11 @@ export default function RightLogin() {
 
           </div>
           <div>
-            <VectorOne
+            {/* <VectorOne
               width={34}
               height={33}
               fill="#FF4A4A"
-            />
+            /> */}
           </div>
         </div>
         <div className="mt-12 flex gap-4">
@@ -65,7 +65,7 @@ export default function RightLogin() {
       </div>
 
       <div className="">
-        <HalfMoon width={124} height={70} />
+        {/* <HalfMoon width={124} height={70} /> */}
 
       </div>
 
