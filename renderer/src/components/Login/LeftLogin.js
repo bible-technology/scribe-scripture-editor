@@ -186,10 +186,11 @@ const LeftLogin = () => {
         Welcome back! Login to access Scribe Scripture
       </p>
       <div className="p-5">
-        <div className="relative border-gray-200 rounded-t-[10px] lg:w-72 w-44 sm:w-52 overflow-hidden">
+        <div id="users" className="relative border-gray-200 rounded-t-[10px] lg:w-72 w-44 sm:w-52 overflow-hidden">
           {sortedUsers?.filter(filterUsers).slice(0, 5).map((user) => (
             <div
               key={user.username}
+              id={user.username}
               className="p-4 py-2 text-sm cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border-b-[1px] border-[#E3E3E3] font-semibold"
               tabIndex={0}
               role="button"

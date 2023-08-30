@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
 		// trace: 'on-first-retry', // record traces on first retry of each test
 		 
 		// Run browser in headless mode.
-		headless: false,
+		// headless: false,
 	  },
 	expect: {
 		timeout: 60 * 1000,
