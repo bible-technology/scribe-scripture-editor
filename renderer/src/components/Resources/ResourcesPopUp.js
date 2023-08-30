@@ -100,7 +100,7 @@ export default function ResourcesPopUp(
 
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
-            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
+            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10  ">
               <h1 className="text-white font-bold text-sm">RESOURCES</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               <button

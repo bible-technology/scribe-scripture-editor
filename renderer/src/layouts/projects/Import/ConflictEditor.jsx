@@ -1,152 +1,7 @@
-/* eslint-disable no-nested-ternary */
-import React, { useEffect, useState } from 'react';
+import { Cog8ToothIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import ConflictSection from './ConflictSection';
 
-const ConflictComponent = ({
-  text, index, setSelectedFileContent, selectedFileContent, handleResetSingle, resolvedFileNames, selectedFileName,
-}) => {
-  // expecting 4 item in array
-  // 1. input text
-  // 2. HEAD change / current change
-  // 3. Incoming Change
-  // 4. mixed data
-
-  const [hoveredId, setHoveredId] = useState('');
-
-  const handleSelection = (content, index) => {
-    const contents = [...selectedFileContent];
-    const currentData = contents[index];
-    if ('text' in contents[index]) {
-      currentData.text = content;
-    } else if ('title' in contents[index]) {
-      currentData.title = content;
-    } else if ('end' in contents[index]) {
-      currentData.end = content;
-    }
-    currentData.conflictResolved = true;
-    setSelectedFileContent(contents);
-  };
-
-  const handleEditAfterResolve = (e, selectedFileContent, index) => {
-    selectedFileContent[index].text = e.target.value.trim();
-  };
-
-  let matchedData;
-
-  if (text) {
-    // eslint-disable-next-line prefer-regex-literals
-    const conflictRegex = new RegExp(
-      /^<{7}([^=]*)\n([\s\S]*)\n={7}\n([\s\S]*)\n>{7}[^=]*$/,
-    );
-    const matchArr = text.match(conflictRegex);
-    // console.log({ matchArr });
-    if (matchArr?.length > 3) {
-      matchedData = { current: matchArr[2], incoming: matchArr[3] };
-      selectedFileContent[index].conflict = true;
-      selectedFileContent[index].conflictResolved = false;
-    }
-  }
-
-  // eslint-disable-next-line no-nested-ternary
-  return matchedData?.current && matchedData?.incoming ? (
-
-    <div className="flex flex-col gap-2 w-full">
-      {/* resolve button section */}
-      <div className="flex gap-3 text-gray-600 text-sm">
-        <span
-          role="button"
-          tabIndex={-1}
-          className="hover:text-red-600 cursor-pointer"
-          // className="hover:text-primary cursor-pointer"
-          onClick={() => handleSelection(matchedData.current, index)}
-          onMouseEnter={() => setHoveredId('current')}
-          onMouseLeave={() => setHoveredId('')}
-        >
-          Ours
-        </span>
-
-        <span>|</span>
-
-        <span
-          role="button"
-          tabIndex={-1}
-          className="hover:text-green-600 cursor-pointer group/incoming"
-          onClick={() => handleSelection(matchedData.incoming, index)}
-          onMouseEnter={() => setHoveredId('incoming')}
-          onMouseLeave={() => setHoveredId('')}
-        >
-          Theirs
-        </span>
-
-        <span>|</span>
-
-        <span
-          role="button"
-          tabIndex={-1}
-          className="hover:text-primary cursor-pointer"
-          onClick={() => handleSelection(`${matchedData.current}\t${matchedData.incoming}`, index)}
-          onMouseEnter={() => setHoveredId('both')}
-          onMouseLeave={() => setHoveredId('')}
-        >
-          Both
-        </span>
-
-      </div>
-      {/* conflict content section */}
-      <div className="border-2 flex flex-col w-full p-2 rounded-md gap-2">
-
-        {/* <div className="text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 hover:bg-red-200"> */}
-        <div className={`text-red-600 bg-gray-200/50 p-3 rounded-md border border-red-200 ${hoveredId === 'current' ? 'bg-red-300/50' : hoveredId === 'both' ? 'bg-primary/[.70]' : ''}`}>
-          {/* <div className="">
-            {'<<<<<<<'}
-            {' '}
-            current
-          </div> */}
-          <div>{matchedData.current}</div>
-        </div>
-
-        {/* <div>=======</div> */}
-
-        {/* <div className="text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 hover:bg-green-200"> */}
-        <div className={`text-green-600 bg-gray-200/50 p-3 rounded-md border border-green-200 ${hoveredId === 'incoming' ? 'bg-green-200' : hoveredId === 'both' ? 'bg-primary/[.70]' : ''} `}>
-          <div>{matchedData.incoming}</div>
-          {/* <div>
-            {'>>>>>>>'}
-            {' '}
-            incoming
-          </div> */}
-        </div>
-      </div>
-
-    </div>
-  ) : (
-    selectedFileContent[index].conflict && selectedFileContent[index].conflictResolved && !resolvedFileNames.includes(selectedFileName)
-      ? (
-        <div className="flex flex-col gap-1">
-          <span
-            role="button"
-            tabIndex={-1}
-            className="hover:text-primary cursor-pointer text-gray-600 text-sm"
-            onClick={() => handleResetSingle(selectedFileContent, index)}
-          >
-            Reset
-          </span>
-          <textarea
-            className="w-full"
-            rows={3}
-            onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
-          >
-            {text}
-
-          </textarea>
-        </div>
-      )
-      : (
-        <div className="border bg-gray-100 flex flex-col w-full p-2 rounded-md min-h-[3rem] justify-center">{text}</div>
-      )
-  );
-};
-
-// all logic are based on OBS Parsed Array
 function ConflictEditor({
   selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
 }) {
@@ -246,74 +101,91 @@ function ConflictEditor({
   };
 
   return (
-    <div className="pl-2 pt-5 pr-5">
-      {/* headign with reset and all select section */}
-      {/* !resolvedFileNames?.includes(selectedFileName) */}
-      <div className="w-full justify-between flex items-center px-10">
-        <div />
-        <div className="flex gap-5">
-          <button
-            type="button"
-            onClick={() => resolveAllTogether(selectedFileContent, 'current')}
-            disabled={resolveAllActive === false}
-            className={` ${resolveAllActive ? 'cursor-pointer hover:text-red-600' : 'text-gray-500'}`}
-          >
-            All ours
-          </button>
-          <button
-            type="button"
-            onClick={() => resolveAllTogether(selectedFileContent, 'incoming')}
-            disabled={resolveAllActive === false}
-            className={` ${resolveAllActive ? 'cursor-pointer hover:text-green-600' : 'text-gray-500'}`}
-          >
-            All theirs
-          </button>
-          <button
-            type="button"
-            onClick={() => resolveAllTogether(selectedFileContent, 'both')}
-            disabled={resolveAllActive === false}
-            className={` ${resolveAllActive ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
-          >
-            All both
-          </button>
-          <button
-            type="button"
-            disabled={resetAlll === false}
-            onClick={() => resetAllResolved()}
-            className={` ${(resetAlll) ? 'cursor-pointer hover:text-primary' : 'text-gray-500'}`}
-          >
-            Reset all
-          </button>
+    <div className="bg-white flex-1 border-2 border-gray-100 rounded-md">
+      {/* Header and Buttons */}
+      <div className="flex justify-between bg-gray-100 border border-gray-100">
+        <div className="flex w-full justify-between">
+          <div className="flex py-1.5 px-1 gap-2.5">
+            <span className="px-2.5 py-0.5 text-black font-semibold tracking-wider text-xs uppercase rounded-xl">comparison</span>
+          </div>
+          <div className="flex py-1.5 px-1 gap-2.5">
+            <button
+              type="button"
+              onClick={() => resolveAllTogether(selectedFileContent, 'current')}
+              disabled={resolveAllActive === false}
+              title="Accept ORIGINAL for all non resolved conflict sections in the opened file"
+              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-black text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
+            >
+              Original
+            </button>
+
+            <button
+              type="button"
+              onClick={() => resolveAllTogether(selectedFileContent, 'incoming')}
+              disabled={resolveAllActive === false}
+              title="Accept NEW for all non resolved conflict sections in the opened file"
+              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-success text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
+            >
+              New
+
+            </button>
+
+            <button
+              type="button"
+              onClick={() => resolveAllTogether(selectedFileContent, 'both')}
+              disabled={resolveAllActive === false}
+              title="Accept BOTH for all non resolved conflict sections in the opened file"
+              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-blue-500 text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
+            >
+              Both
+
+            </button>
+
+            <button
+              type="button"
+              onClick={() => resetAllResolved()}
+              disabled={resetAlll === false}
+              title="RESET the opened file to initial state"
+              className={`px-2.5 py-0.5 bg-gray-300  font-semibold tracking-wider text-xs uppercase rounded-xl ${resetAlll ? 'text-black' : 'text-gray-400'}`}
+            >
+              Reset
+
+            </button>
+
+          </div>
+        </div>
+        <div className="bg-black flex items-center px-2 rounded-tr-md">
+          <Cog8ToothIcon className="w-5 h-5 text-white" />
         </div>
       </div>
-      <div className=" min-h-[72vh] p-5 flex flex-col gap-5">
-        {selectedFileContent?.map((content, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={content?.id}>
-            <div className="flex gap-5 items-center">
-              {(index !== 0 && index !== selectedFileContent.length - 1) && (
-                <div className="bg-gray-200 min-w-[3rem] h-[3rem] flex justify-center items-center rounded-full">
-                  {index}
-                </div>
-              )}
-              <div className={`w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-16'}`}>
-                <ConflictComponent
-                  text={
+      {/* COntent */}
+      <div className="divide-y divide-gray-100  max-h-[75vh] overflow-y-scroll">
+        {selectedFileContent.map((content, index) => (
+          <div key={content.id} className="flex px-2 py-6 gap-4">
+            {(index !== 0 && index !== selectedFileContent.length - 1) && (
+              <div className="h-4 w-4 py-1 px-2 mt-1 flex items-center justify-center bg-primary rounded-full text-xxs text-white">
+                {index}
+              </div>
+            )}
+
+            <div className={` w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-8'} `}>
+              <ConflictSection
+                text={
                     content?.title
                     || content?.text
                     || content?.end
                   }
-                  index={index}
-                  setSelectedFileContent={setSelectedFileContent}
-                  selectedFileContent={selectedFileContent}
-                  handleResetSingle={handleResetSingle}
-                  resolvedFileNames={resolvedFileNames}
-                  selectedFileName={selectedFileName}
-                />
-              </div>
+                index={index}
+                setSelectedFileContent={setSelectedFileContent}
+                selectedFileContent={selectedFileContent}
+                handleResetSingle={handleResetSingle}
+                resolvedFileNames={resolvedFileNames}
+                selectedFileName={selectedFileName}
+              />
             </div>
+
           </div>
-        ))}
+     ))}
       </div>
     </div>
   );
