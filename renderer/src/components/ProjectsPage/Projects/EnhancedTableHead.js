@@ -7,27 +7,29 @@ import {
 import {
   StarIcon,
 } from '@heroicons/react/24/outline';
-import i18n from '../../../translations/i18n';
+import { useTranslation } from 'react-i18next';
+// import i18n from '../../../translations/i18n';
 
 // import { Menu, Transition } from '@headlessui/react';
 
 const headCells = [
   {
     // id: 'name', numeric: false, disablePadding: true, label: 'Project Name',
-    id: 'name', numeric: false, disablePadding: true, label: i18n.t('label-project-name'),
+    id: 'name', numeric: false, disablePadding: true, label: 'label-project-name',
+    // id: 'name', numeric: false, disablePadding: true, label: i18n.t('label-project-name'),
   },
   {
-    id: 'language', numeric: false, disablePadding: true, label: i18n.t('label-language'),
+    id: 'language', numeric: false, disablePadding: true, label: 'label-language',
   },
   {
     // id: 'type', numeric: false, disablePadding: true, label: 'Flavor',
-    id: 'type', numeric: false, disablePadding: true, label: i18n.t('label-flavour'),
+    id: 'type', numeric: false, disablePadding: true, label: 'label-flavour',
   },
   {
-    id: 'date', numeric: true, disablePadding: false, label: i18n.t('label-created-date'),
+    id: 'date', numeric: true, disablePadding: false, label: 'label-created-date',
   },
   {
-    id: 'view', numeric: true, disablePadding: false, label: i18n.t('label-last-viewed'),
+    id: 'view', numeric: true, disablePadding: false, label: 'label-last-viewed',
   },
   // {
   //   id: 'editors', numeric: false, disablePadding: false, label: 'Editors',
@@ -44,6 +46,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+  const { t } = useTranslation();
 
   return (
     <thead className="bg-gray-50">
@@ -154,7 +157,8 @@ function EnhancedTableHead(props) {
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
               >
-                {headCell.label}
+                {/* {headCell.label} */}
+                {t(headCell.label)}
                 {orderBy === headCell.id ? (
                   <span hidden>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
