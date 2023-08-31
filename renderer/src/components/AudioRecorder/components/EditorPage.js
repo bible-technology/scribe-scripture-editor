@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const EditorPage = ({
- content, onChangeVerse, verse, location, updateWave,
+ content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont,
 }) => {
   const path = require('path');
   const [waveUpdate, setWaveUpdate] = useState(false);
@@ -44,7 +44,14 @@ const EditorPage = ({
               <div className="flex items-center justify-center bg-primary w-10 h-8 mr-2 rounded-full text-sm text-white">
                 {mainChunk.verseNumber}
               </div>
-              <p className="m-0 w-full text-sm text-gray-500">
+              <p
+                className="m-0 w-full text-sm text-gray-500"
+                style={{
+                  fontFamily: selectedFont || 'sans-serif',
+                  fontSize: `${fontSize}rem`,
+                  lineHeight: (fontSize > 1.3) ? 1.5 : '',
+                }}
+              >
                 {mainChunk.verseText || ''}
               </p>
 

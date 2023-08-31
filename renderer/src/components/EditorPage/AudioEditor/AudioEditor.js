@@ -30,6 +30,8 @@ const AudioEditor = ({ editor }) => {
       isLoading,
       audioContent,
       audioPath,
+      selectedFont,
+      fontSize,
       // eslint-disable-next-line no-unused-vars
       updateWave, // updateWave is used to update the waveform in the Editor after recording audio
     }, actions: {
@@ -210,7 +212,17 @@ const AudioEditor = ({ editor }) => {
       {((isLoading || !audioContent) && displyScreen) && <EmptyScreen />}
       {isLoading && !displyScreen && <LoadingScreen /> }
       {audioContent && isLoading === false
-      && <EditorPage content={audioContent} onChangeVerse={onChangeVerse} verse={verse} location={audioPath} updateWave={updateWave} />}
+      && (
+      <EditorPage
+        content={audioContent}
+        onChangeVerse={onChangeVerse}
+        verse={verse}
+        location={audioPath}
+        updateWave={updateWave}
+        fontSize={fontSize}
+        selectedFont={selectedFont}
+      />
+)}
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}
