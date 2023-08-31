@@ -79,8 +79,9 @@ export default function TaNavigation({ languageId, referenceResources }) {
         .then((response) => response.json())
         .then((actualData) => {
           // get avaialble books/ingredients
-          if (actualData?.books?.length > 0 && !options.length > 0) {
-            setoptions(actualData?.books);
+          const optionsList = actualData?.ingredients?.map((item) => item.identifier);
+          if (optionsList?.length > 0 && !options.length > 0) {
+            setoptions(optionsList);
           }
           // get data function
           const fetchData = async () => {
