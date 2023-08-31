@@ -37,25 +37,6 @@ test('Check whether the app is being logged IN', async ({userName}) => {
     const title = await window.textContent('[aria-label=projects]')
     console.log('user is Logged In')
     await expect(title).toBe('Projects')
-    await window.getByRole('button', {name: "Open user menu"}).click()
-    const currentUser = await window.textContent('[aria-label="userName"]')
-    if(currentUser !== userName.toLowerCase()){
-      await window.getByRole('menuitem', {name: "Sign out"}).click()
-      console.log('user is not playwright user')
-    }else{
-      await window.getByRole('menuitem', {name: "Sign out"}).click()
-      if (currentUser === userName.toLowerCase() && await fs.existsSync(folder)) {
-        fs.rmSync(folder, {recursive: true, force: true})
-  
-      }
-      console.error('users.json', `${userName} data removed from json`);
-      const filtered = json.filter((item) => 
-        item.username.toLowerCase() !== userName.toLowerCase()
-      )
-      console.log('user is playwright user')
-      expect(await window.title()).toBe('Scribe Scripture');
-      await fs.writeFileSync(file, JSON.stringify(filtered))  
-    }
     
   }else {
     const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
@@ -63,4 +44,3 @@ test('Check whether the app is being logged IN', async ({userName}) => {
     await expect(welcome).toBe("Welcome!")
   }
 });
-
