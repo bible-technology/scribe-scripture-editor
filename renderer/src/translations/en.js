@@ -237,4 +237,10 @@ export const En = {
     'label-volume': 'Volume',
     'label-takes': 'Takes',
     'label-settings': 'Settings',
+    'label-restore': 'Restore',
+    'label-archive': 'Archive',
+    'tooltip-save-cloud-btn': 'This action will sync your data to Door43 ',
+    'tooltip-save-computer-btn': 'This action will clone or update your local data with Door43 data',
+    'label-choose-usfm-files': 'Choose USFM files',
+    'label-choose-md-files': 'Choose Markdown files',
 };

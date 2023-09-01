@@ -237,4 +237,10 @@ export const Ne = {
     'label-volume': 'वॉल्यूम',
     'label-takes': 'टैक्स',
     'label-settings': 'सेटिंग्स',
+    'label-restore': 'पुनर्स्थापना गर्नुहोस्',
+    'label-archive': 'अभिलेख',
+    'tooltip-save-cloud-btn': 'यो कार्यले तपाईंको डाटालाई Door43 मा सिंक गर्नेछ',
+    'tooltip-save-computer-btn': 'यो कार्यले Door43 डाटाको साथ तपाईंको स्थानीय डाटा क्लोन वा अपडेट गर्नेछ',
+    'label-choose-usfm-files': 'USFM फाइलहरू छान्नुहोस्',
+    'label-choose-md-files': 'Markdown फाइलहरू छान्नुहोस्',
 };

@@ -237,4 +237,10 @@ export const Hi = {
     'label-volume': 'वॉल्यूम',
     'label-takes': 'टैक्स',
     'label-settings': 'सेटिंग्स',
+    'label-restore': 'पुनर्स्थापित करना',
+    'label-archive': 'पुरालेख',
+    'tooltip-save-cloud-btn': 'यह क्रिया आपके डेटा को डोर43 से सिंक कर देगी',
+    'tooltip-save-computer-btn': 'यह क्रिया आपके स्थानीय डेटा को डोर43 डेटा के साथ क्लोन या अपडेट कर देगी',
+    'label-choose-usfm-files': 'यूएसएफएम फ़ाइलें चुनें',
+    'label-choose-md-files': 'Markdown फ़ाइलें चुनें',
 };

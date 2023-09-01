@@ -173,7 +173,7 @@ export default function Sync() {
                   {/* <span className="font-semibold">Local Projects</span> */}
                   <span className="font-semibold">{t('label-prj-on-my-computer')}</span>
                   <button
-                    title="This action will sync your data to Door43"
+                    title={t('tooltip-save-cloud-btn')}
                     type="button"
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleCloudSync(selectedAgProject, auth, setSyncProgress)}
@@ -236,7 +236,7 @@ export default function Sync() {
                   {auth && repo && (
                   <button
                     type="button"
-                    title="This action will clone or update your local data with Door43 data"
+                    title={t('tooltip-save-computer-btn')}
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleOfflineSync(repo, auth)}
                     disabled={syncProgress.syncStarted}

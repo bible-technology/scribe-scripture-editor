@@ -237,4 +237,10 @@ export const Fr = {
     'label-volume': 'Volume',
     'label-takes': 'Takes',
     'label-settings': 'Settings',
+    'label-restore': 'Restaurer',
+    'label-archive': 'Archives',
+    'tooltip-save-cloud-btn': 'Cette action synchronisera vos données avec Door43',
+    'tooltip-save-computer-btn': 'Cette action clonera ou mettra à jour vos données locales avec les données Door43',
+    'label-choose-usfm-files': 'Choisissez les fichiers USFM',
+    'label-choose-md-files': 'Choisissez les fichiers Markdown',
 };

@@ -237,4 +237,10 @@ export const Ru = {
     'label-volume': 'Volume',
     'label-takes': 'Takes',
     'label-settings': 'Settings',
+    'label-restore': 'Восстановить',
+    'label-archive': 'Архив',
+    'tooltip-save-cloud-btn': 'Это действие синхронизирует ваши данные с Door43.',
+    'tooltip-save-computer-btn': 'Это действие клонирует или обновит ваши локальные данные данными Door43.',
+    'label-choose-usfm-files': 'Выберите файлы USFM',
+    'label-choose-md-files': 'Выберите файлы Markdown',
 };
