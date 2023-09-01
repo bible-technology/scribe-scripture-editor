@@ -21,7 +21,7 @@ function ConflictSideBar({
              aria-disabled={resolvedFileNames.includes(file)}
              className={`px-5 py-2 ${resolvedFileNames.includes(file)
              ? 'line-through decoration-2 pointer-events-none'
-             : `${selectedFileName === file ? 'bg-primary/70' : 'hover:bg-primary/50 cursor-pointer'}`} `}
+             : `${selectedFileName === file ? 'bg-primary/70' : 'hover:bg-primary cursor-pointer'}`} `}
            >
              {file}
            </li>

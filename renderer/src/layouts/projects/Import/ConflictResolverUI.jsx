@@ -187,7 +187,8 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                       {finishingMerge
                     ? (
                       <div
-                        className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        className="px-4 py-1 bg-success text-sm rounded-md m-2 text-white"
+                        // className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
                         role="status"
                       />
                     )
@@ -196,7 +197,9 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                   )}
 
                   <button
-                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-success/75 cursor-pointer hover:bg-success' : 'bg-gray-200 text-gray-600'} `}
+                    className={`px-4 py-1 m-2 rounded-md uppercase ${(enableSave && !resolvedFileNames.includes(selectedFileName))
+                      ? ' bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '} `}
+                    // className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-success/75 cursor-pointer hover:bg-success' : 'bg-gray-200 text-gray-600'} `}
                     onClick={saveCurrentStory}
                     type="button"
                     disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}

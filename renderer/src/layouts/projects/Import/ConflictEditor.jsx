@@ -158,8 +158,8 @@ function ConflictEditor({
           <Cog8ToothIcon className="w-5 h-5 text-white" />
         </div>
       </div>
-      {/* COntent */}
-      <div className="divide-y divide-gray-100  max-h-[75vh] overflow-y-scroll">
+      {/* Content */}
+      <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll">
         {selectedFileContent.map((content, index) => (
           <div key={content.id} className="flex px-2 py-6 gap-4">
             {(index !== 0 && index !== selectedFileContent.length - 1) && (
