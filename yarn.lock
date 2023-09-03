@@ -16269,22 +16269,10 @@ pkg-up@^3.1.0:
   dependencies:
     find-up "^3.0.0"
 
-playwright-core@1.27.1:
-  version "1.27.1"
-  resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.27.1.tgz"
-  integrity sha512-9EmeXDncC2Pmp/z+teoVYlvmPWUC6ejSSYZUln7YaP89Z6lpAaiaAnqroUt/BoLo8tn7WYShcfaCh+xofZa44Q==
-
 playwright-core@1.36.2:
   version "1.36.2"
   resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.36.2.tgz"
   integrity sha512-sQYZt31dwkqxOrP7xy2ggDfEzUxM1lodjhsQ3NMMv5uGTRDsLxU0e4xf4wwMkF2gplIxf17QMBCodSFgm6bFVQ==
-
-playwright@^1.22.2:
-  version "1.27.1"
-  resolved "https://registry.npmjs.org/playwright/-/playwright-1.27.1.tgz"
-  integrity sha512-xXYZ7m36yTtC+oFgqH0eTgullGztKSRMb4yuwLPl8IYSmgBM88QiB+3IWb1mRIC9/NNwcgbG0RwtFlg+EAFQHQ==
-  dependencies:
-    playwright-core "1.27.1"
 
 plist@^3.0.1, plist@^3.0.4:
   version "3.0.6"
