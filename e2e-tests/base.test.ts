@@ -91,3 +91,13 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
     }
   }
 });
+
+test('Create a new user and login', async ({ userName }) => {
+  await window.getByRole('button', { name: 'Create New Account' }).click()
+  await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
+  await window.getByPlaceholder('Username').fill(userName)
+  await expect(window.locator('//button[@type="submit"]')).toBeVisible()
+  await window.click('[type=submit]');
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
+})
