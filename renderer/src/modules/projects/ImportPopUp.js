@@ -104,7 +104,7 @@ export default function ImportPopUp(props) {
       switch (projectType) {
         case 'Translation': {
           const usfm = fs.readFileSync(filePath, 'utf8');
-          const myUsfmParser = new grammar.USFMParser(usfm);
+          const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
@@ -121,7 +121,7 @@ export default function ImportPopUp(props) {
 
         case 'Audio': {
           const usfm = fs.readFileSync(filePath, 'utf8');
-          const myUsfmParser = new grammar.USFMParser(usfm);
+          const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
