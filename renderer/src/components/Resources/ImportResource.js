@@ -117,7 +117,7 @@ export default function ImportResource({
       <h2 className="uppercase text-sm">{t('label-import-resource')}</h2>
       <h4 className="text-xs text-primary tracking-wide leading-4 font-light flex items-center py-2 gap-2">
         {t('label-burrito-resource-path')}
-        <button title="Select a directory/project that has a Scripture Burrito file i.e. metadata.json file." type="button" disabled>
+        <button title={t('msg-select-dir-for-SB')} type="button" disabled>
           <InformationCircleIcon className="h-6 w-6 text-primary" />
         </button>
       </h4>
@@ -136,7 +136,7 @@ export default function ImportResource({
           onClick={() => openResourceDialog()}
           className="py-2 px-4 flex gap-2 items-center rounded shadow bg-gray-200 border border-gray-300 text-gray-600 uppercase text-xs tracking-wider"
         >
-          Select Folder
+          {t('label-select-folder')}
           <FolderOpenIcon className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>

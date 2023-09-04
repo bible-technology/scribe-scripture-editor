@@ -20,6 +20,7 @@ export default function ImportPopUp(props) {
     projectType,
   } = props;
 
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [books, setBooks] = React.useState([]);
   const [folderPath, setFolderPath] = React.useState([]);
@@ -29,8 +30,7 @@ export default function ImportPopUp(props) {
   const [notify, setNotify] = React.useState();
   const [show, setShow] = React.useState(false);
   const [fileFilter, setfileFilter] = React.useState([{ name: 'usfm files', extensions: ['usfm', 'sfm', 'USFM', 'SFM'] }]);
-  const { t } = useTranslation();
-  const [labelImportFiles, setLabelImportFiles] = React.useState('Choose USFM files');
+  const [labelImportFiles, setLabelImportFiles] = React.useState(t('label-choose-usfm-files'));
   const {
     actions: {
       setImportedFiles,
@@ -187,12 +187,12 @@ export default function ImportPopUp(props) {
     switch (projectType) {
       case 'Translation':
         setfileFilter([{ name: 'usfm files', extensions: ['usfm', 'sfm', 'USFM', 'SFM'] }]);
-        setLabelImportFiles('Choose USFM files');
+        setLabelImportFiles(t('label-choose-usfm-files'));
         break;
 
       case 'OBS':
         setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
-        setLabelImportFiles('Choose Markdown files');
+        setLabelImportFiles(t('label-choose-md-files'));
       break;
 
       default:

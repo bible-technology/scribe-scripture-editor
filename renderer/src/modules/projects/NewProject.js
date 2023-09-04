@@ -384,7 +384,7 @@ export default function NewProject({ call, project, closeEdit }) {
                       showLangCode={{ show: true, langkey: 'lc' }}
                     />
                   </div>
-                  <button type="button" className="mt-6 -ml-2" title="type minimum 3 letter for search">
+                  <button type="button" className="mt-6 -ml-2" title={t('msg-min-three-letter')}>
                     <InformationCircleIcon
                       className="h-5 w-5"
                       aria-hidden="true"

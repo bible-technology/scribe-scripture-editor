@@ -1,9 +1,11 @@
+/* eslint-disable no-nested-ternary */
 import React, { Fragment, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { classNames } from '@/util/classNames';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import DownloadResourcePopUp from '@/components/Resources/ResourceUtils/DownloadResourcePopUp';
 import ImportResource from '@/components/Resources/ImportResource';
+import { useTranslation } from 'react-i18next';
 import ObsBibleAudioTab from './ObsBibleAudioTab';
 import * as logger from '../../logger';
 
@@ -22,6 +24,7 @@ export default function ResourceTabPane({
   setSubMenuItems,
   setfilteredBibleObsAudio,
 }) {
+  const { t } = useTranslation();
   const [isOpenDonwloadPopUp, setIsOpenDonwloadPopUp] = useState(false);
   const [resourceIconClick, setResourceIconClick] = useState(false);
   const openResourceDialogBox = () => {
@@ -43,7 +46,11 @@ export default function ResourceTabPane({
               : 'text-black bg-gray-200',
           )}
           >
-            {selectResource}
+            {selectResource === 'bible'
+            ? t('label-resource-bible')
+            : selectResource === 'OBS' ? 'OBS'
+            : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
+
           </Tab>
           {selectResource !== 'audio'
           && (
@@ -64,7 +71,7 @@ export default function ResourceTabPane({
                   className="w-4 h-4"
                   aria-hidden="true"
                 />
-                Resource
+                {t('label-resource')}
               </button>
             )}
           </Tab>
@@ -84,7 +91,7 @@ export default function ResourceTabPane({
               className="w-4 h-4"
               aria-hidden="true"
             />
-            Collection
+            {t('label-collection')}
           </Tab>
         </Tab.List>
         <Tab.Panels>

@@ -171,25 +171,25 @@ export default function Sync() {
               <div className="bg-white border-x border-gray-200 h-full">
                 <div className="flex justify-between items-center p-3 px-5 uppercase tracking-wider shadow-sm border-b border-gray-200">
                   {/* <span className="font-semibold">Local Projects</span> */}
-                  <span className="font-semibold">Projects on my Computer</span>
+                  <span className="font-semibold">{t('label-prj-on-my-computer')}</span>
                   <button
-                    title="This action will sync your data to Door43"
+                    title={t('tooltip-save-cloud-btn')}
                     type="button"
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleCloudSync(selectedAgProject, auth, setSyncProgress)}
                     disabled={syncProgress.syncStarted}
                   >
                     <CloudArrowUpIcon className="h-5 w-5" />
-                    Save to Cloud
+                    {t('label-save-to-cloud')}
                   </button>
                 </div>
 
                 <div className="flex justify-between items-center h-14 px-5 tracking-wide shadow-sm border-b border-gray-200 uppercase">
                   <div className="font-bold ">
-                    Projects
+                    {t('projects-page')}
                   </div>
                   <div className="text-xs font-semibold uppercase">
-                    Last Synced
+                    {t('label-last-synced')}
                   </div>
                 </div>
 
@@ -201,7 +201,7 @@ export default function Sync() {
               {/* cloud project side */}
               <div className="bg-white border-x border-gray-200">
                 <div className="flex justify-between items-center px-5 uppercase tracking-wider shadow-sm border-b border-gray-200">
-                  <span className="font-semibold">Projects on Cloud</span>
+                  <span className="font-semibold">{t('label-prj-on-cloud')}</span>
 
                   <ul class="flex flex-wrap text-xs font-medium text-center text-gray-500">
                     <li class="mr-2">
@@ -236,13 +236,13 @@ export default function Sync() {
                   {auth && repo && (
                   <button
                     type="button"
-                    title="This action will clone or update your local data with Door43 data"
+                    title={t('tooltip-save-computer-btn')}
                     className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
                     onClick={() => handleOfflineSync(repo, auth)}
                     disabled={syncProgress.syncStarted}
                   >
                     <CloudArrowDownIcon className="h-5 w-5" />
-                    Save to Computer
+                    {t('label-save-to-computer')}
                   </button>
                   )}
 

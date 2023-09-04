@@ -61,7 +61,7 @@ export default function ProjectsLayout(props) {
               <div className="mx-auto py-4 px-4 sm:px-4 lg:px-6 border-primary border-b-4 flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="flex items-center">
-                    <h1 aria-label="projects" className="text-xl font-bold text-gray-900 uppercase tracking-wider">{showArchived ? 'Archived Projects' : title}</h1>
+                    <h1 aria-label="projects" className="text-xl font-bold text-gray-900 uppercase tracking-wider">{showArchived ? t('label-archived-prj') : title}</h1>
                     {header}
                   </div>
                 </div>
@@ -103,12 +103,12 @@ export default function ProjectsLayout(props) {
                         {showArchived ? (
                           <>
                             <ComputerDesktopIcon className="h-4 mr-2 text-white" />
-                            <span>Active</span>
+                            <span>{t('label-active')}</span>
                           </>
                         ) : (
                           <>
                             <ArchiveBoxIcon className="h-4 mr-2 text-white" />
-                            <span>Archived</span>
+                            <span>{t('label-archived')}</span>
                           </>
                         )}
                       </button>
