@@ -383,7 +383,7 @@ const Player = ({
         </div>
         <div className="border-t border-gray-800 bg-black text-white">
           <AudioWaveform
-            height={28}
+            height={80}
             barGap="4"
             barWidth="2"
             waveColor="#ffffff"
