@@ -381,7 +381,7 @@ const LeftLogin = () => {
                         )}
                       </div>
                       {newOpen && (
-                        <span className="text-red-500">{text}</span>
+                        <span id="show-error" className="text-red-500">{text}</span>
                         )}
                       <div className="mt-8 flex gap-8 justify-end">
                         <button
