@@ -1,5 +1,5 @@
 import {
- useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback,
 } from 'react';
 import localforage from 'localforage';
 import { isElectron } from '@/core/handleElectron';
@@ -66,145 +66,145 @@ const ObsEditor = () => {
   const readContent = useCallback(() => {
     setLoadData(false);
     getDetails()
-    .then(({
-      projectName, username, projectsDir, metaPath, path,
+      .then(({
+        projectName, username, projectsDir, metaPath, path,
       }) => {
-      readRefMeta({
-        projectsDir,
-      }).then((refs) => {
-        // setIsLoading(true);
-        refs.forEach(() => {
-          readRefBurrito({
-            metaPath,
-          }).then(async (data) => {
-            if (data) {
-              const _data = JSON.parse(data);
-              Object.entries(_data.ingredients).forEach(
-                ([key]) => {
-                  const folderName = key.split(/[(\\)?(/)?]/gm).slice(0);
-                  const dirName = folderName[0];
-                  setDirectoryName(dirName);
-                  // Fetching data from projectmeta and updating the navigation and lastSeen back
-                  localforage.getItem('currentProject').then(async (projectName) => {
-                    const _projectname = await splitStringByLastOccurance(projectName, '_');
-                    // const _projectname = projectName?.split('_');
-                    localforage.getItem('projectmeta').then((value) => {
-                      Object.entries(value).forEach(
-                        ([, _value]) => {
-                          Object.entries(_value).forEach(
-                            ([, resources]) => {
-                              if (resources.identification.name.en === _projectname[0]) {
-                                resources.project[resources.type.flavorType.flavor.name].navigation = obsNavigation;
-                                resources.project[resources.type.flavorType.flavor.name].lastSeen = moment().format();
-                              }
-                            },
-                          );
-                        },
-                      );
-                      localforage.setItem('projectmeta', value);
-                      // This func will update the scribe-setting.json file
-                      saveReferenceResource();
+        readRefMeta({
+          projectsDir,
+        }).then((refs) => {
+          // setIsLoading(true);
+          refs.forEach(() => {
+            readRefBurrito({
+              metaPath,
+            }).then(async (data) => {
+              if (data) {
+                const _data = JSON.parse(data);
+                Object.entries(_data.ingredients).forEach(
+                  ([key]) => {
+                    const folderName = key.split(/[(\\)?(/)?]/gm).slice(0);
+                    const dirName = folderName[0];
+                    setDirectoryName(dirName);
+                    // Fetching data from projectmeta and updating the navigation and lastSeen back
+                    localforage.getItem('currentProject').then(async (projectName) => {
+                      const _projectname = await splitStringByLastOccurance(projectName, '_');
+                      // const _projectname = projectName?.split('_');
+                      localforage.getItem('projectmeta').then((value) => {
+                        Object.entries(value).forEach(
+                          ([, _value]) => {
+                            Object.entries(_value).forEach(
+                              ([, resources]) => {
+                                if (resources.identification.name.en === _projectname[0]) {
+                                  resources.project[resources.type.flavorType.flavor.name].navigation = obsNavigation;
+                                  resources.project[resources.type.flavorType.flavor.name].lastSeen = moment().format();
+                                }
+                              },
+                            );
+                          },
+                        );
+                        localforage.setItem('projectmeta', value);
+                        // This func will update the scribe-setting.json file
+                        saveReferenceResource();
+                      });
                     });
-                  });
-                  logger.debug('ObsEditor.js', 'Reading the md file for selected OBS story');
-                  const bookID = obsNavigation?.toString().padStart(2, 0);
-                  if (key === path.join(dirName, `${bookID}.md`)) {
-                    readFile({
-                      projectname: projectName,
-                      filename: key,
-                      username,
-                    }).then((data) => {
-                      if (data) {
-                        const stories = [];
-                        // eslint-disable-next-line prefer-const
-                        let id = 1; let footer = false;
-                        // eslint-disable-next-line react/prop-types
-                        const allLines = data.split(/\r\n|\n/);
-                        logger.debug('ObsEditor.js', 'Spliting the stories line by line and storing into an array.');
-                        // Reading line by line
-                        allLines.forEach((line) => {
-                          // To avoid the values after footer, we have added id=0
-                          if (line && id !== 0) {
-                            if (line.match(/^(\s)*#/gm)) {
-                              // Fetching the header content
-                              const hash = line.match(/# (.*)/);
-                              stories.push({
-                                id, title: hash[1],
-                              });
-                              id += 1;
-                            } else if (line.match(/^(\s)*_/gm) || footer === true) {
-                              // Fetching the footer
-                              const objIndex = stories.findIndex(((obj) => obj.id === id));
-                              if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
-                                stories[objIndex].text = '';
-                                id += 1;
-                              }
-                              if (line.match(/_(.*)_/g) && footer === false) {
-                                // single line footer
-                                const underscore = line.match(/_(.*)_/);
+                    logger.debug('ObsEditor.js', 'Reading the md file for selected OBS story');
+                    const bookID = obsNavigation?.toString().padStart(2, 0);
+                    if (key === path.join(dirName, `${bookID}.md`)) {
+                      readFile({
+                        projectname: projectName,
+                        filename: key,
+                        username,
+                      }).then((data) => {
+                        if (data) {
+                          const stories = [];
+                          // eslint-disable-next-line prefer-const
+                          let id = 1; let footer = false;
+                          // eslint-disable-next-line react/prop-types
+                          const allLines = data.split(/\r\n|\n/);
+                          logger.debug('ObsEditor.js', 'Spliting the stories line by line and storing into an array.');
+                          // Reading line by line
+                          allLines.forEach((line) => {
+                            // To avoid the values after footer, we have added id=0
+                            if (line && id !== 0) {
+                              if (line.match(/^(\s)*#/gm)) {
+                                // Fetching the header content
+                                const hash = line.match(/# (.*)/);
                                 stories.push({
-                                  id, end: underscore[1],
+                                  id, title: hash[1],
                                 });
-                                // Logically footer is the last line of the story
-                                id = 0;
-                              } else {
-                                // To get multi-line footer (footer=true)
-                                footer = true;
-                                if (line.match(/^(\s)*_/gm)) {
-                                  // starting of footer
-                                  const underscore = line.match(/^(\s)*_(.*)/);
+                                id += 1;
+                              } else if (line.match(/^(\s)*_/gm) || footer === true) {
+                                // Fetching the footer
+                                const objIndex = stories.findIndex(((obj) => obj.id === id));
+                                if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
+                                  stories[objIndex].text = '';
+                                  id += 1;
+                                }
+                                if (line.match(/_(.*)_/g) && footer === false) {
+                                  // single line footer
+                                  const underscore = line.match(/_(.*)_/);
                                   stories.push({
-                                    id, end: underscore[2],
+                                    id, end: underscore[1],
                                   });
-                                } else if (line.match(/_$/gm)) {
-                                  // end of footer
-                                  const underscore = line.match(/(.*)_$/);
-                                  stories[id - 1].end = `${stories[id - 1].end}\n${underscore[1]}`;
                                   // Logically footer is the last line of the story
                                   id = 0;
                                 } else {
-                                  // middle lines of footer if available
-                                  stories[id - 1].end = `${stories[id - 1].end}\n${line}`;
+                                  // To get multi-line footer (footer=true)
+                                  footer = true;
+                                  if (line.match(/^(\s)*_/gm)) {
+                                    // starting of footer
+                                    const underscore = line.match(/^(\s)*_(.*)/);
+                                    stories.push({
+                                      id, end: underscore[2],
+                                    });
+                                  } else if (line.match(/_$/gm)) {
+                                    // end of footer
+                                    const underscore = line.match(/(.*)_$/);
+                                    stories[id - 1].end = `${stories[id - 1].end}\n${underscore[1]}`;
+                                    // Logically footer is the last line of the story
+                                    id = 0;
+                                  } else {
+                                    // middle lines of footer if available
+                                    stories[id - 1].end = `${stories[id - 1].end}\n${line}`;
+                                  }
+                                }
+                              } else if (line.match(/^(\s)*!/gm)) {
+                                // Fetching the IMG url
+                                const objIndex = stories.findIndex(((obj) => obj.id === id));
+                                if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
+                                  stories[objIndex].text = '';
+                                  id += 1;
+                                }
+                                const imgUrl = line.match(/\((.*)\)/);
+                                stories.push({
+                                  id, img: imgUrl[1],
+                                });
+                              } else {
+                                // Reading the content line by line
+                                const objIndex = stories.findIndex(((obj) => obj.id === id));
+                                if (objIndex !== -1) {
+                                  // Reading first line after img
+                                  stories[objIndex].text = line;
+                                  id += 1;
+                                } else {
+                                  // Reading other lines and appending with previous line data
+                                  stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
                                 }
                               }
-                            } else if (line.match(/^(\s)*!/gm)) {
-                              // Fetching the IMG url
-                              const objIndex = stories.findIndex(((obj) => obj.id === id));
-                              if (objIndex !== -1 && Object.prototype.hasOwnProperty.call(stories[objIndex], 'img')) {
-                                stories[objIndex].text = '';
-                                id += 1;
-                              }
-                              const imgUrl = line.match(/\((.*)\)/);
-                              stories.push({
-                                id, img: imgUrl[1],
-                              });
-                            } else {
-                              // Reading the content line by line
-                              const objIndex = stories.findIndex(((obj) => obj.id === id));
-                              if (objIndex !== -1) {
-                                // Reading first line after img
-                                stories[objIndex].text = line;
-                                id += 1;
-                              } else {
-                                // Reading other lines and appending with previous line data
-                                stories[id - 2].text = `${stories[id - 2].text}\n${line}`;
-                              }
                             }
-                          }
-                        });
-                        logger.debug('ObsEditor.js', 'Story for selected navigation is been set to the array for Editor');
-                        setMdData(stories);
-                      }
-                    });
-                  }
-                },
-              );
-            }
+                          });
+                          logger.debug('ObsEditor.js', 'Story for selected navigation is been set to the array for Editor');
+                          setMdData(stories);
+                        }
+                      });
+                    }
+                  },
+                );
+              }
+            });
           });
         });
       });
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [obsNavigation]);
 
   useEffect(() => {
@@ -216,12 +216,12 @@ const ObsEditor = () => {
     if (loadData === true) {
       readContent();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadData]);
   return (
     <Editor callFrom="obs">
       {mdData
-      && <EditorPanel obsStory={mdData} storyUpdate={updateStory} />}
+        && <EditorPanel obsStory={mdData} storyUpdate={updateStory} />}
     </Editor>
   );
 };

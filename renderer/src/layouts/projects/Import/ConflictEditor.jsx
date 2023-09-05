@@ -1,4 +1,4 @@
-import { Cog8ToothIcon } from '@heroicons/react/24/outline';
+// import { Cog8ToothIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import ConflictSection from './ConflictSection';
 
@@ -60,10 +60,13 @@ function ConflictEditor({
             let resolvedText;
             if (type === 'current') {
               resolvedText = matchArr[2];
+              conflictedData[i].resolvedType = 'current';
             } else if (type === 'incoming') {
               resolvedText = matchArr[3];
+              conflictedData[i].resolvedType = 'incoming';
             } else if (type === 'both') {
               resolvedText = `${matchArr[2]}\t${matchArr[3]}`;
+              conflictedData[i].resolvedType = 'both';
             }
             if (resolvedText) {
               conflictedData[i].conflictResolved = true;
@@ -101,14 +104,14 @@ function ConflictEditor({
   };
 
   return (
-    <div className="bg-white flex-1 border-2 border-gray-100 rounded-md">
+    <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
       {/* Header and Buttons */}
-      <div className="flex justify-between bg-gray-100 border border-gray-100">
+      <div className="flex justify-between bg-gray-100 border border-gray-100 ">
         <div className="flex w-full justify-between">
           <div className="flex py-1.5 px-1 gap-2.5">
             <span className="px-2.5 py-0.5 text-black font-semibold tracking-wider text-xs uppercase rounded-xl">comparison</span>
           </div>
-          <div className="flex py-1.5 px-1 gap-2.5">
+          <div className="flex py-1.5 px-1 gap-2.5 pr-2">
             <button
               type="button"
               onClick={() => resolveAllTogether(selectedFileContent, 'current')}
@@ -154,12 +157,12 @@ function ConflictEditor({
 
           </div>
         </div>
-        <div className="bg-black flex items-center px-2 rounded-tr-md">
+        {/* <div className="bg-black flex items-center px-2 rounded-tr-md">
           <Cog8ToothIcon className="w-5 h-5 text-white" />
-        </div>
+        </div> */}
       </div>
       {/* Content */}
-      <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll">
+      <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
         {selectedFileContent.map((content, index) => (
           <div key={content.id} className="flex px-2 py-6 gap-4">
             {(index !== 0 && index !== selectedFileContent.length - 1) && (

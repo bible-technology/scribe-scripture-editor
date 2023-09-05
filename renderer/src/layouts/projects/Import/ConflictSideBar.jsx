@@ -1,4 +1,4 @@
-import { Cog8ToothIcon } from '@heroicons/react/24/outline';
+// import { Cog8ToothIcon } from '@heroicons/react/24/outline';
 
 function ConflictSideBar({
   conflictData, setSelectedFileName, selectedFileName, resolvedFileNames,
@@ -9,7 +9,7 @@ function ConflictSideBar({
          <span className="px-2.5 py-0.5 bg-primary text-white font-semibold tracking-wider text-xs uppercase rounded-xl">
            {`${conflictData?.data?.files?.filepaths.length || 0} files`}
          </span>
-         <Cog8ToothIcon className="w-5 h-5 text-white" />
+         {/* <Cog8ToothIcon className="w-5 h-5 text-white" /> */}
        </div>
        <ul className="text-black text-xs pt-2.5">
          {conflictData?.data?.files?.filepaths?.sort()?.map((file) => (
