@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "paths": {
       "@/icons/*": [
         "public/icons/*"
@@ -24,6 +22,9 @@
       ],
       "@/util/*": [
         "renderer/src/util/*"
+      ],
+      "@/app/*": [
+        "app/*"
       ],
     }
   }

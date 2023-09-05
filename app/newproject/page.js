@@ -1,5 +1,5 @@
 import ProtectedRoute from '@/components/Protected';
-import NewWebProject from '@/modules/projects/NewWebProject';
+import NewWebProject from '@/components/Projects/NewWebProject';
 
 const newproject = () => (
   <ProtectedRoute>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import ProjectsLayout from '@/layouts/projects/Layout';

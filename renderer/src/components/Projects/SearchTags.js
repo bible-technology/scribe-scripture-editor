@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 export default function SearchTags({
   defaultQuery,
   contentList1,
-  contentList2,
+  // contentList2,
   filterList,
   onfilerRequest1,
-  onfilerRequest2,
+  // onfilerRequest2,
 }) {
   const { t } = useTranslation();
   const [query, setQuery] = React.useState(defaultQuery);
@@ -40,11 +40,11 @@ export default function SearchTags({
   React.useEffect(() => {
     if (query) {
       onfilerRequest1(onQuery(query, contentList1));
-      onfilerRequest2(onQuery(query, contentList2));
+      // onfilerRequest2(onQuery(query, contentList2));
     }
     if (!query) {
       onfilerRequest1(contentList1);
-      onfilerRequest2(contentList2);
+      // onfilerRequest2(contentList2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
@@ -72,11 +72,11 @@ SearchTags.propTypes = {
   defaultQuery: PropTypes.string,
   /** Array list of items  */
   contentList1: PropTypes.array,
-  contentList2: PropTypes.array,
+  // contentList2: PropTypes.array,
   /** Array list to be filtered  */
   filterList: PropTypes.array,
   /** Function to propogate the returned repositories data array. */
   onfilerRequest1: PropTypes.func,
-  onfilerRequest2: PropTypes.func,
+  // onfilerRequest2: PropTypes.func,
   /** Configuration required if paths are provided as URL. */
 };

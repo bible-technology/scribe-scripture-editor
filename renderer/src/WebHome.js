@@ -14,7 +14,7 @@ const WebHome = () => {
   useEffect(() => {
     const checkSession = async () => {
       const data = await getSupabaseSession();
-      if (data.session) {
+      if (data.session.user) {
         setSession(data.session);
         const appLangCode = await getorPutAppLangage('get', data.session.user.email);
         if (i18n.language !== appLangCode) {

@@ -2,13 +2,13 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 
 import { useContext, useState, useEffect } from 'react';
+import ProjectList from '@/components/Projects/ProjectList';
 import Login from './components/Login/Login';
 import AuthenticationContextProvider, { AuthenticationContext } from './components/Login/AuthenticationContextProvider';
 import { loadUsers } from './core/Login/handleJson';
 import ProjectContextProvider from './components/context/ProjectContext';
 import ReferenceContextProvider from './components/context/ReferenceContext';
 import * as logger from './logger';
-import ProjectList from './modules/projects/ProjectList';
 import AutographaContextProvider from './components/context/AutographaContext';
 import { getorPutAppLangage } from './core/projects/handleProfile';
 import i18n from './translations/i18n';

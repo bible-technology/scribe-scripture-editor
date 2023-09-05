@@ -5,38 +5,36 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const IsElectron = process.env.NEXT_PUBLIC_IS_ELECTRON === 'true';
 
 const supabase = !IsElectron ? createClient(supabaseUrl, supabaseAnonKey) : {};
+// const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const supabaseStorage = !IsElectron ? createClient(supabaseUrl, supabaseAnonKey).storage.from('scribe') : {};
 
 const sbStorageUpload = (file, payload, settings = {}) => {
-  console.log({file,payload,settings})
   const data = supabaseStorage.upload(file, payload, settings);
   return data;
 };
 
-async function createDirectory({path, data}) {
-  const { data: folder } = await supabaseStorage.list(path);
-  if (folder.length === 0) {
+async function createDirectory(path, data) {
+  const { data: folder } = await supabaseStorage().list(path);
+  if (folder.length > 0) {
+    console.log('folder already exists', folder);
+  } else {
     if (data) {
       await sbStorageUpload(path, data);
-      return;
     }
-    else{
-      console.log("nofile")
-      const fileName = '.keep';
-      const filePath = `${path}/${fileName}`;
-      const fileContent = new Blob(['testtext'], { type: 'text/plain' });
-      const { data: createdDirectory } = await sbStorageUpload(
-        filePath,
-        fileContent,
-        {
-          cacheControl: '3600',
-          upsert: false,
-        },
-      );
-      console.log('created directory', createdDirectory);
-      return;
-    }
-   
+    const fileName = '.keep';
+    const filePath = `${path}/${fileName}`;
+    const fileContent = new Blob([], { type: 'text/plain' });
+    const { data: createdDirectory } = await sbStorageUpload(
+      filePath,
+      fileContent,
+      {
+        cacheControl: '3600',
+        upsert: false,
+      },
+    );
+    console.log('created directory', createdDirectory);
+    return data;
   }
 }
 
@@ -55,7 +53,7 @@ const getSupabaseUser = async () => {
   }
 };
 
-const supabaseSignup = async ({email, password}) => {
+const supabaseSignup = async (email, password) => {
   if (supabase.auth) {
     const response = await supabase.auth.signUp({
       email,
@@ -97,10 +95,10 @@ const sbStorageDownload = async (path) => {
 };
 
 const sbStorageUpdate = async ({ path, payload, options = {} }) => {
-  await supabaseStorage.update(path, payload, options);
+  await supabaseStorage().update(path, payload, options);
 };
-const sbStorageRemove = async (path) => {
-  await supabaseStorage.remove(path);
+const sbStorageRemove = async (path, payload, options) => {
+  await supabaseStorage().remove(path);
 };
 
 const newPath = 'scribe/users';

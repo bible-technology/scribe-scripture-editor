@@ -427,7 +427,7 @@ const ProjectContextProvider = ({ children }) => {
       Object.assign(projectMetaObj, temp_obj);
     }
     logger.debug('ProjectContext.js', 'Calling saveProjectsMeta with required props');
-    const status = await saveProjectsMeta(projectMetaObj);
+    const status = isElectron() ? await saveProjectsMeta(projectMetaObj) : await saveSupabaseProjectsMeta(projectMetaObj);
     return status;
   };
 

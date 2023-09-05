@@ -21,6 +21,8 @@ const SignIn = () => {
     if (data.session) {
       console.log('sign in success', data);
       await localforage.setItem('userProfile', data);
+      const userData = await localforage.getItem('userProfile');
+      console.log({ userData });
       router.push('/projects');
       setLoading(false);
     } else {
