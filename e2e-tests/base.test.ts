@@ -2,6 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
+import { checkLogInOrNot, filterUser } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -21,22 +22,12 @@ test("Start the scribe application", async () => {
   console.log(appPath);
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
-  await window.waitForSelector('//*[@id="__next"]/div[1]', '//*[@id="__next"]/div')
+  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
 
 })
 
 test('Check whether the app is being logged IN', async ({ userName }) => {
-  const textVisble = await window.locator('//h1["@aria-label=projects"]').isVisible()
-  if (textVisble) {
-    const title = await window.textContent('[aria-label=projects]')
-    console.log('user is Logged In')
-    await expect(title).toBe('Projects')
-
-  } else {
-    const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
-    console.log('user is not Logged In')
-    await expect(welcome).toBe("Welcome!")
-  }
+  await checkLogInOrNot(window, expect, userName)
 });
 
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
@@ -49,9 +40,6 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
   const textVisble = await window.locator('//h1["@aria-label=projects"]').isVisible()
 
   if (textVisble) {
-    const title = await window.textContent('[aria-label=projects]')
-
-    await expect(title).toBe('Projects')
     await window.getByRole('button', { name: "Open user menu" }).click()
     const currentUser = await window.textContent('[aria-label="userName"]')
     if (currentUser !== userName.toLowerCase()) {
@@ -60,36 +48,33 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
     } else {
       /// projects page then logout and delete playwright user
       await window.getByRole('menuitem', { name: "Sign out" }).click()
-      if (currentUser === userName.toLowerCase() && await fs.existsSync(folder)) {
+      if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
         fs.rmSync(folder, { recursive: true, force: true })
-
+        console.log(`${userName} data removed from users.json`);
+        const userfilterd = await filterUser(json, userName)
+        console.log(`user is ${userName}`)
+        await fs.writeFileSync(file, JSON.stringify(userfilterd))
+        await window.reload()
       }
-      console.error('users.json', `${userName} data removed from json`);
-      const filtered = json.filter((item) =>
-        item.username.toLowerCase() !== userName.toLowerCase()
-      )
-      console.log(`user is ${userName}`)
-      await fs.writeFileSync(file, JSON.stringify(filtered))
       expect(await window.title()).toBe('Scribe Scripture');
-      await window.reload()
     }
 
   } else {
-    ///loging page, if playwright user exist then onload app remove 
-    const filtered = json.filter((item) =>
-      item.username.toLowerCase() !== userName.toLowerCase()
-    )
-    if (filtered && await fs.existsSync(folder)) {
+    ///loging page, if playwright user exist then reload app and remove 
+    const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
+    if (existUser && await fs.existsSync(folder)) {
       fs.rmSync(folder, { recursive: true, force: true })
 
-    }
-    console.error('users.json', `${userName} data removed from json`);
+      console.log(`${userName} data removed from users.json`);
+      const userfilterd = await filterUser(json, userName)
+      await fs.writeFileSync(file, JSON.stringify(userfilterd))
+      await window.reload()
 
-    console.log(`user is ${userName}`)
-    await fs.writeFileSync(file, JSON.stringify(filtered))
-    await window.reload()
-    const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
-    await expect(welcome).toBe("Welcome!")
+    } else {
+      const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+      await expect(welcome).toBe("Welcome!")
+      await window.reload()
+    }
   }
 
 });
@@ -106,7 +91,7 @@ test('Create a new user and login', async ({ userName }) => {
 })
 
 
-test("Logout and delete that user from the backend", async ({ userName }) => {
+test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   const newpath = await window?.evaluate(() => Object.assign({}, window.localStorage))
   const path = require('path');
   const folder = path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase());
@@ -119,13 +104,14 @@ test("Logout and delete that user from the backend", async ({ userName }) => {
   const currentUser = await window.textContent('[aria-label="userName"]')
   await window.getByRole('menuitem', { name: "Sign out" }).click()
   expect(await window.title()).toBe('Scribe Scripture');
-  if (userName.toLowerCase() && await fs.existsSync(folder)) {
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
     fs.rmSync(folder, { recursive: true, force: true })
+    console.log('users.json', `${currentUser} data removed from json`);
+    const userfilterd = await filterUser(json, currentUser)
+    await fs.writeFileSync(file, JSON.stringify(userfilterd))
+    await window.reload()
   }
-  console.error('users.json', `${userName} data removed from json`);
-  const filtered = json.filter((item) =>
-    item.username.toLowerCase() !== currentUser.toLowerCase()
-  )
-  await fs.writeFileSync(file, JSON.stringify(filtered))
-  await window.reload()
+  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  await expect(welcome).toBe("Welcome!")
+  await window.close()
 })
