@@ -18,6 +18,7 @@ export default function ImportPopUp(props) {
     open,
     closePopUp,
     projectType,
+    replaceConformation,
   } = props;
 
   const { t } = useTranslation();
@@ -107,6 +108,8 @@ export default function ImportPopUp(props) {
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
@@ -124,6 +127,8 @@ export default function ImportPopUp(props) {
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
@@ -334,4 +339,5 @@ ImportPopUp.propTypes = {
   open: PropTypes.bool,
   closePopUp: PropTypes.func,
   projectType: PropTypes.string,
+  replaceConformation: PropTypes.bool,
 };
