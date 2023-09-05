@@ -279,7 +279,7 @@ export const ListResources = ({
 
               <tr className="bg-gray-100 border-y-2">
                 <td colSpan="6" className="p-2 text-gray-900 font-bold">
-                  Online Resources
+                  {t('label-online-resources')}
                 </td>
               </tr>
 
@@ -335,7 +335,7 @@ export const ListResources = ({
                         className="cursor-pointer focus:outline-none flex justify-center items-center"
                         role="button"
                         tabIndex={0}
-                        title="download"
+                        title={t('tooltip-download')}
                         onClick={(e) => handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       >
                         {downloading && currentDownloading?.responseData?.id === notes?.responseData?.id ? (

@@ -9,6 +9,7 @@ import {
   PlusIcon,
   StopIcon,
 } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import { Listbox } from '@headlessui/react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
@@ -34,6 +35,7 @@ const Player = ({
   setTrigger,
   location,
 }) => {
+  const { t } = useTranslation();
   const [volume, setVolume] = useState(0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const speed = [0.5, 1, 1.5, 2];
@@ -80,7 +82,7 @@ const Player = ({
         <div className="grid grid-flow-col auto-cols-fr text-white bg-black transparent p-1 justify-between items-center">
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              audio
+              {t('label-audio-bible')}
             </div>
             <button
               type="button"
@@ -92,7 +94,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              speed
+              {t('label-speed')}
             </div>
             <Listbox value={currentSpeed} onChange={setCurrentSpeed}>
               <Listbox.Button
@@ -123,7 +125,7 @@ const Player = ({
               {((trigger === 'record' || trigger === 'recResume') && (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  pause
+                  {t('label-pause')}
                 </div>
                 <button
                   type="button"
@@ -141,7 +143,7 @@ const Player = ({
             || (trigger === 'recPause' && (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  continue
+                  {t('label-continue')}
                 </div>
                 <button
                   type="button"
@@ -158,7 +160,7 @@ const Player = ({
             )) || (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  record
+                  {t('label-record')}
                 </div>
                 <button
                   type="button"
@@ -176,7 +178,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                stop
+                {t('label-stop')}
               </div>
               <button
                 type="button"
@@ -194,7 +196,7 @@ const Player = ({
           <div className="flex flex-row lg:gap-5 md:gap-2 md:col-span-3 col-span-4 px-10 justify-center items-center border-r border-r-gray-800">
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                rewind
+                {t('label-rewind')}
               </div>
               <button
                 type="button"
@@ -210,7 +212,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                play
+                {t('label-play')}
               </div>
               <button
                 type="button"
@@ -227,7 +229,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                pause
+                {t('label-pause')}
               </div>
               <button
                 type="button"
@@ -244,7 +246,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                delete
+                {t('label-delete')}
               </div>
               <div>
                 <button
@@ -259,7 +261,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs mb-2 text-gray-300 uppercase tracking-wider">
-                Volume
+                {t('label-delete')}
               </div>
               <div className="flex gap-2 mt-2 items-center justify-center">
                 <button
@@ -299,7 +301,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              Takes
+              {t('label-takes')}
             </div>
             <div className="flex gap-2">
               <button
@@ -366,7 +368,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              settings
+              {t('label-settings')}
             </div>
             <div className="flex flex-col items-center">
               <button

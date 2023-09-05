@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-unused-vars */
@@ -297,7 +298,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     <>
       <div className="text-sm flex flex-col gap-4 border-b border-gray-300 pb-4 mb-4">
         <div class="flex items-center gap-4">
-          <label htmlFor="filter-lang" className="font-bold w-24">Language</label>
+          <label htmlFor="filter-lang" className="font-bold w-24">{t('label-lang')}</label>
           <CustomMultiComboBox
             selectedList={selectedLangFilter}
             setSelectedList={setSelectedLangFilter}
@@ -307,7 +308,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             multiSelect
             dropArrow
           />
-          <button type="button" className="" title="type minimum 3 letter for search">
+          <button type="button" className="" title={t('msg-min-three-letter')}>
             <InformationCircleIcon
               className="h-5 w-5 mr-5"
               aria-hidden="true"
@@ -329,7 +330,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
         </div>
 
         <div class="flex items-center gap-4">
-          <label htmlFor="filter-type" className="font-bold w-24">Type</label>
+          <label htmlFor="filter-type" className="font-bold w-24">{t('label-type')}</label>
           <CustomMultiComboBox
             selectedList={selectedTypeFilter}
             setSelectedList={setSelectedTypeFilter}
@@ -339,7 +340,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
         </div>
 
         <div class="flex items-center gap-4">
-          <label htmlFor="pre-prod" className="font-bold w-24">Prerelease</label>
+          <label htmlFor="pre-prod" className="font-bold w-24">{t('label-pre-release')}</label>
           <input
             id="pre-prod"
             name="pre-prod"
@@ -362,7 +363,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             className="bg-success leading-loose rounded shadow text-xs px-2 font-base text-white tracking-wide uppercase"
             onClick={handleSaveFilter}
           >
-            Save Filter
+            {t('label-save-filter')}
           </button>
         </div>
       </div>
@@ -386,16 +387,18 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                 <tr>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider w-8" />
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    Resource
+                    {t('label-resource')}
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    SUBJECT
+                    {t('label-subject')}
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    Organization
+                    {t('label-organization')}
                   </th>
-                  <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    release/Version
+                  <th className="p-2 font-bold text-gray-70'0 uppercase tracking-wider">
+                    {t('label-version')}
+                    /
+                    {t('label-release')}
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider" />
                 </tr>
@@ -406,7 +409,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                     <tr>
                       <td className="p-2 bg-primary-50 rounded-l-lg font-bold" colSpan={5}>
                         <h4 className={`${resourceData[element].length > 0 ? '' : ' text-red-600'} `}>
-                          {`(${element}) ${resourceData[element].length > 0 ? resourceData[element][0].language_title : 'No Content'} `}
+                          {`(${element}) ${resourceData[element].length > 0 ? resourceData[element][0].language_title : t('label-no-content-available')} `}
                         </h4>
                       </td>
                       <td className="p-2 bg-primary-50 rounded-r-lg">
@@ -447,7 +450,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                               <button
                                 className="text-xs flex w-6 h-6 items-center gap-2 bg-gray-700 text-white group-hover:bg-white group-hover:text-gray-700 cursor-pointer p-1 rounded-full"
                                 type="button"
-                                title="download"
+                                title={t('tooltip-download')}
                                 onClick={() => handleDownload({ selection: 'single', id: row.id, parent: element })}
                               >
                                 <ArrowDownTrayIcon
@@ -463,7 +466,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                         <td colSpan={6} className="text-center ">
                           <div className="flex flex-col items-center gap-1 mt-3">
 
-                            <div>This content is unavailable for this language</div>
+                            {/* <div>This content is unavailable for this language</div>
                             <div>
                               You can Import Own
                               {' '}
@@ -475,7 +478,9 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                             </div>
                             <div>
                               Learn more about creating Scripture Burrito projects with Scribe. Refer Scribe Docs.
-                            </div>
+                            </div> */}
+
+                            <div dangerouslySetInnerHTML={{ __html: t('msg-no-resource-for-bible-obs-download') }} />
                           </div>
 
                         </td>

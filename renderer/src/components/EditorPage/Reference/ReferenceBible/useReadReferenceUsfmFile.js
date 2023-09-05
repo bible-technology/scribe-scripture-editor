@@ -121,7 +121,7 @@ export const useReadReferenceUsfmFile = ({
         localforage.getItem('notification').then((value) => {
           const temp = [...value];
           temp.push({
-            title: t('label-resource'),
+            title: t('label-resources'),
             text: t('dynamic-msg-load-ref-bible-snack-fail', { refName }),
             type: 'failure',
             time: moment().format(),
