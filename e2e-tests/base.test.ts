@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { checkLogInOrNot, filterUser } from './common';
+import { checkLogInOrNot, commonFile, commonFolder, commonJson, filterUser, removeFolderAndFile } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -19,7 +19,6 @@ test("Start the scribe application", async () => {
     // the result of the require('electron') in the main app script
     return app.getAppPath();
   });
-  console.log(appPath);
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
   await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
@@ -31,30 +30,24 @@ test('Check whether the app is being logged IN', async ({ userName }) => {
 });
 
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const path = require('path');
-  const folder = path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase());
-  const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
-  const data = await fs.readFileSync(file);
-  const json = JSON.parse(data);
-  const textVisble = await window.locator('//h1["@aria-label=projects"]').isVisible()
+  ///return json
+  const json = await commonJson(window, userName, packageInfo, fs)
+  /// return file
+  const file = await commonFile(window, userName, packageInfo)
+  /// return folde name
+  const folder = await commonFolder(window, userName, packageInfo)
 
-  if (textVisble) {
+  if (await checkLogInOrNot(window, expect, userName)) {
     await window.getByRole('button', { name: "Open user menu" }).click()
-    const currentUser = await window.textContent('[aria-label="userName"]')
+    let currentUser = await window.textContent('[aria-label="userName"]')
+    await window.getByRole('menuitem', { name: "Sign out" }).click()
     if (currentUser !== userName.toLowerCase()) {
-      await window.getByRole('menuitem', { name: "Sign out" }).click()
-      console.log(`current user is not a ${userName}`)
+      const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+      await expect(welcome).toBe("Welcome!")
     } else {
       /// projects page then logout and delete playwright user
-      await window.getByRole('menuitem', { name: "Sign out" }).click()
       if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-        fs.rmSync(folder, { recursive: true, force: true })
-        console.log(`${userName} data removed from users.json`);
-        const userfilterd = await filterUser(json, userName)
-        console.log(`user is ${userName}`)
-        await fs.writeFileSync(file, JSON.stringify(userfilterd))
-        await window.reload()
+        await removeFolderAndFile(fs, folder, userName, window, json, file)
       }
       expect(await window.title()).toBe('Scribe Scripture');
     }
@@ -63,17 +56,7 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
     ///loging page, if playwright user exist then reload app and remove 
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
     if (existUser && await fs.existsSync(folder)) {
-      fs.rmSync(folder, { recursive: true, force: true })
-
-      console.log(`${userName} data removed from users.json`);
-      const userfilterd = await filterUser(json, userName)
-      await fs.writeFileSync(file, JSON.stringify(userfilterd))
-      await window.reload()
-
-    } else {
-      const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
-      await expect(welcome).toBe("Welcome!")
-      await window.reload()
+      await removeFolderAndFile(fs, folder, userName, window, json, file)
     }
   }
 
@@ -81,6 +64,7 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 
 test('Create a new user and login', async ({ userName }) => {
+  await window.reload()
   await window.getByRole('button', { name: 'Create New Account' }).click()
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
   await window.getByPlaceholder('Username').fill(userName)
@@ -92,24 +76,19 @@ test('Create a new user and login', async ({ userName }) => {
 
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  const newpath = await window?.evaluate(() => Object.assign({}, window.localStorage))
-  const path = require('path');
-  const folder = path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase());
-  const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
-  const data = await fs.readFileSync(file);
-  const json = JSON.parse(data);
+  ///return json
+  const json = await commonJson(window, userName, packageInfo, fs)
+  /// return file
+  const file = await commonFile(window, userName, packageInfo)
+  /// return folde name
+  const folder = await commonFolder(window, userName, packageInfo)
   const title = await window.textContent('[aria-label=projects]');
   await expect(title).toBe('Projects')
   await window.getByRole('button', { name: "Open user menu" }).click()
-  const currentUser = await window.textContent('[aria-label="userName"]')
+  let currentUser = await window.textContent('[aria-label="userName"]')
   await window.getByRole('menuitem', { name: "Sign out" }).click()
-  expect(await window.title()).toBe('Scribe Scripture');
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    fs.rmSync(folder, { recursive: true, force: true })
-    console.log('users.json', `${currentUser} data removed from json`);
-    const userfilterd = await filterUser(json, currentUser)
-    await fs.writeFileSync(file, JSON.stringify(userfilterd))
-    await window.reload()
+    await removeFolderAndFile(fs, folder, currentUser, window, json, file)
   }
   const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
   await expect(welcome).toBe("Welcome!")
