@@ -33,14 +33,16 @@ export const commonFolder = async (window, userName, packageInfo) => {
   return path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase())
 }
 
-export const commonFile = async (window, userName, packageInfo) => {
+export const commonFile = async (window, packageInfo) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   const path = require('path');
   return path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
 }
 
-export const removeFolderAndFile = async (fs, folder, userName, window, json, file) => {
+export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   fs.rmSync(folder, { recursive: true, force: true })
-  const userfilterd = await filterUser(json, userName)
-  await fs.writeFileSync(file, JSON.stringify(userfilterd))
+  const filtered = json.filter((item) =>
+  item.username.toLowerCase() !== userName.toLowerCase()
+)
+  return await fs.writeFileSync(file, JSON.stringify(filtered))
 }

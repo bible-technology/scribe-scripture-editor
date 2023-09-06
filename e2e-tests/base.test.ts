@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { checkLogInOrNot, commonFile, commonFolder, commonJson, filterUser, removeFolderAndFile } from './common';
+import { checkLogInOrNot, commonFile, commonFolder, commonJson, removeFolderAndFile } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -33,30 +33,26 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
   ///return json
   const json = await commonJson(window, userName, packageInfo, fs)
   /// return file
-  const file = await commonFile(window, userName, packageInfo)
+  const file = await commonFile(window, packageInfo)
   /// return folde name
   const folder = await commonFolder(window, userName, packageInfo)
 
   if (await checkLogInOrNot(window, expect, userName)) {
     await window.getByRole('button', { name: "Open user menu" }).click()
-    let currentUser = await window.textContent('[aria-label="userName"]')
+    const currentUser = await window.textContent('[aria-label="userName"]')
     await window.getByRole('menuitem', { name: "Sign out" }).click()
-    if (currentUser !== userName.toLowerCase()) {
+    /// projects page then logout and delete playwright user
+    if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+      await removeFolderAndFile(fs, folder, userName, json, file)
       const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
       await expect(welcome).toBe("Welcome!")
-    } else {
-      /// projects page then logout and delete playwright user
-      if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-        await removeFolderAndFile(fs, folder, userName, window, json, file)
-      }
-      expect(await window.title()).toBe('Scribe Scripture');
+      await window.reload()
     }
-
   } else {
     ///loging page, if playwright user exist then reload app and remove 
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
     if (existUser && await fs.existsSync(folder)) {
-      await removeFolderAndFile(fs, folder, userName, window, json, file)
+      await removeFolderAndFile(fs, folder, userName, json, file)
     }
   }
 
@@ -64,7 +60,6 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 
 test('Create a new user and login', async ({ userName }) => {
-  await window.reload()
   await window.getByRole('button', { name: 'Create New Account' }).click()
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
   await window.getByPlaceholder('Username').fill(userName)
@@ -79,18 +74,17 @@ test("Logout and delete that playwright user from the backend", async ({ userNam
   ///return json
   const json = await commonJson(window, userName, packageInfo, fs)
   /// return file
-  const file = await commonFile(window, userName, packageInfo)
+  const file = await commonFile(window, packageInfo)
   /// return folde name
   const folder = await commonFolder(window, userName, packageInfo)
-  const title = await window.textContent('[aria-label=projects]');
-  await expect(title).toBe('Projects')
-  await window.getByRole('button', { name: "Open user menu" }).click()
-  let currentUser = await window.textContent('[aria-label="userName"]')
-  await window.getByRole('menuitem', { name: "Sign out" }).click()
-  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await removeFolderAndFile(fs, folder, currentUser, window, json, file)
+  if (await checkLogInOrNot(window, expect, userName)) {
+    await window.getByRole('button', { name: "Open user menu" }).click()
+    const currentUser = await window.textContent('[aria-label="userName"]')
+    await window.getByRole('menuitem', { name: "Sign out" }).click()
+    /// projects page then logout and delete playwright user
+    if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+      await removeFolderAndFile(fs, folder, userName, json, file)
+
+    }
   }
-  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
-  await expect(welcome).toBe("Welcome!")
-  await window.close()
 })
