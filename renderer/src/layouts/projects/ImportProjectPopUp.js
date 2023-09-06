@@ -355,7 +355,7 @@ export default function ImportProjectPopUp(props) {
         buttonName2={{
           active: merge,
           loading: processMerge,
-          name:'Merge',
+          name:t('label-merge'),
           action: () => MergeFunction(),
         }}
       />

@@ -259,4 +259,18 @@ export const Ru = {
     'label-reset': 'Перезагрузить',
     'label-both': 'Оба',
     'label-overwrite': 'Перезаписать',
+    'modal-title-abort-conflict-resolution': 'Прервать разрешение конфликта',
+    'msg-abort-conflict-resolution': 'Хотите прервать процесс разрешения конфликта? Если вы прервете, вы потеряете весь свой прогресс и вам придется начинать все сначала.',
+    'label-done': 'сделанный',
+    'label-resolved': 'решено',
+    'label-resolve-conflict': 'разрешить конфликт',
+    'label-comparison': 'сравнение',
+    'label-files': 'файлы',
+    'label-re-record': 'Перезапись',
+    'modal-title-re-record': 'Перезапишите аудио',
+    'msg-re-record-audio': 'Хотите перезаписать звук?',
+    'modal-title-delete-audio': 'Удалить аудио',
+    'msg-delete-audio': 'Вы хотите удалить выбранный дубль?',
+    'label-accepted': 'Принял',
+
 };

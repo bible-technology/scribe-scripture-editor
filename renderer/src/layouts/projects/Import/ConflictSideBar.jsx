@@ -1,13 +1,15 @@
 // import { Cog8ToothIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 function ConflictSideBar({
   conflictData, setSelectedFileName, selectedFileName, resolvedFileNames,
  }) {
+  const { t } = useTranslation();
    return (
      <div className="bg-white border-2 rounded-md border-black h-full">
        <div className="flex items-center justify-between bg-black py-1.5 px-2.5">
          <span className="px-2.5 py-0.5 bg-primary text-white font-semibold tracking-wider text-xs uppercase rounded-xl">
-           {`${conflictData?.data?.files?.filepaths.length || 0} files`}
+           {`${conflictData?.data?.files?.filepaths.length || 0} ${t('label-files')}`}
          </span>
          {/* <Cog8ToothIcon className="w-5 h-5 text-white" /> */}
        </div>

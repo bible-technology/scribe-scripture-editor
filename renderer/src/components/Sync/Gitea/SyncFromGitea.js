@@ -7,7 +7,7 @@ import { checkDuplicate } from '@/core/burrito/importBurrito';
 import * as logger from '../../../logger';
 import { importServerProject } from './SyncFromGiteaUtils';
 
-export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, branch, setPullPopup, setPullData) {
+export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, branch, setPullPopup, setPullData, t = undefined) {
   logger.debug('SyncFromGitea.js', 'in SyncFromGiea : onClick offline sync');
   try {
     const currentUser = await localForage.getItem('userProfile');
@@ -59,7 +59,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
         // check for project exising - true/ undefined
         const duplicate = await checkDuplicate(metaDataSB, currentUser?.username, 'projects');
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : new project and import called');
-        const status = await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData);
+        const status = await importServerProject(false, repo, metaDataSB, auth, branch, { setSyncProgress, notifyStatus }, currentUser.username, duplicate, setPullPopup, setPullData, t);
         if (status) {
           await notifyStatus('success', 'Project Sync to scribe successfull');
           await addNotification('Sync', 'Project Sync Successfull', 'success');

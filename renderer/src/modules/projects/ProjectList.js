@@ -175,7 +175,7 @@ export default function ProjectList() {
                                       >
                                         <td className="px-4 py-4">
                                           <button
-                                            title="star project"
+                                            title={t('tooltip-star-project')}
                                             aria-label="star-project"
                                             onClick={(event) => handleClickStarred(event, project.name, 'starred')}
                                             type="button"
@@ -325,7 +325,7 @@ export default function ProjectList() {
                                           className="px-4 py-4"
                                         >
                                           <button
-                                            title="unstar project"
+                                            title={t('tooltip-un-star-project')}
                                             aria-label="unstar-project"
                                             onClick={(event) => handleClickStarred(event, project.name, 'unstarred')}
                                             type="button"

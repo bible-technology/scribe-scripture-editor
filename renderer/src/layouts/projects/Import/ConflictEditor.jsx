@@ -1,5 +1,6 @@
 // import { Cog8ToothIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConflictSection from './ConflictSection';
 
 function ConflictEditor({
@@ -7,6 +8,7 @@ function ConflictEditor({
 }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (resolvedFileNames?.includes(selectedFileName)) {
@@ -109,27 +111,27 @@ function ConflictEditor({
       <div className="flex justify-between bg-gray-100 border border-gray-100 ">
         <div className="flex w-full justify-between">
           <div className="flex py-1.5 px-1 gap-2.5">
-            <span className="px-2.5 py-0.5 text-black font-semibold tracking-wider text-xs uppercase rounded-xl">comparison</span>
+            <span className="px-2.5 py-0.5 text-black font-semibold tracking-wider text-xs uppercase rounded-xl">{t('label-comparison')}</span>
           </div>
           <div className="flex py-1.5 px-1 gap-2.5 pr-2">
             <button
               type="button"
               onClick={() => resolveAllTogether(selectedFileContent, 'current')}
               disabled={resolveAllActive === false}
-              title="Accept ORIGINAL for all non resolved conflict sections in the opened file"
+              title={t('tooltip-merge-all-orginal-btn')}
               className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-black text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
             >
-              Original
+              {t('label-original')}
             </button>
 
             <button
               type="button"
               onClick={() => resolveAllTogether(selectedFileContent, 'incoming')}
               disabled={resolveAllActive === false}
-              title="Accept NEW for all non resolved conflict sections in the opened file"
+              title={t('tooltip-merge-all-new-btn')}
               className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-success text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
             >
-              New
+              {t('label-new')}
 
             </button>
 
@@ -137,10 +139,10 @@ function ConflictEditor({
               type="button"
               onClick={() => resolveAllTogether(selectedFileContent, 'both')}
               disabled={resolveAllActive === false}
-              title="Accept BOTH for all non resolved conflict sections in the opened file"
+              title={t('tooltip-merge-all-both-btn')}
               className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-blue-500 text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
             >
-              Both
+              {t('label-both')}
 
             </button>
 
@@ -148,10 +150,10 @@ function ConflictEditor({
               type="button"
               onClick={() => resetAllResolved()}
               disabled={resetAlll === false}
-              title="RESET the opened file to initial state"
+              title={t('tooltip-merge-all-reset-btn')}
               className={`px-2.5 py-0.5 bg-gray-300  font-semibold tracking-wider text-xs uppercase rounded-xl ${resetAlll ? 'text-black' : 'text-gray-400'}`}
             >
-              Reset
+              {t('label-reset')}
 
             </button>
 

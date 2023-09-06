@@ -305,7 +305,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
           projectType === 'OBS' && (
             <>
               <h4 className="text-xs font-base mt-4 text-primary  tracking-wide leading-4  font-light">
-                Licence
+                {t('modal-title-license')}
                 <span className="text-error">*</span>
               </h4>
               <div className="flex gap-3 mt-2">
