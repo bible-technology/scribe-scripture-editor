@@ -141,8 +141,8 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
         >
 
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
-            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
+          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto items-center justify-center ">
+            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 w-[80%]">
               <h1 className="text-white font-bold text-sm">RESOLVE CONFLICT</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               {/* close btn section */}
@@ -156,45 +156,50 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
             </div>
 
             {/* contents section */}
-            <div className="flex border bg-white">
-              <ConflictSideBar
-                conflictData={conflictData}
-                setSelectedFileName={setSelectedFileName}
-                selectedFileName={selectedFileName}
-                resolvedFileNames={resolvedFileNames}
-              />
-              <div className="w-full">
-                <div className="h-[80vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
-                  <ConflictEditor
-                    selectedFileContent={selectedFileContent}
-                    setSelectedFileContent={setSelectedFileContent}
-                    selectedFileName={selectedFileName}
-                    FileContentOrginal={FileContentOrginal}
-                    setEnableSave={setEnableSave}
-                    resolvedFileNames={resolvedFileNames}
-                  />
-                </div>
-                <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
+            <div className="flex border bg-white h-[86vh] gap-2 p-2 w-[80%]">
+              {/* sidebar and Editor */}
+              <div className="min-w-[12vw]">
+                <ConflictSideBar
+                  conflictData={conflictData}
+                  setSelectedFileName={setSelectedFileName}
+                  selectedFileName={selectedFileName}
+                  resolvedFileNames={resolvedFileNames}
+                />
+              </div>
+
+              <div className="w-full bg-gray-50 flex flex-col">
+                <ConflictEditor
+                  selectedFileContent={selectedFileContent}
+                  setSelectedFileContent={setSelectedFileContent}
+                  selectedFileName={selectedFileName}
+                  FileContentOrginal={FileContentOrginal}
+                  setEnableSave={setEnableSave}
+                  resolvedFileNames={resolvedFileNames}
+                />
+                <div className="h-[6vh] w-full flex justify-end items-center pr-10 gap-5">
                   {conflictData?.data?.files?.filepaths?.length === resolvedFileNames?.length && (
                     <div
-                      className="px-10 py-2 rounded-md bg-green-500 cursor-pointer hover:bg-green-600"
+                      className="px-10 py-2 rounded-md bg-success/75 cursor-pointer hover:bg-success"
                       role="button"
                       tabIndex={-2}
                       onClick={() => removeSection()}
                     >
                       {finishingMerge
-                        ? (
-                          <div
-                            className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                            role="status"
-                          />
-                        )
-                        : <>All conflicts Resolved : Finish</>}
+                    ? (
+                      <div
+                        className="px-4 py-1 bg-success text-sm rounded-md m-2 text-white"
+                        // className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        role="status"
+                      />
+                    )
+                    : <>Done</>}
                     </div>
                   )}
 
                   <button
-                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600'} `}
+                    className={`px-4 py-1 m-2 rounded-md uppercase ${(enableSave && !resolvedFileNames.includes(selectedFileName))
+                      ? ' bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '} `}
+                    // className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-success/75 cursor-pointer hover:bg-success' : 'bg-gray-200 text-gray-600'} `}
                     onClick={saveCurrentStory}
                     type="button"
                     disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}
@@ -203,6 +208,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </Dialog>
