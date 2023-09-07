@@ -5,10 +5,12 @@ import { useState } from 'react';
 import {
   ArrowSmallDownIcon, ArrowSmallUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
  } from '@heroicons/react/20/solid';
+ import { useTranslation } from 'react-i18next';
 
 const ConflictSection = ({
     text, index, setSelectedFileContent, selectedFileContent, handleResetSingle, resolvedFileNames, selectedFileName,
   }) => {
+    const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState('');
 
   const handleSelection = (content, index, selectedResolverType) => {
@@ -73,7 +75,7 @@ const ConflictSection = ({
           onClick={() => { setHoveredId(''); handleSelection(matchedData.current, index, 'current'); }}
           onMouseEnter={() => setHoveredId('current')}
           onMouseLeave={() => setHoveredId('')}
-          title="Accept ORIGINAL changes to resolve conflict"
+          title={t('tooltip-merge-orginal-btn')}
           className="bg-black w-6 h-6 rounded-full flex justify-center items-center"
         >
           <ArrowSmallUpIcon className="w-4 h-4 text-white " />
@@ -85,7 +87,7 @@ const ConflictSection = ({
           onClick={() => { setHoveredId(''); handleSelection(`${matchedData.current}\t${matchedData.incoming}`, index, 'both'); }}
           onMouseEnter={() => setHoveredId('both')}
           onMouseLeave={() => setHoveredId('')}
-          title="Accept BOTH changes to resolve conflict"
+          title={t('tooltip-merge-both-btn')}
           className="bg-blue-500 w-6 h-6 rounded-full flex justify-center items-center"
         >
           <ArrowsUpDownIcon className="w-4 h-4 text-white" />
@@ -97,7 +99,7 @@ const ConflictSection = ({
           onClick={() => { setHoveredId(''); handleSelection(matchedData.incoming, index, 'incoming'); }}
           onMouseEnter={() => setHoveredId('incoming')}
           onMouseLeave={() => setHoveredId('')}
-          title="Accept NEW changes to resolve conflict"
+          title={t('tooltip-merge-new-btn')}
           className="bg-success w-6 h-6 rounded-full flex justify-center items-center"
         >
           <ArrowSmallDownIcon className="w-5 h-5 text-white" />

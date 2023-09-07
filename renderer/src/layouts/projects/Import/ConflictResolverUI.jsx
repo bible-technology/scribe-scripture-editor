@@ -4,12 +4,14 @@ import React, {
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { useTranslation } from 'react-i18next';
 import * as logger from '../../../logger';
 import ConflictSideBar from './ConflictSideBar';
 import { copyFilesTempToOrginal, parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
 
 function ConflictResolverUI({ conflictData, setConflictPopup }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [selectedFileName, setSelectedFileName] = useState();
   const [selectedFileContent, setSelectedFileContent] = useState([]);
@@ -79,9 +81,9 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
       // popup with warning
       setModel({
         openModel: true,
-        title: 'Abort Conflict Resolution',
-        confirmMessage: 'Do you want to abort conflict Resolution process. If you abort , you will loose all your progress and need to start over.',
-        buttonName: 'Abort',
+        title: t('modal-title-abort-conflict-resolution'),
+        confirmMessage: t('msg-abort-conflict-resolution'),
+        buttonName: t('label-abort'),
       });
     }
   };
@@ -143,7 +145,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto items-center justify-center ">
             <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 w-[80%]">
-              <h1 className="text-white font-bold text-sm">RESOLVE CONFLICT</h1>
+              <h1 className="text-white font-bold text-sm uppercase">{t('label-resolve-conflict')}</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               {/* close btn section */}
               <button
@@ -192,7 +194,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                         role="status"
                       />
                     )
-                    : <>Done</>}
+                    : <>{t('label-done')}</>}
                     </div>
                   )}
 
@@ -204,7 +206,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                     type="button"
                     disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}
                   >
-                    {resolvedFileNames?.includes(selectedFileName) ? 'Resolved' : 'Save'}
+                    {resolvedFileNames?.includes(selectedFileName) ? t('label-resolved') : t('btn-save')}
                   </button>
                 </div>
               </div>

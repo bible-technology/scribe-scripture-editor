@@ -45,9 +45,9 @@ const Player = ({
     if (url[take]) {
       setOpenModal({
         openModel: true,
-        title: 'Re-record the Audio',
-        confirmMessage: 'Do you want to re-record the audio',
-        buttonName: 'Re-record',
+        title: t('modal-title-re-record'),
+        confirmMessage: t('msg-re-record-audio'),
+        buttonName: t('label-re-record'),
       });
     } else {
       // Recording for the first time
@@ -59,9 +59,9 @@ const Player = ({
     if (url[take]) {
       setOpenModal({
         openModel: true,
-        title: 'Delete the Audio',
-        confirmMessage: 'Do you want to delete the selected take',
-        buttonName: 'Delete',
+        title: t('modal-title-delete-audio'),
+        confirmMessage: t('msg-delete-audio'),
+        buttonName: t('label-delete'),
       });
       setTrigger('delete');
     }

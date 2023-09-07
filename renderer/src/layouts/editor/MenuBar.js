@@ -82,7 +82,7 @@ export default function TopMenuBar() {
               />
             </div>
             <div>
-              <span aria-label="editor-project-name" className="text-primary px-10 py-2 text-lg tracking-wide font-bold uppercase" title="Project Name">
+              <span aria-label="editor-project-name" className="text-primary px-10 py-2 text-lg tracking-wide font-bold uppercase" title={t('label-project-name')}>
                 {projectname?.[0]}
               </span>
             </div>
