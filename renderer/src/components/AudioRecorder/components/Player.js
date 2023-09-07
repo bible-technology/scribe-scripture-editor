@@ -78,18 +78,15 @@ const Player = ({
   };
 
   const handleKeyPress = useCallback((event) => {
-    console.log(`Key pressed: ${event.key} ${event.keyCode}`);
     const keyCode = event.keyCode;
     switch (keyCode) {
       case 82: // --> r
         handleRecord();
         break;
       case 69: // --> e
-        console.log('pausee  resueme ++++++++ ------> ', trigger === 'recPause', { trigger });
         setTrigger('recResume');
         break;
       case 80: // --> p
-        console.log('pausee ------> ', trigger === 'record' || trigger === 'recResume', { trigger });
         setTrigger('recPause');
         break;
       case 83: // --> s
@@ -103,7 +100,6 @@ const Player = ({
         break;
       case 13: // --> Enter / Return
         setTrigger('play');
-        // setTrigger((prev) => (prev === 'play' ? 'pause' : 'play'));
         break;
       case 65: // --> a
         changeTake('take1');
@@ -124,6 +120,7 @@ const Player = ({
       default:
         break;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]); // ---> change to space for play and pause
 
   useEffect(() => {
@@ -281,7 +278,7 @@ const Player = ({
               </div>
               <button
                 type="button"
-                title="Return"
+                title="Enter"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('play')}
               >
