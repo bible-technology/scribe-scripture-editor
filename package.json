@@ -3,7 +3,7 @@
   "productName": "scribe-scripture-editor",
   "description": "A friendly assistant for Bible Translators.",
   "author": "Bible Technology <autographa.support@bridgeconn.com>",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "private": true,
   "main": "main/index.js",
