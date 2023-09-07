@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Listbox } from '@headlessui/react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PlayIcon from '@/icons/basil/Outline/Media/Play.svg';
 import PauseIcon from '@/icons/basil/Outline/Media/Pause.svg';
 
@@ -76,6 +76,63 @@ const Player = ({
     shell.openExternal('ms-settings:sound');
     shell.openExternal('x-apple.systempreferences:');
   };
+
+  const handleKeyPress = useCallback((event) => {
+    const keyCode = event.keyCode;
+    switch (keyCode) {
+      case 82: // --> r
+        handleRecord();
+        break;
+      case 69: // --> e
+        setTrigger('recResume');
+        break;
+      case 80: // --> p
+        setTrigger('recPause');
+        break;
+      case 83: // --> s
+        setTrigger('recStop');
+        break;
+      case 188: // --> , comma
+        setTrigger('rewind');
+        break;
+      case 32: // --> space
+        setTrigger('pause');
+        break;
+      case 13: // --> Enter / Return
+        setTrigger('play');
+        break;
+      case 65: // --> a
+        changeTake('take1');
+        break;
+      case 66: // --> b
+        changeTake('take2');
+        break;
+      case 67: // --> c
+        changeTake('take3');
+        break;
+      case 187: // --> + (not in number area)
+        setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        break;
+      case 189: // --> - (left to +)
+        setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
+        break;
+
+      default:
+        break;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]); // ---> change to space for play and pause
+
+  useEffect(() => {
+    // attach the event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // remove the event listener
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
     <div className="relative">
       <div className="relative bottom-0">
@@ -129,6 +186,7 @@ const Player = ({
                 </div>
                 <button
                   type="button"
+                  title="P"
                   className="p-2 bg-error rounded-md hover:bg-dark"
                   onClick={() => setTrigger('recPause')}
                 >
@@ -147,6 +205,7 @@ const Player = ({
                 </div>
                 <button
                   type="button"
+                  title="E"
                   className="p-2 bg-dark rounded-md hover:bg-error"
                   onClick={() => setTrigger('recResume')}
                 >
@@ -164,6 +223,7 @@ const Player = ({
                 </div>
                 <button
                   type="button"
+                  title="R"
                   className="p-2 bg-dark rounded-md hover:bg-error"
                   onClick={() => handleRecord()}
                 >
@@ -182,6 +242,7 @@ const Player = ({
               </div>
               <button
                 type="button"
+                title="S"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('recStop')}
               >
@@ -200,6 +261,7 @@ const Player = ({
               </div>
               <button
                 type="button"
+                title="<"
                 className="p-2 bg-dark rounded-md hover:bg-error"
                 onClick={() => setTrigger('rewind')}
               >
@@ -216,6 +278,7 @@ const Player = ({
               </div>
               <button
                 type="button"
+                title="Enter"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('play')}
               >
@@ -233,6 +296,7 @@ const Player = ({
               </div>
               <button
                 type="button"
+                title="SpaceBar"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('pause')}
               >
@@ -267,6 +331,7 @@ const Player = ({
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
+                  title="-"
                   onClick={() => setVolume(
                   volume < 0.1 ? volume : volume - 0.1,
                 )}
@@ -287,6 +352,7 @@ const Player = ({
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
+                  title="+"
                   onClick={() => setVolume(
                   volume > 0.9 ? volume : volume + 0.1,
                 )}
@@ -320,6 +386,7 @@ const Player = ({
               url?.take1 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take1')}
+                title="select : A"
                 onDoubleClick={() => changeDefault(1)}
               >
                 a
@@ -340,6 +407,7 @@ const Player = ({
               url?.take2 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take2')}
+                title="select : B"
                 onDoubleClick={() => changeDefault(2)}
               >
                 b
@@ -360,6 +428,7 @@ const Player = ({
               url?.take3 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take3')}
+                title="select : C"
                 onDoubleClick={() => changeDefault(3)}
               >
                 c
