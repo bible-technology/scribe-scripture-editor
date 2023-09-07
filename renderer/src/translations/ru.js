@@ -272,5 +272,7 @@ export const Ru = {
     'modal-title-delete-audio': 'Удалить аудио',
     'msg-delete-audio': 'Вы хотите удалить выбранный дубль?',
     'label-accepted': 'Принял',
+    'msg-remove-resource': 'Вы уверены, что хотите удалить ресурс? Это действие нельзя отменить.',
+    'label-check-updates': 'Проверить обновления',
 
 };

@@ -272,4 +272,6 @@ export const Fr = {
     'modal-title-delete-audio': 'Supprimer l\'audio',
     'msg-delete-audio': 'Voulez-vous supprimer la prise sélectionnée ?',
     'label-accepted': 'Accepté',
+    'msg-remove-resource': 'Êtes-vous sûr de vouloir supprimer la ressource. Cette action ne peut pas être annulée',
+    'label-check-updates': 'Vérifier les mises à jour',
 };
