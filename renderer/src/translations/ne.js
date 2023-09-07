@@ -272,4 +272,6 @@ export const Ne = {
     'modal-title-delete-audio': 'अडियो मेटाउनुहोस्',
     'msg-delete-audio': 'के तपाइँ चयन गरिएको टेक मेटाउन चाहनुहुन्छ?',
     'label-accepted': 'स्वीकार गरियो',
+    'msg-remove-resource': 'के तपाईं निश्चित रूपमा स्रोत हटाउन चाहनुहुन्छ। यो कार्य उल्टाउन सकिँदैन',
+    'label-check-updates': 'अपडेटहरू जाँच गर्नुहोस्',
 };

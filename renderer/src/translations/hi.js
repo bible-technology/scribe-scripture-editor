@@ -272,4 +272,6 @@ export const Hi = {
     'modal-title-delete-audio': 'ऑडियो हटाएँ',
     'msg-delete-audio': 'क्या आप चयनित टेक को हटाना चाहते हैं?',
     'label-accepted': 'स्वीकृत',
+    'msg-remove-resource': 'क्या आप वाकई संसाधन को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता',
+    'label-check-updates': 'अपडेट जांचें',
 };

@@ -149,7 +149,7 @@ function CheckHelpsUpdatePopUp({ resource, selectResource }) {
           className="text-xs cursor-pointer focus:outline-none"
           role="button"
           tabIndex={0}
-          title="check updates"
+          title={t('label-check-updates')}
           onClick={(e) => handleCheckUpdateHelpsResources(e, resource)}
         >
           <ArrowPathIcon

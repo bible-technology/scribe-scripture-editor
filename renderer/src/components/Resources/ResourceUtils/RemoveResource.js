@@ -164,7 +164,7 @@ function RemoveResource({
           className="text-xs cursor-pointer focus:outline-none hover:"
           role="button"
           tabIndex={0}
-          title="Remove Resource"
+          title={t('modal-title-remove-resource')}
           onClick={() => setOpenModal(true)}
         >
           <TrashIcon
@@ -184,7 +184,7 @@ function RemoveResource({
           openModal={openModal}
           title={t('modal-title-remove-resource')}
           setOpenModal={setOpenModal}
-          confirmMessage="Are you sure want to remove the resource. This action can not be reverted"
+          confirmMessage={t('msg-remove-resource')}
           buttonName={t('btn-remove')}
           closeModal={() => handleRemoveResourceResources()}
         />

@@ -272,4 +272,6 @@ export const Fa = {
     'modal-title-delete-audio': 'Delete the Audio',
     'msg-delete-audio': 'Do you want to delete the selected take?',
     'label-accepted': 'Accepted',
+    'msg-remove-resource': 'Are you sure want to remove the resource. This action can not be reverted',
+    'label-check-updates': 'Check updates',
 };
