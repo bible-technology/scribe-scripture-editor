@@ -1,4 +1,5 @@
 export const checkLogInOrNot = async(window, expect, userName) => {
+  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
   const textVisble = await window.locator('//h1["@aria-label=projects"]', {timeout:3000}).isVisible()
   if (textVisble) {
     const title = await window.textContent('[aria-label=projects]')
@@ -45,4 +46,11 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   item.username.toLowerCase() !== userName.toLowerCase()
 )
   return await fs.writeFileSync(file, JSON.stringify(filtered))
+}
+
+export const DisplayLogin = async (fs, folder, userName, json, file, window, expect) => {
+  await removeFolderAndFile(fs, folder, userName, json, file)
+  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  await expect(welcome).toBe("Welcome!")
+  await window.reload()
 }

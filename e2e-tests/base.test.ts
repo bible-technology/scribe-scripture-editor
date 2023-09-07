@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { checkLogInOrNot, commonFile, commonFolder, commonJson, removeFolderAndFile } from './common';
+import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, removeFolderAndFile } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -21,7 +21,6 @@ test("Start the scribe application", async () => {
   });
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
-  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
 
 })
 
@@ -43,16 +42,13 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
     await window.getByRole('menuitem', { name: "Sign out" }).click()
     /// projects page then logout and delete playwright user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await removeFolderAndFile(fs, folder, userName, json, file)
-      const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
-      await expect(welcome).toBe("Welcome!")
-      await window.reload()
+      await DisplayLogin(fs, folder, userName, json, file, window, expect)
     }
   } else {
     ///loging page, if playwright user exist then reload app and remove 
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
     if (existUser && await fs.existsSync(folder)) {
-      await removeFolderAndFile(fs, folder, userName, json, file)
+      await DisplayLogin(fs, folder, userName, json, file, window, expect)
     }
   }
 
@@ -83,8 +79,7 @@ test("Logout and delete that playwright user from the backend", async ({ userNam
     await window.getByRole('menuitem', { name: "Sign out" }).click()
     /// projects page then logout and delete playwright user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await removeFolderAndFile(fs, folder, userName, json, file)
-
+      await DisplayLogin(fs, folder, userName, json, file, window, expect)
     }
   }
 })
