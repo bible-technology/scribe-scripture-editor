@@ -90,7 +90,7 @@ const ReferenceAudio = ({
                 // The project has any textTranslation data or not
                 if (exist) {
                   const usfm = fs.readFileSync(path.join(folderPath, 'text-1', 'ingredients', `${bookId.toUpperCase()}.usfm`), 'utf8');
-                  const myUsfmParser = new grammar.USFMParser(usfm);
+                  const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
                   const isJsonValid = myUsfmParser.validate();
                   if (isJsonValid) {
                     const jsonOutput = myUsfmParser.toJSON();

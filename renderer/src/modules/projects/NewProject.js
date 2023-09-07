@@ -241,7 +241,9 @@ export default function NewProject({ call, project, closeEdit }) {
 
   function closeImportPopUp() {
     setOpenPopUp(false);
-    if (call === 'edit') {
+  }
+  function callReplace(value) {
+    if (call === 'edit' && value === true) {
       setReplaceWarning(true);
     }
   }
@@ -403,7 +405,7 @@ export default function NewProject({ call, project, closeEdit }) {
                   >
                     {t('btn-import-books')}
                   </button>
-                  <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} />
+                  <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
                 </div>
               </div>
 
