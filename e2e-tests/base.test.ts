@@ -73,13 +73,11 @@ test("Logout and delete that playwright user from the backend", async ({ userNam
   const file = await commonFile(window, packageInfo)
   /// return folde name
   const folder = await commonFolder(window, userName, packageInfo)
-  if (await checkLogInOrNot(window, expect, userName)) {
-    await window.getByRole('button', { name: "Open user menu" }).click()
-    const currentUser = await window.textContent('[aria-label="userName"]')
-    await window.getByRole('menuitem', { name: "Sign out" }).click()
-    /// projects page then logout and delete playwright user
-    if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await DisplayLogin(fs, folder, userName, json, file, window, expect)
-    }
+  await window.getByRole('button', { name: "Open user menu" }).click()
+  const currentUser = await window.textContent('[aria-label="userName"]')
+  await window.getByRole('menuitem', { name: "Sign out" }).click()
+  /// projects page then logout and delete playwright user
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+    await DisplayLogin(fs, folder, userName, json, file, window, expect)
   }
 })
