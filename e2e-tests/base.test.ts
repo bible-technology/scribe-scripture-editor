@@ -118,18 +118,27 @@ test("Unstar the obs project", async ({ obsProject }) => {
   await unstarProject(window, expect, obsProject)
 })
 
-// test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-//   ///return json
-//   const json = await commonJson(window, userName, packageInfo, fs)
-//   /// return file
-//   const file = await commonFile(window, packageInfo)
-//   /// return folde name
-//   const folder = await commonFolder(window, userName, packageInfo)
-//   await window.getByRole('button', { name: "Open user menu" }).click()
-//   const currentUser = await window.textContent('[aria-label="userName"]')
-//   await window.getByRole('menuitem', { name: "Sign out" }).click()
-//   /// projects page then logout and delete playwright user
-//   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-//     await DisplayLogin(fs, folder, userName, json, file, window, expect)
-//   }
-// })
+/////audio
+test("Star the audio project", async ({ audioProject }) => {
+  await starProject(window, expect, audioProject)
+})
+
+test("Unstar the audio project", async ({ audioProject }) => {
+  await unstarProject(window, expect, audioProject)
+})
+
+test("Logout and delete that playwright user from the backend", async ({ userName }) => {
+  ///return json
+  const json = await commonJson(window, userName, packageInfo, fs)
+  /// return file
+  const file = await commonFile(window, packageInfo)
+  /// return folde name
+  const folder = await commonFolder(window, userName, packageInfo)
+  await window.getByRole('button', { name: "Open user menu" }).click()
+  const currentUser = await window.textContent('[aria-label="userName"]')
+  await window.getByRole('menuitem', { name: "Sign out" }).click()
+  /// projects page then logout and delete playwright user
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+    await DisplayLogin(fs, folder, userName, json, file, window, expect)
+  }
+})
