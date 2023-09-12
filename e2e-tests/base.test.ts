@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, checkNotification, checkProjectName, commonFile, commonFolder, commonJson, goToProjectPage, removeFolderAndFile, searchProject, starProject, unstarProject, updateProject } from './common';
+import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, starProject, unstarProject } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -89,6 +89,10 @@ test('Create and Check the text translation project in the projects list page', 
 
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
+})
+
+test("Unstar the text project", async ({ textProject }) => {
+  await unstarProject(window, expect, textProject)
 })
 
 

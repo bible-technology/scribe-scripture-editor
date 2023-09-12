@@ -76,3 +76,19 @@ export const starProject = async(window, expect, projectname) => {
     }
   }
 }
+
+export const unstarProject = async (window, expect, projectname) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-star"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=star-project]')).toBeVisible()
+      await tds.first().locator('[aria-label=star-project]').click()
+      expect(await rows.count()).toBe(0)
+    }
+  }
+}
