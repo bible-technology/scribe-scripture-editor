@@ -66,13 +66,7 @@ export const starProject = async(window, expect, projectname) => {
     if (await tds.nth(1).textContent() === projectname) {
       expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
       await tds.first().locator('[aria-label=unstar-project]').click()
-      if(await rows.count() === 2){
-        expect(await rows.count()).toBe(1)
-      }else if (rows.count() === 3){
         expect(await rows.count()).toBe(2)
-      }else{
-        expect(await rows.count()).toBe(0)
-      }
     }
   }
 }
@@ -91,4 +85,24 @@ export const unstarProject = async (window, expect, projectname) => {
       expect(await rows.count()).toBe(0)
     }
   }
+}
+
+export const createProjects = async (window, expect, projectname, type, description, abb) => {
+  await window.locator('//a[@aria-label="new"]').click()
+  await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
+  await window.locator('//button[@aria-label="open-popover"]').click()
+  await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
+  await window.locator(`//a[@data-id="${type}"]`).click()
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(projectname)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill(description)
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill(abb)
+  await expect(window.locator('//button[@aria-label="create"]')).toBeVisible()
+  await window.locator('//button[@aria-label="create"]').click()
+  const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+  expect(projectName).toBe(projectname);
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
 }

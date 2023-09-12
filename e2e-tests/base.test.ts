@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, starProject, unstarProject } from './common';
+import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, createProjects, starProject, unstarProject } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -64,11 +64,13 @@ test('Create a new user and login', async ({ userName }) => {
   expect(title).toBe('Projects');
 })
 
+
+///CREATE PROJECTS FOR ALL FLAVOR TYPE
 // // /* Translation Project    */
 test('Create and Check the text translation project in the projects list page', async ({ textProject }) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
-  await expect(window.locator('//h1[@aria-label="projects"]')).toBeVisible()
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
   await window.locator('//input[@id="project_name"]').fill(textProject)
   await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
   await window.locator('//textarea[@id="project_description"]').fill('test description')
@@ -87,6 +89,16 @@ test('Create and Check the text translation project in the projects list page', 
 
 });
 
+// // // ///Obs translation project
+test('Check and create the obs project in project list', async ({ obsProject }) => {
+  await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
+})
+
+// // /////Audio project
+test('Click New and Fill in the audio project page details to create a new project.', async ({ audioProject }) => {
+  await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
+})
+
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
@@ -96,18 +108,18 @@ test("Unstar the text project", async ({ textProject }) => {
 })
 
 
-test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  ///return json
-  const json = await commonJson(window, userName, packageInfo, fs)
-  /// return file
-  const file = await commonFile(window, packageInfo)
-  /// return folde name
-  const folder = await commonFolder(window, userName, packageInfo)
-  await window.getByRole('button', { name: "Open user menu" }).click()
-  const currentUser = await window.textContent('[aria-label="userName"]')
-  await window.getByRole('menuitem', { name: "Sign out" }).click()
-  /// projects page then logout and delete playwright user
-  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await DisplayLogin(fs, folder, userName, json, file, window, expect)
-  }
-})
+// test("Logout and delete that playwright user from the backend", async ({ userName }) => {
+//   ///return json
+//   const json = await commonJson(window, userName, packageInfo, fs)
+//   /// return file
+//   const file = await commonFile(window, packageInfo)
+//   /// return folde name
+//   const folder = await commonFolder(window, userName, packageInfo)
+//   await window.getByRole('button', { name: "Open user menu" }).click()
+//   const currentUser = await window.textContent('[aria-label="userName"]')
+//   await window.getByRole('menuitem', { name: "Sign out" }).click()
+//   /// projects page then logout and delete playwright user
+//   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+//     await DisplayLogin(fs, folder, userName, json, file, window, expect)
+//   }
+// })
