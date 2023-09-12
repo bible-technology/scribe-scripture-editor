@@ -160,7 +160,7 @@ export default function ProjectList() {
                               orderBy={orderBy}
                               onRequestSort={handleRequestSort}
                             />
-                            <tbody id='projects-list-star' className="bg-white divide-y divide-gray-200">
+                            <tbody id="projects-list-star" className="bg-white divide-y divide-gray-200">
                               {starredrow && (stableSort(
                                 starredrow,
                                 getComparator(order, orderBy),
@@ -310,7 +310,7 @@ export default function ProjectList() {
                               ))
                               )}
                             </tbody>
-                            <tbody id='projects-list-unstar' className="bg-white divide-y divide-gray-200">
+                            <tbody id="projects-list-unstar" className="bg-white divide-y divide-gray-200">
                               {unstarredrow && (stableSort(
                                 unstarredrow,
                                 getComparator(order, orderBy),

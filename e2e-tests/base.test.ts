@@ -67,7 +67,7 @@ test('Create a new user and login', async ({ userName }) => {
 
 ///CREATE PROJECTS FOR ALL FLAVOR TYPE
 // // /* Translation Project    */
-test('Create and Check the text translation project in the projects list page', async ({ textProject }) => {
+test('Click New and Fill project page details to create a new project for text translation', async ({ textProject }) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
@@ -90,12 +90,12 @@ test('Create and Check the text translation project in the projects list page', 
 });
 
 // // // ///Obs translation project
-test('Check and create the obs project in project list', async ({ obsProject }) => {
+test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
   await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
 })
 
 // // /////Audio project
-test('Click New and Fill in the audio project page details to create a new project.', async ({ audioProject }) => {
+test('Click Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
