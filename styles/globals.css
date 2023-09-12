@@ -57,13 +57,13 @@
 .heading .ms {
 	@apply uppercase text-lg tracking-wider text-primary;
 }
-.title .mt {
+/* .title .mt {
 	@apply hidden;
-}
+} */
 
-.sectionBody .s {
+/* .sectionBody .ms {
 	@apply hidden;
-}
+} */
 .editor *[contenteditable='true']:focus {
 	@apply bg-primary-50 outline-none rounded-sm;
 }
