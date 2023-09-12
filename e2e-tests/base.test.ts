@@ -99,6 +99,7 @@ test('Click New and Fill in the audio project page details to create a new proje
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
+///text translation
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
@@ -107,6 +108,15 @@ test("Unstar the text project", async ({ textProject }) => {
   await unstarProject(window, expect, textProject)
 })
 
+
+///obs
+test("Star the obs project", async ({ obsProject }) => {
+  await starProject(window, expect, obsProject)
+})
+
+test("Unstar the obs project", async ({ obsProject }) => {
+  await unstarProject(window, expect, obsProject)
+})
 
 // test("Logout and delete that playwright user from the backend", async ({ userName }) => {
 //   ///return json
