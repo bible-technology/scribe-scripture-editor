@@ -54,3 +54,25 @@ export const DisplayLogin = async (fs, folder, userName, json, file, window, exp
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
+
+export const starProject = async(window, expect, projectname) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      await tds.first().locator('[aria-label=unstar-project]').click()
+      if(await rows.count() === 2){
+        expect(await rows.count()).toBe(1)
+      }else if (rows.count() === 3){
+        expect(await rows.count()).toBe(2)
+      }else{
+        expect(await rows.count()).toBe(0)
+      }
+    }
+  }
+}

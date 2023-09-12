@@ -87,6 +87,10 @@ test('Create and Check the text translation project in the projects list page', 
 
 });
 
+test("Star the text project", async ({ textProject }) => {
+  await starProject(window, expect, textProject)
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   ///return json
