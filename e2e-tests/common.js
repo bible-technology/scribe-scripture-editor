@@ -13,9 +13,9 @@ export const checkLogInOrNot = async(window, expect, userName) => {
   return textVisble;
 }
 
-export const filterUser = (json, name) => {
+export const filterUser = (json, userName) => {
   const filtered = json.filter((item) =>
-        item.username.toLowerCase() !== name.toLowerCase()
+        item.username.toLowerCase() !== userName.toLowerCase()
       )
     return filtered
   } 

@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, removeFolderAndFile } from './common';
+import { DisplayLogin, checkLogInOrNot, checkNotification, checkProjectName, commonFile, commonFolder, commonJson, goToProjectPage, removeFolderAndFile, searchProject, starProject, unstarProject, updateProject } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -54,7 +54,6 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 });
 
-
 test('Create a new user and login', async ({ userName }) => {
   await window.getByRole('button', { name: 'Create New Account' }).click()
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
@@ -64,6 +63,29 @@ test('Create a new user and login', async ({ userName }) => {
   const title = await window.textContent('[aria-label=projects]');
   expect(title).toBe('Projects');
 })
+
+// // /* Translation Project    */
+test('Create and Check the text translation project in the projects list page', async ({ textProject }) => {
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
+  await window.getByRole('link', { name: 'new' }).click()
+  await expect(window.locator('//h1[@aria-label="projects"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(textProject)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill('test description')
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="new-testament"]')).toBeVisible()
+  await window.locator('//div[@aria-label="new-testament"]').click()
+  await window.locator('//button[contains(text(),"Ok")]').click()
+  await window.locator('//button[@aria-label="create"]').click()
+  const projectName = await window.innerText(`//div[@id="${textProject}"]`)
+  expect(projectName).toBe(textProject);
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
+
+});
 
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
