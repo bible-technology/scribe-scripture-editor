@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, createProjects, starProject, unstarProject } from './common';
+import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, createProjects, projectValidation, starProject, unstarProject } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -65,9 +65,10 @@ test('Create a new user and login', async ({ userName }) => {
 })
 
 
-///CREATE PROJECTS FOR ALL FLAVOR TYPE
+/*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 // // /* Translation Project    */
 test('Click New and Fill project page details to create a new project for text translation', async ({ textProject }) => {
+  await projectValidation(window, expect)
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
@@ -89,17 +90,18 @@ test('Click New and Fill project page details to create a new project for text t
 
 });
 
-// // // ///Obs translation project
+///Obs translation project
 test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
   await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
 })
 
-// // /////Audio project
+/////Audio project
 test('Click Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
-///text translation
+// /* STAR & UNSTAR PROJECT */
+// ///text translation
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
@@ -109,7 +111,7 @@ test("Unstar the text project", async ({ textProject }) => {
 })
 
 
-///obs
+// ///obs
 test("Star the obs project", async ({ obsProject }) => {
   await starProject(window, expect, obsProject)
 })
@@ -118,7 +120,7 @@ test("Unstar the obs project", async ({ obsProject }) => {
   await unstarProject(window, expect, obsProject)
 })
 
-/////audio
+// ///audio
 test("Star the audio project", async ({ audioProject }) => {
   await starProject(window, expect, audioProject)
 })
