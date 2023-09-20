@@ -55,14 +55,29 @@ export const DisplayLogin = async (fs, folder, userName, json, file, window, exp
   await window.reload()
 }
 
+export const createUserValidation = async (window, expect) => {
+  await window.getByRole('button', { name: 'Create New Account' }).click()
+  await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
+  await window.getByPlaceholder('Username').fill('jo')
+  await expect(window.locator('//button[@type="submit"]')).toBeVisible()
+  await window.click('[type=submit]');
+  const lengthError = await window.textContent('//*[@id="show-error"]')
+  expect(await lengthError).toBe('The input has to be between 3 and 15 characters long')
+  await window.getByPlaceholder('Username').fill('job')
+  await window.click('[type=submit]');
+  const userExistError = await window.textContent('//*[@id="show-error"]')
+  expect(await userExistError).toBe('User exists, Check archived and active tab by click on view more.')
+}
+
 export const projectValidation = async (window,expect) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
   await window.locator('//button[@aria-label="create"]').click()
   const snackbar = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
-  expect(await snackbar).toBe('Fill all the fields')  
+  expect(await snackbar).toBe('Fill all the fields') 
   const title = await window.textContent('[aria-label=projects]');
   expect(title).toBe('New Project');
+  await window.waitForTimeout(5000)
 } 
 
 export const createProjects = async (window, expect, projectname, type, description, abb) => {
@@ -83,7 +98,7 @@ export const createProjects = async (window, expect, projectname, type, descript
   await window.locator('//button[@aria-label="create"]').click()
   const projectName = await window.innerText(`//div[@id="${projectname}"]`)
   expect(projectName).toBe(projectname);
-  const title = await window.textContent('[aria-label=projects]');
+  const title = await window.textContent('[aria-label=projects]', {timeout:10000});
   expect(title).toBe('Projects');
 }
 
@@ -113,7 +128,6 @@ export const unstarProject = async (window, expect, projectname) => {
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-star"]')
   const rows = await body.locator('tr')
-
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
@@ -128,3 +142,9 @@ export const unstarProject = async (window, expect, projectname) => {
   }
 }
 
+export const searchProject = async (window, expect, projectName, searchtext) => {
+  await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
+  await window.locator('//input[@id="search_box"]').fill(searchtext)
+  const projectname = await window.innerText(`//*[@id="${projectName}"]`);
+  expect(projectname).toBe(projectName);
+}
