@@ -232,6 +232,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       onClick={() => selectCanon(canonList[0])}
                       role="button"
                       tabIndex="0"
+                      aria-label="all-books"
                     >
                       {t('label-all')}
                     </div>
@@ -239,6 +240,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       className={canonSpecification.title === 'Old Testament (OT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[1])}
                       role="button"
+                      aria-label="old-testament"
                       tabIndex="0"
                     >
                       {`${t('label-old-testament')} (OT)`}
@@ -256,6 +258,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       className={canonSpecification.title === 'Other' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[3])}
                       role="button"
+                      aria-label="custom-book"
                       tabIndex="0"
                     >
                       {t('label-custom')}

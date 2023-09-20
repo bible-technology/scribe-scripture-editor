@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, createProjects, createUserValidation, projectValidation, searchProject, starProject, unstarProject } from './common';
+import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, createProjects, createUserValidation, goToEditProject, projectValidation, searchProject, starProject, unstarProject } from './common';
 
 const fs = require('fs');
 const { _electron: electron } = require('@playwright/test');
@@ -67,7 +67,7 @@ test('Create a new user and login', async ({ userName }) => {
 
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 // // /* Translation Project    */
-test('Click New and Fill project page details to create a new project for text translation', async ({ textProject }) => {
+test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
   await projectValidation(window, expect)
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
   await window.locator('//input[@id="project_name"]').fill(textProject)
@@ -77,9 +77,10 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
   await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//button[@id="open-advancesettings"]').click()
-  await expect(window.locator('//div[@aria-label="new-testament"]')).toBeVisible()
-  await window.locator('//div[@aria-label="new-testament"]').click()
-  await window.locator('//button[contains(text(),"Ok")]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.getByLabel('nt-Matthew').click()
+  await window.getByRole('button', { name: 'Save' }).click()
   await window.locator('//button[@aria-label="create"]').click()
   const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
   expect(await notifyMe).toBe('New project created')
@@ -100,8 +101,8 @@ test('Click Click New and Fill project page details to create a new project for 
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
-// /* STAR & UNSTAR PROJECT */
-///text translation
+/* STAR & UNSTAR PROJECT */
+////text translation
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
@@ -111,51 +112,65 @@ test("Unstar the text project", async ({ textProject }) => {
 })
 
 // ///obs
-// test("Star the obs project", async ({ obsProject }) => {
-//   await starProject(window, expect, obsProject)
-// })
+test("Star the obs project", async ({ obsProject }) => {
+  await starProject(window, expect, obsProject)
+})
 
-// test("Unstar the obs project", async ({ obsProject }) => {
-//   await unstarProject(window, expect, obsProject)
-// })
+test("Unstar the obs project", async ({ obsProject }) => {
+  await unstarProject(window, expect, obsProject)
+})
 
-// // ///audio
-// test("Star the audio project", async ({ audioProject }) => {
-//   await starProject(window, expect, audioProject)
-// })
+// ///audio
+test("Star the audio project", async ({ audioProject }) => {
+  await starProject(window, expect, audioProject)
+})
 
-// test("Unstar the audio project", async ({ audioProject }) => {
-//   await unstarProject(window, expect, audioProject)
-// })
+test("Unstar the audio project", async ({ audioProject }) => {
+  await unstarProject(window, expect, audioProject)
+})
 
 test('Search a text project in all projects list', async ({ textProject }) => {
   await searchProject(window, expect, textProject, 'translation')
 });
 
+test("updating text transaltion project of description and abbriviation", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  const description = await window.textContent('//textarea[@id="project_description"]')
+  await expect(description).toBe('test description')
+  await window.locator('//textarea[@id="project_description"]').fill('edit test version')
+  const editDescription = await window.textContent('//textarea[@id="project_description"]')
+  await expect(editDescription).toBe('edit test version')
+  await window.locator('input[name="version_abbreviated"]').fill('tvs')
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects')
+})
 
 
-// test('Search an obs project in all projects list', async ({ obsProject }) => {
-//   await searchProject(window, expect, obsProject, 'obs')
-// });
+test('Search an obs project in all projects list', async ({ obsProject }) => {
+  await searchProject(window, expect, obsProject, 'obs')
+});
 
-// test('Search an audio project in all projects list', async ({ audioProject }) => {
-//   await searchProject(window, expect, audioProject, 'audio')
-// });
+test('Search an audio project in all projects list', async ({ audioProject }) => {
+  await searchProject(window, expect, audioProject, 'audio')
+});
 
 
 
-// test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-//   ///return json
-//   const json = await commonJson(window, userName, packageInfo, fs)
-//   /// return file
-//   const file = await commonFile(window, packageInfo)
-//   /// return folde name
-//   const folder = await commonFolder(window, userName, packageInfo)
-//   await window.getByRole('button', { name: "Open user menu" }).click()
-//   const currentUser = await window.textContent('[aria-label="userName"]')
-//   await window.getByRole('menuitem', { name: "Sign out" }).click()
-//   /// projects page then logout and delete playwright user
-//   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-//     await DisplayLogin(fs, folder, userName, json, file, window, expect)
-//   }
-// })
+test("Logout and delete that playwright user from the backend", async ({ userName }) => {
+  ///return json
+  const json = await commonJson(window, userName, packageInfo, fs)
+  /// return file
+  const file = await commonFile(window, packageInfo)
+  /// return folde name
+  const folder = await commonFolder(window, userName, packageInfo)
+  await window.getByRole('button', { name: "Open user menu" }).click()
+  const currentUser = await window.textContent('[aria-label="userName"]')
+  await window.getByRole('menuitem', { name: "Sign out" }).click()
+  /// projects page then logout and delete playwright user
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+    await DisplayLogin(fs, folder, userName, json, file, window, expect)
+  }
+})
