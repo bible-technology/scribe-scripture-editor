@@ -1,4 +1,4 @@
-export const checkLogInOrNot = async(window, expect, userName) => {
+export const checkLogInOrNot = async(window, expect) => {
   await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
   const textVisble = await window.locator('//h1["@aria-label=projects"]', {timeout:3000}).isVisible()
   if (textVisble) {
@@ -14,29 +14,26 @@ export const checkLogInOrNot = async(window, expect, userName) => {
 }
 
 export const filterUser = (json, name) => {
-  const filtered = json.filter((item) =>
-        item.username.toLowerCase() !== name.toLowerCase()
+  const filtered = json.filter((user) =>
+        user.username.toLowerCase() !== name.toLowerCase()
       )
     return filtered
   } 
 
-export const commonJson = async(window, userName, packageInfo, fs) => {
+export const userJson = async(window, packageInfo, fs, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const path = require('path');
   const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
   const data = await fs.readFileSync(file);
   return JSON.parse(data);
 }
 
-export const commonFolder = async (window, userName, packageInfo) => {
+export const userFolder = async (window, userName, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const path = require('path');
   return path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase())
 }
 
-export const commonFile = async (window, packageInfo) => {
+export const userFile = async (window, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const path = require('path');
   return path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
 }
 
@@ -48,7 +45,7 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   return await fs.writeFileSync(file, JSON.stringify(filtered))
 }
 
-export const DisplayLogin = async (fs, folder, userName, json, file, window, expect) => {
+export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   await removeFolderAndFile(fs, folder, userName, json, file)
   const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
   await expect(welcome).toBe("Welcome!")

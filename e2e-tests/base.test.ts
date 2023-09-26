@@ -2,9 +2,10 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { DisplayLogin, checkLogInOrNot, commonFile, commonFolder, commonJson, removeFolderAndFile } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson } from './common';
 
 const fs = require('fs');
+const path = require('path');
 const { _electron: electron } = require('@playwright/test');
 
 let electronApp;
@@ -24,31 +25,31 @@ test("Start the scribe application", async () => {
 
 })
 
-test('Check whether the app is being logged IN', async ({ userName }) => {
-  await checkLogInOrNot(window, expect, userName)
+test('Check whether the app is being logged IN', async () => {
+  await checkLogInOrNot(window, expect)
 });
 
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
-  ///return json
-  const json = await commonJson(window, userName, packageInfo, fs)
-  /// return file
-  const file = await commonFile(window, packageInfo)
-  /// return folde name
-  const folder = await commonFolder(window, userName, packageInfo)
+  ///user json
+  const json = await userJson(window, packageInfo, fs, path)
+  /// user file
+  const file = await userFile(window, packageInfo, path)
+  /// user folde name
+  const folder = await userFolder(window, userName, packageInfo, path)
 
-  if (await checkLogInOrNot(window, expect, userName)) {
+  if (await checkLogInOrNot(window, expect)) {
     await window.getByRole('button', { name: "Open user menu" }).click()
     const currentUser = await window.textContent('[aria-label="userName"]')
     await window.getByRole('menuitem', { name: "Sign out" }).click()
     /// projects page then logout and delete playwright user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await DisplayLogin(fs, folder, userName, json, file, window, expect)
+      await showLoginPage(fs, folder, userName, json, file, window, expect)
     }
   } else {
     ///loging page, if playwright user exist then reload app and remove 
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
     if (existUser && await fs.existsSync(folder)) {
-      await DisplayLogin(fs, folder, userName, json, file, window, expect)
+      await showLoginPage(fs, folder, userName, json, file, window, expect)
     }
   }
 
@@ -67,17 +68,17 @@ test('Create a new user and login', async ({ userName }) => {
 
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  ///return json
-  const json = await commonJson(window, userName, packageInfo, fs)
-  /// return file
-  const file = await commonFile(window, packageInfo)
-  /// return folde name
-  const folder = await commonFolder(window, userName, packageInfo)
+  ///user json
+  const json = await userJson(window, packageInfo, fs, path)
+  /// user file
+  const file = await userFile(window, packageInfo, path)
+  /// user folde name
+  const folder = await userFolder(window, userName, packageInfo, path)
   await window.getByRole('button', { name: "Open user menu" }).click()
   const currentUser = await window.textContent('[aria-label="userName"]')
   await window.getByRole('menuitem', { name: "Sign out" }).click()
   /// projects page then logout and delete playwright user
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await DisplayLogin(fs, folder, userName, json, file, window, expect)
+    await showLoginPage(fs, folder, userName, json, file, window, expect)
   }
 })
