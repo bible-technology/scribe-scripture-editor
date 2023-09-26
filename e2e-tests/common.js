@@ -94,3 +94,45 @@ export const createProjects = async (window, expect, projectname, type, descript
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 }
+
+export const starProject = async (window, expect, projectname) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const starBody = table.locator('//*[@id="projects-list-star"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      await tds.first().locator('[aria-label=unstar-project]').click()
+      expect(await rows.count()).toBe(2)
+      const starRows = await starBody.locator('tr')
+      const starProjectName = await starRows.locator("td").nth(1).innerText()
+      expect(await starProjectName).toBe(projectname)
+      expect(await starRows.count()).toBe(1)
+    }
+  }
+}
+
+export const unstarProject = async (window, expect, projectname) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-star"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=star-project]')).toBeVisible()
+      await tds.first().locator('[aria-label=star-project]').click()
+      const unstarBody = table.locator('//*[@id="projects-list-unstar"]')
+      const unstarRows = await unstarBody.locator('tr')
+      expect(await rows.count()).toBe(0)
+      expect(await unstarRows.count()).toBe(3)
+    }
+  }
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
+}

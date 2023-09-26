@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -102,6 +102,33 @@ test('Click Click New and Fill project page details to create a new project for 
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
+/* STAR & UNSTAR PROJECT */
+///text translation
+test("Star the text project", async ({ textProject }) => {
+  await starProject(window, expect, textProject)
+})
+
+test("Unstar the text project", async ({ textProject }) => {
+  await unstarProject(window, expect, textProject)
+})
+
+///obs
+test("Star the obs project", async ({ obsProject }) => {
+  await starProject(window, expect, obsProject)
+})
+
+test("Unstar the obs project", async ({ obsProject }) => {
+  await unstarProject(window, expect, obsProject)
+})
+
+// ///audio
+test("Star the audio project", async ({ audioProject }) => {
+  await starProject(window, expect, audioProject)
+})
+
+test("Unstar the audio project", async ({ audioProject }) => {
+  await unstarProject(window, expect, audioProject)
+})
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   ///user json
