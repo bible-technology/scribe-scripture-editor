@@ -244,7 +244,7 @@ export default function ImportProjectPopUp(props) {
                     <div className="bg-white text-sm text-left tracking-wide">
                       <div className="flex gap-6">
                         <h4 className="text-sm font-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-burrito-directory')}</h4>
-                        <button title="Select a directory that is a Scripture Burrito for import. It should contain the metadata.json file." type="button" disabled>
+                        <button title={t('msg-select-dir-for-SB')} type="button" disabled>
                           <InformationCircleIcon className="h-6 w-6 text-primary" />
                         </button>
                       </div>
@@ -355,7 +355,7 @@ export default function ImportProjectPopUp(props) {
         buttonName2={{
           active: merge,
           loading: processMerge,
-          name:'Merge',
+          name:t('label-merge'),
           action: () => MergeFunction(),
         }}
       />

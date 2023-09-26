@@ -16,7 +16,7 @@ module.exports = {
         primary: '#FF5500',
         'primary-50': '#E4F2FF',
         secondary: '#151515',
-        success: '#00FF40',
+        success: '#05C715',
         error: '#FF1500',
         validation: '#FFE5E5',
         // white: colors.white,

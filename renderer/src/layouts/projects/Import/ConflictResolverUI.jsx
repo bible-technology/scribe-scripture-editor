@@ -2,15 +2,16 @@ import React, {
   useRef, Fragment, useState, useEffect,
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { useTranslation } from 'react-i18next';
 import * as logger from '../../../logger';
 import ConflictSideBar from './ConflictSideBar';
-import { parseObs, updateAndSaveStory } from './mergeObsUtils';
+import { copyFilesTempToOrginal, parseObs, updateAndSaveStory } from './mergeObsUtils';
 import ConflictEditor from './ConflictEditor';
 
 function ConflictResolverUI({ conflictData, setConflictPopup }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [selectedFileName, setSelectedFileName] = useState();
   const [selectedFileContent, setSelectedFileContent] = useState([]);
@@ -28,28 +29,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
   const finishMergeMoveFiletoProject = async (conflictData) => {
     logger.debug('conflictResolverUI.jsx', 'in finish merge process and copy final data to project');
     setFinishingMerge(true);
-    const path = require('path');
-    const fs = window.require('fs');
-    const fse = window.require('fs-extra');
-    // copy all md from merge main to project main
-    await fse.copy(
-      conflictData.data.mergeDirPath,
-      path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
-    );
-    // remove .git dir from the copied files
-    await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
-      if (err) {
-        throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
-      }
-    });
-    // commit changes in project Dir
-    await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
-    // delete tempDir
-    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
-      if (err) {
-        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
-      }
-    });
+    await copyFilesTempToOrginal(conflictData);
     setFinishingMerge(false);
     logger.debug('conflictResolverUI.jsx', 'finished merge . copy done. delete temp dir and .git');
   };
@@ -101,9 +81,9 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
       // popup with warning
       setModel({
         openModel: true,
-        title: 'Abort Conflict Resolution',
-        confirmMessage: 'Do you want to abort conflict Resolution process. If you abort , you will loose all your progress and need to start over.',
-        buttonName: 'Abort',
+        title: t('modal-title-abort-conflict-resolution'),
+        confirmMessage: t('msg-abort-conflict-resolution'),
+        buttonName: t('label-abort'),
       });
     }
   };
@@ -163,9 +143,9 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
         >
 
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
-            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
-              <h1 className="text-white font-bold text-sm">RESOLVE CONFLICT</h1>
+          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto items-center justify-center ">
+            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 w-[80%]">
+              <h1 className="text-white font-bold text-sm uppercase">{t('label-resolve-conflict')}</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               {/* close btn section */}
               <button
@@ -178,53 +158,59 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
             </div>
 
             {/* contents section */}
-            <div className="flex border bg-white">
-              <ConflictSideBar
-                conflictData={conflictData}
-                setSelectedFileName={setSelectedFileName}
-                selectedFileName={selectedFileName}
-                resolvedFileNames={resolvedFileNames}
-              />
-              <div className="w-full">
-                <div className="h-[80vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
-                  <ConflictEditor
-                    selectedFileContent={selectedFileContent}
-                    setSelectedFileContent={setSelectedFileContent}
-                    selectedFileName={selectedFileName}
-                    FileContentOrginal={FileContentOrginal}
-                    setEnableSave={setEnableSave}
-                    resolvedFileNames={resolvedFileNames}
-                  />
-                </div>
-                <div className="h-[6vh] w-full flex  justify-end items-center pr-10 gap-5">
+            <div className="flex border bg-white h-[86vh] gap-2 p-2 w-[80%]">
+              {/* sidebar and Editor */}
+              <div className="min-w-[12vw]">
+                <ConflictSideBar
+                  conflictData={conflictData}
+                  setSelectedFileName={setSelectedFileName}
+                  selectedFileName={selectedFileName}
+                  resolvedFileNames={resolvedFileNames}
+                />
+              </div>
+
+              <div className="w-full bg-gray-50 flex flex-col">
+                <ConflictEditor
+                  selectedFileContent={selectedFileContent}
+                  setSelectedFileContent={setSelectedFileContent}
+                  selectedFileName={selectedFileName}
+                  FileContentOrginal={FileContentOrginal}
+                  setEnableSave={setEnableSave}
+                  resolvedFileNames={resolvedFileNames}
+                />
+                <div className="h-[6vh] w-full flex justify-end items-center pr-10 gap-5">
                   {conflictData?.data?.files?.filepaths?.length === resolvedFileNames?.length && (
                     <div
-                      className="px-10 py-2 rounded-md bg-green-500 cursor-pointer hover:bg-green-600"
+                      className="px-10 py-2 rounded-md bg-success/75 cursor-pointer hover:bg-success"
                       role="button"
                       tabIndex={-2}
                       onClick={() => removeSection()}
                     >
                       {finishingMerge
-                        ? (
-                          <div
-                            className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                            role="status"
-                          />
-                        )
-                        : <>All conflicts Resolved : Finish</>}
+                    ? (
+                      <div
+                        className="px-4 py-1 bg-success text-sm rounded-md m-2 text-white"
+                        // className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-neutral-100 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        role="status"
+                      />
+                    )
+                    : <>{t('label-done')}</>}
                     </div>
                   )}
 
                   <button
-                    className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-green-500 cursor-pointer hover:bg-green-600' : 'bg-gray-200 text-gray-600'} `}
+                    className={`px-4 py-1 m-2 rounded-md uppercase ${(enableSave && !resolvedFileNames.includes(selectedFileName))
+                      ? ' bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '} `}
+                    // className={`px-10 py-2 rounded-md ${(enableSave && !resolvedFileNames.includes(selectedFileName)) ? ' bg-success/75 cursor-pointer hover:bg-success' : 'bg-gray-200 text-gray-600'} `}
                     onClick={saveCurrentStory}
                     type="button"
                     disabled={!enableSave || resolvedFileNames.includes(selectedFileName)}
                   >
-                    {resolvedFileNames?.includes(selectedFileName) ? 'Resolved' : 'Save'}
+                    {resolvedFileNames?.includes(selectedFileName) ? t('label-resolved') : t('btn-save')}
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </Dialog>

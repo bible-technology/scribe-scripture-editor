@@ -60,14 +60,14 @@ It is relatively easy to setup the application locally for development.
 This is an example of how to list things you need to use the software and how to install them.
 
 -   [Node.js ^16.15.1](https://nodejs.org/en/)
--   [NPM ^8.11.0](https://www.npmjs.com/get-npm)
+-   [YARN ^1.22.19](https://yarnpkg.com/getting-started)
 
 ### Installation
 
 1. Fork and clone this repository
-2. Install dependencies with `npm install`
-3. Start the application with `npm start`
-4. Checkout the web version with `npm run dev`
+2. Install dependencies with `yarn install`
+3. Start the application with `yarn start`
+4. Checkout the web version with `yarn dev`
    Runs the app in the development mode.<br>
    Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
@@ -107,8 +107,8 @@ Usage: logger.[level]("<filename>, <message>")
 -   [Jest](https://testing-library.com/docs/react-testing-library/intro)
 -   [React Testing Library](https://jestjs.io/docs/en/getting-started)
 
-6. Run `npm run lint:fix` for code to adapt our linting rules
-7. Run `npm run build` for build checks
+6. Run `yarn lint:fix` for code to adapt our linting rules
+7. Run `yarn build` for build checks
 8. Commit your Changes (`git commit -m 'Add some NewFeatures'`)
 9. Push to the Branch (`git push origin feature/NewFeature`)
 10. Open a Pull Request and make sure all checks have passed

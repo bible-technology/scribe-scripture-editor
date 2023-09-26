@@ -11,6 +11,7 @@ import * as logger from '../../../logger';
 import DownloadCreateSBforHelps from './DownloadCreateSBforHelps';
 import { handleDownloadResources } from './createDownloadedResourceSB';
 import Door43Logo from '@/icons/door43.svg';
+import { environment } from '../../../../environment';
 
 // const path = require('path');
 
@@ -40,7 +41,8 @@ const checkHelpsVersionUpdate = async (reference, selectResource) => {
         owner = reference?.value?.meta?.owner;
         }
         if (subject && lang && owner) {
-        fetch(`https://git.door43.org/api/catalog/v5/search?subject=${subject}&lang=${lang}&owner=${owner}`)
+        // fetch(`https://git.door43.org/api/catalog/v5/search?subject=${subject}&lang=${lang}&owner=${owner}`)
+        fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&subject=${subject}&lang=${lang}&owner=${owner}`)
         .then((res) => res.json())
         .then((resultMeta) => {
             // console.log({ resultMeta });
@@ -147,7 +149,7 @@ function CheckHelpsUpdatePopUp({ resource, selectResource }) {
           className="text-xs cursor-pointer focus:outline-none"
           role="button"
           tabIndex={0}
-          title="check updates"
+          title={t('label-check-updates')}
           onClick={(e) => handleCheckUpdateHelpsResources(e, resource)}
         >
           <ArrowPathIcon

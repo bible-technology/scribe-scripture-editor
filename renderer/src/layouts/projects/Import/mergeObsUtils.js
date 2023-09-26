@@ -1,4 +1,5 @@
 // parse obs story based on the story number
+import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 import * as logger from '../../../logger';
 // import OBSData from '../../../lib/OBSData.json';
@@ -22,18 +23,20 @@ export async function parseObs(conflictData, selectedFileName) {
             // eslint-disable-next-line react/prop-types
             const allLines = fileContent.split(/\r\n|\n/);
             logger.debug('ObsEditor.js', 'Spliting the stories line by line and storing into an array.');
-            // Reading line by line
+
+            // filter alllines to remove empty lines from the array
+            const allLineFiltered = allLines.filter((line) => line !== '');
 
             // parse handling HEADER and Footer Conflicts
             let headerConflcit = false;
             let footerConflcit = false;
             let footerConflcitFoundIndex;
 
-            if (allLines[0].startsWith('<<<<<')) {
+            if (allLineFiltered[0].startsWith('<<<<<')) {
               headerConflcit = true;
             }
 
-            allLines.forEach((line, index) => {
+            allLineFiltered.forEach((line, index) => {
               // To avoid the values after footer, we have added id=0
               if (line && id !== 0 && footerConflcit === false) {
                 if (headerConflcit) {
@@ -56,7 +59,7 @@ export async function parseObs(conflictData, selectedFileName) {
                   }
 
                 // } else if (footerConflcit && !headerConflcit && line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
-                } else if (line.startsWith('<<<<<') && allLines[index + 1].startsWith('_')) {
+                } else if (line.startsWith('<<<<<') && allLineFiltered[index + 1].startsWith('_')) {
                   // footer coflcit found from this line onwards pass execution to else
                   footerConflcitFoundIndex = index;
                   footerConflcit = true;
@@ -130,10 +133,10 @@ export async function parseObs(conflictData, selectedFileName) {
             logger.debug('mergeObsUtils.js', 'Story for selected navigation is been set to the array for Editor');
 
             // Handle conflcit in footer -- brark the loop when footer conflcit found
-            if (allLines && footerConflcit && footerConflcitFoundIndex) {
+            if (allLineFiltered && footerConflcit && footerConflcitFoundIndex) {
                 logger.debug('mergeObsUtils.js', 'conflcit for footer section. Handling');
                 // handle footer with conflcit
-                const footerConflcitArr = allLines.slice(footerConflcitFoundIndex, allLines.length);
+                const footerConflcitArr = allLineFiltered.slice(footerConflcitFoundIndex, allLineFiltered.length);
                 // add text field in last section -> normaly handled in footer section
                 if (!('text' in stories[stories.length - 1])) {
                   stories[stories.length - 1].text = '';
@@ -200,6 +203,37 @@ export async function createAllMdInDir(dirPath) {
     return true;
   } catch (err) {
     logger.error('mergeObsUtils.js', `error in write files ${err}`);
+    return false;
+  }
+}
+
+export async function copyFilesTempToOrginal(conflictData) {
+  try {
+    const path = require('path');
+    const fs = window.require('fs');
+    const fse = window.require('fs-extra');
+
+    // copy all md from merge main to project main
+    await fse.copy(
+      conflictData.data.mergeDirPath,
+      path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
+    );
+    // remove .git dir from the copied files
+    await fs.rmdirSync(path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName, '.git'), { recursive: true }, (err) => {
+      if (err) {
+        throw new Error(`Failed to remove .git from projects ingredients :  ${err}`);
+      }
+    });
+    // commit changes in project Dir
+    await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
+    // delete tempDir
+    await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
+      if (err) {
+        throw new Error(`Merge Dir exist. Failed to remove :  ${err}`);
+      }
+    });
+    return true;
+  } catch (err) {
     return false;
   }
 }

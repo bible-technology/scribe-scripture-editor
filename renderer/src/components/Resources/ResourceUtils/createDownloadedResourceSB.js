@@ -100,7 +100,7 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
         ];
         json.copyright.licenses[0].ingredient = 'LICENSE.md';
         if (selectResource === 'bible') {
-          resourceMeta.books.forEach((scope) => {
+          resourceMeta.projects.forEach(({ identifier: scope }) => {
             json.type.flavorType.currentScope[scope.toUpperCase()] = [];
             localizedNames[scope.toUpperCase()] = json.localizedNames[scope.toUpperCase()];
           });

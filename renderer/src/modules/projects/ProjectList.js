@@ -175,7 +175,7 @@ export default function ProjectList() {
                                       >
                                         <td className="px-4 py-4">
                                           <button
-                                            title="star project"
+                                            title={t('tooltip-star-project')}
                                             aria-label="star-project"
                                             onClick={(event) => handleClickStarred(event, project.name, 'starred')}
                                             type="button"
@@ -232,11 +232,11 @@ export default function ProjectList() {
                                       >
                                         <Disclosure.Panel as="tr" key={project.name}>
                                           <td className="px-6 py-4">
-                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">description</div>
+                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-description')}</div>
                                             <div className="text-sm tracking-wide p-1">{project.description}</div>
                                           </td>
                                           <td colSpan="3" className="px-5">
-                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">Project ID</div>
+                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-project-id')}</div>
                                             <div className="text-sm tracking-wide p-1">{project.id[0]}</div>
                                           </td>
                                           <td className="pl-5">
@@ -292,7 +292,7 @@ export default function ProjectList() {
                                                             archiveProject(project, project.name);
                                                           }}
                                                         >
-                                                          {project.isArchived === true ? 'Restore' : 'Archive'}
+                                                          {project.isArchived === true ? t('label-restore') : t('label-archive')}
                                                         </button>
                                                       )}
                                                     </Menu.Item>
@@ -325,7 +325,7 @@ export default function ProjectList() {
                                           className="px-4 py-4"
                                         >
                                           <button
-                                            title="unstar project"
+                                            title={t('tooltip-un-star-project')}
                                             aria-label="unstar-project"
                                             onClick={(event) => handleClickStarred(event, project.name, 'unstarred')}
                                             type="button"
@@ -390,11 +390,11 @@ export default function ProjectList() {
                                       >
                                         <Disclosure.Panel as="tr" key={project.name}>
                                           <td className="px-6 py-4">
-                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">description</div>
+                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-description')}</div>
                                             <div aria-label="project-description-display" className="text-sm tracking-wide p-1">{project.description}</div>
                                           </td>
                                           <td colSpan="3" className="px-5">
-                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">Project ID</div>
+                                            <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-project-id')}</div>
                                             <div className="text-sm tracking-wide p-1">{project.id[0]}</div>
                                           </td>
                                           <td className="pl-5">
@@ -450,7 +450,7 @@ export default function ProjectList() {
                                                             archiveProject(project, project.name);
                                                           }}
                                                         >
-                                                          {project.isArchived === true ? 'Restore' : 'Archive'}
+                                                          {project.isArchived === true ? t('label-restore') : t('label-archive')}
                                                         </button>
                                                       )}
                                                     </Menu.Item>

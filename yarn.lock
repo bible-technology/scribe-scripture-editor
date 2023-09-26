@@ -6570,12 +6570,7 @@ bfj@^7.0.2:
     hoopy "^0.1.4"
     tryer "^1.0.1"
 
-bible-reference-range@^1.0.1, bible-reference-range@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/bible-reference-range/-/bible-reference-range-1.1.0.tgz"
-  integrity sha512-EVPhDLSY/hmeW6reO9XLst1SKAAf6Opyfy6l2MZSna9kE6DqEiFW/eWOrkPq5g40Hs+Xe8odPGJuIpdysokQpg==
-
-bible-reference-rcl@^1.1.0:
+bible-reference-rcl@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/bible-reference-rcl/-/bible-reference-rcl-1.1.0.tgz#0e9f33effeaabf6bfed53b897ad8e99033502911"
   integrity sha512-kUrJrTaPmzU7ih8pOjXdOKjBZngVE+NiDnS9SxtSRnpJbKGZqtsmstk3Ld4wIQZvmWfedlbGVx5/R7lG4DeVgw==
@@ -10456,7 +10451,7 @@ follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.9, fol
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
 
-font-detect-rhl@^1.0.5-1:
+font-detect-rhl@1.0.5-1:
   version "1.0.5-1"
   resolved "https://registry.yarnpkg.com/font-detect-rhl/-/font-detect-rhl-1.0.5-1.tgz#4a421265df97ee672eb515a7f9cae2853ca860f4"
   integrity sha512-gIRKZvNHp751pSI2bWk3kl3ybeUYiO8fXlo4xJQldp4Esp4yPkGslArJgEQXyROCBPdqU/kTyvA7eWWyE/y9oQ==
@@ -10845,29 +10840,26 @@ git-diff@^2.0.6:
     shelljs "^0.8.1"
     shelljs.exec "^1.1.7"
 
-gitea-react-toolkit@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/gitea-react-toolkit/-/gitea-react-toolkit-2.2.1.tgz#e13191ae6e3089d12d0f2eeaa69ce49c740651a2"
-  integrity sha512-9VPuWOHQv+z+H2j+GRhShVPKRC1O+qVNWcoashjpXhd1IS4lF820YIl/YDacFa7SvgOpm/sOZ3MPVnxcGIG4aA==
+gitea-react-toolkit@1.9.3:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/gitea-react-toolkit/-/gitea-react-toolkit-1.9.3.tgz#0f1467087fbb814aa68f6f6bc695407c76cd3966"
+  integrity sha512-JubGD8xmLFTSa4unszKIohVxq/6N04mISkA7XekyuPhH1Bm3GBBScETO5zUyZD2x7YeOnUyqCo4lBNKS/6HD9Q==
   dependencies:
     awesome-debounce-promise "2.1.0"
     axios "0.19.0"
     axios-cache-adapter "2.4.1"
     base-64 "0.1.0"
-    deep-equal "^2.0.5"
-    js-base64 "^3.7.2"
     jszip "^3.5.0"
     localforage "1.7.3"
-    markdown-translatable "1.3.1-rc.1"
+    markdown-translatable "1.3.1"
     prop-types "15.7.2"
-    use-deep-compare "^1.1.0"
     use-deep-compare-effect "^1.3.1"
     utf8 "3.0.0"
 
-gitea-react-toolkit@^2.1.2:
-  version "2.2.2"
-  resolved "https://registry.npmjs.org/gitea-react-toolkit/-/gitea-react-toolkit-2.2.2.tgz"
-  integrity sha512-MHsJosA6yyq6iX5M3tn3VmG2CMxlh+6hAsPon2MGjkskbYtxInU4JJo4gX2xxQgbX9AWYC7QogLc7eOGOlSuXA==
+gitea-react-toolkit@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/gitea-react-toolkit/-/gitea-react-toolkit-2.1.2.tgz#7943664e6412b18a905166339dc58016ff43b600"
+  integrity sha512-6tKGEKR5a0ZnxFPp/7w1n3/Cf9kF8nduE6k3dslY6A4zGBaESa4dQmhEEPJyFWOXsYVewflnhSjhgUDiieaqLQ==
   dependencies:
     awesome-debounce-promise "2.1.0"
     axios "0.19.0"
@@ -14485,38 +14477,38 @@ markdown-escapes@^1.0.0:
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.4.tgz#c95415ef451499d7602b91095f3c8e8975f78535"
   integrity sha512-8z4efJYk43E0upd0NbVXwgSTQs6cT3T06etieCMEg7dRbzCbxUCK/GHlX8mhHRDcp+OLlHkPKsvqQTCvsRl2cg==
 
+markdown-translatable@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/markdown-translatable/-/markdown-translatable-1.3.0.tgz#ba6da3e0f01aa34f7c1d075117543cc57f290f2b"
+  integrity sha512-GBc5olyzw5hj7rQHah8tRWoGoqSatvD0Wc6ZEHF0IW8PVMpvgWUAAOFAbJyWbcYZe3FD5w13h1J1MqbPLz6Xww==
+  dependencies:
+    deep-freeze "^0.0.1"
+    md5 "^2.2.1"
+    prop-types "^15.7.2"
+    react-headroom "^3.1.0"
+    react-markdown "4.0.6"
+    showdown "^1.9.1"
+    turndown "^7.0.0"
+    turndown-plugin-gfm "^1.0.2"
+
+markdown-translatable@1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/markdown-translatable/-/markdown-translatable-1.3.1.tgz#29393f8650be38885c7991f2e2e661bbe9d000ae"
+  integrity sha512-oZieaVOCjxZISyGDvcpb3XsJsnPvKd4xCULFQawQ/L395EwGHFERG6gCH65b3w3HjkLEWhdPknWf1BLK6Mu6Tg==
+  dependencies:
+    deep-freeze "^0.0.1"
+    md5 "^2.2.1"
+    prop-types "^15.7.2"
+    react-headroom "^3.1.0"
+    react-markdown "4.0.6"
+    showdown "^1.9.1"
+    turndown "^7.0.0"
+    turndown-plugin-gfm "^1.0.2"
+
 markdown-translatable@1.3.1-rc.1:
   version "1.3.1-rc.1"
   resolved "https://registry.yarnpkg.com/markdown-translatable/-/markdown-translatable-1.3.1-rc.1.tgz#498a264d544f87511465ae06dd454565be1daabb"
   integrity sha512-Cn6GFYHZTAQOBy+XCtweOzDVMmshTjIgd2z9oex9DlNWVqlHO54yEvXduFg4YOl4qgTxkdeH+i3Z3VA+01d71w==
-  dependencies:
-    deep-freeze "^0.0.1"
-    md5 "^2.2.1"
-    prop-types "^15.7.2"
-    react-headroom "^3.1.0"
-    react-markdown "4.0.6"
-    showdown "^1.9.1"
-    turndown "^7.0.0"
-    turndown-plugin-gfm "^1.0.2"
-
-markdown-translatable@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/markdown-translatable/-/markdown-translatable-2.1.1.tgz#da5f0d6b42e73eada0314300362bb5818ecd5cb8"
-  integrity sha512-HYcHo76ooko6Z9bxaLERS6g/B9LXqnIP6kPyMGE3LwPOD/Nk60Q05mec+Zim8k5JswFvXsSOOJXt14jQXKb/3w==
-  dependencies:
-    deep-freeze "^0.0.1"
-    md5 "^2.2.1"
-    prop-types "^15.7.2"
-    react-headroom "^3.1.0"
-    react-markdown "4.0.6"
-    showdown "^1.9.1"
-    turndown "^7.0.0"
-    turndown-plugin-gfm "^1.0.2"
-
-markdown-translatable@^1.3.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/markdown-translatable/-/markdown-translatable-1.3.1.tgz#29393f8650be38885c7991f2e2e661bbe9d000ae"
-  integrity sha512-oZieaVOCjxZISyGDvcpb3XsJsnPvKd4xCULFQawQ/L395EwGHFERG6gCH65b3w3HjkLEWhdPknWf1BLK6Mu6Tg==
   dependencies:
     deep-freeze "^0.0.1"
     md5 "^2.2.1"
@@ -17529,6 +17521,11 @@ react-i18next@^11.17.1:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
+react-icons@4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
+  integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
+
 react-is@^16.13.1, react-is@^16.3.2, react-is@^16.6.3, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -18517,26 +18514,22 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
-scripture-resources-rcl@^5.1.0:
-  version "5.3.9"
-  resolved "https://registry.yarnpkg.com/scripture-resources-rcl/-/scripture-resources-rcl-5.3.9.tgz#be100b829f1ec3c848145afe9ccc528da9011137"
-  integrity sha512-49+VzLNuFEvQKDQegljyIiB9ta3HyTCQKcuzLil8JsWcpQ4H38C5EmMiAd2CEyAieJhX+4gLPC9G1YoOrqCnzg==
+scripture-resources-rcl@5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/scripture-resources-rcl/-/scripture-resources-rcl-5.1.0.tgz#0a614ca151f53dfe15a181f4fefb1e302feaa572"
+  integrity sha512-l7biQ4W/92HrJOvc7pIftfCLCmQMzYczFskKpTP3Fc9wXeMbNGPgGhEl6GIgDWAPezxG8qNylHdouqd09Gb58g==
   dependencies:
-    bible-reference-range "^1.0.1"
     deep-freeze "^0.0.1"
-    gitea-react-toolkit "2.2.1"
+    gitea-react-toolkit "1.9.3"
     js-yaml-parser "^1.0.0"
-    lodash "^4.17.21"
-    markdown-translatable "2.1.1"
+    lodash "^4.17.15"
+    markdown-translatable "1.3.1"
     nyc "^15.0.0-beta.3"
-    prop-types "^15.8.1"
+    prop-types "^15.7.2"
     react-waypoint "^9.0.2"
     string-punctuation-tokenizer "2.1.2"
-    tc-ui-toolkit "^5.3.3"
     use-deep-compare-effect "^1.3.1"
-    usfm-js "3.4.0"
-    word-aligner "^1.0.0"
-    xregexp "^4.1.1"
+    usfm-js "^2.0.2"
 
 scroll-into-view-if-needed@^2.2.20:
   version "2.2.31"
@@ -19758,7 +19751,7 @@ tar@^6.0.2, tar@^6.1.0, tar@^6.1.11:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-tc-ui-toolkit@^5.3.3:
+tc-ui-toolkit@5.3.3:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/tc-ui-toolkit/-/tc-ui-toolkit-5.3.3.tgz#67d5fd6cb6b165a124c0f1490fad7c963fcaf043"
   integrity sha512-Op9iUXXqyd1gJIimgS80quXDEYa9SGxJDPJSGBmKKx3XahqPMDSZdgyuJM9Lvhi6B6bAeiT4iLED3JZY4fQZoQ==
@@ -20059,15 +20052,14 @@ transform-runtime@0.0.0:
   resolved "https://registry.npmjs.org/transform-runtime/-/transform-runtime-0.0.0.tgz"
   integrity sha512-PX3vXzO8lucrVm82vZb7BABBLHyMDPGzn9zElHr+DnvtS3JPXtqwB1iTRe+D6iFXYmjtAF3zH7O0Xc5XpLpMEg==
 
-translation-helps-rcl@^3.3.7:
-  version "3.3.9"
-  resolved "https://registry.npmjs.org/translation-helps-rcl/-/translation-helps-rcl-3.3.9.tgz"
-  integrity sha512-WulLZVAGexhSHo/j97vx3tkmKrD5usNaCHhlEW1lMPXugxGcYCw83dh3Mih2IMJkIZ2vPcx6SUwHLqWsjxArbA==
+translation-helps-rcl@3.3.7:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/translation-helps-rcl/-/translation-helps-rcl-3.3.7.tgz#28fc937afde1390e92892826cc8c462ffc31f1bb"
+  integrity sha512-K5DRCHehRibclGObzV0A1o44d399z5/R4WLZEfFOjdq6w1lhKfWDrr68qG3o+AI2r74/UBqxF3rpQVxYlwqCMA==
   dependencies:
     "@gwdevs/extensible-rcl" "^1.0.1"
     "@mui/styled-engine" "npm:@mui/styled-engine-sc@latest"
     axios "^0.27.2"
-    bible-reference-range "^1.1.0"
     deep-equal "^2.0.5"
     react-draggable "^4.4.3"
     styled-components "^5.2.1"
@@ -20676,10 +20668,10 @@ usfm-js@2.0.1:
     rimraf "^2.6.3"
     transform-runtime "0.0.0"
 
-usfm-js@3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/usfm-js/-/usfm-js-3.4.0.tgz#d3a00634b7219163b2bf41dc9dd83d976ec7ef26"
-  integrity sha512-8pCtMxzb/E3/4PPLLpf9KK10vza1I1/4tZJaDhJ+ycTGfg5JfT6GmDTxYFd6Nw81sbS0CVoyyG89a5ff6yHCzA==
+usfm-js@^2.0.2:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/usfm-js/-/usfm-js-2.1.0.tgz#2d5b200d491d87a9c443728436f8ef07fb0c8730"
+  integrity sha512-DemzdzAwrVeuzRwnZYOKvAle/U2ZUUf04NQSVDgqZCSFyH7hVhe2/PWC7jT2DKnPMYoa0IxnG3XGbuOPXgZ/oQ==
   dependencies:
     lodash.clonedeep "^4.5.0"
 
@@ -21251,10 +21243,10 @@ winston@^3.7.2:
     triple-beam "^1.3.0"
     winston-transport "^4.5.0"
 
-word-aligner@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/word-aligner/-/word-aligner-1.0.2.tgz#7b47a913421337c44b340b424b420cb5ce3ac945"
-  integrity sha512-alc0TltIlBhFB2kEG3tvWVeH/FdD4i0h/fBAJ1kDdlcHcNW4wdbYDGriCW7ikDQYicKtvCJBIG6II8IXjbHTww==
+word-aligner@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/word-aligner/-/word-aligner-1.0.0.tgz#eee4be21b2550f80e5af8df419427cb4272c36cc"
+  integrity sha512-eok7g0bz5yCodu3UusLpIbZMIjP7NkW4E4lpJH70txYFJsNYsASQaGdlc09MzyTwfQcxN076in/zWoNwyHug7g==
   dependencies:
     babel-runtime "^6.26.0"
     fs-extra "6.0.1"

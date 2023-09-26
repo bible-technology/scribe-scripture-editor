@@ -9,10 +9,11 @@ import {
   PlusIcon,
   StopIcon,
 } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import { Listbox } from '@headlessui/react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PlayIcon from '@/icons/basil/Outline/Media/Play.svg';
 import PauseIcon from '@/icons/basil/Outline/Media/Pause.svg';
 
@@ -34,6 +35,7 @@ const Player = ({
   setTrigger,
   location,
 }) => {
+  const { t } = useTranslation();
   const [volume, setVolume] = useState(0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const speed = [0.5, 1, 1.5, 2];
@@ -43,9 +45,9 @@ const Player = ({
     if (url[take]) {
       setOpenModal({
         openModel: true,
-        title: 'Re-record the Audio',
-        confirmMessage: 'Do you want to re-record the audio',
-        buttonName: 'Re-record',
+        title: t('modal-title-re-record'),
+        confirmMessage: t('msg-re-record-audio'),
+        buttonName: t('label-re-record'),
       });
     } else {
       // Recording for the first time
@@ -57,9 +59,9 @@ const Player = ({
     if (url[take]) {
       setOpenModal({
         openModel: true,
-        title: 'Delete the Audio',
-        confirmMessage: 'Do you want to delete the selected take',
-        buttonName: 'Delete',
+        title: t('modal-title-delete-audio'),
+        confirmMessage: t('msg-delete-audio'),
+        buttonName: t('label-delete'),
       });
       setTrigger('delete');
     }
@@ -74,13 +76,70 @@ const Player = ({
     shell.openExternal('ms-settings:sound');
     shell.openExternal('x-apple.systempreferences:');
   };
+
+  const handleKeyPress = useCallback((event) => {
+    const keyCode = event.keyCode;
+    switch (keyCode) {
+      case 82: // --> r
+        handleRecord();
+        break;
+      case 69: // --> e
+        setTrigger('recResume');
+        break;
+      case 80: // --> p
+        setTrigger('recPause');
+        break;
+      case 83: // --> s
+        setTrigger('recStop');
+        break;
+      case 188: // --> , comma
+        setTrigger('rewind');
+        break;
+      case 32: // --> space
+        setTrigger('pause');
+        break;
+      case 13: // --> Enter / Return
+        setTrigger('play');
+        break;
+      case 65: // --> a
+        changeTake('take1');
+        break;
+      case 66: // --> b
+        changeTake('take2');
+        break;
+      case 67: // --> c
+        changeTake('take3');
+        break;
+      case 187: // --> + (not in number area)
+        setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        break;
+      case 189: // --> - (left to +)
+        setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
+        break;
+
+      default:
+        break;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]); // ---> change to space for play and pause
+
+  useEffect(() => {
+    // attach the event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // remove the event listener
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
     <div className="relative">
       <div className="relative bottom-0">
         <div className="grid grid-flow-col auto-cols-fr text-white bg-black transparent p-1 justify-between items-center">
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              audio
+              {t('label-audio-bible')}
             </div>
             <button
               type="button"
@@ -92,7 +151,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              speed
+              {t('label-speed')}
             </div>
             <Listbox value={currentSpeed} onChange={setCurrentSpeed}>
               <Listbox.Button
@@ -123,10 +182,11 @@ const Player = ({
               {((trigger === 'record' || trigger === 'recResume') && (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  pause
+                  {t('label-pause')}
                 </div>
                 <button
                   type="button"
+                  title="P"
                   className="p-2 bg-error rounded-md hover:bg-dark"
                   onClick={() => setTrigger('recPause')}
                 >
@@ -141,10 +201,11 @@ const Player = ({
             || (trigger === 'recPause' && (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  continue
+                  {t('label-continue')}
                 </div>
                 <button
                   type="button"
+                  title="E"
                   className="p-2 bg-dark rounded-md hover:bg-error"
                   onClick={() => setTrigger('recResume')}
                 >
@@ -158,10 +219,11 @@ const Player = ({
             )) || (
               <>
                 <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  record
+                  {t('label-record')}
                 </div>
                 <button
                   type="button"
+                  title="R"
                   className="p-2 bg-dark rounded-md hover:bg-error"
                   onClick={() => handleRecord()}
                 >
@@ -176,10 +238,11 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                stop
+                {t('label-stop')}
               </div>
               <button
                 type="button"
+                title="S"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('recStop')}
               >
@@ -194,10 +257,11 @@ const Player = ({
           <div className="flex flex-row lg:gap-5 md:gap-2 md:col-span-3 col-span-4 px-10 justify-center items-center border-r border-r-gray-800">
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                rewind
+                {t('label-rewind')}
               </div>
               <button
                 type="button"
+                title="<"
                 className="p-2 bg-dark rounded-md hover:bg-error"
                 onClick={() => setTrigger('rewind')}
               >
@@ -210,10 +274,11 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                play
+                {t('label-play')}
               </div>
               <button
                 type="button"
+                title="Enter"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('play')}
               >
@@ -227,10 +292,11 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                pause
+                {t('label-pause')}
               </div>
               <button
                 type="button"
+                title="SpaceBar"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
                 onClick={() => setTrigger('pause')}
               >
@@ -244,7 +310,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                delete
+                {t('label-delete')}
               </div>
               <div>
                 <button
@@ -259,12 +325,13 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs mb-2 text-gray-300 uppercase tracking-wider">
-                Volume
+                {t('label-delete')}
               </div>
               <div className="flex gap-2 mt-2 items-center justify-center">
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
+                  title="-"
                   onClick={() => setVolume(
                   volume < 0.1 ? volume : volume - 0.1,
                 )}
@@ -285,6 +352,7 @@ const Player = ({
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
+                  title="+"
                   onClick={() => setVolume(
                   volume > 0.9 ? volume : volume + 0.1,
                 )}
@@ -299,7 +367,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              Takes
+              {t('label-takes')}
             </div>
             <div className="flex gap-2">
               <button
@@ -318,6 +386,7 @@ const Player = ({
               url?.take1 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take1')}
+                title="select : A"
                 onDoubleClick={() => changeDefault(1)}
               >
                 a
@@ -338,6 +407,7 @@ const Player = ({
               url?.take2 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take2')}
+                title="select : B"
                 onDoubleClick={() => changeDefault(2)}
               >
                 b
@@ -358,6 +428,7 @@ const Player = ({
               url?.take3 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
                 onClick={() => changeTake('take3')}
+                title="select : C"
                 onDoubleClick={() => changeDefault(3)}
               >
                 c
@@ -366,7 +437,7 @@ const Player = ({
           </div>
           <div className="flex flex-col px-10 items-center">
             <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-              settings
+              {t('label-settings')}
             </div>
             <div className="flex flex-col items-center">
               <button
@@ -381,7 +452,7 @@ const Player = ({
         </div>
         <div className="border-t border-gray-800 bg-black text-white">
           <AudioWaveform
-            height={28}
+            height={80}
             barGap="4"
             barWidth="2"
             waveColor="#ffffff"

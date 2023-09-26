@@ -193,6 +193,7 @@ export const ListResources = ({
                         `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
                         resource?.value?.meta?.owner,
                         resource?.value?.meta?.subject,
+                        '',
                         resource,
                       )}
                       role="button"
@@ -207,7 +208,15 @@ export const ListResources = ({
                   <td className="p-2 uppercase">
                     <div
                       // className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                        e,
+                        resource?.value?.meta?.language,
+                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner,
+                        resource?.value?.meta?.subject,
+                        '',
+                        resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >
@@ -217,7 +226,15 @@ export const ListResources = ({
                   <td className="p-2 text-gray-600">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                      e,
+                      resource?.value?.meta?.language,
+                      `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                      resource?.value?.meta?.owner,
+                      resource?.value?.meta?.subject,
+                      '',
+                      resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >
@@ -227,7 +244,15 @@ export const ListResources = ({
                   <td className="p-2 text-gray-600">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, resource?.value?.meta?.language, `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`, resource?.value?.meta?.owner, resource?.value?.meta?.subject, resource)}
+                      onClick={(e) => handleRowSelect(
+                        e,
+                        resource?.value?.meta?.language,
+                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner,
+                        resource?.value?.meta?.subject,
+                        '',
+                        resource,
+                      )}
                       role="button"
                       tabIndex="0"
                     >
@@ -254,7 +279,7 @@ export const ListResources = ({
 
               <tr className="bg-gray-100 border-y-2">
                 <td colSpan="6" className="p-2 text-gray-900 font-bold">
-                  Online Resources
+                  {t('label-online-resources')}
                 </td>
               </tr>
 
@@ -310,7 +335,7 @@ export const ListResources = ({
                         className="cursor-pointer focus:outline-none flex justify-center items-center"
                         role="button"
                         tabIndex={0}
-                        title="download"
+                        title={t('tooltip-download')}
                         onClick={(e) => handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       >
                         {downloading && currentDownloading?.responseData?.id === notes?.responseData?.id ? (

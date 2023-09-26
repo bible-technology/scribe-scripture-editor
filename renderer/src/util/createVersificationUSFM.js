@@ -30,7 +30,7 @@ export const createVersificationUSFM = (
     ingredientsDirName = ingredientsDirName[0].split(/[(\\)?(/)?]/gm).slice(0)[0];
   }
   if (projectType === 'Audio') {
-    folder = path.join(folder, 'text-1', ingredientsDirName);
+    folder = path.join(folder, 'text-1', call === 'edit' ? 'ingredients' : ingredientsDirName);
   } else {
     folder = path.join(folder, ingredientsDirName);
   }

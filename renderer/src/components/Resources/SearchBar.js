@@ -27,7 +27,7 @@ export default function SearchBar({
               onChange={(e) => setSelectedPreProd(e.target.checked)}
             />
             <label className="text-black text-xs uppercase font-bold">
-              pre-release
+              {t('label-pre-release')}
             </label>
           </div>
         )}

@@ -173,7 +173,7 @@ export const cloneAndSetProject = async (fs, gitprojectDir, repo, userBranch, au
 };
 
 // import gitea project to local
-export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, duplicate, setPullPopup, setPullData) => {
+export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, duplicate, setPullPopup, setPullData, t = undefined) => {
   try {
     logger.debug('SyncFromGiteaUtils.js', 'Inside Import Project core');
     const fs = window.require('fs');
@@ -313,7 +313,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         title: 'Sync the Changes',
         status: true,
         confirmMessage: oldSyncMessage,
-        buttonName: 'Accepted',
+        buttonName: t ? t('label-accepted') : 'Accepted',
       });
       return false;
     }
