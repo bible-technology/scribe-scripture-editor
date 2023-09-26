@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -65,6 +65,32 @@ test('Create a new user and login', async ({ userName }) => {
   expect(title).toBe('Projects');
 })
 
+/*CREATE PROJECTS FOR ALL FLAVOR TYPE */
+// // /* Translation Project    */
+test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
+  await window.getByRole('link', { name: 'new' }).click()
+  await createProjectValidation(window, expect)
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(textProject)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill('test description')
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.getByLabel('nt-Matthew').click()
+  await window.getByRole('button', { name: 'Save' }).click()
+  await window.locator('//button[@aria-label="create"]').click()
+  const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
+  expect(await notifyMe).toBe('New project created')
+  const projectName = await window.innerText(`//div[@id="${textProject}"]`)
+  expect(projectName).toBe(textProject);
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('Projects');
+})
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   ///user json

@@ -61,3 +61,12 @@ export const createUserValidation = async (window, expect) => {
   expect(await lengthError === true)
   expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
 }
+
+export const createProjectValidation = async (window, expect) => {
+  await window.locator('//button[@aria-label="create"]').click()
+  const snackbar = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
+  expect(await snackbar).toBe('Fill all the fields')
+  const title = await window.textContent('[aria-label=projects]');
+  expect(title).toBe('New Project');
+  await window.waitForTimeout(3000)
+}
