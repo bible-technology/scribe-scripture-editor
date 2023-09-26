@@ -70,3 +70,27 @@ export const createProjectValidation = async (window, expect) => {
   expect(title).toBe('New Project');
   await window.waitForTimeout(3000)
 }
+
+///function for creating a project for obs and audio
+export const createProjects = async (window, expect, projectname, type, description, abb) => {
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
+  await window.getByRole('link', { name: 'new' }).click()
+  await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
+  await window.locator('//button[@aria-label="open-popover"]').click()
+  await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
+  await window.locator(`//a[@data-id="${type}"]`).click()
+  ////checking for create project validation
+  await createProjectValidation(window, expect)
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(projectname)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill(description)
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill(abb)
+  await expect(window.locator('//button[@aria-label="create"]')).toBeVisible()
+  await window.locator('//button[@aria-label="create"]').click()
+  const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+  expect(projectName).toBe(projectname);
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
+}

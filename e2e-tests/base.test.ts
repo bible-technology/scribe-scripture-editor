@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -91,6 +91,17 @@ test('Click New and Fill project page details to create a new project for text t
   const title = await window.textContent('[aria-label=projects]');
   expect(title).toBe('Projects');
 })
+
+///Obs translation project
+test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
+  await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
+})
+
+/////Audio project
+test('Click Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
+  await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   ///user json
