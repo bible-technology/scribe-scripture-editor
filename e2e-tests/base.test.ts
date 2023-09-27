@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -279,6 +279,21 @@ test("Archive audio project", async ({ audioProject }) => {
 
 test("restore audio project from achived page", async ({ audioProject }) => {
   await unarchivedProjects(window, expect, audioProject)
+})
+
+test("Update/Edit text transaltion project of description and abbriviation", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  const description = await window.textContent('//textarea[@id="project_description"]')
+  await expect(description).toBe('test description')
+  await window.locator('//textarea[@id="project_description"]').fill('edit test version')
+  const editDescription = await window.textContent('//textarea[@id="project_description"]')
+  await expect(editDescription).toBe('edit test version')
+  await window.locator('input[name="version_abbreviated"]').fill('tvs')
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Edit Project')
 })
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
