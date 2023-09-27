@@ -226,6 +226,9 @@ test('Click and Check the audio project name to the editor', async ({ audioProje
   await checkProjectName(window, expect, audioProject)
 });
 
+test('Check audio project Notifications', async () => {
+  await checkNotification(window, expect)
+});
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
