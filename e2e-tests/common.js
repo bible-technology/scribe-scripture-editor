@@ -136,3 +136,11 @@ export const unstarProject = async (window, expect, projectname) => {
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 }
+
+export const searchProject = async (window, expect, projectName, searchtext) => {
+  await window.waitForTimeout(1000)
+  expect(await window.locator('//input[@id="search_box"]')).toBeVisible()
+  await window.locator('//input[@id="search_box"]').fill(searchtext)
+  const projectname = await window.innerText(`//*[@id="${projectName}"]`);
+  expect(await projectname).toBe(projectName);
+}
