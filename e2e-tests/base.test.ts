@@ -339,6 +339,17 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   expect(await title).toBe('Edit Project')
 })
 
+test("Update/Edit text transaltion project license", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await window.getByRole('button', { name: 'CC BY-SA' }).click()
+  await window.getByRole('option', { name: 'CC BY', exact: true }).click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Edit Project')
+})
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
