@@ -355,6 +355,10 @@ test("changing text transaltion project langauge english to persian", async ({ t
   await changeLanguages(window, expect, textProject, "persian", "Persian (Farsi) (fa)")
 })
 
+test("changing text transaltion project langauge persian to English", async ({ textProject }) => {
+  await changeLanguages(window, expect, textProject, "english", "English (en)")
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
