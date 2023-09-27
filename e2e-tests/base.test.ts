@@ -172,6 +172,19 @@ test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
   expect(verse3).toBe('story content added in verse 3');
 });
 
+test('Increase the font size of the obs editor', async ({ obsProject }) => {
+  await window.click('[aria-label=increase-font]');
+  await window.click('[aria-label=increase-font]');
+  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
+  expect(editorpane).toBe('EDITOR');
+  const div = await window.locator('//*[@id="__next"]/main/div/div[3]/div[2]')
+  const fontSize = await div.evaluate((ele) => {
+    console.log(ele, 'ele')
+    return window.getComputedStyle(ele).getPropertyValue('font-size')
+
+  })
+  expect(fontSize).toBe('22.4px');
+});
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
