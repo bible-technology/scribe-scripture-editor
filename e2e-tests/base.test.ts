@@ -234,6 +234,17 @@ test('Return to the projects page from audio editor', async () => {
   await goToProjectPage(window, expect)
 });
 
+test("About scribe Application and License", async () => {
+  await window.getByLabel('about-button').click()
+  const developedby = await window.innerText('[aria-label=developed-by]');
+  expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
+  await window.click('[aria-label=license-button]');
+  await window.getByRole('button', { name: 'About', exact: true }).click()
+  await window.click('[aria-label=close-about]');
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
