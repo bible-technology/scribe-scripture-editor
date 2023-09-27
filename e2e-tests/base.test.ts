@@ -217,6 +217,12 @@ test('Return to the projects page from obs editor', async () => {
 });
 
 
+// audio project
+test('Search an audio project in all projects list', async ({ audioProject }) => {
+  await searchProject(window, expect, audioProject, 'audio')
+});
+
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
