@@ -272,3 +272,25 @@ export const goToEditProject = async (window, expect, projectName) => {
     }
   }
 }
+
+export const changeLanguages = async (window, expect, projectName, searchLangauge, selectLanguage) => {
+  await goToEditProject(window, expect, projectName)
+  expect(await window.getByPlaceholder('Language'))
+  await window.getByPlaceholder('Language').fill(searchLangauge)
+  await window.getByRole('option', { name: selectLanguage }).click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectName) {
+      // expecting persian language
+      expect(await tds.nth(2).textContent()).toBe('English')
+    }
+  }
+}
+

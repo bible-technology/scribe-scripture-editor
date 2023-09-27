@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject, changeLanguages } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -350,6 +350,11 @@ test("Update/Edit text transaltion project license", async ({ textProject }) => 
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Edit Project')
 })
+
+test("changing text transaltion project langauge english to persian", async ({ textProject }) => {
+  await changeLanguages(window, expect, textProject, "persian", "Persian (Farsi) (fa)")
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
