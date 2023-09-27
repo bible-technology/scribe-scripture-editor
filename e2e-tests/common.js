@@ -178,3 +178,30 @@ export const goToProjectPage = async (window, expect) => {
   expect(title).toBe('Projects');
   await window.waitForTimeout(1000)
 }
+
+export const exportProject = async(window, expect, projectname) => {
+  expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      await tds.last().locator('[aria-label=unstar-expand-project]').click()
+      await window.waitForTimeout(1000)
+      await window.locator('.pl-5 > div > div').click()
+      await window.getByRole('menuitem', {name: "Export"}).click()
+      await expect(window.locator('input[name="location"]')).toBeVisible()
+      await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
+      await window.getByRole('button', {name: "Export"}).click()
+      await window.waitForTimeout(2000)
+      const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
+      expect(await notifyMe === true)
+      expect(await rows.count()).toBe(4)
+      await window.locator('[aria-label=unstar-arrow-up]').click()
+    }
+  }
+
+}

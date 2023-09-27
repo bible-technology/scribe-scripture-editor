@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -244,6 +244,11 @@ test("About scribe Application and License", async () => {
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 })
+
+test("Export text translation project in Downloads folder", async ({ textProject }) => {
+  await exportProject(window, expect, textProject)
+})
+
 
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
