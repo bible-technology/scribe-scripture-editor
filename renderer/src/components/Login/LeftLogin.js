@@ -271,7 +271,7 @@ const LeftLogin = () => {
                       </Tab.List>
                       <Tab.Panels>
                         <Tab.Panel className="relative overflow-y-auto h-[60vh] p-5">
-                          <div className="grid grid-cols-2" id='active-tab'>
+                          <div className="grid grid-cols-2" id="active-tab">
                             {sortedUsers.filter(filterUsers).map((user) => (
                               <div className="flex items-center" key={user.username}>
                                 <div
