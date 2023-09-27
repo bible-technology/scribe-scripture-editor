@@ -249,6 +249,9 @@ test("Export text translation project in Downloads folder", async ({ textProject
   await exportProject(window, expect, textProject)
 })
 
+test("Export obs project in Downloads folder", async ({ obsProject }) => {
+  await exportProject(window, expect, obsProject)
+})
 
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
