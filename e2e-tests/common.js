@@ -230,3 +230,27 @@ export const archivedProjects = async (window, expect, projectname) => {
     }
   }
 }
+
+export const unarchivedProjects = async (window, expect, projectname) => {
+  await window.getByRole('button', { name: 'Archived' }).click()
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      await tds.last().locator('[aria-label=unstar-expand-project]').click()
+      await window.locator('.pl-5 > div > div').click({timeout:4000})
+      await window.getByRole('menuitem', { name: 'Restore' }).click()
+      expect(await rows.count()).toBe(2)
+      const title = await window.getByLabel('projects').textContent()
+      expect(await title).toBe("Archived projects")
+    }
+  }
+  await window.getByRole('button', { name: 'Active' }).click()
+  const title = await window.textContent('[aria-label=projects]', {timeout:10000} );
+  expect(title).toBe('Projects');
+}
