@@ -212,6 +212,11 @@ test('Change the obs navigation story  from 1 to 12 and edit the title', async (
   expect(title).toBe('12. The Exodus Edit title');
 });
 
+test('Return to the projects page from obs editor', async () => {
+  await goToProjectPage(window, expect)
+});
+
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
