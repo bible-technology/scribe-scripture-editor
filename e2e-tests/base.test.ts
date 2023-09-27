@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject, changeLanguages } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject, changeLanguages, userProfileValidaiton } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -381,6 +381,23 @@ test("App language change", async () => {
   await window.getByRole('button', { name: "सहेजें" }).click()
   const profile = await window.getByLabel('projects').allTextContents()
   expect(await profile[0]).toBe("Profile")
+  expect(await snackbar === true)
+})
+
+test("Update user Profile", async () => {
+  await userProfileValidaiton(window, expect)
+  await expect(window.locator('input[name="given-name"]')).toBeVisible();
+  await window.locator('input[name="given-name"]').fill("Bobby")
+  await expect(window.locator('input[name="family-name"]')).toBeVisible();
+  await window.locator('input[name="family-name"]').fill("kumar")
+  await expect(window.locator('input[name="email"]')).toBeVisible();
+  await window.locator('input[name="email"]').fill("kumar@gamil.com")
+  await expect(window.locator('input[name="organization"]')).toBeVisible();
+  await window.locator('input[name="organization"]').fill("vidya foundation")
+  await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
+  await window.locator('input[name="selectedregion"]').fill("India")
+  await window.getByRole('button', { name: "Save" }).click()
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
   expect(await snackbar === true)
 })
 

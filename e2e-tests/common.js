@@ -294,3 +294,24 @@ export const changeLanguages = async (window, expect, projectName, searchLangaug
   }
 }
 
+export const userProfileValidaiton = async(window, expect) => {
+  await expect(window.locator('input[name="given-name"]')).toBeVisible();
+  await window.locator('input[name="given-name"]').fill("b")
+  await expect(window.locator('input[name="family-name"]')).toBeVisible();
+  await window.locator('input[name="family-name"]').fill("k")
+  await expect(window.locator('input[name="email"]')).toBeVisible();
+  await window.locator('input[name="email"]').fill("kumar")
+  await expect(window.locator('input[name="organization"]')).toBeVisible();
+  await window.locator('input[name="organization"]').fill("v")
+  await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
+  await window.locator('input[name="selectedregion"]').fill("I")
+  await window.getByRole('button', { name: "Save" }).click()
+  const firstLastNameError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[2]/span')
+  expect(await firstLastNameError).toBe('The input has to be between 2 and 15 characters long')
+  const emailError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[3]/span')
+  expect(await emailError).toBe('Email is not valid!')
+  const organizationError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[4]/span')
+  expect(await organizationError).toBe('The input has to be between 2 and 30 characters long')
+  const regionError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[5]/span')
+  expect(await regionError).toBe('The input has to be between 2 and 15 characters long')
+}
