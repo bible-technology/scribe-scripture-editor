@@ -130,7 +130,7 @@ test("Unstar the audio project", async ({ audioProject }) => {
   await unstarProject(window, expect, audioProject)
 })
 
-
+// text transaltion project
 test('Search a text project in all projects list', async ({ textProject }) => {
   await searchProject(window, expect, textProject, 'translation')
 });
@@ -145,6 +145,12 @@ test('Check text Translation project Notifications', async () => {
 
 test('Return to the projects page', async () => {
   await goToProjectPage(window, expect)
+});
+
+
+// obs project
+test('Search an obs project in all projects list', async ({ obsProject }) => {
+  await searchProject(window, expect, obsProject, 'obs')
 });
 
 
