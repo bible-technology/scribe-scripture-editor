@@ -2,7 +2,15 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject, archivedProjects, unarchivedProjects, goToEditProject, changeLanguages, userProfileValidaiton } from './common';
+import {
+  showLoginPage, checkLogInOrNot, userFile,
+  userFolder, userJson, createUserValidation,
+  createProjectValidation, createProjects, unstarProject,
+  starProject, searchProject, checkProjectName,
+  checkNotification, goToProjectPage, exportProject,
+  archivedProjects, unarchivedProjects, goToEditProject,
+  changeLanguages, userProfileValidaiton, signOut, showActiveUsers
+} from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -399,6 +407,50 @@ test("Update user Profile", async () => {
   await window.getByRole('button', { name: "Save" }).click()
   const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
   expect(await snackbar === true)
+})
+
+
+test("Sign out the Application", async () => {
+  await signOut(window, expect)
+})
+
+test("click view users button and login with playwright user and sign out", async ({ userName }) => {
+  await showActiveUsers(window, expect)
+  const tab = await window.locator('//*[@id="active-tab"]')
+  const div = await tab.locator("div > div")
+  for (let i = 0; i < await div.count(); i++) {
+    if (await div.nth(i).textContent() === userName.toLowerCase()) {
+      await div.nth(i).click()
+      const title = await window.textContent('[aria-label=projects]')
+      await expect(title).toBe('Projects')
+      await signOut(window, expect)
+
+    }
+  }
+})
+
+test("Delete the user from the active tab and check in archived tab", async ({ userName }) => {
+  await showActiveUsers(window, expect)
+  const tab = await window.locator('//*[@id="active-tab"]')
+  const items = await tab.locator('div > div')
+  const div = await tab.locator("div > button")
+  for (let i = 0; i < await items.count(); i++) {
+    if (await items.nth(i).textContent() === userName.toLowerCase()) {
+      await div.nth(i).click()
+      await window.getByRole('tab', { name: 'Archived' }).click()
+      const text = await window.getByRole('tab', { name: 'Archived' }).textContent()
+      expect(await text).toBe('Archived')
+      expect(await window.getByRole('button', { name: userName.toLowerCase() }).textContent()).toBe(userName.toLowerCase())
+      await window.getByLabel('Archived').locator('button').click()
+      expect(await window.getByRole('tab', { name: 'Active' })).toBeVisible()
+      await window.getByRole('tab', { name: 'Active' }).click()
+      expect(await window.getByRole('button', { name: userName.toLowerCase() }).textContent()).toBe(userName.toLowerCase())
+      await window.getByRole('button', { name: userName.toLowerCase() }).click()
+      const title = await window.textContent('[aria-label=projects]')
+      await expect(title).toBe('Projects')
+    }
+  }
+
 })
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {

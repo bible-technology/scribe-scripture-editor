@@ -174,12 +174,12 @@ export const checkNotification = async (window, expect) => {
 
 export const goToProjectPage = async (window, expect) => {
   await window.getByRole('button', { name: "Back" }).click();
-  const title = await window.textContent('[aria-label=projects]', {timeout:10000});
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
   await window.waitForTimeout(1000)
 }
 
-export const exportProject = async(window, expect, projectname) => {
+export const exportProject = async (window, expect, projectname) => {
   expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-unstar"]')
@@ -192,10 +192,10 @@ export const exportProject = async(window, expect, projectname) => {
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.waitForTimeout(1000)
       await window.locator('.pl-5 > div > div').click()
-      await window.getByRole('menuitem', {name: "Export"}).click()
+      await window.getByRole('menuitem', { name: "Export" }).click()
       await expect(window.locator('input[name="location"]')).toBeVisible()
       await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
-      await window.getByRole('button', {name: "Export"}).click()
+      await window.getByRole('button', { name: "Export" }).click()
       await window.waitForTimeout(2000)
       const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
       expect(await notifyMe === true)
@@ -225,7 +225,7 @@ export const archivedProjects = async (window, expect, projectname) => {
       const projectName = await window.innerText(`//div[@id="${projectname}"]`)
       expect(projectName).toBe(projectname);
       await window.getByRole('button', { name: 'Active' }).click()
-      const title = await window.textContent('[aria-label=projects]', {timeout:10000});
+      const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
       expect(title).toBe('Projects');
     }
   }
@@ -243,7 +243,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
     if (await tds.nth(1).textContent() === projectname) {
       expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.locator('.pl-5 > div > div').click({timeout:4000})
+      await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
       await window.getByRole('menuitem', { name: 'Restore' }).click()
       expect(await rows.count()).toBe(2)
       const title = await window.getByLabel('projects').textContent()
@@ -251,7 +251,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
     }
   }
   await window.getByRole('button', { name: 'Active' }).click()
-  const title = await window.textContent('[aria-label=projects]', {timeout:10000} );
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 }
 
@@ -294,7 +294,7 @@ export const changeLanguages = async (window, expect, projectName, searchLangaug
   }
 }
 
-export const userProfileValidaiton = async(window, expect) => {
+export const userProfileValidaiton = async (window, expect) => {
   await expect(window.locator('input[name="given-name"]')).toBeVisible();
   await window.locator('input[name="given-name"]').fill("b")
   await expect(window.locator('input[name="family-name"]')).toBeVisible();
@@ -314,4 +314,19 @@ export const userProfileValidaiton = async(window, expect) => {
   expect(await organizationError).toBe('The input has to be between 2 and 30 characters long')
   const regionError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[5]/span')
   expect(await regionError).toBe('The input has to be between 2 and 15 characters long')
+}
+
+export const signOut = async (window, expect) => {
+  await window.getByRole('button', { name: "Open user menu" }).click()
+  await window.getByRole('menuitem', { name: "Sign out" }).click()
+  await window.waitForTimeout(2000)
+  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  await expect(welcome).toBe("Welcome!")
+}
+
+export const showActiveUsers = async (window, expect) => {
+  expect(await window.getByRole('button', { name: 'View More' })).toBeVisible()
+  await window.getByRole('button', { name: 'View More' }).click()
+  expect(await window.getByRole('tab', { name: 'Active' })).toBeVisible()
+  await window.getByRole('tab', { name: 'Active' }).click()
 }
