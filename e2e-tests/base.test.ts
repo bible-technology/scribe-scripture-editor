@@ -230,6 +230,11 @@ test('Check audio project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
+test('Return to the projects page from audio editor', async () => {
+  await goToProjectPage(window, expect)
+});
+
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
