@@ -151,7 +151,7 @@ test('Check text Translation project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
-test('Return to the projects page', async () => {
+test('Return to the project page', async () => {
   await goToProjectPage(window, expect)
 });
 
@@ -161,7 +161,7 @@ test('Search an obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
 
-test('Click and Check the obs project name to the editor', async ({ obsProject }) => {
+test('Click and Check the obs project name in the editor', async ({ obsProject }) => {
   await checkProjectName(window, expect, obsProject)
 });
 
@@ -253,15 +253,15 @@ test("About scribe Application and License", async () => {
   expect(title).toBe('Projects');
 })
 
-test("Export text translation project in Downloads folder", async ({ textProject }) => {
+test("Export text translation project in the Downloads folder", async ({ textProject }) => {
   await exportProject(window, expect, textProject)
 })
 
-test("Export obs project in Downloads folder", async ({ obsProject }) => {
+test("Export the obs project in the Downloads folder", async ({ obsProject }) => {
   await exportProject(window, expect, obsProject)
 })
 
-test("Export audio audio in Downloads folder", async ({ audioProject }) => {
+test("Export audio audio in the Downloads folder", async ({ audioProject }) => {
   await exportProject(window, expect, audioProject)
 })
 
@@ -269,7 +269,7 @@ test("Archive text translation project", async ({ textProject }) => {
   await archivedProjects(window, expect, textProject)
 })
 
-test("restore text transaltion project from achived page", async ({ textProject }) => {
+test("Restore text translation project from archived page", async ({ textProject }) => {
   await unarchivedProjects(window, expect, textProject)
 })
 
@@ -277,7 +277,7 @@ test("Archive obs project", async ({ obsProject }) => {
   await archivedProjects(window, expect, obsProject)
 })
 
-test("restore obs project from achived page", async ({ obsProject }) => {
+test("Restore the obs project from archived page", async ({ obsProject }) => {
   await unarchivedProjects(window, expect, obsProject)
 })
 
@@ -285,11 +285,11 @@ test("Archive audio project", async ({ audioProject }) => {
   await archivedProjects(window, expect, audioProject)
 })
 
-test("restore audio project from achived page", async ({ audioProject }) => {
+test("Restore the audio project from the archived page", async ({ audioProject }) => {
   await unarchivedProjects(window, expect, audioProject)
 })
 
-test("Update/Edit text transaltion project of description and abbriviation", async ({ textProject }) => {
+test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   const description = await window.textContent('//textarea[@id="project_description"]')
   await expect(description).toBe('test description')
@@ -304,7 +304,7 @@ test("Update/Edit text transaltion project of description and abbriviation", asy
   expect(await title).toBe('Edit Project')
 })
 
-test("Update/Edit text transaltion project scope mark and luke ", async ({ textProject }) => {
+test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//button[@id="open-advancesettings"]').click()
@@ -319,7 +319,7 @@ test("Update/Edit text transaltion project scope mark and luke ", async ({ textP
   expect(await title).toBe('Edit Project')
 })
 
-test("Update/Edit text transaltion project scope custom book into NT", async ({ textProject }) => {
+test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//button[@id="open-advancesettings"]').click()
@@ -347,7 +347,7 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   expect(await title).toBe('Edit Project')
 })
 
-test("Update/Edit text transaltion project license", async ({ textProject }) => {
+test("Update/Edit text translation project license", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//button[@id="open-advancesettings"]').click()
@@ -359,11 +359,11 @@ test("Update/Edit text transaltion project license", async ({ textProject }) => 
   expect(await title).toBe('Edit Project')
 })
 
-test("changing text transaltion project langauge english to persian", async ({ textProject }) => {
+test("Changing text translation project language from English to Persian", async ({ textProject }) => {
   await changeLanguages(window, expect, textProject, "persian", "Persian (Farsi) (fa)")
 })
 
-test("changing text transaltion project langauge persian to English", async ({ textProject }) => {
+test("Changing text translation project language from Persian to English", async ({ textProject }) => {
   await changeLanguages(window, expect, textProject, "english", "English (en)")
 })
 
@@ -414,7 +414,7 @@ test("Sign out the Application", async () => {
   await signOut(window, expect)
 })
 
-test("click view users button and login with playwright user and sign out", async ({ userName }) => {
+test("Click the view users button, log in with playwright user, and sign out", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tab = await window.locator('//*[@id="active-tab"]')
   const div = await tab.locator("div > div")
@@ -429,7 +429,7 @@ test("click view users button and login with playwright user and sign out", asyn
   }
 })
 
-test("Delete the user from the active tab and check in archived tab", async ({ userName }) => {
+test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tab = await window.locator('//*[@id="active-tab"]')
   const items = await tab.locator('div > div')
