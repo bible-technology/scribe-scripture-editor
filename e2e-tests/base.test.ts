@@ -311,6 +311,19 @@ test("Update/Edit text transaltion project scope mark and luke ", async ({ textP
   expect(await title).toBe('Edit Project')
 })
 
+test("Update/Edit text transaltion project scope custom book into NT", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="new-testament"]')).toBeVisible()
+  await window.locator('//div[@aria-label="new-testament"]').click()
+  await window.locator('//button[contains(text(),"Ok")]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Edit Project')
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
