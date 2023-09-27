@@ -200,6 +200,18 @@ test('Decrease the font size of the obs editor', async ({ obsProject }) => {
   expect(fontSize).toBe('16px');
 });
 
+test('Change the obs navigation story  from 1 to 12 and edit the title', async () => {
+  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
+  expect(editorpane).toBe('EDITOR');
+  await expect(window.locator('//*[@id="__next"]/main/div/div[3]/div[1]/div[1]/div/span[2]')).toBeVisible()
+  await window.locator('//*[@id="__next"]/main/div/div[3]/div[1]/div[1]/div/span[2]').click()
+  await window.getByRole('button', { name: "12" }).click();
+  await expect(window.locator('//*[@id="__next"]/main/div/div[3]/div[2]/div[1]/textarea')).toBeVisible()
+  await window.locator('//*[@id="__next"]/main/div/div[3]/div[2]/div[1]/textarea').fill('12. The Exodus Edit title')
+  const title = await window.textContent('//*[@id="__next"]/main/div/div[3]/div[2]/div[1]/textarea')
+  expect(title).toBe('12. The Exodus Edit title');
+});
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
