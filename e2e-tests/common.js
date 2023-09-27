@@ -162,3 +162,12 @@ export const checkProjectName = async (window, expect, name) => {
   const projectname = await window.innerText('[aria-label=editor-project-name]');
   expect(projectname).toBe(name.toUpperCase());
 }
+
+export const checkNotification = async (window, expect) => {
+  await window.getByRole('button', { name: "notification-button" }).click()
+  const title = await window.innerText('[aria-label=notification-title]');
+  expect(title).toBe('NOTIFICATIONS');
+  await window.getByRole('button', { name: "close-notification" }).click()
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');
+}
