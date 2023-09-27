@@ -171,3 +171,10 @@ export const checkNotification = async (window, expect) => {
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 }
+
+export const goToProjectPage = async (window, expect) => {
+  await window.getByRole('button', { name: "Back" }).click();
+  const title = await window.textContent('[aria-label=projects]', {timeout:10000});
+  expect(title).toBe('Projects');
+  await window.waitForTimeout(1000)
+}

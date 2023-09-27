@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createUserValidation, createProjectValidation, createProjects, unstarProject, starProject, searchProject, checkProjectName, checkNotification, goToProjectPage } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -141,6 +141,10 @@ test('Click and Check the text Translation project name to the editor', async ({
 
 test('Check text Translation project Notifications', async () => {
   await checkNotification(window, expect)
+});
+
+test('Return to the projects page', async () => {
+  await goToProjectPage(window, expect)
 });
 
 
