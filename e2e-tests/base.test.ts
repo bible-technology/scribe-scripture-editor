@@ -222,6 +222,10 @@ test('Search an audio project in all projects list', async ({ audioProject }) =>
   await searchProject(window, expect, audioProject, 'audio')
 });
 
+test('Click and Check the audio project name to the editor', async ({ audioProject }) => {
+  await checkProjectName(window, expect, audioProject)
+});
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
