@@ -360,6 +360,30 @@ test("changing text transaltion project langauge persian to English", async ({ t
 })
 
 
+test("App language change", async () => {
+  await window.getByRole('button', { name: "Open user menu" }).click()
+  await window.getByRole('menuitem', { name: "Your Profile" }).click()
+  await window.getByRole('button', { name: "English" }).click()
+  await window.getByRole('option', { name: "Hindi" }).click()
+  await window.getByRole('button', { name: "Save" }).click()
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  expect(await snackbar === true)
+  const textHindi = await window.getByLabel('projects').allTextContents()
+  expect(await textHindi[0]).toBe("प्रोफ़ाइल")
+  await window.getByLabel('projectList').click()
+  await window.waitForTimeout(4000)
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(await title).toBe('प्रोजेक्ट्स')
+  await window.getByRole('button', { name: 'उपयोगकर्ता मेन्यू खोलें' }).click()
+  await window.getByRole('menuitem', { name: 'आपकी प्रोफ़ाइल' }).click()
+  await window.getByRole('button', { name: "Hindi" }).click()
+  await window.getByRole('option', { name: "English" }).click()
+  await window.getByRole('button', { name: "सहेजें" }).click()
+  const profile = await window.getByLabel('projects').allTextContents()
+  expect(await profile[0]).toBe("Profile")
+  expect(await snackbar === true)
+})
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
