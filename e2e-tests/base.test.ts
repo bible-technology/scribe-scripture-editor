@@ -273,6 +273,14 @@ test("restore obs project from achived page", async ({ obsProject }) => {
   await unarchivedProjects(window, expect, obsProject)
 })
 
+test("Archive audio project", async ({ audioProject }) => {
+  await archivedProjects(window, expect, audioProject)
+})
+
+test("restore audio project from achived page", async ({ audioProject }) => {
+  await unarchivedProjects(window, expect, audioProject)
+})
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
