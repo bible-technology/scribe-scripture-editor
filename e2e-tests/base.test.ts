@@ -153,6 +153,9 @@ test('Search an obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
 
+test('Click and Check the obs project name to the editor', async ({ obsProject }) => {
+  await checkProjectName(window, expect, obsProject)
+});
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
