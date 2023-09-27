@@ -296,6 +296,22 @@ test("Update/Edit text transaltion project of description and abbriviation", asy
   expect(await title).toBe('Edit Project')
 })
 
+test("Update/Edit text transaltion project scope mark and luke ", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.getByLabel('nt-Mark').click()
+  await window.getByLabel('nt-Luke').click()
+  await window.getByRole('button', { name: 'Save' }).click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Edit Project')
+})
+
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
