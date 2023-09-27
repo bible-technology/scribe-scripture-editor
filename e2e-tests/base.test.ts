@@ -30,23 +30,23 @@ test('Check whether the app is being logged IN', async () => {
 });
 
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
-  ///user json
+  //user json
   const json = await userJson(window, packageInfo, fs, path)
-  /// user file
+  // user file
   const file = await userFile(window, packageInfo, path)
-  /// user folde name
+  // user folde name
   const folder = await userFolder(window, userName, packageInfo, path)
 
   if (await checkLogInOrNot(window, expect)) {
     await window.getByRole('button', { name: "Open user menu" }).click()
     const currentUser = await window.textContent('[aria-label="userName"]')
     await window.getByRole('menuitem', { name: "Sign out" }).click()
-    /// projects page then logout and delete playwright user
+    // projects page then logout and delete playwright user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
       await showLoginPage(fs, folder, userName, json, file, window, expect)
     }
   } else {
-    ///loging page, if playwright user exist then reload app and remove 
+    // loging page, if playwright user exist then reload app and remove 
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
     if (existUser && await fs.existsSync(folder)) {
       await showLoginPage(fs, folder, userName, json, file, window, expect)
@@ -66,7 +66,7 @@ test('Create a new user and login', async ({ userName }) => {
 })
 
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
-// // /* Translation Project    */
+/* Translation Project    */
 test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
@@ -92,18 +92,18 @@ test('Click New and Fill project page details to create a new project for text t
   expect(title).toBe('Projects');
 })
 
-///Obs translation project
+/* Obs translation project */
 test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
   await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
 })
 
-/////Audio project
+/* Audio project */
 test('Click Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
 /* STAR & UNSTAR PROJECT */
-///text translation
+// text translation
 test("Star the text project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
@@ -112,7 +112,7 @@ test("Unstar the text project", async ({ textProject }) => {
   await unstarProject(window, expect, textProject)
 })
 
-///obs
+// obs
 test("Star the obs project", async ({ obsProject }) => {
   await starProject(window, expect, obsProject)
 })
@@ -121,7 +121,7 @@ test("Unstar the obs project", async ({ obsProject }) => {
   await unstarProject(window, expect, obsProject)
 })
 
-// ///audio
+// audio
 test("Star the audio project", async ({ audioProject }) => {
   await starProject(window, expect, audioProject)
 })
@@ -131,16 +131,16 @@ test("Unstar the audio project", async ({ audioProject }) => {
 })
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  ///user json
+  // user json
   const json = await userJson(window, packageInfo, fs, path)
-  /// user file
+  // user file
   const file = await userFile(window, packageInfo, path)
-  /// user folde name
+  // user folde name
   const folder = await userFolder(window, userName, packageInfo, path)
   await window.getByRole('button', { name: "Open user menu" }).click()
   const currentUser = await window.textContent('[aria-label="userName"]')
   await window.getByRole('menuitem', { name: "Sign out" }).click()
-  /// projects page then logout and delete playwright user
+  // projects page then logout and delete playwright user
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
     await showLoginPage(fs, folder, userName, json, file, window, expect)
   }

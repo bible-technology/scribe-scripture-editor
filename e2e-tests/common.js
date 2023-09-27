@@ -71,7 +71,7 @@ export const createProjectValidation = async (window, expect) => {
   await window.waitForTimeout(3000)
 }
 
-///function for creating a project for obs and audio
+/* function for creating a project for obs and audio */
 export const createProjects = async (window, expect, projectname, type, description, abb) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.getByRole('link', { name: 'new' }).click()
@@ -79,7 +79,7 @@ export const createProjects = async (window, expect, projectname, type, descript
   await window.locator('//button[@aria-label="open-popover"]').click()
   await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
   await window.locator(`//a[@data-id="${type}"]`).click()
-  ////checking for create project validation
+  // checking for create project validation
   await createProjectValidation(window, expect)
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
   await window.locator('//input[@id="project_name"]').fill(projectname)
