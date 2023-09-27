@@ -157,6 +157,10 @@ test('Click and Check the obs project name to the editor', async ({ obsProject }
   await checkProjectName(window, expect, obsProject)
 });
 
+test('Check obs project Notifications', async () => {
+  await checkNotification(window, expect)
+});
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
