@@ -253,6 +253,10 @@ test("Export obs project in Downloads folder", async ({ obsProject }) => {
   await exportProject(window, expect, obsProject)
 })
 
+test("Export audio audio in Downloads folder", async ({ audioProject }) => {
+  await exportProject(window, expect, audioProject)
+})
+
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
