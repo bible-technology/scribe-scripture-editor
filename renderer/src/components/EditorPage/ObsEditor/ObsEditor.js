@@ -15,6 +15,7 @@ import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
 import EditorPanel from './EditorPanel';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
+import { newPath } from '../../../../../supabase';
 
 export const getDetails = () => new Promise((resolve) => {
   logger.debug('ObsEditor.js', 'In getDetails() for fetching the burrito file of current project');
@@ -31,10 +32,33 @@ export const getDetails = () => new Promise((resolve) => {
     });
   });
 });
+
+export const getWebDetails = () => new Promise((resolve) => {
+  localforage.getItem('userProfile').then((value) => {
+    const username = value?.user?.email;
+    localforage.getItem('currentProject').then((projectName) => {
+      const path = require('path');
+      const projectsDir = `${newPath}/${username}/projects/${projectName}`;
+      const metaPath = `${newPath}/${username}/projects/${projectName}/metadata.json`;
+      resolve({
+        projectName, username, projectsDir, metaPath, path,
+      });
+    });
+  });
+});
+
+function checkDetailsFunc() {
+  if (isElectron()) {
+    return getDetails();
+  }
+  return getWebDetails();
+}
+
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
   const { state: { obsNavigation, loadData }, actions: { setLoadData } } = useContext(ReferenceContext);
+
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');
     setMdData(story);
@@ -52,12 +76,12 @@ const ObsEditor = () => {
       }
     });
     const storyStr = title + body + end;
-    getDetails().then((value) => {
+    checkDetailsFunc().then((value) => {
       const bookID = obsNavigation.toString().padStart(2, 0);
       writeToFile({
         username: value.username,
         projectname: value.projectName,
-        filename: (value.path).join(directoryName, `${bookID}.md`),
+        filename: isElectron() ? (value.path).join(directoryName, `${bookID}.md`) : `${directoryName}/${bookID}.md`,
         data: storyStr,
       });
     });
@@ -65,7 +89,7 @@ const ObsEditor = () => {
   // this function is used to fetch the content from the given story number
   const readContent = useCallback(() => {
     setLoadData(false);
-    getDetails()
+    checkDetailsFunc()
       .then(({
         projectName, username, projectsDir, metaPath, path,
       }) => {
@@ -78,7 +102,7 @@ const ObsEditor = () => {
               metaPath,
             }).then(async (data) => {
               if (data) {
-                const _data = JSON.parse(data);
+                const _data = isElectron() ? JSON.parse(data) : data;
                 Object.entries(_data.ingredients).forEach(
                   ([key]) => {
                     const folderName = key.split(/[(\\)?(/)?]/gm).slice(0);
@@ -208,16 +232,16 @@ const ObsEditor = () => {
   }, [obsNavigation]);
 
   useEffect(() => {
-    if (isElectron()) {
-      readContent();
-    }
+    readContent();
   }, [readContent]);
+
   useEffect(() => {
     if (loadData === true) {
       readContent();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadData]);
+
   return (
     <Editor callFrom="obs">
       {mdData

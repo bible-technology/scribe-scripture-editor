@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { Combobox } from '@headlessui/react';
 import PropTypes from 'prop-types';
 import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
-import { useTranslation } from 'react-i18next';
 
 function CustomMultiComboBox({
-  selectedList, setSelectedList, customData, placeholder = 'Select Language', filterParams = 'name', multiSelect = false, dropArrow = false, showLangCode = { show: false, langkey: 'lc' },
+  selectedList, setSelectedList, customData, filterParams = 'name', multiSelect = false, dropArrow = false, showLangCode = { show: false, langkey: 'lc' },
 }) {
-  const { t } = useTranslation();
   let filteredData = [];
   const [query, setQuery] = useState('');
   // eslint-disable-next-line no-unused-vars
@@ -34,7 +32,7 @@ function CustomMultiComboBox({
                   className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                   // displayValue={(language) => language?.ang}
                   displayValue={(selectedList) => `${selectedList.length > 0 ? `${selectedList[0][filterParams]}${multiSelect ? '... click for more' : '' }` : ''}`}
-                  placeholder={placeholder === 'Select Language' ? t('label-lang') : ''}
+                  placeholder="Select Language"
                   onFocus={() => !open && setIsActive(true)}
                   onBlur={() => setIsActive(false)}
                   onChange={(event) => setQuery(event.target.value)}

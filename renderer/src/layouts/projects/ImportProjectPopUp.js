@@ -6,7 +6,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import {
  FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import localforage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import { SnackBar } from '@/components/SnackBar';
