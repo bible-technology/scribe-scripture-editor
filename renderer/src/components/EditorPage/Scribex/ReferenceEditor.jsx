@@ -7,6 +7,7 @@ import SaveIndicator from '@/components/Loading/SaveIndicator';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
+import ReferenceRecursiveBlock from './ReferenceRecursiveBlock';
 
 export default function ReferenceEditor(props) {
   const {
@@ -90,6 +91,14 @@ export default function ReferenceEditor(props) {
       editable,
       preview,
     },
+		components: {
+			block: (__props) =>
+				ReferenceRecursiveBlock({
+					htmlPerf,
+					sequenceIds,
+					...__props,
+				}),
+		},
     decorators: {},
     verbose,
     handlers,
