@@ -264,6 +264,7 @@ export default function ProjectList() {
                                                           type="button"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group flex rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                                          aria-label="star-edit-project"
                                                           onClick={() => editproject(project)}
                                                         >
                                                           {t('btn-edit')}
@@ -276,6 +277,7 @@ export default function ProjectList() {
                                                           type="button"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                                          aria-label="star-export-project"
                                                           onClick={() => openExportPopUp(project)}
                                                         >
                                                           {t('btn-export')}
@@ -288,6 +290,7 @@ export default function ProjectList() {
                                                           type="button"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                                          aria-label="star-archive-project"
                                                           onClick={() => {
                                                             archiveProject(project, project.name);
                                                           }}
@@ -419,9 +422,9 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
-                                                          aria-label="edit-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                                          aria-label="edit-project"
                                                           onClick={() => editproject(project)}
                                                         >
                                                           {t('btn-edit')}
@@ -432,6 +435,7 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
+                                                          aria-label="export-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                                           onClick={() => openExportPopUp(project)}
@@ -449,6 +453,7 @@ export default function ProjectList() {
                                                           onClick={() => {
                                                             archiveProject(project, project.name);
                                                           }}
+                                                          aria-label="archive-project"
                                                         >
                                                           {project.isArchived === true ? t('label-restore') : t('label-archive')}
                                                         </button>

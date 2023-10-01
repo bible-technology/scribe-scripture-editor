@@ -72,7 +72,7 @@ export default function TopMenuBar() {
       >
         {() => (
           <>
-            <button className="h-full px-5 border-r border-gray-200" title={t('label-back')} type="button" onClick={() => goToProjectPage()}>
+            <button id="back-button" className="h-full px-5 border-r border-gray-200" title={t('label-back')} type="button" onClick={() => goToProjectPage()}>
               <ArrowLeftIcon className="h-6 w-6" />
             </button>
             <div className="h-full w-20 grid justify-items-center items-center border-r border-gray-200 hover:text-primary">

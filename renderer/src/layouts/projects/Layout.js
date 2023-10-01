@@ -97,6 +97,7 @@ export default function ProjectsLayout(props) {
                         className={`flex text-white ml-5 font-bold text-xs px-3 py-2 rounded-full
                                     leading-3 tracking-wider uppercase ${showArchived ? 'bg-primary' : 'bg-red-600'} items-center`}
                         type="button"
+                        aria-label="archive-active-button"
                         onClick={toggleArchive}
                       >
 

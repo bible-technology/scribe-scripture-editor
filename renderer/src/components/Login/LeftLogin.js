@@ -207,6 +207,7 @@ const LeftLogin = () => {
             <button
               type="button"
               onClick={openModal}
+              id="view-more"
               className={`
                                      ${isOpen ? '' : 'text-opacity-90'
               } text-white bg-black w-48 text-xs lg:w-72 sm:w-52 py-[12px] flex items-center justify-center text-md font-bold rounded-b-[10px] sm:text-sm`}
@@ -247,6 +248,7 @@ const LeftLogin = () => {
                     <Tab.Group onChange={() => setShowArchived((value) => !value)}>
                       <Tab.List className="flex space-x-0 rounded-xl">
                         <Tab
+                          id="active-tab"
                           className={({ selected }) => classNames(
                             'w-full text-md items-center justify-center outline-none font-bold py-4 leading-5 rounded-t-lg',
                             '',
@@ -258,6 +260,7 @@ const LeftLogin = () => {
                           Active
                         </Tab>
                         <Tab
+                          id="archived-tab"
                           className={({ selected }) => classNames(
                           'w-full text-md items-center justify-center outline-none font-bold py-4 leading-5 rounded-t-lg',
                           selected
@@ -271,7 +274,7 @@ const LeftLogin = () => {
                       </Tab.List>
                       <Tab.Panels>
                         <Tab.Panel className="relative overflow-y-auto h-[60vh] p-5">
-                          <div className="grid grid-cols-2" id="active-tab">
+                          <div className="grid grid-cols-2" id="active-tab-content">
                             {sortedUsers.filter(filterUsers).map((user) => (
                               <div className="flex items-center" key={user.username}>
                                 <div
@@ -325,6 +328,7 @@ const LeftLogin = () => {
           <button
             onClick={openAccountModal}
             type="button"
+            aria-label="create-new-account"
             className="mt-16 mb-28  w-48 lg:w-72 sm:w-52 py-3 font-bold uppercase flex items-center text-xs justify-center  text-white bg-primary rounded  shadow sm:text-xs"
           >
             Create New Account

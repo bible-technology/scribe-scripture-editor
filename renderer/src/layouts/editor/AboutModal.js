@@ -87,6 +87,7 @@ export default function AboutModal(props) {
                         onClick={() => setTabNumber(0)}
                         role="button"
                         tabIndex="0"
+                        aria-label="about-description"
                         className={`flex items-center justify-center p-2 leading-6 text-sm text-black hover:text-primary uppercase tracking-wide font-bold border-0 border-b-4 ${tabNumber === 0 ? 'border-primary' : 'border-transparent hover:border-black'}`}
                       >
                         <InformationCircleIcon

@@ -51,10 +51,11 @@ export const showLoginPage = async (fs, folder, userName, json, file, window, ex
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
-export const createUserValidation = async (window, expect) => {
-  await window.getByRole('button', { name: 'Create New Account' }).click()
+export const userValidation = async (window, expect) => {
+  expect(await window.locator('//*[@aria-label="create-new-account"]')).toBeVisible()
+  await window.locator('//*[@aria-label="create-new-account"]').click()
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
-  await window.getByPlaceholder('Username').fill('jo')
+  await window.locator('//input[@placeholder="Username"]').fill('jo')
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
   const lengthError = await window.locator('//*[@id="show-error"]')
@@ -74,7 +75,7 @@ export const createProjectValidation = async (window, expect) => {
 /* function for creating a project for obs and audio */
 export const createProjects = async (window, expect, projectname, type, description, abb) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
-  await window.getByRole('link', { name: 'new' }).click()
+  await window.locator('//a[@aria-label="new"]').click()
   await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
   await window.locator('//button[@aria-label="open-popover"]').click()
   await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
@@ -164,16 +165,17 @@ export const checkProjectName = async (window, expect, name) => {
 }
 
 export const checkNotification = async (window, expect) => {
-  await window.getByRole('button', { name: "notification-button" }).click()
+  await window.locator('//*[@aria-label="notification-button"]').click()
   const title = await window.innerText('[aria-label=notification-title]');
   expect(title).toBe('NOTIFICATIONS');
-  await window.getByRole('button', { name: "close-notification" }).click()
+  await window.locator('//*[@aria-label="close-notification"]').click()
   const editorpane = await window.innerText('[aria-label=editor-pane]');
   expect(editorpane).toBe('EDITOR');
 }
 
 export const goToProjectPage = async (window, expect) => {
-  await window.getByRole('button', { name: "Back" }).click();
+  expect(await window.locator('//*[@id="back-button"]')).toBeVisible()
+  await window.locator('//*[@id="back-button"]').click();
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
   await window.waitForTimeout(1000)
@@ -192,10 +194,10 @@ export const exportProject = async (window, expect, projectname) => {
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.waitForTimeout(1000)
       await window.locator('.pl-5 > div > div').click()
-      await window.getByRole('menuitem', { name: "Export" }).click()
+      await window.locator('//*[@aria-label="export-project"]').click()
       await expect(window.locator('input[name="location"]')).toBeVisible()
       await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
-      await window.getByRole('button', { name: "Export" }).click()
+      await window.locator('//*[@aria-label="project-export"]').click()
       await window.waitForTimeout(2000)
       const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
       expect(await notifyMe === true)
@@ -219,20 +221,21 @@ export const archivedProjects = async (window, expect, projectname) => {
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.waitForTimeout(1000)
       await window.locator('.pl-5 > div > div').click()
-      await window.getByRole('menuitem', { name: 'Archive' }).click()
+      await window.locator('//*[@aria-label="archive-project"]').click()
       expect(await rows.count()).toBe(4)
-      await window.getByRole('button', { name: 'Archived' }).click()
+      await window.locator('//*[@aria-label="archive-active-button"]').click()
       const projectName = await window.innerText(`//div[@id="${projectname}"]`)
       expect(projectName).toBe(projectname);
-      await window.getByRole('button', { name: 'Active' }).click()
-      const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-      expect(title).toBe('Projects');
+      
     }
   }
+  await window.locator('//*[@aria-label="archive-active-button"]').click()
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
 }
 
 export const unarchivedProjects = async (window, expect, projectname) => {
-  await window.getByRole('button', { name: 'Archived' }).click()
+  await window.locator('//*[@aria-label="archive-active-button"]').click()
   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-unstar"]')
@@ -244,13 +247,13 @@ export const unarchivedProjects = async (window, expect, projectname) => {
       expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
-      await window.getByRole('menuitem', { name: 'Restore' }).click()
+      await window.locator('//*[@aria-label="archive-project"]').click()
       expect(await rows.count()).toBe(2)
-      const title = await window.getByLabel('projects').textContent()
+      const title = await window.locator('//*[@aria-label="projects"]').textContent()
       expect(await title).toBe("Archived projects")
     }
   }
-  await window.getByRole('button', { name: 'Active' }).click()
+  await window.locator('//*[@aria-label="archive-active-button"]').click()
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 }
@@ -266,32 +269,48 @@ export const goToEditProject = async (window, expect, projectName) => {
     if (await tds.nth(1).textContent() === projectName) {
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.locator('[aria-label=unstar-menu-project]').click()
-      await window.getByRole('menuitem', { name: "edit-project" }).click()
+      await window.locator('//*[@aria-label="edit-project"]').click()
       const text = await window.innerText('//*[@id="__next"]/div/div[2]/header/div/div[1]/div/h1')
       await expect(text).toBe('EDIT PROJECT')
     }
   }
 }
 
-export const changeLanguages = async (window, expect, projectName, searchLangauge, selectLanguage) => {
+export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible()
+  await window.locator('//*[@aria-label="user-profile"]').click()
+  await window.getByRole('button', { name: fromLanguage }).click()
+  await window.getByRole('option', { name: toLanguage }).click()
+  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible()
+  await window.locator('//*[@id="save-profile"]').click()
+}
+
+
+
+export const projectTargetLanguage = async (window, expect, projectName, searchLangauge, selectLanguage) => {
   await goToEditProject(window, expect, projectName)
-  expect(await window.getByPlaceholder('Language'))
-  await window.getByPlaceholder('Language').fill(searchLangauge)
-  await window.getByRole('option', { name: selectLanguage }).click()
+  expect(await window.locator('//*[@aria-label="custom-dropdown"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-dropdown"]').fill(searchLangauge)
+  await window.locator(`//*[@aria-label="${selectLanguage}"]`).click()
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2000)
   expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
+  const rows = body.locator('tr')
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === projectName) {
-      // expecting persian language
-      expect(await tds.nth(2).textContent()).toBe('English')
+      // expecting language
+      expect(await tds.nth(2).textContent()).toBe(selectLanguage)
     }
   }
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
 }
 
 export const userProfileValidaiton = async (window, expect) => {
@@ -305,7 +324,7 @@ export const userProfileValidaiton = async (window, expect) => {
   await window.locator('input[name="organization"]').fill("v")
   await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
   await window.locator('input[name="selectedregion"]').fill("I")
-  await window.getByRole('button', { name: "Save" }).click()
+  await window.locator('//*[@id="save-profile"]').click()
   const firstLastNameError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[2]/span')
   expect(await firstLastNameError).toBe('The input has to be between 2 and 15 characters long')
   const emailError = await window.textContent('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[3]/span')
@@ -317,16 +336,19 @@ export const userProfileValidaiton = async (window, expect) => {
 }
 
 export const signOut = async (window, expect) => {
-  await window.getByRole('button', { name: "Open user menu" }).click()
-  await window.getByRole('menuitem', { name: "Sign out" }).click()
-  await window.waitForTimeout(2000)
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await window.locator('//*[@aria-label="signout"]').click()
+  await window.waitForTimeout(1000)
   const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
   await expect(welcome).toBe("Welcome!")
+
 }
 
 export const showActiveUsers = async (window, expect) => {
-  expect(await window.getByRole('button', { name: 'View More' })).toBeVisible()
-  await window.getByRole('button', { name: 'View More' }).click()
-  expect(await window.getByRole('tab', { name: 'Active' })).toBeVisible()
-  await window.getByRole('tab', { name: 'Active' }).click()
+  expect(await window.locator('//*[@id="view-more"]')).toBeVisible()
+  await window.locator('//*[@id="view-more"]').click()
+  const active = await window.locator('//*[@id="active-tab"]').textContent()
+  expect(await active).toBe("Active")
 }

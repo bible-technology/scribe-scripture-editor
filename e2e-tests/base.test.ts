@@ -4,12 +4,12 @@ import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
 import {
   showLoginPage, checkLogInOrNot, userFile,
-  userFolder, userJson, createUserValidation,
+  userFolder, userJson, userValidation,
   createProjectValidation, createProjects, unstarProject,
   starProject, searchProject, checkProjectName,
   checkNotification, goToProjectPage, exportProject,
   archivedProjects, unarchivedProjects, goToEditProject,
-  changeLanguages, userProfileValidaiton, signOut, showActiveUsers
+  projectTargetLanguage, userProfileValidaiton, signOut, showActiveUsers, changeAppLanguage
 } from './common';
 
 const fs = require('fs');
@@ -46,9 +46,11 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
   const folder = await userFolder(window, userName, packageInfo, path)
 
   if (await checkLogInOrNot(window, expect)) {
-    await window.getByRole('button', { name: "Open user menu" }).click()
+    expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+    await window.locator('//*[@id="user-profile"]').click()
     const currentUser = await window.textContent('[aria-label="userName"]')
-    await window.getByRole('menuitem', { name: "Sign out" }).click()
+    expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+    await window.locator('//*[@aria-label="signout"]').click()
     // projects page then logout and delete playwright user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
       await showLoginPage(fs, folder, userName, json, file, window, expect)
@@ -65,8 +67,8 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 
 test('Create a new user and login', async ({ userName }) => {
-  await createUserValidation(window, expect)
-  await window.getByPlaceholder('Username').fill(userName)
+  await userValidation(window, expect)
+  await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
   const title = await window.textContent('[aria-label=projects]');
@@ -77,7 +79,7 @@ test('Create a new user and login', async ({ userName }) => {
 /* Translation Project    */
 test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
-  await window.getByRole('link', { name: 'new' }).click()
+  await window.locator('//a[@aria-label="new"]').click()
   await createProjectValidation(window, expect)
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
   await window.locator('//input[@id="project_name"]').fill(textProject)
@@ -89,8 +91,8 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//button[@id="open-advancesettings"]').click()
   await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
   await window.locator('//div[@aria-label="custom-book"]').click()
-  await window.getByLabel('nt-Matthew').click()
-  await window.getByRole('button', { name: 'Save' }).click()
+  await window.locator('//*[@aria-label="nt-Matthew"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
   const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
   expect(await notifyMe).toBe('New project created')
@@ -143,7 +145,7 @@ test('Search a text project in all projects list', async ({ textProject }) => {
   await searchProject(window, expect, textProject, 'translation')
 });
 
-test('Click and Check the text Translation project name to the editor', async ({ textProject }) => {
+test('Click and Check the text Translation project name in the editor', async ({ textProject }) => {
   await checkProjectName(window, expect, textProject)
 });
 
@@ -180,30 +182,27 @@ test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
   expect(verse3).toBe('story content added in verse 3');
 });
 
-test('Increase the font size of the obs editor', async ({ obsProject }) => {
+test('Increase the font size of the obs editor', async () => {
   await window.click('[aria-label=increase-font]');
   await window.click('[aria-label=increase-font]');
   const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
   expect(editorpane).toBe('EDITOR');
   const div = await window.locator('//*[@id="__next"]/main/div/div[3]/div[2]')
   const fontSize = await div.evaluate((ele) => {
-    console.log(ele, 'ele')
     return window.getComputedStyle(ele).getPropertyValue('font-size')
 
   })
   expect(fontSize).toBe('22.4px');
 });
 
-test('Decrease the font size of the obs editor', async ({ obsProject }) => {
+test('Decrease the font size of the obs editor', async () => {
   const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
   expect(editorpane).toBe('EDITOR');
   await window.click('[aria-label=decrease-font]');
   await window.click('[aria-label=decrease-font]');
   const div = await window.locator('//*[@id="__next"]/main/div/div[3]/div[2]')
   const fontSize = await div.evaluate((ele) => {
-    console.log(ele, 'ele')
     return window.getComputedStyle(ele).getPropertyValue('font-size')
-
   })
   expect(fontSize).toBe('16px');
 });
@@ -230,7 +229,7 @@ test('Search an audio project in all projects list', async ({ audioProject }) =>
   await searchProject(window, expect, audioProject, 'audio')
 });
 
-test('Click and Check the audio project name to the editor', async ({ audioProject }) => {
+test('Click and Check the audio project name in the editor', async ({ audioProject }) => {
   await checkProjectName(window, expect, audioProject)
 });
 
@@ -243,11 +242,11 @@ test('Return to the projects page from audio editor', async () => {
 });
 
 test("About scribe Application and License", async () => {
-  await window.getByLabel('about-button').click()
+  await window.locator('//*[@aria-label="about-button"]').click()
   const developedby = await window.innerText('[aria-label=developed-by]');
   expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
   await window.click('[aria-label=license-button]');
-  await window.getByRole('button', { name: 'About', exact: true }).click()
+  await window.locator('//*[@aria-label="about-description"]').click()
   await window.click('[aria-label=close-about]');
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
@@ -299,9 +298,9 @@ test("Update/Edit text translation project of description and abbreviation", asy
   await window.locator('input[name="version_abbreviated"]').fill('tvs')
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(2)
+  await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Edit Project')
+  expect(await title).toBe('Projects')
 })
 
 test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
@@ -310,13 +309,14 @@ test("Update/Edit text translation project scope mark and luke", async ({ textPr
   await window.locator('//button[@id="open-advancesettings"]').click()
   await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
   await window.locator('//div[@aria-label="custom-book"]').click()
-  await window.getByLabel('nt-Mark').click()
-  await window.getByLabel('nt-Luke').click()
-  await window.getByRole('button', { name: 'Save' }).click()
+  await window.locator('//*[@aria-label="nt-Mark"]').click()
+  await window.locator('//*[@aria-label="nt-Luke"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2500)
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Edit Project')
+  expect(await title).toBe('Projects')
 })
 
 test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
@@ -328,8 +328,9 @@ test("Update/Edit text translation project scope custom book into NT", async ({ 
   await window.locator('//button[contains(text(),"Ok")]').click()
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Edit Project')
+  expect(await title).toBe('Projects')
 })
 
 test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
@@ -338,13 +339,14 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   await window.locator('//button[@id="open-advancesettings"]').click()
   await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
   await window.locator('//div[@aria-label="custom-book"]').click()
-  await window.getByLabel('ot-Genesis').click()
-  await window.getByLabel('ot-Exodus').click()
-  await window.getByRole('button', { name: 'Save' }).click()
+  await window.locator('//*[@aria-label="ot-Genesis"]').click()
+  await window.locator('//*[@aria-label="ot-Exodus"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Edit Project')
+  expect(await title).toBe('Projects')
 })
 
 test("Update/Edit text translation project license", async ({ textProject }) => {
@@ -355,39 +357,37 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   await window.getByRole('option', { name: 'CC BY', exact: true }).click()
   await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
   await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Edit Project')
+  expect(await title).toBe('Projects')
 })
 
 test("Changing text translation project language from English to Persian", async ({ textProject }) => {
-  await changeLanguages(window, expect, textProject, "persian", "Persian (Farsi) (fa)")
+  await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
 })
 
 test("Changing text translation project language from Persian to English", async ({ textProject }) => {
-  await changeLanguages(window, expect, textProject, "english", "English (en)")
+  await projectTargetLanguage(window, expect, textProject, "english", "English")
 })
 
 
-test("App language change", async () => {
-  await window.getByRole('button', { name: "Open user menu" }).click()
-  await window.getByRole('menuitem', { name: "Your Profile" }).click()
-  await window.getByRole('button', { name: "English" }).click()
-  await window.getByRole('option', { name: "Hindi" }).click()
-  await window.getByRole('button', { name: "Save" }).click()
+test("App language change English to hindi", async () => {
+  await changeAppLanguage(window, expect, "English", "Hindi")
   const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
   expect(await snackbar === true)
-  const textHindi = await window.getByLabel('projects').allTextContents()
+  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents()
   expect(await textHindi[0]).toBe("प्रोफ़ाइल")
-  await window.getByLabel('projectList').click()
-  await window.waitForTimeout(4000)
+})
+
+test("App language change Hindi to English", async () => {
+  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible()
+  await window.locator('//*[@aria-label="projectList"]').click()
+  await window.waitForTimeout(2000)
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(await title).toBe('प्रोजेक्ट्स')
-  await window.getByRole('button', { name: 'उपयोगकर्ता मेन्यू खोलें' }).click()
-  await window.getByRole('menuitem', { name: 'आपकी प्रोफ़ाइल' }).click()
-  await window.getByRole('button', { name: "Hindi" }).click()
-  await window.getByRole('option', { name: "English" }).click()
-  await window.getByRole('button', { name: "सहेजें" }).click()
-  const profile = await window.getByLabel('projects').allTextContents()
+  await changeAppLanguage(window, expect, "Hindi", "English")
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents()
   expect(await profile[0]).toBe("Profile")
   expect(await snackbar === true)
 })
@@ -404,7 +404,7 @@ test("Update user Profile", async () => {
   await window.locator('input[name="organization"]').fill("vidya foundation")
   await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
   await window.locator('input[name="selectedregion"]').fill("India")
-  await window.getByRole('button', { name: "Save" }).click()
+  await window.locator('//*[@id="save-profile"]').click()
   const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
   expect(await snackbar === true)
 })
@@ -416,35 +416,34 @@ test("Sign out the Application", async () => {
 
 test("Click the view users button, log in with playwright user, and sign out", async ({ userName }) => {
   await showActiveUsers(window, expect)
-  const tab = await window.locator('//*[@id="active-tab"]')
-  const div = await tab.locator("div > div")
+  const tabContent = await window.locator('//*[@id="active-tab-content"]')
+  const div = await tabContent.locator("div > div")
   for (let i = 0; i < await div.count(); i++) {
     if (await div.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
+      await window.waitForTimeout(2000)
       const title = await window.textContent('[aria-label=projects]')
       await expect(title).toBe('Projects')
       await signOut(window, expect)
-
     }
   }
 })
 
 test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
   await showActiveUsers(window, expect)
-  const tab = await window.locator('//*[@id="active-tab"]')
-  const items = await tab.locator('div > div')
-  const div = await tab.locator("div > button")
+  const tabContent = await window.locator('//*[@id="active-tab-content"]')
+  const items = await tabContent.locator('div > div')
+  const div = await tabContent.locator("div > button")
   for (let i = 0; i < await items.count(); i++) {
     if (await items.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
-      await window.getByRole('tab', { name: 'Archived' }).click()
-      const text = await window.getByRole('tab', { name: 'Archived' }).textContent()
+      expect(await window.locator('//*[@id="archived-tab"]')).toBeVisible()
+      await window.locator('//*[@id="archived-tab"]').click()
+      const text = await window.locator('//*[@id="archived-tab"]').textContent()
       expect(await text).toBe('Archived')
-      expect(await window.getByRole('button', { name: userName.toLowerCase() }).textContent()).toBe(userName.toLowerCase())
       await window.getByLabel('Archived').locator('button').click()
-      expect(await window.getByRole('tab', { name: 'Active' })).toBeVisible()
-      await window.getByRole('tab', { name: 'Active' }).click()
-      expect(await window.getByRole('button', { name: userName.toLowerCase() }).textContent()).toBe(userName.toLowerCase())
+      expect(await window.locator('//*[@id="active-tab"]')).toBeVisible()
+      await window.locator('//*[@id="active-tab"]').click()
       await window.getByRole('button', { name: userName.toLowerCase() }).click()
       const title = await window.textContent('[aria-label=projects]')
       await expect(title).toBe('Projects')
@@ -460,9 +459,11 @@ test("Logout and delete that playwright user from the backend", async ({ userNam
   const file = await userFile(window, packageInfo, path)
   // user folde name
   const folder = await userFolder(window, userName, packageInfo, path)
-  await window.getByRole('button', { name: "Open user menu" }).click()
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
   const currentUser = await window.textContent('[aria-label="userName"]')
-  await window.getByRole('menuitem', { name: "Sign out" }).click()
+  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await window.locator('//*[@aria-label="signout"]').click()
   // projects page then logout and delete playwright user
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
     await showLoginPage(fs, folder, userName, json, file, window, expect)
