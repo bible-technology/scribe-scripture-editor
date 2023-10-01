@@ -226,7 +226,7 @@ export const archivedProjects = async (window, expect, projectname) => {
       await window.locator('//*[@aria-label="archive-active-button"]').click()
       const projectName = await window.innerText(`//div[@id="${projectname}"]`)
       expect(projectName).toBe(projectname);
-      
+
     }
   }
   await window.locator('//*[@aria-label="archive-active-button"]').click()
