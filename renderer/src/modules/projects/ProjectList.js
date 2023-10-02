@@ -71,6 +71,7 @@ export default function ProjectList() {
 
   const handleSelectProject = (event, projectName, projectId) => {
     logger.debug('ProjectList.js', 'In handleSelectProject');
+    console.log({ projectName });
     setSelectedProject(projectName);
     localforage.setItem('currentProject', `${projectName}_${projectId}`);
     router.push('/home');
@@ -125,7 +126,6 @@ export default function ProjectList() {
     }
     return false;
   }
-
   return (
     <>
       {callEditProject === false

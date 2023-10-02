@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ConflictSection from './ConflictSection';
 
 function ConflictEditor({
-  selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames,
+  selectedFileContent, setSelectedFileContent, selectedFileName, FileContentOrginal, setEnableSave, resolvedFileNames, conflictData,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
@@ -166,14 +166,23 @@ function ConflictEditor({
       {/* Content */}
       <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
         {selectedFileContent.map((content, index) => (
-          <div key={content.id} className="flex px-2 py-6 gap-4">
+          <div
+            key={content.id}
+            className={`flex px-2 py-6 gap-4
+            ${conflictData.data.incomingMeta.languages[0].scriptDirection?.toLowerCase() === 'rtl' ? 'flex-row-reverse' : 'flex-row'}`}
+          >
             {(index !== 0 && index !== selectedFileContent.length - 1) && (
               <div className="h-4 w-4 py-1 px-2 mt-1 flex items-center justify-center bg-primary rounded-full text-xxs text-white">
                 {index}
               </div>
             )}
 
-            <div className={` w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-8'} `}>
+            <div
+              className={` w-full ${(index === 0 || index === selectedFileContent.length - 1) && 'ml-8'}`}
+              style={{
+                direction: `${conflictData.data.incomingMeta.languages[0].scriptDirection?.toLowerCase() === 'rtl' ? 'rtl' : 'auto'}`,
+              }}
+            >
               <ConflictSection
                 text={
                     content?.title

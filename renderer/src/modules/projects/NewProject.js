@@ -293,7 +293,6 @@ export default function NewProject({ call, project, closeEdit }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [call]);
-
   return (
     <ProjectsLayout
       title={call === 'new' ? t('new-project-page') : t('edit-project')}

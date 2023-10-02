@@ -2,6 +2,8 @@
 require('@electron/remote/main').initialize();
 const { join } = require('path');
 const { format } = require('url');
+const config = require("dotenv");
+config.config();
 
 // Packages
 const { BrowserWindow, app, ipcMain } = require('electron');

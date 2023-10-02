@@ -16,22 +16,21 @@ const MainPlayer = dynamic(
 );
 const SectionContainer = () => {
   const [editor, setEditor] = useState();
+
   useEffect(() => {
-    if (!editor) {
-      localforage.getItem('userProfile').then((value) => {
-        const username = value?.username;
-        localforage.getItem('currentProject').then((projectName) => {
-          const path = require('path');
-          const fs = window.require('fs');
-          const newpath = localStorage.getItem('userPath');
-          const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
-          const data = fs.readFileSync(metaPath, 'utf-8');
-          const metadata = JSON.parse(data);
-          setEditor(metadata.type.flavorType.flavor.name);
-        });
+    localforage.getItem('userProfile').then((value) => {
+      const username = value?.username;
+      localforage.getItem('currentProject').then((projectName) => {
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
+        const data = fs.readFileSync(metaPath, 'utf-8');
+        const metadata = JSON.parse(data);
+        setEditor(metadata.type.flavorType.flavor.name);
       });
-    }
-  });
+    });
+  }, [editor]);
 
   const { usfmData, bookAvailable } = useReadUsfmFile();
   const { state, actions } = useContext(ScribexContext);

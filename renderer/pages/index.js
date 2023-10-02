@@ -6,6 +6,7 @@ const Home = dynamic(
   () => import('../src/Home'),
   { ssr: false },
 );
+
 const index = () => (
   <>
     <Meta />

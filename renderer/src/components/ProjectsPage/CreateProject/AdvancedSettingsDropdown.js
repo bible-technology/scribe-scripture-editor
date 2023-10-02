@@ -5,12 +5,14 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import localforage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import CustomList from '@/modules/projects/CustomList';
+import { isElectron } from '@/core/handleElectron';
 import { OT, NT } from '../../../lib/CanonSpecification';
 import { ProjectContext } from '../../context/ProjectContext';
 import CustomCanonSpecification from './CustomCanonSpecification';
 import LicencePopover from './LicencePopover';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
+import { newPath, sbStorageDownload } from '../../../../../supabase';
 
 function BookNumberTag(props) {
   const { children } = props;
@@ -88,49 +90,92 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   // console.log('canon spec : ', { canonSpecification });
   // selectNew variable is used to track whether its a new selection or loading from the list
   const setALicense = (licenceTitle, selectNew) => {
-    let title = licenceTitle;
-    let myLicence = { };
-    const fs = window.require('fs');
-    if ((title === 'Custom' || !title) && !selectNew) {
-      myLicence.title = 'Custom';
-      myLicence.locked = false;
-      myLicence.id = 'Other';
-      // To support the Projects of 0.3.0 version of burrito
-      if (project.copyright?.fullStatementPlain) {
-        myLicence.licence = project.copyright?.fullStatementPlain?.en;
-      } else if (project.copyright?.shortStatements) {
-        myLicence.licence = project.copyright?.shortStatements[0]?.statement;
+    if (isElectron()) {
+      let title = licenceTitle;
+      let myLicence = {};
+      const fs = window.require('fs');
+      if ((title === 'Custom' || !title) && !selectNew) {
+        myLicence.title = 'Custom';
+        myLicence.locked = false;
+        myLicence.id = 'Other';
+        // To support the Projects of 0.3.0 version of burrito
+        if (project.copyright?.fullStatementPlain) {
+          myLicence.licence = project.copyright?.fullStatementPlain?.en;
+        } else if (project.copyright?.shortStatements) {
+          myLicence.licence = project.copyright?.shortStatements[0]?.statement;
+        } else {
+          const path = require('path');
+          const newpath = localStorage.getItem('userPath');
+          const id = Object.keys(project.identification.primary.scribe);
+          localforage.getItem('userProfile').then((value) => {
+            logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
+            const folder = path.join(newpath, packageInfo.name, 'users', value?.username, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
+            if (fs.existsSync(folder)) {
+              fs.readFile(folder, 'utf8', (err, data) => {
+                myLicence.licence = data;
+              });
+            } else {
+              const licensefile = require('../../../lib/license/Custom.md');
+              // console.log(myLicence, licensefile.default);
+              myLicence.licence = licensefile.default;
+            }
+          });
+        }
       } else {
-        const path = require('path');
-        const newpath = localStorage.getItem('userPath');
-        const id = Object.keys(project.identification.primary.scribe);
-        localforage.getItem('userProfile').then((value) => {
-          logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
-          const folder = path.join(newpath, packageInfo.name, 'users', value?.username, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
-          if (fs.existsSync(folder)) {
-            fs.readFile(folder, 'utf8', (err, data) => {
-              myLicence.licence = data;
-            });
-          } else {
-            const licensefile = require('../../../lib/license/Custom.md');
-            // console.log(myLicence, licensefile.default);
-            myLicence.licence = licensefile.default;
-          }
-        });
+        // license names are being updated by a prefix 'CC' so to avoid error with previous versions
+        // checking whether the prefix is available or not
+        if (!title.match(/CC/g) && title !== 'Custom') {
+          const str = `CC ${title}`;
+          title = str.replace(/_/gm, '-');
+        }
+        myLicence = licenceList.find((item) => item.title === title);
+        // eslint-disable-next-line import/no-dynamic-require
+        const licensefile = require(`../../../lib/license/${title}.md`);
+        myLicence.licence = licensefile.default;
       }
+      setCopyRight(myLicence);
     } else {
-      // license names are being updated by a prefix 'CC' so to avoid error with previous versions
-      // checking whether the prefix is available or not
-      if (!title.match(/CC/g) && title !== 'Custom') {
-        const str = `CC ${title}`;
-        title = str.replace(/_/gm, '-');
+      let title = licenceTitle;
+      let myLicence = {};
+      if ((title === 'Custom' || !title) && !selectNew) {
+        myLicence.title = 'Custom';
+        myLicence.locked = false;
+        myLicence.id = 'Other';
+        // To support the Projects of 0.3.0 version of burrito
+        if (project.copyright?.fullStatementPlain) {
+          myLicence.licence = project.copyright?.fullStatementPlain?.en;
+        } else if (project.copyright?.shortStatements) {
+          myLicence.licence = project.copyright?.shortStatements[0]?.statement;
+        } else {
+          const path = require('path');
+          const id = Object.keys(project.identification.primary.scribe);
+          localforage.getItem('userProfile').then(async (value) => {
+            logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
+            const folder = path.join(newPath, value?.user?.email, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
+            const { data } = await sbStorageDownload(folder);
+            if (data) {
+              myLicence.licence = data;
+            } else {
+              const licensefile = require('../../../lib/license/Custom.md');
+              // console.log(myLicence, licensefile.default);
+              myLicence.licence = licensefile.default;
+            }
+          });
+        }
+      } else {
+        // license names are being updated by a prefix 'CC' so to avoid error with previous versions
+        // checking whether the prefix is available or not
+        if (!title.match(/CC/g) && title !== 'Custom') {
+          const str = `CC ${title}`;
+          title = str.replace(/_/gm, '-');
+        }
+        myLicence = licenceList.find((item) => item.title === title);
+        // eslint-disable-next-line import/no-dynamic-require
+        const licensefile = require(`../../../lib/license/${title}.md`);
+        myLicence.licence = licensefile.default;
       }
-      myLicence = licenceList.find((item) => item.title === title);
-      // eslint-disable-next-line import/no-dynamic-require
-      const licensefile = require(`../../../lib/license/${title}.md`);
-      myLicence.licence = licensefile.default;
+      setCopyRight(myLicence);
     }
-    setCopyRight(myLicence);
   };
   const loadLicence = () => {
     logger.debug('AdvancedSettingsDropdown.js', 'In loadLicence for loading the selected licence');
@@ -153,11 +198,11 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
       if (canonSpecification.title === 'Other') {
         value.currentScope = canonSpecification.currentScope;
       } else {
-       value.currentScope = currentScope.currentScope;
+        value.currentScope = currentScope.currentScope;
       }
     } else if (canonSpecification.title === 'Other' && value.title === 'Other') {
-        value.currentScope = canonSpecification.currentScope;
-      }
+      value.currentScope = canonSpecification.currentScope;
+    }
     setcanonSpecification(value);
     openBibleNav('edit');
   };
@@ -177,30 +222,30 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   return (
     <>
       <div>
-        { projectType !== 'OBS'
+        {projectType !== 'OBS'
           && (
-          <button
-            className="min-w-max flex justify-between items-center pt-3 shadow tracking-wider leading-none h-10 px-4 py-2 w-96 text-sm font-medium text-black bg-gray-100 rounded-sm hover:bg-gray-200 focus:outline-none"
-            onClick={handleClick}
-            type="button"
-            id="open-advancesettings"
-          >
-            <h3>{t('btn-advance-settings')}</h3>
-            {isShow
-              ? (
-                <ChevronDownIcon
-                  className="h-5 w-5 text-primary"
-                  aria-hidden="true"
-                />
-              )
-              : (
-                <ChevronUpIcon
-                  className="h-5 w-5 text-primary"
-                  aria-hidden="true"
-                />
-            )}
-          </button>
-        )}
+            <button
+              className="min-w-max flex justify-between items-center pt-3 shadow tracking-wider leading-none h-10 px-4 py-2 w-96 text-sm font-medium text-black bg-gray-100 rounded-sm hover:bg-gray-200 focus:outline-none"
+              onClick={handleClick}
+              type="button"
+              id="open-advancesettings"
+            >
+              <h3>{t('btn-advance-settings')}</h3>
+              {isShow
+                ? (
+                  <ChevronDownIcon
+                    className="h-5 w-5 text-primary"
+                    aria-hidden="true"
+                  />
+                )
+                : (
+                  <ChevronUpIcon
+                    className="h-5 w-5 text-primary"
+                    aria-hidden="true"
+                  />
+                )}
+            </button>
+          )}
         {!isShow && projectType !== 'OBS'
           && (
             <div>

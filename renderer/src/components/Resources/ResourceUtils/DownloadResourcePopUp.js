@@ -14,9 +14,10 @@ import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { isElectron } from '@/core/handleElectron';
 import CustomMultiComboBox from './CustomMultiComboBox';
 import langJson from '../../../lib/lang/langNames.json';
-import { handleDownloadResources } from './createDownloadedResourceSB';
+import { handleDownloadResources, handleDownloadWebResources } from './createDownloadedResourceSB';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 
@@ -139,16 +140,16 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       });
       const fetchedDataJson = await fetchedData.json();
       logger.debug('DownloadResourcePopUp.js', 'generating language based resources after fetch');
-        fetchedDataJson.data.forEach((element) => {
-          element.isChecked = false;
-          if (element.language in temp_resource) {
-            temp_resource[element.language].push(element);
-          } else {
-            temp_resource[element.language] = [element];
-          }
-        });
-        setresourceData(temp_resource);
-        setLoading(false);
+      fetchedDataJson.data.forEach((element) => {
+        element.isChecked = false;
+        if (element.language in temp_resource) {
+          temp_resource[element.language].push(element);
+        } else {
+          temp_resource[element.language] = [element];
+        }
+      });
+      setresourceData(temp_resource);
+      setLoading(false);
     } catch (err) {
       logger.debug('DownloadResourcePopUp.js', 'Error on fetch content : ', err);
       setLoading(false);
@@ -232,7 +233,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
         // console.log('resource download started ---', selectedResourceCount);
         setDownloadStarted(true);
         const action = { setDownloadCount };
-        await handleDownloadResources(resourceData, selectResource, action)
+        isElectron() ? await handleDownloadResources(resourceData, selectResource, action) : await handleDownloadWebResources(resourceData, selectResource, action)
           .then(async (resolveResp) => {
             if (selectedResourceCount === resolveResp?.existing) {
               setOpenSnackBar(true);

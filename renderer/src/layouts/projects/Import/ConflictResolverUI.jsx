@@ -177,6 +177,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
                   FileContentOrginal={FileContentOrginal}
                   setEnableSave={setEnableSave}
                   resolvedFileNames={resolvedFileNames}
+                  conflictData={conflictData}
                 />
                 <div className="h-[6vh] w-full flex justify-end items-center pr-10 gap-5">
                   {conflictData?.data?.files?.filepaths?.length === resolvedFileNames?.length && (

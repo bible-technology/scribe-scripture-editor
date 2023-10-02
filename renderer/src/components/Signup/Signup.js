@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import * as logger from '../../logger';
 import useApi from './useApi';
 import CustomLogin from '../Login/CustomLogin'

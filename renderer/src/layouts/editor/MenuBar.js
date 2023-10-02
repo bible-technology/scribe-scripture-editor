@@ -5,7 +5,7 @@ import {
 import {
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -26,6 +26,7 @@ export default function TopMenuBar() {
       setOpenSideBar,
     },
   } = useContext(ProjectContext);
+
   const {
     state: {
       fontSize,
@@ -38,6 +39,7 @@ export default function TopMenuBar() {
   const [projectname, setprojectname] = useState(undefined);
 
   const { t } = useTranslation();
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -60,9 +62,10 @@ export default function TopMenuBar() {
     }
   };
   const goToProjectPage = async () => {
-    await saveReferenceResource();
+    saveReferenceResource();
     router.push('/projects');
   };
+
   return (
     <>
       <EditorSideBar isOpen={openSideBar} closeSideBar={closeSideBar} />

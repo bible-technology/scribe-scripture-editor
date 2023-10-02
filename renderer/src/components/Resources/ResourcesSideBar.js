@@ -22,10 +22,10 @@ export default function ResourcesSidebar({
   selectedProjectMeta,
 }) {
   const { t } = useTranslation();
-
   const handleClick = (id) => {
     setSelectResource(id);
   };
+
   useEffect(() => {
     if (!selectResource) {
       switch (selectedProjectMeta.type.flavorType.flavor.name) {
@@ -39,8 +39,8 @@ export default function ResourcesSidebar({
           setSelectResource('audio');
           break;
         default:
-        setSelectResource('bible');
-        break;
+          setSelectResource('bible');
+          break;
       }
       setTitle('Bible');
     }
@@ -137,22 +137,22 @@ export default function ResourcesSidebar({
             />
             <div className="pl-2">
               {resource.subCategory.length !== 0
-              && resource.subCategory.map(
-                (subCategory, categoryIdx) => {
-                  const { Icon, id, title } = subCategory;
-                  return (
-                    <ResourcesSideBarOption
-                      key={categoryIdx}
-                      Icon={Icon}
-                      resource={subCategory}
-                      handleClick={handleClick}
-                      selectedMenu={selectResource}
-                      setSelectedMenu={setSelectResource}
-                      setShowInput={setShowInput}
-                    />
-                  );
-                },
-              )}
+                && resource.subCategory.map(
+                  (subCategory, categoryIdx) => {
+                    const { Icon, id, title } = subCategory;
+                    return (
+                      <ResourcesSideBarOption
+                        key={categoryIdx}
+                        Icon={Icon}
+                        resource={subCategory}
+                        handleClick={handleClick}
+                        selectedMenu={selectResource}
+                        setSelectedMenu={setSelectResource}
+                        setShowInput={setShowInput}
+                      />
+                    );
+                  },
+                )}
             </div>
           </div>
         );
