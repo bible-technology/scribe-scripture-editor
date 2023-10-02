@@ -102,26 +102,26 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
                 >
                   {t('btn-ok')}
                 </button>
-                )
-              : (
-                <>
-                  <button
-                    type="button"
-                    className="w-40 h-10  bg-error leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                    onClick={() => closeBibleNav()}
-                  >
-                    {t('btn-cancel')}
-                  </button>
-                  <button
-                    type="button"
-                    id="save-canon"
-                    className="w-40 h-10  bg-success leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                    onClick={() => (handleNav === 'edit' ? editCanon() : saveCanon())}
-                  >
-                    {t('btn-save')}
-                  </button>
-                </>
-              )}
+              )
+                : (
+                  <>
+                    <button
+                      type="button"
+                      className="w-40 h-10  bg-error leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
+                      onClick={() => closeBibleNav()}
+                    >
+                      {t('btn-cancel')}
+                    </button>
+                    <button
+                      type="button"
+                      id="save-canon"
+                      className="w-40 h-10  bg-success leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
+                      onClick={() => (handleNav === 'edit' ? editCanon() : saveCanon())}
+                    >
+                      {t('btn-save')}
+                    </button>
+                  </>
+                )}
             </div>
           </div>
         </div>

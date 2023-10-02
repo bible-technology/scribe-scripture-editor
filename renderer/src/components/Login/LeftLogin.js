@@ -210,12 +210,12 @@ const LeftLogin = () => {
               id="view-more"
               className={`
                                      ${isOpen ? '' : 'text-opacity-90'
-              } text-white bg-black w-48 text-xs lg:w-72 sm:w-52 py-[12px] flex items-center justify-center text-md font-bold rounded-b-[10px] sm:text-sm`}
+                } text-white bg-black w-48 text-xs lg:w-72 sm:w-52 py-[12px] flex items-center justify-center text-md font-bold rounded-b-[10px] sm:text-sm`}
             >
               View More
             </button>
           </div>
-)}
+        )}
         <Transition
           appear
           show={isOpen}
@@ -262,8 +262,8 @@ const LeftLogin = () => {
                         <Tab
                           id="archived-tab"
                           className={({ selected }) => classNames(
-                          'w-full text-md items-center justify-center outline-none font-bold py-4 leading-5 rounded-t-lg',
-                          selected
+                            'w-full text-md items-center justify-center outline-none font-bold py-4 leading-5 rounded-t-lg',
+                            selected
                               ? ' text-error  bg-gray-200 '
                               : 'text-gray-400 hover:text-gray-500 border-b bg-white ',
                           )}
@@ -292,7 +292,7 @@ const LeftLogin = () => {
                                   <TrashIcon className="text-gray-500 h-5 w-5" />
                                 </button>
                               </div>
-                          ))}
+                            ))}
                           </div>
                         </Tab.Panel>
                         <Tab.Panel className="relative overflow-y-auto h-[60vh] p-5 ">
@@ -313,7 +313,7 @@ const LeftLogin = () => {
                                 </button>
 
                               </div>
-                          ))}
+                            ))}
                           </div>
                         </Tab.Panel>
                       </Tab.Panels>
@@ -386,7 +386,7 @@ const LeftLogin = () => {
                       </div>
                       {newOpen && (
                         <span id="show-error" className="text-red-500">{text}</span>
-                        )}
+                      )}
                       <div className="mt-8 flex gap-8 justify-end">
                         <button
                           type="button"

@@ -79,15 +79,15 @@ const UserProfile = (_username) => {
                           id="profile"
                           aria-label="user-profile"
                           className={classNames(
-                          active ? 'bg-gray-100' : '',
-                          'block px-4 py-2 text-sm text-gray-700',
-                        )}
+                            active ? 'bg-gray-100' : '',
+                            'block px-4 py-2 text-sm text-gray-700',
+                          )}
                         >
 
                           {item}
 
                         </Link>
-)
+                      )
                     )}
                   </Menu.Item>
                 ))}
@@ -102,15 +102,15 @@ const UserProfile = (_username) => {
                         role="button"
                         tabIndex={0}
                         className={classNames(
-                        active ? 'bg-gray-100' : '',
-                        'block px-4 py-2 text-sm text-gray-700',
-                      )}
+                          active ? 'bg-gray-100' : '',
+                          'block px-4 py-2 text-sm text-gray-700',
+                        )}
                       >
 
                         {t('btn-signout')}
 
                       </Link>
-)
+                    )
 
                   )}
                 </Menu.Item>
