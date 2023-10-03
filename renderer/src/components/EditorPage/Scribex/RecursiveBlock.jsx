@@ -115,8 +115,8 @@ export default function RecursiveBlock({
         addSequenceId,
         htmlPerf,
         onHtmlPerf,
-				onInput: props?.onInput,
-				options,
+        onInput: props?.onInput,
+        options,
       };
       component = <HtmlPerfEditor {..._props} />;
     }

@@ -91,14 +91,13 @@ export default function ReferenceEditor(props) {
       editable,
       preview,
     },
-		components: {
-			block: (__props) =>
-				ReferenceRecursiveBlock({
-					htmlPerf,
-					sequenceIds,
-					...__props,
-				}),
-		},
+    components: {
+      block: (__props) => ReferenceRecursiveBlock({
+          htmlPerf,
+          sequenceIds,
+          ...__props,
+        }),
+    },
     decorators: {},
     verbose,
     handlers,
