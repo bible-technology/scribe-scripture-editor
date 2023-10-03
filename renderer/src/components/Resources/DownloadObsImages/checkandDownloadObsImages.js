@@ -71,7 +71,7 @@ export const checkandDownloadObsImages = async () => {
     const obsImagePath = `${packageInfo.name}/common/${environment.OBS_IMAGE_DIR}`;
     const { data: exist } = await sbStorageList(obsImagePath);
     if (!exist) {
-      await createDirectory({path:obsImagePath});
+      await createDirectory({ path: obsImagePath });
     }
     const { data: filesInDir } = await sbStorageDownload(obsImagePath);
     console.log({ filesInDir });

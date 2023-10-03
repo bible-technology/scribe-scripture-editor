@@ -388,7 +388,7 @@ export const saveSupabaseProjectsMeta = async (projectMetaObj) => {
   const userProfile = await localforage.getItem('userProfile');
   const currentUser = userProfile.user.email;
   const status = [];
-  await createDirectory({path:`${newPath}/${currentUser}/projects`});
+  await createDirectory({ path: `${newPath}/${currentUser}/projects` });
   const projectDir = `${newPath}/${currentUser}/projects}`;
   let projectNameExists = false;
   let checkCanon = false;

@@ -33,7 +33,7 @@ export default async function readLocalResources(username, setSubMenuItems) {
     const parseData = [];
     const projectsDir = `${newPath}/${email}/resources`;
     const userResourceMetaPath = `${newPath}/${email}/resources`;
-    createDirectory({path:userResourceMetaPath});
+    createDirectory({ path: userResourceMetaPath });
     readResourceMetadata(projectsDir, userResourceMetaPath, setSubMenuItems, parseData);
   }
 }
