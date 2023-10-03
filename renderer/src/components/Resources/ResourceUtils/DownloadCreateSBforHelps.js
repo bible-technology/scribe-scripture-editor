@@ -153,10 +153,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
                 const { data: folderExist } = await sbStorageList(folder);
                 console.log({ folderExist });
                 if (!folderExist) {
-                    await createDirectory({path:folder});
+                    await createDirectory({ path: folder });
                 }
                 // writing zip to local
-                await createDirectory({path:`${folder}/${projectResource?.name}.zip}`,payload: Buffer.from(blob)});
+                await createDirectory({ path: `${folder}/${projectResource?.name}.zip}`, payload: Buffer.from(blob) });
 
                 // extract zip
                 const { data: filecontent, error: fileContentError } = await sbStorageDownload(`${folder}/${projectResource?.name}.zip}`);
@@ -170,10 +170,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
                 for (const key of keys) {
                     const item = result.files[key];
                     if (item.dir) {
-                        await createDirectory({path:`${folder}/${item.name}`});
+                        await createDirectory({ path: `${folder}/${item.name}` });
                     } else {
                         const bufferContent = Buffer.from(await item.async('arraybuffer'));
-                        await createDirectory({path:`${folder}/${item.name}`,payload: bufferContent});
+                        await createDirectory({ path: `${folder}/${item.name}`, payload: bufferContent });
                     }
                 }
 
@@ -181,7 +181,7 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
                     data.agOffline = true;
                     data.meta = projectResource;
                     data.lastUpdatedAg = moment().format();
-                    await createDirectory({path:`${folder}/${projectResource?.name}/metadata.json`, payload :JSON.stringify(data)});
+                    await createDirectory({ path: `${folder}/${projectResource?.name}/metadata.json`, payload: JSON.stringify(data) });
                 }).catch((err) => {
                     console.log('DownloadCreateSBforHelps.js', 'failed to save yml metadata.json : ', err);
                 });

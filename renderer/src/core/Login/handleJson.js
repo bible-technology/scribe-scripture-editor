@@ -171,7 +171,7 @@ export const handleJsonWeb = async (values) => {
       });
 
       console.log('handleJson.js', 'Successfully added new user to the existing list in file', { newUser });
-      await createDirectory({path:`${newpath}/${values.email}/projects`});
+      await createDirectory({ path: `${newpath}/${values.email}/projects` });
 
       console.log('handleJson.js', 'Successfully created directories for new user');
       // Add new user to localForage:
