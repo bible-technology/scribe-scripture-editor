@@ -31,6 +31,7 @@ const SelectFile = ({ openChapter, onChapterSelect }) => (
               onClick={(e) => { onChapterSelect(e, i + 1); }}
               className={styles.select}
               tabIndex={0}
+              aria-label={i+1}
             >
               {i + 1}
             </div>

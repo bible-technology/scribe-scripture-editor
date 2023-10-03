@@ -209,7 +209,7 @@ export const exportProject = async (window, expect, projectname) => {
 }
 
 export const archivedProjects = async (window, expect, projectname) => {
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  await expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-unstar"]')
   const rows = await body.locator('tr')
@@ -217,16 +217,17 @@ export const archivedProjects = async (window, expect, projectname) => {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.waitForTimeout(1000)
       await window.locator('.pl-5 > div > div').click()
       await window.locator('//*[@aria-label="archive-project"]').click()
       expect(await rows.count()).toBe(4)
       await window.locator('//*[@aria-label="archive-active-button"]').click()
+      const title = await window.locator('//*[@aria-label="projects"]').textContent()
+      expect(await title).toBe("Archived projects")
       const projectName = await window.innerText(`//div[@id="${projectname}"]`)
       expect(projectName).toBe(projectname);
-
     }
   }
   await window.locator('//*[@aria-label="archive-active-button"]').click()
@@ -236,7 +237,7 @@ export const archivedProjects = async (window, expect, projectname) => {
 
 export const unarchivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archive-active-button"]').click()
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  await expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-unstar"]')
   const rows = await body.locator('tr')
@@ -244,11 +245,12 @@ export const unarchivedProjects = async (window, expect, projectname) => {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.first().locator('[aria-label=unstar-project]')).toBeVisible()
+      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
       await tds.last().locator('[aria-label=unstar-expand-project]').click()
       await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
       await window.locator('//*[@aria-label="archive-project"]').click()
-      expect(await rows.count()).toBe(2)
+      await window.waitForTimeout(500)
+      expect(await rows.count()).toBe(0)
       const title = await window.locator('//*[@aria-label="projects"]').textContent()
       expect(await title).toBe("Archived projects")
     }
