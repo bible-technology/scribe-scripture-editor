@@ -187,6 +187,19 @@ test('Increase the font size of the obs editor', async () => {
   expect(await fontSize).toBe('22.4px');
 });
 
+test('Decrease the font size of the obs editor', async () => {
+  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
+  expect(editorpane).toBe('EDITOR');
+  await window.click('[aria-label=decrease-font]');
+  await window.click('[aria-label=decrease-font]');
+  const div = await window.locator('//*[@aria-label="editor"]')
+  const fontSize = await div.evaluate((ele) => {
+    return window.getComputedStyle(ele).getPropertyValue('font-size')
+  })
+  expect(await fontSize).toBe('16px');
+});
+
+
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
