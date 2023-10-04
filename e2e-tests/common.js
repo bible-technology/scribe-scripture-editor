@@ -139,6 +139,14 @@ export const unstarProject = async (window, expect, projectname) => {
   expect(title).toBe('Projects');
 }
 
+export const searchProject = async (window, expect, projectName, searchtext) => {
+  await window.waitForTimeout(1000)
+  expect(await window.locator('//input[@id="search_box"]')).toBeVisible()
+  await window.locator('//input[@id="search_box"]').fill(searchtext)
+  const projectname = await window.innerText(`//*[@id="${projectName}"]`);
+  expect(await projectname).toBe(projectName);
+}
+
 export const signOut = async (window, expect) => {
   expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
   await window.locator('//*[@id="user-profile"]').click()
@@ -147,7 +155,7 @@ export const signOut = async (window, expect) => {
   await window.waitForTimeout(1000)
   const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
   await expect(welcome).toBe("Welcome!")
-
+  await window.waitForTimeout(500)
 }
 
 export const showActiveUsers = async (window, expect) => {
