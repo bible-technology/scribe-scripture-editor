@@ -152,6 +152,28 @@ test("Click the view users button, log in with playwright user, and sign out", a
   }
 })
 
+test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
+  await showActiveUsers(window, expect)
+  const tabContent = await window.locator('//*[@id="active-tab-content"]')
+  const items = await tabContent.locator('div > div')
+  const div = await tabContent.locator("div > button")
+  for (let i = 0; i < await items.count(); i++) {
+    if (await items.nth(i).textContent() === userName.toLowerCase()) {
+      await div.nth(i).click()
+      expect(await window.locator('//*[@id="archived-tab"]')).toBeVisible()
+      await window.locator('//*[@id="archived-tab"]').click()
+      const text = await window.locator('//*[@id="archived-tab"]').textContent()
+      expect(await text).toBe('Archived')
+      await window.getByLabel('Archived').locator('button').click()
+      expect(await window.locator('//*[@id="active-tab"]')).toBeVisible()
+      await window.locator('//*[@id="active-tab"]').click()
+      await window.getByRole('button', { name: userName.toLowerCase() }).click()
+    }
+  }
+  const title = await window.textContent('[aria-label=projects]')
+  await expect(title).toBe('Projects')
+})
+
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
