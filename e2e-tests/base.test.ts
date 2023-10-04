@@ -150,7 +150,10 @@ test('Return to the project page', async () => {
   await goToProjectPage(window, expect)
 });
 
-
+// obs project
+test('Search an obs project in all projects list', async ({ obsProject }) => {
+  await searchProject(window, expect, obsProject, 'obs')
+});
 
 
 test("Sign out the Application", async () => {
