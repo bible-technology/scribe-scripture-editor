@@ -138,3 +138,14 @@ export const unstarProject = async (window, expect, projectname) => {
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
 }
+
+export const signOut = async (window, expect) => {
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await window.locator('//*[@aria-label="signout"]').click()
+  await window.waitForTimeout(1000)
+  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  await expect(welcome).toBe("Welcome!")
+
+}

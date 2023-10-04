@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -131,6 +131,10 @@ test("Star the audio project", async ({ audioProject }) => {
 
 test("Unstar the audio project", async ({ audioProject }) => {
   await unstarProject(window, expect, audioProject)
+})
+
+test("Sign out the Application", async () => {
+  await signOut(window, expect)
 })
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
