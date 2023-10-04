@@ -228,6 +228,10 @@ test('Check audio project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
+test('Return to the projects page from audio editor', async () => {
+  await goToProjectPage(window, expect)
+});
+
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
