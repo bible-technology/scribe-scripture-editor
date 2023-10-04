@@ -51,10 +51,12 @@ export const showLoginPage = async (fs, folder, userName, json, file, window, ex
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
-export const createUserValidation = async (window, expect) => {
-  await window.getByRole('button', { name: 'Create New Account' }).click()
+
+export const userValidation = async (window, expect) => {
+  expect(await window.locator('//*[@aria-label="create-new-account"]')).toBeVisible()
+  await window.locator('//*[@aria-label="create-new-account"]').click()
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
-  await window.getByPlaceholder('Username').fill('jo')
+  await window.locator('//input[@placeholder="Username"]').fill('jo')
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
   const lengthError = await window.locator('//*[@id="show-error"]')
@@ -74,7 +76,7 @@ export const createProjectValidation = async (window, expect) => {
 /* function for creating a project for obs and audio */
 export const createProjects = async (window, expect, projectname, type, description, abb) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
-  await window.getByRole('link', { name: 'new' }).click()
+  await window.locator('//a[@aria-label="new"]').click()
   await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
   await window.locator('//button[@aria-label="open-popover"]').click()
   await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
@@ -135,4 +137,22 @@ export const unstarProject = async (window, expect, projectname) => {
   }
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
   expect(title).toBe('Projects');
+}
+
+export const signOut = async (window, expect) => {
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await window.locator('//*[@aria-label="signout"]').click()
+  await window.waitForTimeout(1000)
+  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  await expect(welcome).toBe("Welcome!")
+
+}
+
+export const showActiveUsers = async (window, expect) => {
+  expect(await window.locator('//*[@id="view-more"]')).toBeVisible()
+  await window.locator('//*[@id="view-more"]').click()
+  const active = await window.locator('//*[@id="active-tab"]').textContent()
+  expect(await active).toBe("Active")
 }
