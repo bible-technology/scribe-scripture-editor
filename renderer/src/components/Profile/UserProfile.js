@@ -48,7 +48,9 @@ const UserProfile = () => {
         {({ open }) => (
           <>
             <div>
-              <Menu.Button id="user-profile" className="max-w-xs bg-gray-800 border-4 border-white rounded-full flex items-center text-sm
+              <Menu.Button
+                id="user-profile"
+                className="max-w-xs bg-gray-800 border-4 border-white rounded-full flex items-center text-sm
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-700"
               >
                 <span className="sr-only">{t('label-user-menu')}</span>
