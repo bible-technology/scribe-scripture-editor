@@ -325,6 +325,7 @@ const LeftLogin = () => {
           <button
             onClick={openAccountModal}
             type="button"
+            aria-label="create-new-account"
             className="mt-16 mb-28  w-48 lg:w-72 sm:w-52 py-3 font-bold uppercase flex items-center text-xs justify-center  text-white bg-primary rounded  shadow sm:text-xs"
           >
             Create New Account

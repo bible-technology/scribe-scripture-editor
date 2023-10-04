@@ -114,6 +114,7 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
                   </button>
                   <button
                     type="button"
+                    id="save-canon"
                     className="w-40 h-10  bg-success leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
                     onClick={() => (handleNav === 'edit' ? editCanon() : saveCanon())}
                   >

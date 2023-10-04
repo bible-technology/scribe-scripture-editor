@@ -48,7 +48,7 @@ const UserProfile = () => {
         {({ open }) => (
           <>
             <div>
-              <Menu.Button className="max-w-xs bg-gray-800 border-4 border-white rounded-full flex items-center text-sm
+              <Menu.Button id="user-profile" className="max-w-xs bg-gray-800 border-4 border-white rounded-full flex items-center text-sm
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-700"
               >
                 <span className="sr-only">{t('label-user-menu')}</span>
@@ -97,6 +97,7 @@ const UserProfile = () => {
                         <Link
                           href="/profile"
                           id="profile"
+                          aria-label="user-profile"
                           className={classNames(
                             active ? 'bg-gray-100' : '',
                             'block px-4 py-2 text-sm text-gray-700',
@@ -116,6 +117,7 @@ const UserProfile = () => {
                       <Link
                         href="/"
                         id="signout"
+                        aria-label="signout"
                         onClick={() => (isElectron() ? logout() : signOut())}
                         role="button"
                         tabIndex={0}
