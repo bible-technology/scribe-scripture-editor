@@ -163,6 +163,17 @@ test('Check obs project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
+test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
+  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
+  expect(editorpane).toBe('EDITOR');
+  await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
+  await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
+  const verse2 = await window.textContent('div:nth-child(2) > .flex-grow')
+  expect(verse2).toBe('god created heavens and earth');
+  const verse3 = await window.textContent('div:nth-child(3) > .flex-grow')
+  expect(verse3).toBe('story content added in verse 3');
+});
+
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
