@@ -220,6 +220,9 @@ test('Search an audio project in all projects list', async ({ audioProject }) =>
   await searchProject(window, expect, audioProject, 'audio')
 });
 
+test('Click and Check the audio project name in the editor', async ({ audioProject }) => {
+  await checkProjectName(window, expect, audioProject)
+});
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
