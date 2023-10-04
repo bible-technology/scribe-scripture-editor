@@ -165,6 +165,15 @@ export const checkProjectName = async (window, expect, name) => {
   expect(projectname).toBe(name.toUpperCase());
 }
 
+export const checkNotification = async (window, expect) => {
+  await window.locator('//*[@aria-label="notification-button"]').click()
+  const title = await window.innerText('[aria-label=notification-title]');
+  expect(title).toBe('NOTIFICATIONS');
+  await window.locator('//*[@aria-label="close-notification"]').click()
+  const editorpane = await window.innerText('[aria-label=editor-pane]');
+  expect(editorpane).toBe('EDITOR');
+}
+
 
 export const signOut = async (window, expect) => {
   expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
