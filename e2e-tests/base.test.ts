@@ -215,6 +215,11 @@ test('Return to the projects page from obs editor', async () => {
   await goToProjectPage(window, expect)
 });
 
+// audio project
+test('Search an audio project in all projects list', async ({ audioProject }) => {
+  await searchProject(window, expect, audioProject, 'audio')
+});
+
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
