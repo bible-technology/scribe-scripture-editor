@@ -159,6 +159,11 @@ test('Click and Check the obs project name in the editor', async ({ obsProject }
   await checkProjectName(window, expect, obsProject)
 });
 
+test('Check obs project Notifications', async () => {
+  await checkNotification(window, expect)
+});
+
+
 test("Sign out the Application", async () => {
   await signOut(window, expect)
 })
