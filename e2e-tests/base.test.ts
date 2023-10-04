@@ -224,6 +224,11 @@ test('Click and Check the audio project name in the editor', async ({ audioProje
   await checkProjectName(window, expect, audioProject)
 });
 
+test('Check audio project Notifications', async () => {
+  await checkNotification(window, expect)
+});
+
+
 test("Sign out the Application", async () => {
   await signOut(window, expect)
 })
