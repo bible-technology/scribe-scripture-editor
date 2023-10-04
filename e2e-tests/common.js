@@ -174,6 +174,14 @@ export const checkNotification = async (window, expect) => {
   expect(editorpane).toBe('EDITOR');
 }
 
+export const goToProjectPage = async (window, expect) => {
+  expect(await window.locator('//*[@id="back-button"]')).toBeVisible()
+  await window.locator('//*[@id="back-button"]').click();
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
+  await window.waitForTimeout(1000)
+}
+
 
 export const signOut = async (window, expect) => {
   expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
