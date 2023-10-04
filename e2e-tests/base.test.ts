@@ -155,6 +155,9 @@ test('Search an obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
 
+test('Click and Check the obs project name in the editor', async ({ obsProject }) => {
+  await checkProjectName(window, expect, obsProject)
+});
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
