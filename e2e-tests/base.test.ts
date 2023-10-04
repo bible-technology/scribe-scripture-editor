@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -135,6 +135,21 @@ test("Unstar the audio project", async ({ audioProject }) => {
 
 test("Sign out the Application", async () => {
   await signOut(window, expect)
+})
+
+test("Click the view users button, log in with playwright user, and sign out", async ({ userName }) => {
+  await showActiveUsers(window, expect)
+  const tabContent = await window.locator('//*[@id="active-tab-content"]')
+  const div = await tabContent.locator("div > div")
+  for (let i = 0; i < await div.count(); i++) {
+    if (await div.nth(i).textContent() === userName.toLowerCase()) {
+      await div.nth(i).click()
+      await window.waitForTimeout(2000)
+      const title = await window.textContent('[aria-label=projects]')
+      await expect(title).toBe('Projects')
+      await signOut(window, expect)
+    }
+  }
 })
 
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {

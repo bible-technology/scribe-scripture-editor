@@ -149,3 +149,10 @@ export const signOut = async (window, expect) => {
   await expect(welcome).toBe("Welcome!")
 
 }
+
+export const showActiveUsers = async (window, expect) => {
+  expect(await window.locator('//*[@id="view-more"]')).toBeVisible()
+  await window.locator('//*[@id="view-more"]').click()
+  const active = await window.locator('//*[@id="active-tab"]').textContent()
+  expect(await active).toBe("Active")
+}
