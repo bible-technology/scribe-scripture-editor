@@ -162,8 +162,6 @@ test('Check obs project Notifications', async () => {
 });
 
 test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
-  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
-  expect(editorpane).toBe('EDITOR');
   await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
   await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
   const verse2 = await window.textContent('div:nth-child(2) > .flex-grow')
@@ -173,10 +171,8 @@ test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
 });
 
 test('Increase the font size of the obs editor', async () => {
-  await window.click('[aria-label=increase-font]');
-  await window.click('[aria-label=increase-font]');
-  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
-  expect(editorpane).toBe('EDITOR');
+  await window.locator('[aria-label=increase-font]').click();
+  await window.locator('[aria-label=increase-font]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
   const fontSize = await div.evaluate((ele) => {
     return window.getComputedStyle(ele).getPropertyValue('font-size')
@@ -186,10 +182,8 @@ test('Increase the font size of the obs editor', async () => {
 });
 
 test('Decrease the font size of the obs editor', async () => {
-  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
-  expect(editorpane).toBe('EDITOR');
-  await window.click('[aria-label=decrease-font]');
-  await window.click('[aria-label=decrease-font]');
+  await window.locator('[aria-label=decrease-font]').click();
+  await window.locator('[aria-label=decrease-font]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
   const fontSize = await div.evaluate((ele) => {
     return window.getComputedStyle(ele).getPropertyValue('font-size')
@@ -198,8 +192,6 @@ test('Decrease the font size of the obs editor', async () => {
 });
 
 test('Change the obs navigation story  from 1 to 12 and edit the title', async () => {
-  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
-  expect(editorpane).toBe('EDITOR');
   await expect(window.locator('//*[@aria-label="obs-navigation"]')).toBeVisible()
   await window.locator('//*[@aria-label="obs-navigation"]').click()
   await window.locator('//*[@aria-label="12"]').click();

@@ -137,7 +137,7 @@ export const unstarProject = async (window, expect, projectname) => {
 
 // search projects
 export const searchProject = async (window, expect, projectName, searchtext) => {
-  await window.waitForTimeout(1000)
+  await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
   await window.locator('//input[@id="search_box"]').fill(searchtext)
   const projectname = await window.innerText(`//*[@id="${projectName}"]`);
@@ -154,11 +154,11 @@ export const checkProjectName = async (window, expect, name) => {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === name) {
-      await tds.nth(1).click()
+      await tds.nth(1).click({timeout:10000})
       break
     }
   }
-  await window.waitForTimeout(2000)
+  await window.waitForTimeout(1000)
   const projectname = await window.locator('[aria-label=editor-project-name]', { timeout: 10000 }).textContent()
   expect(projectname).toBe(name);
 }
