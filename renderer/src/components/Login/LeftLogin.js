@@ -280,6 +280,7 @@ const LeftLogin = () => {
                                 <div
                                   role="button"
                                   tabIndex={0}
+                                  dataId={user.username}
                                   onClick={() => { handleSubmit({ username: user.username }); }}
                                   className="w-full p-4 py-3 text-sm rounded-lg cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
                                 >
@@ -296,7 +297,7 @@ const LeftLogin = () => {
                           </div>
                         </Tab.Panel>
                         <Tab.Panel className="relative overflow-y-auto h-[60vh] p-5 ">
-                          <div className="grid grid-cols-2">
+                          <div className="grid grid-cols-2" id="archive-tab-content">
                             {sortedUsers.filter(filterUsers).map((user) => (
                               <div className="flex items-center" key={user.username}>
                                 <div

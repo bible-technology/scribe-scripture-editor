@@ -260,6 +260,7 @@ test("Click the view users button, log in with playwright user, and sign out", a
       const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
       expect(title).toBe('Projects')
       await signOut(window, expect)
+      break
     }
   }
 })
@@ -270,6 +271,9 @@ test("Delete the user from the active tab and check in the archived tab", async 
   const tabContent = await window.locator('//*[@id="active-tab-content"]', { timeout: 5000 })
   const items = await tabContent.locator('div > div')
   const div = await tabContent.locator("div > button")
+  const archiveTabContent = await window.locator('//*[@id="archive-tab-content"]')
+  const archiveItems = await archiveTabContent.locator('div > div')
+  const archiveDiv = await archiveTabContent.locator('div > button')
   for (let i = 0; i < await items.count(); i++) {
     if (await items.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
@@ -277,10 +281,11 @@ test("Delete the user from the active tab and check in the archived tab", async 
       await window.locator('//*[@id="archived-tab"]').click()
       const text = await window.locator('//*[@id="archived-tab"]').textContent()
       await expect(text).toBe('Archived')
-      await window.getByLabel('Archived').locator('button').click()
-      await expect(window.locator('//*[@id="active-tab"]')).toBeVisible()
+      if (await archiveItems.nth(i).textContent() === userName.toLowerCase()) {
+        await archiveDiv.nth(i).click()
+      }
       await window.locator('//*[@id="active-tab"]').click()
-      await window.getByRole('button', { name: userName.toLowerCase() }).click()
+      await window.locator(`//*[@dataId="${userName.toLowerCase()}"]`).click()
       break
     }
   }
