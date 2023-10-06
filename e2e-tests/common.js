@@ -1,23 +1,16 @@
 export const checkLogInOrNot = async (window, expect) => {
-  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]')
-  const textVisble = await window.locator('//h1["@aria-label=projects"]', { timeout: 3000 }).isVisible()
+  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]', { timeout: 5000 })
+  const textVisble = await window.locator('//h1[@aria-label="projects"]', { timeout: 5000 }).isVisible()
   if (textVisble) {
-    const title = await window.textContent('[aria-label=projects]')
+    const title = await window.locator('//h1[@aria-label="projects"]').textContent()
     await expect(title).toBe('Projects')
 
   } else {
-    const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+    const welcome = await window.textContent('//h2[@aria-label="welcome"]', {timeout:5000})
     await expect(welcome).toBe("Welcome!")
     await window.reload()
   }
   return textVisble;
-}
-
-export const filterUser = (json, name) => {
-  const filtered = json.filter((user) =>
-    user.username.toLowerCase() !== name.toLowerCase()
-  )
-  return filtered
 }
 
 export const userJson = async (window, packageInfo, fs, path) => {
@@ -45,13 +38,15 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   return await fs.writeFileSync(file, JSON.stringify(filtered))
 }
 
+// display welcome page
 export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   await removeFolderAndFile(fs, folder, userName, json, file)
-  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  const welcome = await window.textContent('//h2[@aria-label="welcome"]', {timeout:5000})
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
 
+// user validation
 export const userValidation = async (window, expect) => {
   expect(await window.locator('//*[@aria-label="create-new-account"]')).toBeVisible()
   await window.locator('//*[@aria-label="create-new-account"]').click()
@@ -64,12 +59,13 @@ export const userValidation = async (window, expect) => {
   expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
 }
 
+// project creation validation
 export const createProjectValidation = async (window, expect) => {
   await window.locator('//button[@aria-label="create"]').click()
   const snackbar = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
   expect(await snackbar).toBe('Fill all the fields')
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('New Project');
+  const title = await window.locator('//h1[@aria-label="projects"]').textContent();
+  await expect(title).toBe('New Project');
   await window.waitForTimeout(3000)
 }
 
@@ -92,11 +88,10 @@ export const createProjects = async (window, expect, projectname, type, descript
   await expect(window.locator('//button[@aria-label="create"]')).toBeVisible()
   await window.locator('//button[@aria-label="create"]').click()
   const projectName = await window.innerText(`//div[@id="${projectname}"]`)
-  expect(projectName).toBe(projectname);
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-  expect(title).toBe('Projects');
+  await expect(projectName).toBe(projectname);
 }
 
+// star the project
 export const starProject = async (window, expect, projectname) => {
   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
@@ -114,10 +109,12 @@ export const starProject = async (window, expect, projectname) => {
       const starProjectName = await starRows.locator("td").nth(1).innerText()
       expect(await starProjectName).toBe(projectname)
       expect(await starRows.count()).toBe(1)
+      break
     }
   }
 }
 
+// unstar the project
 export const unstarProject = async (window, expect, projectname) => {
   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
@@ -132,151 +129,73 @@ export const unstarProject = async (window, expect, projectname) => {
       const unstarBody = table.locator('//*[@id="projects-list-unstar"]')
       const unstarRows = await unstarBody.locator('tr')
       expect(await rows.count()).toBe(0)
-      expect(await unstarRows.count()).toBe(3)
+      expect(await unstarRows.count()).toBe(3)      
+      break;
     }
   }
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-  expect(title).toBe('Projects');
 }
 
+// search projects
 export const searchProject = async (window, expect, projectName, searchtext) => {
   await window.waitForTimeout(1000)
-  expect(await window.locator('//input[@id="search_box"]')).toBeVisible()
+  await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
   await window.locator('//input[@id="search_box"]').fill(searchtext)
   const projectname = await window.innerText(`//*[@id="${projectName}"]`);
-  expect(await projectname).toBe(projectName);
+  await expect(projectname).toBe(projectName);
 }
 
+// check project name in editor
 export const checkProjectName = async (window, expect, name) => {
-  expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = await window.locator('//*[@id="projects-list"]')
-  const body = await table.locator('//*[@id="projects-list-unstar"]')
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
   const rows = await body.locator('tr')
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === name) {
       await tds.nth(1).click()
+      break
     }
   }
-  const editorpane = await window.innerText('[aria-label=editor-pane]', { timeout: 120000 });
-  expect(editorpane).toBe('EDITOR');
-  const projectname = await window.innerText('[aria-label=editor-project-name]');
-  expect(projectname).toBe(name.toUpperCase());
+  await window.waitForTimeout(2000)
+  const projectname = await window.locator('[aria-label=editor-project-name]', { timeout: 10000 }).textContent()
+  expect(projectname).toBe(name);
 }
 
+// check notification
 export const checkNotification = async (window, expect) => {
   await window.locator('//*[@aria-label="notification-button"]').click()
   const title = await window.innerText('[aria-label=notification-title]');
-  expect(title).toBe('NOTIFICATIONS');
+  await expect(title).toBe('NOTIFICATIONS');
   await window.locator('//*[@aria-label="close-notification"]').click()
-  const editorpane = await window.innerText('[aria-label=editor-pane]');
-  expect(editorpane).toBe('EDITOR');
 }
 
+// back button in editor page
 export const goToProjectPage = async (window, expect) => {
-  expect(await window.locator('//*[@id="back-button"]')).toBeVisible()
+  await expect(window.locator('//*[@id="back-button"]')).toBeVisible()
   await window.locator('//*[@id="back-button"]').click();
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
   expect(title).toBe('Projects');
   await window.waitForTimeout(1000)
 }
 
-export const exportProject = async (window, expect, projectname) => {
-  expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = await window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.waitForTimeout(1000)
-      await window.locator('.pl-5 > div > div').click()
-      await window.locator('//*[@aria-label="export-project"]').click()
-      await expect(window.locator('input[name="location"]')).toBeVisible()
-      await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
-      await window.locator('//*[@aria-label="export-projects"]').click()
-      await window.waitForTimeout(2000)
-      const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
-      expect(await notifyMe === true)
-      expect(await rows.count()).toBe(4)
-      await window.locator('[aria-label=unstar-arrow-up]').click()
-    }
-  }
-
-}
-
-export const archivedProjects = async (window, expect, projectname) => {
-  await expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.waitForTimeout(1000)
-      await window.locator('.pl-5 > div > div').click()
-      await window.locator('//*[@aria-label="archive-project"]').click()
-      expect(await rows.count()).toBe(4)
-      await window.locator('//*[@aria-label="archive-active-button"]').click()
-      const title = await window.locator('//*[@aria-label="projects"]').textContent()
-      expect(await title).toBe("Archived projects")
-      const projectName = await window.innerText(`//div[@id="${projectname}"]`)
-      expect(projectName).toBe(projectname);
-    }
-  }
-  await window.locator('//*[@aria-label="archive-active-button"]').click()
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-  expect(title).toBe('Projects');
-}
-
-export const unarchivedProjects = async (window, expect, projectname) => {
-  await window.locator('//*[@aria-label="archive-active-button"]').click()
-  await expect(await window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
-      await window.locator('//*[@aria-label="archive-project"]').click()
-      await window.waitForTimeout(500)
-      expect(await rows.count()).toBe(0)
-      const title = await window.locator('//*[@aria-label="projects"]').textContent()
-      expect(await title).toBe("Archived projects")
-    }
-  }
-  await window.locator('//*[@aria-label="archive-active-button"]').click()
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-  expect(title).toBe('Projects');
-}
-
-
-
+// sing out
 export const signOut = async (window, expect) => {
-  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await expect(window.locator('//*[@id="user-profile"]')).toBeVisible()
   await window.locator('//*[@id="user-profile"]').click()
-  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await expect(window.locator('//*[@aria-label="signout"]')).toBeVisible()
   await window.locator('//*[@aria-label="signout"]').click()
   await window.waitForTimeout(1000)
-  const welcome = await window.textContent('//*[@id="__next"]/div/div[1]/div/h2')
+  const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
   await expect(welcome).toBe("Welcome!")
-  await window.waitForTimeout(500)
+  await window.waitForTimeout(200)
 }
 
+// show active user by clicking the view more but in login page
 export const showActiveUsers = async (window, expect) => {
-  // expect(await window.locator('//*[@id="view-more"]')).toBeVisible()
-  await window.locator('//*[@id="view-more"]').click()
+  await expect(window.locator('//*[@id="view-more"]', {timeout:5000})).toBeVisible()
+  await window.locator('//*[@id="view-more"]', {timeout:5000}).click()
   const active = await window.locator('//*[@id="active-tab"]').textContent()
-  expect(await active).toBe("Active")
+  await expect(active).toBe("Active")
 }

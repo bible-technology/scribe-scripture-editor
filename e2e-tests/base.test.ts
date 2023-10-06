@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProject } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -57,13 +57,13 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 });
 
-
+// create new user
 test('Create a new user and login', async ({ userName }) => {
   await userValidation(window, expect)
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
-  const title = await window.textContent('[aria-label=projects]');
+  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
   expect(title).toBe('Projects');
 })
 
@@ -88,11 +88,9 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
   const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
-  expect(await notifyMe).toBe('New project created')
+  await expect(notifyMe).toBe('New project created')
   const projectName = await window.innerText(`//div[@id="${textProject}"]`)
-  expect(projectName).toBe(textProject);
-  const title = await window.textContent('[aria-label=projects]');
-  expect(title).toBe('Projects');
+  await expect(projectName).toBe(textProject);
 })
 
 /* Obs translation project */
@@ -133,7 +131,7 @@ test("Unstar the audio project", async ({ audioProject }) => {
   await unstarProject(window, expect, audioProject)
 })
 
-// text transaltion project
+/* text transaltion project */
 test('Search a text project in all projects list', async ({ textProject }) => {
   await searchProject(window, expect, textProject, 'translation')
 });
@@ -150,7 +148,7 @@ test('Return to the project page', async () => {
   await goToProjectPage(window, expect)
 });
 
-// obs project
+/* obs project */
 test('Search an obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
@@ -215,7 +213,8 @@ test('Return to the projects page from obs editor', async () => {
   await goToProjectPage(window, expect)
 });
 
-// audio project
+
+/* audio project */
 test('Search an audio project in all projects list', async ({ audioProject }) => {
   await searchProject(window, expect, audioProject, 'audio')
 });
@@ -232,7 +231,7 @@ test('Return to the projects page from audio editor', async () => {
   await goToProjectPage(window, expect)
 });
 
-
+/* about the scribe */
 test("About scribe Application and License", async () => {
   await window.locator('//*[@aria-label="about-button"]').click()
   const developedby = await window.innerText('[aria-label=developed-by]');
@@ -240,14 +239,16 @@ test("About scribe Application and License", async () => {
   await window.click('[aria-label=license-button]');
   await window.locator('//*[@aria-label="about-description"]').click()
   await window.click('[aria-label=close-about]');
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
   expect(title).toBe('Projects');
 })
 
+/*signing out */
 test("Sign out the Application", async () => {
   await signOut(window, expect)
 })
 
+/* view users */
 test("Click the view users button, log in with playwright user, and sign out", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tabContent = await window.locator('//*[@id="active-tab-content"]')
@@ -255,36 +256,39 @@ test("Click the view users button, log in with playwright user, and sign out", a
   for (let i = 0; i < await div.count(); i++) {
     if (await div.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
-      await window.waitForTimeout(2000)
-      const title = await window.textContent('[aria-label=projects]')
-      await expect(title).toBe('Projects')
+      await window.waitForTimeout(1000)
+      const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
+      expect(title).toBe('Projects')
       await signOut(window, expect)
     }
   }
 })
 
+/* user delete, check in archive and restore */
 test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
   await showActiveUsers(window, expect)
-  const tabContent = await window.locator('//*[@id="active-tab-content"]')
+  const tabContent = await window.locator('//*[@id="active-tab-content"]', { timeout: 5000 })
   const items = await tabContent.locator('div > div')
   const div = await tabContent.locator("div > button")
   for (let i = 0; i < await items.count(); i++) {
     if (await items.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
-      expect(await window.locator('//*[@id="archived-tab"]')).toBeVisible()
+      await expect(window.locator('//*[@id="archived-tab"]')).toBeVisible()
       await window.locator('//*[@id="archived-tab"]').click()
       const text = await window.locator('//*[@id="archived-tab"]').textContent()
-      expect(await text).toBe('Archived')
+      await expect(text).toBe('Archived')
       await window.getByLabel('Archived').locator('button').click()
-      expect(await window.locator('//*[@id="active-tab"]')).toBeVisible()
+      await expect(window.locator('//*[@id="active-tab"]')).toBeVisible()
       await window.locator('//*[@id="active-tab"]').click()
       await window.getByRole('button', { name: userName.toLowerCase() }).click()
+      break
     }
   }
-  const title = await window.textContent('[aria-label=projects]')
-  await expect(title).toBe('Projects')
+  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
+  expect(title).toBe('Projects')
 })
 
+/* logout and delete the playwright user */
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)

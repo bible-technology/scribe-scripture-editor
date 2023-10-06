@@ -181,7 +181,7 @@ const LeftLogin = () => {
   };
   return (
     <div className="flex flex-col pt-64 pl-10 md:pt-64 sm:pl-12 md:pl-20 sm:pt-56 w-full">
-      <h2 className="text-2xl font-sans font-bold">Welcome!</h2>
+      <h2 className="text-2xl font-sans font-bold" aria-label="welcome">Welcome!</h2>
       <p className="text-[#8692A6] text-sm mt-[4px]">
         Welcome back! Login to access Scribe Scripture
       </p>
