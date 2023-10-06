@@ -6,7 +6,7 @@ export const checkLogInOrNot = async (window, expect) => {
     await expect(title).toBe('Projects')
 
   } else {
-    const welcome = await window.textContent('//h2[@aria-label="welcome"]', {timeout:5000})
+    const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
     await expect(welcome).toBe("Welcome!")
     await window.reload()
   }
@@ -41,7 +41,7 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
 // display welcome page
 export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   await removeFolderAndFile(fs, folder, userName, json, file)
-  const welcome = await window.textContent('//h2[@aria-label="welcome"]', {timeout:5000})
+  const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
