@@ -257,6 +257,22 @@ test("Restore text translation project from archived page", async ({ textProject
   await unarchivedProjects(window, expect, textProject)
 })
 
+test("Archive obs project", async ({ obsProject }) => {
+  await archivedProjects(window, expect, obsProject)
+})
+
+test("Restore the obs project from archived page", async ({ obsProject }) => {
+  await unarchivedProjects(window, expect, obsProject)
+})
+
+test("Archive audio project", async ({ audioProject }) => {
+  await archivedProjects(window, expect, audioProject)
+})
+
+test("Restore the audio project from the archived page", async ({ audioProject }) => {
+  await unarchivedProjects(window, expect, audioProject)
+})
+
 
 /*signing out */
 test("Sign out the Application", async () => {
