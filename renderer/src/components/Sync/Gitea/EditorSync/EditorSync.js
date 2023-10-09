@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { SnackBar } from '@/components/SnackBar';
 import menuStyles from '@/layouts/editor/MenuBar.module.css';
 import useAddNotification from '@/components/hooks/useAddNotification';
-import PopUpModal from '@/layouts/Sync/PopUpModal';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import PopUpModal from '../../PopUpModal';
 import * as logger from '../../../../logger';
 import CloudUploadIcon from '@/icons/basil/Outline/Files/Cloud-upload.svg';
 import CloudCheckIcon from '@/icons/basil/Solid/Files/Cloud-check.svg';
@@ -17,7 +17,7 @@ import ProgressCircle from '../../ProgressCircle';
 import Door43Logo from '@/icons/door43.svg';
 import { getGiteaUsersList, handleEditorSync } from './EditorSyncUtils';
 import useGetCurrentProjectMeta from '../../hooks/useGetCurrentProjectMeta';
-import { getOrPutLastSyncInAgSettings } from '../../Ag/SyncToGiteaUtils';
+import { getOrPutLastSyncInAgSettings } from '../../Scribe/SyncToGiteaUtils';
 
 function EditorSync({ selectedProject }) {
   const [usersList, setUsersList] = useState([]);

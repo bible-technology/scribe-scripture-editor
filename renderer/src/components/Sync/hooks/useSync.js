@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as localForage from 'localforage';
-import * as logger from '../../logger';
-import fetchProjectsMeta from '../../core/projects/fetchProjectsMeta';
-import { getOrPutLastSyncInAgSettings } from './Ag/SyncToGiteaUtils';
+import * as logger from '../../../logger';
+import fetchProjectsMeta from '../../../core/projects/fetchProjectsMeta';
+import { getOrPutLastSyncInAgSettings } from '../Scribe/SyncToGiteaUtils';
 
 function useSync() {
   const projectList = [];

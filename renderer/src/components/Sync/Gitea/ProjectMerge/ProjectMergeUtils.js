@@ -1,4 +1,4 @@
-import { createFiletoServer } from '../../Ag/SyncToGiteaUtils';
+import { createFiletoServer } from '../../Scribe/SyncToGiteaUtils';
 import * as logger from '../../../../logger';
 import packageInfo from '../../../../../../package.json';
 

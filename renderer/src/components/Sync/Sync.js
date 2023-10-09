@@ -1,8 +1,6 @@
 import { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import ProjectsLayout from '@/layouts/projects/Layout';
-// import Gitea from '@/components/Sync/Gitea/Gitea';
 import AuthenticationContextProvider from '@/components/Login/AuthenticationContextProvider';
 import ProjectContextProvider from '@/components/context/ProjectContext';
 import ReferenceContextProvider from '@/components/context/ReferenceContext';
@@ -10,16 +8,16 @@ import {
   CloudArrowDownIcon,
   CloudArrowUpIcon,
 } from '@heroicons/react/24/outline';
-import ProjectFileBrowser from '@/components/Sync/Ag/ProjectFileBrowser';
-import Gitea from '@/components/Sync/Gitea/Gitea';
-import { SyncContext } from '@/components/Sync/SyncContextProvider';
 import { SnackBar } from '@/components/SnackBar';
-import { uploadToGitea } from '@/components/Sync/Ag/SyncToGitea';
-import { downloadFromGitea } from '@/components/Sync/Gitea/SyncFromGitea';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
-import { cloneAndSetProject, updateSettingsFiles } from '@/components/Sync/Gitea/SyncFromGiteaUtils';
-import { checkoutJsonFiles, pullProject } from '@/components/Sync/Isomorphic/utils';
+import { SyncContext } from './SyncContextProvider';
+import { uploadToGitea } from './Scribe/SyncToGitea';
+import { downloadFromGitea } from './Gitea/SyncFromGitea';
+import { cloneAndSetProject, updateSettingsFiles } from './Gitea/SyncFromGiteaUtils';
+import { checkoutJsonFiles, pullProject } from './Isomorphic/utils';
+import Gitea from './Gitea/Gitea';
+import ProjectFileBrowser from './Scribe/ProjectFileBrowser';
 import Door43Logo from '@/icons/door43.svg';
 import * as logger from '../../logger';
 
@@ -81,7 +79,7 @@ export default function Sync() {
         // for pull without conflict
         const checkoutFIles = await checkoutJsonFiles(pullData.fs, pullData.gitprojectDir, pullData.checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(pullData.fs, pullData.gitprojectDir, pullData.userBranch, auth.token.sha1, pullData.checkoutBranch);
-      pullStatus?.status && await updateSettingsFiles(
+          pullStatus?.status && await updateSettingsFiles(
           pullData.fs,
           pullData.sbDataObject,
           pullData.projectDir,

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
-import useSync from './useSync';
+import useSync from './hooks/useSync';
 
 export const SyncContext = createContext();
 

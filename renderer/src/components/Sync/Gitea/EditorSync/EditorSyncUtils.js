@@ -2,7 +2,7 @@ import * as localForage from 'localforage';
 import { environment } from '../../../../../environment';
 import * as logger from '../../../../logger';
 import packageInfo from '../../../../../../package.json';
-import { uploadToGitea } from '../../Ag/SyncToGitea';
+import { uploadToGitea } from '../../Scribe/SyncToGitea';
 
 export async function getGiteaUsersList() {
   let usersList = [];
