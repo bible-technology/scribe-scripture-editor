@@ -180,6 +180,34 @@ export const goToProjectPage = async (window, expect) => {
   await window.waitForTimeout(1000)
 }
 
+// export projects
+export const exportProjects = async (window, expect, projectname) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
+      await tds.last().locator('[aria-label=unstar-expand-project]').click()
+      await window.waitForTimeout(1000)
+      await window.locator('.pl-5 > div > div').click()
+      await window.locator('//*[@aria-label="unstar-export-project"]').click()
+      await expect(window.locator('input[name="location"]')).toBeVisible()
+      await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
+      await window.locator('//*[@aria-label="export-projects"]').click()
+      await window.waitForTimeout(2000)
+      const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
+      expect(await notifyMe === true)
+      expect(await rows.count()).toBe(4)
+      await window.locator('[aria-label=unstar-arrow-up]').click()
+      break
+    }
+  }
+}
+
 // sing out
 export const signOut = async (window, expect) => {
   await expect(window.locator('//*[@id="user-profile"]')).toBeVisible()

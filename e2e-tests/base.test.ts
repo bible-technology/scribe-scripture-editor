@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -234,6 +234,12 @@ test("About scribe Application and License", async () => {
   const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
   expect(title).toBe('Projects');
 })
+
+/* exports project */
+test("Export text translation project in the Downloads folder", async ({ textProject }) => {
+  await exportProjects(window, expect, textProject)
+})
+
 
 /*signing out */
 test("Sign out the Application", async () => {

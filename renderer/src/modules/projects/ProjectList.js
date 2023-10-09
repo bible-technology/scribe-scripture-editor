@@ -262,6 +262,7 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
+                                                          aria-label="edit-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group flex rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                                           onClick={() => editproject(project)}
@@ -286,6 +287,7 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
+                                                          aria-label="archive-restore-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                                                           onClick={() => {
@@ -432,6 +434,7 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
+                                                          aria-label="unstar-export-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                                           onClick={() => openExportPopUp(project)}
@@ -444,6 +447,7 @@ export default function ProjectList() {
                                                       {({ active }) => (
                                                         <button
                                                           type="button"
+                                                          aria-label="unstar-archive-restore-project"
                                                           className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                                             } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                                                           onClick={() => {
