@@ -5,10 +5,6 @@ import { useRouter } from 'next/navigation';
 import { createSupabaseSettingJson, createWebUser } from '@/core/Login/handleLogin';
 import { environment } from '../../../environment';
 import { supabaseSignup, newPath } from '../../../../supabase';
-// if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-//   const newPath = require('../../../../supabase').newPath
-//   const supabase = require('../../../../../supabase').supabase
-// }
 
 function SignupPage() {
   const [email, setEmail] = useState('');
