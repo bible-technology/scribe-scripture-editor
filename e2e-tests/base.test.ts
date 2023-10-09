@@ -13,7 +13,7 @@ let appPath;
 let window;
 
 
-test("Start the scribe application", async () => {
+test("Check to start the Scribe Application", async () => {
   electronApp = await electron.launch({ args: ['main/index.js'] });
   appPath = await electronApp.evaluate(async ({ app }) => {
     // This runs in the main Electron process, parameter here is always
@@ -58,7 +58,7 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 });
 
 // create new user
-test('Create a new user and login', async ({ userName }) => {
+test('Check for new user creation and login', async ({ userName }) => {
   await userValidation(window, expect)
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
@@ -70,7 +70,7 @@ test('Create a new user and login', async ({ userName }) => {
 
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 /* Translation Project    */
-test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
+test('Check for new project of text translation with custom book creation', async ({ textProject }) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
   await createProjectValidation(window, expect)
@@ -94,74 +94,74 @@ test('Click New and Fill project page details to create a new project for text t
 })
 
 /* Obs translation project */
-test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
+test('Check for obs project creation', async ({ obsProject }) => {
   await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
 })
 
 /* Audio project */
-test('Click Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
+test('Check for new audio project creation', async ({ audioProject }) => {
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
 /* STAR & UNSTAR PROJECT */
 // text translation
-test("Star the text project", async ({ textProject }) => {
+test("Check for star the text translation project", async ({ textProject }) => {
   await starProject(window, expect, textProject)
 })
 
-test("Unstar the text project", async ({ textProject }) => {
+test("Check for unstar the text translation project", async ({ textProject }) => {
   await unstarProject(window, expect, textProject)
 })
 
 // obs
-test("Star the obs project", async ({ obsProject }) => {
+test("Check for star the obs project", async ({ obsProject }) => {
   await starProject(window, expect, obsProject)
 })
 
-test("Unstar the obs project", async ({ obsProject }) => {
+test("Check for unstar the obs project", async ({ obsProject }) => {
   await unstarProject(window, expect, obsProject)
 })
 
 // audio
-test("Star the audio project", async ({ audioProject }) => {
+test("Check for star the audio project", async ({ audioProject }) => {
   await starProject(window, expect, audioProject)
 })
 
-test("Unstar the audio project", async ({ audioProject }) => {
+test("Check for unstar the audio project", async ({ audioProject }) => {
   await unstarProject(window, expect, audioProject)
 })
 
 /* text transaltion project */
-test('Search a text project in all projects list', async ({ textProject }) => {
+test('Check for Search text translation project in all projects list', async ({ textProject }) => {
   await searchProject(window, expect, textProject, 'translation')
 });
 
-test('Click and Check the text Translation project name in the editor', async ({ textProject }) => {
+test('Check for text Translation project name in the editor page', async ({ textProject }) => {
   await checkProjectName(window, expect, textProject)
 });
 
-test('Check text Translation project Notifications', async () => {
+test('Check for text Translation project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
-test('Return to the project page', async () => {
+test('Check for return to the project page', async () => {
   await goToProjectPage(window, expect)
 });
 
 /* obs project */
-test('Search an obs project in all projects list', async ({ obsProject }) => {
+test('Check for Search obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
 
-test('Click and Check the obs project name in the editor', async ({ obsProject }) => {
+test('Check for obs project name in the editor page', async ({ obsProject }) => {
   await checkProjectName(window, expect, obsProject)
 });
 
-test('Check obs project Notifications', async () => {
+test('Check for obs project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
-test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
+test('Check for add content in verses 1 and 2 in the obs story 1 editor.', async () => {
   await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
   await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
   const verse2 = await window.textContent('div:nth-child(2) > .flex-grow')
@@ -170,9 +170,9 @@ test('Add content in verses 1 and 2 in the obs story 1 editor.', async () => {
   expect(verse3).toBe('story content added in verse 3');
 });
 
-test('Increase the font size of the obs editor', async () => {
-  await window.locator('[aria-label=increase-font]').click();
-  await window.locator('[aria-label=increase-font]').click();
+test('Check for increase the font size in obs editor', async () => {
+  await window.locator('//*[@aria-label="increase-font"]').click();
+  await window.locator('//*[@aria-label="increase-font"]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
   const fontSize = await div.evaluate((ele) => {
     return window.getComputedStyle(ele).getPropertyValue('font-size')
@@ -181,9 +181,9 @@ test('Increase the font size of the obs editor', async () => {
   expect(await fontSize).toBe('22.4px');
 });
 
-test('Decrease the font size of the obs editor', async () => {
-  await window.locator('[aria-label=decrease-font]').click();
-  await window.locator('[aria-label=decrease-font]').click();
+test('Check for decrease the font size in obs editor', async () => {
+  await window.locator('//*[@aria-label="decrease-font"]').click();
+  await window.locator('//*[@aria-label="decrease-font"]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
   const fontSize = await div.evaluate((ele) => {
     return window.getComputedStyle(ele).getPropertyValue('font-size')
@@ -191,7 +191,7 @@ test('Decrease the font size of the obs editor', async () => {
   expect(await fontSize).toBe('16px');
 });
 
-test('Change the obs navigation story  from 1 to 12 and edit the title', async () => {
+test('Check for change the obs navigation story from 1 to 12 and edit the title', async () => {
   await expect(window.locator('//*[@aria-label="obs-navigation"]')).toBeVisible()
   await window.locator('//*[@aria-label="obs-navigation"]').click()
   await window.locator('//*[@aria-label="12"]').click();
@@ -201,30 +201,30 @@ test('Change the obs navigation story  from 1 to 12 and edit the title', async (
   expect(title).toBe('12. The Exodus Edit title');
 });
 
-test('Return to the projects page from obs editor', async () => {
+test('Check for return to the projects page from obs editor', async () => {
   await goToProjectPage(window, expect)
 });
 
 
 /* audio project */
-test('Search an audio project in all projects list', async ({ audioProject }) => {
+test('Check for Search audio project in all projects list', async ({ audioProject }) => {
   await searchProject(window, expect, audioProject, 'audio')
 });
 
-test('Click and Check the audio project name in the editor', async ({ audioProject }) => {
+test('Check for audio project name in the editor page', async ({ audioProject }) => {
   await checkProjectName(window, expect, audioProject)
 });
 
-test('Check audio project Notifications', async () => {
+test('Check for audio project Notifications', async () => {
   await checkNotification(window, expect)
 });
 
-test('Return to the projects page from audio editor', async () => {
+test('Check for return to the projects from audio editor page', async () => {
   await goToProjectPage(window, expect)
 });
 
 /* about the scribe */
-test("About scribe Application and License", async () => {
+test("Check for about scribe Application and License", async () => {
   await window.locator('//*[@aria-label="about-button"]').click()
   const developedby = await window.innerText('[aria-label=developed-by]');
   expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
@@ -236,12 +236,12 @@ test("About scribe Application and License", async () => {
 })
 
 /*signing out */
-test("Sign out the Application", async () => {
+test("Check for sign out the Application", async () => {
   await signOut(window, expect)
 })
 
 /* view users */
-test("Click the view users button, log in with playwright user, and sign out", async ({ userName }) => {
+test("Check for view userss, log in with playwright user, and sign out", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tabContent = await window.locator('//*[@id="active-tab-content"]')
   const div = await tabContent.locator("div > div")
@@ -258,7 +258,7 @@ test("Click the view users button, log in with playwright user, and sign out", a
 })
 
 /* user delete, check in archive and restore */
-test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
+test("Check for delete user from the active tab and confirm in the archived tab", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tabContent = await window.locator('//*[@id="active-tab-content"]', { timeout: 5000 })
   const items = await tabContent.locator('div > div')
@@ -286,7 +286,7 @@ test("Delete the user from the active tab and check in the archived tab", async 
 })
 
 /* logout and delete the playwright user */
-test("Logout and delete that playwright user from the backend", async ({ userName }) => {
+test("Check for logout and delete that playwright user from the backend", async ({ userName }) => {
   // user json
   const json = await userJson(window, packageInfo, fs, path)
   // user file
