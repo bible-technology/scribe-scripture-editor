@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects, archivedProjects, unarchivedProjects } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -248,6 +248,10 @@ test("Export the audio project in the Downloads folder", async ({ audioProject }
   await exportProjects(window, expect, audioProject)
 })
 
+/*archive and unarchive project */
+test("Archive text translation project", async ({ textProject }) => {
+  await archivedProjects(window, expect, textProject)
+})
 
 
 /*signing out */
