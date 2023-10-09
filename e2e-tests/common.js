@@ -237,6 +237,35 @@ export const archivedProjects = async (window, expect, projectname) => {
   await expect(projectTitle).toBe('Projects');
 }
 
+// unarchived projects
+export const unarchivedProjects = async (window, expect, projectname) => {
+  await window.locator('//*[@aria-label="archived-projects"]').click()
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectname) {
+      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
+      await tds.last().locator('[aria-label=unstar-expand-project]').click()
+      await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
+      await window.locator('//*[@aria-label="unstar-archive-restore-project"]').click()
+      await window.waitForTimeout(500)
+      expect(await rows.count()).toBe(0)
+      break
+    }
+  }
+  const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
+
+  await expect(archiveTitle).toBe("Archived projects")
+  await window.locator('//*[@aria-label="active-projects"]').click()
+  const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+  await expect(projectName).toBe(projectname);
+  const projectTitle = await window.locator('//*[@aria-label="projects"]').textContent()
+  await expect(projectTitle).toBe('Projects');
+}
 
 // sing out
 export const signOut = async (window, expect) => {

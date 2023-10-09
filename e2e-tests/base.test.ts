@@ -253,6 +253,10 @@ test("Archive text translation project", async ({ textProject }) => {
   await archivedProjects(window, expect, textProject)
 })
 
+test("Restore text translation project from archived page", async ({ textProject }) => {
+  await unarchivedProjects(window, expect, textProject)
+})
+
 
 /*signing out */
 test("Sign out the Application", async () => {
