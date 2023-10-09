@@ -318,6 +318,23 @@ test("Update/Edit text translation project scope custom book into NT", async ({ 
   expect(await title).toBe('Projects')
 })
 
+test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.locator('//*[@aria-label="ot-Genesis"]').click()
+  await window.locator('//*[@aria-label="ot-Exodus"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+
 /*signing out */
 test("Sign out the Application", async () => {
   await signOut(window, expect)
