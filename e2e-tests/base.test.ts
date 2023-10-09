@@ -288,6 +288,22 @@ test("Update/Edit text translation project of description and abbreviation", asy
   expect(await title).toBe('Projects')
 })
 
+test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.locator('//*[@aria-label="nt-Mark"]').click()
+  await window.locator('//*[@aria-label="nt-Luke"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2500)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
 
 /*signing out */
 test("Sign out the Application", async () => {
