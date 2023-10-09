@@ -244,6 +244,10 @@ test("Export the obs project in the Downloads folder", async ({ obsProject }) =>
   await exportProjects(window, expect, obsProject)
 })
 
+test("Export the audio project in the Downloads folder", async ({ audioProject }) => {
+  await exportProjects(window, expect, audioProject)
+})
+
 
 
 /*signing out */
