@@ -307,6 +307,7 @@ export default function ExportProjectPopUp(props) {
                         <button
                           disabled={exportStart}
                           onClick={() => exportBible()}
+                          aria-label="export-projects"
                           type="button"
                           className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                         >
