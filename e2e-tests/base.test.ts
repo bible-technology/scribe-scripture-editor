@@ -240,6 +240,11 @@ test("Export text translation project in the Downloads folder", async ({ textPro
   await exportProjects(window, expect, textProject)
 })
 
+test("Export the obs project in the Downloads folder", async ({ obsProject }) => {
+  await exportProjects(window, expect, obsProject)
+})
+
+
 
 /*signing out */
 test("Sign out the Application", async () => {
