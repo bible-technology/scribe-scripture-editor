@@ -326,6 +326,7 @@ export default function UserProfile() {
 
               <button
                 type="submit"
+                id="save-profile"
                 className=" w-20 h-9 bg-success  shadow-md font-light text-white border-none text-xs leading-5 rounded uppercase mb-5"
               >
                 {t('btn-save')}

@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects, archivedProjects, unarchivedProjects, goToEditProject } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects, archivedProjects, unarchivedProjects, goToEditProject, changeAppLanguage } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -347,6 +347,26 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   expect(await title).toBe('Projects')
 })
 
+test("App language change English to hindi", async () => {
+  await changeAppLanguage(window, expect, "English", "Hindi")
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  expect(await snackbar === true)
+  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents()
+  expect(await textHindi[0]).toBe("प्रोफ़ाइल")
+})
+
+test("App language change Hindi to English", async () => {
+  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible()
+  await window.locator('//*[@aria-label="projectList"]').click()
+  await window.waitForTimeout(2000)
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(await title).toBe('प्रोजेक्ट्स')
+  await changeAppLanguage(window, expect, "Hindi", "English")
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents()
+  expect(await profile[0]).toBe("Profile")
+  expect(await snackbar === true)
+})
 
 /*signing out */
 test("Sign out the Application", async () => {

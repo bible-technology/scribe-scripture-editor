@@ -285,6 +285,17 @@ export const goToEditProject = async (window, expect, projectName) => {
   }
 }
 
+export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
+  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible()
+  await window.locator('//*[@aria-label="user-profile"]').click()
+  await window.getByRole('button', { name: fromLanguage }).click()
+  await window.getByRole('option', { name: toLanguage }).click()
+  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible()
+  await window.locator('//*[@id="save-profile"]').click()
+}
+
 // sing out
 export const signOut = async (window, expect) => {
   await expect(window.locator('//*[@id="user-profile"]')).toBeVisible()
