@@ -19,7 +19,6 @@ const SignIn = () => {
       password,
     });
     if (data.session) {
-      console.log('sign in success', data);
       await localforage.setItem('userProfile', data);
       const userData = await localforage.getItem('userProfile');
       console.log({ userData });
@@ -28,7 +27,6 @@ const SignIn = () => {
     } else {
       setError(signInError);
       setLoading(false);
-      console.log('sign in error', signInError);
     }
   };
 

@@ -242,19 +242,16 @@ export const createObsContent = (
           console.error('Error uploading file to Supabase:', error);
           throw error;
         } else {
-          console.log('File uploaded successfully to Supabase', file);
           const fileSize = file.size;
           return { file, fileSize };
         }
       };
 
-      console.log('createObsContent.js', 'Creating the story md files');
       // eslint-disable-next-line import/no-dynamic-require
       if (call === 'new') {
         OBSData.forEach(async (storyJson) => {
           const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
           if (bookAvailable(importedFiles, currentFileName)) {
-            console.log('createObsContent.js', `${currentFileName} is been Imported`);
             const file = importedFiles.filter((obj) => (obj.id === currentFileName));
             const stats = await uploadFileToSupabase(`${supabasePath}/${currentFileName}`, file[0].content);
             ingredients[path.join('ingredients', currentFileName)] = {
@@ -267,10 +264,8 @@ export const createObsContent = (
             };
             // ingredients[path.join('content', currentFileName)].scope[book] = [];
           } else {
-            console.log('createObsContent.js', 'Creating the md file using RCL function JsonToMd');
             const file = JsonToMd(storyJson, '');
             const stats = await uploadFileToSupabase(`${supabasePath}/${currentFileName}`, file);
-            console.log('createObsContent.js', 'Writing File to the Content Directory');
 
             ingredients[path.join('ingredients', currentFileName)] = {
               checksum: {
@@ -283,7 +278,6 @@ export const createObsContent = (
           }
         });
         // OBS front and back files add to content
-        console.log('createObsContent.js', 'Creating OBS front and back md file in content');
         // check front.md file in imported
         const fileFront = {};
         const fileBack = {};
@@ -292,11 +286,9 @@ export const createObsContent = (
         if (fileFront.files.length > 0) {
           fileFront.name = fileFront.files[0].id;
           fileFront.content = fileFront.files[0].content;
-          console.log('createObsContent.js', `${fileFront.name} is been Imported`);
         } else {
           fileFront.name = 'front.md';
           fileFront.content = OBSFront;
-          console.log('createObsContent.js', `${fileFront.name} default is created`);
         }
         // fs.writeFileSync(path.join(folder, fileFront.name), fileFront.content);
         // let obsstat = fs.statSync(path.join(folder, fileFront.name));
@@ -313,11 +305,9 @@ export const createObsContent = (
         if (fileBack.files.length > 0) {
           fileBack.name = fileBack.files[0].id;
           fileBack.content = fileBack.files[0].content;
-          console.log('createObsContent.js', `${fileBack.name} is been Imported`);
         } else {
           fileBack.name = 'back.md';
           fileBack.content = OBSBack;
-          console.log('createObsContent.js', `${fileBack.name} default is created`);
         }
         obsstat = await uploadFileToSupabase(`${supabasePath}/${fileBack.name}`, fileBack.content);
         ingredients[path.join('ingredients', fileBack.name)] = {
@@ -338,10 +328,8 @@ export const createObsContent = (
           size: obsstat.fileSize,
         };
       } else if (call === 'edit') {
-        console.log('createObsContent.js', 'in Edit obs content files');
         importedFiles.forEach(async (file) => {
           if (file.id !== 'front.md' && file.id !== 'back.md') {
-            console.log('createObsContent.js', `${file.id} is been Imported`);
             const currentStory = OBSData.filter((obj) => (
               (obj.storyId).toString().padStart(2, 0) === (file.id).split('.')[0]));
             const stats = await uploadFileToSupabase(`${supabasePath}/${file.id}`, file.content);
@@ -385,7 +373,6 @@ export const createObsContent = (
         },
         sync: { services: { door43: [] } },
       };
-      console.log('createObsContent.js', 'Creating ag-settings.json file in content');
       const stat = await uploadFileToSupabase(`${supabasePath}/${environment.PROJECT_SETTING_FILE}`, JSON.stringify(settings));
       ingredients[path.join('ingredients', environment.PROJECT_SETTING_FILE)] = {
         checksum: {
@@ -395,7 +382,6 @@ export const createObsContent = (
         size: stat.fileSize,
         role: 'x-scribe',
       };
-      console.log('createObsContent.js', 'Creating OBS content files completed', ingredients);
       resolve(ingredients);
     });
   };

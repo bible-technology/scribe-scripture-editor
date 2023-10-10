@@ -177,7 +177,6 @@ export default function NewWebProject({ call, project, closeEdit }) {
     setLoading(true);
     if (newProjectFields.projectName && newProjectFields.abbreviation) {
       const value = await createSupabaseProject(call, metadata, update, headerDropDown);
-      console.log({ value });
 
       const status = value[0];
       logger.debug('NewProject.js', status.value);

@@ -282,9 +282,6 @@ const SectionPlaceholder1 = ({ editor }) => {
     readObs();
   }, [_obsNavigation1, _obsNavigation2, referenceColumnOneData1, referenceColumnOneData2]);
 
-  console.log({
-    referenceColumnOneData2, referenceColumnOneData1, stories1, stories2,
-  });
   return (
     <>
       {(layout > 0 && layout <= 2) && (

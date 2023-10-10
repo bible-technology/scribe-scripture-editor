@@ -12,9 +12,7 @@ import {
 // }
 
 const fetchProjectsMeta = async ({ currentUser }) => {
-  console.log('fetchProjectsMeta', { currentUser });
   if (isElectron()) {
-    console.log('fetchProjectsMeta', 'isElectron');
     logger.debug('fetchProjectsMeta.js', 'In fetchProjectsMeta');
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
@@ -54,12 +52,9 @@ const fetchProjectsMeta = async ({ currentUser }) => {
       resolve({ projects: burritos });
     });
   }
-console.log('before fetchProjectsMeta', { currentUser, IsElectron });
   if (!IsElectron) {
-console.log('fetchProjectsMeta.js', 'In fetchProjectsMeta');
   const path = `${newPath}/${currentUser}/projects`;
   const { data: allProjects } = await sbStorageList(path);
-console.log({ allProjects });
   const projectPromises = allProjects?.map(async (proj) => {
     const projectName = proj.name;
     const { data, error } = await sbStorageDownload(`${path}/${projectName}/metadata.json`);
@@ -85,8 +80,6 @@ console.log({ allProjects });
     if (setting) {
       return { ...setting, ...projectJson };
     }
-    console.log('ProjectList.js', 'Unable to find scribe-settings for the project so pushing only burrito');
-    console.log({ projectJson });
     return projectJson;
   });
 

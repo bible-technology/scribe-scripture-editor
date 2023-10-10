@@ -51,16 +51,6 @@ export default function Bookmarks() {
     }).finally(() => setIsLoading(false));
   };
 
-  // useEffect(() => {
-  //   console.log('tempChapter', tempChapter, chapter);
-  //   timeout(2000).then(async () => {
-  //       setIsLoading(true);
-  //       onChangeChapter(tempChapter);
-  //       onChangeVerse('1');
-  //   }).then(() => setIsLoading(false));
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [tempChapter]);
-
   return (
     <>
       <div className="bg-gray-800 uppercase text-white text-xs p-2 tracking-wider">

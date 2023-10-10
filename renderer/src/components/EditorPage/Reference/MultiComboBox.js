@@ -15,7 +15,6 @@ function MultiComboBox({
       .toLowerCase()
       .replace(/\s+/g, '')
       .includes(query.toLowerCase().replace(/\s+/g, '')));
-  // console.log({ options, selectedOption });
 
   useEffect(() => {
     if (selectedOption === null && options.length > 0) {

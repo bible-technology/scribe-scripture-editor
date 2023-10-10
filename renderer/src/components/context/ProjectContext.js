@@ -132,17 +132,12 @@ const ProjectContextProvider = ({ children }) => {
       },
       sync: { services: { door43: [] } },
     };
-    console.debug('ProjectContext.js', `Creating a ${environment.USER_SETTING_FILE} file`);
     const data = sbStorageList(file);
-    console.log('ProjectContext.js', { data });
     if (data.length === 0) {
-      const { data: envSettings } = sbStorageUpload(file, JSON.stringify(json), {
+       sbStorageUpload(file, JSON.stringify(json), {
         cacheControl: '3600',
         upsert: false,
       });
-      if (envSettings) {
-        console.log('ProjectContext.js', { envSettings });
-      }
     }
   };
   const concatLanguages = async (json, staicLangJson) => {
@@ -226,12 +221,14 @@ const ProjectContextProvider = ({ children }) => {
       setUsername(value.user.email);
     });
     if (!currentUser) {
+      // eslint-disable-next-line no-console
       console.error('ProjectContext.js', 'Unable to find current user');
     }
 
     const file = `${newPath}/${currentUser}/${environment.USER_SETTING_FILE}`;
     const { data: agUserSettings, error } = await sbStorageDownload(file);
     if (error) {
+      // eslint-disable-next-line no-console
       console.error('ProjectContext.js', 'Failed to read the data from file');
     }
     const json = JSON.parse(await agUserSettings.text());
@@ -355,11 +352,10 @@ const ProjectContextProvider = ({ children }) => {
         }
         json.version = environment.AG_USER_SETTING_VERSION;
         json.sync.services.door43 = json?.sync?.services?.door43 ? json?.sync?.services?.door43 : [];
-        console.debug('ProjectContext.js', 'Upadting the settings in existing file');
         await sbStorageUpload(file, JSON.stringify(json));
-        console.debug('ProjectContext.js', 'Loading new settings from file');
         await loadWebSettings();
       } else {
+        // eslint-disable-next-line no-console
         console.error('ProjectContext.js', 'Failed to read the data from file');
       }
     };

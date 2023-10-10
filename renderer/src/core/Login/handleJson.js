@@ -134,30 +134,24 @@ export const handleJsonWeb = async (values) => {
         upsert: true,
       });
 
-      console.log('handleJson.js', 'Successfully created and written to the file');
       // Add new user to localForage:
       localForage.setItem('users', array, (err) => {
         if (err) {
           console.error('handleJson.js', 'Failed to Create a file and add user to LocalForage');
         }
-        console.log('handleJson.js', 'Created a file and added user to LocalForage');
       });
-      console.log('handleJson.js', 'Exiting from handleJson');
       return error;
     } catch (err) {
-      console.error('handleJson.js', 'Failed to create and write to the file');
       error.fetchFile = true;
       return error;
     }
   } else {
     const { data, error } = await sbStorageDownload(`${newpath}/users.json`);
     if (error) {
-      console.log('handleJson.js', 'Failed to read the data from file');
       error.fetchFile = true;
       return error;
     }
 
-    console.log('handleJson.js', 'Successfully read the data from file', data);
     const json = JSON.parse(await data.text());
     if (uniqueUser(json, values.email)) {
       error.userExist = true;
@@ -165,21 +159,19 @@ export const handleJsonWeb = async (values) => {
     }
     json.push(values);
     try {
+      // eslint-disable-next-line no-unused-vars
       const { data: newUser } = await sbStorageUpload(`${newpath}/users.json`, JSON.stringify(json), {
         cacheControl: '3600',
         upsert: true,
       });
 
-      console.log('handleJson.js', 'Successfully added new user to the existing list in file', { newUser });
       await createDirectory({ path: `${newpath}/${values.email}/projects` });
 
-      console.log('handleJson.js', 'Successfully created directories for new user');
       // Add new user to localForage:
       localForage.setItem('users', json, (errLoc) => {
         if (errLoc) {
           console.error('handleJson.js', 'Failed to add new user to existing list');
         }
-        console.log('handleJson.js', 'Added new user to existing list');
       });
       return error;
     } catch (errCatch) {
