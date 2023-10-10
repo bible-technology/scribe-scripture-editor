@@ -63,8 +63,8 @@ test('Create a new user and login', async ({ userName }) => {
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects');
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects');
 })
 
 
@@ -231,8 +231,8 @@ test("About scribe Application and License", async () => {
   await window.click('[aria-label=license-button]');
   await window.locator('//*[@aria-label="about-description"]').click()
   await window.click('[aria-label=close-about]');
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects');
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects');
 })
 
 /* exports project */
@@ -273,6 +273,7 @@ test("Restore the audio project from the archived page", async ({ audioProject }
   await unarchivedProjects(window, expect, audioProject)
 })
 
+/*Update/Edit the text translation project */
 test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   const description = await window.textContent('//textarea[@id="project_description"]')
@@ -347,6 +348,8 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   expect(await title).toBe('Projects')
 })
 
+
+/*changing app language */
 test("App language change English to hindi", async () => {
   await changeAppLanguage(window, expect, "English", "Hindi")
   const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
@@ -382,8 +385,8 @@ test("Click the view users button, log in with playwright user, and sign out", a
     if (await div.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
       await window.waitForTimeout(1000)
-      const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-      expect(title).toBe('Projects')
+      const title = await window.locator('//*[@aria-label="projects"]').textContent();
+      await expect(title).toBe('Projects')
       await signOut(window, expect)
       break
     }
@@ -414,8 +417,8 @@ test("Delete the user from the active tab and check in the archived tab", async 
       break
     }
   }
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects')
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects')
 })
 
 /* logout and delete the playwright user */

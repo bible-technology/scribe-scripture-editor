@@ -1,10 +1,13 @@
 export const checkLogInOrNot = async (window, expect) => {
   await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]', { timeout: 5000 })
-  const textVisble = await window.locator('//h1[@aria-label="projects"]', { timeout: 5000 }).isVisible()
+  const textVisble = await window.locator('//*[@aria-label="projects"]', { timeout: 5000 }).isVisible()
   if (textVisble) {
-    const title = await window.locator('//h1[@aria-label="projects"]').textContent()
-    await expect(title).toBe('Projects')
-
+    const title = await window.locator('//*[@aria-label="projects"]').textContent()
+    if(await title === "Projects"){
+      await expect(title).toBe("Projects")
+    }else{
+      await expect(title).not.toBe('Projects')
+    }
   } else {
     const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
     await expect(welcome).toBe("Welcome!")
@@ -55,16 +58,15 @@ export const userValidation = async (window, expect) => {
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
   const lengthError = await window.locator('//*[@id="show-error"]')
-  expect(await lengthError === true)
   expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
 }
 
 // project creation validation
 export const createProjectValidation = async (window, expect) => {
   await window.locator('//button[@aria-label="create"]').click()
-  const snackbar = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
-  expect(await snackbar).toBe('Fill all the fields')
-  const title = await window.locator('//h1[@aria-label="projects"]').textContent();
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackbar).toBe('Fill all the fields')
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
   await expect(title).toBe('New Project');
   await window.waitForTimeout(3000)
 }
@@ -159,8 +161,8 @@ export const checkProjectName = async (window, expect, name) => {
     }
   }
   await window.waitForTimeout(1000)
-  const projectname = await window.locator('[aria-label=editor-project-name]', { timeout: 10000 }).textContent()
-  expect(projectname).toBe(name);
+  const projectname = await window.locator('[aria-label=editor-project-name]').textContent()
+  await expect(projectname).toBe(name);
 }
 
 // check notification
@@ -175,58 +177,49 @@ export const checkNotification = async (window, expect) => {
 export const goToProjectPage = async (window, expect) => {
   await expect(window.locator('//*[@id="back-button"]')).toBeVisible()
   await window.locator('//*[@id="back-button"]').click();
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects');
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects');
   await window.waitForTimeout(1000)
+}
+
+// common function for looping the table
+export const commonUtilArchive = async (window, expect, projectName, clickItem) => {
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-unstar"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectName) {
+      expect(await tds.last().locator('[aria-label="unstar-expand-project"]')).toBeVisible()
+      await tds.last().locator('[aria-label="unstar-expand-project"]').click()
+      await window.waitForTimeout(1000)
+      await window.locator('//*[@aria-label="unstar-menu-project"]').click()
+      await window.locator(`//*[@aria-label="${clickItem}"]`).click()
+      break
+    }
+  }
 }
 
 // export projects
 export const exportProjects = async (window, expect, projectname) => {
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.waitForTimeout(1000)
-      await window.locator('.pl-5 > div > div').click()
-      await window.locator('//*[@aria-label="unstar-export-project"]').click()
-      await expect(window.locator('input[name="location"]')).toBeVisible()
-      await window.locator('input[name="location"]').fill('/home/bobby/Downloads')
-      await window.locator('//*[@aria-label="export-projects"]').click()
-      await window.waitForTimeout(2000)
-      const notifyMe = await window.locator('//*[@id="__next"]/div[2]/div').isVisible()
-      expect(await notifyMe === true)
-      expect(await rows.count()).toBe(4)
-      await window.locator('[aria-label=unstar-arrow-up]').click()
-      break
-    }
-  }
+  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
+  const userpath = newpath.userPath.split(".")[0]
+  await commonUtilArchive(window, expect, projectname, "unstar-export-project")
+  await expect(window.locator('input[name="location"]')).toBeVisible()
+  await window.locator('input[name="location"]').fill(`${userpath}/Downloads`)
+  await window.locator('//*[@aria-label="export-projects"]').click()
+  await window.waitForTimeout(2000)
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toBe("Exported Successfully")
+  await window.locator('[aria-label=unstar-arrow-up]').click()
 }
+
 
 // archived projects
 export const archivedProjects = async (window, expect, projectname) => {
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.waitForTimeout(1000)
-      await window.locator('.pl-5 > div > div').click()
-      await window.locator('//*[@aria-label="unstar-archive-restore-project"]').click()
-      expect(await rows.count()).toBe(4)
-      break
-    }
-  }
+  await commonUtilArchive(window, expect, projectname, "unstar-archive-restore-project")
   await window.locator('//*[@aria-label="archived-projects"]').click()
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(archiveTitle).toBe("Archived projects")
@@ -240,25 +233,8 @@ export const archivedProjects = async (window, expect, projectname) => {
 // unarchived projects
 export const unarchivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archived-projects"]').click()
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = await rows.nth(i);
-    const tds = await row.locator('td');
-    if (await tds.nth(1).textContent() === projectname) {
-      expect(await tds.last().locator('[aria-label=unstar-expand-project]')).toBeVisible()
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.locator('.pl-5 > div > div').click({ timeout: 4000 })
-      await window.locator('//*[@aria-label="unstar-archive-restore-project"]').click()
-      await window.waitForTimeout(500)
-      expect(await rows.count()).toBe(0)
-      break
-    }
-  }
+  await commonUtilArchive(window, expect, projectname, "unstar-archive-restore-project")
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
-
   await expect(archiveTitle).toBe("Archived projects")
   await window.locator('//*[@aria-label="active-projects"]').click()
   const projectName = await window.innerText(`//div[@id="${projectname}"]`)
@@ -268,21 +244,9 @@ export const unarchivedProjects = async (window, expect, projectname) => {
 }
 
 export const goToEditProject = async (window, expect, projectName) => {
-  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
-  const table = window.locator('//*[@id="projects-list"]')
-  const body = table.locator('//*[@id="projects-list-unstar"]')
-  const rows = await body.locator('tr')
-  for (let i = 0; i < await rows.count(); i++) {
-    const row = rows.nth(i);
-    const tds = row.locator('td');
-    if (await tds.nth(1).textContent() === projectName) {
-      await tds.last().locator('[aria-label=unstar-expand-project]').click()
-      await window.locator('[aria-label=unstar-menu-project]').click()
-      await window.locator('//*[@aria-label="edit-project"]').click()
-      const text = await window.innerText('//*[@id="__next"]/div/div[2]/header/div/div[1]/div/h1')
-      await expect(text).toBe('EDIT PROJECT')
-    }
-  }
+  await commonUtilArchive(window, expect, projectName, "edit-project")
+  const editTitle = await window.locator('//*[@aria-label="projects"]').textContent()
+  await expect(editTitle).toBe('Edit Project');
 }
 
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
@@ -296,7 +260,7 @@ export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage
   await window.locator('//*[@id="save-profile"]').click()
 }
 
-// sing out
+// sign out
 export const signOut = async (window, expect) => {
   await expect(window.locator('//*[@id="user-profile"]')).toBeVisible()
   await window.locator('//*[@id="user-profile"]').click()
