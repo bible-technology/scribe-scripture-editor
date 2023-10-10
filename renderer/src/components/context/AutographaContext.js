@@ -13,10 +13,7 @@ const AutographaContextProvider = ({ children }) => {
   const context = {
     states: state,
     action: actions,
-    // states: { ...state, ...scribexState.state },
-    // action: { ...actions, ...scribexState.actions },
   };
-  // console.log({context});
 
   return (
     <AutographaContext.Provider value={context}>

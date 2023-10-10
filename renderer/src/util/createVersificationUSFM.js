@@ -199,6 +199,7 @@ export const createWebVersificationUSFM = async (
   call,
   projectType,
 ) => {
+  // eslint-disable-next-line no-console
   console.debug('createVersificationUSFM.js', {
     username,
     project,
@@ -213,15 +214,13 @@ export const createWebVersificationUSFM = async (
   });
 
   const uploadFileToSupabase = async (filePath, fileContent) => {
+    // eslint-disable-next-line no-unused-vars
     const { data: file, error } = await sbStorageUpload(filePath, new Blob([fileContent], { type: 'text/plain' }), {
         upsert: true,
       });
 
     if (error) {
-      console.error('Error uploading file to Supabase:', error);
       throw error;
-    } else {
-      console.log('File uploaded successfully to Supabase', file);
     }
   };
 
@@ -248,12 +247,10 @@ export const createWebVersificationUSFM = async (
   return new Promise((resolve) => {
     schemes.forEach(async (scheme) => {
       if (versification.toLowerCase() === scheme.name) {
-        console.debug('createVersificationUSFM.js', 'Creating the files with selected scheme');
         // eslint-disable-next-line import/no-dynamic-require
         const file = require(`../lib/versification/${scheme.file}`);
         await books.forEach(async (book) => {
           if (bookAvailable(importedFiles, book)) {
-            console.log('createVersificationUSFM.js', `${book} is been Imported`);
             const file = importedFiles.filter((obj) => (obj.id === book));
             uploadFileToSupabase(`${folder}/${book}.usfm`, file[0].content);
             ingredients[path.join('ingredients', `${book}.usfm`)] = {
@@ -310,7 +307,6 @@ export const createWebVersificationUSFM = async (
             }
           }
         });
-        console.debug('createVersificationUSFM.js', 'Creating versification.json file in ingredients');
         await uploadFileToSupabase(`${folder}/versification.json`, JSON.stringify(file));
         ingredients[path.join('ingredients', 'versification.json')] = {
           checksum: {
@@ -321,9 +317,8 @@ export const createWebVersificationUSFM = async (
           role: 'x-versification',
         };
         if (call === 'edit' && currentBurrito?.project?.textTranslation?.shortStatements && (currentBurrito?.project?.textTranslation?.shortStatements).length <= 500) {
-          console.debug('createVersificationUSFM.js', 'Won\'t create license.md file in ingredients and update the current shortStatements');
+          logger.debug('createVersificationUSFM.js', 'Won\'t create license.md file in ingredients and update the current shortStatements');
         } else {
-          console.debug('createVersificationUSFM.js', 'Creating license.md file in ingredients');
           await uploadFileToSupabase(`${folder}/license.md`, currentBurrito?.project?.textTranslation?.shortStatements);
           ingredients[path.join('ingredients', 'license.md')] = {
             checksum: {
@@ -354,7 +349,6 @@ export const createWebVersificationUSFM = async (
         if (call === 'edit') {
           settings.sync = currentBurrito?.sync;
         }
-        console.debug('createVersificationUSFM.js', `Creating ${environment.PROJECT_SETTING_FILE} file in ingredients`);
         await uploadFileToSupabase(`${folder}/${environment.PROJECT_SETTING_FILE}`, JSON.stringify(settings));
         ingredients[path.join('ingredients', environment.PROJECT_SETTING_FILE)] = {
           checksum: {
@@ -364,7 +358,6 @@ export const createWebVersificationUSFM = async (
           // size: stat.size,
           role: 'x-scribe',
         };
-        console.debug('createVersificationUSFM.js', 'Returning the ingredients data');
         resolve(ingredients);
       }
     });

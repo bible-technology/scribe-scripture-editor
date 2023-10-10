@@ -11,7 +11,6 @@ const downloadImageAndSave = async (url, savePath, fs) => {
   const blob = await response.blob();
   const arrayBuffer = await blob.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-  console.log({ blob, arrayBuffer, buffer });
   if (blob.type.includes('image')) {
     await fs.createWriteStream(savePath).write(buffer);
   }
@@ -33,12 +32,12 @@ async function downloadImageAndSaveSupabase(url) {
     const img = document.createElement('img');
     img.src = imageUrl;
     document.body.appendChild(img);
-    const { data, error } = await sbStorageUpload(`${packageInfo.name}/common/${environment.OBS_IMAGE_DIR}`, blob);
+    const { error } = await sbStorageUpload(`${packageInfo.name}/common/${environment.OBS_IMAGE_DIR}`, blob);
     if (error) {
+         // eslint-disable-next-line no-console
       console.log('error uploading images to supabase', { error });
       throw error;
     }
-    console.log(data);
   } catch (error) {
     console.error('Error fetching image:', error);
   }
@@ -74,7 +73,6 @@ export const checkandDownloadObsImages = async () => {
       await createDirectory({ path: obsImagePath });
     }
     const { data: filesInDir } = await sbStorageDownload(obsImagePath);
-    console.log({ filesInDir });
     Object.values(OBSData).forEach(async (storyObj) => {
       Object.values(storyObj.story).forEach(async (story) => {
         let fileName = story.url.split('/');

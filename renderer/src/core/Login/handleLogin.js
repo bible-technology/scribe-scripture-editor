@@ -34,7 +34,6 @@ export const createWebUser = async (values) => {
     lastSeen: new Date(),
     isArchived: false,
   };
-  console.log('passed obj', { obj });
   return handleJsonWeb(obj).then(() => obj);
 };
 /**
@@ -110,7 +109,9 @@ export const createSupabaseSettingJson = async (path) => {
       upsert: true,
     });
   if (data) {
+    // eslint-disable-next-line no-console
     console.log('success, ag-user.json', data);
   }
+  // eslint-disable-next-line no-console
   console.log({ error });
 };

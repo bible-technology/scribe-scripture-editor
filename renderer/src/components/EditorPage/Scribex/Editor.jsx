@@ -9,7 +9,7 @@ import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import {
- insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
+  insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
 } from '@/util/cursorUtils';
 import RecursiveBlock from './RecursiveBlock';
 
@@ -134,44 +134,8 @@ export default function Editor(props) {
     if (insertVerseRChapter === 'Cross Reference') {
       insertXRef(caretPosition, newVerChapNumber, selectedText);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
-
-  // useEffect(() => {
-  //   let pressedKeys = [];
-  //   const handleKeyDown = (e) => {
-  //     const copyKeys = ['Control', 'c'];
-  //     const pasteKeys = ['Control', 'v'];
-  //     pressedKeys.push(e.key);
-  //     if (pressedKeys.join('+') === copyKeys.join('+')) {
-  //       e.preventDefault();
-  //       copyText();
-  //       pressedKeys = [];
-  //     }
-  //     if (pressedKeys.join('+') === pasteKeys.join('+')) {
-  //       e.preventDefault();
-  //       pasteText();
-  //       pressedKeys = [];
-  //     }
-  //     // if (e.key === 's') { console.log("savingssssssssss") }
-  //     // if (e.key === 'Control' && e.key === 'c') {
-  //     //   console.log("copying")
-  //     //   e.preventDefault();
-  //     //   // Call your custom copy function
-  //     //   copyText();
-  //     // } else if (e.metaKey && e.key === 'v') {
-  //     //   console.log("pasting")
-  //     //   e.preventDefault();
-  //     //   // Call your custom paste function
-  //     //   pasteText();
-  //     // }
-  //   };
-
-  //   document.addEventListener('keydown', handleKeyDown);
-  //   return () => {
-  //     document.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, []);
 
   const scrollReference = (chapterNumber) => {
     const refEditors = document.getElementsByClassName('ref-editor');

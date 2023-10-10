@@ -14,7 +14,6 @@ function SignupPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
 
     const { data, error } = await supabaseSignup({
       email,
@@ -22,7 +21,6 @@ function SignupPage() {
     });
     if (data) {
       createSupabaseSettingJson(`${newPath}/${data.user.email}/${environment.USER_SETTING_FILE}`);
-      console.log('signup successful', data);
       setStatus('Check your email for the confirmation link.');
       createWebUser(data.user);
       router.push('/login');

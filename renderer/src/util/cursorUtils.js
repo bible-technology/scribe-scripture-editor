@@ -165,21 +165,6 @@ export function getSelectedText() {
   }
   return selectedText;
 }
-// Copy text to clipboard
-// export function copyText() {
-//   const editor = document.getElementById('editor');
-//   const selectedText = getSelectedText(editor);
-
-//   if (selectedText !== '') {
-//     navigator.clipboard.writeText(selectedText)
-//       .then(() => {
-//         console.log(`Text copied to clipboard:${ selectedText}`);
-//       })
-//       .catch((error) => {
-//         console.error(`Unable to copy text: ${ error}`);
-//       });
-//   }
-// }
 
 // Paste text from clipboard
 export function pasteText() {
@@ -189,7 +174,6 @@ export function pasteText() {
     .then((text) => {
       editor.focus();
       document.execCommand('insertText', false, text);
-      console.log(`Text pasted from clipboard: ${text}`);
     })
     .catch((error) => {
       console.error(`Unable to paste text: ${error}`);
@@ -200,7 +184,7 @@ export class Clipboard {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        console.log('Text copied to clipboard');
+        // console.log('Text copied to clipboard');
       })
       .catch((error) => {
         console.error('Failed to copy text:', error);
@@ -213,7 +197,7 @@ export class Clipboard {
       .then((pastedText) => {
         element.focus();
         document.execCommand('insertText', false, pastedText);
-        console.log('Text pasted from clipboard');
+        // console.log('Text pasted from clipboard');
       })
       .catch((error) => {
         console.error('Failed to paste text:', error);

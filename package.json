@@ -192,9 +192,9 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",
+    "react-icons": "4.10.1",
     "scripture-resources-rcl": "5.1.0",
-    "utf-8-validate": "^5.0.9",
-    "react-icons": "4.10.1"
+    "utf-8-validate": "^5.0.9"
   },
   "overrides": {
     "react": "$react",

@@ -75,9 +75,7 @@ export default function RecursiveBlock({
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0);
-      // console.log({ range })
       const selectedNode = range.startContainer;
-      // console.log({ selectedNode })
       const verse = getCurrentVerse(selectedNode);
       const chapter = getCurrentChapter(selectedNode);
       // if (onReferenceSelected) {

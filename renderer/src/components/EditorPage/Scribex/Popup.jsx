@@ -6,7 +6,6 @@ const Popup = ({
   handleClose, handleButtonClick, title, isPopupOpen, selectedText,
 }) => {
   const [number, setNumber] = useState('');
-  // console.log({ title }, "title");
   const handleInputChange = (event) => {
     setNumber(event.target.value);
   };

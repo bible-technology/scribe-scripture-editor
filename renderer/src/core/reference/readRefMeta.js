@@ -31,7 +31,6 @@ export const readRefMeta = async ({
         console.error('Error fetching files:', error);
         return [];
       }
-      console.log('readRefMeta.js , folders in resources', files);
       const directoryNames = files.map((file) => file.name);
       return directoryNames;
     } catch (error) {

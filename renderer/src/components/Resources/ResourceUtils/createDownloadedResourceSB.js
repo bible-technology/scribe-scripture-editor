@@ -217,8 +217,6 @@ export const generateResourceIngredientsOBS = async (currentResourceMeta, path, 
 };
 
 export const generateWebResourceIngredientsOBS = async (currentResourceMeta, currentResourceProject, resourceBurritoFile, files) => {
-  console.log('DownloadResourcePopUp.js', 'In adding ingredients to burrito of OBS');
-
   for (const file of files) {
     const endPart = file.split('/').pop();
     const regX = /^\d{2}.md$/;
@@ -231,7 +229,6 @@ export const generateWebResourceIngredientsOBS = async (currentResourceMeta, cur
 
       if (fileError) {
         logger.debug('DownloadResourcePopUp.js', 'error file not found in resource download');
-        console.log('DownloadResourcePopUp.js', 'error file not found in resource download');
         throw new Error(`File not Exist in project Directory: ${file}`);
       }
 
@@ -477,6 +474,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
 };
 
 export const handleDownloadWebResources = async (resourceData, selectResource, action, update = false) => {
+     // eslint-disable-next-line no-console
   console.log({
     resourceData,
     selectResource,
@@ -502,15 +500,11 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
         for (const row in resourceData[key]) {
           const resource = resourceData[key][row];
           if (resource.isChecked) {
-            console.log('passed is checked ---------->');
             if (!update) {
               const { data: existingResources } = await sbStorageList(folder);
-              console.log({ existingResources });
               for (const element of existingResources) {
                 if (element.name !== '.keep') {
-                  console.log(element.name);
                   const { data: filecontentMeta } = await sbStorageDownload(`${folder}/${element.name}/metadata.json`);
-                  console.log({ filecontentMeta });
                   const storedResourceMeta = filecontentMeta;
                   if (storedResourceMeta?.resourceMeta) {
                     const storedResourceName = storedResourceMeta.resourceMeta.name;
@@ -521,10 +515,6 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                       && storedResourceOwner === resource.owner
                       && storedResourceTag === resource.release?.tag_name
                     ) {
-                      console.log(
-                        'DownloadResourcePopUp.js',
-                        `In resource download existing resource ${resource.name}_${resource.release?.tag_name}`,
-                      );
                       resourceExist = true;
                       resourceExistCount += 1;
                     }
@@ -536,8 +526,6 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
             if (!resourceExist) {
               const response = await fetch(resource.metadata_json_url);
               const metadataJson = await response.json();
-              console.log('passed fetch meta ---------->', { metadataJson });
-              console.log('DownloadResourcePopUp.js', 'In resource download - fetch resourceMeta yml');
               currentResourceMeta = metadataJson;
               currentResourceProject = resource;
 
@@ -545,15 +533,10 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
               resourceBurritoFile.resourceMeta = currentResourceProject;
               resourceBurritoFile.resourceMeta.lastUpdatedAg = moment().format();
 
-              console.log('DownloadResourcePopUp.js', 'In resource download - basic burrito generated for resource ', `${resource.name}-${resource.owner}`);
-
               currentProjectName = `${resource.name}_${Object.keys(resourceBurritoFile.identification.primary.scribe)[0]}`;
 
               const zipResponse = await fetch(resource.zipball_url);
               const zipBuffer = await zipResponse.arrayBuffer();
-              console.log('DownloadResourcePopUp.js', 'In resource download - downloading zip content completed ');
-
-              console.log('DownloadResourcePopUp.js', 'In resource download - Unzip downloaded resource');
               const jsZip = new JSZip();
               const zip = await jsZip.loadAsync(zipBuffer);
 
@@ -565,7 +548,6 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                   await sbStorageUpload(`${folder}/${zipObject.name}`, fileContent, { upsert: false });
                 }
                 if (zipPath.toLowerCase().includes('license')) {
-                  console.log('DownloadResourcePopUp.js', 'In resource download - check license file found');
                   licenseFileFound = true;
                   const { data: customLicense } = await sbStorageDownload(`${folder}/${zipPath}`);
                   if (customLicense) {
@@ -581,8 +563,6 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                   }
                 }
               }
-
-              console.log('passed zip extract ---------->');
 
               // ingredients add to burrito
               switch (selectResource) {
@@ -609,18 +589,12 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                   throw new Error('Cannot process: Invalid type of resource requested');
               }
 
-              console.log('passed ingredients creations ---------->');
-
               if (!licenseFileFound) {
-                console.log('DownloadResourcePopUp.js', 'In resource custom license add - no license found');
-
                 const { data } = await sbStorageList(`${folder}/${currentResourceProject.name}`);
-                console.log('what is the length', { data });
                 if (data.length > 0) {
                   await sbStorageUpload(`${folder}/${currentResourceProject.name}/LICENSE.md`, customLicenseContent, { upsert: false });
                   const { data: size } = await sbStorageDownload(`${folder}/${currentResourceProject.name}/LICENSE.md`);
                   if (size) {
-                    console.log('In resource custom license add - custom license added', { size });
                     resourceBurritoFile.ingredients['./LICENSE.md'] = {
                       checksum: { md5: md5(customLicenseContent) },
                       mimeType: 'text/md',
@@ -654,7 +628,6 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
               });
 
               await sbStorageUpload(`${folder}/${currentResourceProject.name}/metadata.json`, JSON.stringify(resourceBurritoFile), { upsert: false });
-              console.log('passed ag settings creations ---------->');
 
               // finally remove zip and rename base folder to projectname_id
               const { data, error } = await sbStorageList(`${folder}/${currentResourceProject.name}`);
@@ -662,13 +635,12 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                 await sbStorageUpdate({ path: `${folder}/${currentResourceProject.name}`, payload: `${folder}/${currentProjectName}`, options: { cacheControl: '3600', upsert: true } });
                 await sbStorageRemove(`${folder}/${currentProjectName}.zip`);
               } else {
+                   // eslint-disable-next-line no-console
                 console.log('error in storage.list ---------->', error);
               }
             }
 
             resourceExist = false;
-            console.log('DownloadResourcePopUp.js', 'Finished single resource: ');
-            console.log('completed single resource ---------->', resource.name);
             action && action?.setDownloadCount((prev) => prev + 1);
           }
         }
@@ -681,6 +653,7 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
         resourceExistCount = 0;
       }
     } catch (err) {
+         // eslint-disable-next-line no-console
       console.log('Catching error in download resource', err);
       reject(err);
     }

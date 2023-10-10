@@ -137,11 +137,9 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
         const userProfile = await localForage.getItem('userProfile');
         const username = userProfile?.user?.email;
         try {
-            console.log('DownloadCreateSBforHelps.js', 'In helps-resource download');
             setLoading(true);
             const folder = `${newPath}/${username}/resources`;
             const { data: existingResource } = await sbStorageDownload(folder);
-            console.log(existingResource);
             const downloadProjectName = `${projectResource?.name}_${projectResource?.owner}_${projectResource?.release?.tag_name}`;
             existingResource?.forEach((element) => {
                 if (downloadProjectName === element.name) {
@@ -151,7 +149,6 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
 
             await fetch(projectResource?.zipball_url).then((res) => res.arrayBuffer()).then(async (blob) => {
                 const { data: folderExist } = await sbStorageList(folder);
-                console.log({ folderExist });
                 if (!folderExist) {
                     await createDirectory({ path: folder });
                 }
@@ -161,6 +158,7 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
                 // extract zip
                 const { data: filecontent, error: fileContentError } = await sbStorageDownload(`${folder}/${projectResource?.name}.zip}`);
                 if (fileContentError) {
+                       // eslint-disable-next-line no-console
                     console.log('Failed to download zip file', fileContentError);
                 }
 
@@ -183,14 +181,12 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
                     data.lastUpdatedAg = moment().format();
                     await createDirectory({ path: `${folder}/${projectResource?.name}/metadata.json`, payload: JSON.stringify(data) });
                 }).catch((err) => {
+                       // eslint-disable-next-line no-console
                     console.log('DownloadCreateSBforHelps.js', 'failed to save yml metadata.json : ', err);
                 });
 
                 // finally remove zip and rename base folder to projectname_id
-                console.log('DownloadCreateSBforHelps.js', 'deleting zip file - rename project with project + id in ag format');
                 if (folderExist) {
-                    console.log('DownloadCreateSBforHelps.js', 'deleting zip file - rename project with project + id in ag format');
-
                     if (update && update?.status) {
                         // if updation delete old resource
                         console.log({ projectOld: `${projectResource?.name}_${projectResource?.owner}_${update?.prevVersion}` });
@@ -207,7 +203,6 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
             });
         } catch (error) {
             setLoading(false);
-            console.log('DownloadCreateSBforHelps.js', error);
         }
     }
 };

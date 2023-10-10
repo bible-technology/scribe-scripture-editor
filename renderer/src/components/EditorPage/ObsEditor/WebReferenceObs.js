@@ -70,9 +70,6 @@ const { t } = useTranslation();
       if (window?.navigator?.onLine) {
         await checkandDownloadObsImages(window?.navigator?.onLine);
       }
-      // else {
-      //   console.log('No internet connection');
-      // }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

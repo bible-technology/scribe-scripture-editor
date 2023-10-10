@@ -47,7 +47,6 @@ export const getorPutAppLangage = async (method, currentUser, appLang) => {
     if (currentUser) {
       file = `${newPath}/${currentUser}/${environment.USER_SETTING_FILE}`;
       const { data: settingsFile, error } = await sbStorageList(file);
-      console.log('settingsFile', settingsFile);
       if (settingsFile) {
         const { data } = await sbStorageDownload(file);
         const settings = JSON.parse(await data.text());
@@ -56,7 +55,6 @@ export const getorPutAppLangage = async (method, currentUser, appLang) => {
         } if (method.toLowerCase() === 'put') {
           // save lang code
           settings.appLanguage = appLang.code;
-          console.log('handleProfile.js', 'Updating the app lang details in existing file');
           await sbStorageUpload(file, JSON.stringify(settings));
         }
       }

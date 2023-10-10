@@ -131,12 +131,10 @@ function useProjectsSort() {
   const FetchProjects = async () => {
     const userProfile = await localForage.getItem('userProfile');
     const user = isElectron() ? userProfile.username : userProfile.user.email;
-    console.log('from project sort', { user });
     if (user) {
       logger.debug('useProjectsSort.js', 'Fetching the projects');
       const projectsData = fetchProjectsMeta({ currentUser: user });
       projectsData.then((value) => {
-        console.log('fetchPrjectsmeta', { value });
         if (value) {
           localForage
             .setItem('projectmeta', value)

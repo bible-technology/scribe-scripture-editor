@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
+import 'dotenv/config';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+console.log({ supabaseUrl, supabaseAnonKey });
 const IsElectron = process.env.NEXT_PUBLIC_IS_ELECTRON === 'true';
 
 const supabase = !IsElectron ? createClient(supabaseUrl, supabaseAnonKey) : {};
@@ -14,27 +16,25 @@ const sbStorageUpload = (file, payload, settings = {}) => {
   return data;
 };
 
-async function createDirectory(path, data) {
-  const { data: folder } = await supabaseStorage().list(path);
-  if (folder.length > 0) {
-    console.log('folder already exists', folder);
-  } else {
+async function createDirectory({ path, data }) {
+  const { data: folder } = await supabaseStorage.list(path);
+  if (folder.length === 0) {
     if (data) {
       await sbStorageUpload(path, data);
+    } else {
+      const fileName = '.keep';
+      const filePath = `${path}/${fileName}`;
+      const fileContent = new Blob(['testtext'], { type: 'text/plain' });
+      // eslint-disable-next-line no-unused-vars
+      const { data: createdDirectory } = await sbStorageUpload(
+        filePath,
+        fileContent,
+        {
+          cacheControl: '3600',
+          upsert: false,
+        },
+      );
     }
-    const fileName = '.keep';
-    const filePath = `${path}/${fileName}`;
-    const fileContent = new Blob([], { type: 'text/plain' });
-    const { data: createdDirectory } = await sbStorageUpload(
-      filePath,
-      fileContent,
-      {
-        cacheControl: '3600',
-        upsert: false,
-      },
-    );
-    console.log('created directory', createdDirectory);
-    return data;
   }
 }
 
@@ -53,7 +53,7 @@ const getSupabaseUser = async () => {
   }
 };
 
-const supabaseSignup = async (email, password) => {
+const supabaseSignup = async ({ email, password }) => {
   if (supabase.auth) {
     const response = await supabase.auth.signUp({
       email,
