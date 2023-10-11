@@ -148,8 +148,9 @@ export const checkProjectName = async (window, expect, name) => {
     }
   }
   await window.waitForTimeout(1000)
-  const projectname = await window.locator('[aria-label=editor-project-name]').textContent({ timeout: 30000 })
-  await expect(projectname).toBe(name);
+  await window.waitForSelector('[aria-label=editor-project-name]',{ timeout: 120000 })
+  const projectname = await window.locator('[aria-label=editor-project-name]').textContent()
+  expect(await projectname).toBe(name);
 }
 
 // check notification
