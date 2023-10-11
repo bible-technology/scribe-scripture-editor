@@ -2,7 +2,15 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects, archivedProjects, unarchivedProjects, goToEditProject, changeAppLanguage } from './common';
+import {
+  showLoginPage, checkLogInOrNot, userFile,
+  userFolder, userJson, createProjectValidation,
+  createProjects, unstarProject, starProject,
+  userValidation, signOut, showActiveUsers,
+  searchProject, checkProjectName, checkNotification,
+  goToProjectPage, exportProjects, archivedProjects,
+  unarchivedProjects, goToEditProject, changeAppLanguage
+} from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -87,8 +95,6 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//*[@aria-label="nt-Matthew"]').click()
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
-  // const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
-  // await expect(notifyMe).toBe('New project created')
   const projectName = await window.innerText(`//div[@id="${textProject}"]`)
   await expect(projectName).toBe(textProject);
 })
@@ -248,7 +254,7 @@ test("Export the audio project in the Downloads folder", async ({ audioProject }
   await exportProjects(window, expect, audioProject)
 })
 
-/*archive and unarchive project */
+/* archive and unarchive project */
 test("Archive text translation project", async ({ textProject }) => {
   await archivedProjects(window, expect, textProject)
 })
@@ -273,7 +279,7 @@ test("Restore the audio project from the archived page", async ({ audioProject }
   await unarchivedProjects(window, expect, audioProject)
 })
 
-/*Update/Edit the text translation project */
+/* Update/Edit the text translation project */
 test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
   const description = await window.textContent('//textarea[@id="project_description"]')
@@ -349,7 +355,7 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
 })
 
 
-/*changing app language */
+/*changing app language english to hindi */
 test("App language change English to hindi", async () => {
   await changeAppLanguage(window, expect, "English", "Hindi")
   const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
@@ -358,6 +364,7 @@ test("App language change English to hindi", async () => {
   expect(await textHindi[0]).toBe("प्रोफ़ाइल")
 })
 
+/*changing app language hindi to english */
 test("App language change Hindi to English", async () => {
   expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible()
   await window.locator('//*[@aria-label="projectList"]').click()

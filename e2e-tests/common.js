@@ -15,7 +15,7 @@ export const checkLogInOrNot = async (window, expect) => {
   }
   return textVisble;
 }
-
+// parse users json
 export const userJson = async (window, packageInfo, fs, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
@@ -23,16 +23,19 @@ export const userJson = async (window, packageInfo, fs, path) => {
   return JSON.parse(data);
 }
 
+// user directory name
 export const userFolder = async (window, userName, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase())
 }
 
+// users json
 export const userFile = async (window, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
 }
 
+// removing user directory/folder
 export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   fs.rmSync(folder, { recursive: true, force: true })
   const filtered = json.filter((item) =>
@@ -94,7 +97,7 @@ export const createProjects = async (window, expect, projectname, type, descript
 }
 
 // Star and Unstar
-export const commonUtilExport = async (window, expect, name, clickStar) => {
+export const starUnstar = async (window, expect, name, clickStar) => {
   await expect(window.locator('//table[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//table[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-body"]')
@@ -113,12 +116,12 @@ export const commonUtilExport = async (window, expect, name, clickStar) => {
 
 // star the project
 export const starProject = async (window, expect, projectname) => {
-  await commonUtilExport(window, expect, projectname, "star-project")
+  await starUnstar(window, expect, projectname, "star-project")
 }
 
 // unstar the project
 export const unstarProject = async (window, expect, projectname) => {
-  await commonUtilExport(window, expect, projectname, "unstar-project")
+  await starUnstar(window, expect, projectname, "unstar-project")
 }
 
 // search projects
@@ -168,7 +171,7 @@ export const goToProjectPage = async (window, expect) => {
 }
 
 // common function for looping the table
-export const commonUtilArchive = async (window, expect, projectName, clickItem) => {
+export const commonFilterTable = async (window, expect, projectName, clickItem) => {
   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-body"]')
@@ -191,7 +194,7 @@ export const commonUtilArchive = async (window, expect, projectName, clickItem) 
 export const exportProjects = async (window, expect, projectname) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   const userpath = newpath.userPath.split(".")[0]
-  await commonUtilArchive(window, expect, projectname, "export-project")
+  await commonFilterTable(window, expect, projectname, "export-project")
   await expect(window.locator('input[name="location"]')).toBeVisible()
   await window.locator('input[name="location"]').fill(`${userpath}/Downloads`)
   await window.locator('//*[@aria-label="export-projects"]').click()
@@ -204,7 +207,7 @@ export const exportProjects = async (window, expect, projectname) => {
 
 // archived projects
 export const archivedProjects = async (window, expect, projectname) => {
-  await commonUtilArchive(window, expect, projectname, "archive-restore-project")
+  await commonFilterTable(window, expect, projectname, "archive-restore-project")
   await window.locator('//*[@aria-label="archived-projects"]').click()
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(archiveTitle).toBe("Archived projects")
@@ -218,7 +221,7 @@ export const archivedProjects = async (window, expect, projectname) => {
 // unarchived projects
 export const unarchivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archived-projects"]').click()
-  await commonUtilArchive(window, expect, projectname, "archive-restore-project")
+  await commonFilterTable(window, expect, projectname, "archive-restore-project")
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(archiveTitle).toBe("Archived projects")
   await window.locator('//*[@aria-label="active-projects"]').click()
@@ -228,12 +231,14 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await expect(projectTitle).toBe('Projects');
 }
 
+// Return update/edit page
 export const goToEditProject = async (window, expect, projectName) => {
-  await commonUtilArchive(window, expect, projectName, "edit-project")
+  await commonFilterTable(window, expect, projectName, "edit-project")
   const editTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(editTitle).toBe('Edit Project');
 }
 
+// Change app language
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
   expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
   await window.locator('//*[@id="user-profile"]').click()
