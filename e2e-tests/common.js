@@ -1,7 +1,8 @@
 export const checkLogInOrNot = async (window, expect) => {
   await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]', { timeout: 5000 })
-  const textVisble = await window.locator('//*[@aria-label="projects"]', { timeout: 5000 }).isVisible()
+  const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
   if (textVisble) {
+    // If 'projects' is visible, check the title
     const title = await window.locator('//*[@aria-label="projects"]').textContent()
     if(await title === "Projects"){
       await expect(title).toBe("Projects")
@@ -9,13 +10,15 @@ export const checkLogInOrNot = async (window, expect) => {
       await expect(title).not.toBe('Projects')
     }
   } else {
+    // If 'projects' is not visible, check the 'welcome' element
     const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
     await expect(welcome).toBe("Welcome!")
     await window.reload()
   }
   return textVisble;
 }
-// parse users json
+
+// Retrieves and parses a JSON file containing user information
 export const userJson = async (window, packageInfo, fs, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
@@ -23,19 +26,19 @@ export const userJson = async (window, packageInfo, fs, path) => {
   return JSON.parse(data);
 }
 
-// user directory name
+// Constructs the path to a user's folder.
 export const userFolder = async (window, userName, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase())
 }
 
-// users json
+// Constructs the path to the users' JSON file.
 export const userFile = async (window, packageInfo, path) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
 }
 
-// removing user directory/folder
+// Removes a user's directory and updates the users' JSON file
 export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   fs.rmSync(folder, { recursive: true, force: true })
   const filtered = json.filter((item) =>
@@ -44,7 +47,7 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
   return await fs.writeFileSync(file, JSON.stringify(filtered))
 }
 
-// display welcome page
+// Displays the welcome page after removing a user's folder.
 export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   await removeFolderAndFile(fs, folder, userName, json, file)
   const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
@@ -52,7 +55,7 @@ export const showLoginPage = async (fs, folder, userName, json, file, window, ex
   await window.reload()
 }
 
-// user validation
+// Performs user validation checks.
 export const userValidation = async (window, expect) => {
   expect(await window.locator('//*[@aria-label="create-new-account"]')).toBeVisible()
   await window.locator('//*[@aria-label="create-new-account"]').click()
@@ -64,7 +67,7 @@ export const userValidation = async (window, expect) => {
   expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
 }
 
-// project creation validation
+// Performs project creation validation checks.
 export const createProjectValidation = async (window, expect) => {
   await window.locator('//button[@aria-label="create"]').click()
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
@@ -74,7 +77,7 @@ export const createProjectValidation = async (window, expect) => {
   await window.waitForTimeout(3000)
 }
 
-/* function for creating a project for obs and audio */
+/* Creates a project with a given name, type, description, and abbreviation. */
 export const createProjects = async (window, expect, projectname, type, description, abb) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
@@ -96,7 +99,7 @@ export const createProjects = async (window, expect, projectname, type, descript
   await expect(projectName).toBe(projectname);
 }
 
-// Star and Unstar
+// Stars or unstars a project
 export const starUnstar = async (window, expect, name, clickStar) => {
   await expect(window.locator('//table[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//table[@id="projects-list"]')
@@ -114,17 +117,17 @@ export const starUnstar = async (window, expect, name, clickStar) => {
   }
 }
 
-// star the project
+// Stars a project
 export const starProject = async (window, expect, projectname) => {
   await starUnstar(window, expect, projectname, "star-project")
 }
 
-// unstar the project
+// Untars a project
 export const unstarProject = async (window, expect, projectname) => {
   await starUnstar(window, expect, projectname, "unstar-project")
 }
 
-// search projects
+// Searches for a project with a given name.
 export const searchProject = async (window, expect, projectName, searchtext) => {
   await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
@@ -153,7 +156,7 @@ export const checkProjectName = async (window, expect, name) => {
   expect(await projectname).toBe(name);
 }
 
-// check notification
+// Checks for notifications.
 export const checkNotification = async (window, expect) => {
   await window.locator('//*[@aria-label="notification-button"]').click()
   await window.waitForTimeout(1000)
@@ -162,7 +165,7 @@ export const checkNotification = async (window, expect) => {
   await window.locator('//*[@aria-label="close-notification"]').click()
 }
 
-// back button in editor page
+// Navigates back to the project page from the editor
 export const goToProjectPage = async (window, expect) => {
   await expect(window.locator('//*[@id="back-button"]')).toBeVisible()
   await window.locator('//*[@id="back-button"]').click();
@@ -171,7 +174,7 @@ export const goToProjectPage = async (window, expect) => {
   await window.waitForTimeout(1000)
 }
 
-// common function for looping the table
+// Common function for interacting with tables.
 export const commonFilterTable = async (window, expect, projectName, clickItem) => {
   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//*[@id="projects-list"]')
@@ -191,7 +194,7 @@ export const commonFilterTable = async (window, expect, projectName, clickItem) 
   }
 }
 
-// export projects
+// Exports a project to a specified location
 export const exportProjects = async (window, expect, projectname) => {
   const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
   const userpath = newpath.userPath.split(".")[0]
@@ -206,7 +209,7 @@ export const exportProjects = async (window, expect, projectname) => {
 }
 
 
-// archived projects
+// Moves a project to the archived projects section
 export const archivedProjects = async (window, expect, projectname) => {
   await commonFilterTable(window, expect, projectname, "archive-restore-project")
   await window.locator('//*[@aria-label="archived-projects"]').click()
@@ -219,7 +222,7 @@ export const archivedProjects = async (window, expect, projectname) => {
   await expect(projectTitle).toBe('Projects');
 }
 
-// unarchived projects
+// Moves a project back from archived to active projects.
 export const unarchivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archived-projects"]').click()
   await commonFilterTable(window, expect, projectname, "archive-restore-project")
@@ -232,17 +235,17 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await expect(projectTitle).toBe('Projects');
 }
 
-// Return update/edit page
+// Navigates to the project editing page.
 export const goToEditProject = async (window, expect, projectName) => {
   await commonFilterTable(window, expect, projectName, "edit-project")
   const editTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(editTitle).toBe('Edit Project');
 }
 
-// Change app language
+// Changes the application's language.
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
-  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile-image"]').click()
   expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible()
   await window.locator('//*[@aria-label="user-profile"]').click()
   await window.getByRole('button', { name: fromLanguage }).click()
@@ -253,8 +256,8 @@ export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage
 
 // sign out
 export const signOut = async (window, expect) => {
-  await expect(window.locator('//*[@id="user-profile"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile"]').click()
+  await expect(window.locator('//*[@id="user-profile-image"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile-image"]').click()
   await expect(window.locator('//*[@aria-label="signout"]')).toBeVisible()
   await window.locator('//*[@aria-label="signout"]').click()
   await window.waitForTimeout(1000)
@@ -263,7 +266,7 @@ export const signOut = async (window, expect) => {
   await window.waitForTimeout(200)
 }
 
-// show active user by clicking the view more but in login page
+// Shows a list of active users.
 export const showActiveUsers = async (window, expect) => {
   await expect(window.locator('//*[@id="view-more"]', {timeout:5000})).toBeVisible()
   await window.locator('//*[@id="view-more"]', {timeout:5000}).click()

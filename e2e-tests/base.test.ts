@@ -46,20 +46,29 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
   const folder = await userFolder(window, userName, packageInfo, path)
 
   if (await checkLogInOrNot(window, expect)) {
-    expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
-    await window.locator('//*[@id="user-profile"]').click()
-    const currentUser = await window.textContent('[aria-label="userName"]')
-    expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
-    await window.locator('//*[@aria-label="signout"]').click()
-    // projects page then logout and delete playwright user
+    // Check if user profile image is visible
+    const userProfileImage = window.locator('//*[@id="user-profile-image"]');
+    expect(await userProfileImage.isVisible()).toBeTruthy();
+    await userProfileImage.click();
+
+    // Get the current user's name
+    const currentUser = await window.textContent('[aria-label="userName"]');
+    expect(currentUser).not.toBeNull();
+
+    // Check if signout button is visible
+    const signoutButton = window.locator('//*[@aria-label="signout"]');
+    expect(await signoutButton.isVisible()).toBeTruthy();
+    await signoutButton.click();
+
+    // If the current user matches and the folder exists, log out and delete the user
     if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await showLoginPage(fs, folder, userName, json, file, window, expect)
+      await showLoginPage(fs, folder, userName, json, file, window, expect);
     }
   } else {
-    // loging page, if playwright user exist then reload app and remove 
-    const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase())
+    // On the login page, if the playwright user exists, reload the app and remove it
+    const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
     if (existUser && await fs.existsSync(folder)) {
-      await showLoginPage(fs, folder, userName, json, file, window, expect)
+      await showLoginPage(fs, folder, userName, json, file, window, expect);
     }
   }
 
@@ -436,8 +445,8 @@ test("Logout and delete that playwright user from the backend", async ({ userNam
   const file = await userFile(window, packageInfo, path)
   // user folde name
   const folder = await userFolder(window, userName, packageInfo, path)
-  expect(await window.locator('//*[@id="user-profile"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile"]').click()
+  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile-image"]').click()
   const currentUser = await window.textContent('[aria-label="userName"]')
   expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
   await window.locator('//*[@aria-label="signout"]').click()
