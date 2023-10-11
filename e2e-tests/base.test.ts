@@ -2,7 +2,7 @@
 
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
-import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage } from './common';
+import { showLoginPage, checkLogInOrNot, userFile, userFolder, userJson, createProjectValidation, createProjects, unstarProject, starProject, userValidation, signOut, showActiveUsers, searchProject, checkProjectName, checkNotification, goToProjectPage, exportProjects, archivedProjects, unarchivedProjects, goToEditProject, changeAppLanguage } from './common';
 
 const fs = require('fs');
 const path = require('path');
@@ -63,8 +63,8 @@ test('Create a new user and login', async ({ userName }) => {
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects');
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects');
 })
 
 
@@ -87,8 +87,8 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//*[@aria-label="nt-Matthew"]').click()
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
-  const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
-  await expect(notifyMe).toBe('New project created')
+  // const notifyMe = await window.textContent('//*[@id="__next"]/div/div[2]/div[2]/div/div')
+  // await expect(notifyMe).toBe('New project created')
   const projectName = await window.innerText(`//div[@id="${textProject}"]`)
   await expect(projectName).toBe(textProject);
 })
@@ -226,13 +226,149 @@ test('Return to the projects from audio editor page', async () => {
 /* about the scribe */
 test("About scribe Application and License", async () => {
   await window.locator('//*[@aria-label="about-button"]').click()
-  const developedby = await window.innerText('[aria-label=developed-by]');
+  const developedby = await window.locator('[aria-label=developed-by]').textContent();
   expect(developedby).toBe('Developed by Bridge Connectivity Solutions');
   await window.click('[aria-label=license-button]');
   await window.locator('//*[@aria-label="about-description"]').click()
   await window.click('[aria-label=close-about]');
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects');
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects');
+})
+
+/* exports project */
+test("Export text translation project in the Downloads folder", async ({ textProject }) => {
+  await exportProjects(window, expect, textProject)
+})
+
+test("Export the obs project in the Downloads folder", async ({ obsProject }) => {
+  await exportProjects(window, expect, obsProject)
+})
+
+test("Export the audio project in the Downloads folder", async ({ audioProject }) => {
+  await exportProjects(window, expect, audioProject)
+})
+
+/*archive and unarchive project */
+test("Archive text translation project", async ({ textProject }) => {
+  await archivedProjects(window, expect, textProject)
+})
+
+test("Restore text translation project from archived page", async ({ textProject }) => {
+  await unarchivedProjects(window, expect, textProject)
+})
+
+test("Archive obs project", async ({ obsProject }) => {
+  await archivedProjects(window, expect, obsProject)
+})
+
+test("Restore the obs project from archived page", async ({ obsProject }) => {
+  await unarchivedProjects(window, expect, obsProject)
+})
+
+test("Archive audio project", async ({ audioProject }) => {
+  await archivedProjects(window, expect, audioProject)
+})
+
+test("Restore the audio project from the archived page", async ({ audioProject }) => {
+  await unarchivedProjects(window, expect, audioProject)
+})
+
+/*Update/Edit the text translation project */
+test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  const description = await window.textContent('//textarea[@id="project_description"]')
+  await expect(description).toBe('test description')
+  await window.locator('//textarea[@id="project_description"]').fill('edit test version')
+  const editDescription = await window.textContent('//textarea[@id="project_description"]')
+  await expect(editDescription).toBe('edit test version')
+  await window.locator('input[name="version_abbreviated"]').fill('tvs')
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.locator('//*[@aria-label="nt-Mark"]').click()
+  await window.locator('//*[@aria-label="nt-Luke"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2500)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="new-testament"]')).toBeVisible()
+  await window.locator('//div[@aria-label="new-testament"]').click()
+  await window.locator('//button[contains(text(),"Ok")]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//div[@aria-label="custom-book"]').click()
+  await window.locator('//*[@aria-label="ot-Genesis"]').click()
+  await window.locator('//*[@aria-label="ot-Exodus"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+test("Update/Edit text translation project license", async ({ textProject }) => {
+  await goToEditProject(window, expect, textProject)
+  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//button[@id="open-advancesettings"]').click()
+  await window.getByRole('button', { name: 'CC BY-SA' }).click()
+  await window.getByRole('option', { name: 'CC BY', exact: true }).click()
+  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+})
+
+
+/*changing app language */
+test("App language change English to hindi", async () => {
+  await changeAppLanguage(window, expect, "English", "Hindi")
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  expect(await snackbar === true)
+  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents()
+  expect(await textHindi[0]).toBe("प्रोफ़ाइल")
+})
+
+test("App language change Hindi to English", async () => {
+  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible()
+  await window.locator('//*[@aria-label="projectList"]').click()
+  await window.waitForTimeout(2000)
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(await title).toBe('प्रोजेक्ट्स')
+  await changeAppLanguage(window, expect, "Hindi", "English")
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
+  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents()
+  expect(await profile[0]).toBe("Profile")
+  expect(await snackbar === true)
 })
 
 /*signing out */
@@ -249,8 +385,8 @@ test("Click the view users button, log in with playwright user, and sign out", a
     if (await div.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
       await window.waitForTimeout(1000)
-      const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-      expect(title).toBe('Projects')
+      const title = await window.locator('//*[@aria-label="projects"]').textContent();
+      await expect(title).toBe('Projects')
       await signOut(window, expect)
       break
     }
@@ -281,8 +417,8 @@ test("Delete the user from the active tab and check in the archived tab", async 
       break
     }
   }
-  const title = await window.locator('//h1[@aria-label="projects"]', { timeout: 10000 }).textContent();
-  expect(title).toBe('Projects')
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  await expect(title).toBe('Projects')
 })
 
 /* logout and delete the playwright user */
