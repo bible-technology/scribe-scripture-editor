@@ -103,12 +103,12 @@ export default function ProjectsLayout(props) {
                           {showArchived ? (
                             <>
                               <ComputerDesktopIcon className="h-4 mr-2 text-white" />
-                              <span>{t('label-active')}</span>
+                              <span aria-label="active-projects">{t('label-active')}</span>
                             </>
                           ) : (
                             <>
                               <ArchiveBoxIcon className="h-4 mr-2 text-white" />
-                              <span>{t('label-archived')}</span>
+                              <span aria-label="archived-projects">{t('label-archived')}</span>
                             </>
                           )}
                         </button>

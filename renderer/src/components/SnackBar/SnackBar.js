@@ -66,7 +66,7 @@ const SnackBar = ({
             >
               <XMarkIcon />
             </button>
-            <p>
+            <p aria-label="snack-text">
               {snackText}
             </p>
           </div>
