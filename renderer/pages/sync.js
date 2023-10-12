@@ -1,7 +1,7 @@
 import Sync from '@/components/Sync/Sync';
 import AuthenticationContextProvider from '@/components/Login/AuthenticationContextProvider';
 import AutographaContextProvider from '@/components/context/AutographaContext';
-import SyncContextProvider from '@/components/Sync/SyncContextProvider';
+import SyncContextProvider from '@/components/context/SyncContext';
 
 const projects = () => (
   <AuthenticationContextProvider>

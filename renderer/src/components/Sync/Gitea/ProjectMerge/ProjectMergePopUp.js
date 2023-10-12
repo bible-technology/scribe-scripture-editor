@@ -8,7 +8,7 @@ import useAddNotification from '@/components/hooks/useAddNotification';
 import PopUpModal from '../../PopUpModal';
 import { VerticalLinearStepper } from '../../VerticalStepperProgress';
 import { mergeProgressSteps } from './ProjectMergeConst';
-import LoadingSpinner from '../../LoadingSpinner';
+import { LoadingSpinner } from '../../../LoadingSpinner';
 import { tryMergeProjects } from './MergeActions';
 import burrito from '../../../../lib/BurritoTemplete.json';
 import { backupLocalProject, deleteCreatedMergeBranch, undoMergeOrDeleteOldBackup } from './ProjectMergeUtils';

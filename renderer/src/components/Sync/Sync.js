@@ -11,7 +11,7 @@ import {
 import { SnackBar } from '@/components/SnackBar';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
-import { SyncContext } from './SyncContextProvider';
+import { SyncContext } from '../context/SyncContext';
 import { uploadToGitea } from './Scribe/SyncToGitea';
 import { downloadFromGitea } from './Gitea/SyncFromGitea';
 import { cloneAndSetProject, updateSettingsFiles } from './Gitea/SyncFromGiteaUtils';
