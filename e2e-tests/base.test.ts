@@ -9,7 +9,8 @@ import {
   userValidation, signOut, showActiveUsers,
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
-  unarchivedProjects, goToEditProject, changeAppLanguage, changeTargetLanguage, projectTargetLanguage, userProfileValidaiton
+  unarchivedProjects, goToEditProject, changeAppLanguage,
+  projectTargetLanguage, userProfileValidaiton
 } from './common';
 
 const fs = require('fs');
@@ -363,6 +364,7 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   expect(await title).toBe('Projects')
 })
 
+/* Changing text translation project target language */
 test("Changing text translation project language from English to Persian", async ({ textProject }) => {
   await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
 })
@@ -371,6 +373,7 @@ test("Changing text translation project language from Persian to English", async
   await projectTargetLanguage(window, expect, textProject, "english", "English")
 })
 
+/* updating user profile */
 test("Update user Profile", async () => {
   await userProfileValidaiton(window, expect)
   await expect(window.locator('input[name="given-name"]')).toBeVisible();

@@ -2,11 +2,13 @@ export const checkLogInOrNot = async (window, expect) => {
   await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]', { timeout: 5000 })
   const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
   if (textVisble) {
-    // If 'projects' is visible, check the title
+    // If title is "Projects" (english) or Not(other language) visible in project list page, 
     const title = await window.locator('//*[@aria-label="projects"]').textContent()
     if(await title === "Projects"){
+      //expecting "Projects" in english
       await expect(title).toBe("Projects")
     }else{
+      //expecting "Projects" in Other langauage
       await expect(title).not.toBe('Projects')
     }
   } else {
