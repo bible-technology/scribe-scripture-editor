@@ -9,7 +9,7 @@ import {
   userValidation, signOut, showActiveUsers,
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
-  unarchivedProjects, goToEditProject, changeAppLanguage
+  unarchivedProjects, goToEditProject, changeAppLanguage, changeTargetLanguage, projectTargetLanguage, userProfileValidaiton
 } from './common';
 
 const fs = require('fs');
@@ -97,10 +97,10 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//textarea[@id="project_description"]').fill('test description')
   await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
   await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
-  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//button[@id="open-advancesettings"]').click()
-  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//div[@aria-label="custom-book"]').click()
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-book"]').click()
   await window.locator('//*[@aria-label="nt-Matthew"]').click()
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
@@ -297,8 +297,8 @@ test("Update/Edit text translation project of description and abbreviation", asy
   const editDescription = await window.textContent('//textarea[@id="project_description"]')
   await expect(editDescription).toBe('edit test version')
   await window.locator('input[name="version_abbreviated"]').fill('tvs')
-  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
   await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
@@ -306,15 +306,15 @@ test("Update/Edit text translation project of description and abbreviation", asy
 
 test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//button[@id="open-advancesettings"]').click()
-  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//div[@aria-label="custom-book"]').click()
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-book"]').click()
   await window.locator('//*[@aria-label="nt-Mark"]').click()
   await window.locator('//*[@aria-label="nt-Luke"]').click()
   await window.locator('//*[@id="save-canon"]').click()
-  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
   await window.waitForTimeout(2500)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
@@ -322,13 +322,13 @@ test("Update/Edit text translation project scope mark and luke", async ({ textPr
 
 test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//button[@id="open-advancesettings"]').click()
-  await expect(window.locator('//div[@aria-label="new-testament"]')).toBeVisible()
-  await window.locator('//div[@aria-label="new-testament"]').click()
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@aria-label="new-testament"]')).toBeVisible()
+  await window.locator('//*[@aria-label="new-testament"]').click()
   await window.locator('//button[contains(text(),"Ok")]').click()
-  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
   await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
@@ -336,15 +336,15 @@ test("Update/Edit text translation project scope custom book into NT", async ({ 
 
 test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//button[@id="open-advancesettings"]').click()
-  await expect(window.locator('//div[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//div[@aria-label="custom-book"]').click()
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-book"]').click()
   await window.locator('//*[@aria-label="ot-Genesis"]').click()
   await window.locator('//*[@aria-label="ot-Exodus"]').click()
   await window.locator('//*[@id="save-canon"]').click()
-  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
   await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
@@ -352,17 +352,42 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
 
 test("Update/Edit text translation project license", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//button[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//button[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
   await window.getByRole('button', { name: 'CC BY-SA' }).click()
   await window.getByRole('option', { name: 'CC BY', exact: true }).click()
-  await expect(window.locator('//button[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//button[@aria-label="save-edit-project"]').click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
   await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
 })
 
+test("Changing text translation project language from English to Persian", async ({ textProject }) => {
+  await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
+})
+
+test("Changing text translation project language from Persian to English", async ({ textProject }) => {
+  await projectTargetLanguage(window, expect, textProject, "english", "English")
+})
+
+test("Update user Profile", async () => {
+  await userProfileValidaiton(window, expect)
+  await expect(window.locator('input[name="given-name"]')).toBeVisible();
+  await window.locator('input[name="given-name"]').fill("Bobby")
+  await expect(window.locator('input[name="family-name"]')).toBeVisible();
+  await window.locator('input[name="family-name"]').fill("kumar")
+  await expect(window.locator('input[name="email"]')).toBeVisible();
+  await window.locator('input[name="email"]').fill("kumar@gamil.com")
+  await expect(window.locator('input[name="organization"]')).toBeVisible();
+  await window.locator('input[name="organization"]').fill("vidya foundation")
+  await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
+  await window.locator('input[name="selectedregion"]').fill("India")
+  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible()
+  await window.locator('//*[@id="save-profile"]').click()
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  expect(snackbar).toBe("Updated the Profile.")
+})
 
 /*changing app language english to hindi */
 test("App language change English to hindi", async () => {

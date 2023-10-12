@@ -33,6 +33,7 @@ function CustomMultiComboBox({
                   // displayValue={(language) => language?.ang}
                   displayValue={(selectedList) => `${selectedList.length > 0 ? `${selectedList[0][filterParams]}${multiSelect ? '... click for more' : '' }` : ''}`}
                   placeholder="Select Language"
+                  aria-label="custom-dropdown"
                   onFocus={() => !open && setIsActive(true)}
                   onBlur={() => setIsActive(false)}
                   onChange={(event) => setQuery(event.target.value)}
@@ -54,7 +55,7 @@ function CustomMultiComboBox({
                     {filteredData.length > 0
                     ? filteredData.map((data) => (
                       // <Combobox.Option key={data?.id || data?.pk} className={`${selectedList.includes(data) ? 'bg-gray-400' : ''} hover:bg-gray-300 p-1`} value={data}>
-                      <Combobox.Option key={data?.id || data?.pk} className=" hover:bg-gray-300 p-1" value={data}>
+                      <Combobox.Option key={data?.id || data?.pk} className=" hover:bg-gray-300 p-1" value={data} aria-label={data[filterParams]} >
                         {data[filterParams] }
                         {' '}
                         {showLangCode.show && (

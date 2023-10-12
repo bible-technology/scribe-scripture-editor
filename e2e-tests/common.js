@@ -158,6 +158,7 @@ export const checkProjectName = async (window, expect, name) => {
 
 // Checks for notifications.
 export const checkNotification = async (window, expect) => {
+  await window.waitForSelector('//*[@aria-label="notification-button"]', {timeout : 5000})
   await window.locator('//*[@aria-label="notification-button"]').click()
   await window.waitForTimeout(1000)
   const title = await window.locator('[aria-label=notification-title]').textContent();
@@ -241,6 +242,59 @@ export const goToEditProject = async (window, expect, projectName) => {
   const editTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(editTitle).toBe('Edit Project');
 }
+// change project target language
+export const projectTargetLanguage = async (window, expect, projectName, searchLangauge, selectLanguage) => {
+  await goToEditProject(window, expect, projectName)
+  expect(await window.locator('//*[@aria-label="custom-dropdown"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-dropdown"]').fill(searchLangauge)
+  await window.locator(`//*[@aria-label="${selectLanguage}"]`).click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(2000)
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//*[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-body"]')
+  const rows = body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectName) {
+      // expecting language
+      expect(await tds.nth(2).textContent()).toBe(selectLanguage)
+    }
+  }
+  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  expect(title).toBe('Projects');
+}
+
+// Performs user profile validation checks.
+export const userProfileValidaiton = async(window, expect) => {
+  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile-image"]').click()
+  expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible()
+  await window.locator('//*[@aria-label="user-profile"]').click()
+  await expect(window.locator('input[name="given-name"]')).toBeVisible();
+  await window.locator('input[name="given-name"]').fill("b")
+  await expect(window.locator('input[name="family-name"]')).toBeVisible();
+  await window.locator('input[name="family-name"]').fill("k")
+  await expect(window.locator('input[name="email"]')).toBeVisible();
+  await window.locator('input[name="email"]').fill("kumar")
+  await expect(window.locator('input[name="organization"]')).toBeVisible();
+  await window.locator('input[name="organization"]').fill("v")
+  await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
+  await window.locator('input[name="selectedregion"]').fill("I")
+  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible()
+  await window.locator('//*[@id="save-profile"]').click()
+  const firstLastNameError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[2]/span').textContent()
+  expect(firstLastNameError).toBe('The input has to be between 2 and 15 characters long')
+  const emailError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[3]/span').textContent()
+  expect(emailError).toBe('Email is not valid!')
+  const organizationError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[4]/span').textContent()
+  expect(organizationError).toBe('The input has to be between 2 and 30 characters long')
+  const regionError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[5]/span').textContent()
+  expect(regionError).toBe('The input has to be between 2 and 15 characters long')
+}
+
 
 // Changes the application's language.
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {

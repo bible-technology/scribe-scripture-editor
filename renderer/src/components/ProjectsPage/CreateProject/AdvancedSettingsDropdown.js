@@ -284,6 +284,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       className={canonSpecification.title === 'Old Testament (OT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[1])}
                       role="button"
+                      aria-label="old-testament"
                       tabIndex="0"
                     >
                       {`${t('label-old-testament')} (OT)`}
