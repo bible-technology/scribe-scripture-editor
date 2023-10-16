@@ -75,11 +75,16 @@ async function fetchAndCombineAudio(audioArr, path) {
     });
 }
 
+function sortingLogic(a, b) {
+    // expected format : '1_10_1_default.mp3',
+    return a.split('_')[1] - b.split('_')[1];
+}
+
 export async function mergeAudio(audioArr, dirPath, path, book, chapter) {
     logger.debug('audioUtils.js', 'In Merge Audio fucntion');
     // const audio = new ConcatAudio(window);
     return new Promise((resolve) => {
-        audioArr.sort();
+        audioArr.sort(sortingLogic);
         for (let i = 0; i < audioArr.length; i++) {
             audioArr[i] = path.join(dirPath, audioArr[i]);
         }
