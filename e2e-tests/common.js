@@ -80,13 +80,13 @@ export const createProjectValidation = async (window, expect) => {
 }
 
 /* Creates a project with a given name, type, description, and abbreviation. */
-export const createProjects = async (window, expect, projectname, type, description, abb) => {
+export const createProjects = async (window, expect, projectname, flavorType, description, abb) => {
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
   await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
   await window.locator('//button[@aria-label="open-popover"]').click()
-  await expect(window.locator(`//a[@data-id="${type}"]`)).toBeVisible()
-  await window.locator(`//a[@data-id="${type}"]`).click()
+  await expect(window.locator(`//a[@data-id="${flavorType}"]`)).toBeVisible()
+  await window.locator(`//a[@data-id="${flavorType}"]`).click()
   // checking for create project validation
   await createProjectValidation(window, expect)
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
@@ -211,6 +211,20 @@ export const exportProjects = async (window, expect, projectname) => {
   await window.locator('[aria-label=arrow-up]').click()
 }
 
+//Export a project with chapter and full audio project
+export const exportAudioProject = async(window, expect, projectname, itemCheck) => {
+  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
+  const userpath = newpath.userPath.split(".")[0]
+  await commonFilterTable(window, expect, projectname, "export-project")
+  await expect(window.locator('input[name="location"]')).toBeVisible()
+  await window.locator('input[name="location"]').fill(`${userpath}/Downloads`)
+  await window.locator(`//*[@value="${itemCheck}"]`).click()
+  await window.locator('//*[@aria-label="export-projects"]').click()
+  await window.waitForTimeout(2000)
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toBe("Exported Successfully")
+  await window.locator('[aria-label=arrow-up]').click()
+}
 
 // Moves a project to the archived projects section
 export const archivedProjects = async (window, expect, projectname) => {
@@ -241,9 +255,11 @@ export const unarchivedProjects = async (window, expect, projectname) => {
 // Navigates to the project editing page.
 export const goToEditProject = async (window, expect, projectName) => {
   await commonFilterTable(window, expect, projectName, "edit-project")
+  await window.waitForTimeout(500)
   const editTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(editTitle).toBe('Edit Project');
 }
+
 // change project target language
 export const projectTargetLanguage = async (window, expect, projectName, searchLangauge, selectLanguage) => {
   await goToEditProject(window, expect, projectName)
@@ -298,7 +314,7 @@ export const userProfileValidaiton = async(window, expect) => {
 }
 
 
-// Changes the application's language.
+// Changes the application language.
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
   await window.locator('//*[@id="user-profile-image"]').click()

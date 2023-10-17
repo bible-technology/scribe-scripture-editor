@@ -204,6 +204,7 @@ export default function TargetLanguagePopover({ projectType }) {
         && (
         <button
           type="button"
+          aria-label="edit-language"
           className="focus:outline-none bg-primary h-8 w-8 flex items-center justify-center rounded-full"
           onClick={() => { openLanguageNav('edit'); openModal(); }}
         >
@@ -299,6 +300,7 @@ export default function TargetLanguagePopover({ projectType }) {
                               type="radio"
                               className="form-radio h-4 w-4 text-primary"
                               value={t('label-ltr')}
+                              aria-label="LTR"
                               checked={direction === t('label-ltr')}
                               onChange={() => setDirection(t('label-ltr'))}
                               disabled={lock}
@@ -310,6 +312,7 @@ export default function TargetLanguagePopover({ projectType }) {
                               type="radio"
                               className="form-radio h-4 w-4 text-primary"
                               value={t('label-rtl')}
+                              aria-label="RTL"
                               checked={direction === t('label-rtl')}
                               onChange={() => setDirection(t('label-rtl'))}
                               disabled={lock}
@@ -323,7 +326,6 @@ export default function TargetLanguagePopover({ projectType }) {
                     <div className="flex items-center justify-center mt-8">
                       <button
                         type="button"
-                        aria-label="create-language"
                         onClick={closeModal}
                         className="mr-5 bg-error w-28 h-8 border-color-error rounded
                                   uppercase shadow text-white text-xs tracking-wide leading-4 font-light focus:outline-none"
@@ -334,7 +336,7 @@ export default function TargetLanguagePopover({ projectType }) {
                     : (
                       <button
                         type="button"
-                        aria-label="edit-language"
+                        aria-label={edit === true ? "edit-language": "create-language"}
                         className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
                         onClick={() => (edit === true ? editLanguage() : addLanguage())}
                       >
