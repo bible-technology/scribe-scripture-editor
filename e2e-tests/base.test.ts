@@ -10,7 +10,7 @@ import {
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
-  projectTargetLanguage, userProfileValidaiton
+  projectTargetLanguage, userProfileValidaiton, exportAudioProject
 } from './common';
 
 const fs = require('fs');
@@ -187,6 +187,7 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
 });
 
 test('Increase the font size in the obs editor', async () => {
+  await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 })
   await window.locator('//*[@aria-label="increase-font"]').click();
   await window.locator('//*[@aria-label="increase-font"]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
@@ -198,6 +199,7 @@ test('Increase the font size in the obs editor', async () => {
 });
 
 test('Decrease the font size in the obs editor', async () => {
+  await window.waitForSelector('//*[@aria-label="decrease-font"]', { timeout: 5000 })
   await window.locator('//*[@aria-label="decrease-font"]').click();
   await window.locator('//*[@aria-label="decrease-font"]').click();
   const div = await window.locator('//*[@aria-label="editor"]')
@@ -262,6 +264,15 @@ test("Export the obs project in the Downloads folder", async ({ obsProject }) =>
 
 test("Export the audio project in the Downloads folder", async ({ audioProject }) => {
   await exportProjects(window, expect, audioProject)
+})
+
+//export chapter wise and full audio project
+test("Export chapter wise audio project in the Downloads folder", async ({ audioProject }) => {
+  await exportAudioProject(window, expect, audioProject, "Chapter")
+})
+
+test("Export full audio project in the Downloads folder", async ({ audioProject }) => {
+  await exportAudioProject(window, expect, audioProject, "full")
 })
 
 /* archive and unarchive project */
