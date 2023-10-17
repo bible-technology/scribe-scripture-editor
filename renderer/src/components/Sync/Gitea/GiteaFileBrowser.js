@@ -6,15 +6,13 @@ import {
 } from 'gitea-react-toolkit';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
-import { SyncContext } from '../SyncContextProvider';
+import { SyncContext } from '../../context/SyncContext';
 import * as logger from '../../../logger';
-import LoadingSpinner from '../LoadingSpinner';
+import { LoadingSpinner } from '../../LoadingSpinner';
 import GridRow from '../GridRow';
 import ProjectMergePop from './ProjectMerge/ProjectMergePopUp';
 import { environment } from '../../../../environment';
 
-/* eslint-disable no-console */
-// eslint-disable-next-line react/prop-types
 const GiteaFileBrowser = ({ changeRepo }) => {
   const {
     states: {

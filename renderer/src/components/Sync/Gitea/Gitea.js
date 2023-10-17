@@ -5,7 +5,7 @@ import {
 } from 'gitea-react-toolkit';
 import GiteaFileBrowser from './GiteaFileBrowser';
 import { environment } from '../../../../environment';
-import { createSyncProfile } from '../Ag/SyncToGiteaUtils';
+import { createSyncProfile } from '../Scribe/SyncToGiteaUtils';
 
 const Gitea = ({ setAuth, setRepo }) => {
   const [authentication, setAuthentication] = useState();

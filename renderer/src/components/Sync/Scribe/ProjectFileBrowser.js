@@ -2,7 +2,7 @@ import {
  useContext, useEffect,
 } from 'react';
 import GridRow from '../GridRow';
-import { SyncContext } from '../SyncContextProvider';
+import { SyncContext } from '../../context/SyncContext';
 
 export default function ProjectFileBrowser() {
   const {

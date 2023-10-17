@@ -16,7 +16,7 @@ import { validate } from '../../../util/validate';
 import * as logger from '../../../logger';
 import burrito from '../../../lib/BurritoTemplete.json';
 import ConfirmationModal from '../../editor/ConfirmationModal';
-import ProgressCircle from '../../../components/Sync/ProgressCircle';
+import { ProgressCircle } from '../../../components/ProgressCircle';
 import { exportDefaultAudio, exportFullAudio } from './ExportUtils';
 import packageInfo from '../../../../../package.json';
 
