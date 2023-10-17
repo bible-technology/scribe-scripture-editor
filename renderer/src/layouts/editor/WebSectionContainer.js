@@ -3,7 +3,7 @@
 import { useState, useEffect, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import localforage from 'localforage';
-import ObsEditor from '@/components/EditorPage/ObsEditor/ObsWebEditor';
+import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
 import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import { useReadUsfmFile } from '@/components/hooks/scribex/useReadUsfmFile';
