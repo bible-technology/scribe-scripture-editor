@@ -10,7 +10,7 @@ import {
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
-  projectTargetLanguage, userProfileValidaiton, exportAudioProject
+  projectTargetLanguage, userProfileValidaiton, exportAudioProject, updateDescriptionAbbriviation
 } from './common';
 
 const fs = require('fs');
@@ -303,17 +303,7 @@ test("Restore the audio project from the archived page", async ({ audioProject }
 /* Update/Edit the text translation project */
 test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
   await goToEditProject(window, expect, textProject)
-  const description = await window.textContent('//textarea[@id="project_description"]')
-  await expect(description).toBe('test description')
-  await window.locator('//textarea[@id="project_description"]').fill('edit test version')
-  const editDescription = await window.textContent('//textarea[@id="project_description"]')
-  await expect(editDescription).toBe('edit test version')
-  await window.locator('input[name="version_abbreviated"]').fill('tvs')
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//*[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(3000)
-  const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Projects')
+  await updateDescriptionAbbriviation(window, expect, "edit text translation project", "ettp")
 })
 
 test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
@@ -373,6 +363,18 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   await window.waitForTimeout(3000)
   const title = await window.textContent('[aria-label=projects]');
   expect(await title).toBe('Projects')
+})
+
+/* Update/Edit the obs project */
+test("Update/Edit obs project of description and abbreviation", async ({ obsProject }) => {
+  await goToEditProject(window, expect, obsProject)
+  await updateDescriptionAbbriviation(window, expect, "edit obs project", "eop")
+})
+
+/* Update/Edit the audio project */
+test("Update/Edit audio project of description and abbreviation", async ({ audioProject }) => {
+  await goToEditProject(window, expect, audioProject)
+  await updateDescriptionAbbriviation(window, expect, "edit audio project", "eap")
 })
 
 /* Changing text translation project target language */

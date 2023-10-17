@@ -284,6 +284,21 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
   expect(title).toBe('Projects');
 }
 
+// update/edit project description and abbriviation 
+export const updateDescriptionAbbriviation = async (window, expect, descriptionText, abbreviation) => {
+  const description = await window.textContent('//textarea[@id="project_description"]')
+  await expect(description).toBe('test description')
+  await window.locator('//textarea[@id="project_description"]').fill(descriptionText)
+  const editDescription = await window.textContent('//textarea[@id="project_description"]')
+  await expect(editDescription).toBe(descriptionText)
+  await window.locator('input[name="version_abbreviated"]').fill(abbreviation)
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+}
+
 // Performs user profile validation checks.
 export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
