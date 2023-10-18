@@ -11,7 +11,7 @@ import {
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
   projectTargetLanguage, userProfileValidaiton,
-  exportAudioProject, updateDescriptionAbbriviation, changeLicense
+  exportAudioProject, updateDescriptionAbbriviation, changeLicense, customAddEditLanguage
 } from './common';
 
 const fs = require('fs');
@@ -384,6 +384,30 @@ test("Changing text translation project language from English to Persian", async
 
 test("Changing text translation project language from Persian to English", async ({ textProject }) => {
   await projectTargetLanguage(window, expect, textProject, "english", "English")
+})
+
+// custom project with custom language for text translation
+test("Custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
+  await window.locator('//a[@aria-label="new"]').click()
+  await createProjectValidation(window, expect)
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(customTextTargetLanguage)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill('test description')
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
+  //adding new custom text translation language 
+  await customAddEditLanguage(window, expect, "add-language", "custom text translation language", 'cttl', "RTL", "create-language")
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
+  await window.locator('//*[@id="open-advancesettings"]').click()
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
+  await window.locator('//*[@aria-label="custom-book"]').click()
+  await window.locator('//*[@aria-label="nt-Matthew"]').click()
+  await window.locator('//*[@id="save-canon"]').click()
+  await window.locator('//button[@aria-label="create"]').click()
+  const projectName = await window.innerText(`//div[@id="${customTextTargetLanguage}"]`)
+  await expect(projectName).toBe(customTextTargetLanguage);
 })
 
 /* updating user profile */

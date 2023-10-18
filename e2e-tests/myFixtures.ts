@@ -12,7 +12,7 @@ type myFixture = {
   flavorObs: string
   textUnderscore: string,
   obsUnderscore: string,
-  obsUrduProject: string,
+  customTextTargetLanguage: string,
 }
 const myFixtureTest = myTest.extend<myFixture>({
   userName: "Playwright user",
@@ -26,7 +26,7 @@ const myFixtureTest = myTest.extend<myFixture>({
   doorPassword: "Bobby@123",
   flavorText: "textTranslation",
   flavorObs: "textStories",
-  obsUrduProject: "Obs urdu project",
+  customTextTargetLanguage: "Custom text transaltion",
 })
 
 export const test = myFixtureTest;

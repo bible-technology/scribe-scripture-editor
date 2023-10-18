@@ -310,6 +310,20 @@ export const changeLicense = async (window, expect, currentLicense, newLicense) 
   expect(await title).toBe('Projects')
 }
 
+//Create Custom langauge
+export const customAddEditLanguage = async (window, expect, openModal, targetLanguageName, targetLanguageCode, targetDirection, createLanguage, flavorType) => {
+  await window.locator(`//*[@aria-label="${openModal}"]`).click()
+  expect(await window.locator('//*[@id="language"]')).toBeVisible()
+  await window.locator('//*[@id="language"]').fill(targetLanguageName)
+  expect(await window.locator('//*[@id="code"]')).toBeVisible()
+  await window.locator('//*[@id="code"]').fill(targetLanguageCode)
+  if(flavorType !== "Audio"){
+    await window.locator(`//*[@aria-label="${targetDirection}"]`).click()
+  }
+  await window.locator(`//*[@aria-label="${createLanguage}"]`).click()
+}
+
+
 // Performs user profile validation checks.
 export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
