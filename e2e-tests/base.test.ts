@@ -35,12 +35,14 @@ test("Start the scribe application", async () => {
   expect(await window.title()).toBe('Scribe Scripture');
 
 })
-
+// This test case checks if the user is already logged in
 test('Check whether the app is being logged IN', async () => {
   await checkLogInOrNot(window, expect)
 });
 
+// This test case handles the user's login or logout actions and related operations.
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
+  // Here you handle user login and logout logic, user data, and folder management.
   //user json
   const json = await userJson(window, packageInfo, fs, path)
   // user file
@@ -77,8 +79,9 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
 
 });
 
-// create new user
+// This test case creates a new user and logs in.
 test('Create a new user and login', async ({ userName }) => {
+  // Here you create a new user and validate the login.
   await userValidation(window, expect)
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
@@ -91,6 +94,7 @@ test('Create a new user and login', async ({ userName }) => {
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 /* Translation Project    */
 test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
+  // Here you create a new text translation project with custom settings.
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
   await createProjectValidation(window, expect)
@@ -113,39 +117,47 @@ test('Click New and Fill project page details to create a new project for text t
 
 /* Obs translation project */
 test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
+  //  Here you create a new OBS project.
   await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
 })
 
 /* Audio project */
 test('Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
+  // Here you create a new audio project
   await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
 })
 
 /* STAR & UNSTAR PROJECT */
 // text translation
 test("Star the text translation project", async ({ textProject }) => {
+  // Here you star a text translation project.
   await starProject(window, expect, textProject)
 })
 
 test("Unstar the text translation project", async ({ textProject }) => {
+  // Here you unstar a text translation project.
   await unstarProject(window, expect, textProject)
 })
 
 // obs
 test("Star the obs project", async ({ obsProject }) => {
+  // Here you star a OBS project.
   await starProject(window, expect, obsProject)
 })
 
 test("Unstar the obs project", async ({ obsProject }) => {
+  // Here you unstar a OBS project.
   await unstarProject(window, expect, obsProject)
 })
 
 // audio
 test("Star the audio project", async ({ audioProject }) => {
+  // Here you star a Audio project.
   await starProject(window, expect, audioProject)
 })
 
 test("Unstar the audio project", async ({ audioProject }) => {
+  // Here you unstar a Audio project.
   await unstarProject(window, expect, audioProject)
 })
 
@@ -180,44 +192,51 @@ test('Check obs project Notifications', async () => {
 });
 
 test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
-  await window.locator('div:nth-child(2) > .flex-grow').fill("god created heavens and earth");
-  await window.locator('div:nth-child(3) > .flex-grow').fill("story content added in verse 3");
-  const verse2 = await window.textContent('div:nth-child(2) > .flex-grow')
-  expect(verse2).toBe('god created heavens and earth');
-  const verse3 = await window.textContent('div:nth-child(3) > .flex-grow')
-  expect(verse3).toBe('story content added in verse 3');
+  // Fill text in verse 2 and verse 3 fields
+  await window.locator('div:nth-child(2) > .flex-grow').fill("God created heavens and earth");
+  await window.locator('div:nth-child(3) > .flex-grow').fill("Story content added in verse 3");
+  // Verify if the content was added to verse 2 and verse 3
+  const verse2 = await window.textContent('div:nth-child(2) > .flex-grow');
+  expect(verse2).toBe('God created heavens and earth');
+  const verse3 = await window.textContent('div:nth-child(3) > .flex-grow');
+  expect(verse3).toBe('Story content added in verse 3');
 });
 
 test('Increase the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 })
+  await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });
   await window.locator('//*[@aria-label="increase-font"]').click();
   await window.locator('//*[@aria-label="increase-font"]').click();
-  const div = await window.locator('//*[@aria-label="editor"]')
-  const fontSize = await div.evaluate((ele) => {
-    return window.getComputedStyle(ele).getPropertyValue('font-size')
 
-  })
+  // Get and verify the font size
+  const div = await window.locator('//*[@aria-label="editor"]');
+  const fontSize = await div.evaluate((ele) => {
+    return window.getComputedStyle(ele).getPropertyValue('font-size');
+  });
   expect(await fontSize).toBe('22.4px');
 });
 
 test('Decrease the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="decrease-font"]', { timeout: 5000 })
+  await window.waitForSelector('//*[@aria-label="decrease-font"]', { timeout: 5000 });
   await window.locator('//*[@aria-label="decrease-font"]').click();
   await window.locator('//*[@aria-label="decrease-font"]').click();
-  const div = await window.locator('//*[@aria-label="editor"]')
+
+  // Get and verify the font size
+  const div = await window.locator('//*[@aria-label="editor"]');
   const fontSize = await div.evaluate((ele) => {
-    return window.getComputedStyle(ele).getPropertyValue('font-size')
-  })
+    return window.getComputedStyle(ele).getPropertyValue('font-size');
+  });
   expect(await fontSize).toBe('16px');
 });
 
 test('Change the obs navigation story from 1 to 12 and edit the title', async () => {
-  await expect(window.locator('//*[@aria-label="obs-navigation"]')).toBeVisible()
-  await window.locator('//*[@aria-label="obs-navigation"]').click()
+  await expect(window.locator('//*[@aria-label="obs-navigation"]')).toBeVisible();
+  await window.locator('//*[@aria-label="obs-navigation"]').click();
   await window.locator('//*[@aria-label="12"]').click();
-  await expect(window.locator('//*[@name="12. The Exodus"]')).toBeVisible()
-  await window.locator('//*[@name="12. The Exodus"]').fill('12. The Exodus Edit title')
-  const title = await window.textContent('//*[@name="12. The Exodus Edit title"]')
+
+  // Edit the title of story 12 and verify the change
+  await expect(window.locator('//*[@name="12. The Exodus"]')).toBeVisible();
+  await window.locator('//*[@name="12. The Exodus"]').fill('12. The Exodus Edit title');
+  const title = await window.textContent('//*[@name="12. The Exodus Edit title"]');
   expect(title).toBe('12. The Exodus Edit title');
 });
 
@@ -309,120 +328,178 @@ test("Update/Edit text translation project of description and abbreviation", asy
 })
 
 test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
-  await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//*[@id="open-advancesettings"]').click()
-  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//*[@aria-label="custom-book"]').click()
-  await window.locator('//*[@aria-label="nt-Mark"]').click()
-  await window.locator('//*[@aria-label="nt-Luke"]').click()
-  await window.locator('//*[@id="save-canon"]').click()
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//*[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(2500)
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, textProject);
+
+  // Open advanced settings
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+  await window.locator('//*[@id="open-advancesettings"]').click();
+
+  // Select the custom book option
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible();
+  await window.locator('//*[@aria-label="custom-book"]').click();
+
+  // Select NT-Mark and NT-Luke
+  await window.locator('//*[@aria-label="nt-Mark"]').click();
+  await window.locator('//*[@aria-label="nt-Luke"]').click();
+
+  // Save the changes and return to the projects page
+  await window.locator('//*[@id="save-canon"]').click();
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  await window.waitForTimeout(2500);
+
+  // Verify that the title is "Projects"
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Projects')
+  expect(await title).toBe('Projects');
 })
 
 test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
-  await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//*[@id="open-advancesettings"]').click()
-  await expect(window.locator('//*[@aria-label="new-testament"]')).toBeVisible()
-  await window.locator('//*[@aria-label="new-testament"]').click()
-  await window.locator('//button[contains(text(),"Ok")]').click()
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//*[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(3000)
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, textProject);
+
+  // Open advanced settings
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+  await window.locator('//*[@id="open-advancesettings"]').click();
+
+  // Select the New Testament option
+  await expect(window.locator('//*[@aria-label="new-testament"]')).toBeVisible();
+  await window.locator('//*[@aria-label="new-testament"]').click();
+
+  // Confirm the change and save
+  await window.locator('//button[contains(text(),"Ok")]').click();
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  await window.waitForTimeout(3000);
+
+  // Verify that the title is "Projects"
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Projects')
+  expect(await title).toBe('Projects');
 })
 
 test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
-  await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//*[@id="open-advancesettings"]').click()
-  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//*[@aria-label="custom-book"]').click()
-  await window.locator('//*[@aria-label="ot-Genesis"]').click()
-  await window.locator('//*[@aria-label="ot-Exodus"]').click()
-  await window.locator('//*[@id="save-canon"]').click()
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//*[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(3000)
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, textProject);
+
+  // Open advanced settings
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+  await window.locator('//*[@id="open-advancesettings"]').click();
+
+  // Select the custom book option
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible();
+  await window.locator('//*[@aria-label="custom-book"]').click();
+
+  // Select OT-Genesis and OT-Exodus
+  await window.locator('//*[@aria-label="ot-Genesis"]').click();
+  await window.locator('//*[@aria-label="ot-Exodus"]').click();
+
+  // Save the changes and return to the projects page
+  await window.locator('//*[@id="save-canon"]').click();
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  await window.waitForTimeout(3000);
+
+  // Verify that the title is "Projects"
   const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Projects')
+  expect(await title).toBe('Projects');
 })
 
 test("Update/Edit text translation project license", async ({ textProject }) => {
-  await goToEditProject(window, expect, textProject)
-  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//*[@id="open-advancesettings"]').click()
-  await changeLicense(window, expect, "CC BY-SA", "CC BY")
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, textProject);
+
+  // Open advanced settings
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+  await window.locator('//*[@id="open-advancesettings"]').click();
+
+  // Change the license from "CC BY-SA" to "CC BY"
+  await changeLicense(window, expect, "CC BY-SA", "CC BY");
 })
 
 /* Update/Edit the obs project */
 test("Update/Edit obs project of description and abbreviation", async ({ obsProject }) => {
-  await goToEditProject(window, expect, obsProject)
-  await updateDescriptionAbbriviation(window, expect, "edit obs project", "eop")
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, obsProject);
+
+  // Update description and abbreviation
+  await updateDescriptionAbbriviation(window, expect, "edit obs project", "eop");
 })
 
 test("Update/Edit obs project license", async ({ obsProject }) => {
-  await goToEditProject(window, expect, obsProject)
-  await changeLicense(window, expect, "CC BY-SA", "CC BY")
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, obsProject);
+
+  // Change the license from "CC BY-SA" to "CC BY"
+  await changeLicense(window, expect, "CC BY-SA", "CC BY");
 })
 
 /* Update/Edit the audio project */
 test("Update/Edit audio project of description and abbreviation", async ({ audioProject }) => {
-  await goToEditProject(window, expect, audioProject)
+  // Navigate to the edit project page
+  await goToEditProject(window, expect, audioProject);
+
+  // Update description and abbreviation
   await updateDescriptionAbbriviation(window, expect, "edit audio project", "eap")
 })
 
 
 // custom project with custom language for text translation
 test("Custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
-  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
-  await window.locator('//a[@aria-label="new"]').click()
-  await createProjectValidation(window, expect)
-  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
-  await window.locator('//input[@id="project_name"]').fill(customTextTargetLanguage)
-  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
-  await window.locator('//textarea[@id="project_description"]').fill('test description')
-  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
-  await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
-  //adding new custom text translation language 
-  await customAddEditLanguage(window, expect, "add-language", "custom text translation language", 'cttl', "RTL", "create-language")
-  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
-  await window.locator('//*[@id="open-advancesettings"]').click()
-  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
-  await window.locator('//*[@aria-label="custom-book"]').click()
-  await window.locator('//*[@aria-label="nt-Matthew"]').click()
-  await window.locator('//*[@id="save-canon"]').click()
-  await window.locator('//button[@aria-label="create"]').click()
-  const projectName = await window.innerText(`//div[@id="${customTextTargetLanguage}"]`)
+  // Navigate to the new project creation page
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible();
+  await window.locator('//a[@aria-label="new"]').click();
+
+  // Perform initial project creation steps and provide details
+  await createProjectValidation(window, expect);
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible();
+  await window.locator('//input[@id="project_name"]').fill(customTextTargetLanguage);
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible();
+  await window.locator('//textarea[@id="project_description"]').fill('test description');
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible();
+  await window.locator('//input[@id="version_abbreviated"]').fill('ttp');
+
+  // Adding a new custom text translation language
+  await customAddEditLanguage(window, expect, "add-language", "custom text translation language", 'cttl', "RTL", "create-language");
+
+  // Open advanced settings and configure project scope
+  await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+  await window.locator('//*[@id="open-advancesettings"]').click();
+  await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible();
+  await window.locator('//*[@aria-label="custom-book"]').click();
+  await window.locator('//*[@aria-label="nt-Matthew"]').click();
+  await window.locator('//*[@id="save-canon"]').click();
+
+  // Create the project and verify the project name
+  await window.locator('//button[@aria-label="create"]').click();
+  const projectName = await window.innerText(`//div[@id="${customTextTargetLanguage}"]`);
   await expect(projectName).toBe(customTextTargetLanguage);
 })
 
 //Obs and Audio custom target language RTL project 
 test("Custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
+  // Create a custom OBS project with a custom language
   await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "custom obs project language", 'copl', "RTL", "create-language")
 })
 
 test("Custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
+  // Create a custom audio project with a custom language
   await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "custom audio project language", 'capl', "RTL", "create-language")
 })
 
 /* Changing text translation project target language */
 //text translation project
 test("Changing text translation project language from English to Persian", async ({ textProject }) => {
+  // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
 })
 
 test("Changing text translation project language from Persian to English", async ({ textProject }) => {
+  // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "english", "English")
 })
 
 test("Changing text translation project language from English to new custom text translation language", async ({ textProject }) => {
+  // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "custom text", "custom text translation language")
   await checkProjectName(window, expect, textProject)
   await goToProjectPage(window, expect)
@@ -430,6 +507,7 @@ test("Changing text translation project language from English to new custom text
 
 // obs project
 test("Changing obs project language from English to new custom obs project language", async ({ obsProject }) => {
+  // Change the OBS project language
   await projectTargetLanguage(window, expect, obsProject, "custom obs", "custom obs project language")
   await checkProjectName(window, expect, obsProject)
   await goToProjectPage(window, expect)
@@ -437,44 +515,59 @@ test("Changing obs project language from English to new custom obs project langu
 
 /* updating user profile */
 test("Update user Profile", async () => {
-  await userProfileValidaiton(window, expect)
+  // Validate user profile page elements
+  await userProfileValidaiton(window, expect);
   await expect(window.locator('input[name="given-name"]')).toBeVisible();
-  await window.locator('input[name="given-name"]').fill("Bobby")
+  await window.locator('input[name="given-name"]').fill("Bobby");
   await expect(window.locator('input[name="family-name"]')).toBeVisible();
-  await window.locator('input[name="family-name"]').fill("kumar")
+  await window.locator('input[name="family-name"]').fill("kumar");
   await expect(window.locator('input[name="email"]')).toBeVisible();
-  await window.locator('input[name="email"]').fill("kumar@gamil.com")
+  await window.locator('input[name="email"]').fill("kumar@gamil.com");
   await expect(window.locator('input[name="organization"]')).toBeVisible();
-  await window.locator('input[name="organization"]').fill("vidya foundation")
+  await window.locator('input[name="organization"]').fill("vidya foundation");
   await expect(window.locator('input[name="selectedregion"]')).toBeVisible();
-  await window.locator('input[name="selectedregion"]').fill("India")
-  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible()
-  await window.locator('//*[@id="save-profile"]').click()
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
-  expect(snackbar).toBe("Updated the Profile.")
+  await window.locator('input[name="selectedregion"]').fill("India");
+
+  // Save the updated profile
+  expect(await window.locator('//*[@id="save-profile"]')).toBeVisible();
+  await window.locator('//*[@id="save-profile"]').click();
+
+  // Verify the success message
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(snackbar).toBe("Updated the Profile.");
 })
 
 /*changing app language english to hindi */
 test("App language change English to hindi", async () => {
-  await changeAppLanguage(window, expect, "English", "Hindi")
-  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
-  expect(await snackbar === true)
-  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents()
-  expect(await textHindi[0]).toBe("प्रोफ़ाइल")
+  // Change the app language from English to Hindi
+  await changeAppLanguage(window, expect, "English", "Hindi");
+
+  // Verify the language change and UI update
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible();
+  expect(await snackbar === true);
+
+  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents();
+  expect(await textHindi[0]).toBe("प्रोफ़ाइल");
 })
 
 /*changing app language hindi to english */
 test("App language change Hindi to English", async () => {
-  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible()
-  await window.locator('//*[@aria-label="projectList"]').click()
-  await window.waitForTimeout(2000)
+  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible();
+  await window.locator('//*[@aria-label="projectList"]').click();
+  await window.waitForTimeout(2000);
+
+  // Verify the current page title
   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
-  expect(await title).toBe('प्रोजेक्ट्स')
-  await changeAppLanguage(window, expect, "Hindi", "English")
-  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible()
-  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents()
-  expect(await profile[0]).toBe("Profile")
-  expect(await snackbar === true)
+  expect(await title).toBe('प्रोजेक्ट्स');
+
+  // Change the app language from Hindi to English
+  await changeAppLanguage(window, expect, "Hindi", "English");
+
+  // Verify the language change and UI update
+  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible();
+  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents();
+  expect(await profile[0]).toBe("Profile");
+  expect(await snackbar === true);
 })
 
 /*signing out */
