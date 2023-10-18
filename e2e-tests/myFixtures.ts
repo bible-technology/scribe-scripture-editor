@@ -13,6 +13,8 @@ type myFixture = {
   textUnderscore: string,
   obsUnderscore: string,
   customTextTargetLanguage: string,
+  customObsTargetLanguage: string,
+  customAudioTargetLanguage: string,
 }
 const myFixtureTest = myTest.extend<myFixture>({
   userName: "Playwright user",
@@ -27,6 +29,8 @@ const myFixtureTest = myTest.extend<myFixture>({
   flavorText: "textTranslation",
   flavorObs: "textStories",
   customTextTargetLanguage: "Custom text transaltion",
+  customObsTargetLanguage: "Custom obs target project",
+  customAudioTargetLanguage: "Custom audio target project",
 })
 
 export const test = myFixtureTest;

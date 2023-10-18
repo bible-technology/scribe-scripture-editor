@@ -323,6 +323,29 @@ export const customAddEditLanguage = async (window, expect, openModal, targetLan
   await window.locator(`//*[@aria-label="${createLanguage}"]`).click()
 }
 
+///obs and audio custom target language project
+export const customProjectTargetLanguage = async (window, expect, projectname, flavorType, description, abb, openModal, targetLanguageName, targetLanguageCode, targetDirection, createLanguage) => {
+  await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
+  await window.locator('//a[@aria-label="new"]').click()
+  await expect(window.locator('//button[@aria-label="open-popover"]')).toBeVisible()
+  await window.locator('//button[@aria-label="open-popover"]').click()
+  await expect(window.locator(`//a[@data-id="${flavorType}"]`)).toBeVisible()
+  await window.locator(`//a[@data-id="${flavorType}"]`).click()
+  // checking for create project validation
+  await createProjectValidation(window, expect)
+  await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
+  await window.locator('//input[@id="project_name"]').fill(projectname)
+  await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
+  await window.locator('//textarea[@id="project_description"]').fill(description)
+  await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
+  await window.locator('//input[@id="version_abbreviated"]').fill(abb)  
+   //adding new custom text translation language 
+   await customAddEditLanguage(window, expect, openModal, targetLanguageName, targetLanguageCode, targetDirection, createLanguage, flavorType)
+   await window.locator('//button[@aria-label="create"]').click()
+   const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+   await expect(projectName).toBe(projectname);
+}
+
 
 // Performs user profile validation checks.
 export const userProfileValidaiton = async(window, expect) => {

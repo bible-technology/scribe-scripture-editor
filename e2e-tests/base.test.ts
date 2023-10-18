@@ -11,7 +11,8 @@ import {
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
   projectTargetLanguage, userProfileValidaiton,
-  exportAudioProject, updateDescriptionAbbriviation, changeLicense, customAddEditLanguage
+  exportAudioProject, updateDescriptionAbbriviation, changeLicense,
+  customAddEditLanguage, customProjectTargetLanguage
 } from './common';
 
 const fs = require('fs');
@@ -408,6 +409,15 @@ test("Custom text translation with custom language project", async ({ customText
   await window.locator('//button[@aria-label="create"]').click()
   const projectName = await window.innerText(`//div[@id="${customTextTargetLanguage}"]`)
   await expect(projectName).toBe(customTextTargetLanguage);
+})
+
+//Obs and Audio custom target language RTL project 
+test("Custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
+  await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "obs target language", 'cotl', "RTL", "create-language")
+})
+
+test("Custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
+  await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "audio target language", 'catl', "RTL", "create-language")
 })
 
 /* updating user profile */
