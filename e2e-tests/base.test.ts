@@ -378,14 +378,6 @@ test("Update/Edit audio project of description and abbreviation", async ({ audio
   await updateDescriptionAbbriviation(window, expect, "edit audio project", "eap")
 })
 
-/* Changing text translation project target language */
-test("Changing text translation project language from English to Persian", async ({ textProject }) => {
-  await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
-})
-
-test("Changing text translation project language from Persian to English", async ({ textProject }) => {
-  await projectTargetLanguage(window, expect, textProject, "english", "English")
-})
 
 // custom project with custom language for text translation
 test("Custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
@@ -413,11 +405,34 @@ test("Custom text translation with custom language project", async ({ customText
 
 //Obs and Audio custom target language RTL project 
 test("Custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
-  await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "obs target language", 'cotl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "custom obs project language", 'copl', "RTL", "create-language")
 })
 
 test("Custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
-  await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "audio target language", 'catl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "custom audio project language", 'capl', "RTL", "create-language")
+})
+
+/* Changing text translation project target language */
+//text translation project
+test("Changing text translation project language from English to Persian", async ({ textProject }) => {
+  await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
+})
+
+test("Changing text translation project language from Persian to English", async ({ textProject }) => {
+  await projectTargetLanguage(window, expect, textProject, "english", "English")
+})
+
+test("Changing text translation project language from English to new custom text translation language", async ({ textProject }) => {
+  await projectTargetLanguage(window, expect, textProject, "custom text", "custom text translation language")
+  await checkProjectName(window, expect, textProject)
+  await goToProjectPage(window, expect)
+})
+
+// obs project
+test("Changing obs project language from English to new custom obs project language", async ({ obsProject }) => {
+  await projectTargetLanguage(window, expect, obsProject, "custom obs", "custom obs project language")
+  await checkProjectName(window, expect, obsProject)
+  await goToProjectPage(window, expect)
 })
 
 /* updating user profile */
