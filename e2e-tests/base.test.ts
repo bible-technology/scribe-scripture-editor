@@ -10,7 +10,8 @@ import {
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
-  projectTargetLanguage, userProfileValidaiton, exportAudioProject, updateDescriptionAbbriviation
+  projectTargetLanguage, userProfileValidaiton,
+  exportAudioProject, updateDescriptionAbbriviation, changeLicense
 } from './common';
 
 const fs = require('fs');
@@ -356,19 +357,18 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   await goToEditProject(window, expect, textProject)
   await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//*[@id="open-advancesettings"]').click()
-  await window.getByRole('button', { name: 'CC BY-SA' }).click()
-  await window.getByRole('option', { name: 'CC BY', exact: true }).click()
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
-  await window.locator('//*[@aria-label="save-edit-project"]').click()
-  await window.waitForTimeout(3000)
-  const title = await window.textContent('[aria-label=projects]');
-  expect(await title).toBe('Projects')
+  await changeLicense(window, expect, "CC BY-SA", "CC BY")
 })
 
 /* Update/Edit the obs project */
 test("Update/Edit obs project of description and abbreviation", async ({ obsProject }) => {
   await goToEditProject(window, expect, obsProject)
   await updateDescriptionAbbriviation(window, expect, "edit obs project", "eop")
+})
+
+test("Update/Edit obs project license", async ({ obsProject }) => {
+  await goToEditProject(window, expect, obsProject)
+  await changeLicense(window, expect, "CC BY-SA", "CC BY")
 })
 
 /* Update/Edit the audio project */

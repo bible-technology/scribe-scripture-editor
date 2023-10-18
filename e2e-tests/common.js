@@ -299,6 +299,17 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
   expect(await title).toBe('Projects')
 }
 
+// license updating
+export const changeLicense = async (window, expect, currentLicense, newLicense) => {
+  await window.locator(`//*[@id="${currentLicense}"]`).click()
+  await window.locator(`//*[@aria-label="${newLicense}"]`).click()
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible()
+  await window.locator('//*[@aria-label="save-edit-project"]').click()
+  await window.waitForTimeout(3000)
+  const title = await window.textContent('[aria-label=projects]');
+  expect(await title).toBe('Projects')
+}
+
 // Performs user profile validation checks.
 export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
