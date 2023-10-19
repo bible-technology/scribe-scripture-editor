@@ -14,45 +14,7 @@ import moment from 'moment';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
 import EditorPanel from './EditorPanel';
 import * as logger from '../../../logger';
-import packageInfo from '../../../../../package.json';
-import { newPath } from '../../../../../supabase';
-
-export const getDetails = () => new Promise((resolve) => {
-  logger.debug('ObsEditor.js', 'In getDetails() for fetching the burrito file of current project');
-  localforage.getItem('userProfile').then((value) => {
-    const username = value?.username;
-    localforage.getItem('currentProject').then((projectName) => {
-      const path = require('path');
-      const newpath = localStorage.getItem('userPath');
-      const projectsDir = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName);
-      const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
-      resolve({
-        projectName, username, projectsDir, metaPath, path,
-      });
-    });
-  });
-});
-
-export const getWebDetails = () => new Promise((resolve) => {
-  localforage.getItem('userProfile').then((value) => {
-    const username = value?.user?.email;
-    localforage.getItem('currentProject').then((projectName) => {
-      const path = require('path');
-      const projectsDir = `${newPath}/${username}/projects/${projectName}`;
-      const metaPath = `${newPath}/${username}/projects/${projectName}/metadata.json`;
-      resolve({
-        projectName, username, projectsDir, metaPath, path,
-      });
-    });
-  });
-});
-
-function checkDetailsFunc() {
-  if (isElectron()) {
-    return getDetails();
-  }
-  return getWebDetails();
-}
+import { getDetails } from './utils/getDetails';
 
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
@@ -76,7 +38,7 @@ const ObsEditor = () => {
       }
     });
     const storyStr = title + body + end;
-    checkDetailsFunc().then((value) => {
+    getDetails().then((value) => {
       const bookID = obsNavigation.toString().padStart(2, 0);
       writeToFile({
         username: value.username,
@@ -89,7 +51,7 @@ const ObsEditor = () => {
   // this function is used to fetch the content from the given story number
   const readContent = useCallback(() => {
     setLoadData(false);
-    checkDetailsFunc()
+    getDetails()
       .then(({
         projectName, username, projectsDir, metaPath, path,
       }) => {
