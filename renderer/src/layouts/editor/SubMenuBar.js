@@ -16,11 +16,6 @@ import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import menuStyles from './MenuBar.module.css';
 import packageInfo from '../../../../package.json';
 import { newPath, sbStorageDownload } from '../../../../supabase';
-// if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-//   const supabaseStorage = require('../../../../../supabase').supabaseStorage
-//   const newPath = require('../../../../supabase').newPath
-// }
-// import WifiIcon from '@/icons/wifi.svg';
 
 const activate = () => {
   // console.log('rename');
@@ -107,6 +102,7 @@ export default function SubMenuBar() {
     const email = userProfile.user.email;
     const { data, error } = await sbStorageDownload(`${newPath}/${email}/projects/${projectName}/metadata.json`);
     if (error) {
+      // eslint-disable-next-line no-console
       console.log('SubMenuBar.js', error);
     }
     const metadata = JSON.parse(await data.text());

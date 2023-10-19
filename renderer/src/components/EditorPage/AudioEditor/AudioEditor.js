@@ -12,7 +12,7 @@ import { SnackBar } from '@/components/SnackBar';
 import { useTranslation } from 'react-i18next';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
-import { getDetails } from '../ObsEditor/ObsEditor';
+import { getDetails } from '../ObsEditor/utils/getDetails';
 
 const grammar = require('usfm-grammar');
 

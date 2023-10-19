@@ -226,10 +226,7 @@ export const createObsContent = (
     importedFiles,
     copyright,
     call,
-  ) => {
-    console.log('createObsContent.js', 'In OBS md content creation');
-
-    return new Promise(async (resolve) => {
+  ) => new Promise(async (resolve) => {
       const ingredients = {};
       const supabasePath = `${newPath}/${username}/projects/${project.projectName}_${id}/ingredients`;
 
@@ -239,6 +236,7 @@ export const createObsContent = (
           });
 
         if (error) {
+          // eslint-disable-next-line no-console
           console.error('Error uploading file to Supabase:', error);
           throw error;
         } else {
@@ -384,4 +382,3 @@ export const createObsContent = (
       };
       resolve(ingredients);
     });
-  };

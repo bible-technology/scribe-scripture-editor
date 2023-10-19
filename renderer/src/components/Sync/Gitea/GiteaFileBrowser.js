@@ -89,6 +89,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     // regex is for old sync
     // const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
     let finalBranches = [];
+     // eslint-disable-next-line no-console
       console.log('chedk  : ', fetchBranches.some((branch) => branch.name === 'scribe-main'));
     if (fetchBranches.some((branch) => branch.name === 'scribe-main')) {
       finalBranches.push({ name: 'scribe-main' });

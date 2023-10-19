@@ -31,6 +31,7 @@ export const readFile = async ({
     return new Promise(async (resolve) => {
         const { data: fileContent, error } = await sbStorageDownload(projectsPath);
         if (error) {
+             // eslint-disable-next-line no-console
             console.error('readWebFile function error', error);
         }
         const parsedData = readBlobAsync(fileContent);

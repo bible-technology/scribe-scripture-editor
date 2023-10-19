@@ -39,6 +39,7 @@ async function downloadImageAndSaveSupabase(url) {
       throw error;
     }
   } catch (error) {
+     // eslint-disable-next-line no-console
     console.error('Error fetching image:', error);
   }
 }

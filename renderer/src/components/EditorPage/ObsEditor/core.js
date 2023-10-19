@@ -54,6 +54,7 @@ export async function readBlobAsync(blob) {
     return content;
     // Do something with the content
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error reading blob:', error);
   }
 }
