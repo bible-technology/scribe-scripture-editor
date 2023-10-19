@@ -60,6 +60,7 @@ const fetchProjectsMeta = async ({ currentUser }) => {
     const { data, error } = await sbStorageDownload(`${path}/${projectName}/metadata.json`);
 
     if (error) {
+       // eslint-disable-next-line no-console
       console.error('fetchProjectsMeta.js', error);
       return null;
     }
@@ -73,6 +74,7 @@ const fetchProjectsMeta = async ({ currentUser }) => {
       if (settingData) {
         setting = JSON.parse(await settingData.text());
       } else {
+         // eslint-disable-next-line no-console
         console.error('ProjectList.js', 'Unable to find scribe-settings for the project');
       }
     }

@@ -17,6 +17,7 @@ export const useGetUserName = () => {
                 } else if (!IsElectron) {
                     const { data: { session }, error } = await supabase.auth.getSession();
                     if (error) {
+                         // eslint-disable-next-line no-console
                         console.error(error);
                     }
                     if (session) {
