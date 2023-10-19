@@ -8,7 +8,7 @@ import {
 //   MenuIcon,
 //   XMarkIcon,
 // } from '@heroicons/react/24/outline';
-import Notifications from '@/modules/notifications/Notifications';
+import Notifications from '@/components/Notification/Notifications';
 import UserProfile from '@/components/Profile/UserProfile';
 
 export default function TopMenuBar() {
