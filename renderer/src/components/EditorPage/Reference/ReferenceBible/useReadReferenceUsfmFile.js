@@ -63,7 +63,7 @@ export const useReadReferenceUsfmFile = ({
                     const filePath = path.join(newpath, packageInfo.name, 'users', username, 'resources', refName, key);
                     const fileIngredients = await readIngredients({ filePath });
                     const books = [{
-                      selectors: { org: refName, lang: 'en', abbr: 'ult' },
+                      selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
                       bookCode: bookId.toLowerCase(),
                       data: fileIngredients,
                     }];
@@ -83,7 +83,7 @@ export const useReadReferenceUsfmFile = ({
                     const commonResourcePath = path.join(newpath, packageInfo.name, 'common', 'resources', refName, key);
                     const commonResourceIngredients = await readIngredients({ filePath: commonResourcePath });
                     const books = [{
-                      selectors: { org: refName, lang: 'en', abbr: 'ult' },
+                      selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
                       bookCode: bookId.toLowerCase(),
                       data: commonResourceIngredients,
                     }];
