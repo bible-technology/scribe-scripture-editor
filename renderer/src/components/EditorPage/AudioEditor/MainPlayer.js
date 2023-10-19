@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
-import { getDetails } from '../ObsEditor/ObsEditor';
+import { getDetails } from '../ObsEditor/utils/getDetails';
 
 const MainPlayer = () => {
   const {

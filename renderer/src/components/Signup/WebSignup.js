@@ -25,6 +25,7 @@ function SignupPage() {
       createWebUser(data.user);
       router.push('/login');
     } else {
+       // eslint-disable-next-line no-console
       console.error('error occured', error);
       setStatus(error);
     }

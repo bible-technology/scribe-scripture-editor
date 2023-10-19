@@ -120,6 +120,7 @@ export const handleJsonWeb = async (values) => {
   error = { userExist: false, fetchFile: false };
 
   if (await supabaseStorage().list().then((result) => result.error)) {
+    // eslint-disable-next-line no-console
     console.error('handleJson.js', 'Failed to access the storage');
     error.fetchFile = true;
     return error;
@@ -137,6 +138,7 @@ export const handleJsonWeb = async (values) => {
       // Add new user to localForage:
       localForage.setItem('users', array, (err) => {
         if (err) {
+          // eslint-disable-next-line no-console
           console.error('handleJson.js', 'Failed to Create a file and add user to LocalForage');
         }
       });
@@ -170,11 +172,13 @@ export const handleJsonWeb = async (values) => {
       // Add new user to localForage:
       localForage.setItem('users', json, (errLoc) => {
         if (errLoc) {
+          // eslint-disable-next-line no-console
           console.error('handleJson.js', 'Failed to add new user to existing list');
         }
       });
       return error;
     } catch (errCatch) {
+      // eslint-disable-next-line no-console
       console.error('handleJson.js', 'Failed to add new user to the file');
       return error;
     }

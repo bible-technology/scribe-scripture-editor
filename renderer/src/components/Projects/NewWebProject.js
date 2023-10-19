@@ -226,7 +226,6 @@ export default function NewWebProject({ call, project, closeEdit }) {
     }
     if (create === true) {
       // Checking whether the burrito is of latest version
-      console.warn('NewProject.js', 'Checking whether the burrito is of latest version.');
       if (call === 'edit' && burrito?.meta?.version !== metadata?.meta?.version) {
         setOpenModal(true);
         setLoading(false);
