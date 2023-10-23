@@ -96,7 +96,8 @@
 					["@/layouts", "./renderer/src/layouts/"],
 					["@/modules", "./renderer/src/modules/"],
 					["@/util", "./renderer/src/util/"],
-					["@/core", "./renderer/src/core/"]
+					["@/core", "./renderer/src/core/"],
+					["@/hooks", "./renderer/src/hooks/"]
 				],
 				"node": {
 					"extensions": [".js", ".jsx", ".ts", ".tsx"]

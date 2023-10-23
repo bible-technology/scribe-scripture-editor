@@ -1,10 +1,10 @@
 import { useEffect, useState, useContext } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import usePerf from '@/components/hooks/scribex/usePerf';
-import htmlMap from '@/components/hooks/scribex/htmlmap';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ScribexContext } from '@/components/context/ScribexContext';
+import usePerf from './hooks/usePerf';
+import htmlMap from './hooks/htmlmap';
 import ReferenceEditor from './ReferenceEditor';
 
 export default function ReferenceScribex(props) {
@@ -59,7 +59,7 @@ export default function ReferenceScribex(props) {
 
   useEffect(() => {
     actions.setSequenceIds([]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refName, bookId, scrollLock]);
 
   const { htmlPerf } = perfState;
@@ -82,11 +82,11 @@ export default function ReferenceScribex(props) {
   return (
     <div
       style={{
-          fontFamily: font || 'sans-serif',
-          fontSize: `${fontSize}rem`,
-          lineHeight: (fontSize > 1.3) ? 1.5 : '',
-          direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
-        }}
+        fontFamily: font || 'sans-serif',
+        fontSize: `${fontSize}rem`,
+        lineHeight: (fontSize > 1.3) ? 1.5 : '',
+        direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
+      }}
     >
       <ReferenceEditor {..._props} />
     </div>

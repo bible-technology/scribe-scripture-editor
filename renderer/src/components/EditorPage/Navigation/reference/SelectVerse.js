@@ -50,8 +50,6 @@ export default function SelectVerse({
       document.getElementById('editor').querySelector(`#ch${chapter}v${verseNum}`)?.scrollIntoView();
       setVerseNumber(verseNum);
     }
-     // window.location.href = `#ch${chapter}v${verseNum}`;
-    // document.getElementById(`ch${chapter}v${verseNum}`).scrollIntoView();
   };
 
   const onMultiSelectVerse = async (e, verses) => {

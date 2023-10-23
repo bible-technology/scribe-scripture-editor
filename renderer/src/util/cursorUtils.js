@@ -153,6 +153,14 @@ export function insertXRef(caretPosition, references, selectedText) {
       : pasteHtmlAtCaret(xRefTag, false, caretPosition);
   }
 }
+// export function insertHeading(caretPosition, heading) {
+//   // if (heading && caretPosition) {
+//     const headingTag = `<span data-type="heading" data-subtype="sfie" data-new="true">${'test heading'}</span>`;
+//     // const headingTag = `<span data-type='heading'><span class="graft heading" data-type="graft" data-subtype="heading" data-new="true><span class="paragraph usfm s" data-type="paragraph" data-subtype-ns="usfm" data-subtype="s">${'subheading'}</span></span></span>`;
+//     console.log('inserting section heading');
+//      pasteHtmlAtCaret(headingTag, false, caretPosition);
+//   // }
+// }
 
 // Helper function to get selected text within the editor
 export function getSelectedText() {

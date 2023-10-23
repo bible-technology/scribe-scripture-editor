@@ -9,7 +9,7 @@ export const scrollReference = (chapterNumber) => {
   });
 };
 
-export const onIntersection = (entries, setChapterNumber, scrollLock) => {
+export const onIntersection = ({ entries, setChapterNumber, scrollLock }) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of entries) {
     if (entry.isIntersecting) {

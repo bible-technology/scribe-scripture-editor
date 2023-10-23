@@ -28,12 +28,12 @@ export default function InsertMenu({ handleClick: handleButtonClick, selectedTex
         selectedText={selectedText}
         icon="XR"
       />
-      <PopupButton
+      {/* <PopupButton
         handleClick={handleClick}
         title="Section Heading"
         selectedText={selectedText}
         icon="SH"
-      />
+      /> */}
     </div>
   );
 }

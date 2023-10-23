@@ -2,11 +2,15 @@
 	"[javascript]": {
 		"editor.formatOnSave": false
 	},
-	"editor.rulers": [100],
+	"editor.rulers": [
+		100
+	],
 	"editor.fontLigatures": true,
 	"prettier.tabWidth": 4,
 	"eslint.alwaysShowStatus": true,
-	"prettier.disableLanguages": ["js"],
+	"prettier.disableLanguages": [
+		"js"
+	],
 	"prettier.useTabs": true,
 	"editor.formatOnSave": true,
 	"editor.multiCursorModifier": "alt",

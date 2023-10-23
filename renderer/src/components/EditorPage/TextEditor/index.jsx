@@ -3,19 +3,20 @@ import {
 } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import usePerf from '@/components/hooks/scribex/usePerf';
-import htmlMap from '@/components/hooks/scribex/htmlmap';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
+import { useReadUsfmFile } from './hooks/useReadUsfmFile';
+import htmlMap from './hooks/htmlmap';
+import usePerf from './hooks/usePerf';
 import EditorMenuBar from './EditorMenuBar';
 import Editor from './Editor';
 
-export default function TextEditor(props) {
+export default function TextEditor() {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
-  const { usfmData, bookAvailable } = props;
+  // const { usfmData, bookAvailable } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
   const [chapterNumber, setChapterNumber] = useState(1);
@@ -24,6 +25,8 @@ export default function TextEditor(props) {
   const [newVerChapNumber, setInsertNumber] = useState('');
   const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
   const [selectedText, setSelectedText] = useState();
+
+  const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
     state: {

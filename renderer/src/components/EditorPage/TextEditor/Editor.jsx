@@ -6,13 +6,13 @@ import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import {
-  insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef, insertHeading,
+  insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
 } from '@/util/cursorUtils';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import RecursiveBlock from './RecursiveBlock';
 // eslint-disable-next-line import/no-unresolved, import/extensions
-import { useIntersectionObserver } from './hooks/useIntersectionObserver';
+import { onIntersection } from './utils/IntersectionObserver';
 
 export default function Editor(props) {
   const {
@@ -100,14 +100,22 @@ export default function Editor(props) {
     if (insertVerseRChapter === 'Cross Reference') {
       insertXRef(caretPosition, newVerChapNumber, selectedText);
     }
-    if (insertVerseRChapter === 'Section Heading') {
-      insertHeading(caretPosition, newVerChapNumber, selectedText);
-    }
+    // if (insertVerseRChapter === 'Section Heading') {
+    //   insertHeading(caretPosition, newVerChapNumber, selectedText);
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
 
-  // hook for autoscrolling to the current chapter
-  useIntersectionObserver(scrollLock, setChapterNumber);
+  const observer = new IntersectionObserver((entries) => onIntersection({ setChapterNumber, scrollLock, entries }), {
+    root: document.querySelector('editor'),
+    threshold: 0,
+    rootMargin: '0% 0% -60% 0%',
+  });
+
+  const watchNodes = document.querySelectorAll('.editor .chapter');
+  const watchArr = Array.from(watchNodes);
+  const reverseArray = watchArr.length > 0 ? watchArr.slice().reverse() : [];
+  reverseArray.forEach((chapter) => { observer.observe(chapter); });
 
   const _props = {
     htmlPerf,
