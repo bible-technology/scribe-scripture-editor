@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import localforage from 'localforage';
 import moment from 'moment';
 import { t } from 'i18next';
-import Notifications from '@/modules/notifications/Notifications';
+import Notifications from './Notifications';
 import menuStyles from '../../layouts/editor/MenuBar.module.css';
 import { AutographaContext } from '../context/AutographaContext';
 
