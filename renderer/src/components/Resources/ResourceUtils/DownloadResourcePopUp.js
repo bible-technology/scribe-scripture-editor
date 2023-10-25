@@ -295,6 +295,11 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     setSelectedLangFilter([...selectedLangFilter]);
   };
 
+  const removeType = (idx) => {
+    selectedTypeFilter.splice(idx, 1);
+    setSelectedTypeFilter([...selectedTypeFilter]);
+  };
+
   return (
     <>
       <div className="text-sm flex flex-col gap-4 border-b border-gray-300 pb-4 mb-4">
@@ -340,6 +345,19 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             dropArrow
             multiSelect
           />
+          <div className="flex flex-wrap gap-2 mt-2 mb-2">
+            {selectedTypeFilter.map((type, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
+              >
+                <p>{type.name}</p>
+                <button type="button" onClick={() => removeType(idx)}>
+                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div class="flex items-center gap-4">
@@ -393,7 +411,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                     {t('label-resource')}
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
-                    {t('label-subject')}
+                    {t('label-type')}
                   </th>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider">
                     {t('label-organization')}

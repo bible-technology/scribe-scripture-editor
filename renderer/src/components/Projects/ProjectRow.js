@@ -187,7 +187,7 @@ const ProjectRow = ({
                                     archiveProject(project, project.name);
                                   }}
                                 >
-                                  {project.isArchived === true ? 'Restore' : 'Archive'}
+                                  {project.isArchived === true ? t('label-restore') : t('label-archive')}
                                 </button>
                               )}
                             </Menu.Item>
