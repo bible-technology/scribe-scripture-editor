@@ -11,6 +11,7 @@ import updateTranslationSB from '@/core/burrito/updateTranslationSB';
 import updateObsSB from '@/core/burrito/updateObsSB';
 import { SnackBar } from '@/components/SnackBar';
 // import useSystemNotification from '@/components/hooks/useSystemNotification';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { validate } from '../../../util/validate';
 import * as logger from '../../../logger';
@@ -311,7 +312,7 @@ export default function ExportProjectPopUp(props) {
                           type="button"
                           className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                         >
-                          {t('btn-export')}
+                          {exportStart ? <LoadingSpinner height="h-4" width="w-4" colorTW="text-white" /> : t('btn-export')}
                         </button>
                       </div>
                     </div>
