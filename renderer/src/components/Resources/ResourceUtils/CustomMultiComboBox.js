@@ -5,13 +5,14 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
 function CustomMultiComboBox({
   selectedList, setSelectedList, customData, filterParams = 'name', multiSelect = false, dropArrow = false, showLangCode = { show: false, langkey: 'lc' },
+  placeholder = 'Select Language',
 }) {
   let filteredData = [];
   const [query, setQuery] = useState('');
   // eslint-disable-next-line no-unused-vars
   const [isActive, setIsActive] = useState(false);
   if (customData.length === 1) {
-    setSelectedList(customData[0]);
+    setSelectedList(customData);
   } else if (customData.length > 1) {
     // eslint-disable-next-line no-nested-ternary
     filteredData = (query === '')
@@ -32,7 +33,7 @@ function CustomMultiComboBox({
                   className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                   // displayValue={(language) => language?.ang}
                   displayValue={(selectedList) => `${selectedList.length > 0 ? `${selectedList[0][filterParams]}${multiSelect ? '... click for more' : '' }` : ''}`}
-                  placeholder="Select Language"
+                  placeholder={placeholder}
                   aria-label="custom-dropdown"
                   onFocus={() => !open && setIsActive(true)}
                   onBlur={() => setIsActive(false)}
@@ -55,7 +56,7 @@ function CustomMultiComboBox({
                     {filteredData.length > 0
                     ? filteredData.map((data) => (
                       // <Combobox.Option key={data?.id || data?.pk} className={`${selectedList.includes(data) ? 'bg-gray-400' : ''} hover:bg-gray-300 p-1`} value={data}>
-                      <Combobox.Option key={data?.id || data?.pk} className=" hover:bg-gray-300 p-1" value={data} aria-label={data[filterParams]}>
+                      <Combobox.Option key={data?.name || data?.id || data?.pk} className=" hover:bg-gray-300 p-1" value={data} aria-label={data[filterParams]}>
                         {data[filterParams] }
                         {' '}
                         {showLangCode.show && (
