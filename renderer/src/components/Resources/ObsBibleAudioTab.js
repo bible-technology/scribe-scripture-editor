@@ -62,6 +62,9 @@ export default function ObsBibleAudioTab({
                     {t('label-name')}
                   </th>
                   <th className="px-5 py-3 font-bold text-gray-700 uppercase tracking-wider">
+                    {t('label-type')}
+                  </th>
+                  <th className="px-5 py-3 font-bold text-gray-700 uppercase tracking-wider">
                     {t('label-language')}
                   </th>
                   <th colSpan={3} />
@@ -93,6 +96,23 @@ export default function ObsBibleAudioTab({
                               <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
                                 {ref.projectDir}
                               </span>
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <div
+                              className="focus:outline-none"
+                              onClick={(e) => handleRowSelect(
+                                e,
+                                ref.value.languages[0].name.en,
+                                ref.projectDir,
+                                '',
+                                ref.value.type.flavorType.name,
+                                ref.type,
+                              )}
+                              role="button"
+                              tabIndex="0"
+                            >
+                              {ref.value.resourceMeta.subject}
                             </div>
                           </td>
                           <td className="p-2 uppercase">
