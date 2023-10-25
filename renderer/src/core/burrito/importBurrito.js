@@ -173,6 +173,16 @@ const updateAudioDir = async (dir, path, fs, status) => {
   }
 };
 
+const checkTheProjectIsAudioChapterLevel = async (metadata) => {
+  const chapterPathRegex = /^[0-9]{1,3}\.(mp3|wav)/gm;
+  const chapterLevel = Object.keys(metadata.ingredients).some((path) => {
+    const pathArr = path.split('/');
+    const fileName = pathArr[pathArr.length - 1];
+    return chapterPathRegex.test(fileName);
+});
+  return chapterLevel;
+};
+
 // Core Function Handle Burrito Import for all type of Projects
 const importBurrito = async (filePath, currentUser, updateBurritoVersion, concatedLangs = []) => {
   logger.debug('importBurrito.js', 'Inside importBurrito');
@@ -187,6 +197,15 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
     logger.debug('importBurrito.js', 'Project has Burrito file metadata.json.');
     let sb = fs.readFileSync(path.join(filePath, 'metadata.json'));
     let metadata = JSON.parse(sb);
+    // check if its an audio import and not the import burrito is for chapter level export
+    if (metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
+      const chapterLevel = await checkTheProjectIsAudioChapterLevel(metadata);
+      if (chapterLevel) {
+        logger.error('importBurrito.js', 'Import not supported for chapter level audio projects');
+        status.push({ type: 'error', value: 'Import not supported for chapter level audio projects' });
+        return status;
+      }
+    }
     // Fixing the issue of previous version of AG. The dateCreated was left empty and it will fail the validation.
     if (!metadata?.meta?.dateCreated) {
       const agId = Object.keys(metadata?.identification?.primary?.scribe);
