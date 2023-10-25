@@ -23,8 +23,8 @@ import { environment } from '../../../../environment';
 
 const subjectTypeArray = {
   bible: [
+    { id: 1, name: 'Aligned Bible' },
     { id: 2, name: 'Bible' },
-    // { id: 1, name: 'Aligned Bible' },
     // { id: 3, name: 'Hebrew Old Testament' },
     // { id: 4, name: 'Greek New Testament' },
   ],
@@ -171,12 +171,12 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     logger.debug('DownloadResourcePopUp.js', 'save filter and call fetch');
     if (!downloadStarted) {
       // setLoadFilterDiv(!loadFilterDiv);
-      if (selectedLangFilter.length > 0 || selectedTypeFilter.length > 0) {
+      if (selectedLangFilter.length > 0 && selectedTypeFilter.length > 0) {
         await fetchResource(true);
       } else {
         setOpenSnackBar(true);
         setNotify('warning');
-        setSnackText('No filter applied, please select filter');
+        setSnackText('Please select All filters');
       }
     } else {
       setOpenSnackBar(true);
@@ -336,6 +336,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             selectedList={selectedTypeFilter}
             setSelectedList={setSelectedTypeFilter}
             customData={selectResource === 'bible' ? subjectTypeArray.bible : subjectTypeArray.obs}
+            placeholder="Select Types"
+            dropArrow
             multiSelect
           />
         </div>
