@@ -241,7 +241,7 @@ export default function UserProfile() {
                     className="w-44 h-10  block rounded  sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-200 font-light "
                   />
                 </div>
-                <span className="text-red-500 ml-2 text-sm">{errors?.firstname || errors?.lastname}</span>
+                <span className="text-red-500 ml-2 text-sm" aria-label="name-error">{errors?.firstname || errors?.lastname}</span>
               </div>
               <div>
                 <h4 className="text-xs font-base mb-2 ml-2 text-primary  tracking-wide leading-4  font-light">{t('label-email')}</h4>
@@ -256,7 +256,7 @@ export default function UserProfile() {
                   }}
                   className="w-96 block rounded shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-200 h-10 font-light"
                 />
-                <span className="text-red-500 ml-2 text-sm">{errors?.email}</span>
+                <span className="text-red-500 ml-2 text-sm" aria-label="email-error">{errors?.email}</span>
               </div>
               {(appMode === 'online')
                 && (
@@ -297,7 +297,7 @@ export default function UserProfile() {
                   }}
                   className="w-96 block rounded shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-200 h-10 font-light"
                 />
-                <span className="text-red-500 ml-2 text-sm">{errors?.organization}</span>
+                <span className="text-red-500 ml-2 text-sm" aria-label="organization-error">{errors?.organization}</span>
               </div>
               <div>
                 <h4 className="text-xs font-base mb-2 ml-2 text-primary  tracking-wide leading-4  font-light">{t('label-region')}</h4>
@@ -312,7 +312,7 @@ export default function UserProfile() {
                   }}
                   className="w-96 block rounded shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-200 h-10 font-light"
                 />
-                <span className="text-red-500 ml-2 text-sm">{errors?.selectedregion}</span>
+                <span className="text-red-500 ml-2 text-sm" aria-label="region-error">{errors?.selectedregion}</span>
               </div>
 
               <div className="relative">

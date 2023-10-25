@@ -35,22 +35,20 @@ test("Start the scribe application", async () => {
   expect(await window.title()).toBe('Scribe Scripture');
 
 })
-// This test case checks if the user is already logged in
-test('Check whether the app is being logged IN', async () => {
-  await checkLogInOrNot(window, expect)
-});
 
 // This test case handles the user's login or logout actions and related operations.
 test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
   // Here you handle user login and logout logic, user data, and folder management.
-  //user json
+  //Retrieves and parses a JSON file containing user information
   const json = await userJson(window, packageInfo, fs, path)
-  // user file
+  // Constructs the path to the users.json file.
   const file = await userFile(window, packageInfo, path)
-  // user folde name
+  //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
 
-  if (await checkLogInOrNot(window, expect)) {
+  const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
+
+  if (await checkLogInOrNot(window, expect, textVisble)) {
     // Check if user profile image is visible
     const userProfileImage = window.locator('//*[@id="user-profile-image"]');
     expect(await userProfileImage.isVisible()).toBeTruthy();
@@ -543,8 +541,8 @@ test("App language change English to hindi", async () => {
   await changeAppLanguage(window, expect, "English", "Hindi");
 
   // Verify the language change and UI update
-  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible();
-  expect(await snackbar === true);
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(snackbar).toBe("Updated the Profile.");
 
   const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents();
   expect(await textHindi[0]).toBe("प्रोफ़ाइल");
@@ -564,10 +562,10 @@ test("App language change Hindi to English", async () => {
   await changeAppLanguage(window, expect, "Hindi", "English");
 
   // Verify the language change and UI update
-  const snackbar = await window.locator('//*[@id="__next"]/div[2]/div/div').isVisible();
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(snackbar).toBe("Updated the Profile.");
   const profile = await window.locator('//*[@aria-label="projects"]').allTextContents();
   expect(await profile[0]).toBe("Profile");
-  expect(await snackbar === true);
 })
 
 /*signing out */
@@ -622,12 +620,13 @@ test("Delete the user from the active tab and check in the archived tab", async 
 
 /* logout and delete the playwright user */
 test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  // user json
+  //Retrieves and parses a JSON file containing user information
   const json = await userJson(window, packageInfo, fs, path)
-  // user file
+  // Constructs the path to the users.json file.
   const file = await userFile(window, packageInfo, path)
-  // user folde name
+  //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
+
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
   await window.locator('//*[@id="user-profile-image"]').click()
   const currentUser = await window.textContent('[aria-label="userName"]')

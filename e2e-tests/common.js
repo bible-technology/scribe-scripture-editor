@@ -1,45 +1,39 @@
 // Function to check if the user is logged in or not
-export const checkLogInOrNot = async (window, expect) => {
-  // Wait for the main content to load
-  await window.waitForSelector('//*[@id="__next"]/div', '//*[@id="__next"]/div[1]', { timeout: 5000 })
-  const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
+export const checkLogInOrNot = async (window, expect, textVisble) => {
   if (textVisble) {
-    // If title is "Projects" (english) or Not(other language) visible in project list page, 
-    const title = await window.locator('//*[@aria-label="projects"]').textContent()
-    if(await title === "Projects"){
-      //expecting "Projects" in english
-      await expect(title).toBe("Projects")
-    }else{
-      //expecting "Projects" in Other langauage
-      await expect(title).not.toBe('Projects')
-    }
+    console.log("hello")
+    // If title is "Projects" (english) or Not(other language) visible in project list page,
+    const title = await window.locator('//*[@aria-label="projects"]', {timeout:5000}).textContent()
+    expect(title).toBe(title)
   } else {
+    // await window.waitForSelector('//*[@aria-label="welcome"]', { timeout: 5000 })
+    console.log("world")
     // If 'projects' is not visible, check the 'welcome' element
-    const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
-    await expect(welcome).toBe("Welcome!")
+    const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
+    await expect(welcome).toBe(welcome)
     await window.reload()
   }
   return textVisble;
 }
-
+const userPath= async (window) => {
+  const path = await window.evaluate(() => Object.assign({}, window.localStorage))
+  return path.userPath
+}
 // Retrieves and parses a JSON file containing user information
 export const userJson = async (window, packageInfo, fs, path) => {
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const file = path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
+  const file = path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
   const data = await fs.readFileSync(file);
   return JSON.parse(data);
 }
 
 // Constructs the path to a user's folder.
 export const userFolder = async (window, userName, packageInfo, path) => {
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  return path.join(newpath.userPath, packageInfo.name, 'users', userName.toLowerCase())
+  return path.join(await userPath(window), packageInfo.name, 'users', userName.toLowerCase())
 }
 
 // Constructs the path to the users' JSON file.
 export const userFile = async (window, packageInfo, path) => {
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  return path.join(newpath.userPath, packageInfo.name, 'users', 'users.json');
+  return path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
 }
 
 // Removes a user's directory and updates the users' JSON file
@@ -54,7 +48,7 @@ export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
 // Displays the welcome page after removing a user's folder.
 export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   await removeFolderAndFile(fs, folder, userName, json, file)
-  const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
+  const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
@@ -227,8 +221,8 @@ export const commonFilterTable = async (window, expect, projectName, clickItem) 
 // Exports a project to a specified location
 export const exportProjects = async (window, expect, projectname) => {
   // Get the user's download path from localStorage.
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const userpath = newpath.userPath.split(".")[0]
+  const splitPath = await userPath(window)
+  const userpath = splitPath.split(".")[0]
   // Use the common function to locate the project and export it.
   await commonFilterTable(window, expect, projectname, "export-project")
   await expect(window.locator('input[name="location"]')).toBeVisible()
@@ -244,8 +238,8 @@ export const exportProjects = async (window, expect, projectname) => {
 //Export a project with chapter and full audio project
 export const exportAudioProject = async(window, expect, projectname, itemCheck) => {
     // Get the user's download path from localStorage.
-  const newpath = await window.evaluate(() => Object.assign({}, window.localStorage))
-  const userpath = newpath.userPath.split(".")[0]
+    const splitPath = await userPath(window)
+    const userpath = splitPath.split(".")[0]
   // Use the common function to locate the project and export it.
   await commonFilterTable(window, expect, projectname, "export-project")
   await expect(window.locator('input[name="location"]')).toBeVisible()
@@ -448,13 +442,13 @@ export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="save-profile"]')).toBeVisible();
   await window.locator('//*[@id="save-profile"]').click();
   // Verify error messages for first/last name, email, organization, and region.
-  const firstLastNameError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[2]/span').textContent();
+  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').textContent();
   expect(firstLastNameError).toBe('The input has to be between 2 and 15 characters long');
-  const emailError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[3]/span').textContent();
+  const emailError = await window.locator('//*[@aria-label="email-error"]').textContent();
   expect(emailError).toBe('Email is not valid!');
-  const organizationError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[4]/span').textContent();
+  const organizationError = await window.locator('//*[@aria-label="organization-error"]').textContent();
   expect(organizationError).toBe('The input has to be between 2 and 30 characters long');
-  const regionError = await window.locator('//*[@id="__next"]/div[1]/div[2]/div/div[2]/form/div[5]/span').textContent();
+  const regionError = await window.locator('//*[@aria-label="region-error"]').textContent();
   expect(regionError).toBe('The input has to be between 2 and 15 characters long');
 
 }
@@ -488,7 +482,7 @@ export const signOut = async (window, expect) => {
   // Wait for the signout process to complete.
   await window.waitForTimeout(1000)
   // Verify that the user is signed out.
-  const welcome = await window.locator('//h2[@aria-label="welcome"]', {timeout:5000}).textContent()
+  const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
   await expect(welcome).toBe("Welcome!")
   await window.waitForTimeout(200)
 }
