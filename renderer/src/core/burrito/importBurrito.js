@@ -159,7 +159,7 @@ const updateAudioDir = async (dir, path, fs, status) => {
           if (rename.toLocaleLowerCase().includes(ext)) { return ext; }
         });
         if (extension.length > 0) {
-          const nameWithDefault = rename.replace(extension[0], `_default${extension[0]}`);
+          const nameWithDefault = rename.replace(extension[0], `_1_default${extension[0]}`);
           fs.rename(path.join(dir, 'audio', rename), path.join(dir, 'audio', nameWithDefault), (err) => {
             if (err) {
               logger.error('importBurrito.js', `Audio Rename - ${err}`);
