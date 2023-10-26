@@ -346,7 +346,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             multiSelect
           />
           <div className="flex flex-wrap gap-2 mt-2 mb-2">
-            {selectedTypeFilter.map((type, idx) => (
+            { selectResource === 'bible' && selectedTypeFilter.map((type, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
