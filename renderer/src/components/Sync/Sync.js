@@ -60,11 +60,12 @@ export default function Sync() {
   };
 
   const handleOfflineSync = async (currentRepo, currentAuth) => {
-    if (currentAuth && currentRepo && selectedGiteaProjectBranch?.name) {
+    console.log({ currentRepo, currentAuth, selectedGiteaProjectBranch }, selectedGiteaProjectBranch[0]?.name);
+    if (currentAuth && currentRepo && selectedGiteaProjectBranch[0]?.name) {
       logger.debug('Sync.js', 'in offlineSync Started');
-      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, selectedGiteaProjectBranch.name, setPullPopup, setPullData, t);
+      await downloadFromGitea(currentRepo, currentAuth, setSyncProgress, notifyStatus, setSelectedGiteaProject, addNotification, selectedGiteaProjectBranch[0].name, setPullPopup, setPullData, t);
       logger.debug('Sync.js', 'in offlineSync Finished');
-    } else if (!selectedGiteaProjectBranch?.name) {
+    } else if (!selectedGiteaProjectBranch[0]?.name) {
       logger.debug('Sync.js', 'Do select a branch');
       notifyStatus('warning', 'Do select a branch');
     } else {
