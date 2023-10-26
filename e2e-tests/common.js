@@ -1,13 +1,10 @@
 // Function to check if the user is logged in or not
 export const checkLogInOrNot = async (window, expect, textVisble) => {
   if (textVisble) {
-    console.log("hello")
     // If title is "Projects" (english) or Not(other language) visible in project list page,
     const title = await window.locator('//*[@aria-label="projects"]', {timeout:5000}).textContent()
     expect(title).toBe(title)
   } else {
-    // await window.waitForSelector('//*[@aria-label="welcome"]', { timeout: 5000 })
-    console.log("world")
     // If 'projects' is not visible, check the 'welcome' element
     const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
     await expect(welcome).toBe(welcome)
@@ -15,10 +12,13 @@ export const checkLogInOrNot = async (window, expect, textVisble) => {
   }
   return textVisble;
 }
+
+// get the user path
 const userPath= async (window) => {
   const path = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.userPath
 }
+
 // Retrieves and parses a JSON file containing user information
 export const userJson = async (window, packageInfo, fs, path) => {
   const file = path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
@@ -113,7 +113,7 @@ export const createProjects = async (window, expect, projectname, flavorType, de
 }
 
 /* Functions for managing project stars/unstars. */
-export const starUnstar = async (window, expect, name, clickStar) => {
+export const starUnstar = async (window, expect, name, clickStar, expectAttribute) => {
   await expect(window.locator('//table[@id="projects-list"]')).toBeVisible()
   const table = window.locator('//table[@id="projects-list"]')
   const body = table.locator('//*[@id="projects-list-body"]')
@@ -124,23 +124,14 @@ export const starUnstar = async (window, expect, name, clickStar) => {
     if (await tds.nth(1).textContent() === name) {
       expect(await tds.first().locator(`[aria-label=${clickStar}]`)).toBeVisible()
       await tds.first().locator(`[aria-label=${clickStar}]`).click()
+      const attribute = await rows.nth(0).locator('td').nth(0).locator('button')
+      await expect(attribute).toHaveAttribute('aria-label', expectAttribute)
       await window.waitForTimeout(500)
       break
     }
   }
 }
 
-// Stars a project
-export const starProject = async (window, expect, projectname) => {
-  // Call the common function to star the project.
-  await starUnstar(window, expect, projectname, "star-project")
-}
-
-// Untars a project
-export const unstarProject = async (window, expect, projectname) => {
-  // Call the common function to unstar the project.
-  await starUnstar(window, expect, projectname, "unstar-project")
-}
 
 // Searches for a project with a given name.
 export const searchProject = async (window, expect, projectName, searchtext) => {

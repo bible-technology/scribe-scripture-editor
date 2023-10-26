@@ -5,14 +5,13 @@ import packageInfo from '../package.json';
 import {
   showLoginPage, checkLogInOrNot, userFile,
   userFolder, userJson, createProjectValidation,
-  createProjects, unstarProject, starProject,
-  userValidation, signOut, showActiveUsers,
+  createProjects, userValidation, signOut, showActiveUsers,
   searchProject, checkProjectName, checkNotification,
   goToProjectPage, exportProjects, archivedProjects,
   unarchivedProjects, goToEditProject, changeAppLanguage,
   projectTargetLanguage, userProfileValidaiton,
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
-  customAddEditLanguage, customProjectTargetLanguage
+  customAddEditLanguage, customProjectTargetLanguage, starUnstar
 } from './common';
 
 const fs = require('fs');
@@ -23,8 +22,9 @@ let electronApp;
 let appPath;
 let window;
 
-
-test("Start the scribe application", async () => {
+// This test case handles the user's login or logout actions and related operations.
+// 'If logged IN then logout and delete that user from the backend'
+test.beforeAll(async ({ userName }) => {
   electronApp = await electron.launch({ args: ['main/index.js'] });
   appPath = await electronApp.evaluate(async ({ app }) => {
     // This runs in the main Electron process, parameter here is always
@@ -34,10 +34,6 @@ test("Start the scribe application", async () => {
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
 
-})
-
-// This test case handles the user's login or logout actions and related operations.
-test('If logged IN then logout and delete that user from the backend', async ({ userName }) => {
   // Here you handle user login and logout logic, user data, and folder management.
   //Retrieves and parses a JSON file containing user information
   const json = await userJson(window, packageInfo, fs, path)
@@ -76,6 +72,28 @@ test('If logged IN then logout and delete that user from the backend', async ({ 
   }
 
 });
+
+/* logout and delete the playwright user */
+// "Logout and delete that playwright user from the backend"
+test.afterAll(async ({ userName }) => {
+  //Retrieves and parses a JSON file containing user information
+  const json = await userJson(window, packageInfo, fs, path)
+  // Constructs the path to the users.json file.
+  const file = await userFile(window, packageInfo, path)
+  //  constructs the path to a folder/directory name
+  const folder = await userFolder(window, userName, packageInfo, path)
+
+  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
+  await window.locator('//*[@id="user-profile-image"]').click()
+  const currentUser = await window.textContent('[aria-label="userName"]')
+  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
+  await window.locator('//*[@aria-label="signout"]').click()
+  // projects page then logout and delete playwright user
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+    await showLoginPage(fs, folder, userName, json, file, window, expect)
+  }
+})
+
 
 // This test case creates a new user and logs in.
 test('Create a new user and login', async ({ userName }) => {
@@ -129,34 +147,38 @@ test('Click New and Fill project page details to create a new project for audio'
 // text translation
 test("Star the text translation project", async ({ textProject }) => {
   // Here you star a text translation project.
-  await starProject(window, expect, textProject)
+  await starUnstar(window, expect, textProject, "star-project", "unstar-project")
 })
 
 test("Unstar the text translation project", async ({ textProject }) => {
   // Here you unstar a text translation project.
-  await unstarProject(window, expect, textProject)
+  await starUnstar(window, expect, textProject, "unstar-project", "star-project")
+
 })
 
 // obs
 test("Star the obs project", async ({ obsProject }) => {
   // Here you star a OBS project.
-  await starProject(window, expect, obsProject)
+  await starUnstar(window, expect, obsProject, "star-project", "unstar-project")
+
 })
 
 test("Unstar the obs project", async ({ obsProject }) => {
   // Here you unstar a OBS project.
-  await unstarProject(window, expect, obsProject)
+  await starUnstar(window, expect, obsProject, "unstar-project", "star-project")
 })
 
 // audio
 test("Star the audio project", async ({ audioProject }) => {
   // Here you star a Audio project.
-  await starProject(window, expect, audioProject)
+  await starUnstar(window, expect, audioProject, "star-project", "unstar-project")
+
 })
 
 test("Unstar the audio project", async ({ audioProject }) => {
   // Here you unstar a Audio project.
-  await unstarProject(window, expect, audioProject)
+  await starUnstar(window, expect, audioProject, "unstar-project", "star-project")
+
 })
 
 /* text transaltion project */
@@ -285,16 +307,18 @@ test("Export the audio project in the Downloads folder", async ({ audioProject }
   await exportProjects(window, expect, audioProject)
 })
 
-//export chapter wise and full audio project
+/* export chapter wise project */
 test("Export chapter wise audio project in the Downloads folder", async ({ audioProject }) => {
   await exportAudioProject(window, expect, audioProject, "Chapter")
 })
 
+/* export full audio project */
 test("Export full audio project in the Downloads folder", async ({ audioProject }) => {
   await exportAudioProject(window, expect, audioProject, "full")
 })
 
 /* archive and unarchive project */
+// text translation
 test("Archive text translation project", async ({ textProject }) => {
   await archivedProjects(window, expect, textProject)
 })
@@ -303,6 +327,7 @@ test("Restore text translation project from archived page", async ({ textProject
   await unarchivedProjects(window, expect, textProject)
 })
 
+// obs project
 test("Archive obs project", async ({ obsProject }) => {
   await archivedProjects(window, expect, obsProject)
 })
@@ -311,6 +336,7 @@ test("Restore the obs project from archived page", async ({ obsProject }) => {
   await unarchivedProjects(window, expect, obsProject)
 })
 
+// audio project
 test("Archive audio project", async ({ audioProject }) => {
   await archivedProjects(window, expect, audioProject)
 })
@@ -441,8 +467,8 @@ test("Update/Edit audio project of description and abbreviation", async ({ audio
 })
 
 
-// custom project with custom language for text translation
-test("Custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
+/* custom project with custom language for text translation */
+test("Create custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
   // Navigate to the new project creation page
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible();
   await window.locator('//a[@aria-label="new"]').click();
@@ -473,13 +499,13 @@ test("Custom text translation with custom language project", async ({ customText
   await expect(projectName).toBe(customTextTargetLanguage);
 })
 
-//Obs and Audio custom target language RTL project 
-test("Custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
+/* Obs and Audio custom target language RTL project */
+test("Create custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
   // Create a custom OBS project with a custom language
   await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "custom obs project language", 'copl', "RTL", "create-language")
 })
 
-test("Custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
+test("Create custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
   // Create a custom audio project with a custom language
   await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "custom audio project language", 'capl', "RTL", "create-language")
 })
@@ -618,22 +644,3 @@ test("Delete the user from the active tab and check in the archived tab", async 
   await expect(title).toBe('Projects')
 })
 
-/* logout and delete the playwright user */
-test("Logout and delete that playwright user from the backend", async ({ userName }) => {
-  //Retrieves and parses a JSON file containing user information
-  const json = await userJson(window, packageInfo, fs, path)
-  // Constructs the path to the users.json file.
-  const file = await userFile(window, packageInfo, path)
-  //  constructs the path to a folder/directory name
-  const folder = await userFolder(window, userName, packageInfo, path)
-
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile-image"]').click()
-  const currentUser = await window.textContent('[aria-label="userName"]')
-  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
-  await window.locator('//*[@aria-label="signout"]').click()
-  // projects page then logout and delete playwright user
-  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await showLoginPage(fs, folder, userName, json, file, window, expect)
-  }
-})
