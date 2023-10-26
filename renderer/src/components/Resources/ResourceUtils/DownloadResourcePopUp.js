@@ -171,7 +171,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     logger.debug('DownloadResourcePopUp.js', 'save filter and call fetch');
     if (!downloadStarted) {
       // setLoadFilterDiv(!loadFilterDiv);
-      if (selectedLangFilter.length > 0 && selectedTypeFilter.length > 0) {
+      if (selectedLangFilter.length > 0
+        && (Array.isArray(selectedTypeFilter) ? selectedTypeFilter.length > 0 : selectedTypeFilter?.name)) {
         await fetchResource(true);
       } else {
         setOpenSnackBar(true);
@@ -346,7 +347,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             multiSelect
           />
           <div className="flex flex-wrap gap-2 mt-2 mb-2">
-            { selectResource === 'bible' && selectedTypeFilter.map((type, idx) => (
+            { selectResource === 'bible' && selectedTypeFilter?.map((type, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
