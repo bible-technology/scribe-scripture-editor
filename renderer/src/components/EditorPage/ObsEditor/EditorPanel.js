@@ -51,6 +51,25 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
       return false;
     }
   };
+
+  const adjustTextareaHeight = (element) => {
+    element.style.height = 'auto';
+    element.style.height = `${element.scrollHeight }px`;
+  };
+
+  const handleOnFocus = (status, e) => {
+    const element = e.target;
+    if (status) {
+      adjustTextareaHeight(element);
+    } else {
+      element.style.height = '58px';
+    }
+  };
+
+  const handleAutoHeight = (e) => {
+    adjustTextareaHeight(e.target);
+  };
+
   return (
     <>
       {obsStory.map((story, index) => (
@@ -94,6 +113,9 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
               value={story.text}
               data-id={story.id}
               className="flex-grow text-justify ml-2 p-2 text-sm"
+              onFocus={(e) => handleOnFocus(true, e)}
+              onBlur={(e) => handleOnFocus(false, e)}
+              onInput={(e) => handleAutoHeight(e)}
               style={{
                 fontFamily: selectedFont || 'sans-serif',
                 fontSize: `${fontSize}rem`,
