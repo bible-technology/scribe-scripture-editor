@@ -12,7 +12,7 @@ function CustomMultiComboBox({
   // eslint-disable-next-line no-unused-vars
   const [isActive, setIsActive] = useState(false);
   if (customData.length === 1) {
-    setSelectedList(customData);
+    setSelectedList(customData[0]);
   } else if (customData.length > 1) {
     // eslint-disable-next-line no-nested-ternary
     filteredData = (query === '')
