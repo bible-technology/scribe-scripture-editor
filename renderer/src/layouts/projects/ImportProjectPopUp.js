@@ -18,6 +18,7 @@ import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
 import burrito from '../../lib/BurritoTemplete.json';
 import { mergeProject } from './Import/mergeProject';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function ImportProjectPopUp(props) {
   const {
@@ -325,7 +326,9 @@ export default function ImportProjectPopUp(props) {
                             className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                             onClick={() => importProject()}
                           >
-                            {t('btn-import')}
+                            {importProgress.importStarted 
+                              ? <LoadingSpinner height='h-4' width='w-4' colorTW='text-white'/>
+                              : t('btn-import')}
                           </button>
                         )}
                     </div>
