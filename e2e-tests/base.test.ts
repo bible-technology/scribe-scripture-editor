@@ -439,7 +439,6 @@ test("Update/Edit audio project of description and abbreviation", async ({ audio
   await updateDescriptionAbbriviation(window, expect, description, AudioAbbreviation)
 })
 
-
 /* custom project with custom language for text translation */
 test("Create custom text translation with custom language project", async ({ customTextProject, description, textAbbreviation, customTextLanguage }) => {
   // Navigate to the new project creation page
