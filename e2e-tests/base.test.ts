@@ -615,4 +615,3 @@ test("Delete the user from the active tab and check in the archived tab", async 
   const title = await window.locator('//*[@aria-label="projects"]').textContent();
   await expect(title).toBe('Projects')
 })
-
