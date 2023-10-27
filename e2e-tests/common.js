@@ -1,18 +1,3 @@
-// Function to check if the user is logged in or not
-export const checkLogInOrNot = async (window, expect, textVisble) => {
-  if (textVisble) {
-    // If title is "Projects" (english) or Not(other language) visible in project list page,
-    const title = await window.locator('//*[@aria-label="projects"]', {timeout:5000}).textContent()
-    expect(title).toBe(title)
-  } else {
-    // If 'projects' is not visible, check the 'welcome' element
-    const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
-    await expect(welcome).toBe(welcome)
-    await window.reload()
-  }
-  return textVisble;
-}
-
 // get the user path
 const userPath= async (window) => {
   const path = await window.evaluate(() => Object.assign({}, window.localStorage))
@@ -36,22 +21,47 @@ export const userFile = async (window, packageInfo, path) => {
   return path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
 }
 
-// Removes a user's directory and updates the users' JSON file
-export const removeFolderAndFile = async (fs, folder, userName, json, file) => {
+/* Removes a user's directory and updates the users' JSON file
+ Displays the welcome page after removing a user's folder. */
+export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
   fs.rmSync(folder, { recursive: true, force: true })
   const filtered = json.filter((item) =>
     item.username.toLowerCase() !== userName.toLowerCase()
   )
-  return await fs.writeFileSync(file, JSON.stringify(filtered))
-}
-
-// Displays the welcome page after removing a user's folder.
-export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
-  await removeFolderAndFile(fs, folder, userName, json, file)
+  await fs.writeFileSync(file, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
   await expect(welcome).toBe("Welcome!")
   await window.reload()
 }
+
+//logout and delete the playwright user from backend
+export const clickUserImageToLogout = async (window, expect, userName, path, fs, packageInfo )=> {
+    // Here you handle user login and logout logic, user data, and folder management.
+  //Retrieves and parses a JSON file containing user information
+  const json = await userJson(window, packageInfo, fs, path)
+  // Constructs the path to the users.json file.
+  const file = await userFile(window, packageInfo, path)
+  //  constructs the path to a folder/directory name
+  const folder = await userFolder(window, userName, packageInfo, path)
+  // Check if user profile image is visible
+  const userProfileImage = window.locator('//*[@id="user-profile-image"]');
+  expect(await userProfileImage.isVisible()).toBeTruthy();
+  await userProfileImage.click();
+
+  // Get the current user's name
+  const currentUser = await window.textContent('[aria-label="userName"]');
+  expect(currentUser).not.toBeNull();
+
+  // Check if signout button is visible
+  const signoutButton = window.locator('//*[@aria-label="signout"]');
+  expect(await signoutButton.isVisible()).toBeTruthy();
+  await signoutButton.click();
+
+  // If the current user matches and the folder exists, log out and delete the user
+  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
+    await showLoginPage(fs, folder, userName, json, file, window, expect);
+  }
+} 
 
 // Performs user validation checks.
 export const userValidation = async (window, expect) => {

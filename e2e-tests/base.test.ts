@@ -3,15 +3,13 @@
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
 import {
-  showLoginPage, checkLogInOrNot, userFile,
-  userFolder, userJson, createProjectValidation,
+  showLoginPage, userFile, userFolder, userJson, createProjectValidation,
   createProjects, userValidation, signOut, showActiveUsers,
-  searchProject, checkProjectName, checkNotification,
-  goToProjectPage, exportProjects, archivedProjects,
-  unarchivedProjects, goToEditProject, changeAppLanguage,
-  projectTargetLanguage, userProfileValidaiton,
+  searchProject, checkProjectName, checkNotification, goToProjectPage,
+  exportProjects, archivedProjects, unarchivedProjects, goToEditProject,
+  changeAppLanguage, projectTargetLanguage, userProfileValidaiton,
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
-  customAddEditLanguage, customProjectTargetLanguage, starUnstar
+  customAddEditLanguage, customProjectTargetLanguage, starUnstar, clickUserImageToLogout
 } from './common';
 
 const fs = require('fs');
@@ -33,37 +31,21 @@ test.beforeAll(async ({ userName }) => {
   });
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
-
-  // Here you handle user login and logout logic, user data, and folder management.
-  //Retrieves and parses a JSON file containing user information
-  const json = await userJson(window, packageInfo, fs, path)
-  // Constructs the path to the users.json file.
-  const file = await userFile(window, packageInfo, path)
-  //  constructs the path to a folder/directory name
-  const folder = await userFolder(window, userName, packageInfo, path)
-
+  // check if project text is visible 
   const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
-
-  if (await checkLogInOrNot(window, expect, textVisble)) {
-    // Check if user profile image is visible
-    const userProfileImage = window.locator('//*[@id="user-profile-image"]');
-    expect(await userProfileImage.isVisible()).toBeTruthy();
-    await userProfileImage.click();
-
-    // Get the current user's name
-    const currentUser = await window.textContent('[aria-label="userName"]');
-    expect(currentUser).not.toBeNull();
-
-    // Check if signout button is visible
-    const signoutButton = window.locator('//*[@aria-label="signout"]');
-    expect(await signoutButton.isVisible()).toBeTruthy();
-    await signoutButton.click();
-
-    // If the current user matches and the folder exists, log out and delete the user
-    if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-      await showLoginPage(fs, folder, userName, json, file, window, expect);
-    }
+  if (textVisble) {
+    // logut and delete the user
+    await clickUserImageToLogout(window, expect, userName, path, fs, packageInfo)
   } else {
+    //Retrieves and parses a JSON file containing user information
+    const json = await userJson(window, packageInfo, fs, path)
+    // Constructs the path to the users.json file.
+    const file = await userFile(window, packageInfo, path)
+    //  constructs the path to a folder/directory name
+    const folder = await userFolder(window, userName, packageInfo, path)
+    // If 'projects' is not visible, check the 'welcome' element
+    const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
+    await expect(welcome).toBe(welcome)
     // On the login page, if the playwright user exists, reload the app and remove it
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
     if (existUser && await fs.existsSync(folder)) {
@@ -73,27 +55,18 @@ test.beforeAll(async ({ userName }) => {
 
 });
 
-/* logout and delete the playwright user */
-// "Logout and delete that playwright user from the backend"
+/* logout and delete the playwright user from the backend */
 test.afterAll(async ({ userName }) => {
-  //Retrieves and parses a JSON file containing user information
-  const json = await userJson(window, packageInfo, fs, path)
-  // Constructs the path to the users.json file.
-  const file = await userFile(window, packageInfo, path)
-  //  constructs the path to a folder/directory name
-  const folder = await userFolder(window, userName, packageInfo, path)
-
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile-image"]').click()
-  const currentUser = await window.textContent('[aria-label="userName"]')
-  expect(await window.locator('//*[@aria-label="signout"]')).toBeVisible()
-  await window.locator('//*[@aria-label="signout"]').click()
-  // projects page then logout and delete playwright user
-  if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await showLoginPage(fs, folder, userName, json, file, window, expect)
-  }
+  await clickUserImageToLogout(window, expect, userName, path, fs, packageInfo)
 })
 
+// test status check
+test.afterEach(async ({ }, testInfo) => {
+  console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
+
+  if (testInfo.status !== testInfo.expectedStatus)
+    console.log(`Did not run as expected, ended up at ${window.url()}`);
+});
 
 // This test case creates a new user and logs in.
 test('Create a new user and login', async ({ userName }) => {
