@@ -335,7 +335,7 @@ export default function TargetLanguagePopover({ projectType }) {
                     : (
                       <button
                         type="button"
-                        aria-label={edit === true ? 'edit-language' : 'create-language'}
+                        aria-label="edit-language"
                         className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
                         onClick={() => (edit === true ? editLanguage() : addLanguage())}
                       >

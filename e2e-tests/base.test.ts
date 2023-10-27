@@ -455,7 +455,7 @@ test("Create custom text translation with custom language project", async ({ cus
   await window.locator('//input[@id="version_abbreviated"]').fill(`c${textAbbreviation}`);
 
   // Adding a new custom text translation language
-  await customAddEditLanguage(window, expect, "add-language", customTextLanguage, 'cttl', "RTL", "create-language");
+  await customAddEditLanguage(window, expect, "add-language", customTextLanguage, 'cttl', "RTL", "edit-language");
 
   // Open advanced settings and configure project scope
   await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
@@ -474,12 +474,12 @@ test("Create custom text translation with custom language project", async ({ cus
 /* Obs and Audio custom target language RTL project */
 test("Create custom obs project with custom language project", async ({ customObsProject, projectObsType, description, obsAbbreviation, customObsLanguage }) => {
   // Create a custom OBS project with a custom language
-  await customProjectTargetLanguage(window, expect, customObsProject, projectObsType, description, obsAbbreviation, "add-language", customObsLanguage, 'copl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customObsProject, projectObsType, description, obsAbbreviation, "add-language", customObsLanguage, 'copl', "RTL", "edit-language")
 })
 
 test("Create custom audio project with custom language project", async ({ customAudioProject, projectAudioType, description, AudioAbbreviation, customAudioLanguage }) => {
   // Create a custom audio project with a custom language
-  await customProjectTargetLanguage(window, expect, customAudioProject, projectAudioType, description, AudioAbbreviation, "add-language", customAudioLanguage, 'capl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customAudioProject, projectAudioType, description, AudioAbbreviation, "add-language", customAudioLanguage, 'capl', "RTL", "edit-language")
 })
 
 /* Changing text translation project target language */
