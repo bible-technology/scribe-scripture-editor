@@ -109,7 +109,7 @@ test('Create a new user and login', async ({ userName }) => {
 
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 /* Translation Project    */
-test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject }) => {
+test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject, description, textAbbreviation }) => {
   // Here you create a new text translation project with custom settings.
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
@@ -117,9 +117,9 @@ test('Click New and Fill project page details to create a new project for text t
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible()
   await window.locator('//input[@id="project_name"]').fill(textProject)
   await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible()
-  await window.locator('//textarea[@id="project_description"]').fill('test description')
+  await window.locator('//textarea[@id="project_description"]').fill(description)
   await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible()
-  await window.locator('//input[@id="version_abbreviated"]').fill('ttp')
+  await window.locator('//input[@id="version_abbreviated"]').fill(textAbbreviation)
   await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible()
   await window.locator('//*[@id="open-advancesettings"]').click()
   await expect(window.locator('//*[@aria-label="custom-book"]')).toBeVisible()
@@ -132,52 +132,52 @@ test('Click New and Fill project page details to create a new project for text t
 })
 
 /* Obs translation project */
-test('Click New and Fill project page details to create a new project for obs', async ({ obsProject }) => {
+test('Click New and Fill project page details to create a new project for obs', async ({ obsProject, projectObsType, description, obsAbbreviation }) => {
   //  Here you create a new OBS project.
-  await createProjects(window, expect, obsProject, "OBS", "test description", "otp")
+  await createProjects(window, expect, obsProject, projectObsType, description, obsAbbreviation)
 })
 
 /* Audio project */
-test('Click New and Fill project page details to create a new project for audio', async ({ audioProject }) => {
+test('Click New and Fill project page details to create a new project for audio', async ({ audioProject, projectAudioType, description, AudioAbbreviation }) => {
   // Here you create a new audio project
-  await createProjects(window, expect, audioProject, "Audio", "test description", "atp")
+  await createProjects(window, expect, audioProject, projectAudioType, description, AudioAbbreviation)
 })
 
 /* STAR & UNSTAR PROJECT */
 // text translation
-test("Star the text translation project", async ({ textProject }) => {
+test("Star the text translation project", async ({ textProject, starProject, unstarProject }) => {
   // Here you star a text translation project.
-  await starUnstar(window, expect, textProject, "star-project", "unstar-project")
+  await starUnstar(window, expect, textProject, starProject, unstarProject)
 })
 
-test("Unstar the text translation project", async ({ textProject }) => {
+test("Unstar the text translation project", async ({ textProject, unstarProject, starProject }) => {
   // Here you unstar a text translation project.
-  await starUnstar(window, expect, textProject, "unstar-project", "star-project")
+  await starUnstar(window, expect, textProject, unstarProject, starProject)
 
 })
 
 // obs
-test("Star the obs project", async ({ obsProject }) => {
+test("Star the obs project", async ({ obsProject, starProject, unstarProject }) => {
   // Here you star a OBS project.
-  await starUnstar(window, expect, obsProject, "star-project", "unstar-project")
+  await starUnstar(window, expect, obsProject, starProject, unstarProject)
 
 })
 
-test("Unstar the obs project", async ({ obsProject }) => {
+test("Unstar the obs project", async ({ obsProject, unstarProject, starProject }) => {
   // Here you unstar a OBS project.
-  await starUnstar(window, expect, obsProject, "unstar-project", "star-project")
+  await starUnstar(window, expect, obsProject, unstarProject, starProject)
 })
 
 // audio
-test("Star the audio project", async ({ audioProject }) => {
+test("Star the audio project", async ({ audioProject, starProject, unstarProject }) => {
   // Here you star a Audio project.
-  await starUnstar(window, expect, audioProject, "star-project", "unstar-project")
+  await starUnstar(window, expect, audioProject, starProject, unstarProject)
 
 })
 
-test("Unstar the audio project", async ({ audioProject }) => {
+test("Unstar the audio project", async ({ audioProject, unstarProject, starProject }) => {
   // Here you unstar a Audio project.
-  await starUnstar(window, expect, audioProject, "unstar-project", "star-project")
+  await starUnstar(window, expect, audioProject, unstarProject, starProject)
 
 })
 
@@ -346,9 +346,9 @@ test("Restore the audio project from the archived page", async ({ audioProject }
 })
 
 /* Update/Edit the text translation project */
-test("Update/Edit text translation project of description and abbreviation", async ({ textProject }) => {
+test("Update/Edit text translation project of description and abbreviation", async ({ textProject, description, textAbbreviation }) => {
   await goToEditProject(window, expect, textProject)
-  await updateDescriptionAbbriviation(window, expect, "edit text translation project", "ettp")
+  await updateDescriptionAbbriviation(window, expect, description, textAbbreviation)
 })
 
 test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
@@ -428,7 +428,7 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   expect(await title).toBe('Projects');
 })
 
-test("Update/Edit text translation project license", async ({ textProject }) => {
+test("Update/Edit text translation project license", async ({ textProject, currentLicense, newLicense }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, textProject);
 
@@ -437,38 +437,38 @@ test("Update/Edit text translation project license", async ({ textProject }) => 
   await window.locator('//*[@id="open-advancesettings"]').click();
 
   // Change the license from "CC BY-SA" to "CC BY"
-  await changeLicense(window, expect, "CC BY-SA", "CC BY");
+  await changeLicense(window, expect, currentLicense, newLicense);
 })
 
 /* Update/Edit the obs project */
-test("Update/Edit obs project of description and abbreviation", async ({ obsProject }) => {
+test("Update/Edit obs project of description and abbreviation", async ({ obsProject, description, obsAbbreviation }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, obsProject);
 
   // Update description and abbreviation
-  await updateDescriptionAbbriviation(window, expect, "edit obs project", "eop");
+  await updateDescriptionAbbriviation(window, expect, description, obsAbbreviation);
 })
 
-test("Update/Edit obs project license", async ({ obsProject }) => {
+test("Update/Edit obs project license", async ({ obsProject, currentLicense, newLicense }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, obsProject);
 
   // Change the license from "CC BY-SA" to "CC BY"
-  await changeLicense(window, expect, "CC BY-SA", "CC BY");
+  await changeLicense(window, expect, currentLicense, newLicense);
 })
 
 /* Update/Edit the audio project */
-test("Update/Edit audio project of description and abbreviation", async ({ audioProject }) => {
+test("Update/Edit audio project of description and abbreviation", async ({ audioProject, description, AudioAbbreviation }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, audioProject);
 
   // Update description and abbreviation
-  await updateDescriptionAbbriviation(window, expect, "edit audio project", "eap")
+  await updateDescriptionAbbriviation(window, expect, description, AudioAbbreviation)
 })
 
 
 /* custom project with custom language for text translation */
-test("Create custom text translation with custom language project", async ({ customTextTargetLanguage }) => {
+test("Create custom text translation with custom language project", async ({ customTextProject, description, textAbbreviation, customTextLanguage }) => {
   // Navigate to the new project creation page
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible();
   await window.locator('//a[@aria-label="new"]').click();
@@ -476,14 +476,14 @@ test("Create custom text translation with custom language project", async ({ cus
   // Perform initial project creation steps and provide details
   await createProjectValidation(window, expect);
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible();
-  await window.locator('//input[@id="project_name"]').fill(customTextTargetLanguage);
+  await window.locator('//input[@id="project_name"]').fill(customTextProject);
   await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible();
-  await window.locator('//textarea[@id="project_description"]').fill('test description');
+  await window.locator('//textarea[@id="project_description"]').fill(`custom text translation project ${description}`);
   await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible();
-  await window.locator('//input[@id="version_abbreviated"]').fill('ttp');
+  await window.locator('//input[@id="version_abbreviated"]').fill(`c${textAbbreviation}`);
 
   // Adding a new custom text translation language
-  await customAddEditLanguage(window, expect, "add-language", "custom text translation language", 'cttl', "RTL", "create-language");
+  await customAddEditLanguage(window, expect, "add-language", customTextLanguage, 'cttl', "RTL", "create-language");
 
   // Open advanced settings and configure project scope
   await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
@@ -495,19 +495,19 @@ test("Create custom text translation with custom language project", async ({ cus
 
   // Create the project and verify the project name
   await window.locator('//button[@aria-label="create"]').click();
-  const projectName = await window.innerText(`//div[@id="${customTextTargetLanguage}"]`);
-  await expect(projectName).toBe(customTextTargetLanguage);
+  const projectName = await window.innerText(`//div[@id="${customTextProject}"]`);
+  await expect(projectName).toBe(customTextProject);
 })
 
 /* Obs and Audio custom target language RTL project */
-test("Create custom obs project with custom language project", async ({ customObsTargetLanguage }) => {
+test("Create custom obs project with custom language project", async ({ customObsProject, projectObsType, description, obsAbbreviation, customObsLanguage }) => {
   // Create a custom OBS project with a custom language
-  await customProjectTargetLanguage(window, expect, customObsTargetLanguage, "OBS", "custom obs language test description", "cotp", "add-language", "custom obs project language", 'copl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customObsProject, projectObsType, description, obsAbbreviation, "add-language", customObsLanguage, 'copl', "RTL", "create-language")
 })
 
-test("Create custom audio project with custom language project", async ({ customAudioTargetLanguage }) => {
+test("Create custom audio project with custom language project", async ({ customAudioProject, projectAudioType, description, AudioAbbreviation, customAudioLanguage }) => {
   // Create a custom audio project with a custom language
-  await customProjectTargetLanguage(window, expect, customAudioTargetLanguage, "Audio", "custom audio language test description", "catp", "add-language", "custom audio project language", 'capl', "RTL", "create-language")
+  await customProjectTargetLanguage(window, expect, customAudioProject, projectAudioType, description, AudioAbbreviation, "add-language", customAudioLanguage, 'capl', "RTL", "create-language")
 })
 
 /* Changing text translation project target language */
@@ -517,22 +517,22 @@ test("Changing text translation project language from English to Persian", async
   await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
 })
 
-test("Changing text translation project language from Persian to English", async ({ textProject }) => {
+test("Changing text translation project language from Persian to English", async ({ textProject, english }) => {
   // Change the text translation project language
-  await projectTargetLanguage(window, expect, textProject, "english", "English")
+  await projectTargetLanguage(window, expect, textProject, english.toLowerCase(), english)
 })
 
-test("Changing text translation project language from English to new custom text translation language", async ({ textProject }) => {
+test("Changing text translation project language from English to new custom text translation language", async ({ textProject, customTextLanguage }) => {
   // Change the text translation project language
-  await projectTargetLanguage(window, expect, textProject, "custom text", "custom text translation language")
+  await projectTargetLanguage(window, expect, textProject, "custom text", customTextLanguage)
   await checkProjectName(window, expect, textProject)
   await goToProjectPage(window, expect)
 })
 
 // obs project
-test("Changing obs project language from English to new custom obs project language", async ({ obsProject }) => {
+test("Changing obs project language from English to new custom obs project language", async ({ obsProject, customObsLanguage }) => {
   // Change the OBS project language
-  await projectTargetLanguage(window, expect, obsProject, "custom obs", "custom obs project language")
+  await projectTargetLanguage(window, expect, obsProject, "custom obs", customObsLanguage)
   await checkProjectName(window, expect, obsProject)
   await goToProjectPage(window, expect)
 })
@@ -562,9 +562,9 @@ test("Update user Profile", async () => {
 })
 
 /*changing app language english to hindi */
-test("App language change English to hindi", async () => {
+test("App language change English to hindi", async ({ english, hindi }) => {
   // Change the app language from English to Hindi
-  await changeAppLanguage(window, expect, "English", "Hindi");
+  await changeAppLanguage(window, expect, english, hindi);
 
   // Verify the language change and UI update
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
@@ -575,7 +575,7 @@ test("App language change English to hindi", async () => {
 })
 
 /*changing app language hindi to english */
-test("App language change Hindi to English", async () => {
+test("App language change Hindi to English", async ({ hindi, english }) => {
   expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible();
   await window.locator('//*[@aria-label="projectList"]').click();
   await window.waitForTimeout(2000);
@@ -585,7 +585,7 @@ test("App language change Hindi to English", async () => {
   expect(await title).toBe('प्रोजेक्ट्स');
 
   // Change the app language from Hindi to English
-  await changeAppLanguage(window, expect, "Hindi", "English");
+  await changeAppLanguage(window, expect, hindi, english);
 
   // Verify the language change and UI update
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();

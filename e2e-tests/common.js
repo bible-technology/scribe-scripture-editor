@@ -326,12 +326,12 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
    const description = await window.textContent('//textarea[@id="project_description"]');
    await expect(description).toBe('test description');
    // Fill in the new description.
-   await window.locator('//textarea[@id="project_description"]').fill(descriptionText);
+   await window.locator('//textarea[@id="project_description"]').fill(`edit ${descriptionText}`);
    // Get the edited description and verify it.
    const editDescription = await window.textContent('//textarea[@id="project_description"]');
-   await expect(editDescription).toBe(descriptionText);
+   await expect(editDescription).toBe(`edit ${descriptionText}`);
    // Fill in the abbreviation and verify that the "Save" button is visible.
-   await window.locator('input[name="version_abbreviated"]').fill(abbreviation);
+   await window.locator('input[name="version_abbreviated"]').fill(`e${abbreviation}`);
    await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
    // Click the "Save" button.
    await window.locator('//*[@aria-label="save-edit-project"]').click();
@@ -393,9 +393,9 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
   await expect(window.locator('//input[@id="project_name"]')).toBeVisible();
   await window.locator('//input[@id="project_name"]').fill(projectname);
   await expect(window.locator('//textarea[@id="project_description"]')).toBeVisible();
-  await window.locator('//textarea[@id="project_description"]').fill(description);
+  await window.locator('//textarea[@id="project_description"]').fill(`custom ${flavorType} language ${description}`);
   await expect(window.locator('//input[@id="version_abbreviated"]')).toBeVisible();
-  await window.locator('//input[@id="version_abbreviated"]').fill(abb);
+  await window.locator('//input[@id="version_abbreviated"]').fill(`c${abb}`);
   // Call the customAddEditLanguage function to add/edit target languages.
   await customAddEditLanguage(window, expect, openModal, targetLanguageName, targetLanguageCode, targetDirection, createLanguage, flavorType);
   // Click the button to create the project.
