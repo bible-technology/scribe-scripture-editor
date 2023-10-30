@@ -27,7 +27,6 @@ export default function ReferenceScribex(props) {
   const {
     state: {
       fontSize,
-      projectScriptureDir,
     },
   } = useContext(ReferenceContext);
 
@@ -85,7 +84,6 @@ export default function ReferenceScribex(props) {
           fontFamily: font || 'sans-serif',
           fontSize: `${fontSize}rem`,
           lineHeight: (fontSize > 1.3) ? 1.5 : '',
-          // direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
         }}
     >
       <ReferenceEditor {..._props} />
