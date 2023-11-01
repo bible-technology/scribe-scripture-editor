@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Fragment, useRef, useState,
+  Fragment, useEffect, useRef, useState,
 } from 'react';
 
 import {
@@ -11,19 +11,52 @@ import {
   InformationCircleIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
+
 import { useTranslation } from 'react-i18next';
+import ChatIcon from '@/icons/Book/ChatBubbleLeftEllipsis.svg';
+import EnvelopeIcon from '@/icons/basil/Solid/Communication/Envelope.svg';
+import CheckedIcon from '@/icons/basil/Solid/Status/Checked-box.svg';
+import ReplyIcon from '@/icons/basil/Solid/Communication/Reply.svg';
+
 import LogoIcon from '@/icons/logo.svg';
+import { environment } from '../../../environment';
 import packageInfo from '../../../../package.json';
 
 export default function AboutModal(props) {
   const { openModal, open } = props;
   const [tabNumber, setTabNumber] = useState(0);
+  const [copy, setCopy] = useState(false);
 
   const cancelButtonRef = useRef(null);
   const { t } = useTranslation();
   function modalStatus(isOpen) {
     openModal(isOpen);
   }
+
+  const handleCopyMail = () => {
+    if (navigator) {
+      navigator.clipboard.writeText(environment.SCRIBE_SUPPORT_MAIL);
+      setCopy(true);
+    }
+  };
+
+  const handleWriteNow = () => {
+    if (window) {
+      window.location.href = `mailto:${environment.SCRIBE_SUPPORT_MAIL}`;
+    }
+  };
+
+  useEffect(() => {
+    if (copy) {
+      const timeout = setTimeout(() => {
+        setCopy(false);
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [copy]);
 
   return (
 
@@ -109,6 +142,20 @@ export default function AboutModal(props) {
                         />
                         {t('modal-title-license')}
                       </div>
+                      <div
+                        onClick={() => setTabNumber(2)}
+                        role="button"
+                        tabIndex="0"
+                        aria-label="tech-support"
+                        className={`flex items-center justify-center p-2 leading-6 text-sm text-black hover:text-primary uppercase tracking-wide font-bold border-0 border-b-4 ${tabNumber === 2 ? 'border-primary' : 'border-transparent hover:border-black'}`}
+                      >
+                        <ChatIcon
+                          className="h-5 w-5 mr-2"
+                          aria-hidden="true"
+                        />
+                        {/* {t('modal-title-about')} */}
+                        Tech Support
+                      </div>
                     </div>
                     <div className="mt-5 prose">
                       {tabNumber === 0
@@ -149,6 +196,60 @@ export default function AboutModal(props) {
                               SOFTWARE.
                             </p>
 
+                          </>
+                        )}
+                      {tabNumber === 2
+                        && (
+                          <>
+                            <p className="text-sm text-gray-500">
+                              Your feedback is invaluable to us! Please share your thoughts, suggestions, or concerns to help us improve your experience. We have a dedicated team to ensure a smooth
+                              experience with Scribe.
+                            </p>
+                            <div>
+                              <div className="md:grid md:grid-cols-3 gap-x-2">
+                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
+                                  <EnvelopeIcon className="w-12 h-12 fill-primary" />
+                                  <h5 className="text-xs font-bold">Write Us</h5>
+                                  <p className="text-[11px] leading-4 text-center m-1">Write your thoughts, questions, or concerns with us. Your input matters</p>
+                                </div>
+                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
+                                  <ReplyIcon className="w-12 h-12 fill-primary" />
+                                  <h5 className="text-xs font-bold">Sit Back and Relax</h5>
+                                  <p className="text-[11px] leading-4 text-center m-1">Our support team will review and take the necessary actions.</p>
+                                </div>
+                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
+                                  <CheckedIcon className="w-12 h-12 fill-primary" />
+                                  <h5 className="text-xs font-bold">Done!</h5>
+                                  <p className="text-[11px] leading-4 text-center m-1">Success! Your concern has been resolved, and your path is now clear.</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="md:grid md:grid-cols-1 mr-3 mt-4 rounded-md">
+                              <div className="border border-gray-300 p-2 flex justify-around items-center">
+                                <span className="text-sm">{environment.SCRIBE_SUPPORT_MAIL}</span>
+                                <div>
+                                  <button
+                                    aria-label="connect-now"
+                                    type="button"
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    onClick={() => handleWriteNow()}
+                                  >
+                                    Write Now
+                                  </button>
+                                  <button
+                                    aria-label="copy-mail"
+                                    type="button"
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    onClick={() => handleCopyMail()}
+                                  >
+                                    {copy ? 'Copied' : 'Copy'}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              Thank you for your feedbacks and using Scribe.
+                            </p>
                           </>
                         )}
                     </div>
