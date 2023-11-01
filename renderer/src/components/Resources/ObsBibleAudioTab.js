@@ -112,7 +112,7 @@ export default function ObsBibleAudioTab({
                               role="button"
                               tabIndex="0"
                             >
-                              {ref.value.resourceMeta.subject}
+                              {ref.value.resourceMeta?.subject}
                             </div>
                           </td>
                           <td className="p-2 uppercase">
