@@ -5,20 +5,13 @@ const userPath= async (window) => {
 }
 
 // Retrieves and parses a JSON file containing user information
-export const userJson = async (window, packageInfo, fs, path) => {
-  const file = path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
-  const data = await fs.readFileSync(file);
-  return JSON.parse(data);
+export const userJson = async (window, packageInfo, path) => {
+  return path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
 }
 
 // Constructs the path to a user's folder.
 export const userFolder = async (window, userName, packageInfo, path) => {
   return path.join(await userPath(window), packageInfo.name, 'users', userName.toLowerCase())
-}
-
-// Constructs the path to the users' JSON file.
-export const userFile = async (window, packageInfo, path) => {
-  return path.join(await userPath(window), packageInfo.name, 'users', 'users.json');
 }
 
 /* Removes a user's directory and updates the users' JSON file
@@ -38,9 +31,11 @@ export const showLoginPage = async (fs, folder, userName, json, file, window, ex
 export const clickUserImageToLogout = async (window, expect, userName, path, fs, packageInfo )=> {
     // Here you handle user login and logout logic, user data, and folder management.
   //Retrieves and parses a JSON file containing user information
-  const json = await userJson(window, packageInfo, fs, path)
+  const userData = await userJson(window, packageInfo, path)
+  const data = await fs.readFileSync(userData);
+  const json = JSON.parse(data);
   // Constructs the path to the users.json file.
-  const file = await userFile(window, packageInfo, path)
+  const file = await userJson(window, packageInfo, path)
   //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
   // Check if user profile image is visible

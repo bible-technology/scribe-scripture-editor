@@ -3,7 +3,7 @@
 import { test, expect } from './myFixtures';
 import packageInfo from '../package.json';
 import {
-  showLoginPage, userFile, userFolder, userJson, createProjectValidation,
+  showLoginPage, userFolder, userJson, createProjectValidation,
   createProjects, userValidation, signOut, showActiveUsers,
   searchProject, checkProjectName, checkNotification, goToProjectPage,
   exportProjects, archivedProjects, unarchivedProjects, goToEditProject,
@@ -38,9 +38,11 @@ test.beforeAll(async ({ userName }) => {
     await clickUserImageToLogout(window, expect, userName, path, fs, packageInfo)
   } else {
     //Retrieves and parses a JSON file containing user information
-    const json = await userJson(window, packageInfo, fs, path)
+    const userData = await userJson(window, packageInfo, path)
+    const data = await fs.readFileSync(userData);
+    const json = JSON.parse(data);
     // Constructs the path to the users.json file.
-    const file = await userFile(window, packageInfo, path)
+    const file = await userJson(window, packageInfo, path)
     //  constructs the path to a folder/directory name
     const folder = await userFolder(window, userName, packageInfo, path)
     // If 'projects' is not visible, check the 'welcome' element
