@@ -201,13 +201,11 @@ export default function AboutModal(props) {
                       {tabNumber === 2
                         && (
                           <>
-                            <p className="text-sm text-gray-500">
-                              Thank you for your input! We value it. Our devoted crew is working hard to provide a seamless Scribe experience.
-                            </p>
+
                             <div className="w-full">
                               {/* <div className="md:grid md:grid-cols-3 gap-x-2"> */}
                               <div className="w-full flex flex-col gap-2">
-                                <div className="border border-gray-300 p-2 rounded-md  break-words flex justify-around items-center gap-3 ">
+                                <div className="border border-gray-300 p-2 rounded-md  break-words flex justify-center gap-4 items-center ">
                                   <div className="flex flex-col gap-2 items-center">
                                     <ReplyIcon className="w-12 h-12 fill-primary -scale-x-100" />
                                     <h5 className="text-xs font-bold">Raise an Issue</h5>
@@ -264,6 +262,12 @@ export default function AboutModal(props) {
                                 </div>
                               </div>
                             </div>
+
+                            <p className="text-sm text-gray-700 ">
+                              <span className="font-semibold pr-1 text-primary">Thank you for your input!</span>
+                              {' '}
+                              We value it. Our devoted crew is working hard to provide a seamless Scribe experience.
+                            </p>
 
                           </>
                         )}
