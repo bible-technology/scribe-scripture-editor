@@ -15,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import ChatIcon from '@/icons/Book/ChatBubbleLeftEllipsis.svg';
 import EnvelopeIcon from '@/icons/basil/Solid/Communication/Envelope.svg';
-import CheckedIcon from '@/icons/basil/Solid/Status/Checked-box.svg';
+import GithubIcon from '@/icons/Download/Github.svg';
 import ReplyIcon from '@/icons/basil/Solid/Communication/Reply.svg';
 
 import LogoIcon from '@/icons/logo.svg';
@@ -202,40 +202,57 @@ export default function AboutModal(props) {
                         && (
                           <>
                             <p className="text-sm text-gray-500">
-                              Your feedback is invaluable to us! Please share your thoughts, suggestions, or concerns to help us improve your experience. We have a dedicated team to ensure a smooth
-                              experience with Scribe.
+                              Thank you for your input! We value it. Our devoted crew is working hard to provide a seamless Scribe experience.
                             </p>
-                            <div>
-                              <div className="md:grid md:grid-cols-3 gap-x-2">
-                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
-                                  <EnvelopeIcon className="w-12 h-12 fill-primary" />
-                                  <h5 className="text-xs font-bold">Write Us</h5>
-                                  <p className="text-[11px] leading-4 text-center m-1">Write your thoughts, questions, or concerns with us. Your input matters</p>
-                                </div>
-                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
-                                  <ReplyIcon className="w-12 h-12 fill-primary" />
-                                  <h5 className="text-xs font-bold">Sit Back and Relax</h5>
-                                  <p className="text-[11px] leading-4 text-center m-1">Our support team will review and take the necessary actions.</p>
-                                </div>
-                                <div className="border border-gray-300 p-2 rounded-md max-w-[130px] break-words flex flex-col justify-center items-center">
-                                  <CheckedIcon className="w-12 h-12 fill-primary" />
-                                  <h5 className="text-xs font-bold">Done!</h5>
-                                  <p className="text-[11px] leading-4 text-center m-1">Success! Your concern has been resolved, and your path is now clear.</p>
+                            <div className="w-full">
+                              {/* <div className="md:grid md:grid-cols-3 gap-x-2"> */}
+                              <div className="w-full flex flex-col gap-2">
+                                <div className="border border-gray-300 p-2 rounded-md  break-words flex justify-around items-center gap-3 ">
+                                  <div className="flex flex-col gap-2 items-center">
+                                    <ReplyIcon className="w-12 h-12 fill-primary -scale-x-100" />
+                                    <h5 className="text-xs font-bold">Raise an Issue</h5>
+                                  </div>
+                                  <ul className="text-xs">
+                                    <li>Write the steps - how you faced the issue</li>
+                                    <li>Add relevant screenshots</li>
+                                    <li>Add specific suggestions - if you have any</li>
+                                  </ul>
                                 </div>
                               </div>
-                            </div>
-                            <div className="md:grid md:grid-cols-1 mr-3 mt-4 rounded-md">
-                              <div className="border border-gray-300 p-2 flex justify-around items-center">
-                                <span className="text-sm">{environment.SCRIBE_SUPPORT_MAIL}</span>
-                                <div>
+
+                              <div className="md:grid md:grid-cols-2 gap-x-2 mt-2">
+                                <div className="border border-gray-300 p-2 rounded-md  break-words flex flex-col justify-center items-center">
+                                  <EnvelopeIcon className="w-12 h-12 fill-primary" />
                                   <button
                                     aria-label="connect-now"
                                     type="button"
-                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    className="my-2 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700
+                                      hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  sm:w-auto sm:text-xs"
                                     onClick={() => handleWriteNow()}
                                   >
-                                    Write Now
+                                    Write to Us
                                   </button>
+                                </div>
+                                <div className="border border-gray-300 p-2 rounded-md  break-words flex flex-col justify-center items-center">
+                                  <GithubIcon className="w-10 h-10 fill-primary" />
+                                  <a
+                                    type="button"
+                                    href="https://github.com/bible-technology/scribe-scripture-editor/issues"
+                                    target="_blank"
+                                    className="no-underline my-2 mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700
+                                      hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  sm:w-auto sm:text-xs"
+                                    rel="noreferrer"
+                                  >
+                                    Track the Issue
+                                  </a>
+                                </div>
+                              </div>
+
+                            </div>
+                            <div className="md:grid md:grid-cols-1 mt-4 ">
+                              <div className="border border-gray-300 p-2 flex justify-around items-center rounded-md">
+                                <span className="text-sm">{environment.SCRIBE_SUPPORT_MAIL}</span>
+                                <div>
                                   <button
                                     aria-label="copy-mail"
                                     type="button"
@@ -247,9 +264,7 @@ export default function AboutModal(props) {
                                 </div>
                               </div>
                             </div>
-                            <p className="text-sm text-gray-500">
-                              Thank you for your feedbacks and using Scribe.
-                            </p>
+
                           </>
                         )}
                     </div>
@@ -277,6 +292,15 @@ export default function AboutModal(props) {
                   rel="noreferrer"
                 >
                   {t('btn-source-code')}
+                </a>
+                <a
+                  // type="button"
+                  href="https://docs.scribe.bible/"
+                  target="_blank"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  rel="noreferrer"
+                >
+                  Documentation
                 </a>
 
                 {/* <a
