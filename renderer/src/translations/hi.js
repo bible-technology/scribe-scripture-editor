@@ -274,4 +274,6 @@ export const Hi = {
     'label-accepted': 'स्वीकृत',
     'msg-remove-resource': 'क्या आप वाकई संसाधन को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता',
     'label-check-updates': 'अपडेट जांचें',
+    'label-documentation': 'प्रलेखन',
+    'label-tech-support': 'तकनीकी समर्थन',
 };
