@@ -153,8 +153,7 @@ export default function AboutModal(props) {
                           className="h-5 w-5 mr-2"
                           aria-hidden="true"
                         />
-                        {/* {t('modal-title-about')} */}
-                        Tech Support
+                        {t('label-tech-support')}
                       </div>
                     </div>
                     <div className="mt-5 prose">
@@ -205,17 +204,32 @@ export default function AboutModal(props) {
                             <div className="w-full">
                               {/* <div className="md:grid md:grid-cols-3 gap-x-2"> */}
                               <div className="w-full flex flex-col gap-2">
-                                <div className="border border-gray-300 p-2 rounded-md  break-words flex justify-center gap-4 items-center ">
-                                  <div className="flex flex-col gap-2 items-center">
-                                    <ReplyIcon className="w-12 h-12 fill-primary -scale-x-100" />
-                                    <h5 className="text-xs font-bold">Raise an Issue</h5>
+                                <div className="border border-gray-300 p-2 rounded-md  break-words ">
+                                  <div className="flex justify-center gap-4 items-center ">
+                                    <div className="flex flex-col gap-2 items-center">
+                                      <ReplyIcon className="w-12 h-12 fill-primary -scale-x-100" />
+                                      <h5 className="text-xs font-bold">Ask your Queries</h5>
+                                    </div>
+                                    <ul className="text-xs">
+                                      <li>Write the steps - how you faced the issue</li>
+                                      <li>Add relevant screenshots</li>
+                                      <li>Add specific suggestions - if you have any</li>
+                                    </ul>
                                   </div>
-                                  <ul className="text-xs">
-                                    <li>Write the steps - how you faced the issue</li>
-                                    <li>Add relevant screenshots</li>
-                                    <li>Add specific suggestions - if you have any</li>
-                                  </ul>
+
+                                  <div className="flex justify-center gap-4 items-center ">
+                                    <ul className="text-xs">
+                                      <li>Feautre : Describe your idea</li>
+                                      <span className="ml-1">How it will be beneficail for the users</span>
+                                      <li>Feedback</li>
+                                    </ul>
+                                    <div className="flex flex-col gap-2 items-center">
+                                      <ReplyIcon className="w-12 h-12 fill-primary " />
+                                      <h5 className="text-xs font-bold">Submit your suggessions</h5>
+                                    </div>
+                                  </div>
                                 </div>
+
                               </div>
 
                               <div className="md:grid md:grid-cols-2 gap-x-2 mt-2">
@@ -304,7 +318,7 @@ export default function AboutModal(props) {
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   rel="noreferrer"
                 >
-                  Documentation
+                  {t('label-documentation')}
                 </a>
 
                 {/* <a
