@@ -88,7 +88,7 @@ const ProjectRow = ({
                           (event) => handleSelectProject(event, project.name, project.id[0], router, activeNotificationCount, setSelectedProject, setNotifications, setActiveNotificationCount)
                         }
                         role="button"
-                        aria-label={project.starred ? 'unstar-project-name' : 'star-project-name'}
+                        aria-label={`${project.name}`}
                         tabIndex="0"
                         className="text-sm font-medium text-gray-900"
                       >

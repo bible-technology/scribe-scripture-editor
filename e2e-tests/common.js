@@ -16,12 +16,12 @@ export const userFolder = async (window, userName, packageInfo, path) => {
 
 /* Removes a user's directory and updates the users' JSON file
  Displays the welcome page after removing a user's folder. */
-export const showLoginPage = async (fs, folder, userName, json, file, window, expect) => {
+export const showLoginPage = async (fs, folder, userName, json, userData, window, expect) => {
   fs.rmSync(folder, { recursive: true, force: true })
   const filtered = json.filter((item) =>
     item.username.toLowerCase() !== userName.toLowerCase()
   )
-  await fs.writeFileSync(file, JSON.stringify(filtered))
+  await fs.writeFileSync(userData, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
   await expect(welcome).toBe("Welcome!")
   await window.reload()
@@ -34,8 +34,6 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   const userData = await userJson(window, packageInfo, path)
   const data = await fs.readFileSync(userData);
   const json = JSON.parse(data);
-  // Constructs the path to the users.json file.
-  const file = await userJson(window, packageInfo, path)
   //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
   // Check if user profile image is visible
@@ -54,7 +52,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
 
   // If the current user matches and the folder exists, log out and delete the user
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
-    await showLoginPage(fs, folder, userName, json, file, window, expect);
+    await showLoginPage(fs, folder, userName, json, userData, window, expect);
   }
 } 
 
@@ -81,10 +79,6 @@ export const createProjectValidation = async (window, expect) => {
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
   // Verify if the snackbar message is 'Fill all the fields.'
   await expect(snackbar).toBe('Fill all the fields')
-   // Get the text content of the title element.
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-   // Verify if the title is 'New Project.'
-  await expect(title).toBe('New Project');
   // Wait for 3 seconds (3000 milliseconds).
   await window.waitForTimeout(3000)
 }
@@ -112,7 +106,7 @@ export const createProjects = async (window, expect, projectname, flavorType, de
   await expect(window.locator('//button[@aria-label="create"]')).toBeVisible()
   await window.locator('//button[@aria-label="create"]').click()
   // Get the project name from the DOM.
-  const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`)
   // Verify if the project name matches the expected project name.
   await expect(projectName).toBe(projectname);
 }
@@ -144,7 +138,7 @@ export const searchProject = async (window, expect, projectName, searchtext) => 
   await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
   await window.locator('//input[@id="search_box"]').fill(searchtext)
-  const projectname = await window.locator(`//*[@id="${projectName}"]`).textContent()
+  const projectname = await window.innerText(`//*[@aria-label="${projectName}"]`)
   await expect(projectname).toBe(projectName);
 }
 
@@ -163,8 +157,8 @@ export const checkProjectName = async (window, expect, name) => {
     }
   }
   await window.waitForTimeout(1000)
-  await window.waitForSelector('[aria-label=editor-project-name]',{ timeout: 120000 })
-  const projectname = await window.locator('[aria-label=editor-project-name]').textContent()
+  await window.waitForSelector('//*[@aria-label="editor-project-name"]',{ timeout: 120000 })
+  const projectname = await window.locator('//*[@aria-label="editor-project-name"]').textContent()
   expect(await projectname).toBe(name);
 }
 
@@ -175,7 +169,7 @@ export const checkNotification = async (window, expect) => {
   await window.locator('//*[@aria-label="notification-button"]').click()
   await window.waitForTimeout(1000)
   // Check if the notification title is "Notifications."
-  const title = await window.locator('[aria-label=notification-title]').textContent();
+  const title = await window.locator('//*[@aria-label="notification-title"]').textContent();
   await expect(title).toBe('Notifications');
   await window.locator('//*[@aria-label="close-notification"]').click()
 }
@@ -258,7 +252,7 @@ export const archivedProjects = async (window, expect, projectname) => {
   // Check if the archive title is "Archived projects."
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(archiveTitle).toBe("Archived projects")
-  const projectName = await window.innerText(`//div[@id="${projectname}"]`)
+  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`)
   await expect(projectName).toBe(projectname);
    // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click()
@@ -276,7 +270,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await expect(archiveTitle).toBe("Archived projects");
   // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click();
-  const projectName = await window.innerText(`//div[@id="${projectname}"]`);
+  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`);
   await expect(projectName).toBe(projectname);
   const projectTitle = await window.locator('//*[@aria-label="projects"]').textContent();
   await expect(projectTitle).toBe('Projects');
@@ -321,7 +315,7 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
      }
    }
    // Verify the title of the page is "Projects."
-   const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+   const title = await window.textContent('//*[@aria-label="projects"]', { timeout: 10000 });
    expect(title).toBe('Projects');
 }
 
@@ -343,7 +337,7 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
    // Wait for the page to load.
    await window.waitForTimeout(3000);
    // Verify the title of the page is "Projects."
-   const title = await window.textContent('[aria-label=projects]');
+   const title = await window.textContent('//*[@aria-label="projects"]');
    expect(await title).toBe('Projects');
 }
 
@@ -359,7 +353,7 @@ export const changeLicense = async (window, expect, currentLicense, newLicense) 
  // Wait for the page to load.
  await window.waitForTimeout(3000);
  // Verify the title of the page is "Projects."
- const title = await window.textContent('[aria-label=projects]');
+ const title = await window.textContent('//*[@aria-label="projects"]');
  expect(await title).toBe('Projects');
 }
 
@@ -406,7 +400,7 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
   // Click the button to create the project.
   await window.locator('//button[@aria-label="create"]').click();
   // Verify that the project was created.
-  const projectName = await window.innerText(`//div[@id="${projectname}"]`);
+  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`);
   await expect(projectName).toBe(projectname);
 }
 

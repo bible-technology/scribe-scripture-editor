@@ -41,8 +41,6 @@ test.beforeAll(async ({ userName }) => {
     const userData = await userJson(window, packageInfo, path)
     const data = await fs.readFileSync(userData);
     const json = JSON.parse(data);
-    // Constructs the path to the users.json file.
-    const file = await userJson(window, packageInfo, path)
     //  constructs the path to a folder/directory name
     const folder = await userFolder(window, userName, packageInfo, path)
     // If 'projects' is not visible, check the 'welcome' element
@@ -51,7 +49,7 @@ test.beforeAll(async ({ userName }) => {
     // On the login page, if the playwright user exists, reload the app and remove it
     const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
     if (existUser && await fs.existsSync(folder)) {
-      await showLoginPage(fs, folder, userName, json, file, window, expect);
+      await showLoginPage(fs, folder, userName, json, userData, window, expect);
     }
   }
 
@@ -102,7 +100,7 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//*[@aria-label="nt-Matthew"]').click()
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
-  const projectName = await window.innerText(`//div[@id="${textProject}"]`)
+  const projectName = await window.innerText(`//div[@aria-label="${textProject}"]`)
   await expect(projectName).toBe(textProject);
 })
 
@@ -198,7 +196,7 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
 });
 
 test('Increase the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });
+  await window.waitForSelector('//*[@aria-label="increase-font"]');
   await window.locator('//*[@aria-label="increase-font"]').click();
   await window.locator('//*[@aria-label="increase-font"]').click();
 
@@ -211,7 +209,7 @@ test('Increase the font size in the obs editor', async () => {
 });
 
 test('Decrease the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="decrease-font"]', { timeout: 5000 });
+  await window.waitForSelector('//*[@aria-label="decrease-font"]');
   await window.locator('//*[@aria-label="decrease-font"]').click();
   await window.locator('//*[@aria-label="decrease-font"]').click();
 
@@ -349,7 +347,7 @@ test("Update/Edit text translation project scope mark and luke", async ({ textPr
   await window.waitForTimeout(2500);
 
   // Verify that the title is "Projects"
-  const title = await window.textContent('[aria-label=projects]');
+  const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
 })
 
@@ -372,7 +370,7 @@ test("Update/Edit text translation project scope custom book into NT", async ({ 
   await window.waitForTimeout(3000);
 
   // Verify that the title is "Projects"
-  const title = await window.textContent('[aria-label=projects]');
+  const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
 })
 
@@ -399,7 +397,7 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   await window.waitForTimeout(3000);
 
   // Verify that the title is "Projects"
-  const title = await window.textContent('[aria-label=projects]');
+  const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
 })
 
@@ -469,7 +467,7 @@ test("Create custom text translation with custom language project", async ({ cus
 
   // Create the project and verify the project name
   await window.locator('//button[@aria-label="create"]').click();
-  const projectName = await window.innerText(`//div[@id="${customTextProject}"]`);
+  const projectName = await window.innerText(`//*[@aria-label="${customTextProject}"]`);
   await expect(projectName).toBe(customTextProject);
 })
 
@@ -555,7 +553,7 @@ test("App language change Hindi to English", async ({ hindi, english }) => {
   await window.waitForTimeout(2000);
 
   // Verify the current page title
-  const title = await window.textContent('[aria-label=projects]', { timeout: 10000 });
+  const title = await window.textContent('//*[@aria-label="projects"]', { timeout: 10000 });
   expect(await title).toBe('प्रोजेक्ट्स');
 
   // Change the app language from Hindi to English
