@@ -31,9 +31,10 @@ export async function walk(dir, path, fs) {
   }
 
 // util Function for default export Audio
-const writeAndUpdateBurritoDefaultExport = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project) => {
+const writeAndUpdateBurritoDefaultExport = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project, selectedAudioExt) => {
 await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
     .then(async () => {
+      console.log('export aduio : ', mp3ExportPath, path.join(folderPath, project.name, mp3ExportPath));
     logger.debug('ExportProjectUtils.js', 'Creating the ingredients.');
     const content = fs.readFileSync(path.join(folderPath, project.name, mp3ExportPath), 'utf8');
     const stats = fs.statSync(path.join(folderPath, project.name, mp3ExportPath));
@@ -41,7 +42,7 @@ await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
         checksum: {
         md5: md5(content),
         },
-        mimeType: 'audio/mp3',
+        mimeType: selectedAudioExt.mimeType,
         size: stats.size,
         scope: {},
     };
@@ -50,7 +51,7 @@ await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
 };
 
 // export audio project FUll Zip
-export const exportFullAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t) => {
+export const exportFullAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t, selectedAudioExt) => {
     logger.debug('ExportProjectUtils.js', 'In export Full zip for audio');
     ExportActions.setTotalExported((curr) => curr + 1);
     const AdmZip = window.require('adm-zip');
@@ -168,7 +169,7 @@ const exportChapterAudio = async (defaultAudio, burrito, fs, path, folder, folde
     }
   };
 
-export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t) => {
+export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t, selectedAudioExt) => {
     logger.debug('ExportProjectUtils.js', 'in Export Audio Common Function ');
     const fse = window.require('fs-extra');
     const burrito = metadata;
@@ -185,9 +186,10 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
         const url = audio.split(/[\/\\]/).slice(-1)[0];
         const mp3 = url.replace(/_\d_default/, '');
         const verse = mp3.replace('.mp3', '');
-        const mp3ExportPath = path.join('ingredients', book, chapter, mp3);
+        // const mp3ExportPath = path.join('ingredients', book, chapter, mp3);
+        const mp3ExportPath = path.join('ingredients', book, chapter, `${verse}.${selectedAudioExt.ext}`);
         // eslint-disable-next-line
-        await writeAndUpdateBurritoDefaultExport(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project);
+        await writeAndUpdateBurritoDefaultExport(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project, selectedAudioExt);
         ExportActions.setTotalExported((prev) => prev + 1);
       }
     } else if (ExportStates.audioExport === 'chapter') {
