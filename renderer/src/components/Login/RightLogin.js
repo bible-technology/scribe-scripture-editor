@@ -5,6 +5,10 @@ import LogoIcon from '@/icons/logo.svg';
 // import HalfMoon from '@/illustrations/half-moon.svg';
 // import Quote from '@/illustrations/quote.svg';
 
+import GreenCheckIcon from '@/illustrations/green-check.svg';
+import StandingManIcon from '@/illustrations/standing.svg';
+import SittingIcon from '@/illustrations/sitting.svg';
+
 export default function RightLogin() {
   return (
     <div className="col-span-4 bg-secondary relative flex flex-col justify-between">
@@ -25,6 +29,7 @@ export default function RightLogin() {
             width={52}
             height={42}
           /> */}
+          <SittingIcon className="w-52 h-52" />
         </div>
 
         <div className="mx-10 md:mx-20 lg:mx-32 text-xl text-white leading-9 relative">
@@ -36,7 +41,8 @@ export default function RightLogin() {
             <p className="text-md">A Bible translation editor that is owned by and developed for the community which uses modern technology to solve the practical problems faced on the field in the current Bible translation context.</p>
             <p className="flex gap-2 mt-4 font-semibold items-center">
               <span className="text-lg">FEATURE 1</span>
-              <img src="/../illustrations/greenCheck.png" className="w-4 h-4" alt="" />
+              {/* <img src="/../illustrations/greenCheck.png" className="w-4 h-4" alt="" /> */}
+              <GreenCheckIcon className="w-4 h-4" />
 
             </p>
           </div>
@@ -45,7 +51,8 @@ export default function RightLogin() {
 
         <div className="flex ">
           <div className="">
-            <img src="/../illustrations/standing.png" alt="" />
+            {/* <img src="/../illustrations/standing.png" alt="" /> */}
+            <StandingManIcon className="w-80 h-80" />
 
           </div>
           <div>
@@ -56,11 +63,11 @@ export default function RightLogin() {
             /> */}
           </div>
         </div>
-        <div className="mt-12 flex gap-4">
+        {/* <div className="mt-12 flex gap-4">
           <span className="h-2 w-2 rounded-full bg-white " />
           <span className="h-2 w-2 rounded-full bg-gray-500" />
           <span className="h-2 w-2 rounded-full bg-gray-500" />
-        </div>
+        </div> */}
 
       </div>
 
