@@ -100,7 +100,7 @@ test('Click New and Fill project page details to create a new project for text t
   await window.locator('//*[@aria-label="nt-Matthew"]').click()
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
-  const projectName = await window.innerText(`//div[@aria-label="${textProject}"]`)
+  const projectName = await window.locator(`//*[@id="${textProject}"]`).innerHTML()
   await expect(projectName).toBe(textProject);
 })
 
@@ -196,7 +196,7 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
 });
 
 test('Increase the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="increase-font"]');
+  await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });
   await window.locator('//*[@aria-label="increase-font"]').click();
   await window.locator('//*[@aria-label="increase-font"]').click();
 
@@ -209,7 +209,7 @@ test('Increase the font size in the obs editor', async () => {
 });
 
 test('Decrease the font size in the obs editor', async () => {
-  await window.waitForSelector('//*[@aria-label="decrease-font"]');
+  await window.waitForSelector('//*[@aria-label="decrease-font"]', { timeout: 5000 });
   await window.locator('//*[@aria-label="decrease-font"]').click();
   await window.locator('//*[@aria-label="decrease-font"]').click();
 
@@ -467,7 +467,7 @@ test("Create custom text translation with custom language project", async ({ cus
 
   // Create the project and verify the project name
   await window.locator('//button[@aria-label="create"]').click();
-  const projectName = await window.innerText(`//*[@aria-label="${customTextProject}"]`);
+  const projectName = await window.locator(`//*[@id="${customTextProject}"]`).innerHTML()
   await expect(projectName).toBe(customTextProject);
 })
 

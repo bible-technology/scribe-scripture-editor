@@ -42,7 +42,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   await userProfileImage.click();
 
   // Get the current user's name
-  const currentUser = await window.textContent('[aria-label="userName"]');
+  const currentUser = await window.textContent('//*[@aria-label="userName"]');
   expect(currentUser).not.toBeNull();
 
   // Check if signout button is visible
@@ -106,7 +106,7 @@ export const createProjects = async (window, expect, projectname, flavorType, de
   await expect(window.locator('//button[@aria-label="create"]')).toBeVisible()
   await window.locator('//button[@aria-label="create"]').click()
   // Get the project name from the DOM.
-  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`)
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   // Verify if the project name matches the expected project name.
   await expect(projectName).toBe(projectname);
 }
@@ -133,13 +133,13 @@ export const starUnstar = async (window, expect, name, clickStar, expectAttribut
 
 
 // Searches for a project with a given name.
-export const searchProject = async (window, expect, projectName, searchtext) => {
+export const searchProject = async (window, expect, projectname, searchtext) => {
    // Perform project search.
   await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
   await window.locator('//input[@id="search_box"]').fill(searchtext)
-  const projectname = await window.innerText(`//*[@aria-label="${projectName}"]`)
-  await expect(projectname).toBe(projectName);
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  await expect(projectName).toBe(projectname);
 }
 
 // Check the project name in the editor.
@@ -197,8 +197,8 @@ export const commonFilterTable = async (window, expect, projectName, clickItem) 
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === projectName) {
       // Check if the "expand-project" button is visible and click it.
-      expect(await tds.last().locator('[aria-label="expand-project"]')).toBeVisible()
-      await tds.last().locator('[aria-label="expand-project"]').click()
+      expect(await tds.last().locator('//*[@aria-label="expand-project"]')).toBeVisible()
+      await tds.last().locator('//*[@aria-label="expand-project"]').click()
       await window.waitForTimeout(1000)
       // Open the project menu and click on the specified item.
       await window.locator('//*[@aria-label="menu-project"]').click()
@@ -222,7 +222,7 @@ export const exportProjects = async (window, expect, projectname) => {
   // Check for the success message.
   const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
   await expect(snackText).toBe("Exported Successfully")
-  await window.locator('[aria-label=arrow-up]').click()
+  await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
 //Export a project with chapter and full audio project
@@ -240,7 +240,7 @@ export const exportAudioProject = async(window, expect, projectname, itemCheck) 
   // Check for the success message.
   const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
   await expect(snackText).toBe("Exported Successfully")
-  await window.locator('[aria-label=arrow-up]').click()
+  await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
 // Moves a project to the archived projects section
@@ -252,7 +252,7 @@ export const archivedProjects = async (window, expect, projectname) => {
   // Check if the archive title is "Archived projects."
   const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
   await expect(archiveTitle).toBe("Archived projects")
-  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`)
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   await expect(projectName).toBe(projectname);
    // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click()
@@ -270,7 +270,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await expect(archiveTitle).toBe("Archived projects");
   // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click();
-  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`);
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   await expect(projectName).toBe(projectname);
   const projectTitle = await window.locator('//*[@aria-label="projects"]').textContent();
   await expect(projectTitle).toBe('Projects');
@@ -400,19 +400,22 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
   // Click the button to create the project.
   await window.locator('//button[@aria-label="create"]').click();
   // Verify that the project was created.
-  const projectName = await window.innerText(`//*[@aria-label="${projectname}"]`);
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   await expect(projectName).toBe(projectname);
 }
 
-
-// Performs user profile validation checks.
-export const userProfileValidaiton = async(window, expect) => {
+export const clickUserImage = async (window, expect, itemClick) => {
   // Ensure the user profile image is visible and click on it.
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
   await window.locator('//*[@id="user-profile-image"]').click();
   // Verify that the user profile is visible and click on it.
-  expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible();
-  await window.locator('//*[@aria-label="user-profile"]').click();
+  expect(await window.locator(`//*[@aria-label="${itemClick}"]`)).toBeVisible();
+  await window.locator(`//*[@aria-label="${itemClick}"]`).click();
+}
+
+// Performs user profile validation checks.
+export const userProfileValidaiton = async(window, expect) => {
+  await clickUserImage(window, expect, "user-profile")
   // Check if the "given-name" input is visible and fill it with "b".
   await expect(window.locator('input[name="given-name"]')).toBeVisible();
   await window.locator('input[name="given-name"]').fill("b");
@@ -446,12 +449,7 @@ export const userProfileValidaiton = async(window, expect) => {
 
 // Changes the application's language.
 export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage) => {
-  // Ensure the user profile image is visible and click on it.
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
-  await window.locator('//*[@id="user-profile-image"]').click();
-  // Verify that the user profile is visible and click on it.
-  expect(await window.locator('//*[@aria-label="user-profile"]')).toBeVisible();
-  await window.locator('//*[@aria-label="user-profile"]').click();
+  await clickUserImage(window, expect, "user-profile")
   // Click on the button with the "fromLanguage" name.
   await window.getByRole('button', { name: fromLanguage }).click();
   // Click on the option with the "toLanguage" name.
@@ -463,12 +461,8 @@ export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage
 
 // Signs the user out.
 export const signOut = async (window, expect) => {
-  // Open the user profile menu.
-  await expect(window.locator('//*[@id="user-profile-image"]')).toBeVisible()
-  await window.locator('//*[@id="user-profile-image"]').click()
-  // Click the "signout" option.
-  await expect(window.locator('//*[@aria-label="signout"]')).toBeVisible()
-  await window.locator('//*[@aria-label="signout"]').click()
+  // Open the user profile menu and signout
+  await clickUserImage(window, expect, "signout")
   // Wait for the signout process to complete.
   await window.waitForTimeout(1000)
   // Verify that the user is signed out.
