@@ -12,7 +12,7 @@ import {
 //   const newPath = require('../../../../supabase').newPath
 // }
 
-export const updateAgSettings = async (username, projectName, data) => {
+export const updateAgSettings = async (username, projectName, data, font) => {
   logger.debug('updateAgSettings.js', 'In updateAgSettings');
   const newpath = localStorage.getItem('userPath');
   const fs = window.require('fs');
@@ -28,8 +28,12 @@ export const updateAgSettings = async (username, projectName, data) => {
     } else {
       setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
     }
+    if (!setting.project[data.type.flavorType.flavor.name].font) {
+      setting.project[data.type.flavorType.flavor.name].font = font || '';
+    } else {
+      setting.project[data.type.flavorType.flavor.name].font = font || setting.project[data.type.flavorType.flavor.name].font;
+    }
   }
-  setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   logger.debug('updateAgSettings.js', `Updating the ${environment.PROJECT_SETTING_FILE}`);
   await fs.writeFileSync(folder, JSON.stringify(setting));
 };
@@ -47,6 +51,11 @@ export const updateWebAgSettings = async (username, projectName, data) => {
     } else {
       setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
     }
+    if (!setting.project[data.type.flavorType.flavor.name].font) {
+      setting.project[data.type.flavorType.flavor.name].font = '';
+    } else {
+      setting.project[data.type.flavorType.flavor.name].font = (setting.project[data.type.flavorType.flavor.name].font) ? (setting.project[data.type.flavorType.flavor.name].font) : '';
+    }
   }
   setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   await sbStorageUpload(folder, JSON.stringify(setting), {
@@ -55,7 +64,7 @@ export const updateWebAgSettings = async (username, projectName, data) => {
   });
 };
 
-export const saveReferenceResource = () => {
+export const saveReferenceResource = (font = '') => {
   logger.debug('updateAgSettings.js', 'In saveReferenceResource for saving the reference data');
   localforage.getItem('currentProject').then(async (projectName) => {
     const _projectname = await splitStringByLastOccurance(projectName, '_');
@@ -69,7 +78,7 @@ export const saveReferenceResource = () => {
               if (id[0] === _projectname[1]) {
                 localforage.getItem('userProfile').then(async (value) => {
                   if (isElectron()) {
-                    await updateAgSettings(value?.username, projectName, resources);
+                    await updateAgSettings(value?.username, projectName, resources, font);
                   } else {
                     await updateWebAgSettings(value?.user?.email, projectName, resources);
                   }

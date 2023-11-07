@@ -351,6 +351,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
               lastSeen: moment().format(),
               refResources: [],
               bookMarks: [],
+              font: '',
             },
           },
           sync: { services: { door43: [] } },
@@ -385,9 +386,14 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
           if (!setting.sync && !setting.sync?.services) {
             setting.sync = { services: { door43: [] } };
-            } else {
-              setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
-            }
+          } else {
+            setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
+          }
+          if (!setting.project[metadata.type.flavorType.flavor.name].font) {
+            setting.project[metadata.type.flavorType.flavor.name].font = '';
+          } else {
+            setting.font = (setting.project[metadata.type.flavorType.flavor.name].font) ? (setting.project[metadata.type.flavorType.flavor.name].font) : '';
+          }
           settings = setting;
         }
         settings.project[metadata.type.flavorType.flavor.name].lastSeen = moment().format();

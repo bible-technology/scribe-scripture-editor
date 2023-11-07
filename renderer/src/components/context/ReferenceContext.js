@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import * as localforage from 'localforage';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
@@ -83,6 +84,12 @@ export default function ReferenceContextProvider({ children }) {
       setFolderPath(chosenFolder.filePaths[0]);
     }
   };
+  const handleSelectedFont = async (font) => {
+    if (isElectron()) {
+      saveReferenceResource(font);
+      setSelectedFont(font);
+    }
+  };
 
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
@@ -100,6 +107,7 @@ export default function ReferenceContextProvider({ children }) {
                       case 'textTranslation':
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resources.project?.textTranslation?.font);
                         break;
                       case 'textStories':
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
@@ -229,6 +237,7 @@ export default function ReferenceContextProvider({ children }) {
       setOpenResource4,
       setOpenResourcePopUp,
       setSelectedFont,
+      handleSelectedFont,
       setFont1,
       setFont2,
       setFont3,
