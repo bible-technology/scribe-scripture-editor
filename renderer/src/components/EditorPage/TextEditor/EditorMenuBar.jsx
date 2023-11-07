@@ -11,10 +11,6 @@ import InsertMenu from './InsertMenu';
 export default function EditorMenuBar(props) {
   const {
     selectedFont,
-    setInsertNumber,
-    setInsertVerseRChapter,
-    setTriggerVerseInsert,
-    triggerVerseInsert,
     chapterNumber,
     setChapterNumber,
     verseNumber,
@@ -28,11 +24,6 @@ export default function EditorMenuBar(props) {
     actions: { setScrollLock },
   } = useContext(ProjectContext);
 
-  const handleClick = (number, title) => {
-    setInsertNumber(number);
-    setInsertVerseRChapter(title);
-    setTriggerVerseInsert(!triggerVerseInsert);
-  };
   return (
     <div className="relative min-h-[66px] flex flex-col bg-secondary rounded-t-md overflow-hidden">
       <div className="flex min-h-[33px] items-center justify-between ">
@@ -88,7 +79,7 @@ export default function EditorMenuBar(props) {
         </div>
         <div className="flex ml-auto">
           <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
-          <InsertMenu handleClick={handleClick} selectedText={selectedText} />
+          <InsertMenu />
         </div>
       </div>
     </div>

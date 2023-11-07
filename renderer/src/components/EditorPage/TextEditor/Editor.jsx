@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { ScribexContext } from '@/components/context/ScribexContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import {
-  insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
-} from '@/util/cursorUtils';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import RecursiveBlock from './RecursiveBlock';
@@ -32,14 +30,8 @@ export default function Editor(props) {
     bookAvailable,
     setChapterNumber,
     setVerseNumber,
-    triggerVerseInsert,
-    newVerChapNumber,
-    insertVerseRChapter,
-    selectedText,
-    setSelectedText,
   } = props;
 
-  const [caretPosition, setCaretPosition] = useState();
   const {
     state: {
       chapter, selectedFont, fontSize, projectScriptureDir,
@@ -51,6 +43,12 @@ export default function Editor(props) {
     actions: { setOpenSideBar, setSideBarTab },
   } = useContext(ProjectContext);
 
+  const {
+    state: { caretPosition },
+    actions: { setCaretPosition, setSelectedText },
+  } = useContext(ScribexContext);
+
+  console.log({ caretPosition });
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
 
@@ -86,25 +84,6 @@ export default function Editor(props) {
     chapter && setChapterNumber(chapter);
     verse && setVerseNumber(verse);
   }
-
-  useEffect(() => {
-    if (insertVerseRChapter === 'Verse') {
-      insertVerseNumber(caretPosition, newVerChapNumber);
-    }
-    if (insertVerseRChapter === 'Chapter') {
-      insertChapterNumber(caretPosition, newVerChapNumber);
-    }
-    if (insertVerseRChapter === 'Footnote') {
-      insertFootnote(caretPosition, newVerChapNumber, selectedText);
-    }
-    if (insertVerseRChapter === 'Cross Reference') {
-      insertXRef(caretPosition, newVerChapNumber, selectedText);
-    }
-    // if (insertVerseRChapter === 'Section Heading') {
-    //   insertHeading(caretPosition, newVerChapNumber, selectedText);
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggerVerseInsert]);
 
   const observer = new IntersectionObserver((entries) => onIntersection({ setChapterNumber, scrollLock, entries }), {
     root: document.querySelector('editor'),

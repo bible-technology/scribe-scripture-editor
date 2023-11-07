@@ -35,11 +35,13 @@ export default function RecursiveBlock({
   const [currentVerse, setCurrentVerse] = useState(null);
 
   const updateCursorPosition = () => {
+    console.log('updateCursorPosition');
     const cursorPosition = getCurrentCursorPosition('editor');
     setCaretPosition(cursorPosition);
   };
 
   const checkReturnKeyPress = (event) => {
+    console.log('checkReturnKeyPress');
     const activeTextArea = document.activeElement;
     if (event.key === 'Enter') {
       if (activeTextArea.children.length > 1) {
@@ -61,6 +63,7 @@ export default function RecursiveBlock({
   };
 
   function handleSelection() {
+    console.log('selectin');
     let selectedText = '';
     if (window.getSelection) {
       selectedText = window.getSelection().toString();
@@ -68,11 +71,13 @@ export default function RecursiveBlock({
       selectedText = document.selection.createRange().text;
     }
     if (selectedText) {
+      console.log('selectin', selectedText);
       setSelectedText(selectedText);
     }
   }
 
   const checkCurrentVerse = () => {
+    console.log('checkCurrentVerse');
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0);
       const selectedNode = range.startContainer;

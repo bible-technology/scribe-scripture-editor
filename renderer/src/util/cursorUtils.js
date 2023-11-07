@@ -119,35 +119,37 @@ export function pasteHtmlAtCaret(html, selectPastedContent, cursorPosition) {
   }
 }
 
-export function insertVerseNumber(caretPosition, verseNumber) {
-  if (verseNumber && caretPosition) {
-    const verseTag = `<span class="mark verse verse-${verseNumber}" 
-      id="ch1v${verseNumber}" data-type="mark" data-subtype="verses" data-atts-number="${verseNumber}" 
-      contenteditable="false">${verseNumber}</span>`;
+export function insertVerseNumber({ caretPosition, numberToInsert }) {
+  console.log({ caretPosition, numberToInsert });
+  if (numberToInsert && caretPosition) {
+    const verseTag = `<span class="mark verse verse-${numberToInsert}" 
+      id="ch1v${numberToInsert}" data-type="mark" data-subtype="verses" data-atts-number="${numberToInsert}" 
+      contenteditable="false">${numberToInsert}</span>`;
     pasteHtmlAtCaret(verseTag, false, caretPosition);
   }
 }
-export function insertChapterNumber(caretPosition, chapterNumber) {
-  if (chapterNumber && caretPosition) {
-    const chapterTag = `<span class="mark chapter chapter-${chapterNumber}"
-      id="ch-${chapterNumber}" data-type="mark" data-subtype="chapter"
-      data-atts-number="${chapterNumber}">"${chapterNumber}"</span>`;
+export function insertChapterNumber({ caretPosition, numberToInsert }) {
+  console.log({ caretPosition, numberToInsert });
+  if (numberToInsert && caretPosition) {
+    const chapterTag = `<span class="mark chapter chapter-${numberToInsert}"
+      id="ch-${numberToInsert}" data-type="mark" data-subtype="chapter"
+      data-atts-number="${numberToInsert}">${numberToInsert}</span>`;
     pasteHtmlAtCaret(chapterTag, false, caretPosition);
   }
 }
 
-export function insertFootnote(caretPosition, footNote, selectedText) {
-  if (footNote && caretPosition) {
-    const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
-    const footnoteTagWithSelection = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="fq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${footNote}</span></span></span>`;
+export function insertFootnote({ caretPosition, textToInsert, selectedText }) {
+  if (textToInsert && caretPosition) {
+    const footnoteTag = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${textToInsert}</span></span></span>`;
+    const footnoteTagWithSelection = `<span class="graft footnote" data-type="graft" data-subtype="footnote" data-new="true"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm f" data-type="paragraph" data-subtype-ns="usfm" data-subtype="f">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="fq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="ft">${textToInsert}</span></span></span>`;
     selectedText && selectedText.length !== 0 ? pasteHtmlAtCaret(footnoteTagWithSelection, false, caretPosition) : pasteHtmlAtCaret(footnoteTag, false, caretPosition);
   }
 }
 
-export function insertXRef(caretPosition, references, selectedText) {
-  if (insertXRef && caretPosition) {
-    const xRefTag = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
-    const xRefTagWithSelection = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${references}</span></span></span>`;
+export function insertXRef({ caretPosition, textToInsert, selectedText }) {
+  if (textToInsert && caretPosition) {
+    const xRefTag = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${textToInsert}</span></span></span>`;
+    const xRefTagWithSelection = `<span class="graft xref" data-type="graft" data-subtype="xref" data-new="true"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x"><span class="graft note_caller" data-type="graft" data-subtype="note_caller" data-new="true" data-previewtext="+"><span class="paragraph usfm x" data-type="paragraph" data-subtype-ns="usfm" data-subtype="x">+</span></span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xq">${selectedText}</span><span class="wrapper usfm span" data-type="wrapper" data-subtype-ns="usfm" data-subtype="xt">${textToInsert}</span></span></span>`;
     selectedText && selectedText.length !== 0
       ? pasteHtmlAtCaret(xRefTagWithSelection, false, caretPosition)
       : pasteHtmlAtCaret(xRefTag, false, caretPosition);

@@ -1,4 +1,4 @@
-import {
+import React, {
   useEffect, useState, useContext, Fragment,
 } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
@@ -22,16 +22,13 @@ export default function TextEditor() {
   const [chapterNumber, setChapterNumber] = useState(1);
   const [verseNumber, setVerseNumber] = useState(1);
   const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
-  const [newVerChapNumber, setInsertNumber] = useState('');
-  const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
-  const [selectedText, setSelectedText] = useState();
+  // const [newVerChapNumber, setInsertNumber] = useState('');
+  // const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
 
   const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
-    state: {
-      bookId,
-    },
+    state: { bookId },
     actions: { setSelectedFont },
   } = useContext(ReferenceContext);
 
@@ -91,7 +88,6 @@ export default function TextEditor() {
     ...perfState,
     ...actions,
     ...perfActions,
-    triggerVerseInsert,
     chapterNumber,
     verseNumber,
     isLoading,
@@ -101,14 +97,9 @@ export default function TextEditor() {
     setBookChange,
     setChapterNumber,
     setVerseNumber,
-    newVerChapNumber,
-    insertVerseRChapter,
-    selectedText,
-    setSelectedText,
-    setTriggerVerseInsert,
     setSelectedFont,
-    setInsertNumber,
-    setInsertVerseRChapter,
+    triggerVerseInsert,
+    setTriggerVerseInsert,
   };
   return (
     <>

@@ -1,39 +1,30 @@
-import PopupButton from './PopupButton';
+import React from 'react';
+import { PopupContextProvider } from '../../Popup/PopupContext';
+import Popup from './Popup';
 
-export default function InsertMenu({ handleClick: handleButtonClick, selectedText }) {
-  const handleClick = (number, title) => {
-    handleButtonClick(number, title);
-  };
+export default function InsertMenu() {
   return (
     <div className="flex items-center">
-      <PopupButton
-        handleClick={handleClick}
-        title="Insert Verse"
-        icon="V"
-      />
-      <PopupButton
-        handleClick={handleClick}
-        title="Insert Chapter"
-        icon="C"
-      />
-      <PopupButton
-        handleClick={handleClick}
-        title="Footnote"
-        selectedText={selectedText}
-        icon="FN"
-      />
-      <PopupButton
-        handleClick={handleClick}
-        title="Cross Reference"
-        selectedText={selectedText}
-        icon="XR"
-      />
-      {/* <PopupButton
-        handleClick={handleClick}
-        title="Section Heading"
-        selectedText={selectedText}
-        icon="SH"
-      /> */}
+      <PopupContextProvider>
+        <Popup
+          action="insertVerseNumber"
+        />
+      </PopupContextProvider>
+      <PopupContextProvider>
+        <Popup
+          action="insertChapterNumber"
+        />
+      </PopupContextProvider>
+      <PopupContextProvider>
+        <Popup
+          action="insertFootnote"
+        />
+      </PopupContextProvider>
+      <PopupContextProvider>
+        <Popup
+          action="insertXRef"
+        />
+      </PopupContextProvider>
     </div>
   );
 }
