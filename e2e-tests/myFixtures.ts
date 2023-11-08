@@ -33,8 +33,9 @@ type myFixture = {
 }
 const myFixtureTest = myTest.extend<myFixture>({
   userName: "Playwright user",
-  textProject: "Translation test project",
-  obsProject: "Obs test project",
+  textProject: "Playwright text translation project",
+  obsProject: "Playwright obs project",
+  audioProject: "Playwright audio project",
   projectObsType: "OBS",
   projectAudioType: "Audio",
   description: "test description",
@@ -55,7 +56,6 @@ const myFixtureTest = myTest.extend<myFixture>({
   hindi: "Hindi",
   textUnderscore: "Translation_test_project",
   obsUnderscore: "Obs_test_project",
-  audioProject: "Audio test project",
   syncName: "Sync_Collab_Test",
   doorUser: "bobby",
   doorPassword: "Bobby@123",

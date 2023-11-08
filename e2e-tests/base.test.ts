@@ -82,7 +82,7 @@ test('Create a new user and login', async ({ userName }) => {
 
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
 /* Translation Project    */
-test('Click New and Fill project page details to create a new project for text translation with custom book', async ({ textProject, description, textAbbreviation }) => {
+test('Click New button button and fill a new project detail for text translation english project with custom book from advance settings without importing any books from system ', async ({ textProject, description, textAbbreviation }) => {
   // Here you create a new text translation project with custom settings.
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible()
   await window.locator('//a[@aria-label="new"]').click()
@@ -105,13 +105,13 @@ test('Click New and Fill project page details to create a new project for text t
 })
 
 /* Obs translation project */
-test('Click New and Fill project page details to create a new project for obs', async ({ obsProject, projectObsType, description, obsAbbreviation }) => {
+test('Click New button and fill a new project detail for obs english project without importing any books from system', async ({ obsProject, projectObsType, description, obsAbbreviation }) => {
   //  Here you create a new OBS project.
   await createProjects(window, expect, obsProject, projectObsType, description, obsAbbreviation)
 })
 
 /* Audio project */
-test('Click New and Fill project page details to create a new project for audio', async ({ audioProject, projectAudioType, description, AudioAbbreviation }) => {
+test('Click New button and fill a new project detail for audio enlish project without importing any books from system', async ({ audioProject, projectAudioType, description, AudioAbbreviation }) => {
   // Here you create a new audio project
   await createProjects(window, expect, audioProject, projectAudioType, description, AudioAbbreviation)
 })
@@ -159,7 +159,7 @@ test('Search a text translation project in all projects list', async ({ textProj
   await searchProject(window, expect, textProject, 'translation')
 });
 
-test('Click on a text translation project and Check the text Translation project name in the editor', async ({ textProject }) => {
+test('Click on a created text translation project and Check the text Translation project name in the editor', async ({ textProject }) => {
   await checkProjectName(window, expect, textProject)
 });
 
@@ -176,7 +176,7 @@ test('Search an obs project in all projects list', async ({ obsProject }) => {
   await searchProject(window, expect, obsProject, 'obs')
 });
 
-test('Click on a obs project and Check the obs project name in the editor', async ({ obsProject }) => {
+test('Click on a created obs project and Check the obs project name in the editor', async ({ obsProject }) => {
   await checkProjectName(window, expect, obsProject)
 });
 
@@ -268,25 +268,25 @@ test("About scribe Application and License", async () => {
 })
 
 /* exports project */
-test("Export text translation project in the Downloads folder", async ({ textProject }) => {
+test("Export text translation project without add any content in the Downloads folder", async ({ textProject }) => {
   await exportProjects(window, expect, textProject)
 })
 
-test("Export the obs project in the Downloads folder", async ({ obsProject }) => {
+test("Export the obs project without add any content in the Downloads folder", async ({ obsProject }) => {
   await exportProjects(window, expect, obsProject)
 })
 
-test("Export the audio project in the Downloads folder", async ({ audioProject }) => {
+test("Export the audio project without add any content in the Downloads folder", async ({ audioProject }) => {
   await exportProjects(window, expect, audioProject)
 })
 
 /* export chapter wise project */
-test("Export chapter wise audio project in the Downloads folder", async ({ audioProject }) => {
+test("Export chapter wise audio project without add any content in the Downloads folder", async ({ audioProject }) => {
   await exportAudioProject(window, expect, audioProject, "Chapter")
 })
 
 /* export full audio project */
-test("Export full audio project in the Downloads folder", async ({ audioProject }) => {
+test("Export full audio project without add any content in the Downloads folder", async ({ audioProject }) => {
   await exportAudioProject(window, expect, audioProject, "full")
 })
 
@@ -440,7 +440,7 @@ test("Update/Edit audio project of description and abbreviation", async ({ audio
 })
 
 /* custom project with custom language for text translation */
-test("Create custom text translation with custom language project", async ({ customTextProject, description, textAbbreviation, customTextLanguage }) => {
+test("Create new text translation project with new custom language and direction, custom book and without importing any book from the system", async ({ customTextProject, description, textAbbreviation, customTextLanguage }) => {
   // Navigate to the new project creation page
   await expect(window.locator('//a[@aria-label="new"]')).toBeVisible();
   await window.locator('//a[@aria-label="new"]').click();
@@ -472,12 +472,12 @@ test("Create custom text translation with custom language project", async ({ cus
 })
 
 /* Obs and Audio custom target language RTL project */
-test("Create custom obs project with custom language project", async ({ customObsProject, projectObsType, description, obsAbbreviation, customObsLanguage }) => {
+test("Create new obs project with new custom language and direction", async ({ customObsProject, projectObsType, description, obsAbbreviation, customObsLanguage }) => {
   // Create a custom OBS project with a custom language
   await customProjectTargetLanguage(window, expect, customObsProject, projectObsType, description, obsAbbreviation, "add-language", customObsLanguage, 'copl', "RTL", "edit-language")
 })
 
-test("Create custom audio project with custom language project", async ({ customAudioProject, projectAudioType, description, AudioAbbreviation, customAudioLanguage }) => {
+test("Create new audio project with new custom language with no direction", async ({ customAudioProject, projectAudioType, description, AudioAbbreviation, customAudioLanguage }) => {
   // Create a custom audio project with a custom language
   await customProjectTargetLanguage(window, expect, customAudioProject, projectAudioType, description, AudioAbbreviation, "add-language", customAudioLanguage, 'capl', "RTL", "edit-language")
 })
@@ -494,7 +494,7 @@ test("Changing text translation project language from Persian to English", async
   await projectTargetLanguage(window, expect, textProject, english.toLowerCase(), english)
 })
 
-test("Changing text translation project language from English to new custom text translation language", async ({ textProject, customTextLanguage }) => {
+test("Changing text translation project language from English to new custom created language", async ({ textProject, customTextLanguage }) => {
   // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "custom text", customTextLanguage)
   await checkProjectName(window, expect, textProject)
@@ -502,7 +502,7 @@ test("Changing text translation project language from English to new custom text
 })
 
 // obs project
-test("Changing obs project language from English to new custom obs project language", async ({ obsProject, customObsLanguage }) => {
+test("Changing obs project language from English to new custom obs language", async ({ obsProject, customObsLanguage }) => {
   // Change the OBS project language
   await projectTargetLanguage(window, expect, obsProject, "custom obs", customObsLanguage)
   await checkProjectName(window, expect, obsProject)
@@ -510,7 +510,7 @@ test("Changing obs project language from English to new custom obs project langu
 })
 
 /* updating user profile */
-test("Update user Profile", async () => {
+test("Update user Profile details", async () => {
   // Validate user profile page elements
   await userProfileValidaiton(window, expect);
   await expect(window.locator('input[name="given-name"]')).toBeVisible();
@@ -589,7 +589,7 @@ test("Click the view users button, log in with playwright user, and sign out", a
 })
 
 /* user delete, check in archive and restore */
-test("Delete the user from the active tab and check in the archived tab", async ({ userName }) => {
+test("Click the view users button and delete the playwright user from the active tab and check in the archived tab", async ({ userName }) => {
   await showActiveUsers(window, expect)
   const tabContent = await window.locator('//*[@id="active-tab-content"]', { timeout: 5000 })
   const items = await tabContent.locator('div > div')
