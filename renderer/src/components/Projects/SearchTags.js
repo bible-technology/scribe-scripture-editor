@@ -47,7 +47,7 @@ export default function SearchTags({
       // onfilerRequest2(contentList2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query, contentList1]);
 
   return (
     <div className="relative mx-5">
