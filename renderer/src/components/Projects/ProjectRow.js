@@ -136,7 +136,7 @@ const ProjectRow = ({
 
                     </div>
                   </td>
-                  <td colSpan="3" className="px-5">
+                  <td colSpan="2" className="px-5">
                     <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-project-id')}</div>
                     <div className="text-sm tracking-wide p-1">{project.id[0]}</div>
                   </td>
