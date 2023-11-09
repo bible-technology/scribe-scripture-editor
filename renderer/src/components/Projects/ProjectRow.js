@@ -124,12 +124,20 @@ const ProjectRow = ({
                 leaveTo="transform scale-95 opacity-0"
               >
                 <Disclosure.Panel as="tr" key={project.name}>
-                  <td className="px-6 py-4">
-                    <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">description</div>
-                    <div aria-label="project-description-display" className="text-sm tracking-wide p-1">{project.description}</div>
+                  <td aria-label="empty column" />
+                  <td colSpan={2} className="px-6 py-4">
+                    <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-description')}</div>
+                    <div
+                      title={project.description}
+                      aria-label="project-description-display"
+                      className="text-sm tracking-wide md:max-w-[200px] lg:max-w-[400px] xl:max-w-[550px] p-1 overflow-hidden truncate"
+                    >
+                      {project.description}
+
+                    </div>
                   </td>
                   <td colSpan="3" className="px-5">
-                    <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">Project ID</div>
+                    <div className="text-xxs uppercase font-regular text-gray-500 tracking-wider p-1">{t('label-project-id')}</div>
                     <div className="text-sm tracking-wide p-1">{project.id[0]}</div>
                   </td>
                   <td className="pl-5">
