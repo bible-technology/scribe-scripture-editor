@@ -85,7 +85,7 @@ const ProjectRow = ({
                       <div
                         id={`${project.name}`}
                         onClick={
-                          (event) => handleSelectProject(event, project.name, project.id[0], router, activeNotificationCount, setSelectedProject, setNotifications, setActiveNotificationCount)
+                          (event) => (showArchived ? '' : handleSelectProject(event, project.name, project.id[0], router, activeNotificationCount, setSelectedProject, setNotifications, setActiveNotificationCount))
                         }
                         role="button"
                         aria-label={project.starred ? 'unstar-project-name' : 'star-project-name'}
