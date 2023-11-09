@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
 import { mergeAudio } from '@/components/AudioRecorder/core/audioUtils';
+import { convertToMP3 } from './WavToMp3';
 import * as logger from '../../../logger';
 
 const md5 = require('md5');
@@ -30,8 +31,8 @@ export async function walk(dir, path, fs) {
     return files.reduce((all, folderContents) => all.concat(folderContents), []);
   }
 
-// util Function for default export Audio
-const writeAndUpdateBurritoDefaultExport = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project, selectedAudioExt) => {
+// util Function for default export Audio wav
+const writeAndUpdateBurritoDefaultExportWav = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project, selectedAudioExt) => {
 await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
     .then(async () => {
       console.log('export aduio : ', mp3ExportPath, path.join(folderPath, project.name, mp3ExportPath));
@@ -48,6 +49,39 @@ await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
     };
     burrito.ingredients[mp3ExportPath].scope[book] = [verse.replace('_', ':')];
     }).catch((err) => logger.error('ExportProjectUtils.js', `${err}`));
+};
+
+async function convertWavToMp3(inputFilePath, path, outputFilePath) {
+  try {
+    const context = new window.AudioContext();
+    const mp3Blob = await convertToMP3(context, path.join('file://', inputFilePath), path.join('file://', outputFilePath));
+
+    console.log('generated mp3 blob : ', { mp3Blob });
+    return mp3Blob;
+  } catch (error) {
+    console.error('Error during conversion:', error);
+  }
+}
+
+// utils fucnton for default export Audio mp3
+const writeAndUpdateBurritoDefaultExportMp3 = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project, selectedAudioExt) => {
+  // update new file path mostly in target
+  const outputFilePath = path.join(folderPath, project.name, mp3ExportPath);
+  const mp3Blob = await convertWavToMp3(audio, path, outputFilePath);
+  await writeRecfile(mp3Blob, outputFilePath, fs)
+      .then(async (convertedBlob) => {
+      logger.debug('ExportProjectPopUp.js', 'Generated mp3 audio written to folder');
+      const stats = fs.statSync(outputFilePath);
+      burrito.ingredients[mp3ExportPath] = {
+        checksum: {
+          md5: md5(convertedBlob),
+        },
+        mimeType: selectedAudioExt.mimeType,
+        size: stats.size,
+        scope: {},
+      };
+    });
+  burrito.ingredients[mp3ExportPath].scope[book] = [verse.replace('_', ':')];
 };
 
 // export audio project FUll Zip
@@ -185,11 +219,18 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
         const chapter = audio.split(/[\/\\]/).slice(-2)[0];
         const url = audio.split(/[\/\\]/).slice(-1)[0];
         const mp3 = url.replace(/_\d_default/, '');
-        const verse = mp3.replace('.mp3', '');
+        const verse = mp3.replace('.mp3', ''); // change this when backend change default to wav
         // const mp3ExportPath = path.join('ingredients', book, chapter, mp3);
         const mp3ExportPath = path.join('ingredients', book, chapter, `${verse}.${selectedAudioExt.ext}`);
-        // eslint-disable-next-line
-        await writeAndUpdateBurritoDefaultExport(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project, selectedAudioExt);
+        const exportFolderPath = path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', book, chapter);
+        if (selectedAudioExt.ext === 'wav') {
+          // eslint-disable-next-line
+          await writeAndUpdateBurritoDefaultExportWav(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project, selectedAudioExt);
+        } else if (selectedAudioExt.ext === 'mp3') {
+          fs.mkdirSync(exportFolderPath, { recursive: true });
+          // eslint-disable-next-line
+          await writeAndUpdateBurritoDefaultExportMp3(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project, selectedAudioExt);
+        }
         ExportActions.setTotalExported((prev) => prev + 1);
       }
     } else if (ExportStates.audioExport === 'chapter') {
