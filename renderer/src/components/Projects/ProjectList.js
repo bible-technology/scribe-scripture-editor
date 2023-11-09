@@ -30,7 +30,6 @@ export default function ProjectList() {
       callEditProject,
     },
     action: {
-      setProjects,
       handleClickStarred,
       setCallEditProject,
       FetchProjects,
@@ -38,6 +37,7 @@ export default function ProjectList() {
   } = useContext(AutographaContext);
   const [openPopUp, setOpenPopUp] = useState(false);
   const [currentProject, setCurrentProject] = useState();
+  const [filteredProjects, setFilteredProjects] = useState(projects);
   const openExportPopUp = (project) => {
     setCurrentProject(project);
     setOpenPopUp(true);
@@ -70,7 +70,7 @@ export default function ProjectList() {
               contentList1={projects}
               // contentList2={projects}
               filterList={filterList}
-              onfilerRequest1={setProjects}
+              onfilerRequest1={setFilteredProjects}
               // onfilerRequest2={setProjects}
             />
           )}
@@ -88,7 +88,7 @@ export default function ProjectList() {
                           orderBy={orderBy}
                           onRequestSort={handleRequestSort}
                         />
-                        <ProjectRow projects={projects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={openExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} />
+                        <ProjectRow projects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={openExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} />
                       </table>
                       {(!projects) && <div><LoadingScreen /></div>}
                     </div>
