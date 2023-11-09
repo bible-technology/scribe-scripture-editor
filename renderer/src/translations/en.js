@@ -274,4 +274,6 @@ export const En = {
     'label-accepted': 'Accepted',
     'msg-remove-resource': 'Are you sure want to remove the resource. This action can not be reverted',
     'label-check-updates': 'Check updates',
+    'label-documentation': 'Documentation',
+    'label-tech-support': 'Tech Support',
 };
