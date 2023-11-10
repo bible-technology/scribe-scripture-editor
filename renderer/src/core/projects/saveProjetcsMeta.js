@@ -82,11 +82,12 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       }
     });
 
-    if (projectMetaObj.call === 'edit' && !checker((projectMetaObj.canonSpecification.currentScope), Object.keys(projectMetaObj.project.type.flavorType.currentScope))) {
-      checkCanon = true;
-      logger.warn('saveProjectsMeta.js', 'Not allowed to remove previous scope');
-      status.push({ type: 'warning', value: 'You are not allowed to remove previous scope.' });
-    }
+    // commetend because deselection of exisitng scope is not allowd in the ui itself
+    // if (projectMetaObj.call === 'edit' && !checker((projectMetaObj.canonSpecification.currentScope), Object.keys(projectMetaObj.project.type.flavorType.currentScope))) {
+    //   checkCanon = true;
+    //   logger.warn('saveProjectsMeta.js', 'Not allowed to remove previous scope');
+    //   status.push({ type: 'warning', value: 'You are not allowed to remove previous scope.' });
+    // }
 
     if (checkCanon === false) {
       let id;
@@ -230,11 +231,11 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       }
     });
 
-    if (projectMetaObj.call === 'edit' && !checker((projectMetaObj.canonSpecification.currentScope), Object.keys(projectMetaObj.project.type.flavorType.currentScope))) {
-      checkCanon = true;
-      logger.warn('saveProjectsMeta.js', 'Not allowed to remove previous scope');
-      status.push({ type: 'warning', value: 'You are not allowed to remove previous scope.' });
-    }
+    // if (projectMetaObj.call === 'edit' && !checker((projectMetaObj.canonSpecification.currentScope), Object.keys(projectMetaObj.project.type.flavorType.currentScope))) {
+    //   checkCanon = true;
+    //   logger.warn('saveProjectsMeta.js', 'Not allowed to remove previous scope');
+    //   status.push({ type: 'warning', value: 'You are not allowed to remove previous scope.' });
+    // }
 
     if (checkCanon === false) {
       let id;
