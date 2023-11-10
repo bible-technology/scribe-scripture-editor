@@ -377,6 +377,19 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
    }
 }
 
+export const confirmBookInEditor = async (window, expect, book, chapter, verse, title) => {
+  await window.locator('//*[@aria-label="open-book"]').click()
+  //book
+  await window.locator(`//*[@aria-label="${book}"]`).click();
+  //chapter
+  await window.locator(`//*[@id="chapter-${chapter}"]`).click();
+  //verse
+  await window.locator(`//*[@id="verse-${verse}"]`).click();
+  const bookName = await window.locator('//*[@class="title sequence "]').textContent()
+  console.log(bookName)
+  await expect(bookName).toBe(title)
+}
+
 // Changes the project license.
 export const changeLicense = async (window, expect, currentLicense, newLicense) => {
  // Click on the current license to change it.

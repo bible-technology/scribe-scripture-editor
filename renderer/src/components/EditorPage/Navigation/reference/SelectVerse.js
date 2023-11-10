@@ -116,6 +116,7 @@ export default function SelectVerse({
                 <div
                   key={chapter.key}
                   role="presentation"
+                  id={`chapter-${chapter.name}`}
                   onClick={(e) => { onChapterSelect(e, chapter.key); }}
                   className={styles.select}
                 >
@@ -144,6 +145,7 @@ export default function SelectVerse({
                 <div
                   key={verse.key}
                   role="presentation"
+                  id={`verse-${verse.name}`}
                   style={{ color: controlVerseSelect.includes(parseInt(verse.key, 10)) ? 'seagreen' : '' }}
                   onClick={(e) => (
                     multiSelectVerse

@@ -9,7 +9,7 @@ import {
   exportProjects, archivedProjects, unarchivedProjects, goToEditProject,
   changeAppLanguage, projectTargetLanguage, userProfileValidaiton,
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
-  customAddEditLanguage, customProjectTargetLanguage, starUnstar, clickUserImageToLogout
+  customAddEditLanguage, customProjectTargetLanguage, starUnstar, clickUserImageToLogout, confirmBookInEditor
 } from './common';
 
 const fs = require('fs');
@@ -349,11 +349,18 @@ test("Update/Edit text translation project scope mark and luke", async ({ textPr
   await window.locator('//*[@id="save-canon"]').click();
   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
   await window.locator('//*[@aria-label="save-edit-project"]').click();
-  await window.waitForTimeout(2500);
+  await window.waitForTimeout(2000);
 
   // Verify that the title is "Projects"
   const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
+  await checkProjectName(window, expect, textProject)
+  // checking mark and luke title in editor
+  await confirmBookInEditor(window, expect, "nt-Mark", 1, 1, "MRK")
+  await confirmBookInEditor(window, expect, "nt-Luke", 1, 1, "LUK")
+  // go back to projects page
+  await goToProjectPage(window, expect)
+
 })
 
 test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
