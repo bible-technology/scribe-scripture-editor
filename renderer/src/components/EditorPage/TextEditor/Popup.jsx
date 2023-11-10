@@ -1,36 +1,20 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { ScribexContext } from '@/components/context/ScribexContext';
-import {
-  insertVerseNumber, insertChapterNumber, insertFootnote, insertXRef,
-} from '@/util/cursorUtils';
+
 import { usePopup } from '../../Popup/PopupContext';
 import PopUpTemplate from '../../Popup';
+import { functionMapping } from './utils/insertFunctionMap';
 
-export const functionMapping = {
-  insertVerseNumber: {
-    title: 'Insert Verse', function: insertVerseNumber, icon: 'V', pholder: 'Verse number',
-  },
-  insertChapterNumber: {
-    title: 'Insert Chapter', function: insertChapterNumber, icon: 'C', placeholder: 'Chapter number',
-  },
-  insertFootnote: {
-    title: 'Insert Footnote', function: insertFootnote, icon: 'FN', placeholder: 'Footnote',
-  },
-  insertXRef: {
-    title: 'Insert Cross Reference', function: insertXRef, icon: 'XR', placeholder: 'Cross Reference',
-  },
-};
-
-const Popup = ({ action }) => {
+const Popup = ({ action, setTriggerVerseInsert }) => {
   const {
     state: {
-      textToInsert, numberToInsert, caretPosition, selectedText,
+      textToInsert, numberToInsert, selectedText,
     },
     actions: {
       setTextToInsert,
       setNumberToInsert,
-      setSelectedText,
+      setInsertType,
     },
   } = useContext(ScribexContext);
   const { setIsOpen } = usePopup();
@@ -43,9 +27,13 @@ const Popup = ({ action }) => {
     setNumberToInsert(e.target.value.replace(/[^0-9]/g, ''));
   };
   const handleSubmit = () => {
-    action === 'insertVerseNumber' || action === 'insertChapterNumber'
-      ? functionMapping[action].function({ caretPosition, numberToInsert })
-      : functionMapping[action].function({ caretPosition, textToInsert, selectedText });
+    setInsertType(action);
+    setTriggerVerseInsert((prev) => !prev);
+
+    // calling funciton here does not trigger the perf check to safe. Hence the trigger to re-render.
+    // action === 'insertVerseNumber' || action === 'insertChapterNumber'
+    //   ? functionMapping[action].function({ caretPosition, numberToInsert })
+    //   : functionMapping[action].function({ caretPosition, textToInsert, selectedText });
     setIsOpen(false);
   };
 

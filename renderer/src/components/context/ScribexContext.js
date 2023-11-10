@@ -21,6 +21,7 @@ const ScribexContextProvider = ({
     textToInsert: '',
     numberToInsert: '',
     selectedText: null,
+    insertType: '',
   };
 
   const [state, setState] = useState(initialState);
@@ -66,7 +67,6 @@ const ScribexContextProvider = ({
   }, []);
 
   const setNumberToInsert = useCallback((numberToInsert) => {
-    console.log('setstaqte', { numberToInsert });
     setState((prev) => ({ ...prev, numberToInsert }));
   }, []);
 
@@ -80,6 +80,10 @@ const ScribexContextProvider = ({
     },
     [state.sequenceIds, setSequenceIds],
   );
+
+  const setInsertType = useCallback((insertType) => {
+       setState((prev) => ({ ...prev, insertType }));
+}, []);
   const actions = {
     setFont,
     setSectionable,
@@ -94,6 +98,7 @@ const ScribexContextProvider = ({
     setTextToInsert,
     setNumberToInsert,
     setSelectedText,
+    setInsertType,
   };
 
   const context = {

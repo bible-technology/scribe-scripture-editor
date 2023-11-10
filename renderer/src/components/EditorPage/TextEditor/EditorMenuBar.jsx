@@ -15,8 +15,8 @@ export default function EditorMenuBar(props) {
     setChapterNumber,
     verseNumber,
     setVerseNumber,
-    selectedText,
     setSelectedFont,
+    setTriggerVerseInsert,
   } = props;
 
   const {
@@ -79,7 +79,7 @@ export default function EditorMenuBar(props) {
         </div>
         <div className="flex ml-auto">
           <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
-          <InsertMenu />
+          <InsertMenu setTriggerVerseInsert={setTriggerVerseInsert} />
         </div>
       </div>
     </div>

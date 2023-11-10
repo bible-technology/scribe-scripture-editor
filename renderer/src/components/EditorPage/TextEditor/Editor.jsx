@@ -7,9 +7,11 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 // eslint-disable-next-line import/no-unresolved, import/extensions
-import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
+import { functionMapping } from './utils/insertFunctionMap';
+
 import RecursiveBlock from './RecursiveBlock';
 // eslint-disable-next-line import/no-unresolved, import/extensions
+import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
 
 export default function Editor(props) {
@@ -30,6 +32,7 @@ export default function Editor(props) {
     bookAvailable,
     setChapterNumber,
     setVerseNumber,
+    triggerVerseInsert,
   } = props;
 
   const {
@@ -44,8 +47,12 @@ export default function Editor(props) {
   } = useContext(ProjectContext);
 
   const {
-    state: { caretPosition },
-    actions: { setCaretPosition, setSelectedText },
+    state: {
+      caretPosition, insertType, selectedText, numberToInsert, textToInsert,
+    },
+    actions: {
+      setCaretPosition, setSelectedText, setNumberToInsert, setTextToInsert, setInsertType,
+    },
   } = useContext(ScribexContext);
 
   console.log({ caretPosition });
@@ -77,6 +84,22 @@ export default function Editor(props) {
     setBookChange(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [htmlPerf]);
+
+  useEffect(() => { // temp fix to trigger rerender to cause onblcok trigger to save to file. Need to find a better way.
+    if (insertType !== '') {
+      console.log({
+        caretPosition, numberToInsert, textToInsert, selectedText, insertType,
+      });
+      insertType === 'insertVerseNumber' || insertType === 'insertChapterNumber'
+        ? functionMapping[insertType].function({ caretPosition, numberToInsert })
+        : functionMapping[insertType].function({ caretPosition, textToInsert, selectedText });
+      setNumberToInsert('');
+      setTextToInsert('');
+      setInsertType('');
+      setSelectedText(null);
+      setCaretPosition(0);
+    }
+  }, [triggerVerseInsert]);
 
   useAutoSaveIndication(isSaving);
 
