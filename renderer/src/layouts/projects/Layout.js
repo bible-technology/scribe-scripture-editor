@@ -46,7 +46,7 @@ export default function ProjectsLayout(props) {
   }
 
   return (
-    <div className="flex overflow-auto scrollbars-width absolute w-full h-full">
+    <div className="flex overflow-auto scrollbars-width absolute w-full h-full ">
 
       <SideBar />
 
@@ -133,7 +133,9 @@ export default function ProjectsLayout(props) {
           </header>
         )}
 
-        {children}
+        <div className="max-h-[90%] overflow-y-auto">
+          {children}
+        </div>
 
       </div>
 
