@@ -17,7 +17,7 @@ export const userFolder = async (window, userName, packageInfo, path) => {
 /* Removes a user's directory and updates the users' JSON file
  Displays the welcome page after removing a user's folder. */
 export const showLoginPage = async (fs, folder, userName, json, userData, window, expect) => {
-  fs.rmSync(folder, { recursive: true, force: true })
+  await fs.rmSync(folder, { recursive: true, force: true })
   const filtered = json.filter((item) =>
     item.username.toLowerCase() !== userName.toLowerCase()
   )
@@ -134,7 +134,7 @@ export const starUnstar = async (window, expect, name, clickStar, expectAttribut
 }
 
 // Searches for a project with a given name.
-export const searchProject = async (window, expect, projectname, searchtext, len) => {
+export const searchProject = async (window, expect, projectname, searchtext) => {
   // Perform project search.
   await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
@@ -145,15 +145,15 @@ export const searchProject = async (window, expect, projectname, searchtext, len
   const itemSearch = await window.locator('//input[@id="search_box"]')
   await itemSearch.click()
   if(await rows.count() >= 3){
-    await itemSearch.fill(searchtext)
-    expect(await rows.count()).toBe(1)
-    const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
-    //expecting project name
-    await expect(projectName).toBe(projectname);
+    await itemSearch.fill("translation")
+    expect(await rows.count()).toBe(3)
   }
   await window.waitForTimeout(1000)
-  await itemSearch.fill("translation")
-  expect(await rows.count()).toBe(3)
+  await itemSearch.fill(searchtext)
+  expect(await rows.count()).toBe(1)
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  //expecting project name
+  await expect(projectName).toBe(projectname);
 }
 
 // Check the project name in the editor.
@@ -178,7 +178,7 @@ export const checkProjectName = async (window, expect, name) => {
 }
 
 // Checks for notifications.
-export const checkNotification = async (window, expect) => {
+export const checkNotification = async (window, expect, projectname) => {
   // Wait for the notification button to appear and click it.
   await window.waitForSelector('//*[@aria-label="notification-button"]', {timeout : 5000})
   await window.locator('//*[@aria-label="notification-button"]').click()
@@ -186,6 +186,9 @@ export const checkNotification = async (window, expect) => {
   // Check if the notification title is "Notifications."
   const title = await window.locator('//*[@aria-label="notification-title"]').textContent();
   await expect(title).toBe('Notifications');
+  const div = await window.locator(`//*[@aria-label="success-notification"]`)
+  const notification = await div.locator("div >> p").first().textContent()
+  await expect(notification).toBe(`successfully loaded ${projectname} files`)
   await window.locator('//*[@aria-label="close-notification"]').click()
 }
 

@@ -166,8 +166,8 @@ test('Click on a created text translation project and Check the text Translation
   await checkProjectName(window, expect, textProject)
 });
 
-test('Check text Translation project Notifications', async () => {
-  await checkNotification(window, expect)
+test('Check text Translation project success load notification', async ({ textProject }) => {
+  await checkNotification(window, expect, textProject)
 });
 
 test('Return to the project page', async () => {
@@ -183,8 +183,8 @@ test('Click on a created obs project and Check the obs project name in the edito
   await checkProjectName(window, expect, obsProject)
 });
 
-test('Check obs project Notifications', async () => {
-  await checkNotification(window, expect)
+test('Check obs project success load notification', async ({ obsProject }) => {
+  await checkNotification(window, expect, obsProject)
 });
 
 test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
@@ -250,8 +250,8 @@ test('Click on a audio project and Check the audio project name in the editor', 
   await checkProjectName(window, expect, audioProject)
 });
 
-test('Check audio project Notifications', async () => {
-  await checkNotification(window, expect)
+test('Check audio project success load notification', async ({ audioProject }) => {
+  await checkNotification(window, expect, audioProject)
 });
 
 test('Return to the projects from audio editor page', async () => {

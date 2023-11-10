@@ -91,7 +91,7 @@ const CustomNofications = () => {
                         {moment(val.time, 'YYYY-MM-DD h:mm:ss').fromNow()}
                       </span>
                     </div>
-                    <p aria-label={val.text} className="px-4 py-2">
+                    <p className="px-4 py-2">
                       {val.text}
                     </p>
                   </div>
