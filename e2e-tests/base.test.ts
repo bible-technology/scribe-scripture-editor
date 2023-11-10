@@ -329,7 +329,7 @@ test("Update/Edit text translation project of description and abbreviation", asy
   await updateDescriptionAbbriviation(window, expect, description, textAbbreviation, textProject)
 })
 
-test("Update/Edit text translation project scope mark and luke", async ({ textProject }) => {
+test("Update/Edit text translation project scope added new book mark and luke from custom book", async ({ textProject }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, textProject);
 
@@ -363,7 +363,7 @@ test("Update/Edit text translation project scope mark and luke", async ({ textPr
 
 })
 
-test("Update/Edit text translation project scope custom book into NT", async ({ textProject }) => {
+test("Update/Edit text translation project scope custom book into 27 NT and checking title of john and revelation", async ({ textProject }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, textProject);
 
@@ -384,6 +384,12 @@ test("Update/Edit text translation project scope custom book into NT", async ({ 
   // Verify that the title is "Projects"
   const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
+  await checkProjectName(window, expect, textProject)
+  // checking mark and luke title in editor
+  await confirmBookInEditor(window, expect, "nt-John", 1, 1, "JHN")
+  await confirmBookInEditor(window, expect, "nt-Revelation", 1, 1, "REV")
+  // go back to projects page
+  await goToProjectPage(window, expect)
 })
 
 test("Update/Edit text transaltion project scope custom book genesis and exodus from OT", async ({ textProject }) => {
