@@ -96,6 +96,7 @@ export default function NewProject({ call, project, closeEdit }) {
       newProjectFields,
       languages,
       language,
+      canonSpecification,
     },
     actions: {
       setLanguage,
@@ -202,6 +203,14 @@ export default function NewProject({ call, project, closeEdit }) {
       if (checkDesc[0].isValid === false) {
         logger.warn('NewProject.js', 'Validation failed for Description.');
         create = false;
+      }
+      // custom scope section error
+      if (create && (!canonSpecification || !canonSpecification?.currentScope || canonSpecification?.currentScope?.length === 0)) {
+        create = false;
+        logger.warn('NewProject.js', 'Validation Failed - canon scope not selected');
+        setNotify('warning');
+        setSnackText(t('Scope is not selected or scope is empty. Please add scope.'));
+        setOpenSnackBar(true);
       }
       setError({
         ...error, projectName: checkName, abbr: checkAbbr, description: checkDesc,
