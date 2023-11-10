@@ -8,7 +8,9 @@ import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook'
 import { ProjectContext } from '../../context/ProjectContext';
 import * as logger from '../../../logger';
 
-const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
+const CustomCanonSpecification = ({
+ bibleNav, closeBibleNav, handleNav, project,
+}) => {
   const initialBook = 'mat';
   const initialChapter = '1';
   const initialVerse = '1';
@@ -18,6 +20,7 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
     states: { canonSpecification, canonList },
     actions: { setcanonSpecification },
   } = React.useContext(ProjectContext);
+
   const [selectedBooks, setSelectedBooks] = React.useState([]);
   const [lock, setLock] = React.useState();
   const {
@@ -36,6 +39,7 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
     });
     closeBibleNav();
   };
+
   React.useEffect(() => {
     if (handleNav === 'edit') {
       setLock(canonSpecification.locked);
@@ -44,6 +48,7 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleNav]);
+
   return (
     <Transition
       show={bibleNav}
@@ -82,6 +87,7 @@ const CustomCanonSpecification = ({ bibleNav, closeBibleNav, handleNav }) => {
               selectedBooks={selectedBooks}
               setSelectedBooks={setSelectedBooks}
               scope={name}
+              existingScope={project && Object.keys(project?.type?.flavorType?.currentScope)}
             >
               <button
                 type="button"
