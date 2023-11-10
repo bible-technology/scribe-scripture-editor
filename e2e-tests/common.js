@@ -386,7 +386,6 @@ export const confirmBookInEditor = async (window, expect, book, chapter, verse, 
   //verse
   await window.locator(`//*[@id="verse-${verse}"]`).click();
   const bookName = await window.locator('//*[@class="title sequence "]').textContent()
-  console.log(bookName)
   await expect(bookName).toBe(title)
 }
 

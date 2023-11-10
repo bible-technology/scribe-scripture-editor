@@ -417,6 +417,11 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   // Verify that the title is "Projects"
   const title = await window.textContent('//*[@aria-label="projects"]');
   expect(await title).toBe('Projects');
+  await checkProjectName(window, expect, textProject)
+  await confirmBookInEditor(window, expect, "ot-Genesis", 1, 1, "GEN")
+  await confirmBookInEditor(window, expect, "ot-Exodus", 1, 1, "EXO")
+  // go back to projects page
+  await goToProjectPage(window, expect)
 })
 
 test("Update/Edit text translation project license", async ({ textProject, currentLicense, newLicense }) => {
