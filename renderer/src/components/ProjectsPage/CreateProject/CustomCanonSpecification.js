@@ -87,7 +87,7 @@ const CustomCanonSpecification = ({
               selectedBooks={selectedBooks}
               setSelectedBooks={setSelectedBooks}
               scope={name}
-              existingScope={Object.keys(project?.type?.flavorType?.currentScope)}
+              existingScope={project && Object.keys(project?.type?.flavorType?.currentScope)}
             >
               <button
                 type="button"
