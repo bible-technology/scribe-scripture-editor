@@ -32,7 +32,7 @@ test.beforeAll(async ({ userName }) => {
   window = await electronApp.firstWindow();
   expect(await window.title()).toBe('Scribe Scripture');
   // check if project text is visible 
-  const textVisble = await window.locator('//*[@aria-label="projects"]').isVisible()
+  const textVisble = await window.locator('//*[@id="appName"]').isVisible()
   if (textVisble) {
     // logut and delete the user
     await clickUserImageToLogout(window, expect, userName, path, fs, packageInfo)
@@ -47,8 +47,8 @@ test.beforeAll(async ({ userName }) => {
     const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
     await expect(welcome).toBe(welcome)
     // On the login page, if the playwright user exists, reload the app and remove it
-    const existUser = json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
-    if (existUser && await fs.existsSync(folder)) {
+    const existUser = await json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
+    if (await existUser && await fs.existsSync(folder)) {
       await showLoginPage(fs, folder, userName, json, userData, window, expect);
     }
   }
@@ -70,11 +70,14 @@ test.afterEach(async ({ }, testInfo) => {
 
 // This test case creates a new user and logs in.
 test('Create a new user and login', async ({ userName }) => {
+  await window.waitForSelector('//*[@aria-label="welcome"]')
+  await window.reload()
   // Here you create a new user and validate the login.
   await userValidation(window, expect)
   await window.locator('//input[@placeholder="Username"]').fill(userName)
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
+  // landing to the project page
   const title = await window.locator('//*[@aria-label="projects"]').textContent();
   await expect(title).toBe('Projects');
 })
@@ -156,7 +159,7 @@ test("Unstar the audio project", async ({ audioProject, unstarProject, starProje
 
 /* text transaltion project */
 test('Search a text translation project in all projects list', async ({ textProject }) => {
-  await searchProject(window, expect, textProject, 'translation')
+  await searchProject(window, expect, textProject, 'text translation')
 });
 
 test('Click on a created text translation project and Check the text Translation project name in the editor', async ({ textProject }) => {

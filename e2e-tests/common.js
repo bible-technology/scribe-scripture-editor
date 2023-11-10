@@ -24,6 +24,7 @@ export const showLoginPage = async (fs, folder, userName, json, userData, window
   await fs.writeFileSync(userData, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
   await expect(welcome).toBe("Welcome!")
+  await window.waitForTimeout(500)
   await window.reload()
 }
 
@@ -124,6 +125,7 @@ export const starUnstar = async (window, expect, name, clickStar, expectAttribut
       expect(await tds.first().locator(`[aria-label=${clickStar}]`)).toBeVisible()
       await tds.first().locator(`[aria-label=${clickStar}]`).click()
       const attribute = await rows.nth(0).locator('td').nth(0).locator('button')
+      //expecting a aria-label value
       await expect(attribute).toHaveAttribute('aria-label', expectAttribute)
       await window.waitForTimeout(500)
       break
@@ -131,15 +133,27 @@ export const starUnstar = async (window, expect, name, clickStar, expectAttribut
   }
 }
 
-
 // Searches for a project with a given name.
-export const searchProject = async (window, expect, projectname, searchtext) => {
-   // Perform project search.
+export const searchProject = async (window, expect, projectname, searchtext, len) => {
+  // Perform project search.
   await window.waitForTimeout(500)
   await expect(window.locator('//input[@id="search_box"]')).toBeVisible()
-  await window.locator('//input[@id="search_box"]').fill(searchtext)
-  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
-  await expect(projectName).toBe(projectname);
+  await expect(window.locator('//table[@id="projects-list"]')).toBeVisible()
+  const table = window.locator('//table[@id="projects-list"]')
+  const body = table.locator('//*[@id="projects-list-body"]')
+  const rows = await body.locator('tr')
+  const itemSearch = await window.locator('//input[@id="search_box"]')
+  await itemSearch.click()
+  if(await rows.count() >= 3){
+    await itemSearch.fill(searchtext)
+    expect(await rows.count()).toBe(1)
+    const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+    //expecting project name
+    await expect(projectName).toBe(projectname);
+  }
+  await window.waitForTimeout(1000)
+  await itemSearch.fill("translation")
+  expect(await rows.count()).toBe(3)
 }
 
 // Check the project name in the editor.
@@ -159,6 +173,7 @@ export const checkProjectName = async (window, expect, name) => {
   await window.waitForTimeout(1000)
   await window.waitForSelector('//*[@aria-label="editor-project-name"]',{ timeout: 120000 })
   const projectname = await window.locator('//*[@aria-label="editor-project-name"]').textContent()
+  // expecting project name in editor
   expect(await projectname).toBe(name);
 }
 
@@ -228,8 +243,8 @@ export const exportProjects = async (window, expect, projectname) => {
 //Export a project with chapter and full audio project
 export const exportAudioProject = async(window, expect, projectname, itemCheck) => {
     // Get the user's download path from localStorage.
-    const splitPath = await userPath(window)
-    const userpath = splitPath.split(".")[0]
+  const splitPath = await userPath(window)
+  const userpath = splitPath.split(".")[0]
   // Use the common function to locate the project and export it.
   await commonFilterTable(window, expect, projectname, "export-project")
   await expect(window.locator('input[name="location"]')).toBeVisible()
