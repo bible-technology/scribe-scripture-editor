@@ -87,7 +87,6 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
       setCurrentScope({ title: t('label-other'), currentScope: vals });
     }
   };
-  // console.log('canon spec : ', { canonSpecification });
   // selectNew variable is used to track whether its a new selection or loading from the list
   const setALicense = (licenceTitle, selectNew) => {
     if (isElectron()) {
@@ -375,6 +374,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
           bibleNav={bibleNav}
           closeBibleNav={() => closeBooks()}
           handleNav={handleNav}
+          project={project}
         />
       )}
     </>
