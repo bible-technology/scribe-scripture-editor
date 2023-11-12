@@ -405,6 +405,19 @@ export const changeLicense = async (window, expect, currentLicense, newLicense) 
  expect(await title).toBe('Projects');
 }
 
+export const checkingUpdatedLicense = async (window, expect, projectname, newLicense, flavorType) => {
+  await goToEditProject(window, expect, projectname);
+  if (flavorType !== "OBS") {
+    await expect(window.locator('//*[@id="open-advancesettings"]')).toBeVisible();
+    await window.locator('//*[@id="open-advancesettings"]').click();
+  }
+  const license = await window.locator(`//*[@id="${newLicense}"]`).textContent()
+  await expect(license).toBe(newLicense)
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  // Click the "Save" button.
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+}
+
 // Adds or edits custom target languages.
 export const customAddEditLanguage = async (window, expect, openModal, targetLanguageName, targetLanguageCode, targetDirection, createLanguage, flavorType) => {
   // Open the specified modal.

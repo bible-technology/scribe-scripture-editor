@@ -9,7 +9,8 @@ import {
   exportProjects, archivedProjects, unarchivedProjects, goToEditProject,
   changeAppLanguage, projectTargetLanguage, userProfileValidaiton,
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
-  customAddEditLanguage, customProjectTargetLanguage, starUnstar, clickUserImageToLogout, confirmBookInEditor
+  customAddEditLanguage, customProjectTargetLanguage, starUnstar,
+  clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense
 } from './common';
 
 const fs = require('fs');
@@ -424,7 +425,7 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   await goToProjectPage(window, expect)
 })
 
-test("Update/Edit text translation project license", async ({ textProject, currentLicense, newLicense }) => {
+test("Update/Edit text translation project license", async ({ textProject, currentLicense, newLicense, projectTextType }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, textProject);
 
@@ -434,6 +435,8 @@ test("Update/Edit text translation project license", async ({ textProject, curre
 
   // Change the license from "CC BY-SA" to "CC BY"
   await changeLicense(window, expect, currentLicense, newLicense);
+  //checking updated license
+  await checkingUpdatedLicense(window, expect, textProject, newLicense, projectTextType)
 })
 
 /* Update/Edit the obs project */
@@ -445,12 +448,14 @@ test("Update/Edit obs project of description and abbreviation", async ({ obsProj
   await updateDescriptionAbbriviation(window, expect, description, obsAbbreviation, obsProject);
 })
 
-test("Update/Edit obs project license", async ({ obsProject, currentLicense, newLicense }) => {
+test("Update/Edit obs project license", async ({ obsProject, currentLicense, newLicense, projectObsType }) => {
   // Navigate to the edit project page
   await goToEditProject(window, expect, obsProject);
 
   // Change the license from "CC BY-SA" to "CC BY"
   await changeLicense(window, expect, currentLicense, newLicense);
+  //checking updated license
+  await checkingUpdatedLicense(window, expect, obsProject, newLicense, projectObsType)
 })
 
 /* Update/Edit the audio project */
