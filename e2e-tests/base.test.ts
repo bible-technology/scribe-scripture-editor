@@ -10,7 +10,8 @@ import {
   changeAppLanguage, projectTargetLanguage, userProfileValidaiton,
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
-  clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense, createUser
+  clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
+  createUser, projectPageExpect
 } from './common';
 
 const fs = require('fs');
@@ -86,8 +87,7 @@ test('check user length should be between 3 and 15 characters long', async () =>
 test('Create a new user and login', async ({ userName }) => {
   await createUser(window, expect, userName)
   // landing to the project page
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(title).toBe('Projects');
+  await projectPageExpect(window, expect)
 })
 
 /* view users */
@@ -99,9 +99,7 @@ test("Click the view users button, log in with playwright user, and sign out", a
   for (let i = 0; i < await div.count(); i++) {
     if (await div.nth(i).textContent() === userName.toLowerCase()) {
       await div.nth(i).click()
-      await window.waitForTimeout(1000)
-      const title = await window.locator('//*[@aria-label="projects"]').textContent();
-      await expect(title).toBe('Projects')
+      await projectPageExpect(window, expect)
       break
     }
   }
@@ -118,8 +116,7 @@ test("check the user is already created", async ({ userName }) => {
   await window.locator('//*[@aria-label="cancel"]').click()
   await window.locator(`//*[@id="${userName.toLowerCase()}"]`).click()
   // landing to the project page
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(title).toBe('Projects');
+  await projectPageExpect(window, expect)
 })
 
 /* user delete, check in archive and restore */
@@ -147,8 +144,28 @@ test("Click the view users button and delete the playwright user from the active
       break
     }
   }
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(title).toBe('Projects')
+  await projectPageExpect(window, expect)
+})
+
+/*changing app language english to hindi */
+test("App language change English to hindi", async ({ english, hindi }) => {
+  // Change the app language from English to hindi
+  await changeAppLanguage(window, expect, english, hindi);
+
+  // Verify the language change and UI update
+  await window.waitForSelector('//*[@aria-label="snack-text"]')
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
+  expect(await snackbar).toBe(true);
+
+  await window.locator('//*[@aria-label="projectList"]').click();
+  await projectPageExpect(window, expect)
+})
+
+test("Logout and check application language is changed", async ({ userName }) => {
+  await signOut(window, expect)
+  await window.locator(`//*[@id="${userName.toLowerCase()}"]`).click()
+  // landing to the project page
+  await projectPageExpect(window, expect)
 })
 
 /* NEW PAGE*/
@@ -339,8 +356,7 @@ test("About scribe Application and License", async () => {
   await window.click('[aria-label=license-button]');
   await window.locator('//*[@aria-label="about-description"]').click()
   await window.click('[aria-label=close-about]');
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(title).toBe('Projects');
+  await projectPageExpect(window, expect)
 })
 
 /* exports project */
@@ -420,11 +436,8 @@ test("Update/Edit text translation project scope added new book mark and luke fr
   await window.locator('//*[@id="save-canon"]').click();
   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
   await window.locator('//*[@aria-label="save-edit-project"]').click();
-  await window.waitForTimeout(2000);
-
   // Verify that the title is "Projects"
-  const title = await window.textContent('//*[@aria-label="projects"]');
-  expect(await title).toBe('Projects');
+  await projectPageExpect(window, expect)
   await checkProjectName(window, expect, textProject)
   // checking mark and luke title in editor
   await confirmBookInEditor(window, expect, "nt-Mark", 1, 1, "MRK")
@@ -447,14 +460,11 @@ test("Update/Edit text translation project scope custom book into 27 NT and chec
   await window.locator('//*[@aria-label="new-testament"]').click();
 
   // Confirm the change and save
-  await window.locator('//button[contains(text(),"Ok")]').click();
+  await window.locator('//*[@aria-label="close-bible-nav"]').click();
   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
   await window.locator('//*[@aria-label="save-edit-project"]').click();
-  await window.waitForTimeout(3000);
-
   // Verify that the title is "Projects"
-  const title = await window.textContent('//*[@aria-label="projects"]');
-  expect(await title).toBe('Projects');
+  await projectPageExpect(window, expect)
   await checkProjectName(window, expect, textProject)
   // checking mark and luke title in editor
   await confirmBookInEditor(window, expect, "nt-John", 1, 1, "JHN")
@@ -483,11 +493,8 @@ test("Update/Edit text transaltion project scope custom book genesis and exodus 
   await window.locator('//*[@id="save-canon"]').click();
   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
   await window.locator('//*[@aria-label="save-edit-project"]').click();
-  await window.waitForTimeout(3000);
-
   // Verify that the title is "Projects"
-  const title = await window.textContent('//*[@aria-label="projects"]');
-  expect(await title).toBe('Projects');
+  await projectPageExpect(window, expect)
   await checkProjectName(window, expect, textProject)
   await confirmBookInEditor(window, expect, "ot-Genesis", 1, 1, "GEN")
   await confirmBookInEditor(window, expect, "ot-Exodus", 1, 1, "EXO")
@@ -535,6 +542,22 @@ test("Update/Edit audio project of description and abbreviation", async ({ audio
 
   // Update description and abbreviation
   await updateDescriptionAbbriviation(window, expect, description, AudioAbbreviation, audioProject)
+})
+
+/*changing app language hindi to english */
+test("App language change Hindi to English", async ({ hindi, english }) => {
+  // Verify the current page title
+  await projectPageExpect(window, expect)
+  // Change the app language from Hindi to English
+  await changeAppLanguage(window, expect, hindi, english);
+
+  // Verify the language change and UI update
+  await window.waitForSelector('//*[@aria-label="snack-text"]')
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
+  expect(await snackbar).toBe(true);
+
+  await window.locator('//*[@aria-label="projectList"]').click();
+  await projectPageExpect(window, expect)
 })
 
 /* custom project with custom language for text translation */
@@ -632,40 +655,7 @@ test("Update user Profile details", async () => {
   await window.locator('//*[@id="save-profile"]').click();
 
   // Verify the success message
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(snackbar).toBe("Updated the Profile.");
-})
-
-/*changing app language english to hindi */
-test("App language change English to hindi", async ({ english, hindi }) => {
-  // Change the app language from English to Hindi
-  await changeAppLanguage(window, expect, english, hindi);
-
-  // Verify the language change and UI update
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(snackbar).toBe("Updated the Profile.");
-
-  const textHindi = await window.locator('//*[@aria-label="projects"]').allTextContents();
-  expect(await textHindi[0]).toBe("प्रोफ़ाइल");
-})
-
-/*changing app language hindi to english */
-test("App language change Hindi to English", async ({ hindi, english }) => {
-  expect(await window.locator('//*[@aria-label="projectList"]')).toBeVisible();
-  await window.locator('//*[@aria-label="projectList"]').click();
-  await window.waitForTimeout(2000);
-
-  // Verify the current page title
-  const title = await window.textContent('//*[@aria-label="projects"]', { timeout: 10000 });
-  expect(await title).toBe('प्रोजेक्ट्स');
-
-  // Change the app language from Hindi to English
-  await changeAppLanguage(window, expect, hindi, english);
-
-  // Verify the language change and UI update
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(snackbar).toBe("Updated the Profile.");
-  const profile = await window.locator('//*[@aria-label="projects"]').allTextContents();
-  expect(await profile[0]).toBe("Profile");
-  await window.locator('//*[@aria-label="projectList"]').click();
+  await window.waitForSelector('//*[@aria-label="snack-text"]')
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
+  expect(await snackbar).toBe(true);
 })

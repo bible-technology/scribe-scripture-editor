@@ -30,7 +30,9 @@ type myFixture = {
   customObsLanguage: string,
   customAudioLanguage: string,
   english: string,
-  hindi: string
+  hindi: string,
+  russian: string,
+  farsi: string
 }
 const myFixtureTest = myTest.extend<myFixture>({
   userName: "Playwright user",
@@ -56,6 +58,8 @@ const myFixtureTest = myTest.extend<myFixture>({
   customAudioLanguage: "custom audio project language",
   english: "English",
   hindi: "Hindi",
+  russian: "Russian",
+  farsi: "Farsi",
   textUnderscore: "Translation_test_project",
   obsUnderscore: "Obs_test_project",
   syncName: "Sync_Collab_Test",

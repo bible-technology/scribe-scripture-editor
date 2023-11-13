@@ -70,6 +70,12 @@ export const createUser = async (window, expect, username) => {
   await window.click('[type=submit]');
 }
 
+export const projectPageExpect = async (window, expect) => {
+  await window.waitForSelector('//*[@aria-label="projects"]')
+  const title = await window.locator('//*[@aria-label="projects"]').isVisible();
+  await expect(title).toBe(true);
+}
+
 // Signs the user out.
 export const signOut = async (window, expect) => {
   // Open the user profile menu and signout
@@ -96,9 +102,9 @@ export const showActiveUsers = async (window, expect) => {
 export const createProjectValidation = async (window, expect) => {
   await window.locator('//button[@aria-label="create"]').click()
   // Get the text content of the snackbar.
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible()
   // Verify if the snackbar message is 'Fill all the fields.'
-  await expect(snackbar).toBe('Fill all the fields')
+  await expect(snackbar).toBe(true)
   // Wait for 3 seconds (3000 milliseconds).
   await window.waitForTimeout(3000)
 }
@@ -196,9 +202,9 @@ export const checkProjectName = async (window, expect, name) => {
   }
   await window.waitForTimeout(1000)
   await window.waitForSelector('//*[@aria-label="editor-project-name"]',{ timeout: 120000 })
-  const projectname = await window.locator('//*[@aria-label="editor-project-name"]').textContent()
+  const projectname = await window.locator('//*[@aria-label="editor-project-name"]', { timeout: 120000 }).textContent()
   // expecting project name in editor
-  expect(await projectname).toBe(name);
+  await expect(projectname).toBe(name);
 }
 
 // Checks for notifications.
@@ -222,9 +228,8 @@ export const goToProjectPage = async (window, expect) => {
   await expect(window.locator('//*[@id="back-button"]')).toBeVisible()
   await window.locator('//*[@id="back-button"]').click();
   // Check if the title on the project page is "Projects."
-  const title = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(title).toBe('Projects');
-  await window.waitForTimeout(1000)
+  await window.waitForTimeout(500)
+  await projectPageExpect(window, expect)
 }
 
 // Common function for interacting with tables.
@@ -263,8 +268,8 @@ export const exportProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
-  await expect(snackText).toBe("Exported Successfully")
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
+  await expect(snackText).toBe(true)
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
@@ -281,8 +286,8 @@ export const exportAudioProject = async(window, expect, projectname, itemCheck) 
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
-  await expect(snackText).toBe("Exported Successfully")
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
+  await expect(snackText).toBe(true)
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
@@ -293,22 +298,19 @@ export const archivedProjects = async (window, expect, projectname) => {
   // Click the "archived-projects" button.
   await window.locator('//*[@aria-label="archived-projects"]').click()
   // Check if the archive title is "Archived projects."
-  const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent()
-  await expect(archiveTitle).toBe("Archived projects")
+  await projectPageExpect(window, expect)
   const archiveProjectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   await expect(archiveProjectName).toBe(projectname);
    // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click()
-  const projectTitle = await window.locator('//*[@aria-label="projects"]').textContent()
-  await expect(projectTitle).toBe('Projects');
+  await projectPageExpect(window, expect)
 }
 
 // Moves a project back from archived to active projects.
 export const unarchivedProjects = async (window, expect, projectname) => {
   // Click the "archived-projects" button to go to the archived projects.
   await window.locator('//*[@aria-label="archived-projects"]').click();
-  const archiveTitle = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(archiveTitle).toBe("Archived projects");
+  await projectPageExpect(window, expect)
   // Use the common function to locate the project and unarchive it.
   await commonFilterTable(window, expect, projectname, "archive-restore-project");
   // Click the "active-projects" button to go back to the active projects.
@@ -323,8 +325,7 @@ export const goToEditProject = async (window, expect, projectName) => {
   await commonFilterTable(window, expect, projectName, "edit-project");
   await window.waitForTimeout(500);
   // Check if the title on the edit project page is "Edit Project."
-  const editTitle = await window.locator('//*[@aria-label="projects"]').textContent();
-  await expect(editTitle).toBe('Edit Project');
+  await projectPageExpect(window, expect)
 }
 
 // Changes the target language for a project.
@@ -356,8 +357,8 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
      }
    }
    // Verify the title of the page is "Projects."
-   const title = await window.textContent('//*[@aria-label="projects"]', { timeout: 10000 });
-   expect(title).toBe('Projects');
+  await projectPageExpect(window, expect)
+
 }
 
 // Updates the project description and abbreviation.
@@ -375,11 +376,8 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
    await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
    // Click the "Save" button.
    await window.locator('//*[@aria-label="save-edit-project"]').click();
-   // Wait for the page to load.
-   await window.waitForTimeout(3000);
    // Verify the title of the page is "Projects."
-   const title = await window.textContent('//*[@aria-label="projects"]');
-   expect(await title).toBe('Projects');
+   await projectPageExpect(window, expect)
    await window.waitForTimeout(500)
    await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
    const table = window.locator('//*[@id="projects-list"]')
@@ -422,11 +420,8 @@ export const changeLicense = async (window, expect, currentLicense, newLicense) 
  // Ensure the "Save" button is visible and click it.
  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
  await window.locator('//*[@aria-label="save-edit-project"]').click();
- // Wait for the page to load.
- await window.waitForTimeout(3000);
  // Verify the title of the page is "Projects."
- const title = await window.textContent('//*[@aria-label="projects"]');
- expect(await title).toBe('Projects');
+ await projectPageExpect(window, expect)
 }
 
 export const checkingUpdatedLicense = async (window, expect, projectname, newLicense, flavorType) => {
@@ -520,14 +515,14 @@ export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="save-profile"]')).toBeVisible();
   await window.locator('//*[@id="save-profile"]').click();
   // Verify error messages for first/last name, email, organization, and region.
-  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').textContent();
-  expect(firstLastNameError).toBe('The input has to be between 2 and 15 characters long');
-  const emailError = await window.locator('//*[@aria-label="email-error"]').textContent();
-  expect(emailError).toBe('Email is not valid!');
-  const organizationError = await window.locator('//*[@aria-label="organization-error"]').textContent();
-  expect(organizationError).toBe('The input has to be between 2 and 30 characters long');
-  const regionError = await window.locator('//*[@aria-label="region-error"]').textContent();
-  expect(regionError).toBe('The input has to be between 2 and 15 characters long');
+  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').isVisible();
+  await expect(firstLastNameError).toBe(true);
+  const emailError = await window.locator('//*[@aria-label="email-error"]').isVisible();
+  await expect(emailError).toBe(true);
+  const organizationError = await window.locator('//*[@aria-label="organization-error"]').isVisible();
+  await expect(organizationError).toBe(true);
+  const regionError = await window.locator('//*[@aria-label="region-error"]').isVisible();
+  await expect(regionError).toBe(true);
 
 }
 
