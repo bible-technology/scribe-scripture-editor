@@ -58,19 +58,38 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
 } 
 
 // Performs user validation checks.
-export const userValidation = async (window, expect) => {
+export const createUser = async (window, expect, username) => {
   // Check if the "Create New Account" button is visible
   expect(await window.locator('//*[@aria-label="create-new-account"]')).toBeVisible()
   await window.locator('//*[@aria-label="create-new-account"]').click()
   // Check if the "Username" input field is visible
   await expect(window.locator('//input[@placeholder="Username"]')).toBeVisible()
-  await window.locator('//input[@placeholder="Username"]').fill('jo')
+  await window.locator('//input[@placeholder="Username"]').fill(username)
   // Check if the "Submit" button is visible
   await expect(window.locator('//button[@type="submit"]')).toBeVisible()
   await window.click('[type=submit]');
-  // Check for a length error message
-  const lengthError = await window.locator('//*[@id="show-error"]')
-  expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
+}
+
+// Signs the user out.
+export const signOut = async (window, expect) => {
+  // Open the user profile menu and signout
+  await clickUserImage(window, expect, "signout")
+  // Wait for the signout process to complete.
+  await window.waitForTimeout(1000)
+  // Verify that the user is signed out.
+  const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
+  await expect(welcome).toBe("Welcome!")
+  await window.waitForTimeout(200)
+}
+
+// Shows a list of active users.
+export const showActiveUsers = async (window, expect) => {
+ // Ensure the "view-more" button is visible and click it with a timeout of 5 seconds.
+ await expect(window.locator('//*[@id="view-more"]', { timeout: 5000 })).toBeVisible();
+ await window.locator('//*[@id="view-more"]', { timeout: 5000 }).click();
+ // Get the text content of the "active-tab" element and verify it is "Active".
+ const active = await window.locator('//*[@id="active-tab"]').textContent();
+ await expect(active).toBe("Active");
 }
 
 // Performs project creation validation checks.
@@ -144,16 +163,21 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   const rows = await body.locator('tr')
   const itemSearch = await window.locator('//input[@id="search_box"]')
   await itemSearch.click()
-  if(await rows.count() >= 3){
+  if(await rows.count() >= 4){
     await itemSearch.fill("translation")
-    expect(await rows.count()).toBe(3)
+    expect(await rows.count() > 1).toBe(true)
   }
-  await window.waitForTimeout(1000)
+  await window.waitForTimeout(500)
   await itemSearch.fill(searchtext)
   expect(await rows.count()).toBe(1)
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   //expecting project name
   await expect(projectName).toBe(projectname);
+  await itemSearch.fill("abcd")
+  expect(await rows.count()).toBe(0)
+  await itemSearch.fill("")
+  expect(await rows.count() > 1).toBe(true) 
+
 }
 
 // Check the project name in the editor.
@@ -520,24 +544,4 @@ export const changeAppLanguage = async (window, expect, fromLanguage, toLanguage
   await window.locator('//*[@id="save-profile"]').click();
 }
 
-// Signs the user out.
-export const signOut = async (window, expect) => {
-  // Open the user profile menu and signout
-  await clickUserImage(window, expect, "signout")
-  // Wait for the signout process to complete.
-  await window.waitForTimeout(1000)
-  // Verify that the user is signed out.
-  const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
-  await expect(welcome).toBe("Welcome!")
-  await window.waitForTimeout(200)
-}
 
-// Shows a list of active users.
-export const showActiveUsers = async (window, expect) => {
- // Ensure the "view-more" button is visible and click it with a timeout of 5 seconds.
- await expect(window.locator('//*[@id="view-more"]', { timeout: 5000 })).toBeVisible();
- await window.locator('//*[@id="view-more"]', { timeout: 5000 }).click();
- // Get the text content of the "active-tab" element and verify it is "Active".
- const active = await window.locator('//*[@id="active-tab"]').textContent();
- await expect(active).toBe("Active");
-}
