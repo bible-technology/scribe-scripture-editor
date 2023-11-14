@@ -2,8 +2,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
-import { getCurrentCursorPosition } from '@/util/cursorUtils';
+import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/cursorUtils';
 import { getCurrentVerse, getCurrentChapter } from '@/components/EditorPage/TextEditor/utils/getReferences';
+import { on } from 'ws';
 
 const getTarget = ({ content }) => {
   const div = document.createElement('div');
@@ -89,6 +90,14 @@ export default function RecursiveBlock({
     handleSelection();
   };
 
+  function onPasteHandler(event) {
+    console.log('onPasteHandler');
+    const cursorPosition = getCurrentCursorPosition('editor');
+    const paste = (event.clipboardData || window.clipboardData).getData('text');
+    console.log({ paste, event });
+    pasteTextAtCursorPosition({ cursorPosition, textToInsert: paste });
+  }
+
   let component;
 
   const editable = !!content.match(/data-type="paragraph"/);
@@ -103,6 +112,7 @@ export default function RecursiveBlock({
         onMouseUp={checkCurrentVerse}
         onMouseDown={updateCursorPosition}
         {...props}
+        onPaste={(event) => { event.preventDefault(); onPasteHandler(event); }}
       />
     );
   }

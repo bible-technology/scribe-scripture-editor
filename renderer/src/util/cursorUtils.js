@@ -119,6 +119,19 @@ export function pasteHtmlAtCaret(html, selectPastedContent, cursorPosition) {
   }
 }
 
+// paste copied text from external source. This will paste the sanitized text.
+export function pasteTextAtCursorPosition({ cursorPosition, textToInsert }) {
+  setCurrentCursorPosition(cursorPosition);
+  const sel = window.getSelection();
+  let range;
+  if (sel.getRangeAt && sel.rangeCount) {
+    range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(document.createTextNode(textToInsert));
+    sel.collapseToEnd();
+  }
+}
+
 export function insertVerseNumber({ caretPosition, numberToInsert }) {
   console.log({ caretPosition, numberToInsert });
   if (numberToInsert && caretPosition) {
@@ -175,61 +188,3 @@ export function getSelectedText() {
   }
   return selectedText;
 }
-
-// Paste text from clipboard
-export function pasteText() {
-  const editor = document.getElementById('editor');
-
-  navigator.clipboard.readText()
-    .then((text) => {
-      editor.focus();
-      document.execCommand('insertText', false, text);
-    })
-    .catch((error) => {
-      console.error(`Unable to paste text: ${error}`);
-    });
-}
-export class Clipboard {
-  static copyText(text) {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        // console.log('Text copied to clipboard');
-      })
-      .catch((error) => {
-        console.error('Failed to copy text:', error);
-      });
-  }
-
-  static pasteText(element) {
-    navigator.clipboard
-      .readText()
-      .then((pastedText) => {
-        element.focus();
-        document.execCommand('insertText', false, pastedText);
-        // console.log('Text pasted from clipboard');
-      })
-      .catch((error) => {
-        console.error('Failed to paste text:', error);
-      });
-  }
-}
-
-// export function getWordAtCursor(parentElement) {
-//   const cursorPosition = Cursor.getCurrentCursorPosition(parentElement);
-//   const textContent = parentElement.textContent;
-//   const words = textContent.trim().split(/\s+/);
-//   let charCount = 0;
-
-//   for (let i = 0; i < words.length; i++) {
-//     const word = words[i];
-//     const wordLength = word.length;
-//     charCount += wordLength + 1; // +1 for the space after the word
-
-//     if (charCount > cursorPosition) {
-//       return word;
-//     }
-//   }
-
-//   return null;
-// }
