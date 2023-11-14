@@ -62,14 +62,6 @@ test.afterAll(async ({ userName }) => {
   await clickUserImageToLogout(window, expect, userName, path, fs, packageInfo)
 })
 
-// show test status result
-test.afterEach(async ({ }, testInfo) => {
-  console.log(`Finished ${testInfo.title} with status ${testInfo.status}`);
-
-  if (testInfo.status !== testInfo.expectedStatus)
-    console.log(`Did not run as expected, ended up at ${window.url()}`);
-});
-
 /* LOGIN PAGE */
 /* check the user length */
 test('check user length should be between 3 and 15 characters long', async () => {
@@ -243,11 +235,10 @@ test("Unstar the audio project", async ({ audioProject, unstarProject, starProje
 
 })
 
-// waiting for search a project need to fixed
 /* text transaltion project */
-// test('Search a text translation project in all projects list', async ({ textProject }) => {
-//   await searchProject(window, expect, textProject, 'text translation')
-// });
+test('Search a text translation project in all projects list', async ({ textProject }) => {
+  await searchProject(window, expect, textProject, 'text translation')
+});
 
 test('Click on a created text translation project and Check the text Translation project name in the editor', async ({ textProject }) => {
   await checkProjectName(window, expect, textProject)
@@ -261,11 +252,10 @@ test('Return to the project page', async () => {
   await goToProjectPage(window, expect)
 });
 
-// // waiting for search a project need to fixed
 /* obs project */
-// test('Search an obs project in all projects list', async ({ obsProject }) => {
-//   await searchProject(window, expect, obsProject, 'obs')
-// });
+test('Search an obs project in all projects list', async ({ obsProject }) => {
+  await searchProject(window, expect, obsProject, 'obs')
+});
 
 test('Click on a created obs project and Check the obs project name in the editor', async ({ obsProject }) => {
   await checkProjectName(window, expect, obsProject)
@@ -329,11 +319,10 @@ test('Return to projects list page from obs editor', async () => {
   await goToProjectPage(window, expect)
 });
 
-// waiting for search a project need to fixed
-// /* audio project */
-// test('Search an audio project in all projects list', async ({ audioProject }) => {
-//   await searchProject(window, expect, audioProject, 'audio')
-// });
+/* audio project */
+test('Search an audio project in all projects list', async ({ audioProject }) => {
+  await searchProject(window, expect, audioProject, 'audio')
+});
 
 test('Click on a audio project and Check the audio project name in the editor', async ({ audioProject }) => {
   await checkProjectName(window, expect, audioProject)
@@ -603,10 +592,9 @@ test("Create new audio project with new custom language with no direction", asyn
   await customProjectTargetLanguage(window, expect, customAudioProject, projectAudioType, description, AudioAbbreviation, "add-language", customAudioLanguage, 'capl', "RTL", "edit-language")
 })
 
-// waiting for search a project need to fixed
-// test('Search a new custom text translation project in all projects list', async ({ customTextProject }) => {
-//   await searchProject(window, expect, customTextProject, 'custom text')
-// });
+test('Search a new custom text translation project in all projects list', async ({ customTextProject }) => {
+  await searchProject(window, expect, customTextProject, 'custom text')
+});
 
 /* Changing text translation project target language */
 //text translation project

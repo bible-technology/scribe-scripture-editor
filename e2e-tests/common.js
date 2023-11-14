@@ -180,8 +180,10 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   //expecting project name
   await expect(projectName).toBe(projectname);
   await itemSearch.fill("abcd")
+  await window.waitForTimeout(1000)
   expect(await rows.count()).toBe(0)
-  await itemSearch.fill("")
+  await itemSearch.fill(" ")
+  await window.waitForTimeout(1000)
   expect(await rows.count() > 1).toBe(true) 
 
 }
@@ -364,18 +366,18 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
 // Updates the project description and abbreviation.
 export const updateDescriptionAbbriviation = async (window, expect, descriptionText, abbreviation, projectname) => {
    // Get the initial description and verify it.
-   const description = await window.textContent('//textarea[@id="project_description"]');
-   await expect(description).toBe('test description');
-   // Fill in the new description.
-   await window.locator('//textarea[@id="project_description"]').fill(`edit ${descriptionText}`);
-   // Get the edited description and verify it.
-   const editDescription = await window.textContent('//textarea[@id="project_description"]');
-   await expect(editDescription).toBe(`edit ${descriptionText}`);
-   // Fill in the abbreviation and verify that the "Save" button is visible.
-   await window.locator('input[name="version_abbreviated"]').fill(`e${abbreviation}`);
-   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
-   // Click the "Save" button.
-   await window.locator('//*[@aria-label="save-edit-project"]').click();
+  const description = await window.textContent('//textarea[@id="project_description"]');
+  await expect(description).toBe('test description');
+  // Fill in the new description.
+  await window.locator('//textarea[@id="project_description"]').fill(`edit ${descriptionText}`);
+  // Get the edited description and verify it.
+  const editDescription = await window.textContent('//textarea[@id="project_description"]');
+  await expect(editDescription).toBe(`edit ${descriptionText}`);
+  // Fill in the abbreviation and verify that the "Save" button is visible.
+  await window.locator('input[name="version_abbreviated"]').fill(`e${abbreviation}`);
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  // Click the "Save" button.
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
    // Verify the title of the page is "Projects."
    await projectPageExpect(window, expect)
    await window.waitForTimeout(500)
