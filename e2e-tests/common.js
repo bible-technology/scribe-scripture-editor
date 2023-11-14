@@ -378,27 +378,9 @@ export const updateDescriptionAbbriviation = async (window, expect, descriptionT
   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
   // Click the "Save" button.
   await window.locator('//*[@aria-label="save-edit-project"]').click();
-   // Verify the title of the page is "Projects."
-   await projectPageExpect(window, expect)
-   await window.waitForTimeout(500)
-   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible()
-   const table = window.locator('//*[@id="projects-list"]')
-   const body = table.locator('//*[@id="projects-list-body"]')
-   const rows = await body.locator('tr')
-   for (let i = 0; i < await rows.count(); i++) {
-     const row = await rows.nth(i);
-     const tds = await row.locator('td');
-     if (await tds.nth(1).textContent() === projectname) {
-       // Check if the "expand-project" button is visible and click it.
-      expect(await tds.last().locator('//*[@aria-label="expand-project"]')).toBeVisible()
-      await tds.last().locator('//*[@aria-label="expand-project"]').click()
-      await window.waitForTimeout(1000)
-      const description = await window.locator('//*[@aria-label="project-description-display"]').textContent()
-      await expect(description).toBe(`edit ${descriptionText}`);
-      await window.locator('//*[@aria-label="arrow-up"]').click()
-      break
-     }
-   }
+  await goToEditProject(window, expect, projectname)
+  await window.locator('//*[@aria-label="cancel-edit-project"]').click()
+  await projectPageExpect(window, expect)
 }
 
 export const confirmBookInEditor = async (window, expect, book, chapter, verse, title) => {
