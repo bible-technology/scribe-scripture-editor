@@ -21,6 +21,7 @@ function useSync() {
   });
   const [syncProgress, setSyncProgress] = useState({
     syncStarted: false,
+    syncType: null,
     totalFiles: 0,
     completedFiles: 0,
   });
