@@ -219,13 +219,13 @@ export default function AboutModal(props) {
 
                                   <div className="flex justify-center gap-4 items-center ">
                                     <ul className="text-xs">
-                                      <li>Feature : Describe your idea</li>
-                                      <span className="ml-1">How it will be beneficial for the users</span>
+                                      <li>Give your suggestion for new features &</li>
+                                      <span className="ml-1">how you think they can benefit others</span>
                                       <li>Feedback</li>
                                     </ul>
                                     <div className="flex flex-col gap-2 items-center">
                                       <ReplyIcon className="w-12 h-12 fill-primary " />
-                                      <h5 className="text-xs font-bold">Submit your suggessions</h5>
+                                      <h5 className="text-xs font-bold">Submit your suggestions</h5>
                                     </div>
                                   </div>
                                 </div>
