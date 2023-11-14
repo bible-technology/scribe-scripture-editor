@@ -52,7 +52,7 @@ export default function ProjectFileBrowser() {
             lastSync={projectMeta?.lastSync}
             // selected={selectedAgProject?.projectName === projectMeta?.identification?.name?.en}
             selected={selectedAgProject?.projectId === Object.keys(projectMeta?.identification.primary.scribe)[0]}
-            isUpload={selectedAgProject?.projectName === projectMeta?.identification?.name?.en && syncProgress.syncStarted}
+            isUpload={selectedAgProject?.projectName === projectMeta?.identification?.name?.en && syncProgress.syncStarted && syncProgress.syncType === 'syncTo'}
             uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
           />
         </div>
