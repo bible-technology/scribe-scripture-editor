@@ -154,8 +154,8 @@ test("App language change English to hindi", async ({ english, hindi }) => {
 
   // Verify the language change and UI update
   await window.waitForSelector('//*[@aria-label="snack-text"]')
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
-  expect(await snackbar).toBe(true);
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(await snackbar).toBe("Updated the Profile.");
 
   await window.locator('//*[@aria-label="projectList"]').click();
   await projectPageExpect(window, expect)
@@ -553,8 +553,8 @@ test("App language change Hindi to English", async ({ hindi, english }) => {
 
   // Verify the language change and UI update
   await window.waitForSelector('//*[@aria-label="snack-text"]')
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
-  expect(await snackbar).toBe(true);
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(await snackbar).toBe("Updated the Profile.");
 
   await window.locator('//*[@aria-label="projectList"]').click();
   await projectPageExpect(window, expect)
@@ -656,6 +656,7 @@ test("Update user Profile details", async () => {
 
   // Verify the success message
   await window.waitForSelector('//*[@aria-label="snack-text"]')
-  const snackbar = await window.locator('//*[@aria-label="snack-text"]').isVisible();
-  expect(await snackbar).toBe(true);
+  const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
+  expect(await snackbar).toBe("Updated the Profile.");
+  await window.locator('//*[@aria-label="projectList"]').click();
 })
