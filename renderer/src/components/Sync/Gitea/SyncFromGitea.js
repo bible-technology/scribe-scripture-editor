@@ -15,6 +15,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     setSyncProgress((prev) => ({
       ...prev,
       syncStarted: true,
+      syncType: 'syncFrom',
       totalFiles: 6,
       completedFiles: 1,
     }));
@@ -79,6 +80,7 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
   } finally {
     setSyncProgress({
         syncStarted: false,
+        syncType: null,
         totalFiles: 0,
         completedFiles: 0,
     });
