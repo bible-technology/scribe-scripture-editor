@@ -211,16 +211,16 @@ export default function AboutModal(props) {
                                       <h5 className="text-xs font-bold">Ask your Queries</h5>
                                     </div>
                                     <ul className="text-xs">
-                                      <li>Write the steps - how you faced the issue</li>
-                                      <li>Add relevant screenshots</li>
-                                      <li>Add specific suggestions - if you have any</li>
+                                      <li>Tell us in detail about the issue you faced.</li>
+                                      <li>Include relevant screenshots.</li>
+                                      <li>Add suggestions if you have any.</li>
                                     </ul>
                                   </div>
 
                                   <div className="flex justify-center gap-4 items-center ">
                                     <ul className="text-xs">
-                                      <li>Feautre : Describe your idea</li>
-                                      <span className="ml-1">How it will be beneficail for the users</span>
+                                      <li>Feature : Describe your idea</li>
+                                      <span className="ml-1">How it will be beneficial for the users</span>
                                       <li>Feedback</li>
                                     </ul>
                                     <div className="flex flex-col gap-2 items-center">
@@ -278,9 +278,10 @@ export default function AboutModal(props) {
                             </div>
 
                             <p className="text-sm text-gray-700 ">
-                              <span className="font-semibold pr-1 text-primary">Thank you for your input!</span>
+                              <span className="font-semibold pr-1 text-primary">Thank you for your input</span>
+                              .
                               {' '}
-                              We value it. Our devoted crew is working hard to provide a seamless Scribe experience.
+                              It is greatly appreciated. Our dedicated team is working continuously to offer a smooth Scribe experience.
                             </p>
 
                           </>
