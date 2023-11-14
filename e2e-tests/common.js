@@ -76,6 +76,16 @@ export const projectPageExpect = async (window, expect) => {
   await expect(title).toBe(true);
 }
 
+export const clickUserImage = async (window, expect, itemClick) => {
+  // Ensure the user profile image is visible and click on it.
+  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
+  await window.locator('//*[@id="user-profile-image"]').click();
+  // Verify that the user profile is visible and click on it.
+  await window.waitForSelector(`//*[@aria-label="${itemClick}"]`)
+  expect(await window.locator(`//*[@aria-label="${itemClick}"]`)).toBeVisible();
+  await window.locator(`//*[@aria-label="${itemClick}"]`).click();
+}
+
 // Signs the user out.
 export const signOut = async (window, expect) => {
   // Open the user profile menu and signout
@@ -337,32 +347,36 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
    // Navigate to the project editing page.
    await goToEditProject(window, expect, projectName);
    // Ensure the custom dropdown is visible.
-   expect(await window.locator('//*[@aria-label="custom-dropdown"]')).toBeVisible();
-   // Fill in the search language.
-   await window.locator('//*[@aria-label="custom-dropdown"]').fill(searchLangauge);
-   // Click on the selectLanguage in the dropdown.
-   await window.locator(`//*[@aria-label="${selectLanguage}"]`).click();
-   // Ensure the "Save" button is visible and click it.
-   await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
-   await window.locator('//*[@aria-label="save-edit-project"]').click();
-   // Wait for the page to load and verify that the projects list is visible.
-   await window.waitForTimeout(2000);
-   await expect(window.locator('//*[@id="projects-list"]')).toBeVisible();
-   // Locate the projects list, find the target project, and verify the selected language.
-   const table = window.locator('//*[@id="projects-list"]');
-   const body = table.locator('//*[@id="projects-list-body"]');
-   const rows = body.locator('tr');
-   for (let i = 0; i < await rows.count(); i++) {
-     const row = await rows.nth(i);
-     const tds = await row.locator('td');
-     if (await tds.nth(1).textContent() === projectName) {
-       // Verify the language of the selected project.
-       expect(await tds.nth(2).textContent()).toBe(selectLanguage);
-     }
-   }
-   // Verify the title of the page is "Projects."
+  await window.waitForSelector('//*[@aria-label="custom-dropdown"]')
+  const searchLang = await window.locator('//*[@aria-label="custom-dropdown"]') 
+  expect(await searchLang).toBeVisible();
+  // Fill in the search language.
+  await searchLang.click()
+  await searchLang.fill(searchLangauge);
+  // Click on the selectLanguage in the dropdown.
+  await window.locator(`//*[@aria-label="${selectLanguage}"]`).click();
+  // Ensure the "Save" button is visible and click it.
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  // Wait for the page to load and verify that the projects list is visible.
+  await window.waitForTimeout(2000);
+  await expect(window.locator('//*[@id="projects-list"]')).toBeVisible();
+  // Locate the projects list, find the target project, and verify the selected language.
+  const table = window.locator('//*[@id="projects-list"]');
+  const body = table.locator('//*[@id="projects-list-body"]');
+  const rows = body.locator('tr');
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === projectName) {
+      // Verify the language of the selected project.
+      expect(await tds.nth(2).textContent()).toBe(selectLanguage);
+    }
+  }
+  await goToEditProject(window, expect, projectName);
+  await window.locator('//*[@aria-label="cancel-edit-project"]').click()
   await projectPageExpect(window, expect)
-
+  
 }
 
 // Updates the project description and abbreviation.
@@ -467,16 +481,6 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
   // Verify that the project was created.
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   await expect(projectName).toBe(projectname);
-}
-
-export const clickUserImage = async (window, expect, itemClick) => {
-  // Ensure the user profile image is visible and click on it.
-  await window.waitForSelector('//*[@id="user-profile-image"]')
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
-  await window.locator('//*[@id="user-profile-image"]').click();
-  // Verify that the user profile is visible and click on it.
-  expect(await window.locator(`//*[@aria-label="${itemClick}"]`)).toBeVisible();
-  await window.locator(`//*[@aria-label="${itemClick}"]`).click();
 }
 
 // Performs user profile validation checks.

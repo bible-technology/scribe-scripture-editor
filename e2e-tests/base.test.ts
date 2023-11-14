@@ -598,17 +598,17 @@ test('Search a new custom text translation project in all projects list', async 
 
 /* Changing text translation project target language */
 //text translation project
-test("Changing text translation project language from English to Persian", async ({ textProject }) => {
+test("Changing text translation project language from English to Persian, checking in Projects and edit page", async ({ textProject }) => {
   // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "persian", "Persian (Farsi)")
 })
 
-test("Changing text translation project language from Persian to English", async ({ textProject, english }) => {
+test("Changing text translation project language from Persian to English, checking in Projects and Edit page", async ({ textProject, english }) => {
   // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, english.toLowerCase(), english)
 })
 
-test("Changing text translation project language from English to new custom created language", async ({ textProject, customTextLanguage }) => {
+test("Changing text translation project language from English to new custom created language, checking in Projects and Edit page", async ({ textProject, customTextLanguage }) => {
   // Change the text translation project language
   await projectTargetLanguage(window, expect, textProject, "custom text", customTextLanguage)
   await checkProjectName(window, expect, textProject)
