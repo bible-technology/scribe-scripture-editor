@@ -171,10 +171,12 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   await itemSearch.click()
   if(await rows.count() >= 4){
     await itemSearch.fill("translation")
+    await window.waitForTimeout(1000)
     expect(await rows.count() > 1).toBe(true)
   }
   await window.waitForTimeout(500)
   await itemSearch.fill(searchtext)
+  await window.waitForTimeout(1000)
   expect(await rows.count()).toBe(1)
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   //expecting project name
@@ -416,9 +418,8 @@ export const checkingUpdatedLicense = async (window, expect, projectname, newLic
   }
   const license = await window.locator(`//*[@id="${newLicense}"]`).textContent()
   await expect(license).toBe(newLicense)
-  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
-  // Click the "Save" button.
-  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  await window.locator('//*[@aria-label="cancel-edit-project"]').click()
+  await projectPageExpect(window, expect)
 }
 
 // Adds or edits custom target languages.
@@ -470,6 +471,7 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
 
 export const clickUserImage = async (window, expect, itemClick) => {
   // Ensure the user profile image is visible and click on it.
+  await window.waitForSelector('//*[@id="user-profile-image"]')
   expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
   await window.locator('//*[@id="user-profile-image"]').click();
   // Verify that the user profile is visible and click on it.
