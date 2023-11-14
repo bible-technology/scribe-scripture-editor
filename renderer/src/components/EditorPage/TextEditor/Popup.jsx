@@ -39,9 +39,9 @@ const Popup = ({ action, setTriggerVerseInsert }) => {
 
   return (
     <PopUpTemplate
-      buttonStyle="button gap-2  dark:hover:bg-hc-darkgray-300 dark:bg-hc-darkgray-200 dark:text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1 "
+      buttonStyle="button gap-2 text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1"
       buttonText={functionMapping[action].icon}
-      isLarge
+      isSmall
       maxWidth="max-w-xl"
     >
       <div className="inline-block w-full max-w-md p-6 ">
