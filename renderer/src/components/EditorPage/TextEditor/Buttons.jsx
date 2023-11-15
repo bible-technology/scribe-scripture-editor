@@ -20,6 +20,8 @@ export default function Buttons(props) {
   const [preview, setPreviewState] = useState(false);
   const {
     bookCode,
+    canUndo,
+    canRedo,
     undo,
     redo,
     setSectionable,
@@ -84,18 +86,29 @@ export default function Buttons(props) {
           />
         )}
 
-      <ArrowUturnLeftIcon
-        aria-label="Undo-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
+      <button
+        type="button"
         onClick={() => undo()}
-        title="Undo"
-      />
-      <ArrowUturnRightIcon
-        aria-label="Redo-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
-        onClick={() => redo()}
+        disabled={!canUndo}
         title="Redo"
-      />
+      >
+        <ArrowUturnLeftIcon
+          aria-label="Redo-Icon"
+          className="h-5 mr-2 w-5 text-white cursor-pointer"
+        />
+      </button>
+      <button
+        type="button"
+        onClick={() => redo()}
+        disabled={!canRedo}
+        title="Redo"
+      >
+        <ArrowUturnRightIcon
+          aria-label="Redo-Icon"
+          className="h-5 mr-2 w-5 text-white cursor-pointer"
+        />
+      </button>
+
       <ArrowDownOnSquareIcon
         aria-label="Save-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"

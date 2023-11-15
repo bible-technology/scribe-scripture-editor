@@ -78,7 +78,7 @@ export default function EditorMenuBar(props) {
           <Buttons {...props} />
         </div>
         <div className="flex ml-auto">
-          <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
+          <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
           <InsertMenu setTriggerVerseInsert={setTriggerVerseInsert} />
         </div>
       </div>

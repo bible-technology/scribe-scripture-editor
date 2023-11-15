@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { ScribexContext } from '@/components/context/ScribexContext';
 
+import XMarkIcon from '@/icons/Xelah/XMark.svg';
 import { usePopup } from '../../Popup/PopupContext';
 import PopUpTemplate from '../../Popup';
 import { functionMapping } from './utils/insertFunctionMap';
@@ -15,6 +16,7 @@ const Popup = ({ action, setTriggerVerseInsert }) => {
       setTextToInsert,
       setNumberToInsert,
       setInsertType,
+      setSelectedText,
     },
   } = useContext(ScribexContext);
   const { setIsOpen } = usePopup();
@@ -30,28 +32,34 @@ const Popup = ({ action, setTriggerVerseInsert }) => {
     setInsertType(action);
     setTriggerVerseInsert((prev) => !prev);
 
-    // calling funciton here does not trigger the perf check to safe. Hence the trigger to re-render.
+    // calling funciton here does not trigger the perf check to safe. Hence the trigger to re-render. and the code is commented out.
     // action === 'insertVerseNumber' || action === 'insertChapterNumber'
     //   ? functionMapping[action].function({ caretPosition, numberToInsert })
     //   : functionMapping[action].function({ caretPosition, textToInsert, selectedText });
     setIsOpen(false);
+    setSelectedText('');
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedText('');
   };
 
   return (
     <PopUpTemplate
-      buttonStyle="button gap-2 text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1"
+      buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1"
       buttonText={functionMapping[action].icon}
       isSmall
       maxWidth="max-w-xl"
     >
-      <div className="inline-block w-full max-w-md p-6 ">
+      <div className="absolute flex text-white justify-between items-center w-full bg-black h-8 mb-8 rounded-t-md">
+        <h2 className="text-sm h-5 pl-2">{functionMapping[action].title}</h2>
+        <button type="button" className="h-full flex items-center px-2 bg-primary rounded-tr-md" onClick={() => handleClose()}>
+          <XMarkIcon className="h-5 w-5 text-white" />
+        </button>
+      </div>
+      <div className="inline-block w-full max-w-md p-6 mt-4">
         <div className="mt-2">
-          <div
-            as="h3"
-            className="text-lg font-medium leading-6 text-gray-900"
-          >
-            {functionMapping[action].title}
-          </div>
           {selectedText && selectedText.length > 0
             && (
               <div>
@@ -63,7 +71,7 @@ const Popup = ({ action, setTriggerVerseInsert }) => {
             )}
 
         </div>
-        <div className="mt-2">
+        <div className="mt-4">
           {action === 'insertVerseNumber' || action === 'insertChapterNumber'
             ? (
               <input
