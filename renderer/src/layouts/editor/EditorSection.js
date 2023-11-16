@@ -331,6 +331,7 @@ export default function EditorSection({
             <button
               type="button"
               title={t('tooltip-editor-add-section')}
+              aria-label={`add-section-${panelNo}`}
               onClick={addRow}
               className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
             >

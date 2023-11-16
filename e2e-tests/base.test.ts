@@ -290,7 +290,7 @@ test('Adding panels', async () => {
   expect(title).toBe('1');
 });
 
-test("Adding 2 panels and removing from the editor", async () => {
+test("Adding refernce panels and removing from the editor", async () => {
   await window.waitForSelector('//*[@aria-label="add-panels"]')
   const addPanel = await window.locator('//*[@aria-label="add-panels"]')
   await addPanel.click()
@@ -301,6 +301,19 @@ test("Adding 2 panels and removing from the editor", async () => {
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
   await removeResource(window, expect, 3, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
+})
+
+test("Adding some more section for resource in editor", async () => {
+  await window.waitForSelector('//*[@aria-label="add-panels"]')
+  const addPanel = await window.locator('//*[@aria-label="add-panels"]')
+  await addPanel.click()
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
+  await addPanel.click()
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
+  await window.locator('//*[@aria-label="resources-panel-1"]').hover()
+  await window.locator('//*[@aria-label="add-section-1"]').click()
+  await window.locator('//*[@aria-label="resources-panel-3"]').hover()
+  await window.locator('//*[@aria-label="add-section-3"]').click()
 })
 
 test('Increase the font size in the obs editor', async () => {
