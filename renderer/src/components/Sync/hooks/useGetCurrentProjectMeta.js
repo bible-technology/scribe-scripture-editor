@@ -11,7 +11,7 @@ export default function useGetCurrentProjectMeta() {
         localforage.getItem('userProfile').then((user) => {
           fetchProjectsMeta({ currentUser: user?.username })
           .then((value) => {
-            const projectId = currentProjectName?.split('_')[1];
+            const projectId = currentProjectName?.split('_').pop();
             const projectName = (currentProjectName.slice(0, currentProjectName.lastIndexOf('_'))).toLowerCase();
             meta = value.projects.filter((val) => val.identification.name.en.toLowerCase() === projectName.toLowerCase()
               && Object.keys(val.identification.primary[packageInfo.name])[0] === projectId);
