@@ -410,7 +410,7 @@ const LeftLogin = () => {
             </Dialog>
           </Transition>
         </div>
-        <div className="absolute bottom-5 text-xs lg:left-12 xl:left-24 flex sm:left-6  items-center justify-center sm:gap-8 gap-3 lg:gap-12 xl:gap-20 lg:text-sm font-semibold">
+        {/* <div className="absolute bottom-5 text-xs lg:left-12 xl:left-24 flex sm:left-6  items-center justify-center sm:gap-8 gap-3 lg:gap-12 xl:gap-20 lg:text-sm font-semibold">
           <a href="/" onClick={(event) => event.preventDefault()}>
             EN(US)
           </a>
@@ -423,7 +423,7 @@ const LeftLogin = () => {
           <a href="/" onClick={(event) => event.preventDefault()}>
             TERMS
           </a>
-        </div>
+        </div> */}
       </div>
     </div>
   );

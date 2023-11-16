@@ -1,4 +1,7 @@
 import LogoIcon from '@/icons/logo.svg';
+import Slider from '../ImageSlider/Slider';
+import AudioEditorIcon from '@/illustrations/AudioEditor.svg';
+import OBSEditorIcon from '@/illustrations/OBSEditor.svg';
 // import GroupIcon from '@/illustrations/group.svg';
 
 // import VectorOne from '@/illustrations/vector-one.svg';
@@ -7,59 +10,38 @@ import LogoIcon from '@/icons/logo.svg';
 
 export default function RightLogin() {
   return (
-    <div className="col-span-4 bg-secondary relative flex flex-col justify-between">
+    <div className="col-span-4 bg-secondary relative flex flex-col justify-center">
 
-      <div className="my-5 ml-28 mt-10 flex gap-3 items-center">
+      <div className="my-5  mt-10 flex flex-col gap-3 items-center justify-center">
         <LogoIcon
-          className="h-7 w-7 group-hover:text-primary"
+          className="h-12 w-12 group-hover:text-primary"
           aria-hidden="true"
         />
-        <div className="text-white uppercase font-bold tracking-wider text-2xl">Scribe Scripture</div>
+        <div className="text-white flex flex-col justify-center ">
+          <h3 className="uppercase font-bold tracking-wider text-3xl">Scribe Scripture</h3>
+          <q className="text-center italic text-sm mt-2">Scripture editing made simple</q>
+        </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center relative">
+      <div className="flex flex-col justify-center items-center relative mt-8">
 
-        <div className="mx-auto my-10">
-          {/* <GroupIcon
-            fill="#FF4A4A"
-            width={52}
-            height={42}
-          /> */}
+        <div className="text-white/80 leading-9 relative max-w-[80%] text-center | border border-gray-800 p-10 rounded-xl">
+          <p className="text-lg ">A Bible translation editor that is owned by and developed for the community which uses modern technology to solve the practical problems faced on the field in the current Bible translation context.</p>
         </div>
 
-        <div className="mx-10 md:mx-20 lg:mx-32 text-xl text-white leading-9 relative">
-          <div className="absolute top-0 left-0">
-            {/* <Quote height={26} fill="#FF4A4A" /> */}
-          </div>
-
-          <div className="py-10">
-            <p className="text-md">A Bible translation editor that is owned by and developed for the community which uses modern technology to solve the practical problems faced on the field in the current Bible translation context.</p>
-            <p className="flex gap-2 mt-4 font-semibold items-center">
-              <span className="text-lg">FEATURE 1</span>
-              <img src="/../illustrations/greenCheck.png" className="w-4 h-4" alt="" />
-
-            </p>
-          </div>
-
-        </div>
-
-        <div className="flex ">
-          <div className="">
-            <img src="/../illustrations/standing.png" alt="" />
-
-          </div>
-          <div>
-            {/* <VectorOne
-              width={34}
-              height={33}
-              fill="#FF4A4A"
-            /> */}
-          </div>
-        </div>
-        <div className="mt-12 flex gap-4">
-          <span className="h-2 w-2 rounded-full bg-white " />
-          <span className="h-2 w-2 rounded-full bg-gray-500" />
-          <span className="h-2 w-2 rounded-full bg-gray-500" />
+        <div className="mt-14 w-full mx-24 text-white">
+          <Slider data={[
+                  {
+              id: 1, img: <AudioEditorIcon className="h-full w-full rounded-xl" />, title: 'USER CENTRIC', content: 'The application is built from the ground up get you started with little or no training while enabling both beginners and veteran to their best work!',
+              },
+                  {
+              id: 2, img: <AudioEditorIcon className="h-full w-full rounded-xl" />, title: 'Oral Bible Translation', content: 'A flexible audio recording mode that has been successfully used for completing multiple drafts of OBT projects on the field.',
+              },
+                  {
+              id: 3, img: <OBSEditorIcon className="h-full w-full rounded-xl" />, title: 'Collaborate', content: 'Sync your text projects across multiple collaborators',
+              },
+            ]}
+          />
         </div>
 
       </div>
