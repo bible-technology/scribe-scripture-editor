@@ -97,7 +97,10 @@ const sbStorageDownload = async (path) => {
 const sbStorageUpdate = async ({ path, payload, options = {} }) => {
   await supabaseStorage().update(path, payload, options);
 };
-const sbStorageRemove = async (path, payload, options) => {
+const sbStorageRemove = async (path, options) => {
+  if (options) {
+    await supabaseStorage().remove(path, options);
+  }
   await supabaseStorage().remove(path);
 };
 

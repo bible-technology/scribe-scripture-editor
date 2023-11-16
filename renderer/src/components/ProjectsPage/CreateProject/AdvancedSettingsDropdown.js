@@ -270,7 +270,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                     show
                   /> */}
 
-                  <div className="py-5 flex gap-3 uppercase text-sm font-medium">
+                  <div className="py-5 flex flex-wrap lg:flex-nowrap gap-3 uppercase text-sm font-medium">
                     <div
                       className={canonSpecification.title === 'All Books' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[0])}

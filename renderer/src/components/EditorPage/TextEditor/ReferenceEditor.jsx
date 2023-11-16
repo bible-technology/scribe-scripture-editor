@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
@@ -93,10 +93,10 @@ export default function ReferenceEditor(props) {
     },
     components: {
       block: (__props) => ReferenceRecursiveBlock({
-          htmlPerf,
-          sequenceIds,
-          ...__props,
-        }),
+        htmlPerf,
+        sequenceIds,
+        ...__props,
+      }),
     },
     decorators: {},
     verbose,

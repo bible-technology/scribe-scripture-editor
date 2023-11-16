@@ -23,9 +23,16 @@
       "@/illustrations/*": [
         "public/illustrations/*"
       ],
-      "@/hooks/*":[
+      "@/hooks/*": [
         "src/components/hooks/*"
+      ],
+      "@/hooks2/*": [
+        "src/hooks/*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import localforage from 'localforage';
 import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
 import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
-import { ScribexContext } from '@/components/context/ScribexContext';
-import { useReadUsfmFile } from '@/components/hooks/scribex/useReadUsfmFile';
 import packageInfo from '../../../../package.json';
 import SectionPlaceholder1 from './SectionPlaceholder1';
 import SectionPlaceholder2 from './SectionPlaceholder2';
-import Scribex from '@/components/EditorPage/Scribex/Scribex'; // eslint-disable-line 
+import TextEditor from '@/components/EditorPage/TextEditor'; // eslint-disable-line 
 
 const MainPlayer = dynamic(
   () => import('@/components/EditorPage/AudioEditor/MainPlayer'),
@@ -32,20 +30,12 @@ const SectionContainer = () => {
     });
   }, [editor]);
 
-  const { usfmData, bookAvailable } = useReadUsfmFile();
-  const { state, actions } = useContext(ScribexContext);
-  const props = {
-    usfmData,
-    bookAvailable,
-    state,
-    actions,
-  };
   return (
     <>
       <div className="grid grid-flow-col auto-cols-fr m-3 gap-2">
         <SectionPlaceholder1 editor={editor} />
         <SectionPlaceholder2 editor={editor} />
-        {(editor === 'textTranslation' && <Scribex {...props} />)
+        {(editor === 'textTranslation' && <TextEditor />)
           || (editor === 'textStories' && <ObsEditor />)
           || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
       </div>
