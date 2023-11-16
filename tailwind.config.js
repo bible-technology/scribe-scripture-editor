@@ -33,6 +33,7 @@ module.exports = {
       },
       height: {
         editor: 'calc(-9rem + 100vh)',
+        reference: 'calc((-9.5rem + 100vh)/2)',
       },
     },
   },
