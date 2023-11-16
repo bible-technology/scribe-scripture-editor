@@ -10,16 +10,10 @@ import localforage from 'localforage';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
 // import useNetwork from '@/components/hooks/useNetowrk';
 import { isElectron } from '@/core/handleElectron';
-import Font from '@/icons/font.svg';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
-import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import menuStyles from './MenuBar.module.css';
 import packageInfo from '../../../../package.json';
 import { newPath, sbStorageDownload } from '../../../../supabase';
-
-const activate = () => {
-  // console.log('rename');
-};
 
 const EditorTools = [
   {
@@ -65,12 +59,12 @@ export default function SubMenuBar() {
       icon: <BookmarkIcon />,
       callback: openBookMarks,
     },
-    {
-      itemname: 'Font',
-      icon: <Font />,
-      renderElement: <MenuDropdown />,
-      callback: activate,
-    },
+    // {
+    //   itemname: 'Font',
+    //   icon: <Font />,
+    //   renderElement: <FontSelection selectedFont={selectedFont} setSelectedFont={setSelectedFont} />,
+    //   callback: activate,
+    // },
   ];
 
   const handleResource = () => {

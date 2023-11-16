@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 
 import { ProjectContext } from '@/components/context/ProjectContext';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import FontSelection from '@/components/MenuDropdown/FontSelection';
 // import BibleNavigationX from '@/components/EditorPage/TextEditor/BibleNavigationX';
 import BibleNavigationX from './BibleNavigationX';
 import Buttons from './Buttons';
@@ -78,7 +78,7 @@ export default function EditorMenuBar(props) {
           <Buttons {...props} />
         </div>
         <div className="flex ml-auto">
-          <MenuDropdown selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
+          <FontSelection selectedFont={selectedFont} setSelectedFont={setSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
           <InsertMenu setTriggerVerseInsert={setTriggerVerseInsert} />
         </div>
       </div>

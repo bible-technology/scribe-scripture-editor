@@ -13,7 +13,7 @@ import {
   fontList as fontsArray,
 } from 'font-detect-rhl';
 
-export default function MenuDropdown({ selectedFont, setSelectedFont, buttonStyle }) {
+export default function FontSelection({ selectedFont, setSelectedFont, buttonStyle }) {
   const detectedFonts = useDetectFonts({ fonts: fontsArray });
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);

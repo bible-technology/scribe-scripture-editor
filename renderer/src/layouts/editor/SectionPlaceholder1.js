@@ -334,6 +334,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                           && (
                             <ReferenceObs
                               stories={stories1}
+                              font={font1}
                             />
                           )}
                       </>
@@ -407,6 +408,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                           && (
                             <ReferenceObs
                               stories={stories2}
+                              font={font2}
                             />
                           )}
                       </>

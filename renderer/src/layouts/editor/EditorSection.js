@@ -9,7 +9,7 @@ import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
 import TwNavigation from '@/components/EditorPage/Reference/TW/TwNavigation';
 import { getScriptureDirection } from '@/core/projects/languageUtil';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
+import FontSelection from '@/components/MenuDropdown/FontSelection';
 import AdjustmentsVerticalIcon from '@/icons/Common/AdjustmentsVertical.svg';
 import XMarkIcon from '@/icons/Common/XMark.svg';
 import SquaresPlusIcon from '@/icons/Common/SquaresPlus.svg';
@@ -246,7 +246,7 @@ export default function EditorSection({
                 </>
               )}
               <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible ">
-                <MenuDropdown
+                <FontSelection
                   selectedFont={font}
                   setSelectedFont={setFont}
                 />

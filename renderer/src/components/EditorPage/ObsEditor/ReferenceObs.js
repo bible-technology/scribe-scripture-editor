@@ -17,13 +17,12 @@ const style = {
     fontStyle: 'italic',
   },
 };
-const ReferenceObs = ({ stories }) => {
+const ReferenceObs = ({ stories, font: selectedFont }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [networkState, setNetworkState] = useState({ online: true });
   const {
  state: {
     selectedStory,
-    selectedFont,
     fontSize,
   },
   actions: {
