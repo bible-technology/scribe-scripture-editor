@@ -11,7 +11,7 @@ import {
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
   clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
-  createUser, projectPageExpect
+  createUser, projectPageExpect, removeResource
 } from './common';
 
 const fs = require('fs');
@@ -276,6 +276,32 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
   const verse3 = await window.textContent('div:nth-child(3) > .flex-grow');
   expect(verse3).toBe('Story content added in verse 3');
 });
+
+test('Adding panels', async () => {
+  const addPanel = await window.locator('//*[@aria-label="add-panels"]');
+  await addPanel.click()
+  let title = await window.innerText('//*[@aria-label="number-of-panels"]');
+  expect(title).toBe('2');
+  await addPanel.click()
+  title = await window.innerText('//*[@aria-label="number-of-panels"]');
+  expect(title).toBe('3');
+  await addPanel.click()
+  title = await window.innerText('//*[@aria-label="number-of-panels"]');
+  expect(title).toBe('1');
+});
+
+test("Adding 2 panels and removing from the editor", async () => {
+  await window.waitForSelector('//*[@aria-label="add-panels"]')
+  const addPanel = await window.locator('//*[@aria-label="add-panels"]')
+  await addPanel.click()
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
+  await addPanel.click()
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
+  await removeResource(window, expect, 1, "confirm-remove")
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
+  await removeResource(window, expect, 3, "confirm-remove")
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
+})
 
 test('Increase the font size in the obs editor', async () => {
   await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });

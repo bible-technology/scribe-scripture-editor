@@ -114,7 +114,7 @@ function EditorSync({ selectedProject }) {
           )
           : (
             <div
-              aria-label="add-panels"
+              aria-label="save-to-cloud"
               title={t('label-save-to-cloud')}
               type="div"
             // className={`group ${menuStyles.btn} `}

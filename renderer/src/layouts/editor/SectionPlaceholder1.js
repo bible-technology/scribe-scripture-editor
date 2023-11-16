@@ -309,6 +309,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                   setAddingSection={setAddingSection}
                   font={font1}
                   setFont={setFont1}
+                  panelNo="1"
                 >
                   {
                     (loadResource1 === true)
@@ -382,6 +383,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                   setAddingSection={setAddingSection}
                   font={font2}
                   setFont={setFont2}
+                  panelNo="2"
                 >
                   {
                     (loadResource2 === true)

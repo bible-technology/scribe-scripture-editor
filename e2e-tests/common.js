@@ -38,6 +38,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
   // Check if user profile image is visible
+  await window.waitForSelector('//*[@id="user-profile-image"]')
   const userProfileImage = window.locator('//*[@id="user-profile-image"]');
   expect(await userProfileImage.isVisible()).toBeTruthy();
   await userProfileImage.click();
@@ -78,8 +79,10 @@ export const projectPageExpect = async (window, expect) => {
 
 export const clickUserImage = async (window, expect, itemClick) => {
   // Ensure the user profile image is visible and click on it.
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
-  await window.locator('//*[@id="user-profile-image"]').click();
+  await window.waitForSelector('//*[@id="user-profile-image"]')
+  const imageClick = await window.locator('//*[@id="user-profile-image"]')
+  expect(await imageClick).toBeVisible();
+  await imageClick.click();
   // Verify that the user profile is visible and click on it.
   await window.waitForSelector(`//*[@aria-label="${itemClick}"]`)
   expect(await window.locator(`//*[@aria-label="${itemClick}"]`)).toBeVisible();
@@ -219,6 +222,18 @@ export const checkProjectName = async (window, expect, name) => {
   const projectname = await window.locator('//*[@aria-label="editor-project-name"]', { timeout: 120000 }).textContent()
   // expecting project name in editor
   await expect(projectname).toBe(name);
+}
+
+// removing resource
+export const removeResource = async (window, expect, resourcePaneNo, confirmButton) => {
+  await window.waitForSelector(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  const closePanel = await window.locator(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  expect(await closePanel).toBeVisible()
+  await closePanel.click()
+  const title = await window.locator('//*[@aria-label="confirm-title"]').textContent()
+  await expect(title).toBe(title)
+  expect(await window.locator(`//*[@aria-label="${confirmButton}"]`)).toBeVisible()
+  await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
 }
 
 // Checks for notifications.
