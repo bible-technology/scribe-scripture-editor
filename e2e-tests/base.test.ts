@@ -316,6 +316,19 @@ test("Adding some more section for resource in editor", async () => {
   await window.locator('//*[@aria-label="add-section-3"]').click()
 })
 
+test("Removing all the panels", async () => {
+  //removing added section 2 from reference panel 1
+  await removeResource(window, expect, 2, "confirm-remove")
+  //removing added section 4 from reference panel 2
+  await removeResource(window, expect, 4, "confirm-remove")
+  // removing 1 resource panel
+  await removeResource(window, expect, 1, "confirm-remove")
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
+  // removing 2 resource panel
+  await removeResource(window, expect, 3, "confirm-remove")
+  expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
+})
+
 test('Increase the font size in the obs editor', async () => {
   await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });
   await window.locator('//*[@aria-label="increase-font"]').click();
