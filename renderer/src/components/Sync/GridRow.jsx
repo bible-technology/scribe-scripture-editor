@@ -16,7 +16,7 @@ function GridRow({
         <span
           className={classNames(
             selected ? 'text-primary' : 'text-gray-800',
-            'capitalize w-full flex items-center gap-5',
+            'w-full flex items-center gap-5',
           )}
         >
           <FolderIcon className="w-4 h-4" />

@@ -26,6 +26,7 @@ function ObsTnCard({
   owner,
   resourceId,
   offlineResource,
+  font,
   ...props
 }) {
   const [index, setIndex] = useState(0);
@@ -141,6 +142,7 @@ function ObsTnCard({
         shouldSetQuoteOnClick
         index={index}
         setIndex={(v) => setIndex(v)}
+        font={font}
       />
     ) : <LoadingScreen />
   );

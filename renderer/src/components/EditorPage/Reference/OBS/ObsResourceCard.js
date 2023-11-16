@@ -16,6 +16,7 @@ function ObsResourceCard({
   languageId,
   isLoading,
   setIndex,
+  font,
 }) {
   const {
     state: { filters, markdownView },
@@ -35,18 +36,20 @@ function ObsResourceCard({
         itemIndex={index}
         setItemIndex={setIndex}
       />
-      <CardContent
-        item={[]}
-        items={items}
-        filters={filters}
-        markdown={markdown}
-        languageId={languageId}
-        markdownView={markdownView}
-        isLoading={isLoading}
-        selectedQuote={selectedQuote}
-        setQuote={setQuote}
-        viewMode={viewMode}
-      />
+      <div style={{ fontFamily: font || 'sans-serif' }}>
+        <CardContent
+          item={[]}
+          items={items}
+          filters={filters}
+          markdown={markdown}
+          languageId={languageId}
+          markdownView={markdownView}
+          isLoading={isLoading}
+          selectedQuote={selectedQuote}
+          setQuote={setQuote}
+          viewMode={viewMode}
+        />
+      </div>
     </>
   );
 }

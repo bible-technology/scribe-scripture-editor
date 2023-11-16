@@ -34,6 +34,7 @@ export const updateAgSettings = async (username, projectName, data, font) => {
       setting.project[data.type.flavorType.flavor.name].font = font || setting.project[data.type.flavorType.flavor.name].font;
     }
   }
+  setting.project[data.type.flavorType.flavor.name].refResources = data.project[data.type.flavorType.flavor.name].refResources;
   logger.debug('updateAgSettings.js', `Updating the ${environment.PROJECT_SETTING_FILE}`);
   await fs.writeFileSync(folder, JSON.stringify(setting));
 };

@@ -25,6 +25,7 @@ export default function TranslationHelpsCard({
   selectedQuote,
   viewMode,
   offlineResource,
+  font,
 }) {
   const [offlineItems, setOfflineItems] = useState([]);
   const [offlineItemsDisable, setOfflineItemsDisable] = useState(false);
@@ -182,6 +183,7 @@ export default function TranslationHelpsCard({
         viewMode={viewMode}
         selectedQuote={selectedQuote}
         setQuote={setQuote}
+        font={font}
       />
     </>
   );

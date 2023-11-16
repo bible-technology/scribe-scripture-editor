@@ -69,6 +69,7 @@ export async function saveSettingsResourceHistory(
                       header: referenceColumnData2?.header,
                       owner: referenceColumnData2?.owner,
                       offlineResource: referenceColumnData2.offlineResource,
+                      font: referenceColumnData2?.font,
                     }
                     ));
                     setReferenceColumnData2((prev) => ({
@@ -79,6 +80,7 @@ export async function saveSettingsResourceHistory(
                       header: '',
                       owner: '',
                       offlineResource: { offline: false },
+                      font: '',
                     }
                     ));
                     setOpenResourceR1(false);
@@ -92,6 +94,7 @@ export async function saveSettingsResourceHistory(
                         owner: referenceToUse?.owner,
                         navigation: { book: '1TI', chapter: '1' },
                         offline: referenceToUse.offlineResource,
+                        font: referenceToUse?.font,
                       },
                     };
                 }
@@ -107,6 +110,7 @@ export async function saveSettingsResourceHistory(
                       owner: referenceColumnData1?.owner,
                       navigation: { book: '1TI', chapter: '1' },
                       offline: referenceColumnData1.offlineResource,
+                      font: referenceColumnData1?.font,
                     },
                     2: {
                       resouceId: referenceColumnData2?.selectedResource,
@@ -115,6 +119,7 @@ export async function saveSettingsResourceHistory(
                       owner: referenceColumnData2?.owner,
                       navigation: { book: '1TI', chapter: '1' },
                       offline: referenceColumnData2.offlineResource,
+                      font: referenceColumnData2?.font,
                     },
                   };
                 }

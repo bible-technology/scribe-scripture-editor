@@ -127,6 +127,7 @@ const SectionPlaceholder2 = ({ editor }) => {
         header: '',
         owner: '',
         offlineResource: { offline: false },
+        font: '',
       }
       ));
       setResetResourceOnDeleteOffline((prev) => ({
@@ -145,6 +146,7 @@ const SectionPlaceholder2 = ({ editor }) => {
         header: '',
         owner: '',
         offlineResource: { offline: false },
+        font: '',
       }
       ));
       setResetResourceOnDeleteOffline((prev) => ({
@@ -230,6 +232,7 @@ const SectionPlaceholder2 = ({ editor }) => {
     referenceColumnTwoData2?.refName, referenceColumnTwoData2?.selectedResource, sectionNum, layout,
     referenceColumnTwoData1?.owner, referenceColumnTwoData2?.owner, removingSection, addingSection,
     referenceColumnTwoData1.offlineResource, referenceColumnTwoData2.offlineResource,
+    referenceColumnTwoData1.font, referenceColumnTwoData2.font,
     resetResourceOnDeleteOffline?.referenceColumnTwoData1Reset, resetResourceOnDeleteOffline?.referenceColumnTwoData2Reset,
   ]);
 
@@ -280,7 +283,20 @@ const SectionPlaceholder2 = ({ editor }) => {
         setStories2(core(fs, _obsNavigation2, referenceColumnTwoData2.refName, user.username));
       }
     });
+    if (referenceColumnTwoData1?.font) {
+      setFont3(referenceColumnTwoData1.font);
+    }
+    if (referenceColumnTwoData2.font) {
+      setFont4(referenceColumnTwoData2?.font);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_obsNavigation1, _obsNavigation2, referenceColumnTwoData1, referenceColumnTwoData2]);
+
+  useEffect(() => {
+    setReferenceColumnTwoData1((prev) => ({ ...prev, font: font3 }));
+    setReferenceColumnTwoData2((prev) => ({ ...prev, font: font4 }));
+  }, [font3, font4]);
+
   return (
     <>
       {((openResource1 === true && openResource2 === true)
@@ -333,6 +349,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                           && (
                             <ReferenceObs
                               stories={stories1}
+                              font={font3}
                             />
                           )}
                       </>
@@ -343,6 +360,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                         bookId={_bookId1}
                         chapter={_chapter1}
                         verse={_verse1}
+                        font={font3}
                       />
                     )) || (
                     <TranslationHelps
@@ -354,6 +372,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                       verse={_verse1}
                       story={_obsNavigation1}
                       offlineResource={referenceColumnTwoData1.offlineResource}
+                      font={font3}
                     />
                       )
                     )
@@ -404,6 +423,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                           && (
                             <ReferenceObs
                               stories={stories2}
+                              font={font4}
                             />
                           )}
                       </>
@@ -414,6 +434,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                         bookId={_bookId1}
                         chapter={_chapter1}
                         verse={_verse1}
+                        font={font4}
                       />
                     )) || (
                     <TranslationHelps
@@ -425,6 +446,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                       verse={_verse2}
                       story={_obsNavigation2}
                       offlineResource={referenceColumnTwoData2.offlineResource}
+                      font={font4}
                     />
                       )
                     )
