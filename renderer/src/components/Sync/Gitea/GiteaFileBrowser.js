@@ -161,7 +161,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
               title={`${repo?.name} (${repo.name.split('-').pop().replaceAll('_', ' ')})`}
               lastSync={undefined}
               selected
-              isUpload={selectedGiteaProject?.repo?.name === repo?.name && syncProgress.syncStarted}
+              isUpload={selectedGiteaProject?.repo?.name === repo?.name && syncProgress.syncStarted && syncProgress.syncType === 'syncFrom'}
               uploadPercentage={(syncProgress.completedFiles * 100) / syncProgress.totalFiles}
             />
             <div className="">

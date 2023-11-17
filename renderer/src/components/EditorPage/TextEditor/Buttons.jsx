@@ -20,6 +20,8 @@ export default function Buttons(props) {
   const [preview, setPreviewState] = useState(false);
   const {
     bookCode,
+    canUndo,
+    canRedo,
     undo,
     redo,
     setSectionable,
@@ -27,7 +29,6 @@ export default function Buttons(props) {
     setEditable,
     setPreview,
     exportUsfm,
-    setTriggerVerseInsert,
   } = props;
 
   const onSectionable = () => {
@@ -55,7 +56,6 @@ export default function Buttons(props) {
           sectionable ? 'fill-current' : '',
           'h-5 mr-2 w-5 text-white cursor-pointer',
         )}
-        // aria-hidden="true"
         onClick={onSectionable}
         title={sectionable ? 'Expand all Chapters' : 'Collapse Chapters'}
       />
@@ -66,7 +66,6 @@ export default function Buttons(props) {
           editable ? 'fill-current' : '',
           'h-5 mr-2 w-5 text-white cursor-pointer',
         )}
-        // aria-hidden="true"
         onClick={onEditable}
         title={editable ? 'Disable Edit' : 'Enable Edit'}
       />
@@ -74,7 +73,6 @@ export default function Buttons(props) {
         <Bars2Icon
           aria-label="Article-Icon"
           className="h-5 mr-2 w-5 text-white cursor-pointer"
-          // aria-hidden="true"
           onClick={onBlockable}
           title="Collapse blocks"
         />
@@ -83,48 +81,40 @@ export default function Buttons(props) {
           <Bars4Icon
             aria-label="List-Icon"
             className="h-5 mr-2 w-5 text-white cursor-pointer"
-            // aria-hidden="true"
             onClick={onBlockable}
             title="Split into blocks"
           />
         )}
 
-      <ArrowUturnLeftIcon
-        aria-label="Undo-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
-        // aria-hidden="true"
+      <button
+        type="button"
         onClick={() => undo()}
-        title="Undo"
-      />
-      <ArrowUturnRightIcon
-        aria-label="Redo-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
-        // aria-hidden="true"
-        onClick={() => redo()}
+        disabled={!canUndo}
         title="Redo"
-      />
+      >
+        <ArrowUturnLeftIcon
+          aria-label="Redo-Icon"
+          className="h-5 mr-2 w-5 text-white cursor-pointer"
+        />
+      </button>
+      <button
+        type="button"
+        onClick={() => redo()}
+        disabled={!canRedo}
+        title="Redo"
+      >
+        <ArrowUturnRightIcon
+          aria-label="Redo-Icon"
+          className="h-5 mr-2 w-5 text-white cursor-pointer"
+        />
+      </button>
+
       <ArrowDownOnSquareIcon
         aria-label="Save-Icon"
         className="h-5 mr-2 w-5 text-white cursor-pointer"
-        // aria-hidden="true"
         onClick={() => exportUsfm(bookCode)}
         title="Save"
       />
-      {/* <span>| </span>
-      <Copy
-        aria-label="Save-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
-        aria-hidden="true"
-        onClick={() => copyText()}
-        title="Save"
-      />
-      <Paste
-        aria-label="Paste-Icon"
-        className="h-5 mr-2 w-5 text-white cursor-pointer"
-        aria-hidden="true"
-        onClick={() => pasteText(true)}
-        title="Save"
-      /> */}
     </>
   );
 }

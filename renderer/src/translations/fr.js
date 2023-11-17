@@ -274,4 +274,6 @@ export const Fr = {
     'label-accepted': 'Accepté',
     'msg-remove-resource': 'Êtes-vous sûr de vouloir supprimer la ressource. Cette action ne peut pas être annulée',
     'label-check-updates': 'Vérifier les mises à jour',
+    'label-documentation': 'Documentation',
+    'label-tech-support': 'support technique',
 };

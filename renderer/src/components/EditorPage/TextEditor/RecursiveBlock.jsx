@@ -2,8 +2,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
-import { getCurrentCursorPosition } from '@/util/cursorUtils';
-import { getCurrentVerse, getCurrentChapter } from './getReferences';
+import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/cursorUtils';
+import { getCurrentVerse, getCurrentChapter } from '@/components/EditorPage/TextEditor/utils/getReferences';
+import { on } from 'ws';
 
 const getTarget = ({ content }) => {
   const div = document.createElement('div');
@@ -78,13 +79,17 @@ export default function RecursiveBlock({
       const selectedNode = range.startContainer;
       const verse = getCurrentVerse(selectedNode);
       const chapter = getCurrentChapter(selectedNode);
-      // if (onReferenceSelected) {
       onReferenceSelected({ bookId, chapter, verse });
-      // }
     }
     updateCursorPosition();
     handleSelection();
   };
+
+  function onPasteHandler(event) {
+    const cursorPosition = getCurrentCursorPosition('editor');
+    const paste = (event.clipboardData || window.clipboardData).getData('text');
+    pasteTextAtCursorPosition({ cursorPosition, textToInsert: paste });
+  }
 
   let component;
 
@@ -100,10 +105,10 @@ export default function RecursiveBlock({
         onMouseUp={checkCurrentVerse}
         onMouseDown={updateCursorPosition}
         {...props}
+        onPaste={(event) => { event.preventDefault(); onPasteHandler(event); }}
       />
     );
   }
-
   if (!editable) {
     const sequenceId = getTarget({ content });
 

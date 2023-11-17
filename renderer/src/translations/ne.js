@@ -274,4 +274,6 @@ export const Ne = {
     'label-accepted': 'स्वीकार गरियो',
     'msg-remove-resource': 'के तपाईं निश्चित रूपमा स्रोत हटाउन चाहनुहुन्छ। यो कार्य उल्टाउन सकिँदैन',
     'label-check-updates': 'अपडेटहरू जाँच गर्नुहोस्',
+    'label-documentation': 'कागजात',
+    'label-tech-support': 'प्राविधिक समर्थन',
 };

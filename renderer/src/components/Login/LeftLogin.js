@@ -391,6 +391,7 @@ const LeftLogin = () => {
                       <div className="mt-8 flex gap-8 justify-end">
                         <button
                           type="button"
+                          aria-label="cancel"
                           className="inline-flex justify-center rounded-md border border-transparent bg-primary px-12 py-2 text-sm font-medium text-white hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                           onClick={closeAccountModal}
                         >

@@ -15,4 +15,5 @@ export const environment = {
     AG_MINIMUM_BURRITO_VERSION: '0.3.0',
     OBS_IMAGE_DIR: 'obs-images',
     MERGE_DIR_NAME: '.merge-staging-area',
+    SCRIBE_SUPPORT_MAIL: 'scribe@bridgeconn.com',
 };

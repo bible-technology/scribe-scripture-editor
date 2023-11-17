@@ -8485,18 +8485,7 @@ epitelete-html@0.2.20-beta.2:
     node-html-parser "^5.3.3"
     pure-uuid "^1.6.3"
 
-epitelete@0.2.20-beta.1:
-  version "0.2.20-beta.1"
-  resolved "https://registry.yarnpkg.com/epitelete/-/epitelete-0.2.20-beta.1.tgz#e604ef358132dcb265ce3a967a6aec58162e1b13"
-  integrity sha512-sJpjnj01UDTtO7glo6Tmyvl5WJCZSSyFzbbMWugXM7+LCDdZdIfzdvOWOL+4H68G4ZUjZF3VcA9/PsnE/sBgzA==
-  dependencies:
-    "@babel/core" "^7.19.0"
-    base-64 "^1.0.0"
-    proskomma-json-tools "^0.6.6"
-    pure-uuid "^1.6.3"
-    rfdc "^1.3.0"
-
-epitelete@^0.2.20-beta.1:
+epitelete@^0.2.20, epitelete@^0.2.20-beta.1:
   version "0.2.20"
   resolved "https://registry.yarnpkg.com/epitelete/-/epitelete-0.2.20.tgz#1a89703d5e3152461179bd87540a6f58905141cc"
   integrity sha512-dag7scneBXNrR4LLSmeFWxb1ShYeWOxxRqyogJo9UEES2Nr8B5cNDfGqMqYOszCAMdmnGH1RoH1qydAk04JjoA==
@@ -16163,16 +16152,6 @@ proskomma-json-tools@^0.5.7:
   version "0.5.12"
   resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.5.12.tgz#d82b4aee5368877ad3db28356da5870411e1f734"
   integrity sha512-Zn4KlM8xO/VnkaXoxbv4dWwOqcV4mtObUSRqwQJKv0UWkl7xiHVo5rKxH1lPgF5TitikjVpIrZL/DUCvheYrSw==
-  dependencies:
-    "@babel/core" "^7.17.10"
-    "@babel/plugin-proposal-throw-expressions" "^7.18.6"
-    ajv "^8.11.0"
-    deep-equal "^2.0.5"
-
-proskomma-json-tools@^0.6.6:
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.6.6.tgz#a5df84641ff4c6239f94ab93e3dbf71e52333d88"
-  integrity sha512-IEBJTyg6YDKr4E54CLDO1wDjcoiqGKjLxRDTnNSDRaHBG1TJyN1k94V6CHVrvgzKUtQFdWRH77mQ6hJjIUSLVg==
   dependencies:
     "@babel/core" "^7.17.10"
     "@babel/plugin-proposal-throw-expressions" "^7.18.6"

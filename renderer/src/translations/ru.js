@@ -274,5 +274,7 @@ export const Ru = {
     'label-accepted': 'Принял',
     'msg-remove-resource': 'Вы уверены, что хотите удалить ресурс? Это действие нельзя отменить.',
     'label-check-updates': 'Проверить обновления',
+    'label-documentation': 'Документация',
+    'label-tech-support': 'техническая поддержка',
 
 };

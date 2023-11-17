@@ -178,7 +178,7 @@ export default function Scribex(props) {
               <Buttons {..._props} />
             </div>
             <div className="flex ml-auto">
-              <MenuDropdown selectedFont={selectedFont} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
+              <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
               <InsertMenu handleClick={handleClick} selectedText={selectedText} />
             </div>
           </div>

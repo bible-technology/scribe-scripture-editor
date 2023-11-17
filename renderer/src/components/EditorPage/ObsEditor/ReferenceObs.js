@@ -82,12 +82,12 @@ const { t } = useTranslation();
             stories?.map((story, index) => (
               <div
                 key={story.id}
-                className={`flex gap-5 mb-5 items-center justify-center ${story.id === selectedStory && 'bg-light'}`}
+                className={`flex gap-5 mb-5 items-center  ${story.id === selectedStory && 'bg-light'}`}
                 ref={(element) => addtoItemEls(element, story.id)}
               >
                 {
                   Object.prototype.hasOwnProperty.call(story, 'title') && (
-                  <p className="text-xl text-gray-600" style={style.bold}>
+                  <p className="text-xl text-gray-600 w-full text-center" style={style.bold}>
                     {story.title}
                   </p>
                   )
@@ -101,7 +101,7 @@ const { t } = useTranslation();
                   {/* <img className="w-1/4 rounded-lg" src={story.img} alt="" /> */}
                   <ObsImage story={story} online={networkState.online} />
                   <p
-                    className="text-sm text-gray-600 text-justify"
+                    className="text-sm text-gray-600 text-justify w-full break-words overflow-hidden"
                     style={{
                       fontFamily: font || 'sans-serif',
                       fontSize: `${fontSize}rem`,

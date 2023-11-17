@@ -149,7 +149,7 @@ export default function Editor({
           {t('label-editor-pane')}
         </div>
         <div className="flex ml-auto">
-          <MenuDropdown selectedFont={selectedFont} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
+          <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
           {/* <InsertMenu handleClick={handleClick} selectedText={selectedText} /> */}
         </div>
         <div title={t('tooltip-editor-lock')} className="flex items-center">
