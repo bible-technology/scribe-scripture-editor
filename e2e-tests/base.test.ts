@@ -11,7 +11,7 @@ import {
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
   clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
-  createUser, projectPageExpect, removeResource
+  createUser, projectPageExpect, removeResource, addPanel
 } from './common';
 
 const fs = require('fs');
@@ -278,24 +278,21 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
 });
 
 test('Adding panels', async () => {
-  const addPanel = await window.locator('//*[@aria-label="add-panels"]');
-  await addPanel.click()
+  await addPanel(window)
   let title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('2');
-  await addPanel.click()
+  await addPanel(window)
   title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('3');
-  await addPanel.click()
+  await addPanel(window)
   title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('1');
 });
 
 test("Adding refernce panels and removing from the editor", async () => {
-  await window.waitForSelector('//*[@aria-label="add-panels"]')
-  const addPanel = await window.locator('//*[@aria-label="add-panels"]')
-  await addPanel.click()
+  await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
-  await addPanel.click()
+  await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
   await removeResource(window, expect, 1, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
@@ -304,11 +301,9 @@ test("Adding refernce panels and removing from the editor", async () => {
 })
 
 test("Adding some more section for resource in editor", async () => {
-  await window.waitForSelector('//*[@aria-label="add-panels"]')
-  const addPanel = await window.locator('//*[@aria-label="add-panels"]')
-  await addPanel.click()
+  await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
-  await addPanel.click()
+  await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
   await window.locator('//*[@aria-label="resources-panel-1"]').hover()
   await window.locator('//*[@aria-label="add-section-1"]').click()
@@ -327,6 +322,14 @@ test("Removing all the panels", async () => {
   // removing 2 resource panel
   await removeResource(window, expect, 3, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
+})
+
+test("open a resource panel, check the tab is obs and close", async () => {
+  await addPanel(window)
+  await window.locator('//*[@aria-label="load-module-1"]').click()
+  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
+  await expect(tab).toBe('obs')
+  await window.locator('//*[@aria-label="close-resource-pop"]').click()
 })
 
 test('Increase the font size in the obs editor', async () => {

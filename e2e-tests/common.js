@@ -224,18 +224,6 @@ export const checkProjectName = async (window, expect, name) => {
   await expect(projectname).toBe(name);
 }
 
-// removing resource
-export const removeResource = async (window, expect, resourcePaneNo, confirmButton) => {
-  await window.waitForSelector(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
-  const closePanel = await window.locator(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
-  expect(await closePanel).toBeVisible()
-  await closePanel.click()
-  const title = await window.locator('//*[@aria-label="confirm-title"]').textContent()
-  await expect(title).toBe(title)
-  expect(await window.locator(`//*[@aria-label="${confirmButton}"]`)).toBeVisible()
-  await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
-}
-
 // Checks for notifications.
 export const checkNotification = async (window, expect, projectname) => {
   // Wait for the notification button to appear and click it.
@@ -249,6 +237,23 @@ export const checkNotification = async (window, expect, projectname) => {
   const notification = await div.locator("div >> p").first().textContent()
   await expect(notification).toBe(`successfully loaded ${projectname} files`)
   await window.locator('//*[@aria-label="close-notification"]').click()
+}
+
+export const addPanel = async (window) => {
+  await window.waitForSelector('//*[@aria-label="add-panels"]')
+  await window.locator('//*[@aria-label="add-panels"]').click()
+}
+
+// removing resource
+export const removeResource = async (window, expect, resourcePaneNo, confirmButton) => {
+  await window.waitForSelector(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  const closePanel = await window.locator(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  expect(await closePanel).toBeVisible()
+  await closePanel.click()
+  const title = await window.locator('//*[@aria-label="confirm-title"]').textContent()
+  await expect(title).toBe(title)
+  expect(await window.locator(`//*[@aria-label="${confirmButton}"]`)).toBeVisible()
+  await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
 }
 
 // Navigates back to the project page from the editor
@@ -297,6 +302,7 @@ export const exportProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
+  await window.waitForSelector('//*[@aria-label="snack-text"]')
   const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
   await expect(snackText).toBe(true)
   await window.locator('//*[@aria-label="arrow-up"]').click()

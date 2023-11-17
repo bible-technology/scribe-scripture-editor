@@ -38,13 +38,18 @@ export default function ResourceTabPane({
     <div className="bg-gray-50 items-center p-3 justify-between w-full h-full">
       <Tab.Group>
         <Tab.List className="flex space-x-0 rounded-xl ">
-          <Tab className={({ selected }) => classNames(
+          <Tab
+            className={({ selected }) => classNames(
             'w-20 rounded-t-lg flex items-center justify-center font-bold py-2 text-xs leading-5 text-white uppercase',
             'ring-offset-2 ring-offset-white focus:outline-none z-50',
             selected
               ? 'bg-primary text-white'
               : 'text-black bg-gray-200',
           )}
+            aria-label={selectResource === 'bible'
+            ? t('label-resource-bible')
+            : selectResource === 'OBS' ? 'OBS'
+            : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
           >
             {selectResource === 'bible'
             ? t('label-resource-bible')
@@ -64,6 +69,7 @@ export default function ResourceTabPane({
                     ? 'bg-primary text-white'
                     : 'text-black bg-gray-200',
                 )}
+                aria-label="resources-tab"
                 type="button"
                 onClick={() => { openResourceDialogBox(); setResourceIconClick(!resourceIconClick); }}
               >
@@ -86,6 +92,7 @@ export default function ResourceTabPane({
             )}
             type="button"
             onClick={() => { setOpenImportResourcePopUp(true); setResourceIconClick(!resourceIconClick); }}
+            aria-label="resource-collection-tab"
           >
             <PlusIcon
               className="w-4 h-4"
