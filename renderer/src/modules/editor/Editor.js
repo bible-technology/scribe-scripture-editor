@@ -15,6 +15,7 @@ import BibleNavigation from '@/modules/biblenavigation/BibleNavigation';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import * as logger from '../../logger';
 
 export default function Editor({
@@ -41,6 +42,7 @@ export default function Editor({
     actions: {
       setBookmarksVerses,
       setObsNavigation,
+      handleSelectedFont,
     },
   } = useContext(ReferenceContext);
   const [bookMarked, setBookMarks] = useState(false);
@@ -145,6 +147,10 @@ export default function Editor({
         </div> */}
         <div aria-label="editor-pane" className="h-4 flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate">
           {t('label-editor-pane')}
+        </div>
+        <div className="flex ml-auto">
+          <MenuDropdown selectedFont={selectedFont} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
+          {/* <InsertMenu handleClick={handleClick} selectedText={selectedText} /> */}
         </div>
         <div title={t('tooltip-editor-lock')} className="flex items-center">
           {scrollLock === true ? (

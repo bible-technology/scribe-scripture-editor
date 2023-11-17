@@ -113,10 +113,12 @@ export default function ReferenceContextProvider({ children }) {
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
                         setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
                         setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
+                        setSelectedFont(resources.project?.textStories?.font);
                         break;
                       case 'audioTranslation':
                         setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resources.project?.audioTranslation?.font);
                         break;
                       default:
                         break;
