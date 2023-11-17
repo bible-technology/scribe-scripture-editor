@@ -78,7 +78,7 @@ export default function ObsBibleAudioTab({
                       ? (
                         <tr className="hover:bg-gray-200" key={ref.value.identification.name.en + ref.projectDir}>
 
-                          <td colSpan={2} className="p-2">
+                          <td colSpan={2} className="p-2" id={`${ref.value.identification.name.en}`}>
                             <div
                               className="focus:outline-none"
                               onClick={(e) => handleRowSelect(

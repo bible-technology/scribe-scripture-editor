@@ -404,7 +404,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             </div>
           )
           : (
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" id="resource-table">
               <thead>
                 <tr>
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider w-8" />
@@ -425,7 +425,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                   <th className="p-2 font-bold text-gray-700 uppercase tracking-wider" />
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="resources-tab-body">
                 {Object.keys(resourceData).map((element) => (
                   <>
                     <tr>
@@ -472,6 +472,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
                               <button
                                 className="text-xs flex w-6 h-6 items-center gap-2 bg-gray-700 text-white group-hover:bg-white group-hover:text-gray-700 cursor-pointer p-1 rounded-full"
                                 type="button"
+                                aria-label="download-resource"
                                 title={t('tooltip-download')}
                                 onClick={() => handleDownload({ selection: 'single', id: row.id, parent: element })}
                               >

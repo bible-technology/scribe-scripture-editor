@@ -107,6 +107,7 @@ export default function ResourcesPopUp(
                 type="button"
                 className="bg-primary absolute h-full rounded-tr-lg right-0 text-white"
                 onClick={removeSection}
+                aria-label="close-resource-pop"
               >
                 <XMarkIcon className="mx-3 h-5 w-5" />
 

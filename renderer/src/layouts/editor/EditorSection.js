@@ -39,7 +39,7 @@ export default function EditorSection({
   setAddingSection,
   font,
   setFont,
-  panelNo 
+  panelNo,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);

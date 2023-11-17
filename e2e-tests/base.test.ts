@@ -11,7 +11,7 @@ import {
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
   clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
-  createUser, projectPageExpect, removeResource, addPanel
+  createUser, projectPageExpect, removeResource, addPanel, downloadResource
 } from './common';
 
 const fs = require('fs');
@@ -330,6 +330,13 @@ test("open a resource panel, check the tab is obs and close", async () => {
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
   await window.locator('//*[@aria-label="close-resource-pop"]').click()
+})
+
+test("open a resource panel and download a obs english resource from resource tab and display in added panel", async () => {
+  await window.locator('//*[@aria-label="load-module-1"]').click()
+  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
+  await expect(tab).toBe('obs')
+  await downloadResource(window, expect, "en_obs")
 })
 
 test('Increase the font size in the obs editor', async () => {

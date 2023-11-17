@@ -256,6 +256,31 @@ export const removeResource = async (window, expect, resourcePaneNo, confirmButt
   await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
 }
 
+// download resource and display in panel
+export const downloadResource = async (window, expect, resourceName) => {
+  expect(await window.locator('//*[@aria-label="resources-tab"]')).toBeVisible()
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await expect(window.locator('//*[@id="resource-table"]')).toBeVisible()
+  const table = window.locator('//*[@id="resource-table"]')
+  const body = table.locator('//*[@id="resources-tab-body"]')
+  const rows = await body.locator('tr')
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    if (await tds.nth(1).textContent() === resourceName) {
+      // Check if the "download-resource" button is visible and click it.
+      await window.waitForSelector('//*[@aria-label="download-resource"]')
+      await tds.last().locator('//*[@aria-label="download-resource"]').click()
+      await window.waitForTimeout(500)
+      break;
+    }
+  }
+  expect(await window.locator('//*[@aria-label="obs"]')).toBeVisible()
+  await window.locator('//*[@aria-label="obs"]').click()
+  await window.waitForSelector(`//*[@id="${resourceName}"]`)
+  await window.locator(`//*[@id="${resourceName}"]`).click()
+}
+
 // Navigates back to the project page from the editor
 export const goToProjectPage = async (window, expect) => {
   // Check if the back button is visible and click it.
