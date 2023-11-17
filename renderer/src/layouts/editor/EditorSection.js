@@ -27,6 +27,7 @@ export default function EditorSection({
   setLoadResource,
   loadResource,
   openResource,
+  isNextRowOpen,
   setOpenResource1,
   setOpenResource2,
   setOpenResource3,
@@ -155,6 +156,7 @@ export default function EditorSection({
         break;
     }
   };
+
   useEffect(() => {
     // Since we are adding reference resources from different places the data we have are inconsistant.
     // Looking for flavor from the flavours because flavor is only available for scripture and gloss(obs), not for Translation resources
@@ -190,6 +192,7 @@ export default function EditorSection({
         aria-label="resources-panel"
         className={classNames(
           openResource ? 'hidden' : '',
+          isNextRowOpen ? 'h-editor' : 'h-reference',
           'flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group  overflow-hidden',
         )}
       >
