@@ -55,7 +55,6 @@ export default function Editor(props) {
     },
   } = useContext(ScribexContext);
 
-  console.log({ caretPosition });
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
 
@@ -87,9 +86,6 @@ export default function Editor(props) {
 
   useEffect(() => { // temp fix to trigger rerender to cause onblcok trigger to save to file. Need to find a better way.
     if (insertType !== '') {
-      console.log({
-        caretPosition, numberToInsert, textToInsert, selectedText, insertType,
-      });
       insertType === 'insertVerseNumber' || insertType === 'insertChapterNumber'
         ? functionMapping[insertType].function({ caretPosition, numberToInsert })
         : functionMapping[insertType].function({ caretPosition, textToInsert, selectedText });
@@ -99,6 +95,7 @@ export default function Editor(props) {
       setSelectedText(null);
       setCaretPosition(0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
 
   useAutoSaveIndication(isSaving);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import localforage from 'localforage';
 import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
