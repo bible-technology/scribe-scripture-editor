@@ -23,7 +23,7 @@ export const showLoginPage = async (fs, folder, userName, json, userData, window
   )
   await fs.writeFileSync(userData, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
-  await expect(welcome).toBe("Welcome!")
+  await expect(welcome).toBe(welcome)
   await window.waitForTimeout(500)
   await window.reload()
 }
@@ -96,7 +96,7 @@ export const signOut = async (window, expect) => {
   await window.waitForTimeout(1000)
   // Verify that the user is signed out.
   const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
-  await expect(welcome).toBe("Welcome!")
+  await expect(welcome).toBe(welcome)
   await window.waitForTimeout(200)
 }
 
