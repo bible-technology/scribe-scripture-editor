@@ -37,7 +37,7 @@ export default function SideBar() {
       <AboutModal openModal={openModal} open={open} />
 
       <ul>
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group">
+        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer p-5 lg:py-5 lg:p-0 group">
           <Link
             href="/projects"
             aria-label="projectList"
@@ -47,13 +47,13 @@ export default function SideBar() {
             <ProjectsIcon
               fill="none"
               strokecurrent="none"
-              className="h-7 w-7 text-dark group-hover:text-white"
+              className="h-5 w-5 lg:h-7 lg:w-7 text-dark group-hover:text-white"
             />
             <div className="text-xs mt-3 uppercase">{t('projects-page')}</div>
 
           </Link>
         </li>
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group">
+        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer p-5 lg:py-5 lg:p-0  group">
           <Link
             href="/newproject"
             aria-label="new"
@@ -63,7 +63,7 @@ export default function SideBar() {
             <NewProjectIcon
               fill="none"
               strokecurrent="none"
-              className="h-7 w-7 text-dark group-hover:text-white"
+              className=" h-5 w-5 lg:h-7 lg:w-7 text-dark group-hover:text-white"
             />
             <div className="text-xs mt-3 uppercase">{t('btn-new')}</div>
 

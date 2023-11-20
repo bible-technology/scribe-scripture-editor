@@ -4,9 +4,9 @@ import {
   TableSortLabel,
   TableCell,
 } from '@material-ui/core';
-import {
-  StarIcon,
-} from '@heroicons/react/24/outline';
+// import {
+//   StarIcon,
+// } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 // import i18n from '../../../translations/i18n';
 
@@ -54,9 +54,9 @@ function EnhancedTableHead(props) {
         <th
           scope="col"
             // colSpan="2"
-          className="px-4 py-3 text-left text-xs font-medium text-gray-400"
+          // className="px-4 py-3 text-left text-xs font-medium text-gray-400"
         >
-          <StarIcon className="h-5 w-5" aria-hidden="true" />
+          {/* <StarIcon className="h-5 w-5" aria-hidden="true" /> */}
         </th>
 
         {headCells.map((headCell) => (
