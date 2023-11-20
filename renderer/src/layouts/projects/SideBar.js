@@ -3,6 +3,7 @@ import { useState } from 'react';
 // import * as localForage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
 import LogoIcon from '@/icons/logo.svg';
 import ProjectsIcon from '@/icons/projects.svg';
 import NewProjectIcon from '@/icons/new.svg';
@@ -21,6 +22,8 @@ export default function SideBar() {
   //     });
   // }, []);
 
+  const { pathname } = useRouter();
+
   function openModal(isOpen) {
     setOpen(isOpen);
   }
@@ -37,7 +40,9 @@ export default function SideBar() {
       <AboutModal openModal={openModal} open={open} />
 
       <ul>
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group">
+        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group
+          ${(pathname === '/projects' || pathname === '/') && !open && 'bg-primary'}`}
+        >
           <Link
             href="/projects"
             aria-label="projectList"
@@ -53,7 +58,9 @@ export default function SideBar() {
 
           </Link>
         </li>
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group">
+        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group
+          ${(pathname === '/newproject' && !open) && 'bg-primary'}`}
+        >
           <Link
             href="/newproject"
             aria-label="new"
@@ -69,7 +76,9 @@ export default function SideBar() {
 
           </Link>
         </li>
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5">
+        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5
+          ${(pathname === '/sync' && !open) && 'bg-primary'}`}
+        >
           <Link href="/sync" className="flex flex-col items-center">
 
             <SyncIcon
@@ -82,7 +91,9 @@ export default function SideBar() {
           </Link>
         </li>
 
-        <li className="text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5">
+        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5
+          ${open && 'bg-primary'}`}
+        >
           {/* <Link href="/sync" className="flex flex-col items-center">
 
             <SyncIcon
