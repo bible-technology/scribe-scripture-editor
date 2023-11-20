@@ -237,7 +237,7 @@ export default function EditorSection({
                   ) : (
                     <div className="flex">
                       <div className="py-2 uppercase tracking-wider text-xs font-semibold">
-                        <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                        <div aria-label={`obs-resource-${panelNo}`} className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
                           {title}
                         </div>
                       </div>

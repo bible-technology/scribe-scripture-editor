@@ -375,6 +375,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
         <div className="flex items-center gap-4">
           <button
             type="button"
+            aria-label="clear-language-version"
             className="bg-error leading-loose rounded shadow text-xs px-2 font-base text-white tracking-wide uppercase"
             onClick={handleClearFilter}
           >
@@ -382,6 +383,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
           </button>
           <button
             type="button"
+            aria-label="save-filter"
             className="bg-success leading-loose rounded shadow text-xs px-2 font-base text-white tracking-wide uppercase"
             onClick={handleSaveFilter}
           >

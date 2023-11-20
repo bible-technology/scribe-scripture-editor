@@ -17,7 +17,7 @@ const style = {
     fontStyle: 'italic',
   },
 };
-const ReferenceObs = ({ stories }) => {
+const ReferenceObs = ({ stories, panelNo }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [networkState, setNetworkState] = useState({ online: true });
   const {
@@ -88,7 +88,7 @@ const { t } = useTranslation();
               >
                 {
                   Object.prototype.hasOwnProperty.call(story, 'title') && (
-                  <p className="text-xl text-gray-600 w-full text-center" style={style.bold}>
+                  <p className="text-xl text-gray-600 w-full text-center" aria-label={`obs-story-book-title-${panelNo}`} style={style.bold}>
                     {story.title}
                   </p>
                   )

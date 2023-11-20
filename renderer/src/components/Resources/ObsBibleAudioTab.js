@@ -55,7 +55,7 @@ export default function ObsBibleAudioTab({
       )
         : (
           <div>
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" id="downloaded-resources-table">
               <thead>
                 <tr>
                   <th colSpan={2} className="px-5 py-3 font-bold text-gray-700 uppercase tracking-wider">
@@ -72,7 +72,7 @@ export default function ObsBibleAudioTab({
               </thead>
 
               {selectResource === currentResourceType.resourceType && (
-                <tbody>
+                <tbody id="downloaded-resources-table-body">
                   {filteredBibleObsAudio?.length > 0 && (
                     filteredBibleObsAudio.map((ref) => (ref?.value?.type?.flavorType?.flavor?.name === currentResourceType.flavorName
                       ? (

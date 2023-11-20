@@ -120,7 +120,7 @@ const UserProfile = () => {
                       <Link
                         href="/"
                         id="signout"
-                        aria-label="signout"
+                        aria-label="sign-out"
                         onClick={() => (isElectron() ? logout() : signOut())}
                         role="button"
                         tabIndex={0}

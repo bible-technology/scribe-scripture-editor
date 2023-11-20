@@ -11,7 +11,8 @@ import {
   exportAudioProject, updateDescriptionAbbriviation, changeLicense,
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
   clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
-  createUser, projectPageExpect, removeResource, addPanel, downloadResource
+  createUser, projectPageExpect, removeResource, addPanel, downloadResource,
+  searchResourceLanguage, downloadedResourceTable
 } from './common';
 
 const fs = require('fs');
@@ -139,6 +140,13 @@ test("Click the view users button and delete the playwright user from the active
   await projectPageExpect(window, expect)
 })
 
+test("Logout and check application language is changed", async ({ userName }) => {
+  await signOut(window, expect)
+  await window.locator(`//*[@id="${userName.toLowerCase()}"]`).click()
+  // landing to the project page
+  await projectPageExpect(window, expect)
+})
+
 /*changing app language english to hindi */
 test("App language change English to hindi", async ({ english, hindi }) => {
   // Change the app language from English to hindi
@@ -153,12 +161,7 @@ test("App language change English to hindi", async ({ english, hindi }) => {
   await projectPageExpect(window, expect)
 })
 
-test("Logout and check application language is changed", async ({ userName }) => {
-  await signOut(window, expect)
-  await window.locator(`//*[@id="${userName.toLowerCase()}"]`).click()
-  // landing to the project page
-  await projectPageExpect(window, expect)
-})
+
 
 /* NEW PAGE*/
 /*CREATE PROJECTS FOR ALL FLAVOR TYPE */
@@ -336,7 +339,46 @@ test("open a resource panel and download a obs english resource from resource ta
   await window.locator('//*[@aria-label="load-module-1"]').click()
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
-  await downloadResource(window, expect, "en_obs")
+  await downloadResource(window, expect, "en_obs", "obs")
+  await downloadedResourceTable(window, expect, "en_obs", 1, "obs")
+})
+
+test("add a new resource panel, search hindi resource, download and display", async ({ hindi }) => {
+  await addPanel(window)
+  await window.locator('//*[@aria-label="load-module-3"]').click()
+  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
+  await expect(tab).toBe('obs')
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await searchResourceLanguage(window, expect, hindi)
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await window.locator('//*[@aria-label="save-filter"]').click()
+  await downloadResource(window, expect, "hi_obs", "obs")
+  await downloadedResourceTable(window, expect, "hi_obs", 3, "obs")
+})
+
+test("Clear search langague and pre-release version", async () => {
+  await window.locator('//*[@aria-label="resources-selector-3"]').click()
+  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
+  await expect(tab).toBe('obs')
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await searchResourceLanguage(window, expect, "Urdu")
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await window.locator('//*[@id="pre-prod"]').check()
+  await window.locator('//*[@aria-label="clear-language-version"]').click()
+  await window.locator('//*[@aria-label="close-resource-pop"]').click()
+})
+
+test("Download Persian obs resource with pre-release and replace with Hindi resource", async ({ farsi }) => {
+  await window.locator('//*[@aria-label="resources-selector-3"]').click()
+  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
+  await expect(tab).toBe('obs')
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await searchResourceLanguage(window, expect, "Persian (Farsi)")
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  await window.locator('//*[@id="pre-prod"]').check()
+  await window.locator('//*[@aria-label="save-filter"]').click()
+  await downloadResource(window, expect, "fa_obs", "obs")
+  await downloadedResourceTable(window, expect, "fa_obs", 3, "obs")
 })
 
 test('Increase the font size in the obs editor', async () => {

@@ -333,6 +333,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                         {referenceColumnTwoData1?.languageId
                           && (
                             <ReferenceObs
+                              panelNo="3"
                               stories={stories1}
                             />
                           )}
@@ -405,6 +406,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                         {referenceColumnTwoData2?.languageId
                           && (
                             <ReferenceObs
+                              panelNo="4"
                               stories={stories2}
                             />
                           )}
