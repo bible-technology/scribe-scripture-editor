@@ -63,8 +63,8 @@ function EditorSync({ selectedProject }) {
         }
       } catch (err) {
         logger.debug('EditorSync.js', `Error Sync : ${err}`);
-        await notifyStatus('failure', err?.message || err);
-        await addNotification('Sync', err?.message || err, 'failure');
+        await notifyStatus('failure', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection');
+        await addNotification('Sync', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection', 'failure');
       }
   };
 

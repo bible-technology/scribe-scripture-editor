@@ -8,7 +8,9 @@ import GiteaFileBrowser from './GiteaFileBrowser';
 import { environment } from '../../../../environment';
 import { createSyncProfile } from '../Scribe/SyncToGiteaUtils';
 
-const Gitea = ({ setAuth, setRepo, logout }) => {
+const Gitea = ({
+ setAuth, setRepo, logout, setLogout,
+}) => {
   const [authentication, setAuthentication] = useState();
   const [repository, setRepository] = useState();
 
@@ -39,7 +41,9 @@ const Gitea = ({ setAuth, setRepo, logout }) => {
   useEffect(() => {
     if (logout) {
       setAuthentication();
+      setLogout();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logout]);
 
   return (

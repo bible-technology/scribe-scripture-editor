@@ -258,7 +258,7 @@ export default function Sync() {
                   </div>
 
                 </div>
-                <Gitea setAuth={setAuth} setRepo={setRepo} logout={logout} />
+                <Gitea setAuth={setAuth} setRepo={setRepo} logout={logout} setLogout={setLogout} />
               </div>
             </div>
 

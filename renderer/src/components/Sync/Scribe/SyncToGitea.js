@@ -77,7 +77,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           if (pushResult === false) {
             // Auth error / internet error
             logger.debug('ToGiteaUtils.js', 'Auth failed');
-            throw new Error('Something went wrong!');
+            throw new Error('Your token expired, do Login again!');
           }
           // pull from remote main to local main
           const pullStatus = pushResult && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
