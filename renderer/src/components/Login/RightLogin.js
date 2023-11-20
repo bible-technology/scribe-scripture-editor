@@ -20,19 +20,19 @@ export default function RightLogin() {
 
         <div className="w-full mx-24 text-white">
           <Slider data={[
-                  {
+                {
               id: 1,
               img: <BibleEditorIcon className="h-full w-full rounded-xl" />,
               title: 'USER CENTRIC',
               content: 'Starting with little or no training, the application lets beginners and experts achieve their full potential!',
               },
-                  {
+                {
               id: 2,
               img: <AudioEditorIcon className="h-full w-full rounded-xl" />,
               title: 'Oral Bible Translation',
               content: 'a flexible manner has proven immensely useful in completing multiple OBT projects across various locations, regardless of the presence of scripts',
               },
-                  {
+                {
               id: 3,
               img: <OBSEditorIcon className="h-full w-full rounded-xl" />,
               title: 'Collaborate',
