@@ -280,106 +280,158 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
   expect(verse3).toBe('Story content added in verse 3');
 });
 
+// Test case for adding panels and verifying the panel count.
 test('Adding panels', async () => {
+  // Add a panel
   await addPanel(window)
+  // Get the panel count and expect it to be '2'
   let title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('2');
+  // Add another panel
   await addPanel(window)
+  // Get the panel count and expect it to be '3'
   title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('3');
+  // Add one more panel
   await addPanel(window)
+  // Get the panel count and expect it to be '1' (cycling back to 1)
   title = await window.innerText('//*[@aria-label="number-of-panels"]');
   expect(title).toBe('1');
 });
 
+// Test case for adding reference panels, removing them, and verifying the panel count.
 test("Adding refernce panels and removing from the editor", async () => {
+  // Add two panels
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
+  // Remove a panel (reference panel 1)
   await removeResource(window, expect, 1, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
+  // Remove another panel (reference panel 3)
   await removeResource(window, expect, 3, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
 })
 
+// Test case for adding sections for a resource in the editor.
 test("Adding some more section for resource in editor", async () => {
+  // Add two panels
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('3')
+  // Hover over the first panel, add a section
   await window.locator('//*[@aria-label="resources-panel-1"]').hover()
   await window.locator('//*[@aria-label="add-section-1"]').click()
+  // Hover over the third panel, add a section
   await window.locator('//*[@aria-label="resources-panel-3"]').hover()
   await window.locator('//*[@aria-label="add-section-3"]').click()
 })
 
+// Test case for removing all panels.
 test("Removing all the panels", async () => {
-  //removing added section 2 from reference panel 1
+  // Remove section 2 from reference panel 1
   await removeResource(window, expect, 2, "confirm-remove")
-  //removing added section 4 from reference panel 2
+  // Remove section 4 from reference panel 2
   await removeResource(window, expect, 4, "confirm-remove")
-  // removing 1 resource panel
+  // Remove 1 resource panel
   await removeResource(window, expect, 1, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
-  // removing 2 resource panel
+  // Remove 2 resource panels
   await removeResource(window, expect, 3, "confirm-remove")
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('1')
 })
 
+// Test case for opening a resource panel, checking the tab is obs, and closing.
 test("open a resource panel, check the tab is obs and close", async () => {
+  // Add a panel
   await addPanel(window)
+  // Click to load module in the first panel
   await window.locator('//*[@aria-label="load-module-1"]').click()
+  // Get the tab text and expect it to be 'obs'
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
+  // Click to close the resource panel
   await window.locator('//*[@aria-label="close-resource-pop"]').click()
 })
 
+// Test case for opening a resource panel, downloading an obs English resource, and displaying it in the added panel.
 test("open a resource panel and download a obs english resource from resource tab and display in added panel", async () => {
+  // Click to load module in the first panel
   await window.locator('//*[@aria-label="load-module-1"]').click()
+  // Get the tab text and expect it to be 'obs'
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
+  // Download the English obs resource and display it in the added panel
   await downloadResource(window, expect, "en_obs", "obs")
   await downloadedResourceTable(window, expect, "en_obs", 1, "obs")
 })
 
+// Test case for adding a new resource panel, searching for a Hindi resource, downloading, and displaying it.
 test("add a new resource panel, search hindi resource, download and display", async ({ hindi }) => {
+  // Add a panel
   await addPanel(window)
+  // Click to load module in the third panel
   await window.locator('//*[@aria-label="load-module-3"]').click()
+  // Get the tab text and expect it to be 'obs'
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
+  // Switch to the resources tab and search for Hindi resource
   await window.locator('//*[@aria-label="resources-tab"]').click()
   await searchResourceLanguage(window, expect, hindi)
   await window.locator('//*[@aria-label="resources-tab"]').click()
+  // Save the filter, download the Hindi obs resource, and display it in the third panel
   await window.locator('//*[@aria-label="save-filter"]').click()
   await downloadResource(window, expect, "hi_obs", "obs")
   await downloadedResourceTable(window, expect, "hi_obs", 3, "obs")
 })
 
+// Test case for clearing search language and pre-release version filters.
 test("Clear search langague and pre-release version", async () => {
+  // Switch to the third resource panel
   await window.locator('//*[@aria-label="resources-selector-3"]').click()
+  // Get the tab text and expect it to be 'obs'
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
+  // Switch to the resources tab and search for Urdu language
   await window.locator('//*[@aria-label="resources-tab"]').click()
   await searchResourceLanguage(window, expect, "Urdu")
   await window.locator('//*[@aria-label="resources-tab"]').click()
+  // Check the pre-release version, clear search language and pre-release version filters, and close the resource panel
   await window.locator('//*[@id="pre-prod"]').check()
   await window.locator('//*[@aria-label="clear-language-version"]').click()
   await window.locator('//*[@aria-label="close-resource-pop"]').click()
 })
 
+// Test case for downloading Persian obs resource with pre-release and replacing it with Hindi resource.
 test("Download Persian obs resource with pre-release and replace with Hindi resource", async ({ farsi }) => {
+  // Switch to the third resource panel
   await window.locator('//*[@aria-label="resources-selector-3"]').click()
+  // Get the tab text and expect it to be 'obs'
   const tab = await window.locator('//*[@aria-label="obs"]').textContent()
   await expect(tab).toBe('obs')
+
+  // Switch to the resources tab
   await window.locator('//*[@aria-label="resources-tab"]').click()
+
+  // Search for Persian (Farsi) language resource
   await searchResourceLanguage(window, expect, "Persian (Farsi)")
+
+  // Switch back to the resources tab
   await window.locator('//*[@aria-label="resources-tab"]').click()
+
+  // Check the pre-release version filter
   await window.locator('//*[@id="pre-prod"]').check()
+
+  // Save the filter settings
   await window.locator('//*[@aria-label="save-filter"]').click()
+
+  // Download the Persian obs resource and display it in the third panel
   await downloadResource(window, expect, "fa_obs", "obs")
   await downloadedResourceTable(window, expect, "fa_obs", 3, "obs")
 })
+
 
 test('Increase the font size in the obs editor', async () => {
   await window.waitForSelector('//*[@aria-label="increase-font"]', { timeout: 5000 });

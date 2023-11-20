@@ -255,69 +255,102 @@ export const removeResource = async (window, expect, resourcePaneNo, confirmButt
   await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
 }
 
+// This function is responsible for searching and selecting a language in a custom dropdown.
 export const searchResourceLanguage = async (window, expect, searchLanguage) => {
+  // Wait for the custom dropdown to be visible.
   await window.waitForSelector('//*[@aria-label="custom-dropdown"]')
   const searchLang = await window.locator('//*[@aria-label="custom-dropdown"]')
+  // Ensure that the custom dropdown is visible.
   expect(await searchLang).toBeVisible();
-  // Fill in the search language.
+  
+  // Click on the custom dropdown to activate the language search.
   await searchLang.click()
+  // Fill in the search language in the dropdown.
   await searchLang.fill(searchLanguage)
   // Click on the selectLanguage in the dropdown.
   await window.locator(`//*[@aria-label="${searchLanguage}"]`).click({ timeout: 10000 });
+  // Wait for 2000 milliseconds (2 seconds).
   await window.waitForTimeout(2000)
 }
 
-// download resource and display in panel
+// This function is responsible for navigating to the resources tab, locating a specific resource, and downloading it.
 export const downloadResource = async (window, expect, resourceName, tabType) => {
+  // Navigate to the resources tab.
   await window.locator('//*[@aria-label="resources-tab"]').click()
+  // Wait for the resource table to be visible.
   await window.waitForSelector('//*[@id="resource-table"]')
+  // Ensure that the resource table is visible.
   await expect(window.locator('//*[@id="resource-table"]')).toBeVisible()
   const table = window.locator('//*[@id="resource-table"]')
   const body = table.locator('//*[@id="resources-tab-body"]')
   const rows = await body.locator('tr')
+
+  // Iterate through each row in the resource table.
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
+    
+    // Check if the resource name in the current row matches the target resource name.
     if (await tds.nth(1).textContent() === resourceName) {
       // Check if the "download-resource" button is visible and click it.
       await window.waitForSelector('//*[@aria-label="download-resource"]')
       await tds.last().locator('//*[@aria-label="download-resource"]').click()
+      // Wait for 1000 milliseconds (1 second).
       await window.waitForTimeout(1000)
-      // wait for until the resource may download
+      // Check if the downloaded resource name matches the target resource name.
       expect(await tds.nth(1).textContent({ timeout: 100000 })).toBe(resourceName)
       break;
     }
   }
+
+  // Switch to the specified tab type.
   const bibleObsTab = await window.locator(`//*[@aria-label="${tabType}"]`)
   expect(await bibleObsTab).toBeVisible()
   await bibleObsTab.click()
   expect(await bibleObsTab.textContent()).toBe(tabType)
 }
 
+// This function is responsible for navigating to the downloaded resources table and verifying the presence of a specific resource.
 export const downloadedResourceTable = async (window, expect, resourceName, panelNo, tabType) => {
+  // Wait for the specified tab type to be visible.
   const bibleObsTab = await window.locator(`//*[@aria-label="${tabType}"]`, { timeout: 10000 })
   expect(await bibleObsTab).toBeVisible()
+  
+  // Wait for the downloaded resources table to be visible.
   await window.waitForSelector('//*[@id="downloaded-resources-table"]')
   await expect(window.locator('//*[@id="downloaded-resources-table"]')).toBeVisible()
   const table = window.locator('//*[@id="downloaded-resources-table"]')
   const body = table.locator('//*[@id="downloaded-resources-table-body"]')
   const rows = await body.locator('tr')
+
+  // Iterate through each row in the downloaded resources table.
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     const data = await tds.nth(0).textContent()
     const dataSplit = data.slice(0, 6)
+
+    // Check if the resource name in the current row matches the target resource name.
     if (await dataSplit === resourceName) {
+      // Click on the resource in the downloaded resources table.
       await tds.nth(0).click()
       break;
     }
   }
+
+  // Wait for the resource panel to be visible.
   await window.waitForSelector(`//*[@aria-label="obs-resource-${panelNo}"]`)
   const resoursetitle = await window.locator(`//*[@aria-label="obs-resource-${panelNo}"]`, { timeout: 10000 }).innerHTML()
   const splitString = await resoursetitle.slice(0, 6)
+  
+  // Verify that the displayed resource name in the panel matches the target resource name.
   expect(await splitString).toBe(resourceName)
+  
+  // Get and verify the story title in the panel.
   const storyTitle = await window.locator(`//*[@aria-label="obs-story-book-title-${panelNo}"]`).innerHTML()
   expect(await storyTitle).toBe(storyTitle)
+  
+  // Wait for 1000 milliseconds (1 second).
   await window.waitForTimeout(1000)
 }
 
