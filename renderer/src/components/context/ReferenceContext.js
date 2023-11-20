@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import * as localforage from 'localforage';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
@@ -83,6 +84,12 @@ export default function ReferenceContextProvider({ children }) {
       setFolderPath(chosenFolder.filePaths[0]);
     }
   };
+  const handleSelectedFont = async (font) => {
+    if (isElectron()) {
+      saveReferenceResource(font);
+      setSelectedFont(font);
+    }
+  };
 
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
@@ -100,15 +107,18 @@ export default function ReferenceContextProvider({ children }) {
                       case 'textTranslation':
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resources.project?.textTranslation?.font);
                         break;
                       case 'textStories':
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
                         setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
                         setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
+                        setSelectedFont(resources.project?.textStories?.font);
                         break;
                       case 'audioTranslation':
                         setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resources.project?.audioTranslation?.font);
                         break;
                       default:
                         break;
@@ -229,6 +239,7 @@ export default function ReferenceContextProvider({ children }) {
       setOpenResource4,
       setOpenResourcePopUp,
       setSelectedFont,
+      handleSelectedFont,
       setFont1,
       setFont2,
       setFont3,

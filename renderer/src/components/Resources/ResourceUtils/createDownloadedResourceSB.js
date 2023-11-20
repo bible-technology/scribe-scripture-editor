@@ -140,6 +140,7 @@ export const generateAgSettings = async (metaData, currentResourceMeta, selectRe
           lastSeen: moment().format(),
           refResources: [],
           bookMarks: [],
+          font: '',
         },
       },
       sync: { services: { door43: [] } },

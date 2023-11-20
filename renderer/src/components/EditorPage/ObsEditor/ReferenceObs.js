@@ -17,13 +17,12 @@ const style = {
     fontStyle: 'italic',
   },
 };
-const ReferenceObs = ({ stories, panelNo }) => {
+const ReferenceObs = ({ stories, font, panelNo }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [networkState, setNetworkState] = useState({ online: true });
   const {
  state: {
     selectedStory,
-    selectedFont,
     fontSize,
   },
   actions: {
@@ -104,7 +103,7 @@ const { t } = useTranslation();
                   <p
                     className="text-sm text-gray-600 text-justify w-full break-words overflow-hidden"
                     style={{
-                      fontFamily: selectedFont || 'sans-serif',
+                      fontFamily: font || 'sans-serif',
                       fontSize: `${fontSize}rem`,
                       lineHeight: (fontSize > 1.3) ? 1.5 : '',
                     }}
