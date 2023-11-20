@@ -5,7 +5,6 @@ import React, {
 import * as localForage from 'localforage';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Restore } from '@material-ui/icons';
-import LogoIcon from '@/icons/logo.svg';
 import { createUser, handleLogin, writeToFile } from '../../core/Login/handleLogin';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
@@ -181,34 +180,21 @@ const LeftLogin = () => {
     return false;
   };
   return (
-    <div className="flex flex-col w-full h-full pt-32 items-center relative xl:pt-28">
-
-      <div className=" mt-10 flex flex-col gap-3 items-center justify-center pb-20">
-        <LogoIcon
-          className="h-16 w-16 group-hover:text-primary"
-          aria-hidden="true"
-        />
-        <div className="text-white flex flex-col justify-center ">
-          <h3 className="uppercase font-bold tracking-wider text-3xl text-black">Scribe Scripture</h3>
-          <q className="text-center italic text-sm mt-2 text-black">Scripture editing made simple</q>
-        </div>
-      </div>
-
-      <p className="text-md text-black/80">{sortedUsers.length === 0 ? 'Welcome!' : 'Welcome Back !'}</p>
-
-      <div className="p-7 pb-0">
-
-        <div
-          id="users"
-          className="relative border-gray-200 rounded-t-[10px] lg:w-72 w-44
-          sm:w-52 overflow-hidden drop-shadow-xl shadow-xl"
-        >
+    // <div className="flex flex-col w-full pt-64  items-center mt-14">
+    <div className="flex flex-col w-full pt-64  items-center mt-14">
+      <h2 className="text-2xl font-sans font-bold " aria-label="welcome">
+        {sortedUsers.length === 0 ? 'Welcome' : 'Welcome Back!'}
+      </h2>
+      {/* <p className="text-[#8692A6] text-sm mt-[4px]">
+        Welcome back! Login to access Scribe Scripture
+      </p> */}
+      <div className="p-7">
+        <div id="users" className="relative border-gray-200 rounded-t-[10px] lg:w-72 w-44 sm:w-52 overflow-hidden">
           {sortedUsers?.filter(filterUsers).slice(0, 5).map((user) => (
             <div
               key={user.username}
               id={user.username}
-              className="p-4 py-2 text-sm cursor-pointer bg-[#F9F9F9] hover:bg-primary
-                hover:text-white border-b-[1px] border-[#E3E3E3] font-semibold "
+              className="p-4 py-2 text-sm cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border-b-[1px] border-[#E3E3E3] font-semibold"
               tabIndex={0}
               role="button"
               onClick={() => {
@@ -219,7 +205,6 @@ const LeftLogin = () => {
             </div>
           ))}
         </div>
-
         {sortedUsers.length === 0 ? (<div />) : (
           <div className="">
             <button
@@ -227,15 +212,13 @@ const LeftLogin = () => {
               onClick={openModal}
               id="view-more"
               className={`
-                ${isOpen ? '' : 'text-opacity-90'
-              } text-white bg-black w-48 text-xs lg:w-72 sm:w-52 py-[12px] flex 
-              items-center justify-center text-md font-bold rounded-b-[10px] sm:text-sm drop-shadow-xl shadow-xl`}
+                                     ${isOpen ? '' : 'text-opacity-90'
+              } text-white bg-black w-48 text-xs lg:w-72 sm:w-52 py-[12px] flex items-center justify-center text-md font-bold rounded-b-[10px] sm:text-sm`}
             >
               View More
             </button>
           </div>
-      )}
-
+)}
         <Transition
           appear
           show={isOpen}
@@ -345,14 +328,12 @@ const LeftLogin = () => {
             </div>
           </Dialog>
         </Transition>
-
         <div>
           <button
             onClick={openAccountModal}
             type="button"
             aria-label="create-new-account"
-            className="mt-10 mb-28  w-48 lg:w-72 sm:w-52 py-3 font-bold uppercase flex items-center
-            text-xs justify-center  text-white bg-primary rounded sm:text-xs shadow-xl"
+            className="mt-10 mb-28  w-48 lg:w-72 sm:w-52 py-3 font-bold uppercase flex items-center text-xs justify-center  text-white bg-primary rounded  shadow sm:text-xs"
           >
             Create New Account
           </button>
@@ -413,7 +394,6 @@ const LeftLogin = () => {
                       <div className="mt-8 flex gap-8 justify-end">
                         <button
                           type="button"
-                          aria-label="cancel"
                           className="inline-flex justify-center rounded-md border border-transparent bg-primary px-12 py-2 text-sm font-medium text-white hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                           onClick={closeAccountModal}
                         >
@@ -433,20 +413,21 @@ const LeftLogin = () => {
             </Dialog>
           </Transition>
         </div>
-
-        {/* <div className="absolute w-full bg-red-200 bottom-5 text-xs lg:left-2 xl:left-24 flex sm:left-6  items-center justify-center sm:gap-8 gap-3 lg:gap-12 xl:gap-20 lg:text-sm font-semibold"> */}
-
+        {/* <div className="absolute bottom-5 text-xs lg:left-12 xl:left-24 flex sm:left-6  items-center justify-center sm:gap-8 gap-3 lg:gap-12 xl:gap-20 lg:text-sm font-semibold">
+          <a href="/" onClick={(event) => event.preventDefault()}>
+            EN(US)
+          </a>
+          <a href="/" onClick={(event) => event.preventDefault()}>
+            ABOUT
+          </a>
+          <a href="/" onClick={(event) => event.preventDefault()}>
+            PRIVACY
+          </a>
+          <a href="/" onClick={(event) => event.preventDefault()}>
+            TERMS
+          </a>
+        </div> */}
       </div>
-
-      <div className="flex gap-5 text-xs font-semibold">
-        <a href="https://scribe.bible" target="_blank">
-          SITE
-        </a>
-        <a href="https://docs.scribe.bible/" target="_blank">
-          DOCS
-        </a>
-      </div>
-
     </div>
   );
 };
