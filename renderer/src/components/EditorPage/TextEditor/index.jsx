@@ -28,8 +28,8 @@ export default function TextEditor() {
   const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
-    state: { bookId },
-    actions: { setSelectedFont },
+    state: { bookId, selectedFont },
+    actions: { handleSelectedFont },
   } = useContext(ReferenceContext);
 
   const {
@@ -88,6 +88,7 @@ export default function TextEditor() {
     ...perfState,
     ...actions,
     ...perfActions,
+    selectedFont,
     chapterNumber,
     verseNumber,
     isLoading,
@@ -97,7 +98,7 @@ export default function TextEditor() {
     setBookChange,
     setChapterNumber,
     setVerseNumber,
-    setSelectedFont,
+    handleSelectedFont,
     triggerVerseInsert,
     setTriggerVerseInsert,
   };

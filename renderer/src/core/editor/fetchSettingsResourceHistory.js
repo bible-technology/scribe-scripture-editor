@@ -115,6 +115,7 @@ export async function fetchSettingsResourceHistory(
                                   header: '',
                                   owner: '',
                                   offlineResource: { offline: false },
+                                  font: '',
                                 }
                                 ));
                               } else if (_columnnum === historyColumn && _rownum === '2') {
@@ -132,6 +133,7 @@ export async function fetchSettingsResourceHistory(
                                   header: '',
                                   owner: '',
                                   offlineResource: { offline: false },
+                                  font: '',
                                 }
                                 ));
                               }
@@ -155,6 +157,7 @@ export async function fetchSettingsResourceHistory(
                             header: _value?.name,
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
+                            font: _value?.font,
                           });
                       }
                       if (_rownum === '2') {
@@ -166,6 +169,7 @@ export async function fetchSettingsResourceHistory(
                             header: _value?.name,
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
+                            font: _value?.font,
                           });
                       }
                   },

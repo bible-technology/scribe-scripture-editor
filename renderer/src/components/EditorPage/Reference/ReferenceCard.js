@@ -14,19 +14,23 @@ const ReferenceCard = ({
   setQuote,
   viewMode,
   isLoading,
+  font,
 }) => (
-  <CardContent
-    item={item}
-    items={items}
-    filters={filters}
-    markdown={markdown}
-    languageId={languageId}
-    markdownView={markdownView}
-    isLoading={isLoading}
-    selectedQuote={selectedQuote}
-    setQuote={setQuote}
-    viewMode={viewMode}
-  />
+  <div style={{ fontFamily: font || 'sans-serif' }}>
+    <CardContent
+      item={item}
+      items={items}
+      filters={filters}
+      markdown={markdown}
+      languageId={languageId}
+      markdownView={markdownView}
+      isLoading={isLoading}
+      selectedQuote={selectedQuote}
+      setQuote={setQuote}
+      viewMode={viewMode}
+    />
+  </div>
+
 );
 
 export default ReferenceCard;

@@ -76,6 +76,7 @@ export const createAudioVersification = (
               lastSeen: moment().format(),
               refResources: call === 'edit' ? currentBurrito.project.audioTranslation.refResources : [],
               bookMarks: call === 'edit' ? currentBurrito.project.audioTranslation.bookMarks : [],
+              font: '',
             },
           },
           sync: { services: { door43: [] } },

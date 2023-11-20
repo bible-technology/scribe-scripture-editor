@@ -191,6 +191,7 @@ export const createObsContent = (
           lastSeen: moment().format(),
           refResources: call === 'edit' ? currentBurrito.project.textStories.refResources : [],
           bookMarks: call === 'edit' ? currentBurrito.project.textStories.bookMarks : [],
+          font: '',
         },
       },
       sync: { services: { door43: [] } },
@@ -370,6 +371,7 @@ export const createObsContent = (
           },
         },
         sync: { services: { door43: [] } },
+        font: '',
       };
       const stat = await uploadFileToSupabase(`${supabasePath}/${environment.PROJECT_SETTING_FILE}`, JSON.stringify(settings));
       ingredients[path.join('ingredients', environment.PROJECT_SETTING_FILE)] = {
