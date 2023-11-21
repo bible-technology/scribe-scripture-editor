@@ -41,12 +41,12 @@ const SnackBar = ({
 
   useEffect(() => {
     if (openSnackBar) {
-      setTimeLeft(3);
+      setTimeLeft(30);
     }
   }, [openSnackBar]);
 
   return (
-    <Popover className="fixed bottom-0 left-0 w-60">
+    <Popover className="fixed bottom-0 left-0 w-60 z-50">
       <Transition
         show={openSnackBar}
         as={Fragment}

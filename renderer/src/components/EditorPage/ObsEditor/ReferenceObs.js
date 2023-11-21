@@ -82,7 +82,7 @@ const { t } = useTranslation();
             stories?.map((story, index) => (
               <div
                 key={story.id}
-                className={`flex gap-5 mb-5 items-center  ${story.id === selectedStory && 'bg-light'}`}
+                className={`flex gap-5 mb-5 items-center pr-4  ${story.id === selectedStory && 'bg-light'}`}
                 ref={(element) => addtoItemEls(element, story.id)}
               >
                 {
