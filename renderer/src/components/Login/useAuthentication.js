@@ -61,6 +61,7 @@ function useAuthentication() {
     setCurrentUser();
     await localForage.removeItem('sessionToken');
     await localForage.removeItem('userProfile');
+    await localForage.removeItem('authentication');
     await localForage.setItem('appMode','online');
     router.push('/logout');
   };

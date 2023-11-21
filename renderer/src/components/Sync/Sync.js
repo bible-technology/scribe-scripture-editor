@@ -11,6 +11,7 @@ import {
 import { SnackBar } from '@/components/SnackBar';
 import useAddNotification from '@/components/hooks/useAddNotification';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import * as localforage from 'localforage';
 import { SyncContext } from '../context/SyncContext';
 import { uploadToGitea } from './Scribe/SyncToGitea';
 import { downloadFromGitea } from './Gitea/SyncFromGitea';
@@ -31,6 +32,7 @@ export default function Sync() {
   const [snackBar, setOpenSnackBar] = useState(false);
   const [snackText, setSnackText] = useState('');
   const [notify, setNotify] = useState();
+  const [logout, setLogout] = useState(false);
 
   const {
     states: {
@@ -159,6 +161,11 @@ export default function Sync() {
     }
   };
 
+  const handleLogout = () => {
+    localforage.removeItem('authentication');
+    setLogout(true);
+  };
+
   return (
     <AuthenticationContextProvider>
       <ProjectContextProvider>
@@ -230,22 +237,28 @@ export default function Sync() {
                       </a>
                     </li> */}
                   </ul>
-
-                  {auth && repo && (
-                  <button
-                    type="button"
-                    title={t('tooltip-save-computer-btn')}
-                    className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
-                    onClick={() => handleOfflineSync(repo, auth)}
-                    disabled={syncProgress.syncStarted}
-                  >
-                    <CloudArrowDownIcon className="h-5 w-5" />
-                    {t('label-save-to-computer')}
-                  </button>
-                  )}
+                  <div className="flex items-center">
+                    {auth && repo && (
+                      <button
+                        type="button"
+                        title={t('tooltip-save-computer-btn')}
+                        className="text-white bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary font-medium text-xs px-3 py-1.5 text-center inline-flex items-center rounded-full gap-2 uppercase tracking-wider"
+                        onClick={() => handleOfflineSync(repo, auth)}
+                        disabled={syncProgress.syncStarted}
+                      >
+                        <CloudArrowDownIcon className="h-5 w-5" />
+                        {t('label-save-to-computer')}
+                      </button>
+                    )}
+                    {
+                      auth && (
+                        <button className="px-3 py-1.5 bg-red-500 hover:bg-red-800 text-xs text-white font-medium m-2 rounded-full uppercase" type="button" onClick={() => handleLogout()}>Logout</button>
+                      )
+                    }
+                  </div>
 
                 </div>
-                <Gitea setAuth={setAuth} setRepo={setRepo} />
+                <Gitea setAuth={setAuth} setRepo={setRepo} logout={logout} setLogout={setLogout} />
               </div>
             </div>
 
