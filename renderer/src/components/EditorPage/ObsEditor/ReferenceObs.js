@@ -48,7 +48,6 @@ const { t } = useTranslation();
     // get the direction
     if (title) {
       getScriptureDirection(title).then((dir) => {
-        console.log({ title, dir });
         if (dir && dir.toLowerCase() === 'rtl') {
           setDirection(dir);
         }
