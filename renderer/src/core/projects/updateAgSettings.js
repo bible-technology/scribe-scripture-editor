@@ -45,6 +45,7 @@ export const updateWebAgSettings = async (username, projectName, data) => {
   const { data: settings } = await sbStorageDownload(folder);
   let setting = {};
   setting = JSON.parse(await settings.text());
+  setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   if (settings.version !== environment.AG_SETTING_VERSION) {
     setting.version = environment.AG_SETTING_VERSION;
     if (!setting.sync && !setting.sync?.services) {
@@ -58,7 +59,6 @@ export const updateWebAgSettings = async (username, projectName, data) => {
       setting.project[data.type.flavorType.flavor.name].font = (setting.project[data.type.flavorType.flavor.name].font) ? (setting.project[data.type.flavorType.flavor.name].font) : '';
     }
   }
-  setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   await sbStorageUpload(folder, JSON.stringify(setting), {
     // cacheControl: '3600',
     upsert: true,
