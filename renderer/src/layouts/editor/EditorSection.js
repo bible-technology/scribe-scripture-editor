@@ -40,6 +40,7 @@ export default function EditorSection({
   setAddingSection,
   font,
   setFont,
+  panelNo,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -189,7 +190,7 @@ export default function EditorSection({
   return (
     <>
       <div // div 1
-        aria-label="resources-panel"
+        aria-label={`resources-panel-${panelNo}`}
         className={classNames(
           openResource ? 'hidden' : '',
           isNextRowOpen ? 'h-editor' : 'h-reference',
@@ -198,7 +199,6 @@ export default function EditorSection({
       >
         <div
           className="bg-gray-200 rounded-t text-center text-gray-600 relative"
-          aria-label="resources-panel"
         >
           <div className="bg-gray-200 rounded-t ">
             <div className="flex">
@@ -240,7 +240,7 @@ export default function EditorSection({
                   ) : (
                     <div className="flex">
                       <div className="py-2 uppercase tracking-wider text-xs font-semibold">
-                        <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                        <div aria-label={`obs-resource-${panelNo}`} className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
                           {title}
                         </div>
                       </div>
@@ -254,7 +254,7 @@ export default function EditorSection({
                   setSelectedFont={setFont}
                 />
                 <button
-                  aria-label="resources-selector"
+                  aria-label={`resources-selector-${panelNo}`}
                   type="button"
                   title={t(
                     'tooltip-editor-resource-selector',
@@ -266,6 +266,7 @@ export default function EditorSection({
                 </button>
                 <button
                   type="button"
+                  aria-label={`remove-resource-${panelNo}`}
                   title={t('tooltip-editor-remove-section')}
                   onClick={removeResource}
                   className="px-2"
@@ -285,6 +286,7 @@ export default function EditorSection({
               </div>
               <button
                 type="button"
+                aria-label={`load-module-${panelNo}`}
                 className="p-4 bg-gray-200 rounded-lg ring-offset-1"
                 onClick={showResourcesPanel}
               >
@@ -332,6 +334,7 @@ export default function EditorSection({
             <button
               type="button"
               title={t('tooltip-editor-add-section')}
+              aria-label={`add-section-${panelNo}`}
               onClick={addRow}
               className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
             >

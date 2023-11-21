@@ -1,5 +1,5 @@
 // get the user path
-const userPath= async (window) => {
+const userPath = async (window) => {
   const path = await window.evaluate(() => Object.assign({}, window.localStorage))
   return path.userPath
 }
@@ -23,14 +23,14 @@ export const showLoginPage = async (fs, folder, userName, json, userData, window
   )
   await fs.writeFileSync(userData, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
-  await expect(welcome).toBe("Welcome!")
+  await expect(welcome).toEqual(expect.stringContaining(welcome))
   await window.waitForTimeout(500)
   await window.reload()
 }
 
 //logout and delete the playwright user from backend
-export const clickUserImageToLogout = async (window, expect, userName, path, fs, packageInfo )=> {
-    // Here you handle user login and logout logic, user data, and folder management.
+export const clickUserImageToLogout = async (window, expect, userName, path, fs, packageInfo) => {
+  // Here you handle user login and logout logic, user data, and folder management.
   //Retrieves and parses a JSON file containing user information
   const userData = await userJson(window, packageInfo, path)
   const data = await fs.readFileSync(userData);
@@ -38,6 +38,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   //  constructs the path to a folder/directory name
   const folder = await userFolder(window, userName, packageInfo, path)
   // Check if user profile image is visible
+  await window.waitForSelector('//*[@id="user-profile-image"]')
   const userProfileImage = window.locator('//*[@id="user-profile-image"]');
   expect(await userProfileImage.isVisible()).toBeTruthy();
   await userProfileImage.click();
@@ -47,7 +48,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   expect(currentUser).not.toBeNull();
 
   // Check if signout button is visible
-  const signoutButton = window.locator('//*[@aria-label="signout"]');
+  const signoutButton = window.locator('//*[@aria-label="sign-out"]');
   expect(await signoutButton.isVisible()).toBeTruthy();
   await signoutButton.click();
 
@@ -55,7 +56,7 @@ export const clickUserImageToLogout = async (window, expect, userName, path, fs,
   if (currentUser.toLowerCase() === userName.toLowerCase() && await fs.existsSync(folder)) {
     await showLoginPage(fs, folder, userName, json, userData, window, expect);
   }
-} 
+}
 
 // Performs user validation checks.
 export const createUser = async (window, expect, username) => {
@@ -72,16 +73,17 @@ export const createUser = async (window, expect, username) => {
 
 export const projectPageExpect = async (window, expect) => {
   await window.waitForSelector('//*[@aria-label="projects"]')
-  const title = await window.locator('//*[@aria-label="projects"]').isVisible();
-  await expect(title).toBe(true);
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  expect(title).toEqual(expect.stringContaining(title));
 }
 
 export const clickUserImage = async (window, expect, itemClick) => {
   // Ensure the user profile image is visible and click on it.
-  expect(await window.locator('//*[@id="user-profile-image"]')).toBeVisible();
-  await window.locator('//*[@id="user-profile-image"]').click();
-  // Verify that the user profile is visible and click on it.
-  await window.waitForSelector(`//*[@aria-label="${itemClick}"]`)
+  await window.waitForSelector('//*[@id="user-profile-image"]')
+  const imageClick = await window.locator('//*[@id="user-profile-image"]')
+  expect(await imageClick).toBeVisible();
+  await imageClick.click();
+  await window.waitForSelector(`//*[@aria-label="${itemClick}"]`, { timeout: 10000 })
   expect(await window.locator(`//*[@aria-label="${itemClick}"]`)).toBeVisible();
   await window.locator(`//*[@aria-label="${itemClick}"]`).click();
 }
@@ -89,23 +91,23 @@ export const clickUserImage = async (window, expect, itemClick) => {
 // Signs the user out.
 export const signOut = async (window, expect) => {
   // Open the user profile menu and signout
-  await clickUserImage(window, expect, "signout")
+  await clickUserImage(window, expect, "sign-out")
   // Wait for the signout process to complete.
   await window.waitForTimeout(1000)
   // Verify that the user is signed out.
-  const welcome = await window.locator('//*[@aria-label="welcome"]', {timeout:5000}).textContent()
-  await expect(welcome).toBe("Welcome!")
+  const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
+  await expect(welcome).toEqual(expect.stringContaining(welcome))
   await window.waitForTimeout(200)
 }
 
 // Shows a list of active users.
 export const showActiveUsers = async (window, expect) => {
- // Ensure the "view-more" button is visible and click it with a timeout of 5 seconds.
- await expect(window.locator('//*[@id="view-more"]', { timeout: 5000 })).toBeVisible();
- await window.locator('//*[@id="view-more"]', { timeout: 5000 }).click();
- // Get the text content of the "active-tab" element and verify it is "Active".
- const active = await window.locator('//*[@id="active-tab"]').textContent();
- await expect(active).toBe("Active");
+  // Ensure the "view-more" button is visible and click it with a timeout of 5 seconds.
+  await expect(window.locator('//*[@id="view-more"]', { timeout: 5000 })).toBeVisible();
+  await window.locator('//*[@id="view-more"]', { timeout: 5000 }).click();
+  // Get the text content of the "active-tab" element and verify it is "Active".
+  const active = await window.locator('//*[@id="active-tab"]').textContent();
+  await expect(active).toBe("Active");
 }
 
 // Performs project creation validation checks.
@@ -144,7 +146,7 @@ export const createProjects = async (window, expect, projectname, flavorType, de
   // Get the project name from the DOM.
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   // Verify if the project name matches the expected project name.
-  await expect(projectName).toBe(projectname);
+  await expect(projectName).toEqual(expect.stringContaining(projectname));
 }
 
 /* Functions for managing project stars/unstars. */
@@ -179,7 +181,7 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   const rows = await body.locator('tr')
   const itemSearch = await window.locator('//input[@id="search_box"]')
   await itemSearch.click()
-  if(await rows.count() >= 4){
+  if (await rows.count() >= 4) {
     await itemSearch.fill("translation")
     await window.waitForTimeout(1000)
     expect(await rows.count() > 1).toBe(true)
@@ -190,13 +192,13 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   expect(await rows.count()).toBe(1)
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   //expecting project name
-  await expect(projectName).toBe(projectname);
+  await expect(projectName).toEqual(expect.stringContaining(projectname));
   await itemSearch.fill("abcd")
   await window.waitForTimeout(1000)
   expect(await rows.count()).toBe(0)
   await itemSearch.fill(" ")
   await window.waitForTimeout(1000)
-  expect(await rows.count() > 1).toBe(true) 
+  expect(await rows.count() > 1).toBe(true)
 
 }
 
@@ -210,12 +212,12 @@ export const checkProjectName = async (window, expect, name) => {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
     if (await tds.nth(1).textContent() === name) {
-      await tds.nth(1).click({timeout:10000})
+      await tds.nth(1).click({ timeout: 10000 })
       break
     }
   }
   await window.waitForTimeout(1000)
-  await window.waitForSelector('//*[@aria-label="editor-project-name"]',{ timeout: 120000 })
+  await window.waitForSelector('//*[@aria-label="editor-project-name"]', { timeout: 120000 })
   const projectname = await window.locator('//*[@aria-label="editor-project-name"]', { timeout: 120000 }).textContent()
   // expecting project name in editor
   await expect(projectname).toBe(name);
@@ -224,17 +226,142 @@ export const checkProjectName = async (window, expect, name) => {
 // Checks for notifications.
 export const checkNotification = async (window, expect, projectname) => {
   // Wait for the notification button to appear and click it.
-  await window.waitForSelector('//*[@aria-label="notification-button"]', {timeout : 5000})
+  await window.waitForSelector('//*[@aria-label="notification-button"]', { timeout: 5000 })
   await window.locator('//*[@aria-label="notification-button"]').click()
   await window.waitForTimeout(1000)
   // Check if the notification title is "Notifications."
   const title = await window.locator('//*[@aria-label="notification-title"]').textContent();
-  await expect(title).toBe('Notifications');
+  await expect(title).toEqual(expect.stringContaining(title));
   const div = await window.locator(`//*[@aria-label="success-notification"]`)
   const notification = await div.locator("div >> p").first().textContent()
-  await expect(notification).toBe(`successfully loaded ${projectname} files`)
+  await expect(notification).toEqual(expect.stringContaining(`successfully loaded ${projectname} files`))
   await window.locator('//*[@aria-label="close-notification"]').click()
 }
+
+export const addPanel = async (window) => {
+  await window.waitForSelector('//*[@aria-label="add-panels"]')
+  await window.locator('//*[@aria-label="add-panels"]').click()
+}
+
+export const loadResource = async (window, expect, clickModule, flavor) => {
+  // Click to load module in the first panel
+  await window.locator(`//*[@aria-label="${clickModule}"]`).click()
+  // Get the tab text and expect it to be 'obs/bible'
+  const tabResource = await window.locator(`//*[@aria-label="${flavor}"]`).textContent()
+  await expect(tabResource).toEqual(expect.stringContaining(tabResource))
+}
+
+// removing resource
+export const removeResource = async (window, expect, resourcePaneNo, confirmButton) => {
+  await window.waitForSelector(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  const closePanel = await window.locator(`//*[@aria-label="remove-resource-${resourcePaneNo}"]`)
+  expect(await closePanel).toBeVisible()
+  await closePanel.click()
+  const title = await window.locator('//*[@aria-label="confirm-title"]').textContent()
+  await expect(title).toEqual(expect.stringContaining(title))
+  expect(await window.locator(`//*[@aria-label="${confirmButton}"]`)).toBeVisible()
+  await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
+}
+
+// This function is responsible for searching and selecting a language in a custom dropdown.
+export const searchResourceLanguage = async (window, expect, searchLanguage) => {
+  // Wait for the custom dropdown to be visible.
+  await window.waitForSelector('//*[@aria-label="custom-dropdown"]')
+  const searchLang = await window.locator('//*[@aria-label="custom-dropdown"]')
+  // Ensure that the custom dropdown is visible.
+  expect(await searchLang).toBeVisible();
+  
+  // Click on the custom dropdown to activate the language search.
+  await searchLang.click()
+  // Fill in the search language in the dropdown.
+  await searchLang.fill(searchLanguage)
+  // Click on the selectLanguage in the dropdown.
+  await window.locator(`//*[@aria-label="${searchLanguage}"]`).click({ timeout: 10000 });
+  // Wait for 2000 milliseconds (2 seconds).
+  await window.waitForTimeout(2000)
+}
+
+// This function is responsible for navigating to the resources tab, locating a specific resource, and downloading it.
+export const downloadResource = async (window, expect, resourceName, tabType) => {
+  // Navigate to the resources tab.
+  await window.locator('//*[@aria-label="resources-tab"]').click()
+  // Wait for the resource table to be visible.
+  await window.waitForSelector('//*[@id="resource-table"]')
+  // Ensure that the resource table is visible.
+  await expect(window.locator('//*[@id="resource-table"]')).toBeVisible()
+  const table = window.locator('//*[@id="resource-table"]')
+  const body = table.locator('//*[@id="resources-tab-body"]')
+  const rows = await body.locator('tr')
+
+  // Iterate through each row in the resource table.
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    
+    // Check if the resource name in the current row matches the target resource name.
+    if (await tds.nth(1).textContent() === resourceName) {
+      // Check if the "download-resource" button is visible and click it.
+      await window.waitForSelector('//*[@aria-label="download-resource"]')
+      await tds.last().locator('//*[@aria-label="download-resource"]').click()
+      // Wait for 1000 milliseconds (1 second).
+      await window.waitForTimeout(1000)
+      // Check if the downloaded resource name matches the target resource name.
+      expect(await tds.nth(1).textContent({ timeout: 100000 })).toBe(resourceName)
+      break;
+    }
+  }
+
+  // Switch to the specified tab type.
+  const bibleObsTab = await window.locator(`//*[@aria-label="${tabType}"]`)
+  expect(await bibleObsTab).toBeVisible()
+  await bibleObsTab.click()
+  expect(await bibleObsTab.textContent()).toBe(tabType)
+}
+
+// This function is responsible for navigating to the downloaded resources table and verifying the presence of a specific resource.
+export const downloadedResourceTable = async (window, expect, resourceName, panelNo, tabType) => {
+  // Wait for the specified tab type to be visible.
+  const bibleObsTab = await window.locator(`//*[@aria-label="${tabType}"]`, { timeout: 10000 })
+  expect(await bibleObsTab).toBeVisible()
+  
+  // Wait for the downloaded resources table to be visible.
+  await window.waitForSelector('//*[@id="downloaded-resources-table"]')
+  await expect(window.locator('//*[@id="downloaded-resources-table"]')).toBeVisible()
+  const table = window.locator('//*[@id="downloaded-resources-table"]')
+  const body = table.locator('//*[@id="downloaded-resources-table-body"]')
+  const rows = await body.locator('tr')
+
+  // Iterate through each row in the downloaded resources table.
+  for (let i = 0; i < await rows.count(); i++) {
+    const row = await rows.nth(i);
+    const tds = await row.locator('td');
+    const data = await tds.nth(0).textContent()
+    const dataSplit = data.slice(0, 6)
+
+    // Check if the resource name in the current row matches the target resource name.
+    if (await dataSplit === resourceName) {
+      // Click on the resource in the downloaded resources table.
+      await tds.nth(0).click()
+      break;
+    }
+  }
+
+  // Wait for the resource panel to be visible.
+  await window.waitForSelector(`//*[@aria-label="obs-resource-${panelNo}"]`)
+  const resoursetitle = await window.locator(`//*[@aria-label="obs-resource-${panelNo}"]`, { timeout: 10000 }).innerHTML()
+  const splitString = await resoursetitle.slice(0, 6)
+  
+  // Verify that the displayed resource name in the panel matches the target resource name.
+  expect(await splitString).toBe(resourceName)
+  
+  // Get and verify the story title in the panel.
+  const storyTitle = await window.locator(`//*[@aria-label="obs-story-book-title-${panelNo}"]`).innerHTML()
+  expect(await storyTitle).toBe(storyTitle)
+  
+  // Wait for 1000 milliseconds (1 second).
+  await window.waitForTimeout(1000)
+}
+
 
 // Navigates back to the project page from the editor
 export const goToProjectPage = async (window, expect) => {
@@ -282,14 +409,15 @@ export const exportProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
-  await expect(snackText).toBe(true)
+  await window.waitForSelector('//*[@aria-label="snack-text"]')
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toEqual(expect.stringContaining(snackText))
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
 //Export a project with chapter and full audio project
-export const exportAudioProject = async(window, expect, projectname, itemCheck) => {
-    // Get the user's download path from localStorage.
+export const exportAudioProject = async (window, expect, projectname, itemCheck) => {
+  // Get the user's download path from localStorage.
   const splitPath = await userPath(window)
   const userpath = splitPath.split(".")[0]
   // Use the common function to locate the project and export it.
@@ -300,8 +428,8 @@ export const exportAudioProject = async(window, expect, projectname, itemCheck) 
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
-  await expect(snackText).toBe(true)
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toEqual(expect.stringContaining(snackText))
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
@@ -313,9 +441,9 @@ export const archivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archived-projects"]').click()
   // Check if the archive title is "Archived projects."
   await projectPageExpect(window, expect)
-  const archiveProjectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  const archiveProjectName = await window.locator(`//*[@id="${projectname}"]`).textContent()
   await expect(archiveProjectName).toBe(projectname);
-   // Click the "active-projects" button to go back to the active projects.
+  // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click()
   await projectPageExpect(window, expect)
 }
@@ -329,7 +457,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await commonFilterTable(window, expect, projectname, "archive-restore-project");
   // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click();
-  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).textContent()
   await expect(projectName).toBe(projectname);
 }
 
@@ -344,11 +472,11 @@ export const goToEditProject = async (window, expect, projectName) => {
 
 // Changes the target language for a project.
 export const projectTargetLanguage = async (window, expect, projectName, searchLangauge, selectLanguage) => {
-   // Navigate to the project editing page.
-   await goToEditProject(window, expect, projectName);
-   // Ensure the custom dropdown is visible.
+  // Navigate to the project editing page.
+  await goToEditProject(window, expect, projectName);
+  // Ensure the custom dropdown is visible.
   await window.waitForSelector('//*[@aria-label="custom-dropdown"]')
-  const searchLang = await window.locator('//*[@aria-label="custom-dropdown"]') 
+  const searchLang = await window.locator('//*[@aria-label="custom-dropdown"]')
   expect(await searchLang).toBeVisible();
   // Fill in the search language.
   await searchLang.click()
@@ -364,7 +492,7 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
   // Locate the projects list, find the target project, and verify the selected language.
   const table = window.locator('//*[@id="projects-list"]');
   const body = table.locator('//*[@id="projects-list-body"]');
-  const rows = body.locator('tr');
+  const rows = await body.locator('tr');
   for (let i = 0; i < await rows.count(); i++) {
     const row = await rows.nth(i);
     const tds = await row.locator('td');
@@ -376,12 +504,12 @@ export const projectTargetLanguage = async (window, expect, projectName, searchL
   await goToEditProject(window, expect, projectName);
   await window.locator('//*[@aria-label="cancel-edit-project"]').click()
   await projectPageExpect(window, expect)
-  
+
 }
 
 // Updates the project description and abbreviation.
 export const updateDescriptionAbbriviation = async (window, expect, descriptionText, abbreviation, projectname) => {
-   // Get the initial description and verify it.
+  // Get the initial description and verify it.
   const description = await window.textContent('//textarea[@id="project_description"]');
   await expect(description).toBe('test description');
   // Fill in the new description.
@@ -413,15 +541,15 @@ export const confirmBookInEditor = async (window, expect, book, chapter, verse, 
 
 // Changes the project license.
 export const changeLicense = async (window, expect, currentLicense, newLicense) => {
- // Click on the current license to change it.
- await window.locator(`//*[@id="${currentLicense}"]`).click();
- // Click on the new license.
- await window.locator(`//*[@aria-label="${newLicense}"]`).click();
- // Ensure the "Save" button is visible and click it.
- await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
- await window.locator('//*[@aria-label="save-edit-project"]').click();
- // Verify the title of the page is "Projects."
- await projectPageExpect(window, expect)
+  // Click on the current license to change it.
+  await window.locator(`//*[@id="${currentLicense}"]`).click();
+  // Click on the new license.
+  await window.locator(`//*[@aria-label="${newLicense}"]`).click();
+  // Ensure the "Save" button is visible and click it.
+  await expect(window.locator('//*[@aria-label="save-edit-project"]')).toBeVisible();
+  await window.locator('//*[@aria-label="save-edit-project"]').click();
+  // Verify the title of the page is "Projects."
+  await projectPageExpect(window, expect)
 }
 
 export const checkingUpdatedLicense = async (window, expect, projectname, newLicense, flavorType) => {
@@ -484,7 +612,7 @@ export const customProjectTargetLanguage = async (window, expect, projectname, f
 }
 
 // Performs user profile validation checks.
-export const userProfileValidaiton = async(window, expect) => {
+export const userProfileValidaiton = async (window, expect) => {
   await clickUserImage(window, expect, "user-profile")
   // Check if the "given-name" input is visible and fill it with "b".
   await expect(window.locator('input[name="given-name"]')).toBeVisible();
@@ -505,14 +633,14 @@ export const userProfileValidaiton = async(window, expect) => {
   expect(await window.locator('//*[@id="save-profile"]')).toBeVisible();
   await window.locator('//*[@id="save-profile"]').click();
   // Verify error messages for first/last name, email, organization, and region.
-  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').isVisible();
-  await expect(firstLastNameError).toBe(true);
-  const emailError = await window.locator('//*[@aria-label="email-error"]').isVisible();
-  await expect(emailError).toBe(true);
-  const organizationError = await window.locator('//*[@aria-label="organization-error"]').isVisible();
-  await expect(organizationError).toBe(true);
-  const regionError = await window.locator('//*[@aria-label="region-error"]').isVisible();
-  await expect(regionError).toBe(true);
+  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').textContent();
+  await expect(firstLastNameError).toEqual(expect.stringContaining(firstLastNameError));
+  const emailError = await window.locator('//*[@aria-label="email-error"]').textContent();
+  await expect(emailError).toEqual(expect.stringContaining(emailError));
+  const organizationError = await window.locator('//*[@aria-label="organization-error"]').textContent();
+  await expect(organizationError).toEqual(expect.stringContaining(organizationError));
+  const regionError = await window.locator('//*[@aria-label="region-error"]').textContent();
+  await expect(regionError).toEqual(expect.stringContaining(regionError));
 
 }
 

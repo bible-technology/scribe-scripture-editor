@@ -194,7 +194,7 @@ const LeftLogin = () => {
         </div>
       </div>
 
-      <p className="text-md text-black/80">{sortedUsers.length === 0 ? 'Welcome!' : 'Welcome Back !'}</p>
+      <p className="text-md text-black/80" aria-label="welcome">{sortedUsers.length === 0 ? 'Welcome!' : 'Welcome Back !'}</p>
 
       <div className="p-7 pb-0">
 

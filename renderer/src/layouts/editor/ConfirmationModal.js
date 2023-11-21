@@ -60,7 +60,7 @@ export default function ConfirmationModal({
                     <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                    <Dialog.Title as="h3" aria-label="confirm-title" className="text-lg leading-6 font-medium text-gray-900">
                       {title}
                     </Dialog.Title>
                     <div className="mt-2">
@@ -91,6 +91,7 @@ export default function ConfirmationModal({
                 {buttonName && (
                 <button
                   type="button"
+                  aria-label="confirm-remove"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => close()}
                 >

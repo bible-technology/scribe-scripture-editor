@@ -326,6 +326,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                     setAddingSection={setAddingSection}
                     font={font3}
                     setFont={setFont3}
+                    panelNo="3"
                   >
                     {
                       (loadResource3 === true)
@@ -352,6 +353,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                               <ReferenceObs
                                 stories={stories1}
                                 font={font3}
+                                panelNo="3"
                               />
                             )}
                         </>
@@ -403,6 +405,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                     setAddingSection={setAddingSection}
                     font={font4}
                     setFont={setFont4}
+                    panelNo="4"
                   >
                     {
                       (loadResource4 === true)
@@ -429,6 +432,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                               <ReferenceObs
                                 stories={stories2}
                                 font={font4}
+                                panelNo="4"
                               />
                             )}
                         </>
