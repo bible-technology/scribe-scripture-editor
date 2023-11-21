@@ -29,7 +29,7 @@ export default function SideBar() {
   }
 
   return (
-    <div className="w-28 bg-white shadow min-h-screen">
+    <div className="relative w-28 bg-white shadow min-h-screen">
       <div className="grid justify-items-center items-center h-16 border border-b-1">
         <LogoIcon
           className="h-8 w-8"
@@ -50,17 +50,13 @@ export default function SideBar() {
           >
 
             <ProjectsIcon
-              fill="none"
-              strokecurrent="none"
-              className="h-7 w-7 text-dark group-hover:text-white"
+              className="h-5 w-5 lg:h-7 lg:w-7 text-dark group-hover:text-white"
             />
             <div className="text-xs mt-3 uppercase">{t('projects-page')}</div>
 
           </Link>
         </li>
-        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group
-          ${(pathname === '/newproject' && !open) && 'bg-primary'}`}
-        >
+        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 group ${(pathname === '/newproject' && !open) && 'bg-primary'}`}>
           <Link
             href="/newproject"
             aria-label="new"
@@ -68,9 +64,8 @@ export default function SideBar() {
           >
 
             <NewProjectIcon
-              fill="none"
-              strokecurrent="none"
-              className="h-7 w-7 text-dark group-hover:text-white"
+              strokecurrent="black"
+              className="h-5 w-5 lg:h-7 lg:w-7 text-dark group-hover:text-white stroke-dark"
             />
             <div className="text-xs mt-3 uppercase">{t('btn-new')}</div>
 
@@ -91,9 +86,7 @@ export default function SideBar() {
           </Link>
         </li>
 
-        <li className={`text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5
-          ${open && 'bg-primary'}`}
-        >
+        <li className={`absolute bottom-0 inset-x-0 text-gray-900 font-medium hover:text-white hover:bg-primary cursor-pointer py-5 ${open && 'bg-primary'}`}>
           {/* <Link href="/sync" className="flex flex-col items-center">
 
             <SyncIcon

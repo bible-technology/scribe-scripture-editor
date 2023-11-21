@@ -65,7 +65,7 @@ function BibleHeaderTagDropDown(headerDropDown, handleDropDown, call) {
         <button
           type="button"
           aria-label="open-popover"
-          className="flex justify-center items-center px-3 py-2 text-white ml-5
+          className="flex justify-center items-center px-3 py-2 text-white
           font-bold text-xs rounded-full leading-3 tracking-wider uppercase bg-primary"
         >
           {/* <div className="">{headerDropDown}</div> */}
@@ -305,7 +305,7 @@ export default function NewProject({ call, project, closeEdit }) {
   return (
     <ProjectsLayout
       title={call === 'new' ? t('new-project-page') : t('edit-project')}
-      header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
+      // header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
     >
       {loading === true
         ? (
@@ -318,8 +318,11 @@ export default function NewProject({ call, project, closeEdit }) {
           )
         : (
           <div className="rounded-md border shadow-sm mt-4 ml-5 mr-5 mb-5">
+            <div className="space-y-2 m-10">
+              <span className="text-xs font-base mb-2 text-primary leading-4 tracking-wide  font-light">Project Type</span>
+              {BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 m-10 gap-5">
-
               <div className="lg:col-span-1">
                 <h4 className="text-xs font-base mb-2 text-primary  tracking-wide leading-4  font-light">
                   {t('label-project-name')}
@@ -350,7 +353,6 @@ export default function NewProject({ call, project, closeEdit }) {
                 />
                 <span className="text-error">{error.description[0]?.message}</span>
               </div>
-
               <div className="lg:col-span-2">
                 <div className="flex gap-5">
                   <div>

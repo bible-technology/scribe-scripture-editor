@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ArchiveBoxIcon,
@@ -7,6 +7,7 @@ import {
 
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { ProjectContext } from '@/components/context/ProjectContext';
 import SideBar from './SideBar';
 import TopMenuBar from './TopMenuBar';
 import ImportProjectPopUp from './ImportProjectPopUp';
@@ -26,7 +27,7 @@ export default function ProjectsLayout(props) {
     setShowArchived,
   } = props;
 
-  const [openPopUp, setOpenPopUp] = useState(false);
+  const { states: { openImportPopUp }, actions: { setOpenImportPopUp } } = useContext(ProjectContext);
 
   const [conflictPopup, setConflictPopup] = useState({
     open: false,
@@ -34,12 +35,12 @@ export default function ProjectsLayout(props) {
   });
 
   const { t } = useTranslation();
-  function openImportPopUp() {
-    setOpenPopUp(true);
+  function handleOpenImportPopUp() {
+    setOpenImportPopUp(true);
   }
 
   function closeImportPopUp() {
-    setOpenPopUp(false);
+    setOpenImportPopUp(false);
   }
   function toggleArchive() {
     setShowArchived((value) => !value);
@@ -62,59 +63,59 @@ export default function ProjectsLayout(props) {
                   <div className="flex items-center">
                     <div className="flex items-center">
                       <h1 aria-label="projects" className="text-xl font-bold text-gray-900 uppercase tracking-wider">{showArchived ? t('label-archived-prj') : title}</h1>
-                      {header}
+                      {isImport && !showArchived
+                        && (
+                          <>
+                            <button
+                              aria-label="import"
+                              type="button"
+                              className="flex text-white ml-5 font-bold text-xs px-3 py-2 rounded-full
+                                    leading-3 tracking-wider uppercase bg-primary items-center"
+                              onClick={handleOpenImportPopUp}
+                            >
+                              <ArrowDownTrayIcon className="h-4 mr-2 text-white" />
+                              {t('btn-import')}
+                            </button>
+                            <ImportProjectPopUp open={openImportPopUp} closePopUp={closeImportPopUp} setConflictPopup={setConflictPopup} />
+                          </>
+                        )}
+
+                      {conflictPopup.open
+                        && (
+                          <div className="fixed z-50 ">
+                            <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />
+                          </div>
+                        )}
+
+                      {/* Archived projects button */}
+                      {archive === 'enable' && (
+                        <div>
+                          <button
+                            className={`flex text-white ml-5 font-bold text-xs px-3 py-2 rounded-full
+                                    leading-3 tracking-wider uppercase ${showArchived ? 'bg-primary' : 'bg-red-600'} items-center`}
+                            type="button"
+                            onClick={toggleArchive}
+                          >
+
+                            {showArchived ? (
+                              <>
+                                <ComputerDesktopIcon className="h-4 mr-2 text-white" />
+                                <span aria-label="active-projects">{t('label-active')}</span>
+                              </>
+                            ) : (
+                              <>
+                                <ArchiveBoxIcon className="h-4 mr-2 text-white" />
+                                <span aria-label="archived-projects">{t('label-archived')}</span>
+                              </>
+                            )}
+                          </button>
+
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="ml-auto flex">
-                    {isImport && !showArchived
-                      && (
-                        <>
-                          <button
-                            aria-label="import"
-                            type="button"
-                            className="flex text-white ml-5 font-bold text-xs px-3 py-2 rounded-full
-                                    leading-3 tracking-wider uppercase bg-primary items-center"
-                            onClick={openImportPopUp}
-                          >
-                            <ArrowDownTrayIcon className="h-4 mr-2 text-white" />
-                            {t('btn-import')}
-                          </button>
-                          <ImportProjectPopUp open={openPopUp} closePopUp={closeImportPopUp} setConflictPopup={setConflictPopup} />
-                        </>
-                      )}
-
-                    {conflictPopup.open
-                      && (
-                        <div className="fixed z-50 ">
-                          <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />
-                        </div>
-                      )}
-
-                    {/* Archived projects button */}
-                    {archive === 'enable' && (
-                      <div>
-                        <button
-                          className={`flex text-white ml-5 font-bold text-xs px-3 py-2 rounded-full
-                                    leading-3 tracking-wider uppercase ${showArchived ? 'bg-primary' : 'bg-red-600'} items-center`}
-                          type="button"
-                          onClick={toggleArchive}
-                        >
-
-                          {showArchived ? (
-                            <>
-                              <ComputerDesktopIcon className="h-4 mr-2 text-white" />
-                              <span aria-label="active-projects">{t('label-active')}</span>
-                            </>
-                          ) : (
-                            <>
-                              <ArchiveBoxIcon className="h-4 mr-2 text-white" />
-                              <span aria-label="archived-projects">{t('label-archived')}</span>
-                            </>
-                          )}
-                        </button>
-
-                      </div>
-                    )}
+                    {header}
                   </div>
                 </div>
               )
@@ -133,7 +134,7 @@ export default function ProjectsLayout(props) {
           </header>
         )}
 
-        <div className="max-h-[90%] overflow-y-auto">
+        <div className="max-h-[85%] overflow-y-auto  ">
           {children}
         </div>
 

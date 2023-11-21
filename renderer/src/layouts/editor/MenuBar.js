@@ -8,12 +8,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
-import { ReferenceContext } from '@/components/context/ReferenceContext';
+
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import UserProfile from '@/components/Profile/UserProfile';
 import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
-import styles from './MenuBar.module.css';
 import LogoIcon from '@/icons/logo.svg';
 
 export default function TopMenuBar() {
@@ -26,15 +25,6 @@ export default function TopMenuBar() {
       setOpenSideBar,
     },
   } = useContext(ProjectContext);
-
-  const {
-    state: {
-      fontSize,
-    },
-    actions: {
-      setFontsize,
-    },
-  } = useContext(ReferenceContext);
 
   const [projectname, setprojectname] = useState(undefined);
 
@@ -53,14 +43,7 @@ export default function TopMenuBar() {
   function closeSideBar(open) {
     setOpenSideBar(open);
   }
-  const handleFontSize = (status) => {
-    if (status === 'dec' && fontSize > 0.70) {
-      setFontsize(fontSize - 0.2);
-    }
-    if (status === 'inc' && fontSize < 2) {
-      setFontsize(fontSize + 0.2);
-    }
-  };
+
   const goToProjectPage = async () => {
     saveReferenceResource();
     router.push('/projects');
@@ -119,7 +102,7 @@ export default function TopMenuBar() {
                     />
                   </button>
                 </PopoverProjectType> */}
-                <button type="button" className={styles.btn}>
+                {/* <button type="button" className={styles.btn}>
                   <div
                     aria-label="decrease-font"
                     onClick={() => { handleFontSize('dec'); }}
@@ -140,7 +123,7 @@ export default function TopMenuBar() {
                   >
                     {t('label-editor-font-char')}
                   </div>
-                </button>
+                </button> */}
                 {/* <button type="button" className={styles.btn}>
                   <ExpandIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />
                 </button>
