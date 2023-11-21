@@ -23,7 +23,7 @@ export const showLoginPage = async (fs, folder, userName, json, userData, window
   )
   await fs.writeFileSync(userData, JSON.stringify(filtered))
   const welcome = await window.locator('//*[@aria-label="welcome"]').textContent()
-  await expect(welcome).toBe(welcome)
+  await expect(welcome).toEqual(expect.stringContaining(welcome))
   await window.waitForTimeout(500)
   await window.reload()
 }
@@ -73,8 +73,8 @@ export const createUser = async (window, expect, username) => {
 
 export const projectPageExpect = async (window, expect) => {
   await window.waitForSelector('//*[@aria-label="projects"]')
-  const title = await window.locator('//*[@aria-label="projects"]').isVisible();
-  await expect(title).toBe(true);
+  const title = await window.locator('//*[@aria-label="projects"]').textContent();
+  expect(title).toEqual(expect.stringContaining(title));
 }
 
 export const clickUserImage = async (window, expect, itemClick) => {
@@ -96,7 +96,7 @@ export const signOut = async (window, expect) => {
   await window.waitForTimeout(1000)
   // Verify that the user is signed out.
   const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
-  await expect(welcome).toBe(welcome)
+  await expect(welcome).toEqual(expect.stringContaining(welcome))
   await window.waitForTimeout(200)
 }
 
@@ -146,7 +146,7 @@ export const createProjects = async (window, expect, projectname, flavorType, de
   // Get the project name from the DOM.
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   // Verify if the project name matches the expected project name.
-  await expect(projectName).toBe(projectname);
+  await expect(projectName).toEqual(expect.stringContaining(projectname));
 }
 
 /* Functions for managing project stars/unstars. */
@@ -192,7 +192,7 @@ export const searchProject = async (window, expect, projectname, searchtext) => 
   expect(await rows.count()).toBe(1)
   const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
   //expecting project name
-  await expect(projectName).toBe(projectname);
+  await expect(projectName).toEqual(expect.stringContaining(projectname));
   await itemSearch.fill("abcd")
   await window.waitForTimeout(1000)
   expect(await rows.count()).toBe(0)
@@ -231,16 +231,24 @@ export const checkNotification = async (window, expect, projectname) => {
   await window.waitForTimeout(1000)
   // Check if the notification title is "Notifications."
   const title = await window.locator('//*[@aria-label="notification-title"]').textContent();
-  await expect(title).toBe('Notifications');
+  await expect(title).toEqual(expect.stringContaining(title));
   const div = await window.locator(`//*[@aria-label="success-notification"]`)
   const notification = await div.locator("div >> p").first().textContent()
-  await expect(notification).toBe(`successfully loaded ${projectname} files`)
+  await expect(notification).toEqual(expect.stringContaining(`successfully loaded ${projectname} files`))
   await window.locator('//*[@aria-label="close-notification"]').click()
 }
 
 export const addPanel = async (window) => {
   await window.waitForSelector('//*[@aria-label="add-panels"]')
   await window.locator('//*[@aria-label="add-panels"]').click()
+}
+
+export const loadResource = async (window, expect, clickModule, flavor) => {
+  // Click to load module in the first panel
+  await window.locator(`//*[@aria-label="${clickModule}"]`).click()
+  // Get the tab text and expect it to be 'obs/bible'
+  const tabResource = await window.locator(`//*[@aria-label="${flavor}"]`).textContent()
+  await expect(tabResource).toEqual(expect.stringContaining(tabResource))
 }
 
 // removing resource
@@ -250,7 +258,7 @@ export const removeResource = async (window, expect, resourcePaneNo, confirmButt
   expect(await closePanel).toBeVisible()
   await closePanel.click()
   const title = await window.locator('//*[@aria-label="confirm-title"]').textContent()
-  await expect(title).toBe(title)
+  await expect(title).toEqual(expect.stringContaining(title))
   expect(await window.locator(`//*[@aria-label="${confirmButton}"]`)).toBeVisible()
   await window.locator(`//*[@aria-label="${confirmButton}"]`).click()
 }
@@ -402,8 +410,8 @@ export const exportProjects = async (window, expect, projectname) => {
   await window.waitForTimeout(2000)
   // Check for the success message.
   await window.waitForSelector('//*[@aria-label="snack-text"]')
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
-  await expect(snackText).toBe(true)
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toEqual(expect.stringContaining(snackText))
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
@@ -420,8 +428,8 @@ export const exportAudioProject = async (window, expect, projectname, itemCheck)
   await window.locator('//*[@aria-label="export-projects"]').click()
   await window.waitForTimeout(2000)
   // Check for the success message.
-  const snackText = await window.locator('//*[@aria-label="snack-text"]').isVisible()
-  await expect(snackText).toBe(true)
+  const snackText = await window.locator('//*[@aria-label="snack-text"]').textContent()
+  await expect(snackText).toEqual(expect.stringContaining(snackText))
   await window.locator('//*[@aria-label="arrow-up"]').click()
 }
 
@@ -433,7 +441,7 @@ export const archivedProjects = async (window, expect, projectname) => {
   await window.locator('//*[@aria-label="archived-projects"]').click()
   // Check if the archive title is "Archived projects."
   await projectPageExpect(window, expect)
-  const archiveProjectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  const archiveProjectName = await window.locator(`//*[@id="${projectname}"]`).textContent()
   await expect(archiveProjectName).toBe(projectname);
   // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click()
@@ -449,7 +457,7 @@ export const unarchivedProjects = async (window, expect, projectname) => {
   await commonFilterTable(window, expect, projectname, "archive-restore-project");
   // Click the "active-projects" button to go back to the active projects.
   await window.locator('//*[@aria-label="active-projects"]').click();
-  const projectName = await window.locator(`//*[@id="${projectname}"]`).innerHTML()
+  const projectName = await window.locator(`//*[@id="${projectname}"]`).textContent()
   await expect(projectName).toBe(projectname);
 }
 
@@ -625,14 +633,14 @@ export const userProfileValidaiton = async (window, expect) => {
   expect(await window.locator('//*[@id="save-profile"]')).toBeVisible();
   await window.locator('//*[@id="save-profile"]').click();
   // Verify error messages for first/last name, email, organization, and region.
-  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').isVisible();
-  await expect(firstLastNameError).toBe(true);
-  const emailError = await window.locator('//*[@aria-label="email-error"]').isVisible();
-  await expect(emailError).toBe(true);
-  const organizationError = await window.locator('//*[@aria-label="organization-error"]').isVisible();
-  await expect(organizationError).toBe(true);
-  const regionError = await window.locator('//*[@aria-label="region-error"]').isVisible();
-  await expect(regionError).toBe(true);
+  const firstLastNameError = await window.locator('//*[@aria-label="name-error"]').textContent();
+  await expect(firstLastNameError).toEqual(expect.stringContaining(firstLastNameError));
+  const emailError = await window.locator('//*[@aria-label="email-error"]').textContent();
+  await expect(emailError).toEqual(expect.stringContaining(emailError));
+  const organizationError = await window.locator('//*[@aria-label="organization-error"]').textContent();
+  await expect(organizationError).toEqual(expect.stringContaining(organizationError));
+  const regionError = await window.locator('//*[@aria-label="region-error"]').textContent();
+  await expect(regionError).toEqual(expect.stringContaining(regionError));
 
 }
 

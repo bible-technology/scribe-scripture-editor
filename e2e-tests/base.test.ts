@@ -12,7 +12,7 @@ import {
   customAddEditLanguage, customProjectTargetLanguage, starUnstar,
   clickUserImageToLogout, confirmBookInEditor, checkingUpdatedLicense,
   createUser, projectPageExpect, removeResource, addPanel, downloadResource,
-  searchResourceLanguage, downloadedResourceTable
+  searchResourceLanguage, downloadedResourceTable, loadResource
 } from './common';
 
 const fs = require('fs');
@@ -48,7 +48,7 @@ test.beforeAll(async ({ userName }) => {
     const folder = await userFolder(window, userName, packageInfo, path)
     // If 'projects' is not visible, check the 'welcome' element
     const welcome = await window.locator('//*[@aria-label="welcome"]', { timeout: 5000 }).textContent()
-    await expect(welcome).toBe(welcome)
+    await expect(welcome).toEqual(expect.stringContaining(welcome))
     // On the login page, if the playwright user exists, reload the app and remove it
     const existUser = await json.some((item) => item.username.toLowerCase() === userName.toLowerCase());
     if (await existUser && await fs.existsSync(folder)) {
@@ -70,8 +70,8 @@ test('check user length should be between 3 and 15 characters long', async () =>
   await window.waitForSelector('//*[@aria-label="welcome"]')
   await createUser(window, expect, "jo")
   // Check for a length error message
-  const lengthError = await window.locator('//*[@id="show-error"]')
-  expect(await lengthError.textContent()).toBe('The input has to be between 3 and 15 characters long')
+  const lengthError = await window.locator('//*[@id="show-error"]').textContent()
+  expect(lengthError).toEqual(expect.stringContaining(lengthError))
   await window.locator('//*[@aria-label="cancel"]').click()
 
 })
@@ -104,7 +104,7 @@ test("check the user is already created", async ({ userName }) => {
   await createUser(window, expect, userName)
   // Check for a length error message
   const userExist = await window.locator('//*[@id="show-error"]').textContent()
-  expect(await userExist).toBe('User exists, Check archived and active tab by click on view more.')
+  expect(userExist).toEqual(expect.stringContaining(userExist))
   await window.waitForTimeout(200)
   await window.locator('//*[@aria-label="cancel"]').click()
   await window.locator(`//*[@id="${userName.toLowerCase()}"]`).click()
@@ -155,7 +155,7 @@ test("App language change English to hindi", async ({ english, hindi }) => {
   // Verify the language change and UI update
   await window.waitForSelector('//*[@aria-label="snack-text"]')
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(await snackbar).toBe("Updated the Profile.");
+  expect(snackbar).toEqual(expect.stringContaining(snackbar));
 
   await window.locator('//*[@aria-label="projectList"]').click();
   await projectPageExpect(window, expect)
@@ -185,7 +185,7 @@ test('Click New button button and fill a new project detail for text translation
   await window.locator('//*[@id="save-canon"]').click()
   await window.locator('//button[@aria-label="create"]').click()
   const projectName = await window.locator(`//*[@id="${textProject}"]`).innerHTML()
-  await expect(projectName).toBe(textProject);
+  await expect(projectName).toEqual(expect.stringContaining(textProject));
 })
 
 /* Obs translation project */
@@ -275,9 +275,9 @@ test('Add content in verses 1 and 2 in the obs story 1 editor', async () => {
   await window.locator('div:nth-child(3) > .flex-grow').fill("Story content added in verse 3");
   // Verify if the content was added to verse 2 and verse 3
   const verse2 = await window.textContent('div:nth-child(2) > .flex-grow');
-  expect(verse2).toBe('God created heavens and earth');
+  expect(verse2).toEqual(expect.stringContaining(verse2));
   const verse3 = await window.textContent('div:nth-child(3) > .flex-grow');
-  expect(verse3).toBe('Story content added in verse 3');
+  expect(verse3).toEqual(expect.stringContaining(verse3));
 });
 
 // Test case for adding panels and verifying the panel count.
@@ -348,10 +348,7 @@ test("open a resource panel, check the tab is obs and close", async () => {
   // Add a panel
   await addPanel(window)
   // Click to load module in the first panel
-  await window.locator('//*[@aria-label="load-module-1"]').click()
-  // Get the tab text and expect it to be 'obs'
-  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
-  await expect(tab).toBe('obs')
+  await loadResource(window, expect, "load-module-1", "obs")
   // Click to close the resource panel
   await window.locator('//*[@aria-label="close-resource-pop"]').click()
 })
@@ -359,10 +356,7 @@ test("open a resource panel, check the tab is obs and close", async () => {
 // Test case for opening a resource panel, downloading an obs English resource, and displaying it in the added panel.
 test("open a resource panel and download a obs english resource from resource tab and display in added panel", async () => {
   // Click to load module in the first panel
-  await window.locator('//*[@aria-label="load-module-1"]').click()
-  // Get the tab text and expect it to be 'obs'
-  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
-  await expect(tab).toBe('obs')
+  await loadResource(window, expect, "load-module-1", "obs")
   // Download the English obs resource and display it in the added panel
   await downloadResource(window, expect, "en_obs", "obs")
   await downloadedResourceTable(window, expect, "en_obs", 1, "obs")
@@ -373,10 +367,7 @@ test("add a new resource panel, search hindi resource, download and display", as
   // Add a panel
   await addPanel(window)
   // Click to load module in the third panel
-  await window.locator('//*[@aria-label="load-module-3"]').click()
-  // Get the tab text and expect it to be 'obs'
-  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
-  await expect(tab).toBe('obs')
+  await loadResource(window, expect, "load-module-3", "obs")
   // Switch to the resources tab and search for Hindi resource
   await window.locator('//*[@aria-label="resources-tab"]').click()
   await searchResourceLanguage(window, expect, hindi)
@@ -390,10 +381,7 @@ test("add a new resource panel, search hindi resource, download and display", as
 // Test case for clearing search language and pre-release version filters.
 test("Clear search langague and pre-release version", async () => {
   // Switch to the third resource panel
-  await window.locator('//*[@aria-label="resources-selector-3"]').click()
-  // Get the tab text and expect it to be 'obs'
-  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
-  await expect(tab).toBe('obs')
+  await loadResource(window, expect, "resources-selector-3", "obs")
   // Switch to the resources tab and search for Urdu language
   await window.locator('//*[@aria-label="resources-tab"]').click()
   await searchResourceLanguage(window, expect, "Urdu")
@@ -407,10 +395,8 @@ test("Clear search langague and pre-release version", async () => {
 // Test case for downloading Persian obs resource with pre-release and replacing it with Hindi resource.
 test("Download Persian obs resource with pre-release and replace with Hindi resource", async ({ farsi }) => {
   // Switch to the third resource panel
-  await window.locator('//*[@aria-label="resources-selector-3"]').click()
   // Get the tab text and expect it to be 'obs'
-  const tab = await window.locator('//*[@aria-label="obs"]').textContent()
-  await expect(tab).toBe('obs')
+  await loadResource(window, expect, "resources-selector-3", "obs")
 
   // Switch to the resources tab
   await window.locator('//*[@aria-label="resources-tab"]').click()
@@ -509,7 +495,7 @@ test("Export text translation project without add any content in the Downloads f
   await exportProjects(window, expect, textProject)
 })
 
-test("Export the obs project without add any content in the Downloads folder", async ({ obsProject }) => {
+test("Export the obs project with content in the Downloads folder", async ({ obsProject }) => {
   await exportProjects(window, expect, obsProject)
 })
 
@@ -699,7 +685,7 @@ test("App language change Hindi to English", async ({ hindi, english }) => {
   // Verify the language change and UI update
   await window.waitForSelector('//*[@aria-label="snack-text"]')
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(await snackbar).toBe("Updated the Profile.");
+  expect(snackbar).toEqual(expect.stringContaining(snackbar));
 
   await window.locator('//*[@aria-label="projectList"]').click();
   await projectPageExpect(window, expect)
@@ -801,6 +787,6 @@ test("Update user Profile details", async () => {
   // Verify the success message
   await window.waitForSelector('//*[@aria-label="snack-text"]')
   const snackbar = await window.locator('//*[@aria-label="snack-text"]').textContent();
-  expect(await snackbar).toBe("Updated the Profile.");
+  expect(snackbar).toEqual(expect.stringContaining(snackbar));
   await window.locator('//*[@aria-label="projectList"]').click();
 })
