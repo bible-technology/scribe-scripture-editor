@@ -352,6 +352,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                               <ReferenceObs
                                 stories={stories1}
                                 font={font3}
+                                title={referenceColumnTwoData1.refName}
                               />
                             )}
                         </>
@@ -429,6 +430,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                               <ReferenceObs
                                 stories={stories2}
                                 font={font4}
+                                title={referenceColumnTwoData2.refName}
                               />
                             )}
                         </>
