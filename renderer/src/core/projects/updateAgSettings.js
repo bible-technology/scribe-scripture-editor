@@ -28,14 +28,13 @@ export const updateAgSettings = async (username, projectName, data, font) => {
     } else {
       setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
     }
-    setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
     if (!setting.project[data.type.flavorType.flavor.name].font) {
       setting.project[data.type.flavorType.flavor.name].font = font || '';
     } else {
       setting.project[data.type.flavorType.flavor.name].font = font || setting.project[data.type.flavorType.flavor.name].font;
     }
   }
-  setting.project[data.type.flavorType.flavor.name].refResources = data.project[data.type.flavorType.flavor.name].refResources;
+  setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   logger.debug('updateAgSettings.js', `Updating the ${environment.PROJECT_SETTING_FILE}`);
   await fs.writeFileSync(folder, JSON.stringify(setting));
 };
