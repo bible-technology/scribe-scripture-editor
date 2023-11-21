@@ -300,7 +300,7 @@ test('Adding panels', async () => {
 });
 
 // Test case for adding reference panels, removing them, and verifying the panel count.
-test("Adding refernce panels and removing from the editor", async () => {
+test("Adding reference panels and removing them from the editor", async () => {
   // Add two panels
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
@@ -315,7 +315,7 @@ test("Adding refernce panels and removing from the editor", async () => {
 })
 
 // Test case for adding sections for a resource in the editor.
-test("Adding some more section for resource in editor", async () => {
+test("Adding some more sections for resources in the editor", async () => {
   // Add two panels
   await addPanel(window)
   expect(await window.innerText('//*[@aria-label="number-of-panels"]')).toBe('2')
@@ -344,7 +344,7 @@ test("Removing all the panels", async () => {
 })
 
 // Test case for opening a resource panel, checking the tab is obs, and closing.
-test("open a resource panel, check the tab is obs and close", async () => {
+test("Open a resource panel, check the tab is obs, and close the resource panel", async () => {
   // Add a panel
   await addPanel(window)
   // Click to load module in the first panel
@@ -354,7 +354,7 @@ test("open a resource panel, check the tab is obs and close", async () => {
 })
 
 // Test case for opening a resource panel, downloading an obs English resource, and displaying it in the added panel.
-test("open a resource panel and download a obs english resource from resource tab and display in added panel", async () => {
+test("Open a resource panel download an obs English resource from the resource tab and display in it the added panel", async () => {
   // Click to load module in the first panel
   await loadResource(window, expect, "load-module-1", "obs")
   // Download the English obs resource and display it in the added panel
@@ -363,7 +363,7 @@ test("open a resource panel and download a obs english resource from resource ta
 })
 
 // Test case for adding a new resource panel, searching for a Hindi resource, downloading, and displaying it.
-test("add a new resource panel, search hindi resource, download and display", async ({ hindi }) => {
+test(" Add a new resource panel, search Hindi resources, download and display", async ({ hindi }) => {
   // Add a panel
   await addPanel(window)
   // Click to load module in the third panel
@@ -379,7 +379,7 @@ test("add a new resource panel, search hindi resource, download and display", as
 })
 
 // Test case for clearing search language and pre-release version filters.
-test("Clear search langague and pre-release version", async () => {
+test("Clear search language and pre-release version", async () => {
   // Switch to the third resource panel
   await loadResource(window, expect, "resources-selector-3", "obs")
   // Switch to the resources tab and search for Urdu language
