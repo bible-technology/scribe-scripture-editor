@@ -28,6 +28,7 @@ export const updateAgSettings = async (username, projectName, data, font) => {
     } else {
       setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
     }
+    setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
     if (!setting.project[data.type.flavorType.flavor.name].font) {
       setting.project[data.type.flavorType.flavor.name].font = font || '';
     } else {
