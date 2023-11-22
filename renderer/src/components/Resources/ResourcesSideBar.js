@@ -118,6 +118,13 @@ export default function ResourcesSidebar({
       Icon: MicrophoneIcon,
       subCategory: [],
     },
+    {
+      id: 'local-helps',
+      title: 'Upload Help Resources',
+      resourceType: 'helps',
+      Icon: MicrophoneIcon,
+      subCategory: [],
+    },
   ];
   return (
     <div className="w-[35%] sm:w-[25%] bg-gray-100 h-[85vh] sm:h-[100%] flex flex-col gap-4 p-2">

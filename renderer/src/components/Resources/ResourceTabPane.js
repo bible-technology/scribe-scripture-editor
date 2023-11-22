@@ -38,21 +38,24 @@ export default function ResourceTabPane({
     <div className="bg-gray-50 items-center p-3 justify-between w-full h-full">
       <Tab.Group>
         <Tab.List className="flex space-x-0 rounded-xl ">
-          <Tab className={({ selected }) => classNames(
+          {selectResource !== 'local-helps' && (
+            <Tab className={({ selected }) => classNames(
             'w-20 rounded-t-lg flex items-center justify-center font-bold py-2 text-xs leading-5 text-white uppercase',
             'ring-offset-2 ring-offset-white focus:outline-none z-50',
             selected
               ? 'bg-primary text-white'
               : 'text-black bg-gray-200',
           )}
-          >
-            {selectResource === 'bible'
+            >
+              {selectResource === 'bible'
             ? t('label-resource-bible')
             : selectResource === 'OBS' ? 'OBS'
             : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
 
-          </Tab>
-          {selectResource !== 'audio'
+            </Tab>
+          )}
+
+          {(selectResource !== 'audio' && selectResource !== 'local-helps')
           && (
           <Tab as={Fragment}>
             {({ selected }) => (
@@ -75,7 +78,8 @@ export default function ResourceTabPane({
               </button>
             )}
           </Tab>
-)}
+          )}
+
           <Tab
             className={({ selected }) => classNames(
               'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
@@ -94,21 +98,25 @@ export default function ResourceTabPane({
             {t('label-collection')}
           </Tab>
         </Tab.List>
+
         <Tab.Panels>
-          <Tab.Panel className="p-4 bg-white">
-            <ObsBibleAudioTab
-              selectResource={selectResource}
-              filteredBibleObsAudio={filteredBibleObsAudio}
-              setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-              removeSection={removeSection}
-              loading={loading}
-              setLoading={setLoading}
-              handleRowSelect={handleRowSelect}
-              setSubMenuItems={setSubMenuItems}
-              subMenuItems={subMenuItems}
-            />
-          </Tab.Panel>
-          {selectResource !== 'audio'
+          {selectResource !== 'local-helps' && (
+            <Tab.Panel className="p-4 bg-white">
+              <ObsBibleAudioTab
+                selectResource={selectResource}
+                filteredBibleObsAudio={filteredBibleObsAudio}
+                setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                removeSection={removeSection}
+                loading={loading}
+                setLoading={setLoading}
+                handleRowSelect={handleRowSelect}
+                setSubMenuItems={setSubMenuItems}
+                subMenuItems={subMenuItems}
+              />
+            </Tab.Panel>
+          )}
+
+          {selectResource !== 'audio' && selectResource !== 'local-helps'
             && (
             <Tab.Panel className="p-4 bg-white">
               <DownloadResourcePopUp
@@ -117,7 +125,7 @@ export default function ResourceTabPane({
                 setIsOpenDonwloadPopUp={setIsOpenDonwloadPopUp}
               />
             </Tab.Panel>
-)}
+          )}
           <Tab.Panel className="p-4 bg-white">
             <ImportResource
               open={openImportResourcePopUp}
@@ -125,6 +133,7 @@ export default function ResourceTabPane({
               openPopUp={setOpenImportResourcePopUp}
               setOpenResourcePopUp={setOpenResourcePopUp}
               setLoading={setLoading}
+              selectResource={selectResource}
             />
           </Tab.Panel>
         </Tab.Panels>

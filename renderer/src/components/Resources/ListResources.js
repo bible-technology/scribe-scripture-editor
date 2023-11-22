@@ -238,7 +238,7 @@ export const ListResources = ({
                       role="button"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta && `${(resource.value.meta.released).split('T')[0]}`}
+                      {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource.value.meta.released).split('T')[0]}`}
                     </div>
                   </td>
                   <td className="p-2 text-gray-600">
@@ -265,7 +265,9 @@ export const ListResources = ({
                         {resource?.value?.lastUpdatedAg?.split('T')[0]}
                       </div>
                       <div className="flex justify-center items-center gap-4">
+                        {!resource?.value?.localUploadedHelp && (
                         <CheckHelpsUpdatePopUp resource={resource} selectResource={selectResource} />
+                      )}
                         <RemoveResource
                           resource={resource}
                           selectResource={selectResource}

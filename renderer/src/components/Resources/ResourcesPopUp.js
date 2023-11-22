@@ -125,7 +125,7 @@ export default function ResourcesPopUp(
                   setSelectedPreProd={setSelectedPreProd}
                 />
 
-                {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible')
+                {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible' || selectResource === 'local-helps')
                   ? (
                     <ResourceTabPane
                       selectResource={selectResource}
