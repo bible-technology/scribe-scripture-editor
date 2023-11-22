@@ -4,8 +4,9 @@
  - Supported Resources are TN , TW, TQ, TA for obs and bible
 */
 
-export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePath) => {
+export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePath, raiseSnackbarErroOrWarning, logger) => {
   try {
+    logger.debug('uploadLocalHelpsResources.js', 'in func - started upload local help resource');
     const fse = window.require('fs-extra');
     const yaml = require('js-yaml');
     // read manifest.yaml
@@ -13,13 +14,18 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
       // const manifestBuff = fs.readFileSync(path.join(sourcePath, 'manifest.yaml'));
       // const manifest = YAML.load(manifestBuff);
       const manifest = yaml.load(fs.readFileSync(path.join(sourcePath, 'manifest.yaml'), 'utf8'));
-      console.log({ manifest });
+      logger.debug('uploadLocalHelpsResources.js', 'read manifest successfully');
+
+      // check its not twl or obs-twl -> currently not supported
+      if (manifest.dublin_core.identifier === 'twl' || manifest.dublin_core.identifier === 'obs-twl') {
+        throw new Error('TWL resource type is not currently supported');
+      }
 
       // generate file name same as the door43 downloaded resource name (langcode_resourcetypeCode_owner_releasetab/version  : en_tn_door43_v77)
       const resourceName = `${manifest.dublin_core.language.identifier}_${manifest.dublin_core.identifier}_${manifest.dublin_core.publisher}_v${manifest.dublin_core.version}`;
       // check for duplicate resource
       if (!fs.existsSync(path.join(resourcePath, resourceName))) {
-        console.log('new resouece ok to proceed ---');
+        logger.debug('uploadLocalHelpsResources.js', 'No duplicate resource found');
         // create metadata.json
         const metaData = {
           checking: manifest.checking,
@@ -45,21 +51,40 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
           },
         };
 
+        logger.debug('uploadLocalHelpsResources.js', 'metadata object creation succesfull');
+
         // copy contents from source to target
         await fse.copy(sourcePath, path.join(resourcePath, resourceName))
         .then(async () => {
+          logger.debug('uploadLocalHelpsResources.js', 'resource copy from src to trg successfull');
           // write metadata into the target dir
           await fs.writeFileSync(path.join(resourcePath, resourceName, 'metadata.json'), JSON.stringify(metaData));
-          console.log('Finished ---');
+          logger.debug('uploadLocalHelpsResources.js', 'write metadata is successfull and done uploading');
+          raiseSnackbarErroOrWarning({
+            type: 'success',
+            message: 'Resource uploaded successfully',
+          });
         });
       } else {
         // existing resource with same name
-        console.log('Existing Resource -- xxxx');
+        logger.debug('uploadLocalHelpsResources.js', 'resource already exist');
+        raiseSnackbarErroOrWarning({
+          type: 'warning',
+          message: 'Resource Already Exist',
+        });
       }
     } else {
-      console.log('manifest not exist . Can not upload the resource -- xxxxx');
+      logger.error('uploadLocalHelpsResources.js', 'Invalid resource or No manifest found');
+      raiseSnackbarErroOrWarning({
+        type: 'error',
+        message: 'Invalid resource. No manifest found',
+      });
     }
   } catch (err) {
-    console.log('in upload local fucntion ERR : ', err);
+    logger.error('uploadLocalHelpsResources.js', `unkwon error : ${err?.message || err}`);
+    raiseSnackbarErroOrWarning({
+      type: 'error',
+      message: err?.message || err,
+    });
   }
 };

@@ -13,6 +13,7 @@ import * as logger from '../../logger';
 import { viewBurrito } from '../../core/burrito/importBurrito';
 import packageInfo from '../../../../package.json';
 import { uploadLocalHelpsResources } from './ResourceUtils/uploadLocalHelpsResources';
+import useAddNotification from '../hooks/useAddNotification';
 
 export default function ImportResource({
   closePopUp, setOpenResourcePopUp, setLoading, selectResource,
@@ -34,10 +35,23 @@ export default function ImportResource({
     },
   } = useContext(ReferenceContext);
 
+  const { addNotification } = useAddNotification();
+
   function close() {
     closePopUp(false);
     setValid(false);
   }
+
+  const raiseSnackbarErroOrWarning = async (data) => {
+    // type : success/error/warning , message : error / message
+    await addNotification('Resource', data.message, data.type);
+    if (data?.message && data?.type) {
+      setNotify(data.type);
+      setSnackText(data.message);
+      setOpenSnackBar(true);
+    }
+  };
+
   const importReference = async (projectsDir, name, burritoType) => {
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
@@ -83,7 +97,7 @@ export default function ImportResource({
 
       // section for upload local door43 helps resource (upload and convert to burrito type)
       if (selectResource === 'local-helps') {
-        await uploadLocalHelpsResources(fs, path, projectsDir, folderPath);
+        await uploadLocalHelpsResources(fs, path, projectsDir, folderPath, raiseSnackbarErroOrWarning, logger);
       } else {
         // section for burrito based local resource for bible, obs and audio
         const result = await viewBurrito(folderPath, user?.username, 'resources');
@@ -114,7 +128,7 @@ export default function ImportResource({
       }
     } catch (err) {
       logger.debug('ImportResource.js', 'error in loading resource');
-      setNotify(err);
+      setNotify('error');
     } finally {
       setLoading(false);
     }
