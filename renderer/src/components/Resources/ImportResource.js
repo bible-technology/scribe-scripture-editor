@@ -130,16 +130,25 @@ export default function ImportResource({
       logger.debug('ImportResource.js', 'error in loading resource');
       setNotify('error');
     } finally {
+      setFolderPath('');
       setLoading(false);
     }
   };
 
   return (
     <>
-      <h2 className="uppercase text-sm">{t('label-import-resource')}</h2>
+      <h2 className="uppercase text-sm">{selectResource === 'local-helps' ? 'Import Door43 helps resources' : t('label-import-resource')}</h2>
       <h4 className="text-xs text-primary tracking-wide leading-4 font-light flex items-center py-2 gap-2">
-        {t('label-burrito-resource-path')}
-        <button title={t('msg-select-dir-for-SB')} type="button" disabled>
+        {selectResource === 'local-helps' ? 'Helps Resource filepath' : t('label-burrito-resource-path')}
+        <button
+          title={
+          selectResource === 'local-helps'
+          ? 'supported resources are TN, TW, TQ, TA for bible and OBS with a valid manifest as same as door43'
+          : t('msg-select-dir-for-SB')
+          }
+          type="button"
+          disabled
+        >
           <InformationCircleIcon className="h-6 w-6 text-primary" />
         </button>
       </h4>
