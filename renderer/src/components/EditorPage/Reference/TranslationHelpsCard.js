@@ -83,9 +83,66 @@ export default function TranslationHelpsCard({
               // console.log('project name content : ', currentFile[0].path);
               const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
               // convert tsv to json
+              console.log('file content ===> ', { filecontent });
+              const headerArr = filecontent.split('\n')[0].split('\t');
+              console.log({ headerArr });
+
+              let noteName;
+              let indexOfNote;
+              if (headerArr.indexOf('Note') > 0) {
+                indexOfNote = headerArr.indexOf('Note');
+                noteName = headerArr[indexOfNote];
+              } else if (headerArr.indexOf('OccurrenceNote')) {
+                indexOfNote = headerArr.indexOf('OccurrenceNote');
+                noteName = headerArr[indexOfNote];
+              }
+
+              let bvcType = true;
+              if (headerArr.includes('Reference') && headerArr.every((value) => !['Book', 'Verse', 'Chapter'].includes(value))) {
+                bvcType = false;
+              }
+
+              console.log({ noteName });
+
               const json = filecontent.split('\n')
                 .map((file) => {
+                  if (bvcType) {
                     const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                    return {
+                      Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote,
+                      };
+                  }
+                    const Book = projectId;
+                    const [ref, ID] = file.split('\t');
+                    const Chapter = ref.split(':')[0];
+                    const Verse = ref.split(':')[1];
+                    return {
+                      Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
+                      };
+
+                    // console.log(file.split('\t'));
+
+                  // if (file.split('\t')[0] === 'Book') {
+                  //   // [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                  // } else if (file.split('\t')[0] === 'Reference') {
+                  //   // const [Reference, ID, Tags, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                  // }
+                }).filter((data) => data.Chapter === chapter && data.Verse === verse);
+                // change contents of items
+                // console.log('file content : ', json);
+
+              // orignal -----------------------------------------------------------------------
+
+              const json2 = filecontent.split('\n')
+                .map((file) => {
+                    // console.log(file.split('\t'));
+                    const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+
+                  // if (file.split('\t')[0] === 'Book') {
+                  //   // [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                  // } else if (file.split('\t')[0] === 'Reference') {
+                  //   // const [Reference, ID, Tags, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                  // }
                     return {
                       Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote,
                       };
@@ -94,6 +151,8 @@ export default function TranslationHelpsCard({
                 // console.log('file content : ', json);
                 setOfflineItemsDisable(false);
                 setOfflineItems(json);
+
+                console.log('json out -------->', { json });
               }
               break;
 
@@ -156,6 +215,8 @@ export default function TranslationHelpsCard({
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
 
+  console.log('==========> ', !offlineItemsDisable && offlineResource?.offline, { items });
+
   return (
     <>
       <TranslationhelpsNav
@@ -167,7 +228,7 @@ export default function TranslationHelpsCard({
       <ReferenceCard
         items={items}
         headers={headers}
-        filters={['Note']}
+        filters={['OccurrenceNote']}
         fontSize={fontSize}
         itemIndex={itemIndex}
         setFilters={setFilters}

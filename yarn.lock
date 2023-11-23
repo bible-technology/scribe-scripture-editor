@@ -5897,6 +5897,11 @@ bfj@^7.0.2:
     hoopy "^0.1.4"
     tryer "^1.0.1"
 
+bible-reference-range@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/bible-reference-range/-/bible-reference-range-1.1.0.tgz#2e80f066d30e9884d30f582c623de9cc2414676b"
+  integrity sha512-EVPhDLSY/hmeW6reO9XLst1SKAAf6Opyfy6l2MZSna9kE6DqEiFW/eWOrkPq5g40Hs+Xe8odPGJuIpdysokQpg==
+
 bible-reference-rcl@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/bible-reference-rcl/-/bible-reference-rcl-1.1.0.tgz#0e9f33effeaabf6bfed53b897ad8e99033502911"
@@ -7626,6 +7631,13 @@ dayjs@^1.8.34:
   version "1.11.9"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
   integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
+
+dcs-branch-merger@^1.4.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/dcs-branch-merger/-/dcs-branch-merger-1.4.1.tgz#57a2819c8189f8f23325eff8bebf4f7c698b2c49"
+  integrity sha512-IJbG5OpZQkxNDYao+T5MOrtVatvzDBGsuEwoZ7kq214OCTwlR+J96ApyamNeg+/i5ZQ8oKa3H4OMM6NFp6s7Zw==
+  dependencies:
+    path "0.12.7"
 
 debounce-fn@^4.0.0:
   version "4.0.0"
@@ -19011,14 +19023,16 @@ transform-runtime@0.0.0:
   resolved "https://registry.yarnpkg.com/transform-runtime/-/transform-runtime-0.0.0.tgz#e714d9b69211dd9537939d50e3aa5788c442b85c"
   integrity sha512-PX3vXzO8lucrVm82vZb7BABBLHyMDPGzn9zElHr+DnvtS3JPXtqwB1iTRe+D6iFXYmjtAF3zH7O0Xc5XpLpMEg==
 
-translation-helps-rcl@3.3.7:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/translation-helps-rcl/-/translation-helps-rcl-3.3.7.tgz#28fc937afde1390e92892826cc8c462ffc31f1bb"
-  integrity sha512-K5DRCHehRibclGObzV0A1o44d399z5/R4WLZEfFOjdq6w1lhKfWDrr68qG3o+AI2r74/UBqxF3rpQVxYlwqCMA==
+translation-helps-rcl@3.5.12:
+  version "3.5.12"
+  resolved "https://registry.yarnpkg.com/translation-helps-rcl/-/translation-helps-rcl-3.5.12.tgz#e58427750877c72162aa713fba4033b0e79b40de"
+  integrity sha512-uXj4uWrePiSf2F7eYWauVb1+qp5Rjexu2BYkAe7rGJotG9Z4RI6nbbK56mlG+XHGlbnRkLkIGSZJXOdFDpi8AQ==
   dependencies:
     "@gwdevs/extensible-rcl" "^1.0.1"
     "@mui/styled-engine" "npm:@mui/styled-engine-sc@latest"
     axios "^0.27.2"
+    bible-reference-range "^1.1.0"
+    dcs-branch-merger "^1.4.0"
     deep-equal "^2.0.5"
     react-draggable "^4.4.3"
     styled-components "^5.2.1"
