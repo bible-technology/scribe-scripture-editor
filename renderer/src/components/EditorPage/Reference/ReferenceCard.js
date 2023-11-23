@@ -17,6 +17,7 @@ const ReferenceCard = ({
   font,
 }) => {
   console.log({ item });
+
   return (
     <div style={{ fontFamily: font || 'sans-serif' }}>
       <CardContent
