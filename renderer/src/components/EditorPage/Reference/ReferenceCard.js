@@ -24,8 +24,6 @@ const ReferenceCard = ({
       setItemIndex,
     },
   } = useCardState({ items });
-  console.log({ item, itemIndex });
-  console.log('testing');
 
   useEffect(() => {
     if (resetTrigger) {

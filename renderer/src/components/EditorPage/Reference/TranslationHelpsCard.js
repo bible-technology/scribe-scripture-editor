@@ -2,12 +2,9 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import {
   useContent,
-  // useCardState,
-// CardContent,
 } from 'translation-helps-rcl';
 import localForage from 'localforage';
 import ReferenceCard from './ReferenceCard';
-// import TranslationhelpsNav from './TranslationhelpsNav';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 
@@ -49,7 +46,6 @@ export default function TranslationHelpsCard({
 
   useEffect(() => {
     if (offlineResource && offlineResource.offline) {
-      // console.log('offline in Helpscard : ', offlineResource);
       // read tn tsv contents and pass to items
       try {
         setOfflineMarkdown('');
@@ -62,27 +58,19 @@ export default function TranslationHelpsCard({
           const currentUser = user?.username;
           const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'resources');
           const projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
-// const projectName = 'en_tn_unfoldingWord_v77 (copy)';
-          console.log(resourceId);
           // switch resources
           switch (resourceId) {
             case 'tn':
-console.log(path.join(folder, projectName), fs.existsSync(path.join(folder, projectName)));
               if (fs.existsSync(path.join(folder, projectName))) {
-console.log('yes');
                 // eslint-disable-next-line array-callback-return
                 const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
-console.log('item', item, projectId);
                   if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
                     return item;
                   }
               });
-              console.log('project name content : ', currentFile[0].path);
               const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
-console.log(filecontent);
               // convert tsv to json
               const headerArr = filecontent.split('\n')[0].split('\t');
-console.log(headerArr);
               let noteName;
               let indexOfNote;
               if (headerArr.indexOf('Note') > 0) {
@@ -158,7 +146,6 @@ console.log(headerArr);
                         };
                   }).filter((data) => data.Chapter === chapter && data.Verse === verse);
 
-                  console.log({ json });
                   setOfflineItemsDisable(false);
                   setOfflineItems(json);
               } else {
@@ -181,17 +168,16 @@ console.log(headerArr);
             }
               break;
 
-              case 'ta':
-              setOfflineMarkdown('');
-              if (filePath && projectId && fs.existsSync(path.join(folder, projectName, projectId, filePath))) {
-                const filecontent = fs.readFileSync(path.join(folder, projectName, projectId, filePath), 'utf8');
-                // console.log('filecontent : ', { filecontent });
-                setOfflineItemsDisable(true);
-                setOfflineMarkdown(filecontent);
-              }
-              break;
+            case 'ta':
+            setOfflineMarkdown('');
+            if (filePath && projectId && fs.existsSync(path.join(folder, projectName, projectId, filePath))) {
+              const filecontent = fs.readFileSync(path.join(folder, projectName, projectId, filePath), 'utf8');
+              setOfflineItemsDisable(true);
+              setOfflineMarkdown(filecontent);
+            }
+            break;
 
-              case 'tw':
+            case 'tw':
                 // console.log('filepath : ', { filePath });
                 setOfflineMarkdown('');
               if (filePath && fs.existsSync(path.join(folder, projectName, 'bible', filePath))) {
@@ -206,7 +192,6 @@ console.log(headerArr);
           }
         });
       } catch (err) {
-        // console.log('err on fetch local tn: ', err);
         logger.debug('TranslationHelpsCard.js', `reading offline helps Error : ${err} `);
       }
     }
@@ -217,8 +202,6 @@ console.log(headerArr);
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
-
-  console.log('==========> ', !offlineItemsDisable && offlineResource?.offline, { items, markdown });
 
   return (
     <ReferenceCard
