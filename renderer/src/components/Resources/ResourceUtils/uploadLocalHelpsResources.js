@@ -17,8 +17,8 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
       logger.debug('uploadLocalHelpsResources.js', 'read manifest successfully');
 
       // check its not twl or obs-twl -> currently not supported
-      if (manifest.dublin_core.identifier === 'twl' || manifest.dublin_core.identifier === 'obs-twl') {
-        throw new Error('TWL resource type is not currently supported');
+      if (!['tn', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq'].includes(manifest.dublin_core.identifier)) {
+        throw new Error(`${manifest.dublin_core.identifier} resource type is not currently supported`);
       }
 
       // generate file name same as the door43 downloaded resource name (langcode_resourcetypeCode_owner_releasetab/version  : en_tn_door43_v77)
