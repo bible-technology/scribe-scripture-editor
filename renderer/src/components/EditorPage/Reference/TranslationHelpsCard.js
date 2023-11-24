@@ -110,7 +110,6 @@ export default function TranslationHelpsCard({
               break;
 
             case 'tq':
-
               if (fs.existsSync(path.join(folder, projectName))) {
                 // eslint-disable-next-line array-callback-return
                 const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
@@ -131,7 +130,8 @@ export default function TranslationHelpsCard({
                   bvcType = false;
                 }
 
-                const json = filecontent.split('\n')
+                const joinedVerses = [];
+                const verseObjArr = filecontent.split('\n')
                   .map((file) => {
                     if (bvcType) {
                       const [Book, Chapter, Verse, ID, Question, Response] = file.split('\t');
@@ -139,14 +139,29 @@ export default function TranslationHelpsCard({
                         Book, Chapter, Verse, ID, Question, Response,
                         };
                     }
-                      const Book = projectId;
-                      const [ref, ID] = file.split('\t');
-                      const Chapter = ref.split(':')[0];
-                      const Verse = ref.split(':')[1];
-                      return {
-                        Book, Chapter, Verse, ID, Question: file.split('\t')[questionIndex], Response: file.split('\t')[responseIndex],
-                        };
-                  }).filter((data) => data.Chapter === chapter && data.Verse === verse);
+                    const Book = projectId;
+                    const [ref, ID] = file.split('\t');
+                    const Chapter = ref.split(':')[0];
+                    const Verse = ref.split(':')[1];
+                    if (Verse) {
+                      const splitVerse = Verse?.split('-');
+                      if (splitVerse.length > 1) {
+                        const start = parseInt(splitVerse[0], 10);
+                        const end = parseInt(splitVerse[1], 10);
+                        for (let i = start; i <= end; i++) {
+                          joinedVerses.push({
+                            Book, Chapter, Verse: i.toString(), ID, Question: file.split('\t')[questionIndex], Response: file.split('\t')[responseIndex],
+                          });
+                        }
+                        return { Chapter: -1, Verse: -1 };
+                      }
+                    }
+                    return {
+                      Book, Chapter, Verse, ID, Question: file.split('\t')[questionIndex], Response: file.split('\t')[responseIndex],
+                    };
+                  });
+                  const finalJson = [...verseObjArr, ...joinedVerses];
+                  const json = finalJson.filter((data) => data.Chapter === chapter && data.Verse === verse);
 
                   setOfflineItemsDisable(false);
                   setOfflineItems(json);
