@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { CardContent } from 'translation-helps-rcl';
+import { CardContent, useCardState } from 'translation-helps-rcl';
+import TranslationhelpsNav from './TranslationhelpsNav';
 
 const ReferenceCard = ({
   items,
-  item,
   filters,
-  markdownView,
   markdown,
   languageId,
   selectedQuote,
@@ -16,23 +14,39 @@ const ReferenceCard = ({
   isLoading,
   font,
 }) => {
+  const {
+    state: {
+      item, itemIndex, markdownView,
+    },
+    actions: {
+      setItemIndex,
+    },
+  } = useCardState({ items });
   console.log({ item });
-
+  console.log('testing');
   return (
-    <div style={{ fontFamily: font || 'sans-serif' }}>
-      <CardContent
-        item={item}
+    <>
+      <TranslationhelpsNav
+        classes
         items={items}
-        filters={filters}
-        markdown={markdown}
-        languageId={languageId}
-        markdownView={markdownView}
-        isLoading={isLoading}
-        selectedQuote={selectedQuote}
-        setQuote={setQuote}
-        viewMode={viewMode}
+        itemIndex={itemIndex}
+        setItemIndex={setItemIndex}
       />
-    </div>
+      <div style={{ fontFamily: font || 'sans-serif' }}>
+        <CardContent
+          item={item}
+          items={items}
+          filters={filters}
+          markdown={markdown}
+          languageId={languageId}
+          markdownView={markdownView}
+          isLoading={isLoading}
+          selectedQuote={selectedQuote}
+          setQuote={setQuote}
+          viewMode={viewMode}
+        />
+      </div>
+    </>
 
   );
 };
@@ -41,9 +55,7 @@ export default ReferenceCard;
 
 ReferenceCard.propTypes = {
   items: PropTypes.array,
-  item: PropTypes.object,
   filters: PropTypes.array,
-  markdownView: PropTypes.bool,
   markdown: PropTypes.object,
   languageId: PropTypes.string.isRequired,
   selectedQuote: PropTypes.string,

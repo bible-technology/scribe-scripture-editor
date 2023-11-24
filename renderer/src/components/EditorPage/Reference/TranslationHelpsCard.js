@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import {
   useContent,
-  useCardState,
+  // useCardState,
+  // CardContent,
 } from 'translation-helps-rcl';
 import localForage from 'localforage';
 import ReferenceCard from './ReferenceCard';
-import TranslationhelpsNav from './TranslationhelpsNav';
+// import TranslationhelpsNav from './TranslationhelpsNav';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 
@@ -45,15 +46,6 @@ export default function TranslationHelpsCard({
     readyToFetch: true,
   });
 
-  const {
-    state: {
-      item, headers, fontSize, itemIndex, markdownView,
-    },
-    actions: {
-      setFilters, setFontSize, setItemIndex, setMarkdownView,
-    },
-  } = useCardState({ items });
-
   useEffect(() => {
     if (offlineResource && offlineResource.offline) {
       // console.log('offline in Helpscard : ', offlineResource);
@@ -69,22 +61,27 @@ export default function TranslationHelpsCard({
           const currentUser = user?.username;
           const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'resources');
           const projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
-
+          // const projectName = 'en_tn_unfoldingWord_v77 (copy)';
+          console.log(resourceId);
           // switch resources
           switch (resourceId) {
             case 'tn':
+              console.log(path.join(folder, projectName), fs.existsSync(path.join(folder, projectName)));
               if (fs.existsSync(path.join(folder, projectName))) {
+                console.log('yes');
                 // eslint-disable-next-line array-callback-return
                 const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
+                  console.log('item', item, projectId);
                   if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
                     return item;
                   }
               });
-              // console.log('project name content : ', currentFile[0].path);
+              console.log('project name content : ', currentFile[0].path);
               const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
+              console.log(filecontent);
               // convert tsv to json
               const headerArr = filecontent.split('\n')[0].split('\t');
-
+              console.log(headerArr);
               let noteName;
               let indexOfNote;
               if (headerArr.indexOf('Note') > 0) {
@@ -214,45 +211,27 @@ export default function TranslationHelpsCard({
       }
     }
     // reset index
-    setItemIndex(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, chapter, languageId, resourceId, owner, offlineResource, projectId, items, filePath]);
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
 
-  console.log('==========> ', !offlineItemsDisable && offlineResource?.offline, { items, item, markdown });
+  console.log('==========> ', !offlineItemsDisable && offlineResource?.offline, { items, markdown });
 
   return (
-    <>
-      <TranslationhelpsNav
-        classes
-        items={items}
-        itemIndex={itemIndex}
-        setItemIndex={setItemIndex}
-      />
-      <ReferenceCard
-        items={items}
-        headers={headers}
-        filters={['OccurrenceNote', 'Question', 'Response']}
-        fontSize={fontSize}
-        itemIndex={itemIndex}
-        setFilters={setFilters}
-        setFontSize={setFontSize}
-        setItemIndex={setItemIndex}
-        markdownView={markdownView}
-        setMarkdownView={setMarkdownView}
-        item={item}
-        markdown={markdown}
-        isLoading={isLoading}
-        languageId={languageId}
-        title={title}
-        viewMode={viewMode}
-        selectedQuote={selectedQuote}
-        setQuote={setQuote}
-        font={font}
-      />
-    </>
+    <ReferenceCard
+      items={items}
+      filters={['OccurrenceNote', 'Question', 'Response']}
+      markdown={markdown}
+      isLoading={isLoading}
+      languageId={languageId}
+      title={title}
+      viewMode={viewMode}
+      selectedQuote={selectedQuote}
+      setQuote={setQuote}
+      font={font}
+    />
   );
 }
 
