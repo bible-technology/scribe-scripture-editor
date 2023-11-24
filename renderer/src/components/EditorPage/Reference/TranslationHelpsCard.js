@@ -182,8 +182,7 @@ console.log(headerArr);
               break;
 
               case 'ta':
-                // console.log('filepath : ', { projectId, filePath });
-                setOfflineMarkdown('');
+              setOfflineMarkdown('');
               if (filePath && projectId && fs.existsSync(path.join(folder, projectName, projectId, filePath))) {
                 const filecontent = fs.readFileSync(path.join(folder, projectName, projectId, filePath), 'utf8');
                 // console.log('filecontent : ', { filecontent });
