@@ -183,18 +183,18 @@ const LeftLogin = () => {
   return (
     <div className="flex flex-col w-full h-full pt-32 items-center relative xl:pt-28">
 
-      <div className=" mt-10 flex flex-col gap-3 items-center justify-center pb-20">
+      <div className="mt-10 flex flex-col gap-3 items-center justify-center pb-20 ">
         <LogoIcon
-          className="h-16 w-16 group-hover:text-primary"
+          className="h-16 w-16 group-hover:text-primary ml-5"
           aria-hidden="true"
         />
         <div className="text-white flex flex-col justify-center ">
-          <h3 className="uppercase font-bold tracking-wider text-3xl text-black">Scribe Scripture</h3>
+          <h3 className="uppercase font-bold tracking-wider text-4xl text-black text-center">Scribe</h3>
           <q className="text-center italic text-sm mt-2 text-black">Scripture editing made simple</q>
         </div>
       </div>
 
-      <p className="text-md text-black/80">{sortedUsers.length === 0 ? 'Welcome!' : 'Welcome Back !'}</p>
+      <p className="text-md text-black/80">{sortedUsers.length === 0 ? 'Welcome!' : 'Welcome back!'}</p>
 
       <div className="p-7 pb-0">
 
