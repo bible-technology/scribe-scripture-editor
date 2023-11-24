@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CardContent, useCardState } from 'translation-helps-rcl';
 import TranslationhelpsNav from './TranslationhelpsNav';
@@ -13,6 +13,8 @@ const ReferenceCard = ({
   viewMode,
   isLoading,
   font,
+  setResetTrigger,
+  resetTrigger,
 }) => {
   const {
     state: {
@@ -22,16 +24,27 @@ const ReferenceCard = ({
       setItemIndex,
     },
   } = useCardState({ items });
-  console.log({ item });
+  console.log({ item, itemIndex });
   console.log('testing');
+
+  useEffect(() => {
+    if (resetTrigger) {
+      setItemIndex(0);
+      setResetTrigger(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetTrigger]);
+
   return (
     <>
+      {item && items.length > 0 && (
       <TranslationhelpsNav
         classes
         items={items}
         itemIndex={itemIndex}
         setItemIndex={setItemIndex}
       />
+    )}
       <div style={{ fontFamily: font || 'sans-serif' }}>
         <CardContent
           item={item}

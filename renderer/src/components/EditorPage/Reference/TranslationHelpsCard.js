@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   useContent,
   // useCardState,
-  // CardContent,
+// CardContent,
 } from 'translation-helps-rcl';
 import localForage from 'localforage';
 import ReferenceCard from './ReferenceCard';
@@ -31,6 +31,7 @@ export default function TranslationHelpsCard({
   const [offlineItems, setOfflineItems] = useState([]);
   const [offlineItemsDisable, setOfflineItemsDisable] = useState(false);
   const [offlineMarkdown, setOfflineMarkdown] = useState('');
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   // eslint-disable-next-line prefer-const
   let { items, markdown, isLoading } = useContent({
@@ -61,27 +62,27 @@ export default function TranslationHelpsCard({
           const currentUser = user?.username;
           const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'resources');
           const projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
-          // const projectName = 'en_tn_unfoldingWord_v77 (copy)';
+// const projectName = 'en_tn_unfoldingWord_v77 (copy)';
           console.log(resourceId);
           // switch resources
           switch (resourceId) {
             case 'tn':
-              console.log(path.join(folder, projectName), fs.existsSync(path.join(folder, projectName)));
+console.log(path.join(folder, projectName), fs.existsSync(path.join(folder, projectName)));
               if (fs.existsSync(path.join(folder, projectName))) {
-                console.log('yes');
+console.log('yes');
                 // eslint-disable-next-line array-callback-return
                 const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
-                  console.log('item', item, projectId);
+console.log('item', item, projectId);
                   if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
                     return item;
                   }
               });
               console.log('project name content : ', currentFile[0].path);
               const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
-              console.log(filecontent);
+console.log(filecontent);
               // convert tsv to json
               const headerArr = filecontent.split('\n')[0].split('\t');
-              console.log(headerArr);
+console.log(headerArr);
               let noteName;
               let indexOfNote;
               if (headerArr.indexOf('Note') > 0) {
@@ -211,7 +212,8 @@ export default function TranslationHelpsCard({
       }
     }
     // reset index
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setResetTrigger(true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, chapter, languageId, resourceId, owner, offlineResource, projectId, items, filePath]);
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
@@ -231,6 +233,8 @@ export default function TranslationHelpsCard({
       selectedQuote={selectedQuote}
       setQuote={setQuote}
       font={font}
+      setResetTrigger={setResetTrigger}
+      resetTrigger={resetTrigger}
     />
   );
 }
