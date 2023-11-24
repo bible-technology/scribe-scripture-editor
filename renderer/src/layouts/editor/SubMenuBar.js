@@ -1,16 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { useState, useContext, useEffect } from 'react';
-import { BookmarkIcon } from '@heroicons/react/24/solid';
+// import { BookmarkIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
-import MenuBar from '@/components/Menubar/MenuBar';
-import CustomUsfmToolbar from '@/components/EditorPage/UsfmEditor/CustomUsfmToolbar';
+// import MenuBar from '@/components/Menubar/MenuBar';
+// import CustomUsfmToolbar from '@/components/EditorPage/UsfmEditor/CustomUsfmToolbar';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNofications from '@/components/Notification/CustomNofications';
 import localforage from 'localforage';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
 // import useNetwork from '@/components/hooks/useNetowrk';
 import { isElectron } from '@/core/handleElectron';
-import Font from '@/icons/font.svg';
+// import Font from '@/icons/font.svg';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
 import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import menuStyles from './MenuBar.module.css';
@@ -21,11 +22,11 @@ const activate = () => {
   // console.log('rename');
 };
 
-const EditorTools = [
-  {
-    renderElement: <CustomUsfmToolbar />,
-  },
-];
+// const EditorTools = [
+//   {
+//     renderElement: <CustomUsfmToolbar />,
+//   },
+// ];
 
 export default function SubMenuBar() {
   // const [snackBar, setSnackBar] = useState(true);
@@ -59,19 +60,19 @@ export default function SubMenuBar() {
   };
   const { t } = useTranslation();
   // const networkState = useNetwork();
-  const FileMenuItems = [
-    {
-      itemname: t('label-bookmarks'),
-      icon: <BookmarkIcon />,
-      callback: openBookMarks,
-    },
-    {
-      itemname: 'Font',
-      icon: <Font />,
-      renderElement: <MenuDropdown />,
-      callback: activate,
-    },
-  ];
+  // const FileMenuItems = [
+  //   {
+  //     itemname: t('label-bookmarks'),
+  //     icon: <BookmarkIcon />,
+  //     callback: openBookMarks,
+  //   },
+  //   {
+  //     itemname: 'Font',
+  //     icon: <Font />,
+  //     renderElement: <MenuDropdown />,
+  //     callback: activate,
+  //   },
+  // ];
 
   const handleResource = () => {
     if (layout === 0) {
@@ -127,6 +128,22 @@ export default function SubMenuBar() {
       supabaseResourceType();
     }
   });
+  const {
+    state: {
+      fontSize,
+    },
+    actions: {
+      setFontsize,
+    },
+  } = useContext(ReferenceContext);
+  const handleFontSize = (status) => {
+    if (status === 'dec' && fontSize > 0.70) {
+      setFontsize(fontSize - 0.2);
+    }
+    if (status === 'inc' && fontSize < 2) {
+      setFontsize(fontSize + 0.2);
+    }
+  };
   return (
     <>
 
@@ -203,17 +220,52 @@ export default function SubMenuBar() {
       </Transition> */}
 
       <nav className="flex p-2 shadow-sm border-b border-gray-200">
-        <div className="w-3/5">
-          <MenuBar header={t('label-menu-file')} MenuItems={resourceType === 'textStories' ? FileMenuItems.slice(1) : FileMenuItems} />
+        <div className="w-3/5 items-center flex">
+          {/* <MenuBar header={t('label-menu-file')} MenuItems={resourceType === 'textStories' ? FileMenuItems.slice(1) : FileMenuItems} /> */}
+          <MenuDropdown buttonStyle="bg-gray-100 rounded-md h-full px-2" />
+          <button type="button" className={`${menuStyles.btn}`}>
+            <div
+              aria-label="decrease-font"
+              onClick={() => { handleFontSize('dec'); }}
+              role="button"
+              tabIndex="0"
+              title={t('tooltip-editor-font-dec')}
+              className="h6 w-6 hover:text-black font-bold border-r border-gray-200 text-center flex items-start pl-2"
+            >
+              {t('label-editor-font-char')}
+            </div>
+            <div
+              aria-label="increase-font"
+              className="h6 w-6 hover:text-black font-bold text-lg text-center flex pl-2"
+              onClick={() => { handleFontSize('inc'); }}
+              role="button"
+              title={t('tooltip-editor-font-inc')}
+              tabIndex="0"
+            >
+              {t('label-editor-font-char')}
+            </div>
+          </button>
           {/* <span>
             <MenuBar header="FORMAT" MenuItems={FormatMenuItems} style={{ left: '-60px' }} />
           </span> */}
           {/* <button type="button" className={styles.menu} aria-expanded="false">
             <span>Insert</span>
           </button> */}
-          <span>
+          {/* <span>
             <MenuBar header={t('label-menu-edit')} MenuItems={EditorTools} style={{ left: '-60px', height: '65px' }} />
-          </span>
+          </span> */}
+          <button aria-label="add-panels" title={t('tooltip-editor-layout')} type="button" onClick={() => handleResource()} className={`group ${menuStyles.btn}`}>
+            <ColumnsIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />
+            <span
+              aria-label="number-of-panels"
+              className="px-2 ml-1 bg-primary
+              text-white  group-hover:bg-white
+              group-hover:text-primary inline-flex
+              text-xxs leading-5 font-semibold rounded-full"
+            >
+              {layout + 1}
+            </span>
+          </button>
         </div>
         {/* <div className="w-2/3">
           <div className="flex-1 items-center text-center place-self-center" />
@@ -236,7 +288,7 @@ export default function SubMenuBar() {
             {/* Editor sync 2 new one */}
             <EditorSync selectedProject={selectedProject} />
 
-            <button aria-label="add-panels" title={t('tooltip-editor-layout')} type="button" onClick={() => handleResource()} className={`group ${menuStyles.btn}`}>
+            {/* <button aria-label="add-panels" title={t('tooltip-editor-layout')} type="button" onClick={() => handleResource()} className={`group ${menuStyles.btn}`}>
               <ColumnsIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />
               <span
                 aria-label="number-of-panels"
@@ -247,7 +299,7 @@ export default function SubMenuBar() {
               >
                 {layout + 1}
               </span>
-            </button>
+            </button> */}
             <CustomNofications />
             {/* <button type="button" className={`group ${menuStyles.btn}`}>
               <ReplyIcon fill="currentColor" className="h-6 w-6" aria-hidden="true" />

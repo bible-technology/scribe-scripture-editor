@@ -50,7 +50,7 @@ export default function SearchTags({
   }, [query, contentList1]);
 
   return (
-    <div className="relative mx-5">
+    <div className="relative">
       <MagnifyingGlassIcon className="h-5 w-5 absolute left-0 ml-4 my-2 text-primary" />
       <input
         data-testid="search"
@@ -60,7 +60,7 @@ export default function SearchTags({
         autoComplete="given-name"
         placeholder={t('label-search')}
         onChange={(e) => handleChange(e.target.value)}
-        className="pl-10 bg-gray-100 w-full block rounded-full shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-300"
+        className="pl-10 bg-gray-100 w-full md:w-80 block rounded-full shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-300"
       />
 
     </div>
