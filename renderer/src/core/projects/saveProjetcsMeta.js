@@ -59,11 +59,14 @@ export const saveProjectsMeta = async (projectMetaObj) => {
   let checkCanon = false;
   const folderList = fs.readdirSync(projectDir);
   // handle spaces
-  projectMetaObj.newProjectFields.projectName = projectMetaObj.newProjectFields.projectName.trim();
+  // trim the leading spaces
+  projectMetaObj.newProjectFields.projectName = projectMetaObj.newProjectFields.projectName.trim().replace(/(^_+)?(_+$)?/gm, '');
   folderList.forEach((folder) => {
-    const name = folder.split('_');
-    const formatedName = name[0] && name[0].toLowerCase().replace(/\s+/g, '_');
-    const existingName = projectMetaObj.newProjectFields.projectName?.toLowerCase().replace(/\s+/g, '_');
+    const splittedArr = folder.split('_');
+    splittedArr.pop();
+    const name = splittedArr.join('_');
+    const existingName = name && name.toLowerCase().replace(/\s+/g, '_');
+    const formatedName = projectMetaObj.newProjectFields.projectName?.toLowerCase().replace(/\s+/g, '_');
     if ((formatedName === existingName) && projectMetaObj.call === 'new') {
       // read meta and check the flavour is same or not // projectType : Translation, OBS, Audio
       const readDuplicateMeta = fs.readFileSync(path.join(projectDir, folder, 'metadata.json'));
@@ -78,7 +81,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
         projectNameExists = true;
         // checking for duplicates
         logger.warn('saveProjectsMeta.js', 'Project Name already exists');
-        status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab' });
+        status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab. NOTE : Project name is case-insenstive.Space and underscore will treated as same.' });
       }
     }
   });
