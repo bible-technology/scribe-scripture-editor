@@ -62,11 +62,24 @@ export const saveProjectsMeta = async (projectMetaObj) => {
   projectMetaObj.newProjectFields.projectName = projectMetaObj.newProjectFields.projectName.trim();
   folderList.forEach((folder) => {
     const name = folder.split('_');
-    if (name[0] === projectMetaObj.newProjectFields.projectName && projectMetaObj.call === 'new') {
-      projectNameExists = true;
-      // checking for duplicates
-      logger.warn('saveProjectsMeta.js', 'Project Name already exists');
-      status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab' });
+    const formatedName = name[0] && name[0].toLowerCase().replace(/\s+/g, '_');
+    const existingName = projectMetaObj.newProjectFields.projectName?.toLowerCase().replace(/\s+/g, '_');
+    if ((formatedName === existingName) && projectMetaObj.call === 'new') {
+      // read meta and check the flavour is same or not // projectType : Translation, OBS, Audio
+      const readDuplicateMeta = fs.readFileSync(path.join(projectDir, folder, 'metadata.json'));
+      const currentduplicateMeta = JSON.parse(readDuplicateMeta);
+      const duplicatePrjFlavour = currentduplicateMeta?.type?.flavorType?.flavor?.name;
+      const currentFlavourType = projectMetaObj.projectType;
+      if (
+        (currentFlavourType === 'Translation' && duplicatePrjFlavour === 'textTranslation')
+        || (currentFlavourType === 'OBS' && duplicatePrjFlavour === 'textStories')
+        || (currentFlavourType === 'Audio' && duplicatePrjFlavour === 'audioTranslation')
+        ) {
+        projectNameExists = true;
+        // checking for duplicates
+        logger.warn('saveProjectsMeta.js', 'Project Name already exists');
+        status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab' });
+      }
     }
   });
 
