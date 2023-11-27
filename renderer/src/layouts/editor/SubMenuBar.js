@@ -222,7 +222,7 @@ export default function SubMenuBar() {
       <nav className="flex p-2 shadow-sm border-b border-gray-200">
         <div className="w-3/5 items-center flex">
           {/* <MenuBar header={t('label-menu-file')} MenuItems={resourceType === 'textStories' ? FileMenuItems.slice(1) : FileMenuItems} /> */}
-          <MenuDropdown buttonStyle="bg-gray-100 rounded-md h-full px-2" />
+          {/* <MenuDropdown buttonStyle="bg-gray-100 rounded-md h-full px-2" /> */}
           <button type="button" className={`${menuStyles.btn}`}>
             <div
               aria-label="decrease-font"
