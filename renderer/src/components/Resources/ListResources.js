@@ -203,6 +203,11 @@ export const ListResources = ({
                       <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
                         {resource?.value?.meta?.owner}
                       </span>
+                      {resource?.value?.localUploadedHelp && (
+                      <span className="text-xxs text-gray-800 px-2 py-1 mx-1 bg-green-200 rounded-full">
+                        Uploaded
+                      </span>
+                      )}
                     </div>
                   </td>
                   <td className="p-2 uppercase">
@@ -238,7 +243,7 @@ export const ListResources = ({
                       role="button"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta && `${(resource.value.meta.released).split('T')[0]}`}
+                      {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource.value.meta.released).split('T')[0]}`}
                     </div>
                   </td>
                   <td className="p-2 text-gray-600">
@@ -265,7 +270,9 @@ export const ListResources = ({
                         {resource?.value?.lastUpdatedAg?.split('T')[0]}
                       </div>
                       <div className="flex justify-center items-center gap-4">
+                        {!resource?.value?.localUploadedHelp && (
                         <CheckHelpsUpdatePopUp resource={resource} selectResource={selectResource} />
+                      )}
                         <RemoveResource
                           resource={resource}
                           selectResource={selectResource}

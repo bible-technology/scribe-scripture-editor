@@ -12,9 +12,11 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import * as logger from '../../logger';
 import { viewBurrito } from '../../core/burrito/importBurrito';
 import packageInfo from '../../../../package.json';
+import { uploadLocalHelpsResources } from './ResourceUtils/uploadLocalHelpsResources';
+import useAddNotification from '../hooks/useAddNotification';
 
 export default function ImportResource({
-  closePopUp, setOpenResourcePopUp, setLoading,
+  closePopUp, setOpenResourcePopUp, setLoading, selectResource,
 }) {
   const [valid, setValid] = useState(false);
   const [snackBar, setOpenSnackBar] = useState(false);
@@ -33,10 +35,23 @@ export default function ImportResource({
     },
   } = useContext(ReferenceContext);
 
+  const { addNotification } = useAddNotification();
+
   function close() {
     closePopUp(false);
     setValid(false);
   }
+
+  const raiseSnackbarErroOrWarning = async (data) => {
+    // type : success/error/warning , message : error / message
+    await addNotification('Resource', data.message, data.type);
+    if (data?.message && data?.type) {
+      setNotify(data.type);
+      setSnackText(data.message);
+      setOpenSnackBar(true);
+    }
+  };
+
   const importReference = async (projectsDir, name, burritoType) => {
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
@@ -79,45 +94,61 @@ export default function ImportResource({
       });
       const projectsDir = path.join(newpath, packageInfo.name, 'users', user?.username, 'resources');
       // Adding 'resources' to check the duplication in the user reference list
-      const result = await viewBurrito(folderPath, user?.username, 'resources');
-      if (result.fileExist === false) {
-        setOpenSnackBar(true);
-        setNotify('error');
-        setSnackText(t('dynamic-msg-unable-find-buritto-snack'));
-        logger.warn('ImportResource.js', 'Unable to find burrito file (metadata.json).');
-      } else if (result.validate) {
-        // path.basename is not working for windows
-        // const name = path.basename(folderPath);
-        const name = (folderPath.split(/[(\\)?(/)?]/gm)).pop();
-        setDataForImport({ projectsDir, name });
-        if (fs.existsSync(path.join(projectsDir, result.projectName))) {
-          logger.warn('ImportResource.js', 'Project already available');
-          setOpenModal(true);
-        } else {
-          setLoading(true);
-          logger.debug('ImportResource.js', 'Its a new project');
-          importReference(projectsDir, name, result.burritoType);
-        }
+
+      // section for upload local door43 helps resource (upload and convert to burrito type)
+      if (selectResource === 'local-helps') {
+        await uploadLocalHelpsResources(fs, path, projectsDir, folderPath, raiseSnackbarErroOrWarning, logger);
       } else {
-        setOpenSnackBar(true);
-        setNotify('error');
-        logger.error('ImportResource.js', 'Invalid burrito file (metadata.json).');
-        setSnackText(t('dynamic-msg-unable-invalid-buritto-snack'));
+        // section for burrito based local resource for bible, obs and audio
+        const result = await viewBurrito(folderPath, user?.username, 'resources');
+        if (result.fileExist === false) {
+          setOpenSnackBar(true);
+          setNotify('error');
+          setSnackText(t('dynamic-msg-unable-find-buritto-snack'));
+          logger.warn('ImportResource.js', 'Unable to find burrito file (metadata.json).');
+        } else if (result.validate) {
+          // path.basename is not working for windows
+          // const name = path.basename(folderPath);
+          const name = (folderPath.split(/[(\\)?(/)?]/gm)).pop();
+          setDataForImport({ projectsDir, name });
+          if (fs.existsSync(path.join(projectsDir, result.projectName))) {
+            logger.warn('ImportResource.js', 'Project already available');
+            setOpenModal(true);
+          } else {
+            setLoading(true);
+            logger.debug('ImportResource.js', 'Its a new project');
+            importReference(projectsDir, name, result.burritoType);
+          }
+        } else {
+          setOpenSnackBar(true);
+          setNotify('error');
+          logger.error('ImportResource.js', 'Invalid burrito file (metadata.json).');
+          setSnackText(t('dynamic-msg-unable-invalid-buritto-snack'));
+        }
       }
     } catch (err) {
       logger.debug('ImportResource.js', 'error in loading resource');
-      setNotify(err);
+      setNotify('error');
     } finally {
+      setFolderPath('');
       setLoading(false);
     }
   };
 
   return (
     <>
-      <h2 className="uppercase text-sm">{t('label-import-resource')}</h2>
+      <h2 className="uppercase text-sm">{selectResource === 'local-helps' ? 'Import Door43 helps resources' : t('label-import-resource')}</h2>
       <h4 className="text-xs text-primary tracking-wide leading-4 font-light flex items-center py-2 gap-2">
-        {t('label-burrito-resource-path')}
-        <button title={t('msg-select-dir-for-SB')} type="button" disabled>
+        {selectResource === 'local-helps' ? 'Helps Resource filepath with valid manifest.yaml' : t('label-burrito-resource-path')}
+        <button
+          title={
+          selectResource === 'local-helps'
+          ? 'supported resources are TN, TW, TQ, TA'
+          : t('msg-select-dir-for-SB')
+          }
+          type="button"
+          disabled
+        >
           <InformationCircleIcon className="h-6 w-6 text-primary" />
         </button>
       </h4>
@@ -175,4 +206,5 @@ ImportResource.propTypes = {
   closePopUp: PropTypes.func,
   setOpenResourcePopUp: PropTypes.func,
   setLoading: PropTypes.func,
+  selectResource: PropTypes.string,
 };
