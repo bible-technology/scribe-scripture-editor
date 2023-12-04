@@ -302,16 +302,18 @@ export default function ExportProjectPopUp(props) {
                               <input id="visible_1" className="visible" type="checkbox" checked={checkText} onClick={() => setCheckText(!checkText)} />
                               <span className="ml-2 text-xs font-bold" title="You can have the text content along with the Audio">With Text (if available)</span>
                             </div>
-                            <div className="max-w-[150px]">
-                              <CustomMultiComboBox
-                                selectedList={[selectedAudioExt]}
-                                setSelectedList={setSelectedAudioExt}
-                                customData={Object.values(audioExportFormats)}
-                                filterParams="ext"
-                                placeholder="Select Output type"
-                                dropArrow
-                              />
-                            </div>
+                            {audioExport !== 'full' && (
+                              <div className="max-w-[150px]">
+                                <CustomMultiComboBox
+                                  selectedList={[selectedAudioExt]}
+                                  setSelectedList={setSelectedAudioExt}
+                                  customData={Object.values(audioExportFormats)}
+                                  filterParams="ext"
+                                  placeholder="Select Output type"
+                                  dropArrow
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
