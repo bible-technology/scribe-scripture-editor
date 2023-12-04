@@ -1,12 +1,12 @@
 /* eslint-disable no-useless-escape */
 import { mergeAudio } from '@/components/AudioRecorder/core/audioUtils';
-import { convertToMP3 } from './WavToMp3';
 import * as logger from '../../../logger';
 import loadFFmpeg, { transcodeSingleWavToMp3 } from './ffmpegAudioCore';
 
 const md5 = require('md5');
 
 export async function writeRecfile(file, filePath, fs) {
+  try {
     logger.debug('ExportProjectUtils.js', `in Chapter level file write : ${filePath}`);
     return new Promise((resolve) => {
     const fileReader = new FileReader();
@@ -17,11 +17,15 @@ export async function writeRecfile(file, filePath, fs) {
     };
     fileReader.readAsArrayBuffer(file);
     });
+  } catch (err) {
+    throw new Error(err);
+  }
 }
 
 // fucntion to walkthough the directory and identify audios
 export async function walk(dir, path, fs) {
-    logger.debug('ExportProjectUtils.js', `in wlak thorugh dir : ${dir} : ${path}`);
+  try {
+    logger.debug('ExportUtils.js', `in wlak thorugh dir : ${dir} : ${path}`);
     let files = await fs.readdirSync(dir);
     files = await Promise.all(files.map(async (file) => {
         const filePath = path.join(dir, file);
@@ -30,46 +34,47 @@ export async function walk(dir, path, fs) {
         if (stats.isFile()) { return filePath; }
     }));
     return files.reduce((all, folderContents) => all.concat(folderContents), []);
+  } catch (err) {
+    throw new Error(err);
   }
+}
 
 // util Function for default export Audio wav
 const writeAndUpdateBurritoDefaultExportWav = async (audio, path, mp3ExportPath, fs, fse, book, verse, burrito, folderPath, project, selectedAudioExt) => {
-await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
+  await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
     .then(async () => {
-      console.log('export aduio : ', mp3ExportPath, path.join(folderPath, project.name, mp3ExportPath));
-    logger.debug('ExportProjectUtils.js', 'Creating the ingredients.');
-    const content = fs.readFileSync(path.join(folderPath, project.name, mp3ExportPath), 'utf8');
-    const stats = fs.statSync(path.join(folderPath, project.name, mp3ExportPath));
-    burrito.ingredients[mp3ExportPath] = {
-        checksum: {
-        md5: md5(content),
-        },
-        mimeType: selectedAudioExt.mimeType,
-        size: stats.size,
-        scope: {},
-    };
-    burrito.ingredients[mp3ExportPath].scope[book] = [verse.replace('_', ':')];
-    }).catch((err) => logger.error('ExportProjectUtils.js', `${err}`));
+      logger.debug('ExportUtilss.js', 'Creating the ingredients.');
+      const content = fs.readFileSync(path.join(folderPath, project.name, mp3ExportPath), 'utf8');
+      const stats = fs.statSync(path.join(folderPath, project.name, mp3ExportPath));
+      burrito.ingredients[mp3ExportPath] = {
+          checksum: {
+          md5: md5(content),
+          },
+          mimeType: selectedAudioExt.mimeType,
+          size: stats.size,
+          scope: {},
+      };
+      burrito.ingredients[mp3ExportPath].scope[book] = [verse.replace('_', ':')];
+    }).catch((err) => {
+      logger.error('ExportUtilss.js', `${err}`);
+      throw new Error(err);
+  });
 };
 
 async function convertWavToMp3(inputFilePath, path) {
   try {
-    // const context = new window.AudioContext();
-    // const mp3Blob = await convertToMP3(context, path.join('file://', inputFilePath), path.join('file://', outputFilePath));
+    logger.debug('ExportUtils.js', 'convertWavToMp3 : in convert indivudual wav to mp3');
     let ffmpeg;
     if (!ffmpeg) {
       ffmpeg = await loadFFmpeg();
     }
-    console.log('load success : ', { ffmpeg });
     if (ffmpeg) {
       const mp3Blob = await transcodeSingleWavToMp3(path.join('file://', inputFilePath));
-      console.log('conversion success : ', { inputFilePath, mp3Blob });
-      console.log('-----------------------------------------------------------------------');
       return mp3Blob;
     }
-    throw new Error('Error. FFmpeg loading. Export failed');
+    throw new Error('Error load converter. Export failed');
   } catch (error) {
-    console.error('Error during conversion:', error);
+    logger.debug('ExportUtils.js', `convertWavToMp3 : error in convert indivudual wav to mp3 ${error}`);
     throw new Error(error?.message || error);
   }
 }
@@ -82,7 +87,7 @@ const writeAndUpdateBurritoDefaultExportMp3 = async (audio, path, mp3ExportPath,
     const mp3Blob = await convertWavToMp3(audio, path);
     await writeRecfile(mp3Blob, outputFilePath, fs)
     .then(async (convertedBlob) => {
-      logger.debug('ExportProjectPopUp.js', 'Generated mp3 audio written to folder');
+      logger.debug('ExportUtils.js', 'Generated wav audio written to folder');
       const stats = fs.statSync(outputFilePath);
       burrito.ingredients[mp3ExportPath] = {
         checksum: {
@@ -100,8 +105,9 @@ const writeAndUpdateBurritoDefaultExportMp3 = async (audio, path, mp3ExportPath,
 };
 
 // export audio project FUll Zip
-export const exportFullAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t, selectedAudioExt) => {
-    logger.debug('ExportProjectUtils.js', 'In export Full zip for audio');
+export const exportFullAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t) => {
+  try {
+    logger.debug('ExportUtils.js', 'In export Full zip for audio');
     ExportActions.setTotalExported((curr) => curr + 1);
     const AdmZip = window.require('adm-zip');
     const fse = window.require('fs-extra');
@@ -118,7 +124,7 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
       zip.addLocalFolder(path.join(folder, 'audio', 'ingredients', sourceDir), sourceDir);
     });
     zip.writeZip(path.join(dir, 'ag_internal_audio.zip'));
-    logger.debug('ExportProjectUtils.js', 'write zip completed');
+    logger.debug('ExportUtils.js', 'write zip completed');
     ExportActions.setTotalExported((curr) => curr + 1);
     const list = await walk(path.join(folder, 'audio', 'ingredients'), path, fs);
     const otherFiles = list.filter((name) => !name.includes('.mp3') && !name.includes('.wav'));
@@ -126,7 +132,7 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
       const filePath = file.split(/[\/\\]ingredients[\/\\]/)[1];
       await fse.copy(file, path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', filePath));
     });
-    logger.debug('ExportProjectUtils.js', 'copied all files');
+    logger.debug('ExportUtils.js', 'copied all files');
     const renames = Object.keys(burrito.ingredients).filter((key) => key.includes('audio'));
     await renames?.forEach((rename) => {
       burrito.ingredients[rename.replace(/audio[\/\\]/, '')] = burrito.ingredients[rename];
@@ -143,86 +149,102 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
     };
     ExportActions.setTotalExported((curr) => curr + 1);
     await fs.writeFileSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'metadata.json'), JSON.stringify(burrito));
-    logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
+    logger.debug('ExportUtils.js', 'Exported Successfully');
     ExportActions.resetExportProgress();
     ExportActions.setNotify('success');
     ExportActions.setSnackText(t('dynamic-msg-export-success'));
     ExportActions.setOpenSnackBar(true);
     closePopUp(false);
+  } catch (err) {
+    logger.debug('ExportUtils.js', `Exported failed ${err}`);
+    ExportActions.resetExportProgress(); // finish export reset all states of export
+    ExportActions.setNotify('failure');
+    ExportActions.setSnackText(t('dynamic-msg-export-fail'));
+    ExportActions.setOpenSnackBar(true);
+  }
 };
 
 // Function for Chapter Level Export DEFAULT - Verse Wise / MERGE CHAPTER LEVEL
 const exportChapterAudio = async (defaultAudio, burrito, fs, path, folder, folderPath, project, ExportActions, selectedAudioExt) => {
-    logger.debug('ExportProjectUtils.js', 'In export Chapter level audio');
-    const audioObj = {};
-    // load ffmpeg
-    const ffmpeg = await loadFFmpeg();
+    try {
+      logger.debug('ExportUtils.js', 'In export Chapter level audio');
+      const audioObj = {};
+      // load ffmpeg
+      const ffmpeg = await loadFFmpeg();
 
-    // delete verse vice ingredients exist in burrito
-    const audioExtensions = ['.mp3', '.wav'];
-    // eslint-disable-next-line no-unused-vars
-    Object.entries(burrito.ingredients).forEach(([_k, _v]) => {
-      if (audioExtensions.some((ext) => _k.toLocaleLowerCase().includes(ext.toLocaleLowerCase()))) { delete burrito.ingredients[_k]; }
-    });
-    // eslint-disable-next-line
-    for (const audio of defaultAudio) {
-      const book = audio.split(/[\/\\]/).slice(-3)[0];
-      const chapter = audio.split(/[\/\\]/).slice(-2)[0];
-      const url = audio.split(/[\/\\]/).slice(-1)[0];
-      // eslint-disable-next-line no-await-in-loop
-      if (book in audioObj && chapter in audioObj[book]) {
-          audioObj[book][chapter].push(url);
-      } else if (!(book in audioObj)) {
-          audioObj[book] = { [chapter]: new Array(url) };
-      } else if (book in audioObj && !(chapter in audioObj[book])) {
-          audioObj[book][chapter] = new Array(url);
-      }
-    }
-    // loop the book and chapter  to generate merged audio of chapter
-    // eslint-disable-next-line no-restricted-syntax
-    for (const bk in audioObj) {
-      if (Object.prototype.hasOwnProperty.call(audioObj, bk)) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const ch in audioObj[bk]) {
-          if (Object.prototype.hasOwnProperty.call(audioObj[bk], ch)) {
-            // const extension = audioObj[bk][ch][0].split('.').pop();
-            const audioName = `${ch}.${selectedAudioExt.ext}`;
-            const audioExportPath = path.join(folderPath, project.name, 'ingredients', bk);
-            // eslint-disable-next-line no-await-in-loop
-            await mergeAudio(audioObj[bk][ch], path.join(folder, 'audio', 'ingredients', bk, ch), path, bk, ch, selectedAudioExt.ext, ffmpeg)
-            .then(async ([mergedAudioBlob, timeStampData]) => {
-              logger.debug('ExportProjectPopUp.js', `generated merged audio for ${bk} : ${ch}`);
-              // console.log('audio created ==== : ', `generated merged audio for => ${bk} : ${ch}`);
-              ExportActions.setTotalExported((curr) => curr + audioObj[bk][ch].length);
-              // Write Merge Audio
-              fs.mkdirSync(audioExportPath, { recursive: true });
-              await writeRecfile(mergedAudioBlob, path.join(audioExportPath, audioName), fs)
-              .then(async (convertedBlob) => {
-              logger.debug('ExportProjectPopUp.js', 'Generated audio written to folder');
-              const stats = fs.statSync(path.join(audioExportPath, audioName));
-              burrito.ingredients[path.join('ingredients', bk, audioName)] = {
-                checksum: {
-                  md5: md5(convertedBlob),
-                },
-                mimeType: 'audio/mpeg',
-                size: stats.size,
-                scope: {},
-              };
-              burrito.ingredients[path.join('ingredients', bk, audioName)].scope[bk] = [ch.toString()];
-              logger.debug('ExportProjectPopUp.js', 'Burrito updated for generated Audio');
-              // Write TimeStamp
-              fs.mkdirSync(path.join(folderPath, project.name, 'time stamps'), { recursive: true });
-              await fs.writeFileSync(path.join(folderPath, project.name, 'time stamps', timeStampData[0]), timeStampData[1], 'utf-8');
-            });
-            });
-          }
+      // delete verse vice ingredients exist in burrito
+      const audioExtensions = ['.mp3', '.wav'];
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(burrito.ingredients).forEach(([_k, _v]) => {
+        if (audioExtensions.some((ext) => _k.toLocaleLowerCase().includes(ext.toLocaleLowerCase()))) { delete burrito.ingredients[_k]; }
+      });
+      // eslint-disable-next-line
+      for (const audio of defaultAudio) {
+        const book = audio.split(/[\/\\]/).slice(-3)[0];
+        const chapter = audio.split(/[\/\\]/).slice(-2)[0];
+        const url = audio.split(/[\/\\]/).slice(-1)[0];
+        // eslint-disable-next-line no-await-in-loop
+        if (book in audioObj && chapter in audioObj[book]) {
+            audioObj[book][chapter].push(url);
+        } else if (!(book in audioObj)) {
+            audioObj[book] = { [chapter]: new Array(url) };
+        } else if (book in audioObj && !(chapter in audioObj[book])) {
+            audioObj[book][chapter] = new Array(url);
         }
       }
+      // loop the book and chapter  to generate merged audio of chapter
+      if (ffmpeg) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const bk in audioObj) {
+          if (Object.prototype.hasOwnProperty.call(audioObj, bk)) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const ch in audioObj[bk]) {
+              if (Object.prototype.hasOwnProperty.call(audioObj[bk], ch)) {
+                // const extension = audioObj[bk][ch][0].split('.').pop();
+                const audioName = `${ch}.${selectedAudioExt.ext}`;
+                const audioExportPath = path.join(folderPath, project.name, 'ingredients', bk);
+                // eslint-disable-next-line no-await-in-loop
+                await mergeAudio(audioObj[bk][ch], path.join(folder, 'audio', 'ingredients', bk, ch), path, bk, ch, selectedAudioExt.ext, ffmpeg)
+                .then(async ([mergedAudioBlob, timeStampData]) => {
+                  logger.debug('ExportUtils.js', `generated merged audio for ${bk} : ${ch}`);
+                  // console.log('audio created ==== : ', `generated merged audio for => ${bk} : ${ch}`);
+                  ExportActions.setTotalExported((curr) => curr + audioObj[bk][ch].length);
+                  // Write Merge Audio
+                  fs.mkdirSync(audioExportPath, { recursive: true });
+                  await writeRecfile(mergedAudioBlob, path.join(audioExportPath, audioName), fs)
+                  .then(async (convertedBlob) => {
+                  logger.debug('ExportUtils.js', 'Generated audio written to folder');
+                  const stats = fs.statSync(path.join(audioExportPath, audioName));
+                  burrito.ingredients[path.join('ingredients', bk, audioName)] = {
+                    checksum: {
+                      md5: md5(convertedBlob),
+                    },
+                    mimeType: selectedAudioExt.ext === 'mp3' ? 'audio/mpeg' : 'audio/wav',
+                    size: stats.size,
+                    scope: {},
+                  };
+                  burrito.ingredients[path.join('ingredients', bk, audioName)].scope[bk] = [ch.toString()];
+                  logger.debug('ExportUtils.js', 'Burrito updated for generated Audio');
+                  // Write TimeStamp
+                  fs.mkdirSync(path.join(folderPath, project.name, 'time stamps'), { recursive: true });
+                  await fs.writeFileSync(path.join(folderPath, project.name, 'time stamps', timeStampData[0]), timeStampData[1], 'utf-8');
+                });
+                });
+              }
+            }
+          }
+        }
+      } else {
+        throw new Error('failed to convert. Converted not loaded');
+      }
+    } catch (err) {
+      throw new Error(`audio generation failed : ${err}`);
     }
   };
 
 export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t, selectedAudioExt) => {
-    logger.debug('ExportProjectUtils.js', 'in Export Audio Common Function ');
+  try {
+    logger.debug('ExportUtils.js', 'in Export Audio Common Function ');
     const fse = window.require('fs-extra');
     const burrito = metadata;
     const list = await walk(path.join(folder, 'audio', 'ingredients'), path, fs);
@@ -276,14 +298,18 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
       await fse.copySync(path.join(folder, 'text-1'), path.join(ExportStates.folderPath, ExportStates.project.name, 'text-1'));
       await fs.rmSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), { recursive: true, force: true });
     }
-    // if (audioExport === 'chapter') {
-    //   pushNotification('Export Project', `${t('dynamic-msg-export-success')} ${project.name} project`);
-    // }
-    logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
+    logger.debug('ExportUtils.js', 'Exported Successfully');
     ExportActions.resetExportProgress(); // finish export reset all states of export
     ExportActions.setNotify('success');
     ExportActions.setSnackText(t('dynamic-msg-export-success'));
     ExportActions.setOpenSnackBar(true);
     closePopUp(false);
     ExportActions.setCheckText(false);
-  };
+  } catch (err) {
+    logger.debug('ExportUtils.js', `Exported failed ${err}`);
+    ExportActions.resetExportProgress(); // finish export reset all states of export
+    ExportActions.setNotify('failure');
+    ExportActions.setSnackText(t('dynamic-msg-export-fail'));
+    ExportActions.setOpenSnackBar(true);
+  }
+};
