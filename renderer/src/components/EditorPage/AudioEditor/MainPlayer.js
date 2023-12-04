@@ -6,8 +6,6 @@ import {
 } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
-import { Mp3Encoder } from 'lamejs';
-// import { recordmp3js } from 'recordmp3js';
 import { getDetails } from '../ObsEditor/utils/getDetails';
 
 const MainPlayer = () => {
@@ -107,14 +105,14 @@ const MainPlayer = () => {
     const path = require('path');
     let i = 1;
     // Checking whether the take has any audio
-    if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
+    if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.wav`))) {
       while (i < 4) {
       // Looking for the existed default file so that we can easily rename both the files
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {
+      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`))) {
         // Checking whether the user is trying to default the same default file, else rename both.
         if (i !== value) {
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`));
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.mp3`));
+          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`));
+          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.wav`));
         }
       }
       i += 1;
@@ -123,95 +121,6 @@ const MainPlayer = () => {
     loadChapter();
     }
   };
-
-  // -------------------------------------------- test save mp3 ----------------------------------------------------
-
-  // const convertToMP3 = async (audioBlob) => new Promise((resolve) => {
-  //     const reader = new FileReader();
-  //     reader.onload = async (event) => {
-  //       const arrayBuffer = event.target.result;
-  //       const audioData = new Int16Array(arrayBuffer);
-  //       const sampleRate = 48000; // Adjusted sample rate to 48,000 Hz
-  //       const channels = 1; // Mono audio, change to 2 for stereo
-  //       const lame = new Mp3Encoder(channels, sampleRate, 128);
-
-  //       const bufferSize = 2304; // Adjusted buffer size to ensure it's a multiple of 2
-  //       const mp3Data = [];
-
-  //       for (let i = 0; i < audioData.length; i += bufferSize) {
-  //         const buffer = audioData.subarray(i, i + bufferSize);
-  //         const mp3Frame = lame.encodeBuffer(buffer);
-  //         if (mp3Frame.length > 0) {
-  //           mp3Data.push(new Int8Array(mp3Frame));
-  //         }
-  //       }
-
-  //       const mp3Blob = new Blob(mp3Data, { type: 'audio/mpeg' });
-  //       resolve(mp3Blob);
-  //     };
-
-  //     reader.readAsArrayBuffer(audioBlob);
-  //   });
-
-  const convertToMP3 = async (audioBlob) => new Promise((resolve) => {
-    const audioContext = new window.AudioContext();
-    const reader = new FileReader();
-      reader.onload = async (event) => {
-        const arrayBuffer = event.target.result;
-        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-        const mediaStream = audioContext.createMediaStreamDestination();
-        const mediaRecorder = new MediaRecorder(mediaStream.stream);
-
-        const audioChunks = [];
-        mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                audioChunks.push(event.data);
-            }
-        };
-
-        mediaRecorder.onstop = () => {
-          const mp3Blob = new Blob(audioChunks, { type: 'audio/mp3' });
-          resolve(mp3Blob);
-        };
-
-        mediaRecorder.start();
-        const source = audioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(mediaStream);
-        source.start();
-
-        setTimeout(() => {
-          mediaRecorder.stop();
-          audioContext.close();
-      }, audioBuffer.duration * 1000);
-      };
-
-      reader.readAsArrayBuffer(audioBlob);
-  });
-
-    // -------------------------------------------------------------------
-    const saveAudioAsMP3 = async (audioBlob, projectsDir) => {
-      if (audioBlob) {
-        const fs = window.require('fs');
-        const path = require('path');
-        const mp3Blob = await convertToMP3(audioBlob);
-        const fileReader = new FileReader();
-        // eslint-disable-next-line func-names
-        const filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_converted.mp3`);
-        fileReader.onload = function () {
-          // eslint-disable-next-line react/no-this-in-sfc
-          fs.writeFile(filePath, Buffer.from(new Uint8Array(this.result)), (err) => {
-            if (!err) {
-              console.log('converted mp3 saved', { bookId, chapter, verse });
-            }
-          });
-        };
-        fileReader.readAsArrayBuffer(mp3Blob);
-      }
-    };
-
-  // ----------------------------------------------------------------------------------------------------------------
 
   const saveAudio = (blob) => {
     getDetails()
@@ -249,8 +158,8 @@ const MainPlayer = () => {
       };
       fileReader.readAsArrayBuffer(blob);
 
-      // save as mp3
-      saveAudioAsMP3(blob, projectsDir);
+      // // save as mp3
+      // saveAudioAsMP3(blob, projectsDir);
     });
   };
   const playRecordingFeedback = useCallback(
@@ -268,7 +177,7 @@ const MainPlayer = () => {
   } = useReactMediaRecorder({
       audio: true,
       onStop: playRecordingFeedback,
-      blobPropertyBag: { type: 'audio/mp3' },
+      blobPropertyBag: { type: 'audio/wav' },
   });
   const handleFunction = () => {
     // We have used trigger to identify whether the call is from DeleteAudio or Re-record
@@ -286,15 +195,15 @@ const MainPlayer = () => {
         },
       );
       // Checking whether the user is trying to delete the default file.
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`))) {
+      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`))) {
         // Since user is deleting the default file, we need to change the default to some other takes if available
         let i = 1;
         while (i < 4) {
           if (i !== +result) {
-            if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`))) {
-              fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`));
+            if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`))) {
+              fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`));
               delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-              fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`));
+              fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`));
               delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
               i = 5;
             }
@@ -303,13 +212,13 @@ const MainPlayer = () => {
         }
         // Deleting the default one
         if (i !== 6) {
-          fs.unlinkSync(path.join(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`)));
+          fs.unlinkSync(path.join(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`)));
           delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
           delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition].default;
         }
       } else {
         delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-        fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}.mp3`));
+        fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}.wav`));
       }
       // Since we are not loading the entire component and updating the JSON data (audioContent), we need to update it manually.
       setAudioContent(audioCurrentChapter.bookContent[chapter - 1].contents);
