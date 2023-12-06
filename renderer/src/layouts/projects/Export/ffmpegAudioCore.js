@@ -14,10 +14,20 @@ export default async function loadFFmpeg() {
   return ffmpeg;
 }
 
-export const transcodeSingleWavToMp3 = async (inputFilePath) => {
+export const transcodeSingleWavToMp3 = async (inputFilePath, project, book, chapter, packageInfo, currentUser) => {
   await ffmpeg.writeFile('input.wav', await fetchFile(inputFilePath));
   // await ffmpeg.exec(['-i', 'input.wav', '-b:a', '96', '-ar', '44100', '-c:a', 'copy', 'output.mp3']);
-  await ffmpeg.exec(['-i', 'input.wav', 'output.mp3']);
+  let audioMetaDataArr = [];
+  if (project?.name && book && chapter && packageInfo && currentUser) {
+    audioMetaDataArr = [
+      '-metadata', `title=${book}_${chapter}`,
+      '-metadata', `artist=${currentUser || packageInfo.name}`,
+      '-metadata', `album=${project.name}`,
+      '-metadata', `comment=${packageInfo.name}_${packageInfo.version}`,
+      '-metadata', `date=${new Date().getFullYear().toString()}`,
+  ];
+  }
+  await ffmpeg.exec(['-i', 'input.wav', ...audioMetaDataArr, 'output.mp3']);
   const fileData = await ffmpeg.readFile('output.mp3');
   const data = new Uint8Array(fileData);
   const mp3Blob = new Blob([data.buffer], { type: 'audio/mpeg' });

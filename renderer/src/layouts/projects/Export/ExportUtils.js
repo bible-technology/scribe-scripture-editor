@@ -1,7 +1,9 @@
 /* eslint-disable no-useless-escape */
 import { mergeAudio } from '@/components/AudioRecorder/core/audioUtils';
+import * as localforage from 'localforage';
 import * as logger from '../../../logger';
 import loadFFmpeg, { transcodeSingleWavToMp3 } from './ffmpegAudioCore';
+import packageInfo from '../../../../../package.json';
 
 const md5 = require('md5');
 
@@ -61,7 +63,7 @@ const writeAndUpdateBurritoDefaultExportWav = async (audio, path, mp3ExportPath,
   });
 };
 
-async function convertWavToMp3(inputFilePath, path) {
+async function convertWavToMp3(inputFilePath, path, project, book, chapter, currentUser) {
   try {
     logger.debug('ExportUtils.js', 'convertWavToMp3 : in convert indivudual wav to mp3');
     let ffmpeg;
@@ -69,7 +71,14 @@ async function convertWavToMp3(inputFilePath, path) {
       ffmpeg = await loadFFmpeg();
     }
     if (ffmpeg) {
-      const mp3Blob = await transcodeSingleWavToMp3(path.join('file://', inputFilePath));
+      const mp3Blob = await transcodeSingleWavToMp3(
+        path.join('file://', inputFilePath),
+        project,
+        book,
+        chapter,
+        packageInfo,
+        currentUser,
+        );
       return mp3Blob;
     }
     throw new Error('Error load converter. Export failed');
@@ -84,7 +93,12 @@ const writeAndUpdateBurritoDefaultExportMp3 = async (audio, path, mp3ExportPath,
   // update new file path mostly in target
   try {
     const outputFilePath = path.join(folderPath, project.name, mp3ExportPath);
-    const mp3Blob = await convertWavToMp3(audio, path);
+    let currentUser;
+    await localforage.getItem('userProfile').then((value) => {
+        currentUser = value?.username;
+    });
+    const ch_verse = verse.split('_');
+    const mp3Blob = await convertWavToMp3(audio, path, project, book, ch_verse[0], currentUser);
     await writeRecfile(mp3Blob, outputFilePath, fs)
     .then(async (convertedBlob) => {
       logger.debug('ExportUtils.js', 'Generated wav audio written to folder');
