@@ -63,7 +63,6 @@ export default function ImportProjectPopUp(props) {
     setValid(false);
     closePopUp(false);
     setShow(false);
-    setSbData({});
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
   }
 
@@ -83,6 +82,7 @@ export default function ImportProjectPopUp(props) {
       });
     } else {
       logger.debug('ImportProjectPopUp.js', 'Didn\'t select any project');
+      setSbData({});
       close();
     }
     setFolderPath(chosenFolder.filePaths[0]);
@@ -111,6 +111,7 @@ export default function ImportProjectPopUp(props) {
       setSnackText(status[0].value);
       setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: 0, totalSteps: 0}))
       if (status[0].type === 'success') {
+        setSbData({});
         close();
         FetchProjects();
         router.push('/projects');
@@ -135,6 +136,7 @@ export default function ImportProjectPopUp(props) {
   
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
+      setMerge(false);
       checkBurritoVersion();
     } else {
       callImport(true);
@@ -148,6 +150,7 @@ export default function ImportProjectPopUp(props) {
     modelClose();
     await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
     setMerge(false)
+    setSbData({});
     close()
     logger.debug('importProjectPopUp.js', 'git merge process done');
   }
@@ -160,7 +163,6 @@ export default function ImportProjectPopUp(props) {
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
         // currently MERGE feature only Enabled for OBS projects
-        console.log({sbData});
         if (sbData?.burritoType === 'gloss / textStories'){
           setMerge(true)
         }
