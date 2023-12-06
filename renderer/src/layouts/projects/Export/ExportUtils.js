@@ -204,7 +204,7 @@ const exportChapterAudio = async (defaultAudio, burrito, fs, path, folder, folde
                 const audioName = `${ch}.${selectedAudioExt.ext}`;
                 const audioExportPath = path.join(folderPath, project.name, 'ingredients', bk);
                 // eslint-disable-next-line no-await-in-loop
-                await mergeAudio(audioObj[bk][ch], path.join(folder, 'audio', 'ingredients', bk, ch), path, bk, ch, selectedAudioExt.ext, ffmpeg)
+                await mergeAudio(audioObj[bk][ch], path.join(folder, 'audio', 'ingredients', bk, ch), path, bk, ch, selectedAudioExt.ext, ffmpeg, project)
                 .then(async ([mergedAudioBlob, timeStampData]) => {
                   logger.debug('ExportUtils.js', `generated merged audio for ${bk} : ${ch}`);
                   // console.log('audio created ==== : ', `generated merged audio for => ${bk} : ${ch}`);
@@ -258,8 +258,8 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
         const book = audio.split(/[\/\\]/).slice(-3)[0];
         const chapter = audio.split(/[\/\\]/).slice(-2)[0];
         const url = audio.split(/[\/\\]/).slice(-1)[0];
-        const mp3 = url.replace(/_\d_default/, '');
-        const verse = mp3.replace('.mp3', ''); // change this when backend change default to wav
+        const wavAudio = url.replace(/_\d_default/, '');
+        const verse = wavAudio.replace('.wav', ''); // change this when backend change default to wav
         // const mp3ExportPath = path.join('ingredients', book, chapter, mp3);
         const mp3ExportPath = path.join('ingredients', book, chapter, `${verse}.${selectedAudioExt.ext}`);
         const exportFolderPath = path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', book, chapter);
