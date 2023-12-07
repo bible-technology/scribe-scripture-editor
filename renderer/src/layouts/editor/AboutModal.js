@@ -160,7 +160,7 @@ export default function AboutModal(props) {
                       {tabNumber === 0
                         && (
                           <p className="text-sm text-gray-500">
-                            This is a standalone desktop application which hopes to aid and be a friendly companion of the Bible Translator. In essence it is a basic USFM editor which is capable of import and export of USFM files. It has handy features like color-coded diffs across imported texts for comparison between revisions, search and replace and export to formatted HTML and Scribe Scripture will include capabilities for syncing data with online repositories and that this application is licensed differently.
+                            Scribe Scripture Editor is a free and open-licensed desktop application that is designed to support the Bible translator with drafting and checking scripture in both text and audio formats as well as provides support for translating Open Bible Stories in different modes. The features include multi-project support, revision control (cloud sync), audio recording and seamless basic USFM editing. It has a modular architecture and is poised to grow and support the evolving needs on the ground.
                           </p>
                         )}
                       {tabNumber === 1
@@ -221,7 +221,7 @@ export default function AboutModal(props) {
                                     <ul className="text-xs">
                                       <li>Give your suggestion for new features &</li>
                                       <span className="ml-1">how you think they can benefit others</span>
-                                      <li>Feedback</li>
+                                      <li>Share your experience</li>
                                     </ul>
                                     <div className="flex flex-col gap-2 items-center">
                                       <ReplyIcon className="w-12 h-12 fill-primary " />
@@ -278,8 +278,7 @@ export default function AboutModal(props) {
                             </div>
 
                             <p className="text-sm text-gray-700 ">
-                              <span className="font-semibold pr-1 text-primary">Thank you for your input</span>
-                              .
+                              <span className="font-semibold pr-1 text-primary">Thank you for your input.</span>
                               {' '}
                               It is greatly appreciated. Our dedicated team is working continuously to offer a smooth Scribe experience.
                             </p>

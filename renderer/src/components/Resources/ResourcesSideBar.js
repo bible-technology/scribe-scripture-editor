@@ -3,10 +3,12 @@
 import {
   DocumentTextIcon,
   PhotoIcon,
-  ChatBubbleLeftEllipsisIcon,
+  Square3Stack3DIcon,
   MicrophoneIcon,
   BookOpenIcon,
   QuestionMarkCircleIcon,
+  ClipboardDocumentListIcon,
+  AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 
 import React, { useState, useEffect } from 'react';
@@ -64,25 +66,25 @@ export default function ResourcesSidebar({
           id: 'twlm',
           title: t('label-resource-twl'),
           resourceType: 'translationWordList',
-          Icon: PhotoIcon,
+          Icon: ClipboardDocumentListIcon,
         },
         {
           id: 'tw',
           title: t('label-resource-twlm'),
           resourceType: 'translationWord',
-          Icon: ChatBubbleLeftEllipsisIcon,
+          Icon: Square3Stack3DIcon,
         },
         {
           id: 'tq',
           title: t('label-resource-tq'),
           resourceType: 'translationQuestion',
-          Icon: BookOpenIcon,
+          Icon: QuestionMarkCircleIcon,
         },
         {
           id: 'ta',
           title: t('label-resource-ta'),
           resourceType: 'translationAcademy',
-          Icon: PhotoIcon,
+          Icon: AcademicCapIcon,
         },
       ],
     },
@@ -90,7 +92,7 @@ export default function ResourcesSidebar({
       id: 'obs',
       title: t('label-resource-obs'),
       resourceType: 'obsResource',
-      Icon: ChatBubbleLeftEllipsisIcon,
+      Icon: PhotoIcon,
       subCategory: [
         {
           id: 'obs-tn',
@@ -108,7 +110,7 @@ export default function ResourcesSidebar({
           id: 'obs-twlm',
           title: t('label-resource-obs-twl'),
           resourceType: 'obsTranslationWordList',
-          Icon: PhotoIcon,
+          Icon: ClipboardDocumentListIcon,
         },
       ],
     },
