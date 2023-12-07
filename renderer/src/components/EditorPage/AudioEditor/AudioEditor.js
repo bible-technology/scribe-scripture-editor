@@ -158,9 +158,9 @@ const AudioEditor = ({ editor }) => {
                                             } else {
                                               // If found only one audio for the verse then making that audio as default one.
                                               // replace url with `${chapter}_${verseNum[1]}_1_default.mp3`
-                                              bookContent[key].contents[v].take1 = `${chapter}_${verseNum[1]}_1_default.mp3`;
+                                              bookContent[key].contents[v].take1 = `${chapter}_${verseNum[1]}_1_default.wav`;
                                               bookContent[key].contents[v].default = 'take1';
-                                              fs.renameSync(path.join(filePath, chapterNum, verse), path.join(filePath, chapterNum, `${chapter}_${verseNum[1]}_1_default.mp3`));
+                                              fs.renameSync(path.join(filePath, chapterNum, verse), path.join(filePath, chapterNum, `${chapter}_${verseNum[1]}_1_default.wav`));
                                             }
                                           }
                                         },

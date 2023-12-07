@@ -105,14 +105,14 @@ const MainPlayer = () => {
     const path = require('path');
     let i = 1;
     // Checking whether the take has any audio
-    if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
+    if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.wav`))) {
       while (i < 4) {
       // Looking for the existed default file so that we can easily rename both the files
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {
+      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`))) {
         // Checking whether the user is trying to default the same default file, else rename both.
         if (i !== value) {
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`));
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.mp3`));
+          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`));
+          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.wav`));
         }
       }
       i += 1;
@@ -121,6 +121,7 @@ const MainPlayer = () => {
     loadChapter();
     }
   };
+
   const saveAudio = (blob) => {
     getDetails()
     .then(({
@@ -135,13 +136,13 @@ const MainPlayer = () => {
       let filePath;
       if (name.length > 0) {
         // While Re-recording replacing the file with same name
-        if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`))) {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+        if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.wav`))) {
+          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.wav`);
         } else {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}.mp3`);
+          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}.wav`);
         }
       } else {
-        filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+        filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.wav`);
       }
 
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -156,6 +157,9 @@ const MainPlayer = () => {
         });
       };
       fileReader.readAsArrayBuffer(blob);
+
+      // // save as mp3
+      // saveAudioAsMP3(blob, projectsDir);
     });
   };
   const playRecordingFeedback = useCallback(
@@ -173,7 +177,7 @@ const MainPlayer = () => {
   } = useReactMediaRecorder({
       audio: true,
       onStop: playRecordingFeedback,
-      blobPropertyBag: { type: 'audio/mp3' },
+      blobPropertyBag: { type: 'audio/wav' },
   });
   const handleFunction = () => {
     // We have used trigger to identify whether the call is from DeleteAudio or Re-record
@@ -191,15 +195,15 @@ const MainPlayer = () => {
         },
       );
       // Checking whether the user is trying to delete the default file.
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`))) {
+      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`))) {
         // Since user is deleting the default file, we need to change the default to some other takes if available
         let i = 1;
         while (i < 4) {
           if (i !== +result) {
-            if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`))) {
-              fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`));
+            if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`))) {
+              fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.wav`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.wav`));
               delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-              fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`));
+              fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`));
               delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
               i = 5;
             }
@@ -208,13 +212,13 @@ const MainPlayer = () => {
         }
         // Deleting the default one
         if (i !== 6) {
-          fs.unlinkSync(path.join(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`)));
+          fs.unlinkSync(path.join(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.wav`)));
           delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
           delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition].default;
         }
       } else {
         delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-        fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}.mp3`));
+        fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}.wav`));
       }
       // Since we are not loading the entire component and updating the JSON data (audioContent), we need to update it manually.
       setAudioContent(audioCurrentChapter.bookContent[chapter - 1].contents);
