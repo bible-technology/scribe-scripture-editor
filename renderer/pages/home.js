@@ -6,21 +6,25 @@ import EditorLayout from '@/layouts/editor/Layout';
 import SectionContainer from '@/layouts/editor/SectionContainer';
 import AutographaContextProvider from '@/components/context/AutographaContext';
 import ScribexContextProvider from '@/components/context/ScribexContext';
+import Meta from '../src/Meta';
 
 export default function ReferenceSelector() {
   return (
-    <AuthenticationContextProvider>
-      <AutographaContextProvider>
-        <ProjectContextProvider>
-          <ReferenceContextProvider>
-            <EditorLayout>
-              <ScribexContextProvider>
-                <SectionContainer />
-              </ScribexContextProvider>
-            </EditorLayout>
-          </ReferenceContextProvider>
-        </ProjectContextProvider>
-      </AutographaContextProvider>
-    </AuthenticationContextProvider>
+    <>
+      <Meta />
+      <AuthenticationContextProvider>
+        <AutographaContextProvider>
+          <ProjectContextProvider>
+            <ReferenceContextProvider>
+              <EditorLayout>
+                <ScribexContextProvider>
+                  <SectionContainer />
+                </ScribexContextProvider>
+              </EditorLayout>
+            </ReferenceContextProvider>
+          </ProjectContextProvider>
+        </AutographaContextProvider>
+      </AuthenticationContextProvider>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 .btn {
-  @apply inline-flex items-center px-2 py-1 mx-1 border border-gray-200 rounded-md shadow-sm 
+	@apply inline-flex items-center px-2 py-1 mx-1 border border-gray-200 rounded-md shadow-sm 
   text-sm text-primary bg-gray-100 
   hover:bg-primary hover:text-white 
   focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300;
@@ -12,11 +12,11 @@
 } */
 
 .saved {
-  @apply inline-flex items-center px-2 py-1 mx-1 text-sm text-dark font-bold;
+	@apply inline-flex items-center px-2 py-1 mx-1 text-sm text-dark font-bold;
 }
 
 .btnDark {
-  @apply inline-flex items-center px-2 py-1 mx-2 border border-gray-200 rounded-md shadow-sm 
+	@apply inline-flex items-center px-2 py-1 mx-2 border border-gray-200 rounded-md shadow-sm 
   text-sm text-primary bg-gray-100 
   hover:bg-gray-800 hover:text-white 
   focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300;

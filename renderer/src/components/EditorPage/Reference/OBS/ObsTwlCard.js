@@ -22,6 +22,7 @@ function ObsTwlCard({
   owner,
   resourceId,
   offlineResource,
+  font,
   ...props
 }) {
   const [index, setIndex] = useState(1);
@@ -102,6 +103,7 @@ function ObsTwlCard({
         shouldSetQuoteOnClick
         index={index}
         setIndex={(v) => setIndex(v)}
+        font={font}
       />
     ) : (
       <LoadingScreen />

@@ -185,7 +185,7 @@ const AudioEditor = ({ editor }) => {
                           );
                           setIsLoading(false);
                           setOpenSnackBar(true);
-                          setSnackText(t('dynamic-msg-load-ref-bible-snack', { projectName }));
+                          setSnackText(t('dynamic-msg-load-ref-bible-snack', { refName: projectName }));
                           setNotify('success');
                           setDisplayScreen(false);
                         } else {

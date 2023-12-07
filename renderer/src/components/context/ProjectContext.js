@@ -51,6 +51,8 @@ const ProjectContextProvider = ({ children }) => {
   const [selectedProjectMeta, setSelectedProjectMeta] = useState();
   const [importedFiles, setImportedFiles] = useState([]);
   const [sideBarTab, setSideBarTab] = useState('');
+  const [openImportPopUp, setOpenImportPopUp] = useState(false);
+  const [openExportPopUp, setOpenExportPopUp] = useState(false);
 
   const handleProjectFields = (prop) => (event) => {
     setNewProjectFields({ ...newProjectFields, [prop]: event.target.value });
@@ -535,6 +537,8 @@ const ProjectContextProvider = ({ children }) => {
       openSideBar,
       editorSave,
       sideBarTab,
+      openImportPopUp,
+      openExportPopUp,
       selectedProjectMeta,
     },
     actions: {
@@ -557,6 +561,8 @@ const ProjectContextProvider = ({ children }) => {
       setLanguages,
       setEditorSave,
       setSideBarTab,
+      setOpenImportPopUp,
+      setOpenExportPopUp,
       setSelectedProjectMeta,
     },
   };

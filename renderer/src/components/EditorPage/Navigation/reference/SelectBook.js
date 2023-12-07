@@ -13,6 +13,7 @@ export default function SelectBook({
   selectedBooks,
   setSelectedBooks,
   scope,
+  existingScope = [],
 }) {
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
@@ -46,7 +47,9 @@ export default function SelectBook({
     } else {
       const _selectedBooks = [...selectedBooks];
       const selectedIndex = _selectedBooks.indexOf(bookID.toUpperCase());
+      if (!(scope === 'Other' && existingScope?.length > 0 && existingScope.includes(bookID.toUpperCase()))) {
       _selectedBooks.splice(selectedIndex, 1);
+      }
       setSelectedBooks(_selectedBooks);
     }
   }

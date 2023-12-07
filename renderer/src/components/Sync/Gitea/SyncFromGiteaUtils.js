@@ -53,6 +53,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
           lastSeen: moment().format(),
           refResources: [],
           bookMarks: [],
+          font: '',
         },
       },
       sync: { services: { door43: [] } },
@@ -87,9 +88,14 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
       // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
       if (!setting.sync && !setting.sync?.services) {
         setting.sync = { services: { door43: [] } };
-        } else {
-          setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
-        }
+      } else {
+        setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
+      }
+      if (!setting.font) {
+        setting.project[sbDataObject.type.flavorType.flavor.name].font = '';
+      } else {
+        setting.project[sbDataObject.type.flavorType.flavor.name].font = (setting.project[sbDataObject.type.flavorType.flavor.name].font) ? (setting.project[sbDataObject.type.flavorType.flavor.name].font) : '';
+      }
       settings = setting;
     }
     settings.project[sbDataObject.type.flavorType.flavor.name].lastSeen = moment().format();

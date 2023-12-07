@@ -261,3 +261,6 @@ p.paragraph:has(.chapter) {
 .perf .PerfEditorWrapper {
   margin: 0.1em;
 } */
+.button {
+  @apply flex h-8 cursor-pointer  items-center justify-center rounded-lg p-2 text-xs font-bold  outline-none  xl:px-4;
+}

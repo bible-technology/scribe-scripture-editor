@@ -50,8 +50,6 @@ export default function SelectVerse({
       document.getElementById('editor').querySelector(`#ch${chapter}v${verseNum}`)?.scrollIntoView();
       setVerseNumber(verseNum);
     }
-     // window.location.href = `#ch${chapter}v${verseNum}`;
-    // document.getElementById(`ch${chapter}v${verseNum}`).scrollIntoView();
   };
 
   const onMultiSelectVerse = async (e, verses) => {
@@ -116,6 +114,7 @@ export default function SelectVerse({
                 <div
                   key={chapter.key}
                   role="presentation"
+                  id={`chapter-${chapter.name}`}
                   onClick={(e) => { onChapterSelect(e, chapter.key); }}
                   className={styles.select}
                 >
@@ -144,6 +143,7 @@ export default function SelectVerse({
                 <div
                   key={verse.key}
                   role="presentation"
+                  id={`verse-${verse.name}`}
                   style={{ color: controlVerseSelect.includes(parseInt(verse.key, 10)) ? 'seagreen' : '' }}
                   onClick={(e) => (
                     multiSelectVerse

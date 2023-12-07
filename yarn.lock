@@ -5914,6 +5914,11 @@ bfj@^7.0.2:
     hoopy "^0.1.4"
     tryer "^1.0.1"
 
+bible-reference-range@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/bible-reference-range/-/bible-reference-range-1.1.0.tgz#2e80f066d30e9884d30f582c623de9cc2414676b"
+  integrity sha512-EVPhDLSY/hmeW6reO9XLst1SKAAf6Opyfy6l2MZSna9kE6DqEiFW/eWOrkPq5g40Hs+Xe8odPGJuIpdysokQpg==
+
 bible-reference-rcl@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/bible-reference-rcl/-/bible-reference-rcl-1.1.0.tgz#0e9f33effeaabf6bfed53b897ad8e99033502911"
@@ -7644,6 +7649,13 @@ dayjs@^1.8.34:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
   integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
 
+dcs-branch-merger@^1.4.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/dcs-branch-merger/-/dcs-branch-merger-1.4.1.tgz#57a2819c8189f8f23325eff8bebf4f7c698b2c49"
+  integrity sha512-IJbG5OpZQkxNDYao+T5MOrtVatvzDBGsuEwoZ7kq214OCTwlR+J96ApyamNeg+/i5ZQ8oKa3H4OMM6NFp6s7Zw==
+  dependencies:
+    path "0.12.7"
+
 debounce-fn@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/debounce-fn/-/debounce-fn-4.0.0.tgz#ed76d206d8a50e60de0dd66d494d82835ffe61c7"
@@ -8502,18 +8514,7 @@ epitelete-html@0.2.20-beta.2:
     node-html-parser "^5.3.3"
     pure-uuid "^1.6.3"
 
-epitelete@0.2.20-beta.1:
-  version "0.2.20-beta.1"
-  resolved "https://registry.yarnpkg.com/epitelete/-/epitelete-0.2.20-beta.1.tgz#e604ef358132dcb265ce3a967a6aec58162e1b13"
-  integrity sha512-sJpjnj01UDTtO7glo6Tmyvl5WJCZSSyFzbbMWugXM7+LCDdZdIfzdvOWOL+4H68G4ZUjZF3VcA9/PsnE/sBgzA==
-  dependencies:
-    "@babel/core" "^7.19.0"
-    base-64 "^1.0.0"
-    proskomma-json-tools "^0.6.6"
-    pure-uuid "^1.6.3"
-    rfdc "^1.3.0"
-
-epitelete@^0.2.20-beta.1:
+epitelete@^0.2.20, epitelete@^0.2.20-beta.1:
   version "0.2.20"
   resolved "https://registry.yarnpkg.com/epitelete/-/epitelete-0.2.20.tgz#1a89703d5e3152461179bd87540a6f58905141cc"
   integrity sha512-dag7scneBXNrR4LLSmeFWxb1ShYeWOxxRqyogJo9UEES2Nr8B5cNDfGqMqYOszCAMdmnGH1RoH1qydAk04JjoA==
@@ -16198,16 +16199,6 @@ proskomma-json-tools@^0.5.7:
     ajv "^8.11.0"
     deep-equal "^2.0.5"
 
-proskomma-json-tools@^0.6.6:
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.6.6.tgz#a5df84641ff4c6239f94ab93e3dbf71e52333d88"
-  integrity sha512-IEBJTyg6YDKr4E54CLDO1wDjcoiqGKjLxRDTnNSDRaHBG1TJyN1k94V6CHVrvgzKUtQFdWRH77mQ6hJjIUSLVg==
-  dependencies:
-    "@babel/core" "^7.17.10"
-    "@babel/plugin-proposal-throw-expressions" "^7.18.6"
-    ajv "^8.11.0"
-    deep-equal "^2.0.5"
-
 proskomma-json-tools@^0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.7.2.tgz#317a0be61402811c5a5cea6fbef2468003e242d5"
@@ -19066,14 +19057,16 @@ transform-runtime@0.0.0:
   resolved "https://registry.yarnpkg.com/transform-runtime/-/transform-runtime-0.0.0.tgz#e714d9b69211dd9537939d50e3aa5788c442b85c"
   integrity sha512-PX3vXzO8lucrVm82vZb7BABBLHyMDPGzn9zElHr+DnvtS3JPXtqwB1iTRe+D6iFXYmjtAF3zH7O0Xc5XpLpMEg==
 
-translation-helps-rcl@3.3.7:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/translation-helps-rcl/-/translation-helps-rcl-3.3.7.tgz#28fc937afde1390e92892826cc8c462ffc31f1bb"
-  integrity sha512-K5DRCHehRibclGObzV0A1o44d399z5/R4WLZEfFOjdq6w1lhKfWDrr68qG3o+AI2r74/UBqxF3rpQVxYlwqCMA==
+translation-helps-rcl@3.5.12:
+  version "3.5.12"
+  resolved "https://registry.yarnpkg.com/translation-helps-rcl/-/translation-helps-rcl-3.5.12.tgz#e58427750877c72162aa713fba4033b0e79b40de"
+  integrity sha512-uXj4uWrePiSf2F7eYWauVb1+qp5Rjexu2BYkAe7rGJotG9Z4RI6nbbK56mlG+XHGlbnRkLkIGSZJXOdFDpi8AQ==
   dependencies:
     "@gwdevs/extensible-rcl" "^1.0.1"
     "@mui/styled-engine" "npm:@mui/styled-engine-sc@latest"
     axios "^0.27.2"
+    bible-reference-range "^1.1.0"
+    dcs-branch-merger "^1.4.0"
     deep-equal "^2.0.5"
     react-draggable "^4.4.3"
     styled-components "^5.2.1"

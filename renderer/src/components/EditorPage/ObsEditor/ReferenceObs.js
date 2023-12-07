@@ -3,6 +3,7 @@ import {
  useContext, useEffect, useRef, useState,
 } from 'react';
 import PropTypes from 'prop-types';
+import { getScriptureDirection } from '@/core/projects/languageUtil';
 import { useTranslation } from 'react-i18next';
 import { checkandDownloadObsImages } from '@/components/Resources/DownloadObsImages/checkandDownloadObsImages';
 // import useNetwork from '@/components/hooks/useNetowrk';
@@ -17,13 +18,13 @@ const style = {
     fontStyle: 'italic',
   },
 };
-const ReferenceObs = ({ stories }) => {
+const ReferenceObs = ({ stories, font, title }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [direction, setDirection] = useState('ltr');
   const [networkState, setNetworkState] = useState({ online: true });
   const {
  state: {
     selectedStory,
-    selectedFont,
     fontSize,
   },
   actions: {
@@ -43,8 +44,18 @@ const { t } = useTranslation();
     }
     itemEls.current.length = 0;
     setSelectedStory(1);
+
+    // get the direction
+    if (title) {
+      getScriptureDirection(title).then((dir) => {
+        if (dir && dir.toLowerCase() === 'rtl') {
+          setDirection(dir);
+        }
+      });
+    }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stories]);
+  }, [stories, title]);
 
   // scroll based on story part selection
   const addtoItemEls = (el, id) => {
@@ -83,12 +94,13 @@ const { t } = useTranslation();
             stories?.map((story, index) => (
               <div
                 key={story.id}
-                className={`flex gap-5 mb-5 items-center justify-center ${story.id === selectedStory && 'bg-light'}`}
+                className={`flex gap-5 mb-5 items-center ${story.id === selectedStory && 'bg-light'}
+                  ${direction === 'rtl' ? 'pl-4' : 'pr-4'}`}
                 ref={(element) => addtoItemEls(element, story.id)}
               >
                 {
                   Object.prototype.hasOwnProperty.call(story, 'title') && (
-                  <p className="text-xl text-gray-600" style={style.bold}>
+                  <p className="text-xl text-gray-600 w-full text-center" style={style.bold}>
                     {story.title}
                   </p>
                   )
@@ -102,9 +114,9 @@ const { t } = useTranslation();
                   {/* <img className="w-1/4 rounded-lg" src={story.img} alt="" /> */}
                   <ObsImage story={story} online={networkState.online} />
                   <p
-                    className="text-sm text-gray-600 text-justify"
+                    className="text-sm text-gray-600 text-justify w-full break-words overflow-hidden"
                     style={{
-                      fontFamily: selectedFont || 'sans-serif',
+                      fontFamily: font || 'sans-serif',
                       fontSize: `${fontSize}rem`,
                       lineHeight: (fontSize > 1.3) ? 1.5 : '',
                     }}

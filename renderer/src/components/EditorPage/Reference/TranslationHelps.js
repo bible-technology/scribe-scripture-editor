@@ -7,7 +7,7 @@ import ObsTnCard from './OBS/ObsTn';
 import ObsTwlCard from './OBS/ObsTwlCard';
 
 const TranslationHelps = ({
- selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource,
+ selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font,
 }) => {
   const {
     state: {
@@ -39,6 +39,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
           );
         case 'twl':
@@ -54,6 +55,7 @@ const TranslationHelps = ({
               resourceId="twl"
               owner="test_org"
               server="https://git.door43.org"
+              font={font}
             />
           );
         case 'twlm':
@@ -69,6 +71,7 @@ const TranslationHelps = ({
               resourceId="twl"
               owner={owner}
               server="https://git.door43.org"
+              font={font}
             />
             );
         case 'tq':
@@ -86,6 +89,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
           );
         case 'tw':
@@ -101,6 +105,7 @@ const TranslationHelps = ({
               filePath={offlineResource?.twSelected?.folder}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
             );
         case 'ta':
@@ -117,6 +122,7 @@ const TranslationHelps = ({
               filePath={filePathTa}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
             );
         case 'bible':
@@ -128,6 +134,7 @@ const TranslationHelps = ({
               bookId={bookId}
               chapter={chapter}
               verse={verse}
+              font={font}
             />
           );
         case 'obs':
@@ -139,6 +146,7 @@ const TranslationHelps = ({
               bookId={bookId}
               chapter={chapter}
               verse={verse}
+              font={font}
             />
           );
         case 'obs-tn':
@@ -154,6 +162,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
           );
         case 'obs-tq':
@@ -169,6 +178,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
           );
           case 'obs-twlm':
@@ -184,6 +194,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               offlineResource={offlineResource}
+              font={font}
             />
           );
         default:

@@ -8,7 +8,7 @@
 <br />
 <p align="center">
   <a href="">
-    <img src="https://github.com/bible-technology/scribe-scripture-editor/blob/development/styles/Logo.png" alt="Logo" width="80" height="80">
+    <img src="https://github.com/bible-technology/scribe-scripture-editor/blob/development/styles/scribe-logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Scribe Scripture Editor (Scribe SE)</h3>
@@ -16,7 +16,7 @@
   <p align="center">
     A Bible translation editor for everyone.
     <br />
-    <a href="https://github.com/friendsofagape/autographa/issues">Report Issue</a>
+    <a href="https://github.com/bible-technology/scribe-scripture-editor/issues">Report Issue</a>
     ·
     <a href="https://github.com/bible-technology/scribe-scripture-editor/issues">Feature Request</a>
   </p>
@@ -41,7 +41,7 @@
 
 ## About The Project
 
-Scribe SE is a standalone desktop application which aims to aid and be a friendly companion for the Bible Translator. It is composed of modes which support focus on specific use-cases e.g. text translation (USFM-based editor), Oral Bible translation (audio recorder) and Open Bible Story (in Markdown format) drafting mode. It supports syncing with online repositories for data backup and other such helpful features. 
+Scribe Scripture Editor is a free and open-licensed desktop application that is designed to support the Bible translator with drafting and checking scripture in both text and audio formats as well as provides support for translating Open Bible Stories in different modes. The features include multi-project support, revision control (cloud sync), audio recording and seamless basic USFM editing. It has a modular architecture and is poised to grow and support the evolving needs on the ground.
 
 ### Built With
 

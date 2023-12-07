@@ -14,6 +14,7 @@ import SearchTags from './SearchTags';
 import NewProject from './NewProject';
 import * as logger from '../../logger';
 import ProjectRow from './ProjectRow';
+import { ProjectContext } from '../context/ProjectContext';
 
 export default function ProjectList() {
   const { t } = useTranslation();
@@ -30,20 +31,20 @@ export default function ProjectList() {
       callEditProject,
     },
     action: {
-      setProjects,
       handleClickStarred,
       setCallEditProject,
       FetchProjects,
     },
   } = useContext(AutographaContext);
-  const [openPopUp, setOpenPopUp] = useState(false);
+  const { states: { openExportPopUp }, actions: { setOpenExportPopUp } } = useContext(ProjectContext);
   const [currentProject, setCurrentProject] = useState();
-  const openExportPopUp = (project) => {
+  const [filteredProjects, setFilteredProjects] = useState(projects);
+  const handleExportPopUp = (project) => {
     setCurrentProject(project);
-    setOpenPopUp(true);
+    setOpenExportPopUp(true);
   };
   const closeExportPopUp = () => {
-    setOpenPopUp(false);
+    setOpenExportPopUp(false);
   };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -70,7 +71,7 @@ export default function ProjectList() {
               contentList1={projects}
               // contentList2={projects}
               filterList={filterList}
-              onfilerRequest1={setProjects}
+              onfilerRequest1={setFilteredProjects}
               // onfilerRequest2={setProjects}
             />
           )}
@@ -88,7 +89,7 @@ export default function ProjectList() {
                           orderBy={orderBy}
                           onRequestSort={handleRequestSort}
                         />
-                        <ProjectRow projects={projects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={openExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} />
+                        <ProjectRow projects={projects} filteredProjects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={handleExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} />
                       </table>
                       {(!projects) && <div><LoadingScreen /></div>}
                     </div>
@@ -100,7 +101,7 @@ export default function ProjectList() {
 
         </ProjectsLayout>
       ) : <NewProject call="edit" project={currentProject} closeEdit={() => closeEditProject()} />}
-      <ExportProjectPopUp open={openPopUp} closePopUp={closeExportPopUp} project={currentProject} />
+      <ExportProjectPopUp open={openExportPopUp} closePopUp={closeExportPopUp} project={currentProject} />
     </>
   );
 }

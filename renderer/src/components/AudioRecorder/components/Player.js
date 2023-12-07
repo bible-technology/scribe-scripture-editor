@@ -325,7 +325,7 @@ const Player = ({
 
             <div className="flex flex-col items-center">
               <div className="text-xxs mb-2 text-gray-300 uppercase tracking-wider">
-                {t('label-delete')}
+                {t('label-volume')}
               </div>
               <div className="flex gap-2 mt-2 items-center justify-center">
                 <button

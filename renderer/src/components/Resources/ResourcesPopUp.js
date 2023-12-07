@@ -115,17 +115,19 @@ export default function ResourcesPopUp(
             <div className="flex border bg-white">
               <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} />
               <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
-                <SearchBar
-                  currentFullResources={currentFullResources}
-                  selectResource={selectResource}
-                  setFilteredResources={setFilteredResources}
-                  subMenuItems={subMenuItems}
-                  setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-                  selectedPreProd={selectedPreProd}
-                  setSelectedPreProd={setSelectedPreProd}
-                />
+                {selectResource !== 'local-helps' && (
+                  <SearchBar
+                    currentFullResources={currentFullResources}
+                    selectResource={selectResource}
+                    setFilteredResources={setFilteredResources}
+                    subMenuItems={subMenuItems}
+                    setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                    selectedPreProd={selectedPreProd}
+                    setSelectedPreProd={setSelectedPreProd}
+                  />
+                )}
 
-                {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible')
+                {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible' || selectResource === 'local-helps')
                   ? (
                     <ResourceTabPane
                       selectResource={selectResource}

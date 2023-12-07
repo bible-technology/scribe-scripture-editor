@@ -2,7 +2,7 @@ export const environment = {
     PROJECT_SETTING_FILE: 'scribe-settings.json',
     USER_SETTING_FILE: 'scribe-user-settings.json',
     production: false,
-    AG_SETTING_VERSION: '1.2.1',
+    AG_SETTING_VERSION: '1.2.2',
     AG_USER_SETTING_VERSION: '1.2.0',
     APPLICATION_ID: 'AutographaEditor',
     JAVASCRIPT_KEY: 'C3925DFBCF06DF5291AC',
@@ -15,4 +15,5 @@ export const environment = {
     AG_MINIMUM_BURRITO_VERSION: '0.3.0',
     OBS_IMAGE_DIR: 'obs-images',
     MERGE_DIR_NAME: '.merge-staging-area',
+    SCRIBE_SUPPORT_MAIL: 'scribe@bridgeconn.com',
 };

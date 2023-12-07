@@ -35,7 +35,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
 
       if (!checkInit || !checkForRepo?.id) {
         setSyncProgress((prev) => ({
-        ...prev, syncStarted: true, completedFiles: 1, totalFiles: 6,
+        ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 6,
         }));
         let projectInitialized;
         if (!checkInit) {
@@ -62,7 +62,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         }
       } else {
         setSyncProgress((prev) => ({
-        ...prev, syncStarted: true, completedFiles: 1, totalFiles: 3,
+        ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 3,
         }));
         // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
         const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
@@ -77,7 +77,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
           if (pushResult === false) {
             // Auth error / internet error
             logger.debug('ToGiteaUtils.js', 'Auth failed');
-            throw new Error('Something went wrong!');
+            throw new Error('Your token expired, do Login again!');
           }
           // pull from remote main to local main
           const pullStatus = pushResult && await pullProject(fs, projectsMetaPath, mainBranch, auth.token.sha1, localBranch);
@@ -121,7 +121,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       throw new Error(err?.message || err);
     } finally {
       setSyncProgress((prev) => ({
-        ...prev, syncStarted: false, completedFiles: 0, totalFiles: 0,
+        ...prev, syncStarted: false, syncType: null, completedFiles: 0, totalFiles: 0,
         }));
     }
   });

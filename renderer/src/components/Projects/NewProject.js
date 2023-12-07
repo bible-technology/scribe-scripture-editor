@@ -50,7 +50,7 @@ const solutions = [
 function TargetLanguageTag(props) {
   const { children } = props;
   return (
-    <div className="rounded-full px-3 py-1 ml-28 bg-gray-200 text-xs uppercase font-semibold">{children}</div>
+    <div className="rounded-full px-3 py-1 bg-gray-200 text-xs uppercase font-semibold">{children}</div>
   );
 }
 
@@ -65,7 +65,7 @@ function BibleHeaderTagDropDown(headerDropDown, handleDropDown, call) {
         <button
           type="button"
           aria-label="open-popover"
-          className="flex justify-center items-center px-3 py-2 text-white ml-5
+          className="flex justify-center items-center px-3 py-2 text-white
           font-bold text-xs rounded-full leading-3 tracking-wider uppercase bg-primary"
         >
           {/* <div className="">{headerDropDown}</div> */}
@@ -96,6 +96,7 @@ export default function NewProject({ call, project, closeEdit }) {
       newProjectFields,
       languages,
       language,
+      canonSpecification,
     },
     actions: {
       setLanguage,
@@ -203,6 +204,14 @@ export default function NewProject({ call, project, closeEdit }) {
         logger.warn('NewProject.js', 'Validation failed for Description.');
         create = false;
       }
+      // custom scope section error
+      if (create && (!canonSpecification || !canonSpecification?.currentScope || canonSpecification?.currentScope?.length === 0)) {
+        create = false;
+        logger.warn('NewProject.js', 'Validation Failed - canon scope not selected');
+        setNotify('warning');
+        setSnackText(t('Scope is not selected or scope is empty. Please add scope.'));
+        setOpenSnackBar(true);
+      }
       setError({
         ...error, projectName: checkName, abbr: checkAbbr, description: checkDesc,
       });
@@ -296,7 +305,7 @@ export default function NewProject({ call, project, closeEdit }) {
   return (
     <ProjectsLayout
       title={call === 'new' ? t('new-project-page') : t('edit-project')}
-      header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
+      // header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
     >
       {loading === true
         ? (
@@ -308,10 +317,13 @@ export default function NewProject({ call, project, closeEdit }) {
           </div>
           )
         : (
-          <div className=" rounded-md border shadow-sm mt-4 ml-5 mr-5 mb-5">
+          <div className="rounded-md border shadow-sm mt-4 ml-5 mr-5 mb-5">
+            <div className="space-y-2 m-10">
+              <span className="text-xs font-base mb-2 text-primary leading-4 tracking-wide  font-light">Project Type</span>
+              {BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 m-10 gap-5">
-
-              <div>
+              <div className="lg:col-span-1">
                 <h4 className="text-xs font-base mb-2 text-primary  tracking-wide leading-4  font-light">
                   {t('label-project-name')}
                   <span className="text-error">*</span>
@@ -325,7 +337,7 @@ export default function NewProject({ call, project, closeEdit }) {
                     handleProjectName(e);
                   }}
                   disabled={call !== 'new'}
-                  className={classNames(call !== 'new' ? 'bg-gray-200' : '', 'w-52 lg:w-80 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300')}
+                  className={classNames(call !== 'new' ? 'bg-gray-200' : '', 'w-48 lg:w-full rounded shadow-sm sm:text-sm focus:border-primary border-gray-300')}
                 />
                 <span className="text-error">{error.projectName[0]?.message || error.projectName[1]?.message}</span>
                 <h4 className="mt-5 text-xs font-base mb-2 text-primary leading-4 tracking-wide  font-light">{t('label-description')}</h4>
@@ -337,12 +349,11 @@ export default function NewProject({ call, project, closeEdit }) {
                   onChange={(e) => {
                     setNewProjectFields({ ...newProjectFields, description: e.target.value });
                   }}
-                  className="bg-white w-52 lg:w-80 h-28  block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
+                  className="bg-white w-48 lg:w-full h-28  block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
                 />
                 <span className="text-error">{error.description[0]?.message}</span>
               </div>
-
-              <div className="col-span-2">
+              <div className="lg:col-span-2">
                 <div className="flex gap-5">
                   <div>
                     <h4 className="text-xs font-base mb-2 text-primary  tracking-wide leading-4  font-light">
@@ -364,18 +375,20 @@ export default function NewProject({ call, project, closeEdit }) {
                 </div>
                 <div className="flex gap-5 mt-5 items-center">
                   <div>
-                    {headerDropDown !== 'Audio'
-                      && (
-                      <div className="absolute">
-                        <TargetLanguageTag>
-                          {language.ld ? language.ld : 'LTR'}
-                        </TargetLanguageTag>
-                      </div>
-                    )}
-                    <h4 className="text-xs font-base mb-3 text-primary  tracking-wide leading-4  font-light">
-                      {t('label-target-language')}
-                      <span className="text-error">*</span>
-                    </h4>
+                    <div className="flex gap-4 items-center mb-2">
+                      <h4 className="text-xs font-base  text-primary  tracking-wide leading-4  font-light">
+                        {t('label-target-language')}
+                        <span className="text-error">*</span>
+                      </h4>
+                      {headerDropDown !== 'Audio'
+                        && (
+                          <div>
+                            <TargetLanguageTag>
+                              {language.ld ? language.ld : 'LTR'}
+                            </TargetLanguageTag>
+                          </div>
+                        )}
+                    </div>
                     <CustomMultiComboBox
                       selectedList={[language]}
                       setSelectedList={setLanguage}

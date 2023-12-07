@@ -17,6 +17,11 @@ const ScribexContextProvider = ({
     graftSequenceId: null,
     reference,
     font,
+    caretPosition: 0,
+    textToInsert: '',
+    numberToInsert: '',
+    selectedText: null,
+    insertType: '',
   };
 
   const [state, setState] = useState(initialState);
@@ -53,12 +58,32 @@ const ScribexContextProvider = ({
     setState((prev) => ({ ...prev, graftSequenceId }));
   }, []);
 
+  const setCaretPosition = useCallback((caretPosition) => {
+    setState((prev) => ({ ...prev, caretPosition }));
+  }, []);
+
+  const setTextToInsert = useCallback((textToInsert) => {
+    setState((prev) => ({ ...prev, textToInsert }));
+  }, []);
+
+  const setNumberToInsert = useCallback((numberToInsert) => {
+    setState((prev) => ({ ...prev, numberToInsert }));
+  }, []);
+
+  const setSelectedText = useCallback((selectedText) => {
+    setState((prev) => ({ ...prev, selectedText }));
+  }, []);
+
   const addSequenceId = useCallback(
     (_sequenceId) => {
       setSequenceIds([...state.sequenceIds, _sequenceId]);
     },
     [state.sequenceIds, setSequenceIds],
   );
+
+  const setInsertType = useCallback((insertType) => {
+       setState((prev) => ({ ...prev, insertType }));
+}, []);
   const actions = {
     setFont,
     setSectionable,
@@ -69,6 +94,11 @@ const ScribexContextProvider = ({
     setSequenceIds,
     addSequenceId,
     setGraftSequenceId,
+    setCaretPosition,
+    setTextToInsert,
+    setNumberToInsert,
+    setSelectedText,
+    setInsertType,
   };
 
   const context = {

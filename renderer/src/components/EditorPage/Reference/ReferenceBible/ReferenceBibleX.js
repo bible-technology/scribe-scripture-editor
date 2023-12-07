@@ -6,7 +6,7 @@ import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { SnackBar } from '@/components/SnackBar';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import { useReadReferenceUsfmFile } from '@/components/EditorPage/Reference/ReferenceBible/useReadReferenceUsfmFile';
-import ReferenceScribex from '../../Scribex/ReferenceScribex';
+import ReferenceScribex from '../../TextEditor/ReferenceScribex';
 
 const ReferenceBibleX = ({
   languageId,

@@ -11,6 +11,7 @@ import {
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import UploadIcon from '../../../public/icons/basil/Outline/Files/Upload.svg';
 
 import ResourcesSideBarOption from './ResourcesSideBarOption';
 
@@ -116,6 +117,13 @@ export default function ResourcesSidebar({
       title: t('label-audio-bible'),
       resourceType: 'audio',
       Icon: MicrophoneIcon,
+      subCategory: [],
+    },
+    {
+      id: 'local-helps',
+      title: 'Upload Help Resources',
+      resourceType: 'helps',
+      Icon: UploadIcon,
       subCategory: [],
     },
   ];

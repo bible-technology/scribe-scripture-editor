@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { classNames } from '@/util/classNames';
 import { PlusIcon } from '@heroicons/react/24/outline';
@@ -34,12 +34,18 @@ export default function ResourceTabPane({
     }
   };
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [selectResource]);
+
   return (
     <div className="bg-gray-50 items-center p-3 justify-between w-full h-full">
-      <Tab.Group>
+      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
         <Tab.List className="flex space-x-0 rounded-xl ">
           <Tab className={({ selected }) => classNames(
-            'w-20 rounded-t-lg flex items-center justify-center font-bold py-2 text-xs leading-5 text-white uppercase',
+            'px-6 rounded-t-lg flex items-center justify-center font-bold py-2 text-xs leading-5 text-white uppercase',
             'ring-offset-2 ring-offset-white focus:outline-none z-50',
             selected
               ? 'bg-primary text-white'
@@ -49,10 +55,21 @@ export default function ResourceTabPane({
             {selectResource === 'bible'
             ? t('label-resource-bible')
             : selectResource === 'OBS' ? 'OBS'
+            : selectResource === 'local-helps'
+            ? (
+              <div className="flex gap-2">
+                <PlusIcon
+                  className="w-4 h-4"
+                  aria-hidden="true"
+                />
+                {t('label-collection')}
+              </div>
+            )
             : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
 
           </Tab>
-          {selectResource !== 'audio'
+
+          {(selectResource !== 'audio' && selectResource !== 'local-helps')
           && (
           <Tab as={Fragment}>
             {({ selected }) => (
@@ -75,7 +92,9 @@ export default function ResourceTabPane({
               </button>
             )}
           </Tab>
-)}
+          )}
+
+          {selectResource !== 'local-helps' && (
           <Tab
             className={({ selected }) => classNames(
               'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
@@ -93,22 +112,27 @@ export default function ResourceTabPane({
             />
             {t('label-collection')}
           </Tab>
+          )}
         </Tab.List>
+
         <Tab.Panels>
-          <Tab.Panel className="p-4 bg-white">
-            <ObsBibleAudioTab
-              selectResource={selectResource}
-              filteredBibleObsAudio={filteredBibleObsAudio}
-              setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-              removeSection={removeSection}
-              loading={loading}
-              setLoading={setLoading}
-              handleRowSelect={handleRowSelect}
-              setSubMenuItems={setSubMenuItems}
-              subMenuItems={subMenuItems}
-            />
-          </Tab.Panel>
-          {selectResource !== 'audio'
+          {selectResource !== 'local-helps' && (
+            <Tab.Panel className="p-4 bg-white">
+              <ObsBibleAudioTab
+                selectResource={selectResource}
+                filteredBibleObsAudio={filteredBibleObsAudio}
+                setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                removeSection={removeSection}
+                loading={loading}
+                setLoading={setLoading}
+                handleRowSelect={handleRowSelect}
+                setSubMenuItems={setSubMenuItems}
+                subMenuItems={subMenuItems}
+              />
+            </Tab.Panel>
+          )}
+
+          {selectResource !== 'audio' && selectResource !== 'local-helps'
             && (
             <Tab.Panel className="p-4 bg-white">
               <DownloadResourcePopUp
@@ -117,7 +141,7 @@ export default function ResourceTabPane({
                 setIsOpenDonwloadPopUp={setIsOpenDonwloadPopUp}
               />
             </Tab.Panel>
-)}
+          )}
           <Tab.Panel className="p-4 bg-white">
             <ImportResource
               open={openImportResourcePopUp}
@@ -125,6 +149,7 @@ export default function ResourceTabPane({
               openPopUp={setOpenImportResourcePopUp}
               setOpenResourcePopUp={setOpenResourcePopUp}
               setLoading={setLoading}
+              selectResource={selectResource}
             />
           </Tab.Panel>
         </Tab.Panels>

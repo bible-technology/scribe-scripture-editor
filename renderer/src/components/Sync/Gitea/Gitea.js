@@ -3,11 +3,14 @@ import {
   AuthenticationContextProvider,
   RepositoryContextProvider,
 } from 'gitea-react-toolkit';
+import * as localforage from 'localforage';
 import GiteaFileBrowser from './GiteaFileBrowser';
 import { environment } from '../../../../environment';
 import { createSyncProfile } from '../Scribe/SyncToGiteaUtils';
 
-const Gitea = ({ setAuth, setRepo }) => {
+const Gitea = ({
+ setAuth, setRepo, logout, setLogout,
+}) => {
   const [authentication, setAuthentication] = useState();
   const [repository, setRepository] = useState();
 
@@ -23,6 +26,26 @@ const Gitea = ({ setAuth, setRepo }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authentication, repository]);
 
+  const getAuth = async () => {
+    const authentication = await localforage.getItem('authentication');
+    return authentication;
+  };
+
+  const saveAuth = async (authentication) => {
+    if (authentication === undefined || authentication === null) {
+      await localforage.removeItem('authentication');
+    } else {
+      await localforage.setItem('authentication', authentication);
+    }
+  };
+  useEffect(() => {
+    if (logout) {
+      setAuthentication();
+      setLogout();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logout]);
+
   return (
     <AuthenticationContextProvider
       config={{
@@ -31,6 +54,8 @@ const Gitea = ({ setAuth, setRepo }) => {
       }}
       authentication={authentication}
       onAuthentication={setAuthentication}
+      loadAuthentication={getAuth}
+      saveAuthentication={saveAuth}
     >
       <RepositoryContextProvider
         repository={repository}

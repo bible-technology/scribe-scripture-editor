@@ -28,5 +28,9 @@
         "app/*"
       ],
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

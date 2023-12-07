@@ -6,7 +6,7 @@ const getValue = async (filteredData, twURL, repoName, scrollLock, flavor = '') 
   const chapterTsvData = [];
   const notesObj = {};
   await Promise.all(filteredData.map(async (tsvObj) => {
-  if (repoName.includes('obs-twl')) {
+  if (repoName?.includes('obs-twl')) {
     // Fetching the content for Translation Word List
     const regex = /(.*)dict\//gm;
     const link = (tsvObj.TWLink).replace(regex, '');
