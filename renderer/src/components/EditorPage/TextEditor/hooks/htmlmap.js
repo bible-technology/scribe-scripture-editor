@@ -19,6 +19,16 @@ const htmlMap = (context) => ({
     '*': {
       tagName: 'p',
     },
+    'usfm:mt': {
+      classList: ['major-title paragraph mt hidden'],
+      tagName: 'h2',
+      attributes: { contenteditable: false },
+    },
+    'usfm:ms': {
+      classList: ['major-section-heading paragraph ms'],
+      tagName: 'h3',
+      attributes: { contenteditable: false },
+    },
   },
   mark: {
     '*': {
