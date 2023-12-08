@@ -22,7 +22,7 @@ import { ProgressCircle } from '../../../components/ProgressCircle';
 import { exportDefaultAudio, exportFullAudio } from './ExportUtils';
 import packageInfo from '../../../../../package.json';
 
-const audioExportFormats = { wav: { ext: 'wav', mimeType: 'audio/wav' }, mp3: { ext: 'mp3', mimeType: 'audio/mp3' } };
+const audioExportFormats = { wav: { ext: 'wav', mimeType: 'audio/wav' }, mp3: { ext: 'mp3', mimeType: 'audio/mpeg' } };
 
 export default function ExportProjectPopUp(props) {
   const {

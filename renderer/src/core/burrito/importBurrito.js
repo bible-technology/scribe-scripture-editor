@@ -96,6 +96,7 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       sb = JSON.stringify(metadata);
     }
     const success = await validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
+    console.log({ metadata });
     if (success || metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
       result.validate = true;
       logger.debug('importBurrito.js', 'Burrito file validated successfully');
@@ -103,6 +104,7 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       result.version = metadata.meta.version;
       result.burritoType = `${metadata.type?.flavorType?.name} / ${metadata.type?.flavorType?.flavor?.name}`;
       result.ingredients = Object.keys(metadata.ingredients).map((key) => key);
+      result.ingredientsArray = metadata.ingredients;
       result.primaryKey = metadata.identification.primary;
       result.publicDomain = metadata.copyright?.publicDomain;
       result.language = metadata.languages.map((lang) => lang.name.en);
@@ -331,6 +333,21 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           }
           metadata.ingredients[key].checksum.md5 = checksum;
           metadata.ingredients[key].size = stats.size;
+          // specific to old .mp3 audio support
+          // change .mp3 to wav and mimetype to audio/wav (for old mp3 exports)
+          if (/\.mp3$/.test(key)) {
+            try {
+              fs.renameSync(path.join(audioDir, key), path.join(audioDir, key.replace('.mp3', '.wav')));
+              metadata.ingredients[key].mimeType = 'audio/wav';
+              const newKey = key.replace('.mp3', '.wav');
+              metadata.ingredients[newKey] = metadata.ingredients[key];
+              delete metadata.ingredients[key];
+            } catch (err) {
+              logger.debug('importBurrito.js', `import failed - mp3 to wav section : ${err}`);
+              fs.unlinkSync(path.join(projectDir, `${projectName}_${id}`));
+              throw new Error('import failed');
+            }
+          }
         });
       })
       .catch((err) => logger.error('importBurrito.js', `${err}`));

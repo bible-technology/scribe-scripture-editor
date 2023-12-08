@@ -152,35 +152,66 @@ export default function ImportProjectPopUp(props) {
     logger.debug('importProjectPopUp.js', 'git merge process done');
   }
 
-  const importProject = async () => {
-    logger.debug('ImportProjectPopUp.js', 'Inside importProject');
-    if (folderPath) {
-      setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
-      setValid(false);
-      if (sbData.duplicate === true) {
-        logger.warn('ImportProjectPopUp.js', 'Project already available');
-        // currently MERGE feature only Enabled for OBS projects
-        console.log({sbData});
-        if (sbData?.burritoType === 'gloss / textStories'){
-          setMerge(true)
+  const checksForAudioImport = async (sbData) => {
+    console.log({sbData});
+    const ingredientsArr = sbData?.ingredientsArray || []
+    // check for the importing audio is chapter vise
+    if(Object.keys(ingredientsArr).length > 0){
+      Object.entries(ingredientsArr).forEach(([key ,value]) => {
+        console.log(key ,value)
+        if(/^ingredients\/.+\/\d+.mp3$/.test(key)) {
+            // matched ingedients/BookId/1.mp3
+            throw new Error("Chapter Level audio project is not supported")
         }
-        setModel({
-          openModel: true,
-          title: t('modal-title-replace-resource'),
-          confirmMessage: t('dynamic-msg-confirm-replace-resource'),
-          buttonName: t('btn-replace'),
-        });
-      } else {
-        logger.debug('ImportProjectPopUp.js', 'Its a new project');
-        checkBurritoVersion();
-      }
-    } else {
-      logger.error('ImportProjectPopUp.js', 'Invalid Path');
-      setValid(true);
-      setNotify('failure');
-      setSnackText(t('dynamic-msg-invalid-path'));
-      setOpenSnackBar(true);
+        // new mp3 have mime type as audio/mpeg old is audio/mp3
+        if(/\.mp3$/.test(key) && value?.mimeType === "audio/mpeg") {
+          // key - path end with mp3
+          throw new Error("unable to import mp3 projects")
+        }
+      })
+    }else{
+      throw new Error("Not found ingredients in metadata")
     }
+  }
+
+  const importProject = async () => {
+    try{
+      logger.debug('ImportProjectPopUp.js', 'Inside importProject');
+      if (folderPath) {
+        setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
+        setValid(false);
+        // if type is audio
+        if(sbData?.burritoType === 'scripture / audioTranslation'){
+          await checksForAudioImport(sbData)
+        }
+        if (sbData.duplicate === true) {
+          logger.warn('ImportProjectPopUp.js', 'Project already available');
+          // currently MERGE feature only Enabled for OBS projects
+          if (sbData?.burritoType === 'gloss / textStories'){
+            setMerge(true)
+          }
+          setModel({
+            openModel: true,
+            title: t('modal-title-replace-resource'),
+            confirmMessage: t('dynamic-msg-confirm-replace-resource'),
+            buttonName: t('btn-replace'),
+          });
+        } else {
+          logger.debug('ImportProjectPopUp.js', 'Its a new project');
+          checkBurritoVersion();
+        }
+      } else {
+        logger.error('ImportProjectPopUp.js', 'Invalid Path');
+        setValid(true);
+        throw new Error(t('dynamic-msg-invalid-path'))
+      }
+    } catch(err) {
+      setNotify('failure');
+      setSnackText(err?.message || err);
+      setOpenSnackBar(true);
+      setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
+    }
+    
   };
 
   React.useEffect(() => {
