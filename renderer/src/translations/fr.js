@@ -103,6 +103,7 @@ export const Fr = {
     'label-no-content-available': 'Aucun contenu disponible!',
     'label-enter-location': 'Entrez l\'emplacement',
     'label-editor-load-module': 'Charger un module',
+    'label-import-door43-resources': 'Importer DOOR43 aide les ressources',
     'tooltip-editor-lock': 'verrouillage/déverrouillage de la navigation',
     'tooltip-editor-bookmark': 'signet',
     'tooltip-editor-notification': 'notification',
@@ -276,4 +277,7 @@ export const Fr = {
     'label-check-updates': 'Vérifier les mises à jour',
     'label-documentation': 'Documentation',
     'label-tech-support': 'support technique',
+    'msg-helps-filepath': 'Vous pouvez mettre en place une ressource rapide pour le serveur manifest.yaml.',
+    'tooltip-supported-resources': 'les ressources prises en charge sont TN, TW, TQ, TA',
+    'label-upload-help-resources': 'Télécharger des ressources d\'aide',
 };

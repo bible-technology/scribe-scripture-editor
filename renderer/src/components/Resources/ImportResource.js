@@ -137,13 +137,13 @@ export default function ImportResource({
 
   return (
     <>
-      <h2 className="uppercase text-sm">{selectResource === 'local-helps' ? 'Import Door43 helps resources' : t('label-import-resource')}</h2>
+      <h2 className="uppercase text-sm">{selectResource === 'local-helps' ? t('label-import-door43-resources') : t('label-import-resource')}</h2>
       <h4 className="text-xs text-primary tracking-wide leading-4 font-light flex items-center py-2 gap-2">
-        {selectResource === 'local-helps' ? 'Helps Resource filepath with valid manifest.yaml' : t('label-burrito-resource-path')}
+        {selectResource === 'local-helps' ? t('msg-helps-filepath') : t('label-burrito-resource-path')}
         <button
           title={
           selectResource === 'local-helps'
-          ? 'supported resources are TN, TW, TQ, TA'
+          ? t('tooltip-supported-resources')
           : t('msg-select-dir-for-SB')
           }
           type="button"

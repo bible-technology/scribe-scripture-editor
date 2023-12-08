@@ -103,6 +103,7 @@ export const Ne = {
     'label-no-content-available': 'कुनै सामाग्री उपलब्ध छैन',
     'label-enter-location': 'स्थान दर्ता गर्नुहोस्',
     'label-editor-load-module': 'मोड्‍युल लोड गर्नुहोस्',
+    'label-import-door43-resources': 'आयात DOOR43 संसाधनहरूको सहायता गर्छ',
     'tooltip-editor-lock': 'नेविगेशन लॉक/अनलॉक',
     'tooltip-editor-bookmark': 'पृष्ठसङ्केत',
     'tooltip-editor-notification': 'सूचना',
@@ -276,4 +277,7 @@ export const Ne = {
     'label-check-updates': 'अपडेटहरू जाँच गर्नुहोस्',
     'label-documentation': 'कागजात',
     'label-tech-support': 'प्राविधिक समर्थन',
+    'msg-helps-filepath': 'वैध manifest.yaml सँग संसाधन फाइलपाथलाई मद्दत गर्दछ',
+    'tooltip-supported-resources': 'समर्थित स्रोतहरू TN, TW, TQ, TA हुन्',
+    'label-upload-help-resources': 'मद्दत स्रोतहरू अपलोड गर्नुहोस्',
 };

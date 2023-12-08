@@ -103,6 +103,7 @@ export const Hi = {
     'label-no-content-available': 'कोई सामग्री उपलब्ध नहीं है!',
     'label-enter-location': 'स्थान दर्ज करें',
     'label-editor-load-module': 'मॉड्यूल लोड करें',
+    'label-import-door43-resources': 'आयात DOOR43 संसाधनों की सहायता करता है',
     'tooltip-editor-lock': 'नेविगेशन लॉक/अनलॉक',
     'tooltip-editor-bookmark': 'बुकमार्क',
     'tooltip-editor-notification': 'सूचना',
@@ -276,4 +277,7 @@ export const Hi = {
     'label-check-updates': 'अपडेट जांचें',
     'label-documentation': 'प्रलेखन',
     'label-tech-support': 'तकनीकी समर्थन',
+    'msg-helps-filepath': 'आप manifest.yaml सर्वर के लिए एक त्वरित संसाधन सेट कर सकते हैं।',
+    'tooltip-supported-resources': 'समर्थित संसाधन TN, TW, TQ, TA हैं।',
+    'label-upload-help-resources': 'सहायता संसाधन अपलोड करें',
 };

@@ -123,7 +123,7 @@ export default function ResourcesSidebar({
     },
     {
       id: 'local-helps',
-      title: 'Upload Help Resources',
+      title: t('label-upload-help-resources'),
       resourceType: 'helps',
       Icon: UploadIcon,
       subCategory: [],

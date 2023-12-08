@@ -103,6 +103,7 @@ export const En = {
     'label-no-content-available': 'No content available!',
     'label-enter-location': 'Enter location',
     'label-editor-load-module': 'Load a Module',
+    'label-import-door43-resources': 'Import Door43 helps resources',
     'tooltip-editor-lock': 'navigation lock/unlock',
     'tooltip-editor-bookmark': 'bookmark',
     'tooltip-editor-notification': 'notification',
@@ -276,4 +277,7 @@ export const En = {
     'label-check-updates': 'Check updates',
     'label-documentation': 'Documentation',
     'label-tech-support': 'Tech Support',
+    'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
+    'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
+    'label-upload-help-resources': 'Upload Help Resources',
 };
