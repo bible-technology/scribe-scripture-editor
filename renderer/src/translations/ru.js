@@ -103,6 +103,7 @@ export const Ru = {
     'label-no-content-available': 'Нет доступного контента!',
     'label-enter-location': 'Введите расположение',
     'label-editor-load-module': 'Загрузите модуль',
+    'label-import-door43-resources': 'Импорт ресурсов DOOR43 помогает',
     'tooltip-editor-lock': 'navigation lock/unlock',
     'tooltip-editor-bookmark': 'закладка',
     'tooltip-editor-notification': 'уведомление',
@@ -276,5 +277,7 @@ export const Ru = {
     'label-check-updates': 'Проверить обновления',
     'label-documentation': 'Документация',
     'label-tech-support': 'техническая поддержка',
-
+    'msg-helps-filepath': 'Помогает найти путь к ресурсу файла с реальным файлом manifest.yaml.',
+    'tooltip-supported-resources': 'поддерживаемые ресурсы: TN, TW, TQ, TA',
+    'label-upload-help-resources': 'Загрузить справочные ресурсы',
 };
