@@ -96,7 +96,6 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       sb = JSON.stringify(metadata);
     }
     const success = await validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
-    console.log({ metadata });
     if (success || metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
       result.validate = true;
       logger.debug('importBurrito.js', 'Burrito file validated successfully');
