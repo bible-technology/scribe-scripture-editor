@@ -10,6 +10,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
+import { fixtStudioUsfm } from './utils/tStudioImportParser';
 
 const grammar = require('usfm-grammar');
 
@@ -104,7 +105,8 @@ export default function ImportPopUp(props) {
     folderPath.forEach((filePath) => {
       switch (projectType) {
         case 'Translation': {
-          const usfm = fs.readFileSync(filePath, 'utf8');
+          let usfm = fs.readFileSync(filePath, 'utf8');
+          usfm = fixtStudioUsfm(usfm); // temp fix to import usfm files from tStudio
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
@@ -198,7 +200,7 @@ export default function ImportPopUp(props) {
       case 'OBS':
         setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
         setLabelImportFiles(t('label-choose-md-files'));
-      break;
+        break;
 
       default:
         break;
