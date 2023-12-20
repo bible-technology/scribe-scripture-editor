@@ -46,7 +46,7 @@ export default function SideBar() {
           <Link
             href="/projects"
             aria-label="projectList"
-            className="flex flex-col items-center"
+            className="flex flex-col items-center px-2"
           >
 
             <ProjectsIcon
