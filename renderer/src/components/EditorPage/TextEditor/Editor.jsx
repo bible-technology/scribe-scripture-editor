@@ -1,4 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, {
+ useContext, useEffect, useLayoutEffect, useRef,
+} from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
 import LoadingScreen from '@/components/Loading/LoadingScreen';
@@ -12,7 +14,7 @@ import { functionMapping } from './utils/insertFunctionMap';
 import RecursiveBlock from './RecursiveBlock';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
-import { onIntersection } from './utils/IntersectionObserver';
+import { onIntersection, scrollReference } from './utils/IntersectionObserver';
 
 export default function Editor(props) {
   const {
@@ -98,14 +100,35 @@ export default function Editor(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
 
+  const isScrolling = useRef(false);
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      isScrolling.current = true;
+    };
+    const handleScrollEnd = () => {
+      isScrolling.current = false;
+    };
+    const editorDiv = document.getElementById('fulleditor');
+    // Adding scroll and click event listeners
+    editorDiv.addEventListener('scroll', handleScroll);
+    editorDiv.addEventListener('click', handleScrollEnd);
+    return () => {
+      editorDiv.removeEventListener('scroll', handleScroll);
+      editorDiv.removeEventListener('click', handleScrollEnd);
+    };
+  }, []);
+
   useAutoSaveIndication(isSaving);
 
   function onReferenceSelected({ chapter, verse }) {
     chapter && setChapterNumber(chapter);
     verse && setVerseNumber(verse);
+    scrollReference(chapter);
   }
 
-  const observer = new IntersectionObserver((entries) => onIntersection({ setChapterNumber, scrollLock, entries }), {
+  const observer = new IntersectionObserver((entries) => onIntersection({
+    scroll: isScrolling.current, setChapterNumber, scrollLock, entries, setVerseNumber,
+  }), {
     root: document.querySelector('editor'),
     threshold: 0,
     rootMargin: '0% 0% -60% 0%',
@@ -140,6 +163,7 @@ export default function Editor(props) {
 
   return (
     <div
+      id="fulleditor"
       style={{
         fontFamily: selectedFont || 'sans-serif',
         fontSize: `${fontSize}rem`,

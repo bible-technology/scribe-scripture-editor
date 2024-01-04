@@ -9,12 +9,17 @@ export const scrollReference = (chapterNumber) => {
   });
 };
 
-export const onIntersection = ({ entries, setChapterNumber, scrollLock }) => {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const entry of entries) {
-    if (entry.isIntersecting) {
-      setChapterNumber(entry.target.dataset.attsNumber);
-      scrollLock === false ? scrollReference(entry.target.dataset.attsNumber) : {};
+export const onIntersection = ({
+ scroll, entries, setChapterNumber, scrollLock, setVerseNumber,
+}) => {
+  if (scroll) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        setChapterNumber(entry.target.dataset.attsNumber);
+        setVerseNumber(1);
+        scrollLock === false ? scrollReference(entry.target.dataset.attsNumber) : {};
+      }
     }
   }
 };
