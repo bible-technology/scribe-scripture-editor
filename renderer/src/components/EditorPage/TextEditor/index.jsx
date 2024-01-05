@@ -29,7 +29,7 @@ export default function TextEditor() {
 
   const {
     state: { bookId, selectedFont },
-    actions: { handleSelectedFont },
+    actions: { handleSelectedFont, onChangeChapter, onChangeVerse },
   } = useContext(ReferenceContext);
 
   const {
@@ -55,6 +55,12 @@ export default function TextEditor() {
     setSelectedBook(bookId.toUpperCase());
     setBookChange(true);
   }, [bookId]);
+
+  useEffect(() => {
+    onChangeChapter(chapterNumber, 1);
+    onChangeVerse(verseNumber, 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapterNumber, verseNumber]);
 
   const { catalog } = useCatalog({ proskomma, stateId, verbose });
   const { id: docSetId, documents } = (done && catalog.docSets[0]) || {};
