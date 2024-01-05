@@ -4,6 +4,7 @@ import {
   useContent,
 } from 'translation-helps-rcl';
 import localForage from 'localforage';
+import LoadingScreen from '@/components/Loading/LoadingScreen';
 import ReferenceCard from './ReferenceCard';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
@@ -177,7 +178,7 @@ export default function TranslationHelpsCard({
                           setOfflineItemsDisable(true);
                           setOfflineMarkdown(filecontent);
                         } else {
-                          setOfflineMarkdown('');
+                          setOfflineMarkdown({ error: true, data: 'No Content Avaialble' });
                         }
                     }
                   });
@@ -191,6 +192,8 @@ export default function TranslationHelpsCard({
               const filecontent = fs.readFileSync(path.join(folder, projectName, projectId, filePath), 'utf8');
               setOfflineItemsDisable(true);
               setOfflineMarkdown(filecontent);
+            } else {
+              setOfflineMarkdown({ error: true, data: 'No Content Available' });
             }
             break;
 
@@ -201,6 +204,8 @@ export default function TranslationHelpsCard({
                 const filecontent = fs.readFileSync(path.join(folder, projectName, 'bible', filePath), 'utf8');
                 setOfflineItemsDisable(true);
                 setOfflineMarkdown(filecontent);
+              } else {
+                setOfflineMarkdown({ error: true, data: 'No Content Available' });
               }
               break;
 
@@ -221,20 +226,23 @@ export default function TranslationHelpsCard({
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
 
   return (
-    <ReferenceCard
-      items={items}
-      filters={['OccurrenceNote']}
-      markdown={markdown}
-      isLoading={isLoading}
-      languageId={languageId}
-      title={title}
-      viewMode={viewMode}
-      selectedQuote={selectedQuote}
-      setQuote={setQuote}
-      font={font}
-      setResetTrigger={setResetTrigger}
-      resetTrigger={resetTrigger}
-    />
+    (markdown || items) ? (
+      <ReferenceCard
+        items={items}
+        filters={['OccurrenceNote']}
+        markdown={markdown}
+        isLoading={isLoading}
+        languageId={languageId}
+        title={title}
+        viewMode={viewMode}
+        selectedQuote={selectedQuote}
+        setQuote={setQuote}
+        font={font}
+        setResetTrigger={setResetTrigger}
+        resetTrigger={resetTrigger}
+      />
+    ) : <LoadingScreen />
+
   );
 }
 
