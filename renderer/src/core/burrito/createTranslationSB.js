@@ -18,7 +18,7 @@ call,
 update,
 ) => {
   logger.debug('createTranslationSB.js', 'In createTranslationSB');
-  const localizedNames = {};
+  let localizedNames = {};
   return new Promise((resolve) => {
     let json = {};
     if (call === 'edit') {
@@ -54,9 +54,19 @@ update,
     } else {
       json.copyright.licenses[0].ingredient = 'license.md';
     }
+
+    if (call === 'edit') {
+      localizedNames = JSON.parse(JSON.stringify(json.localizedNames));
+      Object.keys(json.type.flavorType.currentScope).forEach((scope) => {
+        if (!localizedNames[scope]) {
+          localizedNames[scope] = burrito.localizedNames[scope];
+        }
+      });
+    }
+
     selectedScope.forEach((scope) => {
       json.type.flavorType.currentScope[scope] = [];
-      localizedNames[scope] = json.localizedNames[scope];
+      localizedNames[scope] = burrito.localizedNames[scope];
     });
     json.localizedNames = localizedNames;
     logger.debug('createTranslationSB.js', 'Created the Translation SB');
