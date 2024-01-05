@@ -105,6 +105,7 @@ export default function TranslationHelpsCard({
                       };
                     }).filter((data) => data.Chapter === chapter && data.Verse === verse);
                   setOfflineItemsDisable(false);
+                  console.log({ json });
                   setOfflineItems(json);
                 }
               }
@@ -178,7 +179,7 @@ export default function TranslationHelpsCard({
                           setOfflineItemsDisable(true);
                           setOfflineMarkdown(filecontent);
                         } else {
-                          setOfflineMarkdown('');
+                          setOfflineMarkdown({ error: true, data: 'No Content Avaialble' });
                         }
                     }
                   });
@@ -192,6 +193,8 @@ export default function TranslationHelpsCard({
               const filecontent = fs.readFileSync(path.join(folder, projectName, projectId, filePath), 'utf8');
               setOfflineItemsDisable(true);
               setOfflineMarkdown(filecontent);
+            } else {
+              setOfflineMarkdown({ error: true, data: 'No Content Available' });
             }
             break;
 
@@ -202,6 +205,8 @@ export default function TranslationHelpsCard({
                 const filecontent = fs.readFileSync(path.join(folder, projectName, 'bible', filePath), 'utf8');
                 setOfflineItemsDisable(true);
                 setOfflineMarkdown(filecontent);
+              } else {
+                setOfflineMarkdown({ error: true, data: 'No Content Available' });
               }
               break;
 
@@ -220,6 +225,10 @@ export default function TranslationHelpsCard({
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
+
+  console.log({
+ markdown, isLoading, items, offlineMarkdown, offlineItems,
+});
 
   return (
     (markdown || items) ? (
