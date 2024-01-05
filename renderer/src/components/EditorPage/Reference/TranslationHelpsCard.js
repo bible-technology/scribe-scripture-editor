@@ -105,7 +105,6 @@ export default function TranslationHelpsCard({
                       };
                     }).filter((data) => data.Chapter === chapter && data.Verse === verse);
                   setOfflineItemsDisable(false);
-                  console.log({ json });
                   setOfflineItems(json);
                 }
               }
@@ -225,10 +224,6 @@ export default function TranslationHelpsCard({
 
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
-
-  console.log({
- markdown, isLoading, items, offlineMarkdown, offlineItems,
-});
 
   return (
     (markdown || items) ? (
