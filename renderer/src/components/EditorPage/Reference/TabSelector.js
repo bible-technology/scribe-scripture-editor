@@ -9,7 +9,7 @@ function classNames(...classes) {
 function TabSelector({ currentTab, setCurrentTab, tabData }) {
   return (
     <div className="w-full px-2 sm:px-0 pb-2">
-      <Tab.Group manual selectedIndex={currentTab} onChange={setCurrentTab}>
+      <Tab.Group manual defaultIndex={2} selectedIndex={currentTab} onChange={setCurrentTab}>
         <Tab.List className="flex space-x-1 rounded-xl bg-gray-200 p-1">
           {tabData.map((data) => (
             <Tab
