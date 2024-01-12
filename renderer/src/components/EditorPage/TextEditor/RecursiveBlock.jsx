@@ -40,27 +40,6 @@ export default function RecursiveBlock({
     setCaretPosition(cursorPosition);
   };
 
-  const checkReturnKeyPress = (event) => {
-    const activeTextArea = document.activeElement;
-    if (event.key === 'Enter') {
-      if (activeTextArea.children.length > 1) {
-        const lineBreak = activeTextArea.children[1]?.outerHTML;
-        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, '&nbsp');
-      }
-    }
-    // BACKSPACE DISABLE
-    if (event.keyCode === 8) {
-      const range = document.getSelection().getRangeAt(0);
-      const selectedNode = range.startContainer;
-      const prevNode = selectedNode.previousSibling;
-      if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
-        event.preventDefault();
-      }
-      prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
-    }
-    updateCursorPosition();
-  };
-
   function handleSelection() {
     let selectedText = '';
     if (window.getSelection) {
@@ -85,6 +64,29 @@ export default function RecursiveBlock({
     handleSelection();
   };
 
+  const keyStrokeHandler = (event) => {
+    const activeTextArea = document.activeElement;
+    // Replace line break with space
+    if (event.key === 'Enter') {
+      if (activeTextArea.children.length > 1) {
+        const lineBreak = activeTextArea.children[1]?.outerHTML;
+        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, '&nbsp');
+      }
+    }
+    // Disable backspace if the previous node is not the same verse
+    if (event.keyCode === 8) {
+      const range = document.getSelection().getRangeAt(0);
+      const selectedNode = range.startContainer;
+      const prevNode = selectedNode.previousSibling;
+      if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
+        event.preventDefault();
+      }
+      prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
+    }
+    checkCurrentVerse();
+    updateCursorPosition();
+  };
+
   function onPasteHandler(event) {
     const cursorPosition = getCurrentCursorPosition('editor');
     const paste = (event.clipboardData || window.clipboardData).getData('text');
@@ -101,11 +103,11 @@ export default function RecursiveBlock({
       <div
         className="editor-paragraph"
         contentEditable={contentEditable}
-        onKeyDown={checkReturnKeyPress}
+        onKeyDown={keyStrokeHandler}
         onMouseUp={checkCurrentVerse}
         onMouseDown={updateCursorPosition}
-        {...props}
         onPaste={(event) => { event.preventDefault(); onPasteHandler(event); }}
+        {...props}
       />
     );
   }

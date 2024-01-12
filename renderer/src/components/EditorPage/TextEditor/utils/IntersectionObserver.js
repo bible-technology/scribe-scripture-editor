@@ -1,13 +1,25 @@
-export const scrollReference = (chapterNumber) => {
-  const refEditors = document.getElementsByClassName('ref-editor');
-  refEditors.length > 0 && Array.prototype.filter.call(refEditors, (refEditor) => {
-    const editorInView = refEditor.querySelector(`#ch-${chapterNumber}`);
-    if (editorInView) {
-      editorInView.scrollIntoView();
-      editorInView.classList.add('scroll-mt-10');
-    }
-  });
-};
+export const scrollReference = (() => {
+  let prevCV;
+  return (c, v) => {
+    const refEditors = document.getElementsByClassName('ref-editor');
+    refEditors.length > 0 && Array.prototype.filter.call(refEditors, (refEditor) => {
+      if (!prevCV || prevCV.c !== c) {
+        const chapterInView = refEditor.querySelector(`#ch-${c}`);
+        if (chapterInView) {
+          chapterInView.scrollIntoView();
+          chapterInView.classList.add('scroll-mt-10');
+        }
+      } else if (prevCV && (prevCV.c === c && prevCV.v !== v)) {
+        const verseInView = refEditor.querySelector(`#ch${c}v${v}`);
+        if (verseInView) {
+          verseInView.scrollIntoView();
+          verseInView.classList.add('scroll-mt-30');
+        }
+      }
+    });
+    prevCV = { c, v };
+  };
+})();
 
 export const onIntersection = ({
  scroll, entries, setChapterNumber, scrollLock, setVerseNumber,
