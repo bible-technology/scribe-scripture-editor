@@ -117,6 +117,12 @@ function TranslationMergeUI() {
     return { valid: isJsonValid, data: myUsfmParser.toJSON() };
   }
 
+  async function parseJsonToUsfm(json) {
+    const myUsfmParser = new grammar.JSONParser(json);
+    const usfm = myUsfmParser.toUSFM();
+    return usfm;
+  }
+
   const parseFiles = async () => {
     // parse imported
     console.log('started parsing');
@@ -147,6 +153,12 @@ function TranslationMergeUI() {
       setError('unable to read imported USFM');
     }
     setLoading(false);
+  };
+
+  const testToUsfm = async () => {
+    const json = { book: usfmJsons.current.book, chapters: [usfmJsons.current.chapters[0]] };
+    const data = await parseJsonToUsfm(json);
+    console.log({ data });
   };
 
   useEffect(() => {
@@ -218,6 +230,8 @@ function TranslationMergeUI() {
                         </button>
                       </>
                     )}
+
+                    <button onClick={testToUsfm}>parse usfm</button>
 
                   </div>
                   <div className="border-2 border-black rounded-md h-[50px] p-1">
