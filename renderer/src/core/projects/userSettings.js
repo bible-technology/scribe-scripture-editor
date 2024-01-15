@@ -109,3 +109,26 @@ export const saveUserSettings = async (userSettingsJson) => {
         throw new Error(err?.message || err);
     }
 };
+
+// this will read usfm file based on path name / bookname (eg : ingredients/MAT.usfm)
+export const readUsfmFile = async (filename, projectName) => {
+    try {
+        logger.debug('userSettings.js', 'In readUsfm file');
+        const currentUser = await localForage.getItem('userProfile');
+        const newpath = localStorage.getItem('userPath');
+        const fs = window.require('fs');
+        const path = require('path');
+        const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects', projectName, filename);
+        if (fs.existsSync(file)) {
+            const usfm = await fs.readFileSync(file);
+            if (usfm) {
+                logger.debug('userSettings.js', 'read usfm file successfully');
+                return usfm;
+            }
+
+            throw new Error('failed to read usfm  file');
+        }
+    } catch (err) {
+        throw new Error(err?.message || err);
+    }
+};
