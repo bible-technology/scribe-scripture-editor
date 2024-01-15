@@ -8,6 +8,13 @@ import LoadingScreen from '@/components/Loading/LoadingScreen';
 import ReferenceCard from './ReferenceCard';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
+import TabSelector from './TabSelector';
+
+const tnTabHeads = [
+  { id: 1, title: 'Book Overview' },
+  { id: 2, title: 'Chapter Overview' },
+  { id: 3, title: 'Verse Note' },
+];
 
 export default function TranslationHelpsCard({
   title,
@@ -31,10 +38,14 @@ export default function TranslationHelpsCard({
   const [offlineMarkdown, setOfflineMarkdown] = useState('');
   const [resetTrigger, setResetTrigger] = useState(false);
 
+  const [currentTnTab, setCurrentTnTab] = useState(2);
+
+  const [currentChapterVerse, setCurrentChapterVerse] = useState({ verse, chapter });
+
   // eslint-disable-next-line prefer-const
   let { items, markdown, isLoading } = useContent({
-    verse,
-    chapter,
+    verse: currentChapterVerse.verse,
+    chapter: currentChapterVerse.chapter,
     projectId,
     branch,
     languageId,
@@ -44,6 +55,16 @@ export default function TranslationHelpsCard({
     server,
     readyToFetch: true,
   });
+
+  useEffect(() => {
+    if (currentTnTab === 1) {
+      setCurrentChapterVerse({ chapter, verse: 'intro' });
+    } else if (currentTnTab === 0) {
+      setCurrentChapterVerse({ verse: 'intro', chapter: 'front' });
+    } else {
+      setCurrentChapterVerse({ verse, chapter });
+    }
+  }, [currentTnTab, verse, chapter]);
 
   useEffect(() => {
     if (offlineResource && offlineResource.offline) {
@@ -103,7 +124,7 @@ export default function TranslationHelpsCard({
                       return {
                         Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
                       };
-                    }).filter((data) => data.Chapter === chapter && data.Verse === verse);
+                    }).filter((data) => data.Chapter === currentChapterVerse.chapter && data.Verse === currentChapterVerse.verse);
                   setOfflineItemsDisable(false);
                   setOfflineItems(json);
                 }
@@ -225,23 +246,37 @@ export default function TranslationHelpsCard({
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
 
+  if (resourceId === 'tn' && items) {
+    if (items[0]?.Note) {
+      items[0].Note = (items[0].Note).replace(/(<br>|\\n)/gm, '\n');
+    }
+    if (items[0]?.OccurrenceNote) {
+      items[0].OccurrenceNote = (items[0].OccurrenceNote).replace(/(<br>|\\n)/gm, '\n');
+    }
+  }
+
   return (
-    (markdown || items) ? (
-      <ReferenceCard
-        items={items}
-        filters={['OccurrenceNote']}
-        markdown={markdown}
-        isLoading={isLoading}
-        languageId={languageId}
-        title={title}
-        viewMode={viewMode}
-        selectedQuote={selectedQuote}
-        setQuote={setQuote}
-        font={font}
-        setResetTrigger={setResetTrigger}
-        resetTrigger={resetTrigger}
-      />
-    ) : <LoadingScreen />
+    <>
+      {resourceId === 'tn' && (<TabSelector currentTab={currentTnTab} setCurrentTab={setCurrentTnTab} tabData={tnTabHeads} />)}
+      {(markdown || items) ? (
+        <ReferenceCard
+          resourceId={resourceId}
+          items={items}
+          filters={['OccurrenceNote']}
+          markdown={markdown}
+          isLoading={isLoading}
+          languageId={languageId}
+          title={title}
+          viewMode={viewMode}
+          selectedQuote={selectedQuote}
+          setQuote={setQuote}
+          font={font}
+          setResetTrigger={setResetTrigger}
+          resetTrigger={resetTrigger}
+        />
+      )
+      : <LoadingScreen />}
+    </>
 
   );
 }
