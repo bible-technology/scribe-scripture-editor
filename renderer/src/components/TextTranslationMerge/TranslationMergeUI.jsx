@@ -6,6 +6,7 @@ import { AutographaContext } from '@/components/context/AutographaContext';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { readUsfmFile } from '@/core/projects/userSettings';
 import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
 import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
@@ -15,7 +16,7 @@ const grammar = require('usfm-grammar');
 
 function TranslationMergeUI() {
   const [importedUsfmFolderPath, setImportedUsfmFolderPath] = useState([]);
-  const [files, setFiles] = useState({
+  const [usfmJsons, setUsfmJsons] = useState({
     imported: null,
     current: null,
   });
@@ -46,7 +47,7 @@ function TranslationMergeUI() {
   } = useGetCurrentProjectMeta();
 
   console.log({
-    openTextTranslationMerge, currentProjectMeta, importedUsfmFolderPath, files,
+    openTextTranslationMerge, currentProjectMeta, importedUsfmFolderPath, usfmJsons,
   });
 
   const modalClose = () => {
@@ -74,14 +75,15 @@ function TranslationMergeUI() {
 
   const handleOnAbortMerge = () => {
     setError('');
-    setFiles({ imported: null, current: null });
+    setUsfmJsons({ imported: null, current: null });
     setImportedUsfmFolderPath([]);
     setOpenTextTranslationMerge({ open: false, meta: null });
     modalClose();
   };
 
   useEffect(() => {
-    if (openTextTranslationMerge?.meta && !currentProjectMeta) {
+    console.log('in call meta : ');
+    if (openTextTranslationMerge?.meta) {
       const { id, name } = openTextTranslationMerge.meta;
       (async () => {
         await getProjectMeta(`${name}_${id[0]}`);
@@ -109,9 +111,7 @@ function TranslationMergeUI() {
     openFileDialogSettingData();
   };
 
-  async function readAndParseUsfm(filePath) {
-    const fs = window.require('fs');
-    const usfm = fs.readFileSync(filePath, 'utf8');
+  async function parseUsfm(usfm) {
     const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
     const isJsonValid = myUsfmParser.validate();
     return { valid: isJsonValid, data: myUsfmParser.toJSON() };
@@ -120,19 +120,31 @@ function TranslationMergeUI() {
   const parseFiles = async () => {
     // parse imported
     console.log('started parsing');
-    const importedJson = await readAndParseUsfm(importedUsfmFolderPath[0]);
-    if (!importedJson.valid) {
-      setError('Imported Usfm is invalid');
-    } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
-      && !Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode?.toLowerCase())) {
-      setError('Imported USFM is not in the scope of Current Project');
+    const fs = window.require('fs');
+    const readUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
+    if (readUsfm) {
+      const importedJson = await parseUsfm(readUsfm);
+      if (!importedJson.valid) {
+        setError('Imported Usfm is invalid');
+      } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
+        && !Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode?.toLowerCase())) {
+        setError('Imported USFM is not in the scope of Current Project');
+      } else {
+        setError('');
+        setUsfmJsons((prev) => ({ ...prev, imported: importedJson.data }));
+        // Parse current project same book
+        const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
+        const currentBookPath = Object.keys(currentProjectMeta?.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
+        const { id, name } = openTextTranslationMerge.meta;
+        const currentBookUsfm = await readUsfmFile(currentBookPath, `${name}_${id[0]}`);
+        console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
+        if (currentBookUsfm) {
+          const currentJson = await parseUsfm(currentBookUsfm);
+          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data }));
+        }
+      }
     } else {
-      setError('');
-      setFiles((prev) => ({ ...prev, imported: importedJson.data }));
-      // Parse current project same book
-      const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
-      const currentBookPath = Object.keys(currentProjectMeta?.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
-      console.log('FOUND ====> ', { currentBookPath });
+      setError('unable to read imported USFM');
     }
     setLoading(false);
   };

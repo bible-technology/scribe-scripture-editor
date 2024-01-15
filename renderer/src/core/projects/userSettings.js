@@ -120,7 +120,7 @@ export const readUsfmFile = async (filename, projectName) => {
         const path = require('path');
         const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects', projectName, filename);
         if (fs.existsSync(file)) {
-            const usfm = await fs.readFileSync(file);
+            const usfm = await fs.readFileSync(file, 'utf-8');
             if (usfm) {
                 logger.debug('userSettings.js', 'read usfm file successfully');
                 return usfm;
