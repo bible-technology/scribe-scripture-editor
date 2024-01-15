@@ -30,6 +30,7 @@ export default function ProjectList() {
       projects,
       // unstarredProjects,
       callEditProject,
+      openTextTranslationMerge,
     },
     action: {
       handleClickStarred,
@@ -54,7 +55,7 @@ export default function ProjectList() {
   };
 
   const closeEditProject = async () => {
-    logger.debug('ProjectList.js', 'Closing edit project page and updating the values');
+    logger.debug('ProjectList.js', 'Closing edit project page and updating the valuesd');
     setCallEditProject(false);
     await FetchProjects();
   };
@@ -103,7 +104,7 @@ export default function ProjectList() {
         </ProjectsLayout>
       ) : <NewProject call="edit" project={currentProject} closeEdit={() => closeEditProject()} />}
       <ExportProjectPopUp open={openExportPopUp} closePopUp={closeExportPopUp} project={currentProject} />
-      <TranslationMergeUI />
+      {openTextTranslationMerge.open && <TranslationMergeUI />}
     </>
   );
 }
