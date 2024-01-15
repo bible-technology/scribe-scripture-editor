@@ -9,9 +9,18 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
 import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
+import LoadingScreen from '../Loading/LoadingScreen';
+
+const grammar = require('usfm-grammar');
 
 function TranslationMergeUI() {
   const [importedUsfmFolderPath, setImportedUsfmFolderPath] = useState([]);
+  const [files, setFiles] = useState({
+    imported: null,
+    current: null,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const {
     states: {
@@ -36,7 +45,9 @@ function TranslationMergeUI() {
     actions: { getProjectMeta },
   } = useGetCurrentProjectMeta();
 
-  // console.log({ openTextTranslationMerge, currentProjectMeta, importedUsfmFolderPath });
+  console.log({
+    openTextTranslationMerge, currentProjectMeta, importedUsfmFolderPath, files,
+  });
 
   const modalClose = () => {
     setModel({
@@ -62,8 +73,11 @@ function TranslationMergeUI() {
   };
 
   const handleOnAbortMerge = () => {
-    modalClose();
+    setError('');
+    setFiles({ imported: null, current: null });
+    setImportedUsfmFolderPath([]);
     setOpenTextTranslationMerge({ open: false, meta: null });
+    modalClose();
   };
 
   useEffect(() => {
@@ -94,6 +108,42 @@ function TranslationMergeUI() {
   const handleImportUsfm = () => {
     openFileDialogSettingData();
   };
+
+  async function readAndParseUsfm(filePath) {
+    const fs = window.require('fs');
+    const usfm = fs.readFileSync(filePath, 'utf8');
+    const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+    const isJsonValid = myUsfmParser.validate();
+    return { valid: isJsonValid, data: myUsfmParser.toJSON() };
+  }
+
+  const parseFiles = async () => {
+    // parse imported
+    console.log('started parsing');
+    const importedJson = await readAndParseUsfm(importedUsfmFolderPath[0]);
+    if (!importedJson.valid) {
+      setError('Imported Usfm is invalid');
+    } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
+      && !Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode?.toLowerCase())) {
+      setError('Imported USFM is not in the scope of Current Project');
+    } else {
+      setError('');
+      setFiles((prev) => ({ ...prev, imported: importedJson.data }));
+      // Parse current project same book
+      const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
+      const currentBookPath = Object.keys(currentProjectMeta?.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
+      console.log('FOUND ====> ', { currentBookPath });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // get usfm and parse
+    if (importedUsfmFolderPath.length === 1 && currentProjectMeta) {
+      setLoading(true);
+      parseFiles();
+    }
+  }, [importedUsfmFolderPath, currentProjectMeta]);
 
   return (
     <>
@@ -137,22 +187,30 @@ function TranslationMergeUI() {
                 <TranslationMergNavBar />
                 <div className="col-span-5 h-full flex flex-col gap-2">
                   <div className="border-2 border-black rounded-md grow p-2">
-                    <div>
-                      Project Scope :
-                      {Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).map((scope) => (
-                        <span className="ml-2" key={scope}>{scope}</span>
-                      ))}
 
-                    </div>
-                    <button
-                      type="button"
-                      className="border-2 border-primary rounded-lg px-2 py-1 hover:bg-primary hover:text-white"
-                      onClick={handleImportUsfm}
-                    >
-                      {`${t('btn-import')} Usfm`}
-                    </button>
+                    {loading ? (<LoadingScreen />) : (
+                      <>
+                        <div>
+                          Project Scope :
+                          {currentProjectMeta && Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).map((scope) => (
+                            <span className="ml-2" key={scope}>{scope}</span>
+                          ))}
+
+                        </div>
+                        <button
+                          type="button"
+                          className="border-2 border-primary rounded-lg px-2 py-1 hover:bg-primary hover:text-white"
+                          onClick={handleImportUsfm}
+                        >
+                          {`${t('btn-import')} Usfm`}
+                        </button>
+                      </>
+                    )}
+
                   </div>
-                  <div className="border-2 border-black rounded-md h-[50px] p-1">Footer</div>
+                  <div className="border-2 border-black rounded-md h-[50px] p-1">
+                    <p className="text-red-500 text-sm">{error}</p>
+                  </div>
                 </div>
               </div>
             </div>
