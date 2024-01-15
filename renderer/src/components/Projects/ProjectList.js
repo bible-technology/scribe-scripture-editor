@@ -15,6 +15,7 @@ import NewProject from './NewProject';
 import * as logger from '../../logger';
 import ProjectRow from './ProjectRow';
 import { ProjectContext } from '../context/ProjectContext';
+import TranslationMergeUI from '../TextTranslationMerge/TranslationMergeUI';
 
 export default function ProjectList() {
   const { t } = useTranslation();
@@ -102,6 +103,7 @@ export default function ProjectList() {
         </ProjectsLayout>
       ) : <NewProject call="edit" project={currentProject} closeEdit={() => closeEditProject()} />}
       <ExportProjectPopUp open={openExportPopUp} closePopUp={closeExportPopUp} project={currentProject} />
+      <TranslationMergeUI />
     </>
   );
 }
