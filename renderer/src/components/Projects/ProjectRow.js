@@ -34,6 +34,7 @@ const ProjectRow = ({
       setNotifications,
       setCallEditProject,
       setActiveNotificationCount,
+      setOpenTextTranslationMerge,
     },
   } = useContext(AutographaContext);
 
@@ -204,6 +205,22 @@ const ProjectRow = ({
                               </button>
                             )}
                           </Menu.Item>
+                          {project.type === 'Text Translation' && (
+
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                type="button"
+                                aria-label="edit-project"
+                                className={`${active ? 'bg-primary text-white' : 'text-gray-900'
+                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                onClick={() => setOpenTextTranslationMerge(true)}
+                              >
+                                {t('label-merge')}
+                              </button>
+                            )}
+                          </Menu.Item>
+                          )}
                           <Menu.Item>
                             {({ active }) => (
                               <button

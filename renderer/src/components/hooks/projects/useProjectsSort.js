@@ -24,6 +24,7 @@ function useProjectsSort() {
   const [callEditProject, setCallEditProject] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [activeNotificationCount, setActiveNotificationCount] = React.useState(0);
+  const [openTextTranslationMerge, setOpenTextTranslationMerge] = React.useState(false);
 
   const starrtedData = [];
   const unstarrtedData = [];
@@ -353,6 +354,7 @@ function useProjectsSort() {
       selectedProject,
       notifications,
       activeNotificationCount,
+      openTextTranslationMerge,
     },
     actions: {
       handleClickStarred,
@@ -374,6 +376,7 @@ function useProjectsSort() {
       setSelectedProject,
       setNotifications,
       setActiveNotificationCount,
+      setOpenTextTranslationMerge,
     },
   };
   return response;
