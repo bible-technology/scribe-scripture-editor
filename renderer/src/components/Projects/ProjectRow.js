@@ -214,7 +214,7 @@ const ProjectRow = ({
                                 aria-label="edit-project"
                                 className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                   } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
-                                onClick={() => setOpenTextTranslationMerge(true)}
+                                onClick={() => setOpenTextTranslationMerge({ open: true, meta: project })}
                               >
                                 {t('label-merge')}
                               </button>
