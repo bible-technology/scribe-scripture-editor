@@ -239,26 +239,28 @@ export async function copyFilesTempToOrginal(conflictData) {
   }
 }
 
-export async function createAllBaseUSFMonScope(dirPath, incomingMeta) {
+export async function createAllBaseUSFMonScope(mergePath, incomingMeta, projectOrgPath) {
   try {
     // function to create all base usfm files based in scope of the project
     logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - create base usfm in a dir');
     const fs = window.require('fs');
 
-    const generateBaseUsfms = await createMergeBaseUSFMwithScope(incomingMeta);
+    const generateBaseUsfms = await createMergeBaseUSFMwithScope(incomingMeta, projectOrgPath);
+    console.log({ generateBaseUsfms });
 
-    // await OBSData.forEach(async (storyJson) => {
-    //   const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
-    //   const file = await JsonToMd(storyJson, '');
-    //   if (!fs.existsSync(dirPath)) {
-    //     fs.mkdirSync(dirPath, { recursive: true });
-    //     logger.debug('mergeObsUtils.js', 'Inside createAllMd - Dir is created');
-    //   }
-    //   fs.writeFileSync(path.join(dirPath, currentFileName), file);
-    // });
-
-    logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - successfully created base files');
-    return false;
+    if (generateBaseUsfms) {
+      await Object.entries(generateBaseUsfms).forEach(async ([book, usfmContent]) => {
+        const currentFileName = `${book}.usfm`;
+        if (!fs.existsSync(mergePath)) {
+          fs.mkdirSync(mergePath, { recursive: true });
+          logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - Dir is created');
+        }
+        fs.writeFileSync(path.join(mergePath, currentFileName), usfmContent);
+      });
+      logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - successfully created base files');
+      return false;
+    }
+      return false;
   } catch (err) {
     logger.error('mergeObsUtils.js', `createAllBaseUSFMonScope error in write files ${err}`);
     return false;

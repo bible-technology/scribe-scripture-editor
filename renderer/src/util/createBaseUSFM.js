@@ -1,39 +1,58 @@
 // function to create base USFM file based on provided scope and versification scheme
-import moment from 'moment';
-import { environment } from '../../environment';
 import * as logger from '../logger';
-import packageInfo from '../../../package.json';
 
 const grammar = require('usfm-grammar');
-const path = require('path');
-const md5 = require('md5');
 
-const schemes = [
-  { name: 'eng', file: 'eng.json' },
-  { name: 'lxx', file: 'lxx.json' },
-  { name: 'org', file: 'org.json' },
-  { name: 'rsc', file: 'rsc.json' },
-  { name: 'rso', file: 'rso.json' },
-  { name: 'vul', file: 'vul.json' },
-];
-
-export async function createMergeBaseUSFMwithScope(incomingMeta) {
+export async function createMergeBaseUSFMwithScope(incomingMeta, projectOrgPath) {
   logger.debug('createBaseUSFMwithScope.js', 'In createBaseUSFMwithScope');
-  const currentScheme = schemes.find((scheme) => scheme.name === incomingMeta.llll.toLowerCase());
+  const fs = window.require('fs');
+  const path = require('path');
   const currentScope = Object.keys(incomingMeta.type.flavorType.currentScope);
 
-  const ingredients = {};
+  // read versification json file from backend - ingredients/versification.json
+  const versificationData = fs.readFileSync(path.join(projectOrgPath, 'ingredients/versification.json'));
+  const versificationJson = JSON.parse(versificationData);
 
   return new Promise((resolve) => {
-    const fs = window.require('fs');
-
-    // read it from backend settings json
-
-    // eslint-disable-next-line import/no-dynamic-require
-    const schemeUSFMFile = require(`../lib/versification/${currentScheme.file}`);
-
+    const scopeUsfms = {};
     currentScope.forEach((scope) => {
+      const list = versificationJson.maxVerses;
+      if (list[scope]) {
+        const chapters = [];
+        (list[scope]).forEach((verse, i) => {
+          let contents = [{ p: null }];
+          const verses = [];
+          for (let i = 1; i <= parseInt(verse, 10); i += 1) {
+            verses.push({
+              verseNumber: i.toString(),
+              verseText: '',
+              contents: ['...'], // adding default text to verses to show the beginning of verse.
+            });
+          }
+          contents = contents.concat(verses);
+          chapters.push({
+            chapterNumber: (i + 1).toString(),
+            contents,
+          });
+        });
+        const usfm = {
+          book: {
+            bookCode: scope,
+            meta: [{ h: scope }, [{ mt: [scope] }]],
+          },
+          chapters,
+        };
+        const myJsonParser = new grammar.JSONParser(usfm);
+        const isJsonValid = myJsonParser.validate();
+        if (isJsonValid) {
+          const reCreatedUsfm = myJsonParser.toUSFM();
+          scopeUsfms[scope] = reCreatedUsfm;
 
+          if (Object.keys(scopeUsfms).length === currentScope.length) {
+            resolve(scopeUsfms);
+          }
+        }
+      }
     });
   });
 }

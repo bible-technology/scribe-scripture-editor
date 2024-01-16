@@ -109,7 +109,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       contentCreated = await createAllMdInDir(mergeDirPath);
     } else if (burritoType === 'scripture / textTranslation') {
       // USFM Section
-      contentCreated = await createAllBaseUSFMonScope(mergeDirPath, incomingMeta);
+      contentCreated = await createAllBaseUSFMonScope(mergeDirPath, incomingMeta, targetPath);
     }
     logger.debug('mergeProject.js', 'created base file content in the temp Dir');
     //  init git
