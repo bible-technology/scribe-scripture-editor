@@ -9,11 +9,10 @@ export const scrollReference = (() => {
           chapterInView.scrollIntoView();
           chapterInView.classList.add('scroll-mt-10');
         }
-      } else if (prevCV && (prevCV.c === c && prevCV.v !== v)) {
+      } else {
         const verseInView = refEditor.querySelector(`#ch${c}v${v}`);
         if (verseInView) {
           verseInView.scrollIntoView();
-          verseInView.classList.add('scroll-mt-30');
         }
       }
     });

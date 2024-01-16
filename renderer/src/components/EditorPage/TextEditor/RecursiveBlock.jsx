@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/cursorUtils';
-import { getCurrentVerse, getCurrentChapter } from '@/components/EditorPage/TextEditor/utils/getReferences';
+import {
+  getCurrentVerse, getCurrentChapter, hightlightRefVerse,
+} from '@/components/EditorPage/TextEditor/utils/getReferences';
 import { on } from 'ws';
 
 const getTarget = ({ content }) => {
@@ -56,9 +58,10 @@ export default function RecursiveBlock({
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0);
       const selectedNode = range.startContainer;
-      const verse = getCurrentVerse(selectedNode);
+      const { verse } = getCurrentVerse(selectedNode);
       const chapter = getCurrentChapter(selectedNode);
       onReferenceSelected({ bookId, chapter, verse });
+      hightlightRefVerse(chapter, verse);
     }
     updateCursorPosition();
     handleSelection();
