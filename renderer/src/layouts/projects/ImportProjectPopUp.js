@@ -148,7 +148,7 @@ export default function ImportProjectPopUp(props) {
     logger.debug('importProjectPopUp.js', 'call for merge');
     setProcessMerge(true)
     modelClose();
-    await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+    await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge, sbData.burritoType);
     setMerge(false)
     setSbData({});
     close()
@@ -160,10 +160,11 @@ export default function ImportProjectPopUp(props) {
     if (folderPath) {
       setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
       setValid(false);
+      console.log({sbData});
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
         // currently MERGE feature only Enabled for OBS projects
-        if (sbData?.burritoType === 'gloss / textStories'){
+        if (sbData?.burritoType === 'gloss / textStories' || sbData.burritoType  === "scripture / textTranslation"){
           setMerge(true)
         }
         setModel({

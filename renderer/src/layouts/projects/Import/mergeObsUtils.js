@@ -1,5 +1,6 @@
 // parse obs story based on the story number
 import { commitChanges } from '@/components/Sync/Isomorphic/utils';
+import { createMergeBaseUSFMwithScope } from '@/util/createBaseUSFM';
 import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 import * as logger from '../../../logger';
 // import OBSData from '../../../lib/OBSData.json';
@@ -213,7 +214,7 @@ export async function copyFilesTempToOrginal(conflictData) {
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
 
-    // copy all md from merge main to project main
+    // copy all md / usfm from merge main to project main
     await fse.copy(
       conflictData.data.mergeDirPath,
       path.join(conflictData.data.projectPath, conflictData.data.projectContentDirName),
@@ -234,6 +235,32 @@ export async function copyFilesTempToOrginal(conflictData) {
     });
     return true;
   } catch (err) {
+    return false;
+  }
+}
+
+export async function createAllBaseUSFMonScope(dirPath, incomingMeta) {
+  try {
+    // function to create all base usfm files based in scope of the project
+    logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - create base usfm in a dir');
+    const fs = window.require('fs');
+
+    const generateBaseUsfms = await createMergeBaseUSFMwithScope(incomingMeta);
+
+    // await OBSData.forEach(async (storyJson) => {
+    //   const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
+    //   const file = await JsonToMd(storyJson, '');
+    //   if (!fs.existsSync(dirPath)) {
+    //     fs.mkdirSync(dirPath, { recursive: true });
+    //     logger.debug('mergeObsUtils.js', 'Inside createAllMd - Dir is created');
+    //   }
+    //   fs.writeFileSync(path.join(dirPath, currentFileName), file);
+    // });
+
+    logger.debug('mergeObsUtils.js', 'Inside createAllBaseUSFMonScope - successfully created base files');
+    return false;
+  } catch (err) {
+    logger.error('mergeObsUtils.js', `createAllBaseUSFMonScope error in write files ${err}`);
     return false;
   }
 }

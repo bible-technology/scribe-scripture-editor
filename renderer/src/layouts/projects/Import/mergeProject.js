@@ -13,11 +13,11 @@ import { readUserSettings } from '@/core/projects/userSettings';
 import packageInfo from '../../../../../package.json';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
-import { copyFilesTempToOrginal, createAllMdInDir } from './mergeObsUtils';
+import { copyFilesTempToOrginal, createAllBaseUSFMonScope, createAllMdInDir } from './mergeObsUtils';
 
 const path = require('path');
 
-export const mergeProject = async (incomingPath, currentUser, setConflictPopup, setModel, setProcessMerge) => {
+export const mergeProject = async (incomingPath, currentUser, setConflictPopup, setModel, setProcessMerge, burritoType) => {
   // CURRENT MERGE IS ONLY FOR OBS
 
   // 1. setting up basic things needed for merging
@@ -56,6 +56,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       filePath: path.join(incomingPath, 'metadata.json'),
     });
     incomingMeta = JSON.parse(incomingMeta);
+    console.log({ incomingMeta });
     const projectId = Object.keys(
       incomingMeta.identification.primary[packageInfo.name],
     )[0];
@@ -102,8 +103,14 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     }
 
     // create DIR and files in the directory
-    // FOR OBS ONLY -> Add condition here to call usfm
-    const contentCreated = await createAllMdInDir(mergeDirPath);
+    let contentCreated;
+    if (burritoType === 'gloss / textStories') {
+      // OBS section
+      contentCreated = await createAllMdInDir(mergeDirPath);
+    } else if (burritoType === 'scripture / textTranslation') {
+      // USFM Section
+      contentCreated = await createAllBaseUSFMonScope(mergeDirPath, incomingMeta);
+    }
     logger.debug('mergeProject.js', 'created base file content in the temp Dir');
     //  init git
     const gitInitialized = contentCreated && await initProject(fs, mergeDirPath, currentUser, tempMergeMain);
@@ -178,6 +185,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
           projectMainBranch: currentActiveBranch,
           currentUser,
           projectName: `${projectName}_${projectId}`,
+          burritoType,
         },
       });
     }
