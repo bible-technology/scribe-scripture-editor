@@ -3,13 +3,14 @@ import * as localforage from 'localforage';
 import { v5 as uuidv5 } from 'uuid';
 import { createAudioVersification } from '@/util/createAudioVersification';
 import { checkInitialize, commitChanges, initProject } from '@/components/Sync/Isomorphic/utils';
+import { factoryCreateContent } from '@/util/factoryCreateContent';
 import { createVersificationUSFM, createWebVersificationUSFM } from '../../util/createVersificationUSFM';
 import { createObsContent, createWebObsContent } from '../../util/createObsContent';
 import createTranslationSB from '../burrito/createTranslationSB';
 import createObsSB from '../burrito/createObsSB';
+import createAudioSB from '../burrito/createAudioSB';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
-import createAudioSB from '../burrito/createAudioSB';
 import packageInfo from '../../../../package.json';
 import {
   createDirectory, newPath, sbStorageList, sbStorageUpload,
@@ -73,18 +74,90 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       const currentduplicateMeta = JSON.parse(readDuplicateMeta);
       const duplicatePrjFlavour = currentduplicateMeta?.type?.flavorType?.flavor?.name;
       const currentFlavourType = projectMetaObj.projectType;
+      // Nicolas : to refactor
       if (
         (currentFlavourType === 'Translation' && duplicatePrjFlavour === 'textTranslation')
         || (currentFlavourType === 'OBS' && duplicatePrjFlavour === 'textStories')
         || (currentFlavourType === 'Audio' && duplicatePrjFlavour === 'audioTranslation')
+        // NicolasEdits : added Juxta
+        || (currentFlavourType === 'Juxta' && duplicatePrjFlavour === 'x-juxtalinear')
         ) {
         projectNameExists = true;
         // checking for duplicates
         logger.warn('saveProjectsMeta.js', 'Project Name already exists');
-        status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab. NOTE : Project name is case-insenstive.Space and underscore will treated as same.' });
+        status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab. NOTE : Project name is case-insenstive. Space and underscore will be treated as same.' });
       }
     }
   });
+
+  // Nicolas : does the three big functions down there can be refactored ?
+
+  /**
+   * the factory function that creates a project
+   * @param {string} type one of ["translation", "obs", "audio", "juxta"]
+   * @param {boolean} doChecks
+   */
+  const burritoChecksAndCreation = async (type, doChecks) => {
+    logger.debug('saveProjectsMeta.js', 'In Burrito Checks And Creation');
+
+    if (doChecks) {
+      projectMetaObj.importedFiles.forEach((file) => {
+        if (!bookAvailable(projectMetaObj.canonSpecification.currentScope, file.id)) {
+          checkCanon = true;
+          logger.warn('saveProjectsMeta.js', `${file.id} is not added in Canon Specification or scope`);
+          status.push({ type: 'warning', value: `${file.id} is not added in Canon Specification` });
+        }
+      });
+    }
+
+    if (checkCanon === false) {
+      let id;
+      let scope;
+
+      // getting id and maybe scope
+      if (projectMetaObj.call === 'new') {
+        logger.debug('saveProjectsMeta.js', 'Creating a key for the Project');
+        const key = currentUser + projectMetaObj.newProjectFields.projectName + moment().format();
+        id = uuidv5(key, environment.uuidToken);
+        scope = projectMetaObj.canonSpecification.currentScope;
+      } else {
+        logger.debug('saveProjectsMeta.js', 'Fetching the key from the existing Project');
+        // from existing metadata
+        scope = (projectMetaObj.canonSpecification.currentScope)
+          .filter((x) => !(Object.keys(projectMetaObj.project.type.flavorType.currentScope)).includes(x));
+        id = Object.keys(projectMetaObj.project?.identification?.primary?.scribe);
+        projectMetaObj.importedFiles.forEach((file) => {
+          scope.push(file.id);
+        });
+      }
+
+      // create content/versification
+      logger.debug('saveProjectsMeta.js', `In burritoChecksAndCreation : processing projectMetaObj.projectType : ${projectMetaObj.projectType}`);
+      const promise = factoryCreateContent({
+        username: currentUser,
+        project: projectMetaObj.newProjectFields,
+        versification: projectMetaObj.versificationScheme,
+        books: scope,
+        direction: projectMetaObj.language.ld,
+        id,
+        importedFiles: projectMetaObj.importedFiles,
+        copyright: projectMetaObj.copyright,
+        currentBurrito: projectMetaObj.project,
+        call: projectMetaObj.call,
+        projectType: projectMetaObj.projectType,
+      });
+
+      // then create SB
+
+      // then maybe make a SB usfm
+
+      // finally push git
+      promise.finally(() => {
+        logger.debug('saveProjectsMeta.js', projectMetaObj.call === 'new' ? 'New project created successfully.' : 'Updated the Changes.');
+        status.push({ type: 'success', value: (projectMetaObj.call === 'new' ? 'New project created' : 'Updated the changes') });
+      });
+    }
+  };
 
   // Translation burrito creation and checks
   const translationBurritoChecksAndCreation = async () => {
@@ -98,7 +171,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       }
     });
 
-    // commetend because deselection of exisitng scope is not allowd in the ui itself
+    // commetend because deselection of exisitng scope is not allowed in the ui itself
     // if (projectMetaObj.call === 'edit' && !checker((projectMetaObj.canonSpecification.currentScope), Object.keys(projectMetaObj.project.type.flavorType.currentScope))) {
     //   checkCanon = true;
     //   logger.warn('saveProjectsMeta.js', 'Not allowed to remove previous scope');
@@ -126,7 +199,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       // Create New burrito
       // ingredient has the list of created files in the form of SB Ingredients
       logger.debug('saveProjectsMeta.js', 'Calling creatVersification for generating USFM files.');
-      await createVersificationUSFM(
+      createVersificationUSFM(
         currentUser,
         projectMetaObj.newProjectFields,
         projectMetaObj.versificationScheme,
@@ -138,7 +211,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
         projectMetaObj.project,
         projectMetaObj.call,
         projectMetaObj.projectType,
-      ).then(async (ingredient) => {
+      ).then(async (ingredients) => {
         logger.debug('saveProjectsMeta.js', 'Calling createTranslationSB for creating burrito.');
         const burritoFile = await createTranslationSB(
           currentUser,
@@ -154,17 +227,19 @@ export const saveProjectsMeta = async (projectMetaObj) => {
           projectMetaObj.update,
         );
         if (projectMetaObj.call === 'edit') {
-          burritoFile.ingredients = { ...projectMetaObj.project.ingredients, ...ingredient };
+          burritoFile.ingredients = { ...projectMetaObj.project.ingredients, ...ingredients };
           burritoFile?.sync && delete burritoFile.sync;
         } else {
-          burritoFile.ingredients = ingredient;
+          burritoFile.ingredients = ingredients;
         }
         logger.debug('saveProjectsMeta.js', 'Creating a burrito file.');
-        await fs.writeFileSync(path.join(
+        fs.writeFileSync(path.join(
           projectDir,
           `${projectMetaObj.newProjectFields.projectName}_${id}`,
           'metadata.json',
         ), JSON.stringify(burritoFile));
+      })
+      .then(async () => {
         // init git for the Project
         const projectGitPath = path.join(projectDir, `${projectMetaObj.newProjectFields.projectName}_${id}`);
         await checkGitandCommitFiles(fs, projectGitPath, null, currentUser);
@@ -235,7 +310,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
     });
   };
 
-  // Translation burrito creation and checks
+  // Audio burrito creation and checks
   const audioBurritoChecksAndCreation = async () => {
     logger.debug('saveProjectsMeta.js', 'In audio Burrito Checks And Creation');
 
@@ -374,6 +449,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
         });
     }
   };
+
   // Switch Project Creation
   if (projectNameExists === false || projectMetaObj.call === 'edit') {
     switch (projectMetaObj.projectType) {
@@ -387,6 +463,11 @@ export const saveProjectsMeta = async (projectMetaObj) => {
 
       case 'Audio':
         await audioBurritoChecksAndCreation();
+        break;
+
+      // NicolasEdits : added Juxta
+      case 'Juxta':
+        await translationBurritoChecksAndCreation();
         break;
 
       default:

@@ -19,6 +19,7 @@ import { environment } from '../../../environment';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
 import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
+import Book from '@/icons/basil/Outline/Files/Book.svg';
 import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
@@ -45,6 +46,13 @@ const solutions = [
     href: '##',
     icon: ImageIcon,
   },
+  // Nicolas : if I wanna add a mode on the UI, I can call it here
+  // NicolasEdits : added Juxta
+  {
+    name: 'Juxta',
+    href: '##',
+    icon: Book,
+  },
 ];
 
 function TargetLanguageTag(props) {
@@ -54,6 +62,7 @@ function TargetLanguageTag(props) {
   );
 }
 
+// Nicolas : the dropdown I'm looking for
 function BibleHeaderTagDropDown(headerDropDown, handleDropDown, call) {
   return (
     call === 'new'
@@ -166,6 +175,7 @@ export default function NewProject({ call, project, closeEdit }) {
 
   const createTheProject = (update) => {
     logger.debug('NewProject.js', 'Creating new project.');
+    // headerDropDown === projectType
     const value = createProject(call, metadata, update, headerDropDown);
     value.then((status) => {
       logger.debug('NewProject.js', status[0].value);
@@ -182,6 +192,7 @@ export default function NewProject({ call, project, closeEdit }) {
       }
     });
   };
+  // Nicolas : the button that calls all the domino to create a project
   const validate = async () => {
     logger.debug('NewProject.js', 'Validating the fields.');
     setLoading(true);
@@ -281,6 +292,11 @@ export default function NewProject({ call, project, closeEdit }) {
 
       case 'audioTranslation':
         setHeaderDropDown('Audio');
+        break;
+
+      // NicolasEdits : added Juxta
+      case 'x-juxtalinear':
+        setHeaderDropDown('Juxta');
         break;
 
       default:

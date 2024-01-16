@@ -304,6 +304,7 @@ const SectionPlaceholder2 = ({ editor }) => {
           <>
             {(openResource3 === false || openResource4 === false) && (
               <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} overflow-x-auto`}>
+                {/* Nicolas : TODO add juxta editor Here ??? */}
                 {openResource3 === false && (
                   <EditorSection
                     row="3"

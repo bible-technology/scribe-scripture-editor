@@ -6,7 +6,7 @@ import React, {
 import PropTypes from 'prop-types';
 
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
@@ -95,7 +95,7 @@ export default function ReferenceContextProvider({ children }) {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
         // const _projectname = projectName?.split('_');
-        const _projectname = await splitStringByLastOccurance(projectName, '_');
+        const _projectname = await splitStringByLastOccurence(projectName, '_');
         localforage.getItem('projectmeta').then((val) => {
           Object?.entries(val).forEach(
             ([, _value]) => {
@@ -104,6 +104,7 @@ export default function ReferenceContextProvider({ children }) {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
+                      // Nicolas : add a case for juxta here ?
                       case 'textTranslation':
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
