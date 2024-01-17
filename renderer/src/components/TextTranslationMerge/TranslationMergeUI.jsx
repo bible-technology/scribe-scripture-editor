@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, {
   useRef, Fragment, useState, useEffect, useContext,
 } from 'react';
@@ -11,6 +12,8 @@ import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
 import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
 import LoadingScreen from '../Loading/LoadingScreen';
+import ImportUsfmUI from './ImportUsfmUI';
+import UsfmConflictEditor from './UsfmConflictEditor';
 
 const grammar = require('usfm-grammar');
 
@@ -49,9 +52,7 @@ function TranslationMergeUI() {
     actions: { getProjectMeta },
   } = useGetCurrentProjectMeta();
 
-  console.log({
-    openTextTranslationMerge, currentProjectMeta, importedUsfmFolderPath, usfmJsons,
-  });
+  console.log({ openTextTranslationMerge, currentProjectMeta });
 
   const modalClose = () => {
     setModel({
@@ -85,7 +86,6 @@ function TranslationMergeUI() {
   };
 
   useEffect(() => {
-    console.log('in call meta : ');
     if (openTextTranslationMerge?.meta) {
       const { id, name } = openTextTranslationMerge.meta;
       (async () => {
@@ -128,7 +128,6 @@ function TranslationMergeUI() {
 
   const parseFiles = async () => {
     // parse imported
-    console.log('started parsing');
     const fs = window.require('fs');
     const readUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
     if (readUsfm) {
@@ -146,7 +145,7 @@ function TranslationMergeUI() {
         const currentBookPath = Object.keys(currentProjectMeta?.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
         const { id, name } = openTextTranslationMerge.meta;
         const currentBookUsfm = await readUsfmFile(currentBookPath, `${name}_${id[0]}`);
-        console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
+        // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
         if (currentBookUsfm) {
           const currentJson = await parseUsfm(currentBookUsfm);
           currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data }));
@@ -156,12 +155,6 @@ function TranslationMergeUI() {
       setError('unable to read imported USFM');
     }
     setLoading(false);
-  };
-
-  const testToUsfm = async () => {
-    const json = { book: usfmJsons.current.book, chapters: [usfmJsons.current.chapters[0]] };
-    const data = await parseJsonToUsfm(json);
-    console.log({ data });
   };
 
   useEffect(() => {
@@ -222,25 +215,19 @@ function TranslationMergeUI() {
                   <div className="border-2 border-black rounded-md grow p-2">
 
                     {loading ? (<LoadingScreen />) : (
-                      <>
-                        <div>
-                          Project Scope :
-                          {currentProjectMeta && Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).map((scope) => (
-                            <span className="ml-2" key={scope}>{scope}</span>
-                          ))}
 
-                        </div>
-                        <button
-                          type="button"
-                          className="border-2 border-primary rounded-lg px-2 py-1 hover:bg-primary hover:text-white"
-                          onClick={handleImportUsfm}
-                        >
-                          {`${t('btn-import')} Usfm`}
-                        </button>
-                      </>
+                      (usfmJsons.current && usfmJsons.imported) ? (
+                        <UsfmConflictEditor usfmJsons={usfmJsons} />
+                      )
+                        : (
+                          <ImportUsfmUI
+                            buttonName={`${t('btn-import')} Usfm`}
+                            currentProjectMeta={currentProjectMeta}
+                            handleImportUsfm={handleImportUsfm}
+                          />
+                        )
+
                     )}
-
-                    <button onClick={testToUsfm}>parse usfm</button>
 
                   </div>
                   <div className="border-2 border-black rounded-md h-[50px] p-1">
