@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, {
-  useRef, Fragment, useState, useEffect, useContext,
+  useRef, Fragment, useState, useEffect, useContext, useMemo,
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { AutographaContext } from '@/components/context/AutographaContext';
@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { readUsfmFile } from '@/core/projects/userSettings';
+import DiffMatchPatch from 'diff-match-patch';
 import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
 import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
@@ -17,11 +18,14 @@ import UsfmConflictEditor from './UsfmConflictEditor';
 
 const grammar = require('usfm-grammar');
 
+const dmp = new DiffMatchPatch();
+
 function TranslationMergeUI() {
   const [importedUsfmFolderPath, setImportedUsfmFolderPath] = useState([]);
   const [usfmJsons, setUsfmJsons] = useState({
     imported: null,
     current: null,
+    diffOut: null,
   });
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [resolvedFileNames, setResolvedFileNames] = useState([]);
@@ -129,9 +133,9 @@ function TranslationMergeUI() {
   const parseFiles = async () => {
     // parse imported
     const fs = window.require('fs');
-    const readUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
-    if (readUsfm) {
-      const importedJson = await parseUsfm(readUsfm);
+    const IncomingUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
+    if (IncomingUsfm) {
+      const importedJson = await parseUsfm(IncomingUsfm);
       if (!importedJson.valid) {
         setError('Imported Usfm is invalid');
       } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
@@ -149,6 +153,10 @@ function TranslationMergeUI() {
         if (currentBookUsfm) {
           const currentJson = await parseUsfm(currentBookUsfm);
           currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data }));
+
+          // compare usfms to check conflcit or not
+          const diffOut = await dmp.diff_main(IncomingUsfm, currentBookUsfm);
+          setUsfmJsons((prev) => ({ ...prev, diffOut }));
         }
       }
     } else {
@@ -217,7 +225,9 @@ function TranslationMergeUI() {
                     {loading ? (<LoadingScreen />) : (
 
                       (usfmJsons.current && usfmJsons.imported) ? (
-                        <UsfmConflictEditor usfmJsons={usfmJsons} />
+                        <div className="h-[70vh] overflow-auto">
+                          <UsfmConflictEditor usfmJsons={usfmJsons} />
+                        </div>
                       )
                         : (
                           <ImportUsfmUI
