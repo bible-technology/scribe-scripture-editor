@@ -92,7 +92,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
                   <div class="text-center font-extrabold">OR</div>
                   <div class="">
                     You can do
-                    <span class="font-bold">OFFLINE SYNC</span>
+                    <span class="font-bold">Save To Computer</span>
                     which will overwrite all unsynced changes with the data of Door43.
                   </div>
                   <div class='text-green-600 mt-2'>
