@@ -20,6 +20,9 @@ function TranslationMergeUI() {
     imported: null,
     current: null,
   });
+  const [selectedChapter, setSelectedChapter] = useState(1);
+  const [resolvedFileNames, setResolvedFileNames] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -208,7 +211,13 @@ function TranslationMergeUI() {
             {/* contents section */}
             <div className="bg-[#e7e7e7] w-[80vw] h-[80vh]">
               <div className="p-2 h-full border grid grid-cols-6 gap-2">
-                <TranslationMergNavBar />
+                <TranslationMergNavBar
+                  currentUsfmJson={usfmJsons.current}
+                  resolvedFileNames={resolvedFileNames}
+                  selectedChapter={selectedChapter}
+                  setSelectedChapter={setSelectedChapter}
+                />
+
                 <div className="col-span-5 h-full flex flex-col gap-2">
                   <div className="border-2 border-black rounded-md grow p-2">
 
