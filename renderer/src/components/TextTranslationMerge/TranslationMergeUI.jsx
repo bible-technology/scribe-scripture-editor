@@ -15,6 +15,7 @@ import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
 import LoadingScreen from '../Loading/LoadingScreen';
 import ImportUsfmUI from './ImportUsfmUI';
 import UsfmConflictEditor from './UsfmConflictEditor';
+import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 
 const grammar = require('usfm-grammar');
 
@@ -25,7 +26,7 @@ function TranslationMergeUI() {
   const [usfmJsons, setUsfmJsons] = useState({
     imported: null,
     current: null,
-    diffOut: null,
+    merge: null,
   });
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [resolvedFileNames, setResolvedFileNames] = useState([]);
@@ -136,6 +137,7 @@ function TranslationMergeUI() {
     const IncomingUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
+      // const normalisedIncomingUSFM = await parseJsonToUsfm(importedJson.data);
       if (!importedJson.valid) {
         setError('Imported Usfm is invalid');
       } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
@@ -152,11 +154,20 @@ function TranslationMergeUI() {
         // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
         if (currentBookUsfm) {
           const currentJson = await parseUsfm(currentBookUsfm);
-          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data }));
+          // const currentNormalisedUsfm = await parseJsonToUsfm(currentJson.data);
+
+          // generate the merge object with current , incoming , merge verses
+          processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).then((out) => {
+            console.log('processed files : ', { out });
+          }).catch((err) => {
+            console.log('process usfm : ', err);
+          });
+
+          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data, mergeJson: JSON.parse(JSON.stringify(currentJson.data)) }));
 
           // compare usfms to check conflcit or not
-          const diffOut = await dmp.diff_main(IncomingUsfm, currentBookUsfm);
-          setUsfmJsons((prev) => ({ ...prev, diffOut }));
+          // const diffOut = await dmp.diff_main(normalisedIncomingUSFM, currentNormalisedUsfm);
+          // setUsfmJsons((prev) => ({ ...prev, diffOut }));
         }
       }
     } else {
@@ -226,7 +237,7 @@ function TranslationMergeUI() {
 
                       (usfmJsons.current && usfmJsons.imported) ? (
                         <div className="h-[70vh] overflow-auto">
-                          <UsfmConflictEditor usfmJsons={usfmJsons} />
+                          <UsfmConflictEditor usfmJsons={usfmJsons} currentProjectMeta={currentProjectMeta} />
                         </div>
                       )
                         : (
