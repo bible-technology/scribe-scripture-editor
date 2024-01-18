@@ -1,13 +1,31 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
-  console.log({ usfmJsons, currentProjectMeta });
+const DisplayTagObj = ({ tagObj }) => (
 
+  typeof tagObj === 'string' ? (<p>{tagObj}</p>)
+    : (
+      Object.entries(tagObj).map(([tag, value, index]) => (
+        <p key={index} data-tag={tag}>
+          <span className="text-gray-500">{tag}</span>
+          {' '}
+          <span>{value}</span>
+        </p>
+      ))
+    )
+);
+
+function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
   const { t } = useTranslation();
+
+  const [currentChapter, setCurrentChapter] = useState(null);
+
+  console.log({
+    usfmJsons, currentProjectMeta, selectedChapter, currentChapter,
+  });
 
   const resolveAllTogether = (data, type) => {
     console.log('resolve all together');
@@ -20,6 +38,15 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
   const resetAllResolved = () => {
     console.log('reset all conflict ');
   };
+
+  useEffect(() => {
+    if (usfmJsons && selectedChapter) {
+      const currentCh = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter);
+      if (currentCh?.length === 1) {
+        setCurrentChapter(currentCh[0]);
+      }
+    }
+  }, [selectedChapter, usfmJsons]);
 
   return (
     <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
@@ -81,8 +108,8 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
       </div>
 
       {/* Content */}
-      <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
-        {/* {selectedFileContent.map((content, index) => (
+      {/* <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
+        {selectedFileContent.map((content, index) => (
           <div
             key={content.id}
             className={`flex px-2 py-6 gap-4
@@ -112,8 +139,31 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
             </div>
 
           </div>
-        ))} */}
+        ))}
+      </div> */}
+
+      {/* --------------------------------------------- testing -------------------------------------------- */}
+
+      <div className="">
+        {selectedChapter && currentChapter && currentChapter.contents.map((item, index) => (
+          item?.verseNumber
+            ? (
+              <div key={item.verseNumber} className="flex gap-2">
+                <span>{item.verseNumber}</span>
+                <div>
+                  {item.contents.map((tag, index) => <DisplayTagObj key={index} tagObj={tag} />)}
+                </div>
+              </div>
+            )
+
+            : (
+              <div key={index}>
+                <DisplayTagObj tagObj={item} />
+              </div>
+            )
+        ))}
       </div>
+
     </div>
   );
 }
