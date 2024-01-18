@@ -5,7 +5,7 @@ function TranslationMergNavBar({
   currentUsfmJson, setSelectedChapter, selectedChapter, resolvedFileNames,
 }) {
   const { t } = useTranslation();
-  console.log({ currentUsfmJson });
+  // console.log({ currentUsfmJson });
   return (
     <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden">
       <div className="flex items-center justify-between bg-black py-1.5 px-2.5">
