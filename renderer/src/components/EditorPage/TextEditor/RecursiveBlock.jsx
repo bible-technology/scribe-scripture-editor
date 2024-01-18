@@ -33,6 +33,7 @@ export default function RecursiveBlock({
   onReferenceSelected,
   setCaretPosition,
   setSelectedText,
+  scrollLock,
   ...props
 }) {
   const [currentVerse, setCurrentVerse] = useState(null);
@@ -53,7 +54,6 @@ export default function RecursiveBlock({
       setSelectedText(selectedText);
     }
   }
-
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0);
@@ -61,7 +61,7 @@ export default function RecursiveBlock({
       const { verse } = getCurrentVerse(selectedNode);
       const chapter = getCurrentChapter(selectedNode);
       onReferenceSelected({ bookId, chapter, verse });
-      hightlightRefVerse(chapter, verse);
+      !scrollLock && hightlightRefVerse(chapter, verse);
     }
     updateCursorPosition();
     handleSelection();
@@ -86,8 +86,10 @@ export default function RecursiveBlock({
       }
       prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
     }
-    checkCurrentVerse();
-    updateCursorPosition();
+    if ([37, 38, 39, 40].includes(event.keyCode)) {
+      checkCurrentVerse();
+      updateCursorPosition();
+    }
   };
 
   function onPasteHandler(event) {

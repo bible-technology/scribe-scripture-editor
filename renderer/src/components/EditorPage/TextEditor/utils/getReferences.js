@@ -12,18 +12,14 @@ export const getCurrentVerse = (currentNode) => {
   return { verse, verseText };
 };
 
-// export const hightlightRefVerse = (chapter, verse) => {
-//   const refEditor = document.getElementById('ref-editor');
-//   const verseInView = refEditor.querySelector(`#ch${chapter}v${verse}`);
-//   const { verseText } = getCurrentVerse(verseInView);
-
-//   const range = document.createRange();
-//   range.setStart(verseInView, 0);
-//   range.setEnd(verseText, verseText.textContent.length);
-//   const selection = document.getSelection();
-//   selection.removeAllRanges();
-//   selection.addRange(range);
-// };
+export const removeHighlightFromRefVerse = ({ c, v }) => {
+  const refEditors = document.getElementsByClassName('ref-editor');
+  refEditors.length > 0 && Array.prototype.filter.call(refEditors, (refEditor) => {
+    const prevHighlight = refEditor.querySelector(`#ch${c}v${v}`).nextElementSibling;
+    const hightlightText = prevHighlight && prevHighlight.innerHTML;
+    prevHighlight && prevHighlight.replaceWith(hightlightText);
+  });
+};
 
 export const hightlightRefVerse = (() => {
   let prevCV;
@@ -33,12 +29,15 @@ export const hightlightRefVerse = (() => {
       if (!(prevCV && prevCV.c !== c)) {
         const verseInView = refEditor.querySelector(`#ch${c}v${v}`);
         const { verseText } = getCurrentVerse(verseInView);
+        // highlight verse
         const range = document.createRange();
-        range.setStart(verseInView, 0);
+        range.setStart(verseText, 0);
         range.setEnd(verseText, verseText.textContent.length);
-        const selection = document.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
+        const newSpan = document.createElement('span');
+        newSpan.classList.add('bg-primary-50');
+        range.surroundContents(newSpan);
+        // remove highlight from previous verse
+        prevCV && removeHighlightFromRefVerse({ ...prevCV });
       }
     });
     prevCV = { c, v };
