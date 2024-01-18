@@ -7,7 +7,7 @@ function TranslationMergNavBar({
   const { t } = useTranslation();
   // console.log({ currentUsfmJson });
   return (
-    <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden">
+    <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden ">
       <div className="flex items-center justify-between bg-black py-1.5 px-2.5">
         <span className="px-2.5 py-0.5 bg-primary text-white font-semibold tracking-wider text-xs uppercase rounded-xl">
           {` ${t('label-book')} - ${currentUsfmJson?.book?.bookCode || ''}`}
@@ -15,8 +15,8 @@ function TranslationMergNavBar({
         {/* <Cog8ToothIcon className="w-5 h-5 text-white" /> */}
       </div>
 
-      <div className="h-full overflow-auto">
-        <ul className="text-black text-xs pt-2.5">
+      <div className="h-full overflow-auto ">
+        <ul className="text-black text-xs py-2.5">
           {currentUsfmJson?.chapters?.map((chapter) => (
             <li
               key={chapter.chapterNumber}
