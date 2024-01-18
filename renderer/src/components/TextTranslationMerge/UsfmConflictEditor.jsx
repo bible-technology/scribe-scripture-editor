@@ -10,7 +10,7 @@ const DisplayTagObj = ({ tagObj }) => (
         <p key={index} data-tag={tag}>
           <span className="text-gray-500">{tag}</span>
           {' '}
-          <span>{value}</span>
+          <span>{Array.isArray(value) ? value.map((v, index) => <DisplayTagObj key={index} tagObj={v} />) : value}</span>
         </p>
       ))
     )
