@@ -157,7 +157,8 @@ function TranslationMergeUI() {
           // const currentNormalisedUsfm = await parseJsonToUsfm(currentJson.data);
 
           // generate the merge object with current , incoming , merge verses
-          processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).then((out) => {
+          const mergeJson = JSON.parse(JSON.stringify(currentJson.data));
+          processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, mergeJson).then((out) => {
             console.log('processed files : ', { out });
           }).catch((err) => {
             console.log('process usfm : ', err);
@@ -237,7 +238,11 @@ function TranslationMergeUI() {
 
                       (usfmJsons.current && usfmJsons.imported) ? (
                         <div className="h-[70vh] overflow-auto">
-                          <UsfmConflictEditor usfmJsons={usfmJsons} currentProjectMeta={currentProjectMeta} />
+                          <UsfmConflictEditor
+                            usfmJsons={usfmJsons}
+                            currentProjectMeta={currentProjectMeta}
+                            selectedChapter={selectedChapter}
+                          />
                         </div>
                       )
                         : (
