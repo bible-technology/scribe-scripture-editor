@@ -1,13 +1,13 @@
 export const getCurrentVerse = (currentNode) => {
   let verse;
-  let previousElement = currentNode.previousElementSibling;
-  const verseText = currentNode.nextSibling;
+  let previousElement = currentNode?.previousElementSibling;
+  const verseText = currentNode?.nextSibling;
   while (previousElement) {
     if (previousElement.dataset.type === 'mark' && previousElement.dataset.subtype === 'verses') {
       verse = previousElement.dataset.attsNumber;
       break;
     }
-    previousElement = previousElement.previousElementSibling;
+    previousElement = previousElement?.previousElementSibling;
   }
   return { verse, verseText };
 };
@@ -15,7 +15,7 @@ export const getCurrentVerse = (currentNode) => {
 export const removeHighlightFromRefVerse = ({ c, v }) => {
   const refEditors = document.getElementsByClassName('ref-editor');
   refEditors.length > 0 && Array.prototype.filter.call(refEditors, (refEditor) => {
-    const prevHighlight = refEditor.querySelector(`#ch${c}v${v}`).nextElementSibling;
+    const prevHighlight = refEditor.querySelector(`#ch${c}v${v}`)?.nextElementSibling;
     const hightlightText = prevHighlight && prevHighlight.innerHTML;
     prevHighlight && prevHighlight.replaceWith(hightlightText);
   });
