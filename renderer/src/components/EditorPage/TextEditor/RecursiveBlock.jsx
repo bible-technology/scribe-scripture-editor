@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/cursorUtils';
-import { getCurrentVerse, getCurrentChapter } from '@/components/EditorPage/TextEditor/utils/getReferences';
+import {
+  getCurrentVerse, getCurrentChapter,
+} from '@/components/EditorPage/TextEditor/utils/getReferences';
 import { on } from 'ws';
 
 const getTarget = ({ content }) => {
@@ -31,6 +33,7 @@ export default function RecursiveBlock({
   onReferenceSelected,
   setCaretPosition,
   setSelectedText,
+  scrollLock,
   ...props
 }) {
   const [currentVerse, setCurrentVerse] = useState(null);
@@ -38,27 +41,6 @@ export default function RecursiveBlock({
   const updateCursorPosition = () => {
     const cursorPosition = getCurrentCursorPosition('editor');
     setCaretPosition(cursorPosition);
-  };
-
-  const checkReturnKeyPress = (event) => {
-    const activeTextArea = document.activeElement;
-    if (event.key === 'Enter') {
-      if (activeTextArea.children.length > 1) {
-        const lineBreak = activeTextArea.children[1]?.outerHTML;
-        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, '&nbsp');
-      }
-    }
-    // BACKSPACE DISABLE
-    if (event.keyCode === 8) {
-      const range = document.getSelection().getRangeAt(0);
-      const selectedNode = range.startContainer;
-      const prevNode = selectedNode.previousSibling;
-      if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
-        event.preventDefault();
-      }
-      prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
-    }
-    updateCursorPosition();
   };
 
   function handleSelection() {
@@ -72,17 +54,42 @@ export default function RecursiveBlock({
       setSelectedText(selectedText);
     }
   }
-
   const checkCurrentVerse = () => {
     if (document.getSelection().rangeCount >= 1 && onReferenceSelected) {
       const range = document.getSelection().getRangeAt(0);
       const selectedNode = range.startContainer;
-      const verse = getCurrentVerse(selectedNode);
+      const { verse } = getCurrentVerse(selectedNode);
       const chapter = getCurrentChapter(selectedNode);
       onReferenceSelected({ bookId, chapter, verse });
+      // !scrollLock && hightlightRefVerse(chapter, verse);
     }
     updateCursorPosition();
     handleSelection();
+  };
+
+  const keyStrokeHandler = (event) => {
+    const activeTextArea = document.activeElement;
+    // Replace line break with space
+    if (event.key === 'Enter') {
+      if (activeTextArea.children.length > 1) {
+        const lineBreak = activeTextArea.children[1]?.outerHTML;
+        activeTextArea.children[1].outerHTML = lineBreak.replace(/<br\s*\/?>/gi, '&nbsp');
+      }
+    }
+    // Disable backspace if the previous node is not the same verse
+    if (event.keyCode === 8) {
+      const range = document.getSelection().getRangeAt(0);
+      const selectedNode = range.startContainer;
+      const prevNode = selectedNode.previousSibling;
+      if (prevNode && prevNode.dataset.attsNumber !== currentVerse) {
+        event.preventDefault();
+      }
+      prevNode ? setCurrentVerse(prevNode.dataset.attsNumber) : {};
+    }
+    if ([37, 38, 39, 40].includes(event.keyCode)) {
+      checkCurrentVerse();
+      updateCursorPosition();
+    }
   };
 
   function onPasteHandler(event) {
@@ -101,11 +108,11 @@ export default function RecursiveBlock({
       <div
         className="editor-paragraph"
         contentEditable={contentEditable}
-        onKeyDown={checkReturnKeyPress}
+        onKeyDown={keyStrokeHandler}
         onMouseUp={checkCurrentVerse}
         onMouseDown={updateCursorPosition}
-        {...props}
         onPaste={(event) => { event.preventDefault(); onPasteHandler(event); }}
+        {...props}
       />
     );
   }

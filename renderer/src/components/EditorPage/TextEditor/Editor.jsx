@@ -1,5 +1,5 @@
 import React, {
- useContext, useEffect, useLayoutEffect, useRef,
+  useContext, useEffect, useLayoutEffect, useRef,
 } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 
@@ -123,7 +123,7 @@ export default function Editor(props) {
   function onReferenceSelected({ chapter, verse }) {
     chapter && setChapterNumber(chapter);
     verse && setVerseNumber(verse);
-    scrollReference(chapter);
+    !scrollLock && scrollReference(chapter, verse);
   }
 
   const observer = new IntersectionObserver((entries) => onIntersection({
@@ -147,7 +147,7 @@ export default function Editor(props) {
     addSequenceId,
     components: {
       block: (__props) => RecursiveBlock({
-        htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, setSelectedText, ...__props,
+        htmlPerf, onHtmlPerf: saveHtmlPerf, sequenceIds, addSequenceId, onReferenceSelected, setCaretPosition, setSelectedText, scrollLock, ...__props,
       }),
     },
     options: {
