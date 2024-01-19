@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const DisplayTagObj = ({ tagObj }) => (
+const DisplayTagObj = ({ key, tagObj }) => (
 
   typeof tagObj === 'string' ? (<p>{tagObj}</p>)
     : (
@@ -107,48 +107,13 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) 
         </div> */}
       </div>
 
-      {/* Content */}
-      {/* <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
-        {selectedFileContent.map((content, index) => (
-          <div
-            key={content.id}
-            className={`flex px-2 py-6 gap-4
-            ${currentProjectMeta?.languages[0].scriptDirection?.toLowerCase() === 'rtl' ? 'flex-row-reverse' : 'flex-row'}`}
-          >
-
-            <div
-              className=" w-full"
-              style={{
-                direction: `${currentProjectMeta.data.incomingMeta.languages[0].scriptDirection?.toLowerCase() === 'rtl' ? 'rtl' : 'auto'}`,
-              }}
-            >
-              ggg
-              <ConflictSection
-                text={
-                  content?.title
-                  || content?.text
-                  || content?.end
-                }
-                index={index}
-                setSelectedFileContent={setSelectedFileContent}
-                selectedFileContent={selectedFileContent}
-                handleResetSingle={handleResetSingle}
-                resolvedFileNames={resolvedFileNames}
-                selectedFileName={selectedFileName}
-              />
-            </div>
-
-          </div>
-        ))}
-      </div> */}
-
       {/* --------------------------------------------- testing -------------------------------------------- */}
 
       <div className="">
         {selectedChapter && currentChapter && currentChapter.contents.map((item, index) => (
           item?.verseNumber
             ? (
-              <div key={item.verseNumber} className="flex gap-2">
+              <div key={item.verseNumber} className="flex gap-2 border border-gray-500 my-2">
                 <span>{item.verseNumber}</span>
                 <div>
                   {item.contents.map((tag, index) => <DisplayTagObj key={index} tagObj={tag} />)}
@@ -157,7 +122,7 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) 
             )
 
             : (
-              <div key={index}>
+              <div key={index} className="">
                 <DisplayTagObj tagObj={item} />
               </div>
             )
