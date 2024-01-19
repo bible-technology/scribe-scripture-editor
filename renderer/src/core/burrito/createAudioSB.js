@@ -49,6 +49,8 @@ update,
     json.identification.name.en = projectFields.projectName;
     json.identification.abbreviation.en = projectFields.abbreviation;
     json.languages[0].name.en = language;
+    // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
+    json.idAuthorities.scribe.id = 'http://www.scribe.bible';
     if (call === 'edit' && project?.copyright?.shortStatements && (copyright.licence).length <= 500) {
       json.copyright.shortStatements[0].statement = copyright.licence;
     } else {
