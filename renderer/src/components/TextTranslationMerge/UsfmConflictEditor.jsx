@@ -1,10 +1,14 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import DiffMatchPatch from 'diff-match-patch';
 
-function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
-  console.log({ usfmJsons, currentProjectMeta });
-
+const dmp = new DiffMatchPatch();
+function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) {
+  console.log({ usfmJsons, currentProjectMeta, selectedChapter });
+  const [currentChapterVerses, setCurrentChapterVerses] = useState();
+  const [importedChapterVerses, setImportedChapterVerses] = useState();
+  const [haveConflict, setHaveConflict] = useState([]);
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
   const { t } = useTranslation();
@@ -20,7 +24,52 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
   const resetAllResolved = () => {
     console.log('reset all conflict ');
   };
+  const displayContent = (selectedChapter) => {
+    const currentContent = usfmJsons.current.chapters;
+    const importContent = usfmJsons.imported.chapters;
+    // console.log(currentContent);
+    const currentVerses = currentContent.map((value) => {
+      if (value.chapterNumber === selectedChapter) {
+        const verses = value.contents.filter((item) => item?.verseNumber);
+        console.log(verses);
+        return verses;
+      }
+    });
+    const currentValue = currentVerses.filter((item) => item)[0];
+    const importedVerses = importContent.map((value) => {
+      if (value.chapterNumber === selectedChapter) {
+        const verses = value.contents.filter((item) => item?.verseNumber);
+        console.log(verses);
+        return verses;
+      }
+    });
+    const importedValue = importedVerses.filter((item) => item)[0];
+    const conflicts = [];
+    currentValue?.map((current, index) => {
+      if (current.verseNumber === (importedValue && importedValue[index].verseNumber)) {
+        // const diffOut = dmp.diff_main(current.verseText, importedValue[index].verseText);
+        // console.log(diffOut);
+        if (current.verseText !== importedValue[index].verseText) {
+          conflicts.push(current.verseNumber);
+        }
+      }
+    });
+    console.log(currentValue, importedValue);
+    console.log({ conflicts });
+    setHaveConflict(conflicts);
+    setCurrentChapterVerses(currentValue);
+    setImportedChapterVerses(importedValue);
+  };
 
+  // const findDifference =(selectedChapter)=>{
+
+  // }
+  useEffect(() => {
+    if (selectedChapter) {
+      displayContent(selectedChapter);
+      // findDifference(selectedChapter)
+    }
+  }, [selectedChapter]);
   return (
     <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
       {/* Header and Buttons */}
@@ -82,6 +131,44 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta }) {
 
       {/* Content */}
       <div className="divide-y divide-gray-100 max-h-[71vh] overflow-y-scroll scrollbars-width">
+        <div>
+          {currentChapterVerses?.map((verse, index) => (
+            <div key={verse.verseNumber} className={`${haveConflict.includes(verse.verseNumber) && 'border border-green-500'}`}>
+              <p>{verse.verseNumber}</p>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  {verse.contents?.map((data, index) => (
+                    <p key={index}>
+                      {/* {console.log(typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p))} */}
+                      {typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p)}
+                    </p>
+                ))}
+                </div>
+                <div className="flex-1">
+                  {importedChapterVerses && importedChapterVerses[index].contents?.map((data, index) => (
+                    <p key={index}>
+                      {/* {console.log(typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p))} */}
+                      {typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p)}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+        ))}
+        </div>
+        {/* <div>
+          {importedChapterVerses?.map((verse) => (
+            <>
+              <p key={verse.verseNumber}>{verse.verseNumber}</p>
+              {verse.contents?.map((data, index) => (
+                <p key={index}>
+                  {console.log(typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p))}
+                  {typeof data === 'string' ? data : JSON.stringify(data.s5) || JSON.stringify(data.p)}
+                </p>
+          ))}
+            </>
+        ))}
+        </div> */}
         {/* {selectedFileContent.map((content, index) => (
           <div
             key={content.id}

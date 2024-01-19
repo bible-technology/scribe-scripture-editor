@@ -237,7 +237,7 @@ function TranslationMergeUI() {
 
                       (usfmJsons.current && usfmJsons.imported) ? (
                         <div className="h-[70vh] overflow-auto">
-                          <UsfmConflictEditor usfmJsons={usfmJsons} currentProjectMeta={currentProjectMeta} />
+                          <UsfmConflictEditor usfmJsons={usfmJsons} currentProjectMeta={currentProjectMeta} selectedChapter={selectedChapter} />
                         </div>
                       )
                         : (
