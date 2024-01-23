@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 export default function getCurrentOnlineOfflineHelpsResources(selectResource) {
   const resources = [
+    // Nicolas : add juxtalinear here ?
+    // { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
     { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
     { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
     { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },

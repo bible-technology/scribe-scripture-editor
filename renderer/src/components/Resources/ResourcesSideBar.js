@@ -62,6 +62,13 @@ export default function ResourcesSidebar({
           resourceType: 'translationNote',
           Icon: DocumentTextIcon,
         },
+        // Nicolas : added juxtalinear to resourcesList
+        // {
+        //   id: 'jxl',
+        //   title: 'juxta',
+        //   resourceType: 'juxtalinear',
+        //   Icon: DocumentTextIcon,
+        // },
         {
           id: 'twlm',
           title: t('label-resource-twl'),

@@ -157,6 +157,21 @@ function useProjectsSort() {
                       _project.type.flavorType.flavor
                         .name
                       ) {
+                        // Nicolas : add description for juxta here
+                        // NicolasEdits : added Juxta
+                        case 'x-juxtalinear':
+                          lastSeen = _project.project
+                            ?.textTranslation
+                            ?.lastSeen;
+                          description = _project.project
+                            ?.textTranslation
+                            ?.description;
+                          isArchived = _project.project
+                            ?.textTranslation
+                            ?.isArchived;
+                            starred = _project.project?.textTranslation?.starred;
+                          flavorType = 'Juxtalinear';
+                          break;
                         case 'textTranslation':
                           lastSeen = _project.project
                             ?.textTranslation

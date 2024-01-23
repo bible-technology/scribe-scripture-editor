@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '@/core/handleElectron';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
@@ -67,7 +67,7 @@ export const updateWebAgSettings = async (username, projectName, data) => {
 export const saveReferenceResource = (font = '') => {
   logger.debug('updateAgSettings.js', 'In saveReferenceResource for saving the reference data');
   localforage.getItem('currentProject').then(async (projectName) => {
-    const _projectname = await splitStringByLastOccurance(projectName, '_');
+    const _projectname = await splitStringByLastOccurence(projectName, '_');
     // const _projectname = projectName?.split('_');
     localforage.getItem('projectmeta').then((value) => {
       Object.entries(value).forEach(
