@@ -46,7 +46,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
   const [selectedLangFilter, setSelectedLangFilter] = useState([]);
   const [selectedTypeFilter, setSelectedTypeFilter] = useState([]);
   const [selectedPreProd, setSelectedPreProd] = useState(false);
-  const [selectedScriptureBurrito, setselectedScriptureBurrito] = useState(false);
   // resource Download
   const [downloadStarted, setDownloadStarted] = useState(false);
   const [totalDownload, setTotalDownload] = useState(0);
@@ -80,8 +79,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     setLoading(true);
     // subject = bible and lang = en - if not custom filter or initial loading
     // const baseUrl = 'https://git.door43.org/api/catalog/v5/search';
-    const metadataType = selectedScriptureBurrito ? 'sb' : 'rc';
-    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=${metadataType}`;
+    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&metadataType=sb`;
     let url = '';
     if (filter) {
       url = `${baseUrl}`;
@@ -371,18 +369,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             type="checkbox"
             checked={selectedPreProd}
             onChange={(e) => setSelectedPreProd(e.target.checked)}
-          />
-        </div>
-
-        {/* NicolasEdits : add scripture burrito check */}
-        <div class="flex items-center gap-4">
-          <label htmlFor="scripture-burrito" className="font-bold w-24">Get scripture burrito</label>
-          <input
-            id="scripture-burrito"
-            name="scripture-burrito"
-            type="checkbox"
-            checked={selectedScriptureBurrito}
-            onChange={(e) => setselectedScriptureBurrito(e.target.checked)}
           />
         </div>
 
