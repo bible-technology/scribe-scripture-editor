@@ -1,39 +1,49 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  ArrowSmallDownIcon, ArrowSmallUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
+} from '@heroicons/react/20/solid';
 
 function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
   const { t } = useTranslation();
 
-  const [currentChapter, setCurrentChapter] = useState(null);
-
   console.log({
-    usfmJsons, currentProjectMeta, selectedChapter, currentChapter,
+    usfmJsons, currentProjectMeta, selectedChapter,
   });
 
   const resolveAllTogether = (data, type) => {
     console.log('resolve all together');
   };
 
-  const handleResetSingle = (data, index) => {
+  const handleResetSingle = (verseNum) => {
     console.log('hanlde reset single conflcit');
+    const currentVerseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+      .contents.find((item) => item?.verseNumber === verseNum);
+    currentVerseObj.resolved.status = false;
+    currentVerseObj.resolved.resolvedContent = null;
   };
 
   const resetAllResolved = () => {
     console.log('reset all conflict ');
   };
 
-  useEffect(() => {
-    if (usfmJsons && selectedChapter) {
-      const currentCh = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter);
-      // identify conflicts in the chapter
-      if (currentCh?.length === 1) {
-        setCurrentChapter(currentCh[0]);
-      }
+  const handleResolveSingle = (type, verseNum) => {
+    const currentVerseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+      .contents.find((item) => item?.verseNumber === verseNum);
+    let currentData = {};
+    if (type === 'current') {
+      currentData = { verseText: currentVerseObj.verseText, contents: currentVerseObj.contents, verseNumber: verseNum };
+    } else {
+      currentData = currentVerseObj.incoming;
     }
-  }, [selectedChapter, usfmJsons]);
+
+    // assign to resolved section
+    currentVerseObj.resolved.status = true;
+    currentVerseObj.resolved.resolvedContent = currentData;
+  };
 
   return (
     <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
@@ -109,16 +119,34 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) 
                   // conflict resolved section (Data from resolved.resolvedContent)
                   item.resolved.status ? (
                     <div>
-                      conflict Resolved
+                      <div className="flex gap-2 border border-gray-500 w-full p-1 rounded-md relative">
+                        <div>{item.resolved.resolvedContent.verseText}</div>
+                        <ArrowPathRoundedSquareIcon
+                          className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
+                          onClick={() => handleResetSingle(item.verseNumber)}
+                        />
+                      </div>
                     </div>
                   )
                     : (
                       // conflict Exist Show Both data
                       <div className="flex flex-col gap-2 border border-gray-500 w-full p-1 rounded-md">
-                        <div className="border border-red-500 p-1">
+                        <div
+                          title="Click to accept current change"
+                          role="button"
+                          tabIndex={-1}
+                          className="border border-red-500 p-1 hover:bg-red-200"
+                          onClick={() => handleResolveSingle('current', item.verseNumber)}
+                        >
                           {item.verseText}
                         </div>
-                        <div className="border border-green-500 p-1">
+                        <div
+                          title="Click to accept incoming change"
+                          role="button"
+                          tabIndex={-1}
+                          className="border border-green-500 p-1 hover:bg-green-200"
+                          onClick={() => handleResolveSingle('incoming', item.verseNumber)}
+                        >
                           {item.incoming.verseText}
                         </div>
                       </div>
