@@ -157,14 +157,12 @@ function TranslationMergeUI() {
           // const currentNormalisedUsfm = await parseJsonToUsfm(currentJson.data);
 
           // generate the merge object with current , incoming , merge verses
-          const mergeJson = JSON.parse(JSON.stringify(currentJson.data));
-          processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, mergeJson).then((out) => {
-            console.log('processed files : ', { out });
-          }).catch((err) => {
+          // const mergeJson = JSON.parse(JSON.stringify(currentJson.data));
+          const mergeJson = await processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).catch((err) => {
             console.log('process usfm : ', err);
           });
 
-          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data, mergeJson: JSON.parse(JSON.stringify(currentJson.data)) }));
+          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data, mergeJson }));
 
           // compare usfms to check conflcit or not
           // const diffOut = await dmp.diff_main(normalisedIncomingUSFM, currentNormalisedUsfm);

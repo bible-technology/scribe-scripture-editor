@@ -2,20 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const DisplayTagObj = ({ key, tagObj }) => (
-
-  typeof tagObj === 'string' ? (<p>{tagObj}</p>)
-    : (
-      Object.entries(tagObj).map(([tag, value, index]) => (
-        <p key={index} data-tag={tag}>
-          <span className="text-gray-500">{tag}</span>
-          {' '}
-          <span>{Array.isArray(value) ? value.map((v, index) => <DisplayTagObj key={index} tagObj={v} />) : value}</span>
-        </p>
-      ))
-    )
-);
-
 function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) {
   const [resolveAllActive, setResolveALlActive] = useState();
   const [resetAlll, setResetAll] = useState();
@@ -42,6 +28,7 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) 
   useEffect(() => {
     if (usfmJsons && selectedChapter) {
       const currentCh = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter);
+      // identify conflicts in the chapter
       if (currentCh?.length === 1) {
         setCurrentChapter(currentCh[0]);
       }
@@ -110,23 +97,41 @@ function UsfmConflictEditor({ usfmJsons, currentProjectMeta, selectedChapter }) 
       {/* --------------------------------------------- testing -------------------------------------------- */}
 
       <div className="">
-        {selectedChapter && currentChapter && currentChapter.contents.map((item, index) => (
-          item?.verseNumber
-            ? (
-              <div key={item.verseNumber} className="flex gap-2 border border-gray-500 my-2">
-                <span>{item.verseNumber}</span>
-                <div>
-                  {item.contents.map((tag, index) => <DisplayTagObj key={index} tagObj={tag} />)}
-                </div>
-              </div>
-            )
+        {selectedChapter && usfmJsons.mergeJson
+          && usfmJsons?.mergeJson?.chapters?.slice(selectedChapter - 1, selectedChapter)[0].contents.map((item, index) => (
+            item.verseNumber
+            && (
+              <div key={item.verseNumber} className="flex gap-2 mb-2">
+                <span className="font-medium">{item.verseNumber}</span>
+                {/* conflict is / was there */}
+                {item?.resolved ? (
 
-            : (
-              <div key={index} className="">
-                <DisplayTagObj tagObj={item} />
+                  // conflict resolved section (Data from resolved.resolvedContent)
+                  item.resolved.status ? (
+                    <div>
+                      conflict Resolved
+                    </div>
+                  )
+                    : (
+                      // conflict Exist Show Both data
+                      <div className="flex flex-col gap-2 border border-gray-500 w-full p-1 rounded-md">
+                        <div className="border border-red-500 p-1">
+                          {item.verseText}
+                        </div>
+                        <div className="border border-green-500 p-1">
+                          {item.incoming.verseText}
+                        </div>
+                      </div>
+                    )
+                )
+                  : (
+                    <div className="text-gray-600">
+                      {item.verseText}
+                    </div>
+                  )}
               </div>
             )
-        ))}
+          ))}
       </div>
 
     </div>
