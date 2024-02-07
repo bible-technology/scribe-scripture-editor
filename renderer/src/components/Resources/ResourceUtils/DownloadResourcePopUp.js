@@ -79,7 +79,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     setLoading(true);
     // subject = bible and lang = en - if not custom filter or initial loading
     // const baseUrl = 'https://git.door43.org/api/catalog/v5/search';
-    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc`;
+    const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&metadataType=sb`;
     let url = '';
     if (filter) {
       url = `${baseUrl}`;
