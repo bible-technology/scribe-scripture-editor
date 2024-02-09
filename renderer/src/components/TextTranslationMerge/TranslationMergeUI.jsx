@@ -26,7 +26,6 @@ function TranslationMergeUI() {
   const [usfmJsons, setUsfmJsons] = useState({
     imported: null,
     current: null,
-    merge: null,
   });
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [resolvedFileNames, setResolvedFileNames] = useState([]);
@@ -240,6 +239,7 @@ function TranslationMergeUI() {
                             usfmJsons={usfmJsons}
                             currentProjectMeta={currentProjectMeta}
                             selectedChapter={selectedChapter}
+                            setUsfmJsons={setUsfmJsons}
                           />
                         </div>
                       )
