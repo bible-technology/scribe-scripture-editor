@@ -28,7 +28,8 @@ function TranslationMergeUI() {
     current: null,
   });
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const [resolvedFileNames, setResolvedFileNames] = useState([]);
+  const [conflictedChapters, setConflictedChapters] = useState([]);
+  const [resolvedChapters, setResolvedChapters] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -157,9 +158,12 @@ function TranslationMergeUI() {
 
           // generate the merge object with current , incoming , merge verses
           // const mergeJson = JSON.parse(JSON.stringify(currentJson.data));
-          const mergeJson = await processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).catch((err) => {
+          const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).catch((err) => {
             console.log('process usfm : ', err);
           });
+          const mergeJson = processOutArr[0];
+          console.log('processOutArr[1] : ', processOutArr[1]);
+          setConflictedChapters(processOutArr[1]);
 
           currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data, mergeJson }));
 
@@ -223,7 +227,8 @@ function TranslationMergeUI() {
               <div className="p-2 h-full border grid grid-cols-6 gap-2">
                 <TranslationMergNavBar
                   currentUsfmJson={usfmJsons.current}
-                  resolvedFileNames={resolvedFileNames}
+                  conflictedChapters={conflictedChapters}
+                  resolvedChapters={resolvedChapters}
                   selectedChapter={selectedChapter}
                   setSelectedChapter={setSelectedChapter}
                 />

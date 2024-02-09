@@ -2,6 +2,7 @@ async function processAndIdentiyVerseChangeinUSFMJsons(currentJson, IncomingJson
   // process USFM JSONs and generate comparaison object
 
   const mergeTempJson = JSON.parse(JSON.stringify(currentJson));
+  const conflictedChapters = [];
 
   return new Promise((resolve, reject) => {
     const comparisonResult = async () => {
@@ -15,14 +16,14 @@ async function processAndIdentiyVerseChangeinUSFMJsons(currentJson, IncomingJson
               // add incoming data
               content.incoming = IncomingVerse;
               content.resolved = { status: false, resolvedContent: null };
+              !conflictedChapters.includes(chapter.chapterNumber) && conflictedChapters.push(chapter.chapterNumber);
             }
           }
         });
       });
-      // console.log({ mergeTempJson });
+      // console.log({ mergeTempJson, conflictedChapters });
     };
-
-    comparisonResult().then(() => resolve(mergeTempJson)).catch((err) => reject(err));
+    comparisonResult().then(() => resolve([mergeTempJson, conflictedChapters])).catch((err) => reject(err));
   });
 }
 
