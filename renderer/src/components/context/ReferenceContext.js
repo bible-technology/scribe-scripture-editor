@@ -12,7 +12,7 @@ import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 
-export const ReferenceContext = createContext({});
+export const ReferenceContext = createContext();
 
 export default function ReferenceContextProvider({ children }) {
   const initialBook = '1ti';
@@ -40,7 +40,7 @@ export default function ReferenceContextProvider({ children }) {
   const [fontSize, setFontsize] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
-  const [refernceLoading, setRefernceLoading] = useState({
+  const [referenceLoading, setReferenceLoading] = useState({
     status: false,
     text: '',
   });
@@ -200,7 +200,7 @@ export default function ReferenceContextProvider({ children }) {
       fontSize,
       layout,
       row,
-      refernceLoading,
+      referenceLoading,
       counter,
       bookmarksVerses,
       myEditorRef,
@@ -248,7 +248,7 @@ export default function ReferenceContextProvider({ children }) {
       setFontsize,
       setLayout,
       setRow,
-      setRefernceLoading,
+      setReferenceLoading,
       setCounter,
       setBookmarksVerses,
       setCloseNavigation,

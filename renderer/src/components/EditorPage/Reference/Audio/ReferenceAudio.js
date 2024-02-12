@@ -28,7 +28,7 @@ const ReferenceAudio = ({
 }) => {
   const {
     actions: {
-      setRefernceLoading,
+      setReferenceLoading,
       setCounter,
     },
   } = useContext(ReferenceContext);

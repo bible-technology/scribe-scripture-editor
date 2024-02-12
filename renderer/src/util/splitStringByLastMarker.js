@@ -1,6 +1,12 @@
 // split any string into array items based on last occurence of something
 // both inputs should be string
 
+/**
+ *
+ * @param {string} text
+ * @param {string} splitter
+ * @returns {Promise<Array<string>>}
+ */
 export async function splitStringByLastOccurence(text, splitter) {
     const lastOccurenceIndex = text.lastIndexOf(splitter);
 

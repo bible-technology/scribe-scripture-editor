@@ -456,6 +456,7 @@ const ProjectContextProvider = ({ children }) => {
     const status = saveSupabaseProjectsMeta(projectMetaObj);
     return status;
   };
+
   const resetProjectStates = () => {
     const initialState = {
       language: '',

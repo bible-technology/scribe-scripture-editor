@@ -19,7 +19,7 @@ export async function writeRecfile(file, filePath, fs) {
 
 // fucntion to walkthough the directory and identify audios
 export async function walk(dir, path, fs) {
-    logger.debug('ExportProjectUtils.js', `in wlak thorugh dir : ${dir} : ${path}`);
+    logger.debug('ExportProjectUtils.js', `in walk through dir : ${dir} : ${path}`);
     let files = await fs.readdirSync(dir);
     files = await Promise.all(files.map(async (file) => {
         const filePath = path.join(dir, file);

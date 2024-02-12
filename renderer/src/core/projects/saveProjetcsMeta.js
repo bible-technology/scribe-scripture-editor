@@ -92,8 +92,6 @@ export const saveProjectsMeta = async (projectMetaObj) => {
     }
   });
 
-  // Nicolas : does the three big functions down there can be refactored ?
-
   /**
    * the factory function that creates a project
    * @param {string} type one of ["Translation", "OBS", "Audio", "Juxta"]
