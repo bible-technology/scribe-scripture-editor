@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/20/solid';
 
 function UsfmConflictEditor({
-  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setResolvedChapters,
+  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState(true);
   const [resetAlll, setResetAll] = useState(false);
@@ -38,7 +38,6 @@ function UsfmConflictEditor({
   };
 
   const handleResetSingle = (verseNum) => {
-    console.log('hanlde reset single conflcit');
     const currentVerseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.find((item) => item?.verseNumber === verseNum);
     currentVerseObj.resolved.status = false;
@@ -46,6 +45,7 @@ function UsfmConflictEditor({
     setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
     setResolveALlActive(true);
     setResetAll(false);
+    setChapterResolveDone(false);
   };
 
   const resetAllResolved = () => {
@@ -59,6 +59,7 @@ function UsfmConflictEditor({
     setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
     setResolveALlActive(true);
     setResetAll(false);
+    setChapterResolveDone(false);
   };
 
   const handleResolveSingle = (type, verseNum) => {
@@ -80,20 +81,22 @@ function UsfmConflictEditor({
   useEffect(() => {
     // check all resolved in the current ch
     let resolvedStatus = false;
-
     for (let index = 0; index < usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents.length; index++) {
       const verseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents[index];
       if (verseObj?.resolved && verseObj?.resolved?.status === false) {
         resolvedStatus = false;
+        setChapterResolveDone(false);
+        setResetAll(false);
+        setResolveALlActive(true);
         break;
       } else {
         resolvedStatus = true;
       }
     }
-
     if (resolvedStatus) {
-      console.log('in resolved status ---------------->');
-      // setResolvedChapters((prev) => [...prev, selectedChapter]);
+      setChapterResolveDone(true);
+      setResetAll(true);
+      setResolveALlActive(false);
     }
   }, [usfmJsons, selectedChapter]);
 
@@ -169,7 +172,7 @@ function UsfmConflictEditor({
               >
                 <span className="font-medium self-center">{item.verseNumber}</span>
                 {/* conflict is / was there */}
-                {item?.resolved ? (
+                {(item?.resolved && !resolvedChapters.includes(selectedChapter)) ? (
 
                   // conflict resolved section (Data from resolved.resolvedContent)
                   item.resolved.status ? (
