@@ -187,9 +187,9 @@ function TranslationMergeUI() {
     }
   }, [importedUsfmFolderPath, currentProjectMeta]);
 
-  useEffect(() => {
-    setChapterResolveDone(false);
-  }, [selectedChapter]);
+  const resolveAndMarkDoneChapter = () => {
+    setResolvedChapters((prev) => [...prev, selectedChapter]);
+  };
 
   return (
     <>
@@ -250,8 +250,8 @@ function TranslationMergeUI() {
                             currentProjectMeta={currentProjectMeta}
                             selectedChapter={selectedChapter}
                             setUsfmJsons={setUsfmJsons}
-                            setResolvedChapters={setResolvedChapters}
                             setChapterResolveDone={setChapterResolveDone}
+                            resolvedChapters={resolvedChapters}
                           />
                         </div>
                       )
@@ -266,8 +266,20 @@ function TranslationMergeUI() {
                     )}
 
                   </div>
-                  <div className="border-2 border-black rounded-md h-[50px] p-1">
+                  <div className="border-2 border-black rounded-md h-[50px] p-1 flex justify-between">
                     <p className="text-red-500 text-sm">{error}</p>
+                    {usfmJsons.current && usfmJsons.imported && (
+                      <button
+                        type="button"
+                        onClick={() => resolveAndMarkDoneChapter()}
+                        disabled={!chapterResolveDone}
+                        className={`px-4 py-1  rounded-md uppercase 
+                        ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '} 
+                        `}
+                      >
+                        Resolve
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
