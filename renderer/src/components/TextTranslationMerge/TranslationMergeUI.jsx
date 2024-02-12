@@ -30,6 +30,7 @@ function TranslationMergeUI() {
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [conflictedChapters, setConflictedChapters] = useState([]);
   const [resolvedChapters, setResolvedChapters] = useState([]);
+  const [chapterResolveDone, setChapterResolveDone] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -186,6 +187,10 @@ function TranslationMergeUI() {
     }
   }, [importedUsfmFolderPath, currentProjectMeta]);
 
+  useEffect(() => {
+    setChapterResolveDone(false);
+  }, [selectedChapter]);
+
   return (
     <>
       <Transition
@@ -245,6 +250,8 @@ function TranslationMergeUI() {
                             currentProjectMeta={currentProjectMeta}
                             selectedChapter={selectedChapter}
                             setUsfmJsons={setUsfmJsons}
+                            setResolvedChapters={setResolvedChapters}
+                            setChapterResolveDone={setChapterResolveDone}
                           />
                         </div>
                       )
