@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 function TranslationMergNavBar({
   currentUsfmJson, setSelectedChapter, selectedChapter, conflictedChapters, resolvedChapters,
 }) {
+  console.log({ resolvedChapters, conflictedChapters });
   const { t } = useTranslation();
   return (
     <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden ">

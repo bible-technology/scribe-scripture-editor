@@ -6,18 +6,35 @@ import {
 } from '@heroicons/react/20/solid';
 
 function UsfmConflictEditor({
-  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons,
+  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setResolvedChapters,
 }) {
-  const [resolveAllActive, setResolveALlActive] = useState();
-  const [resetAlll, setResetAll] = useState();
+  const [resolveAllActive, setResolveALlActive] = useState(true);
+  const [resetAlll, setResetAll] = useState(false);
   const { t } = useTranslation();
 
-  console.log({
-    usfmJsons, currentProjectMeta, selectedChapter,
-  });
+  // console.log({
+  //   usfmJsons, currentProjectMeta, selectedChapter,
+  // });
 
   const resolveAllTogether = (type) => {
-    console.log('resolve all together', type);
+    usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+      .contents.forEach((verseObj) => {
+        if (verseObj?.resolved?.status === false) {
+          let currentData = {};
+          if (type === 'current') {
+            currentData = { verseText: verseObj.verseText, contents: verseObj.contents, verseNumber: verseObj.verseNumber };
+          } else {
+            currentData = verseObj.incoming;
+          }
+
+          // assign to resolved section
+          verseObj.resolved.status = true;
+          verseObj.resolved.resolvedContent = currentData;
+        }
+      });
+    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setResolveALlActive(false);
+    setResetAll(true);
   };
 
   const handleResetSingle = (verseNum) => {
@@ -27,10 +44,21 @@ function UsfmConflictEditor({
     currentVerseObj.resolved.status = false;
     currentVerseObj.resolved.resolvedContent = null;
     setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setResolveALlActive(true);
+    setResetAll(false);
   };
 
   const resetAllResolved = () => {
-    console.log('reset all conflict ');
+    usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+      .contents.forEach((verseObj) => {
+        if (verseObj?.resolved?.status === true) {
+          verseObj.resolved.status = false;
+          verseObj.resolved.resolvedContent = null;
+        }
+      });
+    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setResolveALlActive(true);
+    setResetAll(false);
   };
 
   const handleResolveSingle = (type, verseNum) => {
@@ -49,6 +77,26 @@ function UsfmConflictEditor({
     setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
   };
 
+  useEffect(() => {
+    // check all resolved in the current ch
+    let resolvedStatus = false;
+
+    for (let index = 0; index < usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents.length; index++) {
+      const verseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents[index];
+      if (verseObj?.resolved && verseObj?.resolved?.status === false) {
+        resolvedStatus = false;
+        break;
+      } else {
+        resolvedStatus = true;
+      }
+    }
+
+    if (resolvedStatus) {
+      console.log('in resolved status ---------------->');
+      // setResolvedChapters((prev) => [...prev, selectedChapter]);
+    }
+  }, [usfmJsons, selectedChapter]);
+
   return (
     <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
       {/* Header and Buttons */}
@@ -63,7 +111,7 @@ function UsfmConflictEditor({
               onClick={() => resolveAllTogether('current')}
               disabled={resolveAllActive === false}
               title={t('tooltip-merge-all-orginal-btn')}
-              className={`${true ? 'px-2.5 py-0.5 bg-black text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
+              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-black text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
             >
               {t('label-original')}
             </button>
@@ -73,7 +121,7 @@ function UsfmConflictEditor({
               onClick={() => resolveAllTogether('incoming')}
               disabled={resolveAllActive === false}
               title={t('tooltip-merge-all-new-btn')}
-              className={`${true ? 'px-2.5 py-0.5 bg-success text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
+              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-success text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
             >
               {t('label-new')}
 
@@ -201,7 +249,7 @@ function UsfmConflictEditor({
                     )
                 )
                   : (
-                    <div className="text-gray-600">
+                    <div className="text-gray-400">
                       {item.verseText}
                     </div>
                   )}
