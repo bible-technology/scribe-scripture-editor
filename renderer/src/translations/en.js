@@ -280,4 +280,6 @@ export const En = {
     'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
     'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
     'label-upload-help-resources': 'Upload Help Resources',
+    'msg-conflict-resolution-duplicate-book': 'Conflict resolution for {{bookId}} is in progress. Do you want to start over. You will loose all your progress and can not be reverted.',
+    'label-startover': 'start over',
 };
