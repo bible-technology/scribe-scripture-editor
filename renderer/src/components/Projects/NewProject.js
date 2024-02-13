@@ -14,12 +14,11 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { environment } from '../../../environment';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
 import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
-import Book from '@/icons/basil/Outline/Files/Book.svg';
 import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
@@ -51,7 +50,7 @@ const solutions = [
   {
     name: 'Juxta',
     href: '##',
-    icon: Book,
+    icon: BookOpenIcon,
   },
 ];
 

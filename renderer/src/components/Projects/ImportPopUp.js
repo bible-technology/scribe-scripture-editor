@@ -103,6 +103,7 @@ export default function ImportPopUp(props) {
     const files = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
+        // Nicolas add a juxta type here
         case 'Translation': {
           const usfm = fs.readFileSync(filePath, 'utf8');
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
@@ -165,6 +166,31 @@ export default function ImportPopUp(props) {
           break;
         }
 
+        case 'Juxta': {
+          const jsonFile = fs.readFileSync(filePath, 'utf8');
+          let filename = filePath.split(/[(\\)?(/)?]/gm).pop();
+          const regexExp = /^([1-9]).md$/;
+
+          const matchSingleDigit = regexExp.exec(filename);
+          if (matchSingleDigit) {
+            let fileNum = filename.split('.')[0];
+            fileNum = fileNum.toString().padStart(2, 0);
+            filename = `${fileNum}.json`;
+          }
+          // Nicolas : TODO add a validator for our juxta type
+          // const isMdValid = OBSValidate(filename);
+          // if (isMdValid) {
+          logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
+          files.push({ id: filename, content: jsonFile });
+          // } else {
+          //   logger.warn('ImportPopUp.js', 'Invalid Md file.');
+          //   setNotify('failure');
+          //   setSnackText(t('dynamic-msg-invalid-md-file'));
+          //   setOpenSnackBar(true);
+          // }
+          break;
+        }
+
         default:
           break;
       }
@@ -198,6 +224,13 @@ export default function ImportPopUp(props) {
       case 'OBS':
         setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
         setLabelImportFiles(t('label-choose-md-files'));
+      break;
+
+      // Nicolas : added juxta here
+      case 'Juxta':
+        setfileFilter([{ name: 'json files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT'] }]);
+        // Nicolas : TODO translation here
+        setLabelImportFiles('Choose json files');
       break;
 
       default:

@@ -1,4 +1,5 @@
 import createTranslationSB from '../core/burrito/createTranslationSB';
+import createJuxtalinearSB from '../core/burrito/createJuxtalinearSB';
 import createAudioSB from '../core/burrito/createAudioSB';
 import createObsSB from '../core/burrito/createObsSB';
 import * as logger from '../logger';
@@ -66,7 +67,7 @@ export const factoryCreateSB = async ({
       );
       break;
     case 'Juxta':
-      burritoFilePromise = await createTranslationSB(
+      burritoFilePromise = await createJuxtalinearSB(
         username,
         projectFields,
         selectedScope,
