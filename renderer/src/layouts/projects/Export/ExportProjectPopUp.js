@@ -89,6 +89,8 @@ export default function ExportProjectPopUp(props) {
     logger.debug('ExportProjectPopUp.js', 'Updated Scripture burrito');
           let data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
           const sb = JSON.parse(data);
+          // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
+          sb.idAuthorities.scribe.id = 'http://www.scribe.bible';
           if (!sb.copyright?.shortStatements && sb.copyright?.licenses) {
             delete sb.copyright.publicDomain;
             data = JSON.stringify(sb);

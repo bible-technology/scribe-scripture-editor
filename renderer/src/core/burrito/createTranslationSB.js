@@ -18,7 +18,7 @@ call,
 update,
 ) => {
   logger.debug('createTranslationSB.js', 'In createTranslationSB');
-  const localizedNames = {};
+  let localizedNames = {};
   return new Promise((resolve) => {
     let json = {};
     if (call === 'edit') {
@@ -49,14 +49,26 @@ update,
     json.identification.name.en = projectFields.projectName;
     json.identification.abbreviation.en = projectFields.abbreviation;
     json.languages[0].name.en = language;
+    // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
+    json.idAuthorities.scribe.id = 'http://www.scribe.bible';
     if (call === 'edit' && project?.copyright?.shortStatements && (copyright.licence).length <= 500) {
       json.copyright.shortStatements[0].statement = copyright.licence;
     } else {
       json.copyright.licenses[0].ingredient = 'license.md';
     }
+
+    if (call === 'edit') {
+      localizedNames = JSON.parse(JSON.stringify(json.localizedNames));
+      Object.keys(json.type.flavorType.currentScope).forEach((scope) => {
+        if (!localizedNames[scope]) {
+          localizedNames[scope] = burrito.localizedNames[scope];
+        }
+      });
+    }
+
     selectedScope.forEach((scope) => {
       json.type.flavorType.currentScope[scope] = [];
-      localizedNames[scope] = json.localizedNames[scope];
+      localizedNames[scope] = burrito.localizedNames[scope];
     });
     json.localizedNames = localizedNames;
     logger.debug('createTranslationSB.js', 'Created the Translation SB');

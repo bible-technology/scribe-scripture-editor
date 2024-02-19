@@ -225,7 +225,7 @@ export const En = {
     'msg-select-dir-for-SB': 'Select a directory/project that has a Scripture Burrito file I.e. metadata.json file',
     'label-online-resources': 'Online Resources',
     'tooltip-download': 'Download',
-    'msg-no-resource-for-bible-obs-download': '<div>This content is unavailable for this language</div><div> You can Import Own<span style="font-weight:bold">Scripture Burrito</span>Resources through<span style={{ fontWeight: "bold" }}> Collection </span>tab.</div><div>Learn more about creating Scripture Burrito projects with Scribe. Refer Scribe Docs.</div>',
+    'msg-no-resource-for-bible-obs-download': '<div>This content is unavailable for this language</div><div> You can Import Own <span style="font-weight:bold">Scripture Burrito</span> Resources through<span style={{ fontWeight: "bold" }}> Collection </span>tab.</div><div>Learn more about creating Scripture Burrito projects with Scribe. Refer Scribe Docs.</div>',
     'label-back': 'Back',
     'label-speed': 'Speed',
     'label-record': 'Record',

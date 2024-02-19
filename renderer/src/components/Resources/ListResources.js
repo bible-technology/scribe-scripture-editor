@@ -112,19 +112,19 @@ export const ListResources = ({
           await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
           break;
         case 'tq':
-          await fetchTranslationResource('Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+          await fetchTranslationResource('Translation Questions&subject=tsv Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
           break;
         case 'obs-tn':
           await fetchTranslationResource('OBS Translation Notes&subject=tsv obs Translation notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
           break;
         case 'obs-tq':
-          await fetchTranslationResource('OBS Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+          await fetchTranslationResource('OBS Translation Questions&subject=tsv obs Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
           break;
         case 'obs-twlm':
           await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
           break;
         case 'ta':
-          await fetchTranslationResource('Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
+          await fetchTranslationResource('Translation Academy&subject=tsv Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
           break;
         default:
           break;

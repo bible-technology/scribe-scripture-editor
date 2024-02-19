@@ -27,7 +27,7 @@
 	"eslint.codeAction.disableRuleComment": {},
 	"eslint.codeAction.showDocumentation": {},
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
+		"source.fixAll.eslint": "explicit"
 	},
 	"eslint.workingDirectories": [],
 	"editor.tabSize": 2

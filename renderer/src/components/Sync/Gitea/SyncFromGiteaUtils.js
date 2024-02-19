@@ -212,7 +212,7 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       });
       sbDataObject.idAuthorities = {
       scribe: {
-          id: 'http://www.autographa.org',
+          id: 'http://www.scribe.bible',
           name: {
           en: 'Scribe application',
           },

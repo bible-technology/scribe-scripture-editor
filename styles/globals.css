@@ -103,6 +103,10 @@ p.paragraph:has(.chapter) {
 	@apply text-primary text-sm;
 }
 
+.ref-editor ::selection {
+  @apply bg-primary-50;
+}
+
 /* .perf .verse:after {
 	visibility: visible;
 	position: absolute;

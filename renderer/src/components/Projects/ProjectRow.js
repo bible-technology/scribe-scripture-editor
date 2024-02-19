@@ -59,9 +59,10 @@ const ProjectRow = ({
     }
     return 0;
   }
+
   return (
     <tbody className="bg-white divide-y divide-gray-200" id="projects-list-body">
-      {projects?.length === 0 && (
+      {((projects?.length === 0 && filteredProjects?.length > 0) || (!showArchived && projects?.length === archivedProjects?.length)) && (
         <tr>
           <td colSpan="7" className="space-y-7 px-6 py-28 whitespace-nowrap text-center">
             <h2 className="font-medium text-gray-500 tracking-wide">You don&apos;t have any projects yet</h2>
@@ -87,12 +88,12 @@ const ProjectRow = ({
         </tr>
       )}
       {
-        projects?.length !== 0 && filteredProjects?.length === 0 && (
-          <tr>
-            <td colSpan="7" className="space-y-7 px-6 py-28 whitespace-nowrap text-center">
-              <h2 className="font-medium text-gray-500 tracking-wide">No projects found. Try a different search term.</h2>
-            </td>
-          </tr>
+       projects?.length > 0 && filteredProjects?.length === 0 && (
+       <tr>
+         <td colSpan="7" className="space-y-7 px-6 py-28 whitespace-nowrap text-center">
+           <h2 className="font-medium text-gray-500 tracking-wide">No projects found. Try a different search term.</h2>
+         </td>
+       </tr>
         )
       }
       {

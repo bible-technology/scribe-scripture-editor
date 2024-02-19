@@ -234,7 +234,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         });
         metadata.idAuthorities = {
           scribe: {
-            id: 'http://www.autographa.org',
+            id: 'http://www.scribe.bible',
             name: {
               en: 'Scribe application',
             },

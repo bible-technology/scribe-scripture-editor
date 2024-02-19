@@ -35,6 +35,7 @@ const findCode = (list, id) => {
   });
   return code;
 };
+
 export const createDownloadedResourceSB = async (username, resourceMeta, projectResource, selectResource) => {
   logger.debug('createDownloadedResourceSB.js', 'Create Metadata for downloaded bible resource');
   // generate unique key
@@ -90,9 +91,11 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
       json.identification.name.en = projectResource.name;
       json.identification.abbreviation.en = '';
 
+      logger.debug('createDownloadedResourceSB.js', `resourceMeta?.dublin_core == ${resourceMeta}`);
+      // if it's a SB resourceMeta.dublin_core doesn't exist
       if (resourceMeta?.dublin_core?.language.identifier) {
         json.languages[0].tag = resourceMeta.dublin_core.language.identifier;
-      } else if (resourceMeta.dublin_core.language.title) {
+      } else if (resourceMeta?.dublin_core?.language.title) {
         const code = findCode(languageCode, resourceMeta.dublin_core.language.title);
         if (code) {
           json.languages[0].tag = code;
@@ -127,7 +130,7 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
 // export default createDownloadedResourceSB;
 
 export const generateAgSettings = async (metaData, currentResourceMeta, selectResource) => new Promise((resolve) => {
-  logger.debug('DownloadResourcePopUp.js', 'In generate scribe-settings for resource downloaded');
+  logger.debug('createDownloadedResourceSB.js', 'In generate scribe-settings for resource downloaded');
   try {
     const settings = {
       version: environment.AG_SETTING_VERSION,
@@ -157,7 +160,7 @@ export const generateAgSettings = async (metaData, currentResourceMeta, selectRe
 export const generateResourceIngredientsTextTransaltion = async (currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile) => {
   // generating ingredients content in metadata
   currentResourceMeta?.projects.forEach(async (project) => {
-    logger.debug('DownloadResourcePopUp.js', 'In adding ingredients to burrito for TextTransaltion');
+    logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito for TextTransaltion');
     const fs = window.require('fs');
     if (fs.existsSync(path.join(folder, currentResourceProject.name, project.path))) {
       const filecontent = await fs.readFileSync(path.join(folder, currentResourceProject.name, project.path), 'utf8');
@@ -171,7 +174,7 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
         scope: { [project?.identifier.toUpperCase()]: [] },
       };
     } else {
-      logger.debug('DownloadResourcePopUp.js', 'error file not found in resource download');
+      logger.debug('createDownloadedResourceSB.js', 'error file not found In create downloaded resource SB');
       throw new Error(`File not Exist in project Directory:  ${project.path}`);
     }
   });
@@ -179,7 +182,7 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
 };
 
 export const generateResourceIngredientsOBS = async (currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, files) => {
-  logger.debug('DownloadResourcePopUp.js', 'In adding ingredients to burrito of OBS');
+  logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito of OBS');
   files.forEach(async (file) => { // en_obs/content/01.md, en_obs/content/front/title.md
     const fs = window.require('fs');
     const endPart = file.split('/').pop();
@@ -209,7 +212,7 @@ export const generateResourceIngredientsOBS = async (currentResourceMeta, path, 
           resourceBurritoFile.ingredients[file.replace(`${currentResourceProject.name}/`, '')].role = 'title';
         }
       } else {
-        logger.debug('DownloadResourcePopUp.js', 'error file not found in resource download');
+        logger.debug('createDownloadedResourceSB.js', 'error file not found In create downloaded resource SB');
         throw new Error(`File not Exist in project Directory:  ${file}`);
       }
     }
@@ -229,7 +232,7 @@ export const generateWebResourceIngredientsOBS = async (currentResourceMeta, cur
       const { data: fileResponse, error: fileError } = await sbStorageDownload(filePath);
 
       if (fileError) {
-        logger.debug('DownloadResourcePopUp.js', 'error file not found in resource download');
+        logger.debug('createDownloadedResourceSB.js', 'error file not found In create downloaded resource SB');
         throw new Error(`File not Exist in project Directory: ${file}`);
       }
 
@@ -260,14 +263,14 @@ export const generateWebResourceIngredientsOBS = async (currentResourceMeta, cur
 };
 
 export const handleDownloadResources = async (resourceData, selectResource, action, update = false) => {
-  logger.debug('DownloadResourcePopUp.js', 'In resource download - started : ');
+  logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - started : ');
   const newpath = localStorage.getItem('userPath');
   //   console.log({
   //  resourceData, selectResource, action, update,
   // });
   return new Promise((resolve, reject) => {
     localForage.getItem('userProfile').then(async (user) => {
-      logger.debug('DownloadResourcePopUp.js', 'In resource download user fetch - ', user?.username);
+      logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB user fetch - ', user?.username);
       const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
       const fs = window.require('fs');
       let resourceBurritoFile = {};
@@ -298,7 +301,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                       const storedresourceMeta = filecontentMeta?.resourceMeta;
                       if (storedresourceMeta?.name === resource?.name && storedresourceMeta?.owner === resource?.owner
                         && storedresourceMeta?.release?.tag_name === resource?.release?.tag_name) {
-                        logger.debug('DownloadResourcePopUp.js', `In resource download  existing resource ${resource?.name}_${resource?.release?.tag_name}`);
+                        logger.debug('createDownloadedResourceSB.js', `In create downloaded resource SB  existing resource ${resource?.name}_${resource?.release?.tag_name}`);
                         resourceExist = true;
                         resourceExistCount += 1;
                       }
@@ -313,7 +316,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                   // eslint-disable-next-line no-loop-func
                   .then(async (response) => {
                     logger.debug('passed  fetch meta ---------->', { response });
-                    logger.debug('DownloadResourcePopUp.js', 'In resource download - fetch resourceMeta yml');
+                    logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - fetch resourceMeta yml');
                     currentResourceMeta = response;
                     currentResourceProject = resource;
                     // creating burrito template
@@ -323,21 +326,21 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                     resourceBurritoFile.resourceMeta.lastUpdatedAg = moment().format();
                     logger.debug('passed  create burrito ---------->');
 
-                    logger.debug('DownloadResourcePopUp.js', 'In resource download - basic burrito generated for resource ', `${resource.name}-${resource.owner}`);
+                    logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - basic burrito generated for resource ', `${resource.name}-${resource.owner}`);
 
                     currentProjectName = `${resource.name}_${Object.keys(resourceBurritoFile.identification.primary.scribe)[0]}`;
                     await fetch(resource.zipball_url)
                       .then((res) => res.arrayBuffer())
                       .then(async (blob) => {
-                        logger.debug('DownloadResourcePopUp.js', 'In resource download - downloading zip content ');
+                        logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - downloading zip content ');
                         if (!fs.existsSync(folder)) {
                           fs.mkdirSync(folder, { recursive: true });
                         }
                         // wririntg zip to local
                         await fs.writeFileSync(path.join(folder, `${currentProjectName}.zip`), Buffer.from(blob));
-                        logger.debug('DownloadResourcePopUp.js', 'In resource download - downloading zip content completed ');
+                        logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - downloading zip content completed ');
 
-                        logger.debug('DownloadResourcePopUp.js', 'In resource download - Unzip downloaded resource');
+                        logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - Unzip downloaded resource');
                         // extract zip
                         const filecontent = await fs.readFileSync(path.join(folder, `${currentProjectName}.zip`));
                         const result = await JSZip.loadAsync(filecontent);
@@ -354,7 +357,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                             fs.writeFileSync(path.join(folder, item.name), bufferContent);
                           }
                           if (key.toLowerCase().includes('license')) {
-                            logger.debug('DownloadResourcePopUp.js', 'In resource download - check license file found');
+                            logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - check license file found');
                             licenseFileFound = true;
                             // console.log('license exist');
                             if (fs.existsSync(path.join(folder, key))) {
@@ -375,21 +378,29 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                         // ingredients add to burrito
                         switch (selectResource) {
                           case 'bible':
-                            resourceBurritoFile = await generateResourceIngredientsTextTransaltion(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile);
+                            if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
+                              resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
+                            } else {
+                              resourceBurritoFile = await generateResourceIngredientsTextTransaltion(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile);
+                            }
                             customLicenseContent = customLicense;
                             break;
                           case 'obs':
-                            resourceBurritoFile = await generateResourceIngredientsOBS(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, keys);
+                            if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
+                              resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
+                            } else {
+                              resourceBurritoFile = await generateResourceIngredientsOBS(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, keys);
+                            }
                             customLicenseContent = OBSLicense;
                             break;
                           default:
-                            throw new Error(' can not process : Invalid Type od Resource requested');
+                            throw new Error('Cannot process : Invalid Type of requested Resource');
                         }
                         logger.debug('passed ingredients creations ---------->');
 
                         // custom license adding
                         if (!licenseFileFound) {
-                          logger.debug('DownloadResourcePopUp.js', 'In resource custom license add - no license found');
+                          logger.debug('createDownloadedResourceSB.js', 'In resource custom license add - no license found');
                           // console.log('no license file found -', md5(customLicenseContent));
                           if (fs.existsSync(path.join(folder, currentResourceProject.name))) {
                             fs.writeFileSync(path.join(folder, currentResourceProject.name, 'LICENSE.md'), customLicenseContent);
@@ -404,7 +415,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                         }
 
                         // scribe settings file generation
-                        logger.debug('DownloadResourcePopUp.js', 'generating scribe-settings');
+                        logger.debug('createDownloadedResourceSB.js', 'generating scribe-settings');
                         const settings = await generateAgSettings(resourceBurritoFile, currentResourceMeta, selectResource);
                         await fs.writeFileSync(path.join(folder, currentResourceProject.name, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
                         const settingsContent = fs.readFileSync(path.join(folder, currentResourceProject.name, environment.PROJECT_SETTING_FILE), 'utf8');
@@ -416,26 +427,30 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                           size: stats.size,
                           role: 'x-scribe',
                         };
+
                         // added new section to avoid ingredients issue in meta some times (new user)
-                        const ymlPath = currentResourceMeta?.projects[0]?.path.replace('./', '');
-                        const renames = Object.keys(resourceBurritoFile.ingredients);
-                        const regex = new RegExp(`(\\.\\/)|(${ymlPath}[\\/\\\\])`, 'g');
-                        await renames?.forEach((rename) => {
-                          if (!rename.match(regex)) {
-                            delete resourceBurritoFile.ingredients[rename];
-                          }
-                        });
+                        // only useful if it's NOT a scripture burrito
+                        if (currentResourceMeta.format && currentResourceMeta.format !== 'scripture burrito') {
+                          const ymlPath = currentResourceMeta?.projects[0]?.path.replace('./', '');
+                          const renames = Object.keys(resourceBurritoFile.ingredients);
+                          const regex = new RegExp(`(\\.\\/)|(${ymlPath}[\\/\\\\])`, 'g');
+                          await renames?.forEach((rename) => {
+                            if (!rename.match(regex)) {
+                              delete resourceBurritoFile.ingredients[rename];
+                            }
+                          });
+                        }
                         // write metaData.json
                         await fs.writeFileSync(path.join(folder, currentResourceProject.name, 'metadata.json'), JSON.stringify(resourceBurritoFile));
 
                         logger.debug('passed scribe settings creations ---------->');
 
                         // finally remove zip and rename base folder to projectname_id
-                        logger.debug('DownloadResourcePopUp.js', 'deleting zip file - rename project with project + id in scribe format');
+                        logger.debug('createDownloadedResourceSB.js', 'deleting zip file - rename project with project + id in scribe format');
                         if (fs.existsSync(folder)) {
                           fs.renameSync(path.join(folder, currentResourceProject.name), path.join(folder, currentProjectName));
                           fs.unlinkSync(path.join(folder, `${currentProjectName}.zip`), () => {
-                            logger.debug('DownloadResourcePopUp.js', 'error in deleting zip');
+                            logger.debug('createDownloadedResourceSB.js', 'error in deleting zip');
                             throw new Error(`Removing Resource Zip Failed :  ${currentResourceProject.name}`);
                           });
                         }
@@ -447,7 +462,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                   });
               }
               resourceExist = false;
-              logger.debug('DownloadResourcePopUp.js', 'Finished single resource: ');
+              logger.debug('createDownloadedResourceSB.js', 'Finished single resource: ');
               logger.debug('completed single resource ---------->', resource.name);
               action && action?.setDownloadCount((prev) => prev + 1);
             }
@@ -466,7 +481,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
           resolve(resp_obj);
         }
       } catch (err) {
-        logger.debug('DownloadResourcePopUp.js', 'Catching error in dowload resource', err);
+        logger.debug('createDownloadedResourceSB.js', 'Catching error in create dowload resource SB', err);
         resourceExistCount = 0;
         reject(err);
       }
@@ -618,15 +633,18 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                 size,
                 role: 'x-scribe',
               };
+
               // added new section to avoid ingredients issue in meta some times (new user)
-              const ymlPath = currentResourceMeta?.projects[0]?.path.replace('./', '');
-              const renames = Object.keys(resourceBurritoFile.ingredients);
-              const regex = new RegExp(`(\\.\\/)|(${ymlPath}[\\/\\\\])`, 'g');
-              renames?.forEach((rename) => {
-                if (!rename.match(regex)) {
-                  delete resourceBurritoFile.ingredients[rename];
-                }
-              });
+              if (currentResourceMeta.format && currentResourceMeta.format !== 'scripture burrito') {
+                const ymlPath = currentResourceMeta?.projects[0]?.path.replace('./', '');
+                const renames = Object.keys(resourceBurritoFile.ingredients);
+                const regex = new RegExp(`(\\.\\/)|(${ymlPath}[\\/\\\\])`, 'g');
+                renames?.forEach((rename) => {
+                  if (!rename.match(regex)) {
+                    delete resourceBurritoFile.ingredients[rename];
+                  }
+                });
+              }
 
               await sbStorageUpload(`${folder}/${currentResourceProject.name}/metadata.json`, JSON.stringify(resourceBurritoFile), { upsert: false });
 
