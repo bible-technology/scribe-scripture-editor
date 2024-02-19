@@ -63,6 +63,8 @@ export default function ImportProjectPopUp(props) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
     removeExtractedZipDir()
     setValid(false);
+    setSbData()
+    setFolderPath()
     closePopUp(false);
     setShow(false);
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
@@ -70,15 +72,15 @@ export default function ImportProjectPopUp(props) {
 
   const openFileDialogSettingData = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
-    // const options = { properties: ['openDirectory', 'openFile'] };
-    const options = { properties: [] };
+    // const options = { properties: ['openFile','openDirectory'] };
+    const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
     const { dialog } = window.require('@electron/remote');
     const chosenFolder = await dialog.showOpenDialog(options);
     let selectedFolderPath;
     if ((chosenFolder.filePaths).length > 0) {
       logger.debug('ImportProjectPopUp.js', 'Selected a directory');
       await localforage.getItem('userProfile').then(async (value) => {
-        setShow(true);
+        // setShow(true);
         setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         selectedFolderPath = chosenFolder.filePaths[0]
@@ -109,7 +111,7 @@ export default function ImportProjectPopUp(props) {
     const path = require('path');
     const fs = window.require('fs');
     // delete the extracted zip file after successfull / failed import
-    if(importingIsZip) {
+    if(importingIsZip && folderPath) {
       setImportingIsZip(false)
       if (fs.existsSync(path.join(folderPath))) {
         await fs.rmdirSync(path.join(folderPath), { recursive: true }, async (err) => {
@@ -225,7 +227,8 @@ export default function ImportProjectPopUp(props) {
   React.useEffect(() => {
     if (open) {
       setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
-      openFileDialogSettingData();
+      // openFileDialogSettingData();
+      setShow(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -308,8 +311,18 @@ export default function ImportProjectPopUp(props) {
                       </div>
 
                       <div>
-                        <h4 className="text-red-500">{valid === true ? t('label-enter-location') : (sbData?.fileExist ? '' : t('dynamic-msg-unable-find-buritto-snack'))}</h4>
+                        <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ((sbData?.fileExist || !folderPath) ? '' : t('dynamic-msg-unable-find-buritto-snack'))}</h4>
                       </div>
+
+                      {/* check zip or folder */}
+                      {!folderPath && (
+                        <div className="w-full flex">
+                        <div className="flex flex-row justify-end mr-3">
+                          <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
+                          <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                        </div>
+                      </div>
+                      )}
 
                     </div>
 
@@ -348,7 +361,7 @@ export default function ImportProjectPopUp(props) {
                           </label>
                         )}
                         </div>
-                      )}
+                      ) }
 
                     <div className="flex gap-6 mb-5 justify-end">
 
