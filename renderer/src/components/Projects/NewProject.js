@@ -22,7 +22,7 @@ import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
 import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 // eslint-disable-next-line no-unused-vars
 const solutions = [
   {

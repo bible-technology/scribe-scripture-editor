@@ -15,7 +15,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { validate } from '../../../util/validate';
 import * as logger from '../../../logger';
-import burrito from '../../../lib/BurritoTemplete.json';
+import burrito from '../../../lib/BurritoTemplate.json';
 import ConfirmationModal from '../../editor/ConfirmationModal';
 import { ProgressCircle } from '../../../components/ProgressCircle';
 import { exportDefaultAudio, exportFullAudio } from './ExportUtils';

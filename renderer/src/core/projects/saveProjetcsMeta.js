@@ -21,7 +21,7 @@ const bookAvailable = (list, id) => list.some((obj) => obj === id);
 const checker = (arr, target) => target.every((v) => arr.includes(v));
 
 // Add the new mode here
-const flavours = {
+const flavors = {
   Translation: 'textTranslation',
   Audio: 'audioTranslation',
   OBS: 'textStories',
@@ -78,13 +78,13 @@ export const saveProjectsMeta = async (projectMetaObj) => {
     const existingName = name && name.toLowerCase().replace(/\s+/g, '_');
     const formatedName = projectMetaObj.newProjectFields.projectName?.toLowerCase().replace(/\s+/g, '_');
     if ((formatedName === existingName) && projectMetaObj.call === 'new') {
-      // read meta and check the flavour is same or not
+      // read meta and check the flavors is same or not
       const readDuplicateMeta = fs.readFileSync(path.join(projectDir, folder, 'metadata.json'));
       const currentduplicateMeta = JSON.parse(readDuplicateMeta);
-      const duplicatePrjFlavour = currentduplicateMeta?.type?.flavorType?.flavor?.name;
-      const currentFlavourType = projectMetaObj.projectType;
+      const duplicatePrjFlavor = currentduplicateMeta?.type?.flavorType?.flavor?.name;
+      const currentFlavorType = projectMetaObj.projectType;
       // checking for duplicates
-      if (flavours[currentFlavourType] === duplicatePrjFlavour) {
+      if (flavors[currentFlavorType] === duplicatePrjFlavor) {
         projectNameExists = true;
         logger.warn('saveProjectsMeta.js', 'Project Name already exists');
         status.push({ type: 'warning', value: 'projectname exists, check you archived or projects tab. NOTE : Project name is case-insenstive. Space and underscore will be treated as same.' });

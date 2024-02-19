@@ -27,7 +27,7 @@ export const Ru = {
     'projects-page': 'Проекты',
     'label-search': 'Поиск',
     'label-project': 'Проект',
-    'label-flavour': 'тип',
+    'label-flavor': 'тип',
     'label-project-type': 'Тип проекта',
     'label-project-name': 'Название проекта',
     'label-language': 'Язык интерфейса',

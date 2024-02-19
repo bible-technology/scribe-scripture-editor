@@ -16,7 +16,7 @@ import CloseIcon from '@/illustrations/close-button-black.svg';
 import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
 import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 import { mergeProject } from './Import/mergeProject';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateTranslationSB';

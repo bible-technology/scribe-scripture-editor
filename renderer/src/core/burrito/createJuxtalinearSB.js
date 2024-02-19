@@ -1,21 +1,21 @@
 import moment from 'moment';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateTranslationSB';
 
 const createJuxtalinearSB = (
-username,
-projectFields,
-selectedScope,
-language,
-langCode,
-direction,
-copyright,
-id,
-project,
-call,
-update,
+  username,
+  projectFields,
+  selectedScope,
+  language,
+  langCode,
+  direction,
+  copyright,
+  id,
+  project,
+  call,
+  update,
 ) => {
   logger.debug('createJuxtalinearSB.js', 'In createJuxtalinearSB');
   const localizedNames = {};
@@ -31,6 +31,7 @@ update,
     } else {
       json = burrito;
     }
+    json.type.flavorType.flavor.name = 'x-juxtalinear';
     json.meta.generator.userName = username;
     json.meta.generator.softwareVersion = packageInfo.version;
     if (call !== 'edit') {

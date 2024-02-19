@@ -27,7 +27,7 @@ export const Fa = {
     'projects-page': 'Projects',
     'label-search': 'Search',
     'label-project': 'Project',
-    'label-flavour': 'Flavour',
+    'label-flavor': 'Flavor',
     'label-project-type': 'Type',
     'label-project-name': 'Project Name',
     'label-language': 'Language Name',

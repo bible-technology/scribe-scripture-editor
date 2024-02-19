@@ -228,7 +228,7 @@ export default function ImportPopUp(props) {
 
       // Nicolas : added juxta here
       case 'Juxta':
-        setfileFilter([{ name: 'json files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT'] }]);
+        setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
         // Nicolas : TODO translation here
         setLabelImportFiles('Choose json files');
       break;

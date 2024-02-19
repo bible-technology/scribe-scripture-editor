@@ -69,18 +69,18 @@ export const saveReferenceResource = (font = '') => {
   localforage.getItem('currentProject').then(async (projectName) => {
     const _projectname = await splitStringByLastOccurence(projectName, '_');
     // const _projectname = projectName?.split('_');
-    localforage.getItem('projectmeta').then((value) => {
-      Object.entries(value).forEach(
+    localforage.getItem('projectmeta').then((projectmeta) => {
+      Object.entries(projectmeta).forEach(
         ([, _value]) => {
           Object.entries(_value).forEach(
             ([, resources]) => {
               const id = Object.keys(resources.identification.primary[packageInfo.name]);
               if (id[0] === _projectname[1]) {
-                localforage.getItem('userProfile').then(async (value) => {
+                localforage.getItem('userProfile').then(async (userProfile) => {
                   if (isElectron()) {
-                    await updateAgSettings(value?.username, projectName, resources, font);
+                    await updateAgSettings(userProfile?.username, projectName, resources, font);
                   } else {
-                    await updateWebAgSettings(value?.user?.email, projectName, resources);
+                    await updateWebAgSettings(userProfile?.user?.email, projectName, resources);
                   }
                 });
               }

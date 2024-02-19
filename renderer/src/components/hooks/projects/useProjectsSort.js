@@ -153,6 +153,8 @@ function useProjectsSort() {
                       let flavorType;
                       let isArchived;
                       let starred;
+                      let proj;
+                      let projJuxta;
                       switch (
                       _project.type.flavorType.flavor
                         .name
@@ -160,16 +162,17 @@ function useProjectsSort() {
                         // Nicolas : add description for juxta here
                         // NicolasEdits : added Juxta
                         case 'x-juxtalinear':
-                          lastSeen = _project.project
-                            ?.textTranslation
-                            ?.lastSeen;
-                          description = _project.project
-                            ?.textTranslation
-                            ?.description;
-                          isArchived = _project.project
-                            ?.textTranslation
-                            ?.isArchived;
-                            starred = _project.project?.textTranslation?.starred;
+                          proj = _project.project;
+                          if (proj) {
+                            projJuxta = proj['x-juxtalinear'];
+                            lastSeen = projJuxta
+                              ?.lastSeen;
+                            description = projJuxta
+                              ?.description;
+                            isArchived = projJuxta
+                              ?.isArchived;
+                            starred = projJuxta.starred;
+                          }
                           flavorType = 'Juxtalinear';
                           break;
                         case 'textTranslation':
@@ -262,15 +265,18 @@ function useProjectsSort() {
       if (_project.identification.name.en !== name) { return; }
 
       const flavorName = _project.type.flavorType.flavor.name;
+      logger.debug(`flavorName == ${flavorName}`);
       const dirNameMap = {
-        textTranslation: 'textTranslation',
+        textTranslation: 'juxtalinear',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        'x-juxtalinear': 'x-juxtalinear',
       };
 
       const dirName = dirNameMap[flavorName];
       if (!dirName) { return; }
 
+      logger.debug(`_project.project == ${JSON.stringify(_project.project, null, 4)}`);
       const status = _project.project[dirName].isArchived;
       _project.project[dirName].isArchived = !status;
       _project.project[dirName].lastSeen = moment().format();

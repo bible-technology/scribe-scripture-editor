@@ -7,7 +7,7 @@
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
 import * as localForage from 'localforage';
-import Textburrito from '../../../lib/BurritoTemplete.json';
+import Textburrito from '../../../lib/BurritoTemplate.json';
 import OBSburrito from '../../../lib/OBSTemplete.json';
 import languageCode from '../../../lib/LanguageCode.json';
 import * as logger from '../../../logger';
@@ -54,7 +54,7 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
         json = OBSburrito;
         break;
       default:
-        throw new Error(' can not process :Inavalid Type od Resource requested');
+        throw new Error(' can not process : Invalid Type od Resource requested');
       // break;
     }
     return new Promise((resolve) => {
@@ -90,7 +90,7 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
       json.identification.name.en = projectResource.name;
       json.identification.abbreviation.en = '';
 
-      if (resourceMeta.dublin_core.language.identifier) {
+      if (resourceMeta?.dublin_core?.language.identifier) {
         json.languages[0].tag = resourceMeta.dublin_core.language.identifier;
       } else if (resourceMeta.dublin_core.language.title) {
         const code = findCode(languageCode, resourceMeta.dublin_core.language.title);
@@ -383,7 +383,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                             customLicenseContent = OBSLicense;
                             break;
                           default:
-                            throw new Error(' can not process :Inavalid Type od Resource requested');
+                            throw new Error(' can not process : Invalid Type od Resource requested');
                         }
                         logger.debug('passed ingredients creations ---------->');
 

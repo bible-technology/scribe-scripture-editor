@@ -94,6 +94,7 @@ export default function ReferenceContextProvider({ children }) {
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
+        let resProj;
         // const _projectname = projectName?.split('_');
         const _projectname = await splitStringByLastOccurence(projectName, '_');
         localforage.getItem('projectmeta').then((val) => {
@@ -105,8 +106,14 @@ export default function ReferenceContextProvider({ children }) {
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
                       // Nicolas : add a case for juxta here ?
+                      case 'x-juxtalinear':
+                        resProj = resources.project['x-juxtalinear'];
+                        setBookmarksVerses(resProj.bookMarks);
+                        setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resProj?.font);
+                        break;
                       case 'textTranslation':
-                        setBookmarksVerses(resources.project?.textTranslation.bookMarks);
+                        setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.textTranslation?.font);
                         break;

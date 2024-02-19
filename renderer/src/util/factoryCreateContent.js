@@ -1,6 +1,7 @@
 import { createVersificationUSFM } from './createVersificationUSFM';
 import { createAudioVersification } from './createAudioVersification';
 import { createObsContent } from './createObsContent';
+import { createJuxtaContent } from './createJuxtaContent';
 import * as logger from '../logger';
 
 // const projectTypes = ['Translation', 'Audio', 'OBS', 'Juxta'];
@@ -66,7 +67,7 @@ export const factoryCreateContent = async ({
       break;
     case 'Juxta':
       // Nicolas : Todo createVersificationJuxta ??
-      promise = await createVersificationUSFM(
+      promise = await createJuxtaContent(
         username,
         project,
         versification,
