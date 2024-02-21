@@ -5,17 +5,17 @@ import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateTranslationSB';
 
 const createTranslationSB = (
-username,
-projectFields,
-selectedScope,
-language,
-langCode,
-direction,
-copyright,
-id,
-project,
-call,
-update,
+  username,
+  projectFields,
+  selectedScope,
+  language,
+  langCode,
+  direction,
+  copyright,
+  id,
+  project,
+  call,
+  update,
 ) => {
   logger.debug('createTranslationSB.js', 'In createTranslationSB');
   let localizedNames = {};

@@ -3,7 +3,9 @@ const { Proskomma } = require("proskomma-core")
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { SofriaRenderFromProskomma } = require("proskomma-json-tools");
 
-
+// TODO : transferer cette fonction vers 
+// => renderer/src/components/EditorPage/JuxtaTextEditor/hooks/useReadUsfmFile.js 
+// and call it into "renderer/src/components/Projects/ImportPopUp.js" line 178
 export const readUsfm = (srcUsfm: string | undefined) => {
   const pk = new Proskomma()
   pk.importDocument({ lang: "grc", abbr: "ugnt" }, "usfm", srcUsfm)
@@ -197,7 +199,6 @@ export const readUsfm = (srcUsfm: string | undefined) => {
       {
         description: "Postprocess sentences",
         test: () => true,
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         action: () => {},
       },
     ],

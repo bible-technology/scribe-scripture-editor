@@ -268,3 +268,9 @@ p.paragraph:has(.chapter) {
 .button {
   @apply flex h-8 cursor-pointer  items-center justify-center rounded-lg p-2 text-xs font-bold  outline-none  xl:px-4;
 }
+
+ion-toolbar {
+  --background: #FF5500;
+
+  --border-color: white;
+}

@@ -149,7 +149,7 @@ export default function Editor(props) {
       }}
       className="border-l-2 border-r-2 border-secondary pb-16 overflow-auto h-full scrollbars-width leading-8"
     >
-      <div className="editor" id="editor" style={style}>
+      <div id="editor" style={style}>
         {/* {!bookAvailable && <EmptyScreen />}
         {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
         {bookAvailable && sequenceId && !bookChange && (

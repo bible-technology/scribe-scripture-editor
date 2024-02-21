@@ -4,8 +4,9 @@ import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { readRefBurrito } from '../../../../core/reference/readRefBurrito';
 import { readFile } from '../../../../core/editor/readFile';
 import packageInfo from '../../../../../../package.json';
+
 //  hook to fetch usfmfile from system drive
-export const useReadUsfmFile = (test = '') => {
+export const useReadUsfmFile = () => {
   const [readFileName, setReadFileName] = useState('');
   const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setbookAvailable] = useState(false);
@@ -39,6 +40,7 @@ export const useReadUsfmFile = (test = '') => {
           const books = [{
             selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
             bookCode: currentBook.bookId.toLowerCase(),
+            bookFileName: currentBook.fileName,
             data: fileData,
           }];
           setUsfmData(books);
@@ -54,6 +56,6 @@ export const useReadUsfmFile = (test = '') => {
       }
     }
     readLocalFile();
-  }, [bookId, test]);
+  }, [bookId]);
   return { usfmData, bookAvailable, readFileName };
 };

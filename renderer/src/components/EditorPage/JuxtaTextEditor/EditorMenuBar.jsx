@@ -1,22 +1,22 @@
 import React, { useContext } from 'react';
 
 import { ProjectContext } from '@/components/context/ProjectContext';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
+// import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/JuxtaTextEditor/BibleNavigationX';
 import BibleNavigationX from './BibleNavigationX';
-import Buttons from './Buttons';
-import InsertMenu from './InsertMenu';
+// import Buttons from './Buttons';
+// import InsertMenu from './InsertMenu';
 
 export default function EditorMenuBar(props) {
   const {
-    selectedFont,
+    // selectedFont,
     chapterNumber,
     setChapterNumber,
     verseNumber,
     setVerseNumber,
-    handleSelectedFont,
-    setTriggerVerseInsert,
+    // handleSelectedFont,
+    // setTriggerVerseInsert,
   } = props;
 
   const {
@@ -25,7 +25,7 @@ export default function EditorMenuBar(props) {
   } = useContext(ProjectContext);
 
   return (
-    <div className="relative min-h-[66px] flex flex-col bg-secondary rounded-t-md overflow-hidden">
+    <div className="relative min-h-[33px] flex flex-col bg-secondary rounded-t-md overflow-hidden">
       <div className="flex min-h-[33px] items-center justify-between ">
         <BibleNavigationX
           chapterNumber={chapterNumber}
@@ -37,7 +37,7 @@ export default function EditorMenuBar(props) {
           aria-label="editor-pane"
           className="flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
         >
-          Editor
+          Juxtalinear editor
         </div>
         <div
           title="navigation lock/unlock"
@@ -73,7 +73,7 @@ export default function EditorMenuBar(props) {
           </div>
         </div>
       </div>
-      <div className="mx-2.5 min-h-[33px] flex items-center justify-center">
+      {/* <div className="mx-2.5 min-h-[33px] flex items-center justify-center">
         <div className="flex items-center">
           <Buttons {...props} />
         </div>
@@ -81,7 +81,7 @@ export default function EditorMenuBar(props) {
           <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
           <InsertMenu setTriggerVerseInsert={setTriggerVerseInsert} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

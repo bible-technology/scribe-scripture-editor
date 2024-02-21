@@ -86,7 +86,7 @@ const Home: React.FC = () => {
   const clickRef = useRef(0);
   const usfmOpenRef = useRef<HTMLInputElement>(null);
   const jsonOpenRef = useRef<HTMLInputElement>(null);
-  const { usfmData, bookAvailable, readFileName } = useReadUsfmFile('Hoazeme');
+  const { usfmData, bookAvailable, readFileName } = useReadUsfmFile();
 
   // const [mode, setMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light");
 
@@ -120,14 +120,20 @@ const Home: React.FC = () => {
     // const blob = new Blob([usfmData[0] as string], { type: 'application/json' });
     // saveAs(blob, 'cake.json');
     if(bookAvailable) {
-      // const blob = new Blob([usfmData[0].data as string], { type: 'application/json' });
-      // saveAs(blob, 'caked.json');
-      // const res = readUsfm(usfmData[0].data);
-      const stcs = JSON.parse(usfmData[0].data);
+      let normalizedExt = usfmData[0].bookFileName.split('.')[1].toLowerCase();
+      let resContent;
+      // if(normalizedExt === 'usfm' || normalizedExt === 'usfm') {
+      //   resContent = readUsfm(usfmData[0].data);
+      // } else {
+      resContent = JSON.parse(usfmData[0].data);
+      // }
       setFileName(readFileName);
       setCurIndex(0);
-      setGlobalTotalSentences(remakeSentences(stcs));
-      setOriginText(stcs.map((sentence) => sentence.sourceString));
+      setGlobalTotalSentences(remakeSentences(resContent));
+      setOriginText(resContent.map((sentence: { sourceString: string; }) => sentence.sourceString));
+      if (resContent.length) {
+        setItemArrays([getItems(resContent)]);
+      }
     }
   }
 

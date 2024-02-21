@@ -17941,16 +17941,18 @@ proskomma-json-tools@^0.7.1:
     cheerio "^1.0.0-rc.12"
     deep-equal "^2.0.5"
 
-proskomma-json-tools@^0.7.2:
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.7.7.tgz#1dfa3344196a67e67896e14e17558dda6e904ccb"
-  integrity sha512-Sgv7bL1jzMqlGm2hkMDqavbH0abJ5G01obuvDeFf/3ept5tux7yHv58wolpHGVOW19Dp1Hclrjkelq1OJHZ6wA==
+proskomma-json-tools@^0.8.8:
+  version "0.8.8"
+  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.8.8.tgz#06b461fb11fdf82e0977fb284054ed47f1eeb0f1"
+  integrity sha512-S+Lc+o0PQSb7qCb8eLSn/xho2e+KftKUoQ6axge8bDlfGPJ7/Lk3GdaOMEne50KRnVSkevO0TcneBZVrN6vL0A==
   dependencies:
     "@babel/core" "^7.23.2"
     "@babel/plugin-proposal-throw-expressions" "^7.22.5"
     ajv "^8.12.0"
     cheerio "^1.0.0-rc.12"
     deep-equal "^2.2.2"
+    usfm-js "^3.4.2"
+    xregexp "^5.1.1"
 
 proskomma-react-hooks@2.4.0:
   version "2.4.0"
@@ -21755,6 +21757,13 @@ usfm-js@^2.0.2:
   version "2.1.0"
   resolved "https://registry.npmjs.org/usfm-js/-/usfm-js-2.1.0.tgz"
   integrity sha512-DemzdzAwrVeuzRwnZYOKvAle/U2ZUUf04NQSVDgqZCSFyH7hVhe2/PWC7jT2DKnPMYoa0IxnG3XGbuOPXgZ/oQ==
+  dependencies:
+    lodash.clonedeep "^4.5.0"
+
+usfm-js@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/usfm-js/-/usfm-js-3.4.2.tgz#a4232cffe38c9f521246b007a4045648cbcf419a"
+  integrity sha512-i5nGxGwFhkOWd7xgfVWQ6GTkCpksfy5AUIwNJcwanTn3ua5J1nwl3pjApCDA6x1B++8ICkcQMUt0FB/bkKdE2g==
   dependencies:
     lodash.clonedeep "^4.5.0"
 

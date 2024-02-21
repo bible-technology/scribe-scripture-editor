@@ -7,6 +7,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { readUsfm } from '@/components/Projects/utils/readUsfm';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
@@ -111,7 +112,7 @@ export default function ImportPopUp(props) {
           if (isJsonValid) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
             replaceConformation(true);
-            logger.debug('ImportPopUp. js', 'Valid USFM file.');
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
           } else {
@@ -167,27 +168,39 @@ export default function ImportPopUp(props) {
         }
 
         case 'Juxta': {
-          const jsonFile = fs.readFileSync(filePath, 'utf8');
-          let filename = filePath.split(/[(\\)?(/)?]/gm).pop();
-          const regexExp = /^([1-9]).md$/;
+          const file = fs.readFileSync(filePath, 'utf8');
+          const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
 
-          const matchSingleDigit = regexExp.exec(filename);
-          if (matchSingleDigit) {
-            let fileNum = filename.split('.')[0];
-            fileNum = fileNum.toString().padStart(2, 0);
-            filename = `${fileNum}.json`;
+          const fileExt = filename.split('.').pop()?.toLowerCase();
+          if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
+              || fileExt === undefined) {
+            const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
+            const isJsonValid = myUsfmParser.validate();
+            // if the USFM is valid
+            if (isJsonValid) {
+              replaceConformation(true);
+              logger.debug('ImportPopUp.js', 'Valid USFM file.');
+              // then we get the book code and we transform our data to our Juxta json file
+              const jsonOutput = myUsfmParser.toJSON();
+              const juxtaJson = JSON.stringify(readUsfm(file));
+              files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
+            } else {
+              logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+              setNotify('failure');
+              setSnackText(t('dynamic-msg-invalid-usfm-file'));
+              setOpenSnackBar(true);
+            }
+          } else if (fileExt === 'json') {
+            // Nicolas : TODO add a validator for our juxta type
+            logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
+            files.push({ id: filename.split('.')[0], content: file });
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid Md file.');
+            setNotify('failure');
+            // Nicolas : TODO translations
+            setSnackText('invalid file type');
+            setOpenSnackBar(true);
           }
-          // Nicolas : TODO add a validator for our juxta type
-          // const isMdValid = OBSValidate(filename);
-          // if (isMdValid) {
-          logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
-          files.push({ id: filename, content: jsonFile });
-          // } else {
-          //   logger.warn('ImportPopUp.js', 'Invalid Md file.');
-          //   setNotify('failure');
-          //   setSnackText(t('dynamic-msg-invalid-md-file'));
-          //   setOpenSnackBar(true);
-          // }
           break;
         }
 

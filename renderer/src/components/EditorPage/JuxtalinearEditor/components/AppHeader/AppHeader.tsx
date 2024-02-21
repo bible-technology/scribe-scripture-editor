@@ -23,10 +23,10 @@ export const AppHeader: React.FC = () => {
   const usfmOpenRef = useRef<HTMLInputElement>(null);
   const jsonOpenRef = useRef<HTMLInputElement>(null);
   const [loadOnce, setLoadOnce] = useState<boolean>(false);
-  const { usfmData, bookAvailable } = useReadUsfmFile('AppHeader');
+  const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
-    fileName,
+    // fileName,
     sentences,
     // itemArrays,
     curIndex,
@@ -264,7 +264,7 @@ export const AppHeader: React.FC = () => {
     <IonHeader>
       <IonToolbar>
         <Stack flexDirection="row" justifyContent="center" alignItems="center">
-          <Stack flexDirection="row" justifyContent="center" gap={1}>
+          {/* <Stack flexDirection="row" justifyContent="center" gap={1}>
             <Button variant="contained" onClick={openUsfm}>
               Open usfm
             </Button>
@@ -285,13 +285,13 @@ export const AppHeader: React.FC = () => {
               onChange={openJsonHandler}
               hidden
             />
-          </Stack>
+          </Stack> */}
           <Button onClick={onPrevHandler}>
-            <IoArrowBackCircleOutline size={32} />
+            <IoArrowBackCircleOutline size={32} color="#111827" />
           </Button>
           <Stack alignItems="center">
-            <Box sx={{ color: "grey", fontStyle: "italic" }}>{fileName}</Box>
-            <Box sx={{ color: "grey", fontSize: "14px" }}>
+            {/* <Box sx={{ color: "white", fontStyle: "italic" }}>{fileName}</Box> */}
+            <Box sx={{ color: "white", fontSize: "14px" }}>
               Sentence
               <Input
                 value={sentences.length ? curIndex + 1 : 0}
@@ -303,10 +303,10 @@ export const AppHeader: React.FC = () => {
               {endVerse()})
             </Box>
           </Stack>
-          <Button onClick={onNextHandler}>
-            <IoArrowForwardCircleOutline size={32} />
+          <Button onClick={onNextHandler} color="primary">
+            <IoArrowForwardCircleOutline size={32} color="#111827" />
           </Button>
-          <Stack flexDirection="row" justifyContent="center" gap={1}>
+          {/* <Stack flexDirection="row" justifyContent="center" gap={1}>
             <Button variant="contained">
               <div id="download-link" onClick={saveJsonHandler}>
                 Save json
@@ -315,7 +315,7 @@ export const AppHeader: React.FC = () => {
             <Button variant="contained" disabled>
               Save usfm
             </Button>
-          </Stack>
+          </Stack> */}
         </Stack>
       </IonToolbar>
     </IonHeader>
