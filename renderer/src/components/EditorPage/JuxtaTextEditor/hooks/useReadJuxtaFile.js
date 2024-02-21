@@ -6,7 +6,7 @@ import { readFile } from '../../../../core/editor/readFile';
 import packageInfo from '../../../../../../package.json';
 
 //  hook to fetch usfmfile from system drive
-export const useReadUsfmFile = () => {
+export const useReadJuxtaFile = () => {
   const [readFileName, setReadFileName] = useState('');
   const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setbookAvailable] = useState(false);

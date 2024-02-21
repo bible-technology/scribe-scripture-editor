@@ -7,7 +7,7 @@ import { ScribexContext } from '@/components/context/ScribexContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
-import { useReadUsfmFile } from './hooks/useReadUsfmFile';
+import { useReadJuxtaFile } from './hooks/useReadJuxtaFile';
 import htmlMap from './hooks/htmlmap';
 import usePerf from './hooks/usePerf';
 import EditorMenuBar from './EditorMenuBar';
@@ -24,7 +24,7 @@ export default function JuxtaTextEditor() {
   // const [newVerChapNumber, setInsertNumber] = useState('');
   // const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
 
-  const { usfmData, bookAvailable } = useReadUsfmFile();
+  const { usfmData, bookAvailable } = useReadJuxtaFile();
 
   const {
     state: { bookId, selectedFont },

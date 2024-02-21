@@ -1,6 +1,7 @@
 /* eslint-disable no-return-assign */
 import { SofriaRenderFromProskomma } from 'proskomma-json-tools';
 import { Proskomma } from 'proskomma-core';
+import md5 from 'md5';
 
 /**
  * Reads and processes a USFM file using Proskomma.
@@ -8,7 +9,7 @@ import { Proskomma } from 'proskomma-core';
  * @param {string} srcUsfm The USFM source text to be processed.
  * @returns The processed sentences from the USFM file.
  */
-export const readUsfm = (srcUsfm) => {
+export const readUsfm = (srcUsfm, bookCode) => {
   const pk = new Proskomma();
   pk.importDocument({ lang: 'grc', abbr: 'ugnt' }, 'usfm', srcUsfm);
 
@@ -66,9 +67,12 @@ export const readUsfm = (srcUsfm) => {
             .filter((w) => !w.occurrences)
             .forEach((w) => (w.occurrences = workspace.occurrences[w.lemma]));
           output.sentences
-            .map((s) => s.chunks.map(
+            .map((s) => {
+              s.checksum = md5(JSON.stringify(s.chunks));
+              return s.chunks.map(
                 (sc) => sc.source.map((scw) => scw),
-              ))
+              );
+            })
             .forEach((s) => s?.filter((w) => !w.occurrences)
                 .forEach((w) => (w.occurrences = workspace.occurrences[w.lemma])));
           workspace.verses = null;
@@ -112,6 +116,7 @@ export const readUsfm = (srcUsfm) => {
                 originalSource: workspace.currentSentence,
                 chunks: [
                   {
+                    checksum: md5(workspace.currentSentence),
                     source: workspace.currentSentence,
                     gloss: '',
                   },
@@ -152,10 +157,11 @@ export const readUsfm = (srcUsfm) => {
     ],
   };
 
-  const output = { sentences: [] };
+  const output = { checksum: '', bookCode, sentences: [] };
   const cl = new SofriaRenderFromProskomma({ proskomma: pk, actions });
   const docId = pk.gqlQuerySync('{documents {id}}').data.documents[0].id;
   cl.renderDocument({ docId, config: {}, output });
 
-  return output.sentences;
+  output.checksum = md5(JSON.stringify(output.sentences));
+  return output;
 };

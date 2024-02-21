@@ -30,10 +30,12 @@ interface ISource {
 interface ISentence {
   originalSource?: ISource[],
   chunks: {
+    checksum: string | number[]
     source: ISource[]
     gloss: string
   }[]
-  sourceString: string
+  sourceString: string,
+  checksum: string | number[]
 }
 
 interface ISentenceContext {

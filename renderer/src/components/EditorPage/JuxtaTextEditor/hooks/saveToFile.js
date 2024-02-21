@@ -8,7 +8,7 @@ import { newPath } from '../../../../../../supabase';
 import * as logger from '../../../../logger';
 
 // function to save to file.
-export const saveToFile = async (usfmText, bookCode) => {
+export const saveToFile = async (juxtaData, bookCode) => {
   logger.debug('saveToFile.js', `saving ${bookCode} to file`);
   try {
     const upperCaseBookCode = bookCode.toUpperCase();
@@ -27,7 +27,7 @@ export const saveToFile = async (usfmText, bookCode) => {
             username: userName,
             projectname: projectName,
             filename: key,
-            data: usfmText,
+            data: juxtaData,
           });
         }
       }

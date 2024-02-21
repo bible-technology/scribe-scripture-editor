@@ -182,7 +182,7 @@ export default function ImportPopUp(props) {
               logger.debug('ImportPopUp.js', 'Valid USFM file.');
               // then we get the book code and we transform our data to our Juxta json file
               const jsonOutput = myUsfmParser.toJSON();
-              const juxtaJson = JSON.stringify(readUsfm(file));
+              const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
               files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
             } else {
               logger.warn('ImportPopUp.js', 'Invalid USFM file.');

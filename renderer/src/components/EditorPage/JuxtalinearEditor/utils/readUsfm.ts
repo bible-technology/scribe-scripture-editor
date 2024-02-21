@@ -4,7 +4,7 @@ const { Proskomma } = require("proskomma-core")
 const { SofriaRenderFromProskomma } = require("proskomma-json-tools");
 
 // TODO : transferer cette fonction vers 
-// => renderer/src/components/EditorPage/JuxtaTextEditor/hooks/useReadUsfmFile.js 
+// => renderer/src/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile.js 
 // and call it into "renderer/src/components/Projects/ImportPopUp.js" line 178
 export const readUsfm = (srcUsfm: string | undefined) => {
   const pk = new Proskomma()
@@ -164,6 +164,7 @@ export const readUsfm = (srcUsfm: string | undefined) => {
                 originalSource : workspace.currentSentence,
                 chunks: [
                   {
+                    checksum: "teoizjf",
                     source: workspace.currentSentence,
                     gloss: "",
                   },

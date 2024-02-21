@@ -18,8 +18,9 @@ import { saveToFile } from '../../JuxtaTextEditor/hooks/saveToFile';
 import { MarkdownInput } from "../components/MarkdownInput";
 import { SentenceContext } from "../index";
 import { ReferenceContext } from '@/components/context/ReferenceContext';
-import { useReadUsfmFile } from "../../JuxtaTextEditor/hooks/useReadUsfmFile";
-import { readUsfm } from "../utils/readUsfm";
+import { useReadJuxtaFile } from "../../JuxtaTextEditor/hooks/useReadJuxtaFile";
+import md5 from "md5";
+// import { readUsfm } from "../utils/readUsfm";
 
 const grid = 3
 
@@ -73,20 +74,16 @@ const Home: React.FC = () => {
       refName,
       //  closeNavigation,
     }, actions: {
-      onChangeBook,
       onChangeChapter,
       onChangeVerse,
-      setFolderPath,
-      applyBooksFilter,
-      setCloseNavigation,
-      setRefName,
     },
   } = useContext(ReferenceContext);
 
+  const [jsonFileContent, setJsonFileContent] = useState<IOutput>(null);
   const clickRef = useRef(0);
   const usfmOpenRef = useRef<HTMLInputElement>(null);
   const jsonOpenRef = useRef<HTMLInputElement>(null);
-  const { usfmData, bookAvailable, readFileName } = useReadUsfmFile();
+  const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
 
   // const [mode, setMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light");
 
@@ -105,12 +102,14 @@ const Home: React.FC = () => {
         return {
           source,
           gloss: chunk.gloss,
+          checksum: md5(source)
         };
       });
       return {
         originalSource: stc.originalSource,
         chunks,
         sourceString: stc.sourceString,
+        checksum: md5(stc.originalSource)
       };
     });
   };
@@ -120,19 +119,14 @@ const Home: React.FC = () => {
     // const blob = new Blob([usfmData[0] as string], { type: 'application/json' });
     // saveAs(blob, 'cake.json');
     if(bookAvailable) {
-      let normalizedExt = usfmData[0].bookFileName.split('.')[1].toLowerCase();
-      let resContent;
-      // if(normalizedExt === 'usfm' || normalizedExt === 'usfm') {
-      //   resContent = readUsfm(usfmData[0].data);
-      // } else {
-      resContent = JSON.parse(usfmData[0].data);
-      // }
+      const resContent = JSON.parse(usfmData[0].data);
+      setJsonFileContent(resContent);
       setFileName(readFileName);
       setCurIndex(0);
-      setGlobalTotalSentences(remakeSentences(resContent));
-      setOriginText(resContent.map((sentence: { sourceString: string; }) => sentence.sourceString));
-      if (resContent.length) {
-        setItemArrays([getItems(resContent)]);
+      setGlobalTotalSentences(remakeSentences(resContent.sentences));
+      setOriginText(resContent.sentences.map((sentence: { sourceString: string; }) => sentence.sourceString));
+      if (resContent.sentences.length) {
+        setItemArrays([getItems(resContent.sentences)]);
       }
     }
   }
@@ -140,45 +134,6 @@ const Home: React.FC = () => {
   useEffect(() => {
     tryLoadSentences();
   }, [bookAvailable, usfmData]);
-
-  useEffect(() => {
-    // const fse = window.require('fs-extra');
-    // const path = window.require('path');
-    let strBooks: string;
-    // bookList.forEach(async (book: { key: string; }) => {
-    //     if (bookName !== book.key) {
-    //         onChangeBook(book.key);
-    //     }
-    //     onChangeChapter(chapter);
-    //     onChangeVerse(verse);
-    //     strBooks += book.key;
-    //     strBooks += "\n ";
-    //   }
-    // );
-    // let sb = fse.readFileSync(path.join(folderPath, 'metadata.json'));
-    // const metadata = JSON.parse(sb);
-    // localforage.getItem('userProfile').then((value) => {
-    //   localforage.getItem('currentProject').then((projectName) => {
-    //     readFile({
-    //       projectname: projectName,
-    //       filename: `ingredients/${bookId.toUpperCase()}.json`,
-    //       username: value.username,
-    //     }).then((data) => {
-    //       strBooks = data
-    //       // setJuxtaxData(JSON.parse(data));
-    //     });
-    //   });
-    // });
-    // const blob = new Blob([refName], { type: 'text/plain' });
-    // saveAs(blob, 'cake.json');
-  }, [refName, setRefName]);
-  // useEffect(() => {
-  //   window.matchMedia('(prefers-color-scheme: dark)')
-  //     .addEventListener('change', event => {
-  //       const colorScheme = event.matches ? "dark" : "light";
-  //       setMode(colorScheme);
-  //     });
-  // }, []);
 
   useEffect(() => {
     if (sentences.length) {
@@ -199,23 +154,27 @@ const Home: React.FC = () => {
       })
       return {
         source,
-        gloss: chunk.gloss
+        gloss: chunk.gloss,
+        checksum: md5(source)
       }
     })
     return {
       originalSource: stc.originalSource,
       chunks,
-      sourceString: stc.sourceString
+      sourceString: stc.sourceString,
+      checksum: md5(stc.originalSource)
     }
   }
 
 
   useEffect(() => {
     if(sentences[0] !== undefined) {
-      sentences[0].chunks.filter(({source}) => source[0]).forEach(({ source }) => {
-        source.filter(e => e);
+      sentences[0].chunks.filter(({source}) => source[0]).forEach((chunck) => {
+        chunck.source.filter(e => e);
+        chunck.checksum = md5(chunck.source);
       });
-      const jsonStr = JSON.stringify(sentences);
+      jsonFileContent.sentences = sentences
+      const jsonStr = JSON.stringify(jsonFileContent);
       saveToFile(jsonStr, bookId);
     }
   }, [setGlobalItemArrays]);
@@ -223,7 +182,7 @@ const Home: React.FC = () => {
   const getItems = (res: ISentence[] = null) => {
     if(res !== null) {
       return res[0].chunks
-        .map(({ source, gloss }, index: number) => {
+        .map(({ source, gloss, checksum }, index: number) => {
           return {
             chunk: source
               .filter((s) => s)
@@ -235,12 +194,13 @@ const Home: React.FC = () => {
                 };
               }),
             gloss,
+            checksum,
           };
         })
         .filter(({ chunk }) => chunk.length);
     } else {
       return sentences[curIndex].chunks
-      .map(({ source, gloss }, index: number) => {
+      .map(({ source, gloss, checksum }, index: number) => {
         return {
           chunk: source
             .filter((s) => s)
@@ -252,6 +212,7 @@ const Home: React.FC = () => {
               };
             }),
           gloss,
+          checksum,
         };
       })
       .filter(({ chunk }) => chunk.length)
@@ -286,11 +247,13 @@ const Home: React.FC = () => {
 
       const newChunks = [...sentences[curIndex].chunks]
       newChunks[sInd].source = newSource
+      newChunks[sInd].checksum = md5(newSource)
 
       const newSentence = remakeSentence({
         originalSource: sentences[curIndex].originalSource,
         chunks: newChunks,
         sourceString: sentences[curIndex].sourceString,
+        checksum: md5(sentences[curIndex].originalSource)
       })
       setGlobalSentences(curIndex, newSentence)
     } else {
@@ -307,11 +270,14 @@ const Home: React.FC = () => {
       newChunks[dInd].source = sentenceRes[dInd]
       newChunks[sInd].gloss = ""
       newChunks[dInd].gloss = ""
+      newChunks[sInd].checksum = md5(sentenceRes[sInd])
+      newChunks[dInd].checksum = md5(sentenceRes[dInd])
 
       const newSentence = remakeSentence({
         originalSource: sentences[curIndex].originalSource,
         chunks: newChunks,
         sourceString: sentences[curIndex].sourceString,
+        checksum: md5(sentences[curIndex].originalSource)
       })
       setGlobalSentences(curIndex, newSentence)
     }
@@ -341,13 +307,14 @@ const Home: React.FC = () => {
             newChunks[rowN - 1].gloss = ""
             newChunks[rowN].source = []
             newChunks[rowN].gloss = ""
+            newChunks[rowN].checksum = ""
             newChunks = newChunks.filter((c) => c.source.length)
           } else {
             // Make new row
             newChunks = [
               ...newChunks.slice(0, rowN),
-              { source: newChunks[rowN].source.slice(0, colN), gloss: "" },
-              { source: newChunks[rowN].source.slice(colN), gloss: "" },
+              { source: newChunks[rowN].source.slice(0, colN), gloss: "", checksum: md5(newChunks[rowN].source.slice(0, colN)) },
+              { source: newChunks[rowN].source.slice(colN), gloss: newChunks[rowN].gloss, checksum: md5(newChunks[rowN].source.slice(colN)) },
               ...newChunks.slice(rowN + 1),
             ]
           }
@@ -356,6 +323,7 @@ const Home: React.FC = () => {
             originalSource: sentences[curIndex].originalSource,
             chunks: newChunks,
             sourceString: sentences[curIndex].sourceString,
+            checksum: md5(sentences[curIndex].originalSource)
           })
           setGlobalSentences(curIndex, newSentence)
         }
@@ -395,6 +363,7 @@ const Home: React.FC = () => {
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
+      checksum: md5(sentences[curIndex].originalSource),
     })
     setGlobalSentences(curIndex, newSentence)
   }
@@ -407,6 +376,7 @@ const Home: React.FC = () => {
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
+      checksum: md5(sentences[curIndex].originalSource),
     })
     setGlobalSentences(curIndex, newSentence)
   }
@@ -424,6 +394,7 @@ const Home: React.FC = () => {
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
+      checksum: md5(sentences[curIndex].originalSource),
     })
   }
 
