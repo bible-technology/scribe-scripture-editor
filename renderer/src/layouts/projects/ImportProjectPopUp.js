@@ -39,6 +39,7 @@ export default function ImportProjectPopUp(props) {
   const [processMerge, setProcessMerge] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState();
   const [sbData, setSbData] = React.useState({});
+  const [importingIsZip, setImportingIsZip] = React.useState(false);
   const [model, setModel] = React.useState({
     openModel: false,
     title: '',
@@ -58,9 +59,12 @@ export default function ImportProjectPopUp(props) {
     completedSteps: 0,
   });
 
-  function close() {
-    logger.debug('ImportProjectPopUp.js', 'Closing the Dialog box');
+  async function close(triggeredFrom) {
+    logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
+    removeExtractedZipDir()
     setValid(false);
+    setSbData()
+    setFolderPath()
     closePopUp(false);
     setShow(false);
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
@@ -68,27 +72,58 @@ export default function ImportProjectPopUp(props) {
 
   const openFileDialogSettingData = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
-    const options = { properties: ['openDirectory'] };
+    // const options = { properties: ['openFile','openDirectory'] };
+    const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
     const { dialog } = window.require('@electron/remote');
     const chosenFolder = await dialog.showOpenDialog(options);
+    let selectedFolderPath;
     if ((chosenFolder.filePaths).length > 0) {
       logger.debug('ImportProjectPopUp.js', 'Selected a directory');
       await localforage.getItem('userProfile').then(async (value) => {
-        setShow(true);
+        // setShow(true);
         setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
-        const result = await viewBurrito(chosenFolder.filePaths[0], value.username, 'projects');
+        selectedFolderPath = chosenFolder.filePaths[0]
+        // check if zip
+        if(chosenFolder.filePaths[0].endsWith('.zip')) {
+          const AdmZip = window.require('adm-zip');
+          setImportingIsZip(true)
+          const path = require('path');
+          const zip = new AdmZip(chosenFolder.filePaths[0]);
+          const extractFileName = chosenFolder.filePaths[0].replace('.zip',"__extracted")
+          zip.extractAllTo(path.join(extractFileName),true);
+          // change the choosefolder Filepath to new path
+          selectedFolderPath = extractFileName
+        }
+
+        const result = await viewBurrito(selectedFolderPath, value.username, 'projects');
         setSbData(result);
       });
     } else {
       logger.debug('ImportProjectPopUp.js', 'Didn\'t select any project');
       setSbData({});
-      close();
+      close("else");
     }
-    setFolderPath(chosenFolder.filePaths[0]);
+    setFolderPath(selectedFolderPath);
   };
 
-  const modelClose = () => {
+  const removeExtractedZipDir = async() => {
+    const path = require('path');
+    const fs = window.require('fs');
+    // delete the extracted zip file after successfull / failed import
+    if(importingIsZip && folderPath) {
+      setImportingIsZip(false)
+      if (fs.existsSync(path.join(folderPath))) {
+        await fs.rmdirSync(path.join(folderPath), { recursive: true }, async (err) => {
+          if (err) {
+            throw new Error(`Remove extracted zip folder :  ${err}`);
+          }
+        });
+      }
+    }
+  }
+
+  const modelClose = async () => {
     setModel({
       openModel: false,
       title: '',
@@ -99,11 +134,15 @@ export default function ImportProjectPopUp(props) {
   };
 
   const callImport = async (updateBurriot) => {
-    modelClose();
+    await modelClose();
     setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
     logger.debug('ImportProjectPopUp.js', 'Inside callImport');
+    const path = require('path');
+    const fs = window.require('fs');
     await localforage.getItem('userProfile').then(async (value) => {
       const status = await importBurrito(folderPath, value.username, updateBurriot, languages);
+      // delete the extracted zip file after successfull / failed import
+      await removeExtractedZipDir()
       setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
       setOpenSnackBar(true);
       closePopUp(false);
@@ -112,7 +151,7 @@ export default function ImportProjectPopUp(props) {
       setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: 0, totalSteps: 0}))
       if (status[0].type === 'success') {
         setSbData({});
-        close();
+        close("Success");
         FetchProjects();
         router.push('/projects');
       }
@@ -188,7 +227,8 @@ export default function ImportProjectPopUp(props) {
   React.useEffect(() => {
     if (open) {
       setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
-      openFileDialogSettingData();
+      // openFileDialogSettingData();
+      setShow(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -210,7 +250,8 @@ export default function ImportProjectPopUp(props) {
           initialFocus={cancelButtonRef}
           static
           open={show}
-          onClose={close}
+          // onClose={() => close('X')}
+          onClose={() => {}}
         >
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex items-center justify-center h-screen">
@@ -221,7 +262,7 @@ export default function ImportProjectPopUp(props) {
                     {t('label-import-project')}
                   </div>
                   <button
-                    onClick={close}
+                    onClick={() => close('Backdrop')}
                     type="button"
                     className="focus:outline-none"
                   >
@@ -270,8 +311,18 @@ export default function ImportProjectPopUp(props) {
                       </div>
 
                       <div>
-                        <h4 className="text-red-500">{valid === true ? t('label-enter-location') : (sbData?.fileExist ? '' : t('dynamic-msg-unable-find-buritto-snack'))}</h4>
+                        <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ((sbData?.fileExist || !folderPath) ? '' : t('dynamic-msg-unable-find-buritto-snack'))}</h4>
                       </div>
+
+                      {/* check zip or folder */}
+                      {!folderPath && (
+                        <div className="w-full flex">
+                        <div className="flex flex-row justify-end mr-3">
+                          <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
+                          <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                        </div>
+                      </div>
+                      )}
 
                     </div>
 
@@ -310,13 +361,13 @@ export default function ImportProjectPopUp(props) {
                           </label>
                         )}
                         </div>
-                      )}
+                      ) }
 
                     <div className="flex gap-6 mb-5 justify-end">
 
                       <button
                         type="button"
-                        onClick={close}
+                        onClick={() => close('cancel')}
                         className="py-2 px-6 rounded shadow bg-error text-white uppercase text-xs tracking-widest font-semibold"
                       >
                         {t('btn-cancel')}

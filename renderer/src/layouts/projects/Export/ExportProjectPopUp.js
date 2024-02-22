@@ -38,6 +38,7 @@ export default function ExportProjectPopUp(props) {
   const [metadata, setMetadata] = React.useState({});
   const [audioExport, setAudioExport] = React.useState('default');
   const [checkText, setCheckText] = React.useState(false);
+  const [checkZip, setCheckZip] = React.useState(true);
 
   const [totalExported, setTotalExported] = React.useState(0);
   const [totalExports, setTotalExports] = React.useState(0);
@@ -87,38 +88,51 @@ export default function ExportProjectPopUp(props) {
   const updateCommon = (fs, path, folder, project) => {
     const fse = window.require('fs-extra');
     logger.debug('ExportProjectPopUp.js', 'Updated Scripture burrito');
-          let data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
-          const sb = JSON.parse(data);
-          // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
-          sb.idAuthorities.scribe.id = 'http://www.scribe.bible';
-          if (!sb.copyright?.shortStatements && sb.copyright?.licenses) {
-            delete sb.copyright.publicDomain;
-            data = JSON.stringify(sb);
-          }
-          const success = validate('metadata', path.join(folder, 'metadata.json'), data, sb.meta.version);
-          if (success) {
-            logger.debug('ExportProjectPopUp.js', 'Burrito validated successfully');
-            fse.copy(folder, path.join(folderPath, project.name))
-              .then(() => {
-                deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
-                .then(() => {
-                  resetExportProgress(); // reset export states
-                  logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
-                  setNotify('success');
-                  setSnackText(t('dynamic-msg-export-success'));
-                  setOpenSnackBar(true);
-                  closePopUp(false);
+      let data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
+      const sb = JSON.parse(data);
+      // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
+      sb.idAuthorities.scribe.id = 'http://www.scribe.bible';
+      if (!sb.copyright?.shortStatements && sb.copyright?.licenses) {
+        delete sb.copyright.publicDomain;
+        data = JSON.stringify(sb);
+      }
+      const success = validate('metadata', path.join(folder, 'metadata.json'), data, sb.meta.version);
+      if (success) {
+        logger.debug('ExportProjectPopUp.js', 'Burrito validated successfully');
+        fse.copy(folder, path.join(folderPath, project.name))
+          .then(() => {
+            deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
+            .then(async () => {
+              // convert to zip if text translation and zip checked
+              if (project?.type === 'Text Translation' && checkZip) {
+                const AdmZip = window.require('adm-zip');
+                const zip = new AdmZip();
+                zip.addLocalFolder(path.join(folderPath, project.name));
+                zip.writeZip(path.join(folderPath, `${project.name}.zip`));
+                // delete folder
+                await fs.rmdirSync(path.join(folderPath, project.name), { recursive: true }, async (err) => {
+                  if (err) {
+                    throw new Error(`Remove Org Exported Dir failed :  ${err}`);
+                  }
                 });
-              })
-              .catch((err) => {
-                resetExportProgress(); // reset export states
-                logger.error('ExportProjectPopUp.js', `Failed to export ${err}`);
-                setNotify('failure');
-                setSnackText(t('dynamic-msg-export-fail'));
-                setOpenSnackBar(true);
-                closePopUp(false);
-              });
-          }
+              }
+              resetExportProgress(); // reset export states
+              logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
+              setNotify('success');
+              setSnackText(t('dynamic-msg-export-success'));
+              setOpenSnackBar(true);
+              closePopUp(false);
+            });
+          })
+          .catch((err) => {
+            resetExportProgress(); // reset export states
+            logger.error('ExportProjectPopUp.js', `Failed to export ${err}`);
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-export-fail'));
+            setOpenSnackBar(true);
+            closePopUp(false);
+          });
+      }
   };
 
   const updateBurritoVersion = (username, fs, path, folder) => {
@@ -295,6 +309,16 @@ export default function ExportProjectPopUp(props) {
                         <span className=" ml-4 text-xs font-bold" title="All takes of every verse saved as a ZIP archive within Scripture Burrito">Full project</span>
                       </div>
                     </div>
+                    )}
+                    {project?.type === 'Text Translation' && (
+
+                    <div className="w-full py-3 flex">
+                      <div className="flex flex-row justify-end mr-3">
+                        <input id="visible_1" className="visible" type="checkbox" checked={checkZip} onClick={() => setCheckZip(!checkZip)} />
+                        <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                      </div>
+                    </div>
+
                     )}
                     <div className="absolute bottom-0 right-0 left-0 bg-white">
                       <div className="flex gap-6 mx-5 justify-end">

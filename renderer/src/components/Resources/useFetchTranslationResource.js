@@ -7,7 +7,7 @@ function createData(name, language, owner) {
     name, language, owner,
   };
 }
-export const fetchTranslationResource = async (urlpath, setResource, selectResource, selectedPreProd, snackBarAction) => {
+export const fetchTranslationResource = async (urlpath, setResource, selectResource, selectedPreProd, snackBarAction, metadataType = 'rc') => {
   logger.debug('ResourcesPopUp.js', `fetchTranslationResource :  ${selectResource}`);
   // const baseUrl = 'https://git.door43.org/api/catalog/v5/search?';
   // https://git.door43.org/api/v1/catalog/search?metadataType=rc
