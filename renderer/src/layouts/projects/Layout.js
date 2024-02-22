@@ -12,6 +12,7 @@ import SideBar from './SideBar';
 import TopMenuBar from './TopMenuBar';
 import ImportProjectPopUp from './ImportProjectPopUp';
 import ConflictResolverUI from './Import/ConflictResolverUI';
+import TranslationMergeUI from '@/components/TextTranslationMerge/TranslationMergeUI';
 
 export default function ProjectsLayout(props) {
   const {
@@ -33,6 +34,13 @@ export default function ProjectsLayout(props) {
     open: false,
     data: undefined,
   });
+
+  function closeMergeWindow() {
+    setConflictPopup({
+      open: false,
+      data: undefined,
+    });
+  }
 
   const { t } = useTranslation();
   function handleOpenImportPopUp() {
@@ -83,7 +91,9 @@ export default function ProjectsLayout(props) {
                       {conflictPopup.open
                         && (
                           <div className="fixed z-50 ">
-                            <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />
+                            {conflictPopup.data?.projectType === 'textTranslation'
+                            ? <TranslationMergeUI conflictData={conflictPopup} closeMergeWindow={closeMergeWindow} />
+                            : <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />}
                           </div>
                         )}
 

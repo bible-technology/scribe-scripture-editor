@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/20/solid';
 
 function UsfmConflictEditor({
-  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters,
+  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters, selectedBook,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState(true);
   const [resetAlll, setResetAll] = useState(false);
@@ -17,7 +17,7 @@ function UsfmConflictEditor({
   // });
 
   const resolveAllTogether = (type) => {
-    usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+    usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.forEach((verseObj) => {
         if (verseObj?.resolved?.status === false) {
           let currentData = {};
@@ -32,38 +32,38 @@ function UsfmConflictEditor({
           verseObj.resolved.resolvedContent = currentData;
         }
       });
-    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
     setResolveALlActive(false);
     setResetAll(true);
   };
 
   const handleResetSingle = (verseNum) => {
-    const currentVerseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+    const currentVerseObj = usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.find((item) => item?.verseNumber === verseNum);
     currentVerseObj.resolved.status = false;
     currentVerseObj.resolved.resolvedContent = null;
-    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
     setResolveALlActive(true);
     setResetAll(false);
     setChapterResolveDone(false);
   };
 
   const resetAllResolved = () => {
-    usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+    usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.forEach((verseObj) => {
         if (verseObj?.resolved?.status === true) {
           verseObj.resolved.status = false;
           verseObj.resolved.resolvedContent = null;
         }
       });
-    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
     setResolveALlActive(true);
     setResetAll(false);
     setChapterResolveDone(false);
   };
 
   const handleResolveSingle = (type, verseNum) => {
-    const currentVerseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
+    const currentVerseObj = usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.find((item) => item?.verseNumber === verseNum);
     let currentData = {};
     if (type === 'current') {
@@ -75,14 +75,14 @@ function UsfmConflictEditor({
     // assign to resolved section
     currentVerseObj.resolved.status = true;
     currentVerseObj.resolved.resolvedContent = currentData;
-    setUsfmJsons((prev) => ({ ...prev, mergeJson: usfmJsons.mergeJson }));
+    setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
   };
 
   useEffect(() => {
     // check all resolved in the current ch
     let resolvedStatus = false;
-    for (let index = 0; index < usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents.length; index++) {
-      const verseObj = usfmJsons.mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents[index];
+    for (let index = 0; index < usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents.length; index++) {
+      const verseObj = usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0].contents[index];
       if (verseObj?.resolved && verseObj?.resolved?.status === false) {
         resolvedStatus = false;
         setChapterResolveDone(false);
@@ -161,8 +161,8 @@ function UsfmConflictEditor({
       {/* --------------------------------------------- testing -------------------------------------------- */}
 
       <div className="">
-        {selectedChapter && usfmJsons.mergeJson
-          && usfmJsons?.mergeJson?.chapters?.slice(selectedChapter - 1, selectedChapter)[0].contents.map((item, index) => (
+        {selectedChapter && usfmJsons[selectedBook].mergeJson
+          && usfmJsons[selectedBook]?.mergeJson?.chapters?.slice(selectedChapter - 1, selectedChapter)[0].contents.map((item, index) => (
             item.verseNumber
             && (
               <div

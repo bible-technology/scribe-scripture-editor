@@ -88,7 +88,7 @@ const updateTranslationSB = async (username, project, updateBurrito) => new Prom
     try {
       logger.debug('updateTranslationSB.js', 'Updating the metadata.json (burrito) file.');
       fs.writeFileSync(path.join(folder, 'metadata.json'), JSON.stringify(metadata));
-      resolve(true);
+      resolve(metadata);
     } catch {
       logger.error('updateTranslationSB.js', 'Failed to update the metadata.json (burrito) file.');
       resolve(false);

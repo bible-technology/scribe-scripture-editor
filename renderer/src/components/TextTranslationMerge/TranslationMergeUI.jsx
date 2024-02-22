@@ -20,36 +20,10 @@ import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
 
 const grammar = require('usfm-grammar');
+const path = require('path');
 
-const dmp = new DiffMatchPatch();
-
-function TranslationMergeUI() {
-  const [importedUsfmFolderPath, setImportedUsfmFolderPath] = useState([]);
-  const [usfmJsons, setUsfmJsons] = useState({
-    imported: null,
-    current: null,
-  });
-  const [selectedChapter, setSelectedChapter] = useState(1);
-  const [selectedBookId, setSelectedBookId] = useState(null);
-  const [conflictedChapters, setConflictedChapters] = useState([]);
-  const [resolvedChapters, setResolvedChapters] = useState([]);
-  const [chapterResolveDone, setChapterResolveDone] = useState(false);
-
-  const [savedConflictsBooks, setSavedConflictsBooks] = useState([]);
-  const [existImportedBook, setExistImportedBook] = useState({ status: false, bookId: null });
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [finishedConflict, setFinishedConflict] = useState(false);
-
-  const {
-    states: {
-      openTextTranslationMerge,
-    },
-    action: {
-      setOpenTextTranslationMerge,
-    },
-  } = useContext(AutographaContext);
+function TranslationMergeUI({ conflictData, closeMergeWindow }) {
+  console.log({ conflictData });
 
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
@@ -60,14 +34,27 @@ function TranslationMergeUI() {
     buttonName: '',
   });
 
-  const {
-    state: { currentProjectMeta },
-    actions: { getProjectMeta },
-  } = useGetCurrentProjectMeta();
+  const [selectedBook, setSelectedBook] = useState(conflictData?.data?.files[0]);
+  const [selectedChapter, setSelectedChapter] = useState();
+  const [resolvedBooks, setResolvedBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [usfmJsons, setUsfmJsons] = useState({});
+  const [conflictedChapters, setConflictedChapters] = useState({});
 
-  console.log({
-    openTextTranslationMerge, currentProjectMeta, selectedBookId, usfmJsons,
-  });
+  const removeSection = async (abort = false) => {
+    if (abort === false) {
+      // TODO : allow to close and continue later
+    } else {
+      // popup with warning
+      setModel({
+        openModel: true,
+        title: t('modal-title-abort-conflict-resolution'),
+        confirmMessage: t('msg-abort-conflict-resolution'),
+        buttonName: t('label-abort'),
+      });
+    }
+  };
 
   const modalClose = () => {
     setModel({
@@ -80,7 +67,6 @@ function TranslationMergeUI() {
 
   const handleStartOver = () => {
     console.log('start over called ----');
-    setExistImportedBook({ status: false, bookId: null });
     modalClose();
   };
 
@@ -88,109 +74,11 @@ function TranslationMergeUI() {
     console.log({ buttonName }, model);
     if (model.buttonName === t('label-abort')) {
       setError('');
-      setUsfmJsons({ imported: null, current: null });
-      setImportedUsfmFolderPath([]);
-      setOpenTextTranslationMerge({ open: false, meta: null });
       modalClose();
+      closeMergeWindow();
     } else {
       handleStartOver();
     }
-  };
-
-  const removeSection = async (abort = false) => {
-    if (abort === false) {
-      // pass
-    } else {
-      // popup with warning
-      setModel({
-        openModel: true,
-        title: t('modal-title-abort-conflict-resolution'),
-        confirmMessage: t('msg-abort-conflict-resolution'),
-        buttonName: t('label-abort'),
-      });
-    }
-  };
-
-  const readMergeDirOrSingleFile = async (readDir = true, fileName = null) => {
-    const fs = window.require('fs');
-    const { id, name } = openTextTranslationMerge.meta;
-    const _projectName = `${name}_${id[0]}`;
-    const newpath = localStorage.getItem('userPath');
-    const path = require('path');
-
-    const user = await localforage.getItem('userProfile');
-    if (user?.username) {
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-      if (!fs.existsSync(path.join(USFMMergeDirPath, _projectName))) {
-        return null;
-      }
-      if (readDir) {
-        const files = fs.readdirSync(path.join(USFMMergeDirPath, _projectName));
-        console.log({ files });
-        return files;
-      }
-      // read file - json
-      let jsonFile = fs.readFileSync(path.join(USFMMergeDirPath, _projectName, fileName));
-      jsonFile = JSON.parse(jsonFile);
-      return jsonFile;
-    }
-    console.error('no user : ', { user });
-  };
-
-  useEffect(() => {
-    if (openTextTranslationMerge?.meta) {
-      const { id, name } = openTextTranslationMerge.meta;
-      (async () => {
-        await getProjectMeta(`${name}_${id[0]}`);
-        // check for existing merge and display ui based on that
-        const mergeDirContents = await readMergeDirOrSingleFile();
-        setSavedConflictsBooks(mergeDirContents);
-      })();
-    }
-  }, []);
-
-  const openFileDialogSettingData = async () => {
-    logger.debug('translationMergeUI.js', 'Inside openFileDialogSettingData');
-    const options = {
-      properties: ['openFile'],
-      filters: [{ name: 'usfm files', extensions: ['usfm', 'sfm', 'USFM', 'SFM'] }],
-    };
-    const { dialog } = window.require('@electron/remote');
-    const chosenFolder = await dialog.showOpenDialog(options);
-    if ((chosenFolder.filePaths).length > 0) {
-      logger.debug('translationMergeUI.js', 'Selected the files');
-      setImportedUsfmFolderPath(chosenFolder.filePaths);
-    } else {
-      logger.debug('translationMergeUI.js', 'Didn\'t select any file');
-    }
-  };
-
-  const handleImportUsfm = () => {
-    openFileDialogSettingData();
-  };
-
-  const resumeConflictResolution = async (bookId) => {
-    // bookid (same as backendfilename) - > mat.json
-    console.log('book id : ', bookId);
-    const { usfmJsons } = await readMergeDirOrSingleFile(false, bookId);
-    setUsfmJsons(usfmJsons);
-    setExistImportedBook({ status: false, bookId: null });
-
-    const _conflictedBooks = [];
-    setSelectedBookId(usfmJsons.mergeJson.book.bookCode.toLowerCase());
-    usfmJsons.mergeJson.chapters.forEach((chapter, index) => {
-      chapter.contents.forEach((content) => {
-        if (content.verseNumber) {
-          if (content?.resolved && !content?.resolved?.status) {
-            !_conflictedBooks.includes(chapter.chapterNumber) && _conflictedBooks.push(chapter.chapterNumber);
-          }
-        }
-      });
-    });
-
-    setConflictedChapters(_conflictedBooks);
-    setFinishedConflict(false);
-    console.log({ usfmJsons });
   };
 
   async function parseUsfm(usfm) {
@@ -205,58 +93,52 @@ function TranslationMergeUI() {
     return usfm;
   }
 
-  const parseFiles = async () => {
+  console.log({ usfmJsons });
+
+  const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
-    const IncomingUsfm = fs.readFileSync(importedUsfmFolderPath[0], 'utf8');
+    const IncomingUsfm = fs.readFileSync(path.join(conflictData.data.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
-      // const normalisedIncomingUSFM = await parseJsonToUsfm(importedJson.data);
       if (!importedJson.valid) {
         setError('Imported Usfm is invalid');
-      } else if (!Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode)
-        && !Object.keys(currentProjectMeta?.type?.flavorType?.currentScope).includes(importedJson?.data?.book?.bookCode?.toLowerCase())) {
-        setError('Imported USFM is not in the scope of Current Project');
       } else {
         // Parse current project same book
         const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
 
         setError('');
-        setUsfmJsons((prev) => ({ ...prev, imported: importedJson.data }));
-        setSelectedBookId(importedJson.data.book.bookCode.toLowerCase());
-        const currentBookPath = Object.keys(currentProjectMeta?.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
-        const { id, name } = openTextTranslationMerge.meta;
-        const currentBookUsfm = await readUsfmFile(currentBookPath, `${name}_${id[0]}`);
+
+        setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], imported: importedJson.data } }));
+
+        // setSelectedBookId(importedJson.data.book.bookCode.toLowerCase());
+        // const currentBookPath = Object.keys(conflictData.data.currentMeta.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
+        const { projectFullName } = conflictData.data;
+        const currentBookUsfm = await readUsfmFile(selectedBook, projectFullName);
         // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
         if (currentBookUsfm) {
           const currentJson = await parseUsfm(currentBookUsfm);
-          // const currentNormalisedUsfm = await parseJsonToUsfm(currentJson.data);
-
           // generate the merge object with current , incoming , merge verses
-          // const mergeJson = JSON.parse(JSON.stringify(currentJson.data));
           const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).catch((err) => {
             console.log('process usfm : ', err);
           });
           const mergeJson = processOutArr[0];
           console.log('processOutArr[1] : ', processOutArr[1]);
-          setConflictedChapters(processOutArr[1]);
+          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], current: currentJson.data, mergeJson } }));
+          setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] }));
+          setLoading(false);
 
-          if (savedConflictsBooks.includes(`${importedJson.data.book.bookCode.toLowerCase()}.json`)) {
-            setExistImportedBook({ status: true, bookId: importedJson.data.book.bookCode.toLowerCase() });
-            console.log('existing book');
-            setModel({
-              openModel: true,
-              title: t('modal-title-abort-conflict-resolution'),
-              confirmMessage: t('msg-conflict-resolution-duplicate-book', { bookId: importedJson.data.book.bookCode.toUpperCase() }),
-              buttonName: t('label-startover'),
-            });
-          }
-
-          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, current: currentJson.data, mergeJson }));
-
-          // compare usfms to check conflcit or not
-          // const diffOut = await dmp.diff_main(normalisedIncomingUSFM, currentNormalisedUsfm);
-          // setUsfmJsons((prev) => ({ ...prev, diffOut }));
+          // old UI logic of import and parse already saved book
+          // if (savedConflictsBooks.includes(`${importedJson.data.book.bookCode.toLowerCase()}.json`)) {
+          //   setExistImportedBook({ status: true, bookId: importedJson.data.book.bookCode.toLowerCase() });
+          //   console.log('existing book');
+          //   setModel({
+          //     openModel: true,
+          //     title: t('modal-title-abort-conflict-resolution'),
+          //     confirmMessage: t('msg-conflict-resolution-duplicate-book', { bookId: importedJson.data.book.bookCode.toUpperCase() }),
+          //     buttonName: t('label-startover'),
+          //   });
+          // }
         }
       }
     } else {
@@ -265,97 +147,28 @@ function TranslationMergeUI() {
     setLoading(false);
   };
 
+  console.log({ conflictedChapters, selectedBook });
+
+  // handle conflict check for a book on book nav
   useEffect(() => {
-    // get usfm and parse
-    if (importedUsfmFolderPath.length === 1 && currentProjectMeta) {
-      setLoading(true);
-      parseFiles();
-      setFinishedConflict(false);
-    }
-  }, [importedUsfmFolderPath, currentProjectMeta]);
-
-  useEffect(() => {
-    if (conflictedChapters.length === resolvedChapters.length) {
-      setFinishedConflict(true);
-    }
-  }, [conflictedChapters.length, resolvedChapters.length]);
-
-  const resolveAndMarkDoneChapter = () => {
-    setResolvedChapters((prev) => [...prev, selectedChapter]);
-    // store the jsons to the backend (/.merge/projectName/BookID.json)
-    const fs = window.require('fs');
-    const { id, name } = openTextTranslationMerge.meta;
-    const _projectName = `${name}_${id[0]}`;
-    const newpath = localStorage.getItem('userPath');
-    const path = require('path');
-    localforage.getItem('userProfile').then((user) => {
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-      if (!fs.existsSync(path.join(USFMMergeDirPath, _projectName))) {
-        fs.mkdirSync(path.join(USFMMergeDirPath, _projectName), { recursive: true });
-      }
-      console.log('write this book :', `${selectedBookId}.json`);
-      fs.writeFileSync(path.join(USFMMergeDirPath, _projectName, `${selectedBookId}.json`), JSON.stringify({ usfmJsons }));
-    });
-  };
-
-  const handleFinishedResolution = async () => {
-    try {
-      const path = require('path');
-      const fs = window.require('fs');
-
-      const { id, name } = openTextTranslationMerge.meta;
-      const _projectName = `${name}_${id[0]}`;
-      const newpath = localStorage.getItem('userPath');
-
-      const user = await localforage.getItem('userProfile');
-      if (user?.username) {
-        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-        const currentJsonFile = `${existImportedBook.bookId}.json`;
-        const OrgProjectFilePath = path.join(newpath, packageInfo.name, 'users', user?.username, 'projects', _projectName, 'ingredients', existImportedBook.bookId.toUpperCase());
-
-        // convert usfmJson.mergeJson to norml parsedJson and convert to usfm
-
-        const resolvedTempJson = JSON.parse(JSON.stringify(usfmJsons.mergeJson));
-
-        for (let index = 0; index < resolvedTempJson.chapters.length; index++) {
-          const chObjContents = usfmJsons.mergeJson.chapters[index].contents;
-          for (let j = 0; j < chObjContents.length; j++) {
-            let verseObj = chObjContents[j];
-            if (verseObj?.resolved) {
-              const tempResolvedContent = verseObj.resolved.resolvedContent;
-              verseObj = { ...tempResolvedContent };
-            }
-          }
+    if (!loading) {
+      (async () => {
+        setLoading(true);
+        if (conflictedChapters[selectedBook]) {
+          setLoading(false);
+        } else {
+          await checkForConflictInSelectedBook(selectedBook);
         }
-
-        const usfm = await parseJsonToUsfm(resolvedTempJson);
-        fs.writeFileSync(OrgProjectFilePath, usfm, 'utf-8');
-
-        // delete saved json in merge dir - check if it is the last one then delete folder too
-        if (!fs.existsSync(path.join(USFMMergeDirPath, _projectName))) {
-          const files = fs.readdirSync(path.join(USFMMergeDirPath, _projectName));
-          if (files?.length > 1) {
-            // delete single file
-            await fs.unlinkSync(path.join(USFMMergeDirPath, currentJsonFile));
-          } else {
-            // delete dir
-            await fs.rmdirSync(USFMMergeDirPath, { recursive: true }, (err) => {
-              if (err) {
-                throw new Error(`Error delete .usfm-merge dir :  ${err}`);
-              }
-            });
-          }
-        }
-      }
-    } catch (err) {
-      console.log('error : finishd move file ---> ', err);
+      })();
+    } else {
+      // TODO : add a message loading is showing some other process is going on
     }
-  };
+  }, [selectedBook]);
 
   return (
     <>
       <Transition
-        show={openTextTranslationMerge.open}
+        show={conflictData.open}
         as={Fragment}
         enter="transition duration-100 ease-out"
         enterFrom="transform scale-95 opacity-0"
@@ -369,7 +182,7 @@ function TranslationMergeUI() {
           className="fixed inset-0 z-10 overflow-y-auto"
           initialFocus={cancelButtonRef}
           static
-          open={openTextTranslationMerge.open}
+          open={conflictData.open}
           onClose={() => removeSection(true)}
         >
 
@@ -391,10 +204,14 @@ function TranslationMergeUI() {
             {/* contents section */}
             <div className="bg-[#e7e7e7] w-[80vw] h-[80vh]">
               <div className="p-2 h-full border grid grid-cols-6 gap-2">
+
                 <TranslationMergNavBar
-                  currentUsfmJson={!existImportedBook.status ? usfmJsons.current : {}}
-                  conflictedChapters={!existImportedBook.status ? conflictedChapters : []}
-                  resolvedChapters={resolvedChapters}
+                  conflictedBooks={conflictData?.data?.files}
+                  resolvedBooks={resolvedBooks}
+                  selectedBook={selectedBook}
+                  setSelectedBook={setSelectedBook}
+                  disableSelection={loading}
+                  conflictedChapters={conflictedChapters[selectedBook]}
                   selectedChapter={selectedChapter}
                   setSelectedChapter={setSelectedChapter}
                 />
@@ -404,34 +221,50 @@ function TranslationMergeUI() {
 
                     {loading ? (<LoadingScreen />) : (
 
-                      (usfmJsons.current && usfmJsons.imported && !existImportedBook.status) ? (
+                      usfmJsons[selectedBook]?.current && usfmJsons[selectedBook]?.imported && (
                         <div className="h-[70vh] overflow-auto">
                           <UsfmConflictEditor
                             usfmJsons={usfmJsons}
-                            currentProjectMeta={currentProjectMeta}
+                            currentProjectMeta={conflictData?.data?.currentMeta}
                             selectedChapter={selectedChapter}
+                            selectedBook={selectedBook}
                             setUsfmJsons={setUsfmJsons}
-                            setChapterResolveDone={setChapterResolveDone}
-                            resolvedChapters={resolvedChapters}
+                            setChapterResolveDone={() => { }}
+                            resolvedChapters={[]}
                           />
                         </div>
                       )
-                        : (
-                          <ImportUsfmUI
-                            buttonName={`${t('btn-import')} Usfm`}
-                            currentProjectMeta={currentProjectMeta}
-                            handleImportUsfm={handleImportUsfm}
-                            savedConflictsBooks={savedConflictsBooks}
-                            resumeConflictResolution={resumeConflictResolution}
-                          />
-                        )
+
+                      // (usfmJsons.current && usfmJsons.imported && !existImportedBook.status) ? (
+                      //   <div className="h-[70vh] overflow-auto">
+                      //     <UsfmConflictEditor
+                      //       usfmJsons={usfmJsons}
+                      //       currentProjectMeta={currentProjectMeta}
+                      //       selectedChapter={selectedChapter}
+                      //       setUsfmJsons={setUsfmJsons}
+                      //       setChapterResolveDone={setChapterResolveDone}
+                      //       resolvedChapters={resolvedChapters}
+                      //     />
+                      //   </div>
+                      // )
+                      //   : (
+                      //     <ImportUsfmUI
+                      //       buttonName={`${t('btn-import')} Usfm`}
+                      //       currentProjectMeta={currentProjectMeta}
+                      //       handleImportUsfm={handleImportUsfm}
+                      //       savedConflictsBooks={savedConflictsBooks}
+                      //       resumeConflictResolution={resumeConflictResolution}
+                      //     />
+                      //   )
 
                     )}
 
                   </div>
                   <div className="border-2 border-black rounded-md h-[50px] p-1 flex justify-between">
                     <p className="text-red-500 text-sm">{error}</p>
-                    {usfmJsons.current && usfmJsons.imported && (
+                    <p>Buttons Sections</p>
+                    {/* BUTTONS SECTIONS --------------------------------------------------------------------------- TODO add buttos */}
+                    {/* {usfmJsons.current && usfmJsons.imported && (
                       finishedConflict ? (
 
                         <button
@@ -447,14 +280,14 @@ function TranslationMergeUI() {
                           type="button"
                           onClick={() => resolveAndMarkDoneChapter()}
                           disabled={!chapterResolveDone}
-                          className={`px-4 py-1  rounded-md uppercase 
-                        ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '} 
+                          className={`px-4 py-1  rounded-md uppercase
+                        ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '}
                         `}
                         >
                           Resolve
                         </button>
                       )
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>

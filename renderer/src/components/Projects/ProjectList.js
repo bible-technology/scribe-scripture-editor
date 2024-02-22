@@ -30,7 +30,6 @@ export default function ProjectList() {
       projects,
       // unstarredProjects,
       callEditProject,
-      openTextTranslationMerge,
     },
     action: {
       handleClickStarred,
@@ -104,7 +103,6 @@ export default function ProjectList() {
         </ProjectsLayout>
       ) : <NewProject call="edit" project={currentProject} closeEdit={() => closeEditProject()} />}
       <ExportProjectPopUp open={openExportPopUp} closePopUp={closeExportPopUp} project={currentProject} />
-      {openTextTranslationMerge.open && <TranslationMergeUI />}
     </>
   );
 }
