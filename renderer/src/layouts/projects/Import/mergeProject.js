@@ -167,6 +167,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       setConflictPopup({
         open: true,
         data: {
+          projectType: 'textStories',
           files: mergeStatus.data,
           mergeDirPath,
           projectPath: targetPath,

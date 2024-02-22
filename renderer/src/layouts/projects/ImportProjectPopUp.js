@@ -18,7 +18,9 @@ import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
 import burrito from '../../lib/BurritoTemplete.json';
 import { mergeProject } from './Import/mergeProject';
+
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { mergeTextTranslationProject } from '@/components/TextTranslationMerge/mergeTextTranslationProject';
 
 export default function ImportProjectPopUp(props) {
   const {
@@ -187,12 +189,20 @@ export default function ImportProjectPopUp(props) {
     logger.debug('importProjectPopUp.js', 'call for merge');
     setProcessMerge(true)
     modelClose();
-    await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+    if (sbData?.burritoType === 'gloss / textStories'){
+      await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+    }else if (sbData?.burritoType === 'scripture / textTranslation') {
+      console.log("Started Indentify Merge conflicts ------");
+      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData)
+      console.log("completed merge idenitfy process ------");
+    }
     setMerge(false)
     setSbData({});
     close()
     logger.debug('importProjectPopUp.js', 'git merge process done');
   }
+
+  console.log({sbData});
 
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
@@ -202,7 +212,7 @@ export default function ImportProjectPopUp(props) {
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
         // currently MERGE feature only Enabled for OBS projects
-        if (sbData?.burritoType === 'gloss / textStories'){
+        if (sbData?.burritoType === 'gloss / textStories' || sbData?.burritoType === 'scripture / textTranslation'){
           setMerge(true)
         }
         setModel({
