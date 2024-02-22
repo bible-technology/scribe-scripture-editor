@@ -82,13 +82,13 @@ export const createJuxtaContent = (
       project: {
         'x-juxtalinear': {
           scriptDirection: direction,
-          starred: call === 'edit' ? currentBurrito.project.textStories.starred : false,
-          isArchived: call === 'edit' ? currentBurrito.project.textStories.isArchived : false,
+          starred: call === 'edit' ? currentBurrito.project['x-juxtalinear'].starred : false,
+          isArchived: call === 'edit' ? currentBurrito.project['x-juxtalinear'].isArchived : false,
           description: project.description,
           copyright: copyright.title,
           lastSeen: moment().format(),
-          refResources: call === 'edit' ? currentBurrito.project.textStories.refResources : [],
-          bookMarks: call === 'edit' ? currentBurrito.project.textStories.bookMarks : [],
+          refResources: call === 'edit' ? currentBurrito.project['x-juxtalinear'].refResources : [],
+          bookMarks: call === 'edit' ? currentBurrito.project['x-juxtalinear'].bookMarks : [],
           font: '',
         },
       },

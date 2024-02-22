@@ -195,11 +195,17 @@ export default function ImportPopUp(props) {
             // Nicolas : TODO add a validator for our juxta type
             // Nicolas : TODO change the way I get the bookcode
             const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
-            logger.warn('ImportPopUp.js', `updatedFile == ${updatedFile.bookCode}`);
+            if (updatedFile.error) {
+              logger.warn('ImportPopUp.js', 'Invalid filename.');
+              setNotify('failure');
+              // Nicolas : TODO translations
+              setSnackText(updatedFile.error);
+              setOpenSnackBar(true);
+            }
             logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
             files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
           } else {
-            logger.warn('ImportPopUp.js', 'Invalid Md file.');
+            logger.warn('ImportPopUp.js', 'Invalid file.');
             setNotify('failure');
             // Nicolas : TODO translations
             setSnackText('invalid file type');
