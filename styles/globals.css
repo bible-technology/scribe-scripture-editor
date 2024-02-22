@@ -270,7 +270,7 @@ p.paragraph:has(.chapter) {
 }
 
 ion-toolbar {
-  --background: #FF5500;
+  --background: #E5E7EB;
 
   --border-color: white;
 }

@@ -161,6 +161,7 @@ export const readUsfm = (srcUsfm: string | undefined) => {
           ) {
             if (workspace.currentSentence.length > 0) {
               output.sentences.push({
+                checksum: "azejp",
                 originalSource : workspace.currentSentence,
                 chunks: [
                   {

@@ -137,24 +137,24 @@ export const AppHeader: React.FC = () => {
       <IonToolbar>
         <Stack flexDirection="row" justifyContent="center" alignItems="center">
           <Button onClick={onPrevHandler}>
-            <IoArrowBackCircleOutline size={32} color="#111827" />
+            <IoArrowBackCircleOutline size={32} color="#FF5500" />
           </Button>
           <Stack alignItems="center">
             {/* <Box sx={{ color: "white", fontStyle: "italic" }}>{fileName}</Box> */}
-            <Box sx={{ color: "white", fontSize: "14px" }}>
-              Sentence
+            <Box sx={{ color: "#4B5563", fontSize: "14px" }}>
+              Sentence&nbsp;
               <Input
                 value={sentences.length ? curIndex + 1 : 0}
                 sx={{ width: "30px" }}
                 inputProps={{ style: { textAlign: "center", color: "black" } }}
                 onChange={indexChangeHandler}
               />
-              of {sentences.length} (ch:{currentChapter()}, v{startVerse()} -{" "}
+              &nbsp;of {sentences.length} (ch:{currentChapter()}, v{startVerse()} -{" "}
               {endVerse()})
             </Box>
           </Stack>
           <Button onClick={onNextHandler} color="primary">
-            <IoArrowForwardCircleOutline size={32} color="#111827" />
+            <IoArrowForwardCircleOutline size={32} color="#FF5500" />
           </Button>
         </Stack>
       </IonToolbar>
