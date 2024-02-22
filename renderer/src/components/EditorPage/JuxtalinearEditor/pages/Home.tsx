@@ -20,6 +20,7 @@ import { SentenceContext } from "../index";
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { useReadJuxtaFile } from "../../JuxtaTextEditor/hooks/useReadJuxtaFile";
 import md5 from "md5";
+import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta.js';
 // import { readUsfm } from "../utils/readUsfm";
 
 const grid = 3
@@ -88,7 +89,12 @@ const Home: React.FC = () => {
   // const [mode, setMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light");
 
   const remakeSentences = (stcs: ISentence[]) => {
+    let checksumSentences = '';
+    let checksumChuncks = '';
+    let currentCs = '';
     return stcs.map((stc) => {
+      checksumChuncks = '';
+      currentCs = '';
       const counts: { [key: string]: any } = {};
       const chunks = stc.chunks.filter(({source}) => source[0]).map((chunk) => {
         const source = chunk.source.map((src) => {
@@ -99,17 +105,21 @@ const Home: React.FC = () => {
           }
           return { ...src, index: counts[src.content] };
         });
+        currentCs = md5(normalizeString(JSON.stringify(source) + chunk.gloss)) as string;
+        checksumChuncks += currentCs;
         return {
           source,
           gloss: chunk.gloss,
-          checksum: md5(source)
+          checksum: currentCs
         };
       });
+      currentCs = md5(checksumChuncks) as string;
+      checksumSentences += currentCs;
       return {
         originalSource: stc.originalSource,
         chunks,
         sourceString: stc.sourceString,
-        checksum: md5(stc.originalSource)
+        checksum: checksumSentences
       };
     });
   };
@@ -142,6 +152,8 @@ const Home: React.FC = () => {
   }, [sentences, curIndex])
 
   const remakeSentence = (stc: ISentence) => {
+    let checksumChuncks = '';
+    let currentCs = '';
     const counts: {[key: string]: any} = {}
     const chunks = stc.chunks.filter(({source}) => source[0]).map((chunk) => {
       const source = chunk.source.map((src) => {
@@ -152,17 +164,19 @@ const Home: React.FC = () => {
         }
         return { ...src, index: counts[src.content] }
       })
+      currentCs = md5(normalizeString(JSON.stringify(source) + chunk.gloss)) as string;
+      checksumChuncks += currentCs;
       return {
         source,
         gloss: chunk.gloss,
-        checksum: md5(source)
+        checksum: currentCs
       }
     })
     return {
       originalSource: stc.originalSource,
       chunks,
       sourceString: stc.sourceString,
-      checksum: md5(stc.originalSource)
+      checksum: md5(checksumChuncks)
     }
   }
 
@@ -171,7 +185,6 @@ const Home: React.FC = () => {
     if(sentences[0] !== undefined) {
       sentences[0].chunks.filter(({source}) => source[0]).forEach((chunck) => {
         chunck.source.filter(e => e);
-        chunck.checksum = md5(chunck.source);
       });
       jsonFileContent.sentences = sentences
       const jsonStr = JSON.stringify(jsonFileContent);
@@ -247,13 +260,12 @@ const Home: React.FC = () => {
 
       const newChunks = [...sentences[curIndex].chunks]
       newChunks[sInd].source = newSource
-      newChunks[sInd].checksum = md5(newSource)
 
       const newSentence = remakeSentence({
         originalSource: sentences[curIndex].originalSource,
         chunks: newChunks,
         sourceString: sentences[curIndex].sourceString,
-        checksum: md5(sentences[curIndex].originalSource)
+        checksum: ""
       })
       setGlobalSentences(curIndex, newSentence)
     } else {
@@ -268,16 +280,12 @@ const Home: React.FC = () => {
       const newChunks = [...sentences[curIndex].chunks]
       newChunks[sInd].source = sentenceRes[sInd]
       newChunks[dInd].source = sentenceRes[dInd]
-      newChunks[sInd].gloss = ""
-      newChunks[dInd].gloss = ""
-      newChunks[sInd].checksum = md5(sentenceRes[sInd])
-      newChunks[dInd].checksum = md5(sentenceRes[dInd])
 
       const newSentence = remakeSentence({
         originalSource: sentences[curIndex].originalSource,
         chunks: newChunks,
         sourceString: sentences[curIndex].sourceString,
-        checksum: md5(sentences[curIndex].originalSource)
+        checksum: ""
       })
       setGlobalSentences(curIndex, newSentence)
     }
@@ -304,7 +312,7 @@ const Home: React.FC = () => {
               ...newChunks[rowN - 1].source,
               ...newChunks[rowN].source,
             ]
-            newChunks[rowN - 1].gloss = ""
+            // newChunks[rowN - 1].gloss = ""
             newChunks[rowN].source = []
             newChunks[rowN].gloss = ""
             newChunks[rowN].checksum = ""
@@ -313,8 +321,8 @@ const Home: React.FC = () => {
             // Make new row
             newChunks = [
               ...newChunks.slice(0, rowN),
-              { source: newChunks[rowN].source.slice(0, colN), gloss: "", checksum: md5(newChunks[rowN].source.slice(0, colN)) },
-              { source: newChunks[rowN].source.slice(colN), gloss: newChunks[rowN].gloss, checksum: md5(newChunks[rowN].source.slice(colN)) },
+              { source: newChunks[rowN].source.slice(0, colN), gloss: "", checksum: "" },
+              { source: newChunks[rowN].source.slice(colN), gloss: newChunks[rowN].gloss, checksum: "" },
               ...newChunks.slice(rowN + 1),
             ]
           }
@@ -323,7 +331,7 @@ const Home: React.FC = () => {
             originalSource: sentences[curIndex].originalSource,
             chunks: newChunks,
             sourceString: sentences[curIndex].sourceString,
-            checksum: md5(sentences[curIndex].originalSource)
+            checksum: ""
           })
           setGlobalSentences(curIndex, newSentence)
         }
@@ -363,7 +371,7 @@ const Home: React.FC = () => {
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
-      checksum: md5(sentences[curIndex].originalSource),
+      checksum: "",
     })
     setGlobalSentences(curIndex, newSentence)
   }
@@ -376,7 +384,7 @@ const Home: React.FC = () => {
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
-      checksum: md5(sentences[curIndex].originalSource),
+      checksum: "",
     })
     setGlobalSentences(curIndex, newSentence)
   }
@@ -390,12 +398,12 @@ const Home: React.FC = () => {
     const newChunks = [...sentences[curIndex].chunks]
     newChunks[n].gloss = e.target.value
     setGlobalItemArrays(curIndex, newItemArrays)
-    setGlobalSentences(curIndex, {
+    setGlobalSentences(curIndex, remakeSentence({
       originalSource: sentences[curIndex].originalSource,
       chunks: newChunks,
       sourceString: sentences[curIndex].sourceString,
-      checksum: md5(sentences[curIndex].originalSource),
-    })
+      checksum: "",
+    }))
   }
 
   return (

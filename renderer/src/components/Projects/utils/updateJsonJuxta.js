@@ -1,6 +1,6 @@
 import md5 from 'md5';
 
-const normalizeString = (str) => str.replace(/(\r\n|\n|\r| )/gm, '');
+export const normalizeString = (str) => str.replace(/(\r\n|\n|\r| )/gm, '');
 
 /**
  * Transform an old json juxta format to the newest version.
