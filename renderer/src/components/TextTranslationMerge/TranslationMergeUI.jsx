@@ -34,13 +34,16 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     buttonName: '',
   });
 
-  const [selectedBook, setSelectedBook] = useState(conflictData?.data?.files[0]);
   const [selectedChapter, setSelectedChapter] = useState();
   const [resolvedBooks, setResolvedBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [usfmJsons, setUsfmJsons] = useState({});
+  const [selectedBook, setSelectedBook] = useState();
   const [conflictedChapters, setConflictedChapters] = useState({});
+  const [chapterResolveDone, setChapterResolveDone] = useState(false);
+  const [finishedConflict, setFinishedConflict] = useState(false);
+  const [resolvedChapters, setResolvedChapters] = useState({});
 
   const removeSection = async (abort = false) => {
     if (abort === false) {
@@ -93,12 +96,12 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     return usfm;
   }
 
-  console.log({ usfmJsons });
+  console.log({ conflictedChapters, selectedBook, usfmJsons });
 
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
-    const IncomingUsfm = fs.readFileSync(path.join(conflictData.data.incomingPath, selectedBook), 'utf8');
+    const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
       if (!importedJson.valid) {
@@ -112,8 +115,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
         setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], imported: importedJson.data } }));
 
         // setSelectedBookId(importedJson.data.book.bookCode.toLowerCase());
-        // const currentBookPath = Object.keys(conflictData.data.currentMeta.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
-        const { projectFullName } = conflictData.data;
+        // const currentBookPath = Object.keys(usfmJsons.conflictMeta.currentMeta.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
+        const { projectFullName } = usfmJsons.conflictMeta;
         const currentBookUsfm = await readUsfmFile(selectedBook, projectFullName);
         // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
         if (currentBookUsfm) {
@@ -147,11 +150,40 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     setLoading(false);
   };
 
-  console.log({ conflictedChapters, selectedBook });
+  const handleFinishedResolution = () => {
+
+  };
+
+  const resolveAndMarkDoneChapter = () => {
+    const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
+    setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
+    if (restOfTheChapters?.length === 0) {
+      // completed conflicts for that particualr book
+      setResolvedBooks((prev) => [...prev, selectedBook]);
+    }
+    // store the jsons to the backend (/.merge/projectName/BookID.json)
+    const fs = window.require('fs');
+    const { projectFullName } = usfmJsons.conflictMeta;
+    const newpath = localStorage.getItem('userPath');
+    const path = require('path');
+    localforage.getItem('userProfile').then((user) => {
+      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
+      if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
+        fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
+      }
+      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, `${usfmJsons}.json`), JSON.stringify({ usfmJsons }));
+    });
+  };
+
+  // store conflict data to usfm jsons meta
+  useEffect(() => {
+    setUsfmJsons((prev) => ({ ...prev, conflictMeta: conflictData.data }));
+    setSelectedBook(conflictData?.data?.files[0]);
+  }, [conflictData]);
 
   // handle conflict check for a book on book nav
   useEffect(() => {
-    if (!loading) {
+    if (!loading && usfmJsons?.conflictMeta) {
       (async () => {
         setLoading(true);
         if (conflictedChapters[selectedBook]) {
@@ -163,7 +195,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     } else {
       // TODO : add a message loading is showing some other process is going on
     }
-  }, [selectedBook]);
+  }, [selectedBook, usfmJsons.conflictMeta]);
 
   return (
     <>
@@ -206,7 +238,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
               <div className="p-2 h-full border grid grid-cols-6 gap-2">
 
                 <TranslationMergNavBar
-                  conflictedBooks={conflictData?.data?.files}
+                  conflictedBooks={usfmJsons?.conflictMeta?.files}
                   resolvedBooks={resolvedBooks}
                   selectedBook={selectedBook}
                   setSelectedBook={setSelectedBook}
@@ -225,11 +257,11 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
                         <div className="h-[70vh] overflow-auto">
                           <UsfmConflictEditor
                             usfmJsons={usfmJsons}
-                            currentProjectMeta={conflictData?.data?.currentMeta}
+                            currentProjectMeta={usfmJsons?.conflictMeta?.currentMeta}
                             selectedChapter={selectedChapter}
                             selectedBook={selectedBook}
                             setUsfmJsons={setUsfmJsons}
-                            setChapterResolveDone={() => { }}
+                            setChapterResolveDone={setChapterResolveDone}
                             resolvedChapters={[]}
                           />
                         </div>
@@ -262,11 +294,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
                   </div>
                   <div className="border-2 border-black rounded-md h-[50px] p-1 flex justify-between">
                     <p className="text-red-500 text-sm">{error}</p>
-                    <p>Buttons Sections</p>
-                    {/* BUTTONS SECTIONS --------------------------------------------------------------------------- TODO add buttos */}
-                    {/* {usfmJsons.current && usfmJsons.imported && (
+                    {usfmJsons[selectedBook]?.current && usfmJsons[selectedBook]?.imported && (
                       finishedConflict ? (
-
                         <button
                           type="button"
                           onClick={() => handleFinishedResolution()}
@@ -287,7 +316,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
                           Resolve
                         </button>
                       )
-                    )} */}
+                    )}
                   </div>
                 </div>
               </div>

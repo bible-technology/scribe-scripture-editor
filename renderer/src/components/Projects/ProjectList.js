@@ -15,7 +15,6 @@ import NewProject from './NewProject';
 import * as logger from '../../logger';
 import ProjectRow from './ProjectRow';
 import { ProjectContext } from '../context/ProjectContext';
-import TranslationMergeUI from '../TextTranslationMerge/TranslationMergeUI';
 
 export default function ProjectList() {
   const { t } = useTranslation();
