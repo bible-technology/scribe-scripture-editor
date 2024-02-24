@@ -201,6 +201,7 @@ export default function ImportPopUp(props) {
               // Nicolas : TODO translations
               setSnackText(updatedFile.error);
               setOpenSnackBar(true);
+              break;
             }
             logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
             files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
