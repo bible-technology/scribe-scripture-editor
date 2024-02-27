@@ -9,7 +9,7 @@ import {
 } from "react-icons/io5";
 import { Button, Box, Stack, Input } from "@mui/material";
 
-import { SentenceContext } from "../../index";
+import { SentenceContext } from '@/components/context/SentenceContext';
 import saveAs from "file-saver";
 
 export const AppHeader: React.FC = () => {
@@ -23,6 +23,8 @@ export const AppHeader: React.FC = () => {
     setItemArrays,
     setOriginText,
     setCurIndex,
+    setChapterNumber,
+    setVerseNumber,
   } = useContext(SentenceContext);
 
   const {
@@ -62,7 +64,18 @@ export const AppHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    setCurIndex(getSentenceFromCV());
+    if(sentences.length && sentences[curIndex]) {
+      const [chap, vers] = sentences[curIndex].chunks[0].source[0].cv.split(":").map((digit: string) => parseInt(digit, 10));
+      console.log(chap, vers);
+      setChapterNumber(chap);
+      setVerseNumber(vers);
+    }
+  }, [curIndex, setCurIndex]);
+
+  useEffect(() => {
+    if(closeNavigation) {
+      setCurIndex(getSentenceFromCV());
+    }
   }, [closeNavigation]);
 
   const getSentenceFromCV = () => {

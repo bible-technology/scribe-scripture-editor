@@ -32,7 +32,7 @@ export default function Editor(props) {
     // setGraftSequenceId,
     bookAvailable,
     setChapterNumber,
-    // setVerseNumber,
+    setVerseNumber,
     triggerVerseInsert,
   } = props;
 
@@ -139,6 +139,14 @@ export default function Editor(props) {
   //   handlers,
   // };
 
+  const _props = {
+    bookAvailable,
+    setChapterNumber,
+    setVerseNumber,
+    bookChange,
+    setBookChange,
+  };
+
   return (
     <div
       style={{
@@ -154,7 +162,7 @@ export default function Editor(props) {
         {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
         {bookAvailable && sequenceId && !bookChange && (
         )} */}
-        <JuxtalinearEditor />
+        <JuxtalinearEditor {..._props} />
       </div>
     </div>
   );

@@ -1,45 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Input, Stack, InputProps, Box } from "@mui/material";
 import Markdown from "react-markdown";
 import { IoCheckmark, IoCreate } from "react-icons/io5";
 
-export const MarkdownInput = (props: InputProps) => {
-  const [isEdit, setIsEdit] = useState(false);
+export const MarkdownInput = ({ setIsEditing, isEditing, ...props }: InputProps & { setIsEditing: (value: boolean) => boolean, isEditing: boolean }) => {
   const [isHovered, setIsHovered] = useState(false);
-  // const clickRef = useRef(0);
+  const clickRef = useRef(0);
 
-  // const enterPressed = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  //   if(isEdit && e.key == "Enter") {
-  //     setIsEdit(false);
-  //   }
-  // }
+  const enterPressed = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if(isEditing && e.key == "Enter") {
+      setIsEditing(false);
+    }
+  }
+  const handleDoubleClickToEdit = () => {
+    clickRef.current += 1
+    if (clickRef.current === 1) {
+      setTimeout(() => {
+        if (clickRef.current === 2) {
+          setIsEditing(true);
+        }
+        clickRef.current = 0
+      }, 300)
+    }
+  }
 
-  // const handleDoubleClickToEdit = () => {
-  //   clickRef.current += 1
-  //   console.log(clickRef.current);
-  //   console.log(isEdit);
-  //   if (clickRef.current === 1) {
-  //     setTimeout(() => {
-  //       if (clickRef.current >= 2) {
-  //         setIsEdit(true);
-  //         clickRef.current = 0
-  //       }
-  //     }, 300)
-  //   }
-  // }
-
-  if (isEdit) {
+  if (isEditing) {
     return (
       <Stack
         flexDirection={"row"}
         sx={{ background: "lightgrey", width: "100%", height: "36px", pl: "8px" }}
       >
         <Box flexGrow={1}>
-          <Input {...props} fullWidth onBlur={() => setIsEdit(false)}></Input>
+          <Input autoFocus onKeyDown={enterPressed} {...props} fullWidth onBlur={() => setIsEditing(false)}></Input>
         </Box>
         <Box sx={{ padding: "6px" }}>
           <Button
-            onClick={() => setIsEdit(false)}
+            onClick={() => setIsEditing(false)}
             sx={{ width: "24px", minWidth: "24px", padding: "4px" }}
             variant="contained"
           >
@@ -56,6 +52,7 @@ export const MarkdownInput = (props: InputProps) => {
       sx={{ background: "lightgrey", width: "100%", height: "36px", pl: "8px" }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => handleDoubleClickToEdit()}
     >
       <Stack
         flexGrow={1}
@@ -69,7 +66,7 @@ export const MarkdownInput = (props: InputProps) => {
       {isHovered ? (
         <Box sx={{ padding: "6px" }}>
           <Button
-            onClick={() => setIsEdit(true)}
+            onClick={() => setIsEditing(true)}
             sx={{ width: "24px", minWidth: "24px", padding: "4px" }}
             variant="contained"
           >

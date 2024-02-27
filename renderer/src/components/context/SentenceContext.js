@@ -1,18 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const SentenceContext = React.createContext({
-  fileName: '',
-  sentences: [],
-  originText: [],
-  itemArrays: [[]],
-  curIndex: 0,
-  setFileName: () => {},
-  setGlobalSentences: () => {},
-  setOriginText: () => {},
-  setGlobalTotalSentences: () => {},
-  setGlobalItemArrays: () => {},
-  setItemArrays: () => {},
-  setCurIndex: () => {},
-});
+export const SentenceContext = React.createContext();
 
-export default SentenceContext;
+const SentenceContextProvider = ({ children, value }) => {
+  const context = value;
+
+  return (
+    <SentenceContext.Provider value={context}>
+      {children}
+    </SentenceContext.Provider>
+  );
+};
+export default SentenceContextProvider;
+SentenceContextProvider.propTypes = {
+  children: PropTypes.node,
+};

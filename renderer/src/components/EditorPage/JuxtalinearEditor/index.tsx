@@ -1,34 +1,40 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
-// import { ISentence, IChunk } from './types';
+import React, { useState } from "react";
 
-import Editor from '@/modules/editor/Editor';
 import { setupIonicReact } from "@ionic/react"
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import Home from "./pages/Home";
 
 /* Core CSS required for Ionic components to work properly */
-import "@ionic/react/css/core.css"
+import "@ionic/react/css/core.css";
 
-import { Layout } from "./components/Layout"
+import { Layout } from "./components/Layout";
+import SentenceContextProvider from '@/components/context/SentenceContext';
+// import { ISentence, IChunk } from "./types";
 
-setupIonicReact()
+setupIonicReact();
 
-export const SentenceContext = createContext<ISentenceContext>({
-  fileName: "",
-  sentences: [],
-  originText: [],
-  itemArrays: [[]],
-  curIndex: 0,
-  setFileName: () => {},
-  setGlobalSentences: () => {},
-  setOriginText: () => {},
-  setGlobalTotalSentences: () => {},
-  setGlobalItemArrays: () => {},
-  setItemArrays: () => {},
-  setCurIndex: () => {},
-})
+// export const SentenceContext = createContext<ISentenceContext>({
+//   fileName: "",
+//   sentences: [],
+//   originText: [],
+//   itemArrays: [[]],
+//   curIndex: 0,
+//   setFileName: () => {},
+//   setGlobalSentences: () => {},
+//   setOriginText: () => {},
+//   setGlobalTotalSentences: () => {},
+//   setGlobalItemArrays: () => {},
+//   setItemArrays: () => {},
+//   setCurIndex: () => {},
+// })
 
-const JuxtalinearEditor: React.FC = () => {
+const JuxtalinearEditor: React.FC<any> = ({
+  bookAvailable,
+  setChapterNumber,
+  setVerseNumber,
+  bookChange,
+  setBookChange,
+}) => {
   const [fileName, setFileName] = useState("");
   const [sentences, setGlobalTotalSentences] = useState(
     new Array<ISentence>()
@@ -52,7 +58,7 @@ const JuxtalinearEditor: React.FC = () => {
   }
 
   return (
-    <SentenceContext.Provider
+    <SentenceContextProvider
       value={{
         fileName,
         sentences,
@@ -66,12 +72,14 @@ const JuxtalinearEditor: React.FC = () => {
         setGlobalItemArrays,
         setItemArrays,
         setCurIndex,
+        setChapterNumber,
+        setVerseNumber,
       }}
     >
       <Layout>
           <Home />
       </Layout>
-    </SentenceContext.Provider>
+    </SentenceContextProvider>
   );
 }
 
