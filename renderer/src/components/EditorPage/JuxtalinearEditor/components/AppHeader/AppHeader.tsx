@@ -66,7 +66,6 @@ export const AppHeader: React.FC = () => {
   useEffect(() => {
     if(sentences.length && sentences[curIndex]) {
       const [chap, vers] = sentences[curIndex].chunks[0].source[0].cv.split(":").map((digit: string) => parseInt(digit, 10));
-      console.log(chap, vers);
       setChapterNumber(chap);
       setVerseNumber(vers);
     }
