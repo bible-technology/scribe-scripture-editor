@@ -30,7 +30,9 @@
     "deploy": "yarn build && electron-builder -p always"
   },
   "eslintIgnore": [
-    "*.test.js"
+    "*.test.js",
+    "*.tsx",
+    "*.ts"
   ],
   "build": {
     "asar": true,

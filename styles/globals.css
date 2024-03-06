@@ -269,8 +269,28 @@ p.paragraph:has(.chapter) {
   @apply flex h-8 cursor-pointer  items-center justify-center rounded-lg p-2 text-xs font-bold  outline-none  xl:px-4;
 }
 
-ion-toolbar {
-  --background: #E5E7EB;
+#sundesmosToolbar {
+  background-color: #E5E7EB;
+  border-color: white;
+}
 
-  --border-color: white;
+.chunk-row:hover {
+  background-color: rgba(135, 206, 250, 0.3);
+}
+
+div.draggable {
+  border-color: #121212;
+  border-width: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .source-text {
+    color: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .source-text {
+    color: #121212;
+  }
 }

@@ -1,16 +1,13 @@
 import React, { useContext, useEffect } from "react";
-import { IonHeader, IonToolbar } from "@ionic/react";
-import { ProjectContext } from '@/components/context/ProjectContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 
 import {
   IoArrowBackCircleOutline,
   IoArrowForwardCircleOutline,
 } from "react-icons/io5";
-import { Button, Box, Stack, Input } from "@mui/material";
+import { AppBar, Toolbar, Button, Box, Stack, Input } from "@mui/material";
 
 import { SentenceContext } from '@/components/context/SentenceContext';
-import saveAs from "file-saver";
 
 export const AppHeader: React.FC = () => {
   const {
@@ -145,13 +142,13 @@ export const AppHeader: React.FC = () => {
   };
 
   return (
-    <IonHeader>
-      <IonToolbar>
-        <Stack flexDirection="row" justifyContent="center" alignItems="center">
+    <AppBar position="static" id="sundesmosToolbar">
+      <Toolbar>
+        <Stack flexDirection="row" justifyContent="center" alignItems="center" width="100%">
           <Button onClick={onPrevHandler}>
             <IoArrowBackCircleOutline size={32} color="#FF5500" />
           </Button>
-          <Stack alignItems="center">
+          <Stack justifyContent="center" alignItems="center">
             {/* <Box sx={{ color: "white", fontStyle: "italic" }}>{fileName}</Box> */}
             <Box sx={{ color: "#4B5563", fontSize: "14px" }}>
               Sentence&nbsp;
@@ -169,7 +166,7 @@ export const AppHeader: React.FC = () => {
             <IoArrowForwardCircleOutline size={32} color="#FF5500" />
           </Button>
         </Stack>
-      </IonToolbar>
-    </IonHeader>
+      </Toolbar>
+    </AppBar>
   );
 };

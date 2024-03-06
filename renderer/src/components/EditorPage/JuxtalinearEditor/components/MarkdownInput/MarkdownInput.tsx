@@ -3,7 +3,7 @@ import { Button, Input, Stack, InputProps, Box } from "@mui/material";
 import Markdown from "react-markdown";
 import { IoCheckmark, IoCreate } from "react-icons/io5";
 
-export const MarkdownInput = ({ setIsEditing, isEditing, ...props }: InputProps & { setIsEditing: (value: boolean) => boolean, isEditing: boolean }) => {
+export const MarkdownInput = ({ setIsEditing, isEditing, fontSize, selectedFont, ...props }: InputProps & { setIsEditing: (value: boolean) => boolean, isEditing: boolean, fontSize:number, selectedFont:string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const clickRef = useRef(0);
 
@@ -28,10 +28,14 @@ export const MarkdownInput = ({ setIsEditing, isEditing, ...props }: InputProps 
     return (
       <Stack
         flexDirection={"row"}
-        sx={{ background: "lightgrey", width: "100%", height: "36px", pl: "8px" }}
+        sx={{ background: "lightgrey", width: "100%", height: "36px", pl: "8px"}}
       >
         <Box flexGrow={1}>
-          <Input autoFocus onKeyDown={enterPressed} {...props} fullWidth onBlur={() => setIsEditing(false)}></Input>
+          <Input autoFocus onKeyDown={enterPressed} {...props} fullWidth onBlur={() => setIsEditing(false)} style={{
+                // fontFamily: selectedFont || 'sans-serif',
+                fontSize: `${fontSize}rem`,
+                lineHeight: (fontSize > 1.3) ? 1.5 : '',
+              }} ></Input>
         </Box>
         <Box sx={{ padding: "6px" }}>
           <Button
@@ -57,9 +61,12 @@ export const MarkdownInput = ({ setIsEditing, isEditing, ...props }: InputProps 
       <Stack
         flexGrow={1}
         justifyContent={"center"}
-        sx={{ width: "100%", height: "100%" }}
+        sx={{ width: "100%", height: "100%"}}
       >
-        <Markdown unwrapDisallowed allowedElements={['em', 'strong', 'italic', 'p']}>
+        <Markdown
+          unwrapDisallowed
+          allowedElements={['em', 'strong', 'italic', 'p']}
+        >
           {props.value as string}
         </Markdown>
       </Stack>

@@ -68,6 +68,8 @@ const Home: React.FC = () => {
       verse,
       chapterList,
       verseList,
+      fontSize,
+      selectedFont,
       languageId,
       folderPath,
       refName,
@@ -80,8 +82,8 @@ const Home: React.FC = () => {
 
   const [jsonFileContent, setJsonFileContent] = useState<IOutput>(null);
   const clickRef = useRef(0);
-  const usfmOpenRef = useRef<HTMLInputElement>(null);
-  const jsonOpenRef = useRef<HTMLInputElement>(null);
+  // const usfmOpenRef = useRef<HTMLInputElement>(null);
+  // const jsonOpenRef = useRef<HTMLInputElement>(null);
   const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
   const [editStates, setEditStates] = useState<boolean[]>(new Array(1).fill(false));
 
@@ -454,7 +456,10 @@ const Home: React.FC = () => {
               <Grid container key={n} className="chunk-row">
                 <Grid item sm={true} px={2} py={1}>
                   <Stack flexDirection="row">
-                    <Stack height={36} justifyContent="center">
+                    <Stack
+                      height={36}
+                      justifyContent="center"
+                    >
                       <Button
                         sx={{ minWidth: '30px', height: '14px' }}
                         onClick={() => chunkUpHandler(n)}
@@ -526,6 +531,8 @@ const Home: React.FC = () => {
                     onChange={(e) => glossChangeHandler(e, n)}
                     isEditing={editStates[n]}
                     setIsEditing={(value) => setEditState(n, value)}
+                    fontSize={fontSize}
+                    selectedFont={selectedFont}
                   />
                 </Grid>
               </Grid>

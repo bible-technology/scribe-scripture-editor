@@ -1,13 +1,6 @@
 import React from 'react';
-// import { useRef } from 'react';
-// import {
-  // IonMenu,
-  // IonPage,
-  // IonContent,
-  // IonFooter,
-  // IonMenuToggle,
-// } from '@ionic/react';
 import { AppHeader } from '../AppHeader';
+import { Box } from '@material-ui/core';
 
 interface LayoutProps {
   children?: React.ReactNode
@@ -15,13 +8,11 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <>
-      {/* <IonPage id="sundesmos"> */}
-        <AppHeader />
-        <div>
-          {children}
-        </div>
-      {/* </IonPage> */}
-    </>
+    <Box id="sundesmos" sx={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AppHeader />
+      <div>
+        {children}
+      </div>
+    </Box>
   )
 }
