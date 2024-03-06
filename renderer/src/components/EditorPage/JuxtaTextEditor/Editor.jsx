@@ -13,6 +13,7 @@ import { functionMapping } from './utils/insertFunctionMap';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
+import JuxtAlignEditor from '@/components/EditorPage/JuxtAlignEditor'; // eslint-disable-line
 import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // eslint-disable-line
 
 export default function Editor(props) {
@@ -34,6 +35,8 @@ export default function Editor(props) {
     setChapterNumber,
     setVerseNumber,
     triggerVerseInsert,
+    juxtaMode,
+    setJuxtaMode,
   } = props;
 
   const {
@@ -162,7 +165,10 @@ export default function Editor(props) {
         {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
         {bookAvailable && sequenceId && !bookChange && (
         )} */}
-        <JuxtalinearEditor {..._props} />
+        {juxtaMode === true
+          ? (<JuxtalinearEditor {..._props} />)
+          : (<JuxtAlignEditor {..._props} />)}
+
       </div>
     </div>
   );
