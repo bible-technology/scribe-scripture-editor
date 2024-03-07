@@ -27,7 +27,8 @@
     "build": "next build renderer && next export renderer",
     "pack-app": "yarn build && electron-builder --dir",
     "dist": "yarn build && electron-builder -p never",
-    "deploy": "yarn build && electron-builder -p always"
+    "deploy": "yarn build && electron-builder -p always",
+    "makewin": "electron-builder --windows"
   },
   "eslintIgnore": [
     "*.test.js",
@@ -39,6 +40,10 @@
     "extraResources": "renderer/public",
     "extraMetadata": {
       "main": "main/index.js"
+    },
+    "directories":{
+      "buildResources":"resources",
+      "output":"release"
     },
     "files": [
       "main",
@@ -64,10 +69,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "styles/scribe-logo.png",
-      "publish": [
-        "github"
-      ]
+      "icon": "styles/scribe-logo.png"
     },
     "nsis": {
       "allowToChangeInstallationDirectory": true,
