@@ -1,0 +1,30 @@
+{
+    "bookcode": "MRK",
+    "checksum": "65q4zd6468v6s4f6juyk468bf8t7b98",
+    "blocks": [
+        {
+            "sentences": [0],
+            "tradText": "***Ici*** commence la Bonne Nouvelle de **Jésus**-Christ Fils de Dieu.",
+            "alignments": [
+            ]
+        },
+        {
+            "sentences": [1],
+            "tradText": "Le prophète **Ésaïe** avait bien dit : « Voici, j'envoie mon messager à toi. Il préparera ton chemin.",
+            "alignments": [
+            ]
+        },
+        {
+            "sentences": [2],
+            "tradText": "Il y a une voix qui crie dans le désert : 'Préparez le chemin du Seigneur ! Rendez droits ses sentiers.'»",
+            "alignments": [
+            ]
+        },
+        {
+            "sentences": [3],
+            "tradText": "**Alors Jean** est arrivé. Il baptisait dans le désert et appelait ***les gens*** à se faire baptiser ***en signe*** de leur changement de direction, afin d'être pardonnés de leur péchés.",
+            "alignments": [
+            ]
+        }
+    ]
+}
