@@ -148,6 +148,7 @@ export default function Editor(props) {
     setVerseNumber,
     bookChange,
     setBookChange,
+    juxtaMode,
   };
 
   return (
@@ -165,10 +166,7 @@ export default function Editor(props) {
         {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
         {bookAvailable && sequenceId && !bookChange && (
         )} */}
-        {juxtaMode === true
-          ? (<JuxtalinearEditor {..._props} />)
-          : (<JuxtAlignEditor {..._props} />)}
-
+        <JuxtalinearEditor {..._props} />
       </div>
     </div>
   );

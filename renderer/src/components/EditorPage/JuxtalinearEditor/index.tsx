@@ -9,6 +9,7 @@ import Home from './pages/Home';
 
 import { Layout } from './components/Layout';
 import SentenceContextProvider from '@/components/context/SentenceContext';
+import JuxtAlignEditor from '../JuxtAlignEditor';
 // import { ISentence, IChunk } from './types';
 
 // setupIonicReact();
@@ -34,6 +35,7 @@ const JuxtalinearEditor: React.FC<any> = ({
   setVerseNumber,
   bookChange,
   setBookChange,
+  juxtaMode
 }) => {
   const [fileName, setFileName] = useState('');
   const [sentences, setGlobalTotalSentences] = useState(
@@ -77,7 +79,9 @@ const JuxtalinearEditor: React.FC<any> = ({
       }}
     >
       <Layout>
-        <Home />
+        {juxtaMode === true
+            ? (<Home />)
+            : (<JuxtAlignEditor />)}
       </Layout>
     </SentenceContextProvider>
   );
