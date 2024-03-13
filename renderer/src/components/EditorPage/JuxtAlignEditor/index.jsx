@@ -15,8 +15,8 @@ import Information from '../../../../../public/icons/circle-info-solid.svg';
 import Close from '../../../../../public/icons/x-solid.svg';
 
 // import { ISentence, IChunk } from './types';
-import plse from './TIT_align_juxta_psle.json';
-import jxt from './jxtl.json';
+import plse from './plse.json';
+// import jxt from './jxtl.json';
 
 export default function JuxtAlignEditor() {
   const {
@@ -248,7 +248,7 @@ export default function JuxtAlignEditor() {
                         === plse.blocks[currentBlockid].alignments[i].md5Chunck
                       ) {
                         console.log(
-                          plse.blocks[currentBlockid].alignments[i].words,
+                          plse.blocks[currentBlockid].alignments,
                         );
 
                         setHoverNotSelectedWord(

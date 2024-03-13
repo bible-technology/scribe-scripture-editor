@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import { useEffect, useState, useContext } from 'react';
 import localforage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -5,7 +7,7 @@ import { readRefBurrito } from '../../../../core/reference/readRefBurrito';
 import { readFile } from '../../../../core/editor/readFile';
 import packageInfo from '../../../../../../package.json';
 
-//  hook to fetch usfmfile from system drive
+//  hook to fetch juxtalinear files from system drive
 export const useReadJuxtalign = () => {
   const [readFileNameTranslation, setReadFileNameTranslation] = useState('');
   const [usfmData, setUsfmData] = useState([]);
