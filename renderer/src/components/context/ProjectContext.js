@@ -21,6 +21,7 @@ export const ProjectContext = React.createContext();
 
 const ProjectContextProvider = ({ children }) => {
   const [editorSave, setEditorSave] = useState('');
+  const [openPdfPopup, setOpenPdfPopup] = useState(false);
   const [drawer, setDrawer] = useState(false);
   const [scrollLock, setScrollLock] = useState(false);
   const [sideTabTitle, setSideTabTitle] = useState('New');
@@ -540,6 +541,7 @@ const ProjectContextProvider = ({ children }) => {
       openImportPopUp,
       openExportPopUp,
       selectedProjectMeta,
+      openPdfPopup,
     },
     actions: {
       setDrawer,
@@ -564,6 +566,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenImportPopUp,
       setOpenExportPopUp,
       setSelectedProjectMeta,
+      setOpenPdfPopup,
     },
   };
 

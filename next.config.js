@@ -7,6 +7,7 @@ const nextConfig = {
     // Fixes npm packages that depend on `fs` module
     if (!isServer) {
       config.resolve.fallback.fs = false;
+      config.resolve.alias.canvas = false;
     }
     config.module.rules.push({
       test: /\.md$/,
