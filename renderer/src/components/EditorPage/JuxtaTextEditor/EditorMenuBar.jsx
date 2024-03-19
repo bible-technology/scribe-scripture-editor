@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { ProjectContext } from '@/components/context/ProjectContext';
 // import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import {
- LockClosedIcon, BookmarkIcon, EllipsisHorizontalCircleIcon, BookOpenIcon, LockOpenIcon,
+  LockClosedIcon, BookmarkIcon, EllipsisHorizontalCircleIcon, BookOpenIcon, LockOpenIcon,
 } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/JuxtaTextEditor/BibleNavigationX';
 import BibleNavigationX from './BibleNavigationX';
@@ -106,15 +106,6 @@ export default function EditorMenuBar(props) {
           </div>
         </div>
       </div>
-      {/* <div className="mx-2.5 min-h-[33px] flex items-center justify-center">
-        <div className="flex items-center">
-          <Buttons {...props} />
-        </div>
-        <div className="flex ml-auto">
-          <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
-          <InsertMenu setTriggerVerseInsert={setTriggerVerseInsert} />
-        </div>
-      </div> */}
     </div>
   );
 }
