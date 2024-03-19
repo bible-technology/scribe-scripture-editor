@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import md5 from 'md5';
 
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -13,8 +14,10 @@ import { functionMapping } from './utils/insertFunctionMap';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
-import JuxtAlignEditor from '@/components/EditorPage/JuxtAlignEditor'; // eslint-disable-line
 import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // eslint-disable-line
+import SentenceContextProvider from '@/components/context/SentenceContext';
+import { useReadJuxtaFile } from '@/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile';
+import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta.js';
 
 export default function Editor(props) {
   const {
@@ -31,7 +34,6 @@ export default function Editor(props) {
     // addSequenceId,
     // saveHtmlPerf,
     // setGraftSequenceId,
-    bookAvailable,
     setChapterNumber,
     setVerseNumber,
     triggerVerseInsert,
@@ -44,6 +46,12 @@ export default function Editor(props) {
       chapter, selectedFont, fontSize, projectScriptureDir,
     },
   } = useContext(ReferenceContext);
+
+  const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
+  const [jsonFileContent, setJsonFileContent] = useState(null);
+
+  const [zoomLeftJuxtalign, setZoomLeftJuxtalign] = useState(24);
+  const [zoomRightJuxtalign, setZoomRightJuxtalign] = useState(24);
 
   const {
     states: { openSideBar, scrollLock },
@@ -62,27 +70,27 @@ export default function Editor(props) {
   const sequenceId = sequenceIds.at(-1);
   const style = isSaving ? { cursor: 'progress' } : {};
 
-  // const handlers = {
-  //   onBlockClick: ({ element }) => {
-  //     const _sequenceId = element.dataset.target;
-  //     const { tagName } = element;
-  //     if (_sequenceId) {
-  //       if (tagName === 'SPAN' && element.dataset.subtype === 'footnote') {
-  //         setGraftSequenceId(_sequenceId);
-  //         setOpenSideBar(!openSideBar);
-  //         setSideBarTab('footnotes');
-  //       }
-  //       if (tagName === 'SPAN' && element.dataset.subtype === 'xref') {
-  //         setGraftSequenceId(_sequenceId);
-  //         setOpenSideBar(!openSideBar);
-  //         setSideBarTab('xref');
-  //       }
-  //     } else {
-  //       setSideBarTab('');
-  //       setGraftSequenceId(null);
-  //     }
-  //   },
-  // };
+  const [fileName, setFileName] = useState('');
+  const [helpAldearyOpenedOnce, setHelpAldearyOpenedOnce] = useState(false);
+  const [sentences, setGlobalTotalSentences] = useState(
+    new Array(),
+  );
+  const [originText, setOriginText] = useState([])
+  const [itemArrays, setItemArrays] = useState([]);
+  const [curIndex, setCurIndex] = useState(0);
+
+  const setGlobalItemArrays = (index, itemArr) => {
+    const newItemArrays = [...itemArrays];
+    newItemArrays[index] = itemArr;
+    setItemArrays(newItemArrays);
+  }
+
+  const setGlobalSentences = (index, sentence) => {
+    const newSentences = [...sentences];
+    newSentences[index] = sentence;
+    setGlobalTotalSentences(newSentences);
+  }
+
   useEffect(() => {
     setBookChange(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,10 +112,100 @@ export default function Editor(props) {
 
   useAutoSaveIndication(isSaving);
 
-  // function onReferenceSelected({ chapter, verse }) {
-  //   chapter && setChapterNumber(chapter);
-  //   verse && setVerseNumber(verse);
-  // }
+  const remakeSentences = (stcs) => {
+    let checksumSentences = '';
+    let checksumChuncks = '';
+    let currentCs = '';
+    return stcs.map((stc) => {
+      checksumChuncks = '';
+      currentCs = '';
+      const counts = {};
+      const chunks = stc.chunks.filter(({ source }) => source[0]).map((chunk) => {
+        const source = chunk.source.map((src) => {
+          if (counts[src.content] === undefined) {
+            counts[src.content] = 0;
+          } else {
+            counts[src.content] += 1;
+          }
+          return { ...src, index: counts[src.content] };
+        });
+        currentCs = md5(normalizeString(JSON.stringify(source) + chunk.gloss)) + '';
+        checksumChuncks += currentCs;
+        return {
+          source,
+          gloss: chunk.gloss,
+          checksum: currentCs
+        };
+      });
+      currentCs = md5(checksumChuncks) + '';
+      checksumSentences += currentCs;
+      return {
+        originalSource: stc.originalSource,
+        chunks,
+        sourceString: stc.sourceString,
+        checksum: checksumSentences
+      };
+    });
+  };
+
+  const getItems = (res = null) => {
+    if (res !== null) {
+      return res[0].chunks
+        .map(({ source, gloss, checksum }, index) => {
+          return {
+            chunk: source
+              .filter((s) => s)
+              .map((s, n) => {
+                return {
+                  id: `item-${index * 1000 + n}`,
+                  content: s.content,
+                  index: s.index,
+                };
+              }),
+            gloss,
+            checksum,
+          };
+        })
+        .filter(({ chunk }) => chunk.length);
+    } else {
+      return sentences[curIndex].chunks
+        .map(({ source, gloss, checksum }, index) => {
+          return {
+            chunk: source
+              .filter((s) => s)
+              .map((s, n) => {
+                return {
+                  id: `item-${index * 1000 + n}`,
+                  content: s.content,
+                  index: s.index
+                };
+              }),
+            gloss,
+            checksum,
+          };
+        })
+        .filter(({ chunk }) => chunk.length);
+    }
+  };
+
+  const tryLoadSentences = () => {
+    if (bookAvailable) {
+      const resContent = JSON.parse(usfmData[0].data);
+      setJsonFileContent(resContent);
+      setFileName(readFileName);
+      setCurIndex(curIndex);
+      setGlobalTotalSentences(remakeSentences(resContent.sentences));
+      setOriginText(resContent.sentences.map((sentence) => sentence.sourceString));
+      if (resContent.sentences.length) {
+        setItemArrays([getItems(resContent.sentences)]);
+      }
+    }
+  }
+
+  useEffect(() => {
+    tryLoadSentences();
+    console.log('reload sentences!');
+  }, [usfmData]);
 
   const observer = new IntersectionObserver((entries) => onIntersection({ setChapterNumber, scrollLock, entries }), {
     root: document.querySelector('editor'),
@@ -162,11 +260,39 @@ export default function Editor(props) {
       className="border-l-2 border-r-2 border-secondary pb-16 overflow-auto h-full scrollbars-width leading-8"
     >
       <div id="editor" style={style}>
-        {/* {!bookAvailable && <EmptyScreen />}
-        {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
-        {bookAvailable && sequenceId && !bookChange && (
-        )} */}
-        <JuxtalinearEditor {..._props} />
+        {!bookAvailable && <EmptyScreen />}
+        {bookAvailable && sentences.length <= 0 && <LoadingScreen />}
+        {bookAvailable && sentences.length > 0 && (
+          <SentenceContextProvider
+            value={{
+              fileName,
+              sentences,
+              originText,
+              itemArrays,
+              curIndex,
+              jsonFileContent,
+              helpAldearyOpenedOnce,
+              zoomLeftJuxtalign,
+              zoomRightJuxtalign,
+              setFileName,
+              setGlobalSentences,
+              setOriginText,
+              setGlobalTotalSentences,
+              setGlobalItemArrays,
+              setItemArrays,
+              setCurIndex,
+              setChapterNumber,
+              setVerseNumber,
+              setJsonFileContent,
+              setHelpAldearyOpenedOnce,
+              setZoomLeftJuxtalign,
+              setZoomRightJuxtalign,
+              getItems,
+            }}
+          >
+            <JuxtalinearEditor {..._props} />
+          </SentenceContextProvider>
+        )}
       </div>
     </div>
   );

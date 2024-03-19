@@ -41,9 +41,9 @@
     "extraMetadata": {
       "main": "main/index.js"
     },
-    "directories":{
-      "buildResources":"resources",
-      "output":"release"
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
     },
     "files": [
       "main",
@@ -210,6 +210,7 @@
     "react-icons": "^4.11.0",
     "react-markdown": "^9.0.0",
     "react-media-recorder": "^1.6.6",
+    "react-modal": "^3.16.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
@@ -239,6 +240,7 @@
     "workbox-strategies": "^7.0.0",
     "workbox-streams": "^7.0.0",
     "ws": "^8.8.0",
+    "xregexp": "^5.1.1",
     "yarn": "^1.22.19"
   },
   "optionalDependencies": {
