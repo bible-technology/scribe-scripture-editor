@@ -137,7 +137,6 @@ export default function JuxtAlignEditor() {
 
   useEffect(() => {
     async function getUserSettings() {
-      console.log('userSettingsJson== ', userSettingsJson);
       if (!helpAldearyOpenedOnce) {
         let tmpUsrSet = await readUserSettings();
         setUserSettingsJson(tmpUsrSet);
@@ -292,39 +291,6 @@ export default function JuxtAlignEditor() {
 
   return (
     <div style={{ height: "100vh", overflow: "hidden" }}>
-      {/* <div
-        style={{
-          flexDirection: "row",
-          display: "flex",
-          justifyContent: "space-between",
-          margin: 20,
-        }}
-      > */}
-      {/* <div
-          className="Button"
-          style="cursor: pointer;"
-          onClick={() => {
-            modifyPLSE();
-            changeBlockId(currentBlockid - 1);
-          }}
-        >
-          block precedent
-        </div>
-        <div style={{ fontSize: "2em" }}>
-          {currentBlockid + 1}/{plse.blocks.length}
-        </div>
-
-        <div
-          className="Button"
-          style="cursor: pointer;"
-          onClick={() => {
-            modifyPLSE();
-            changeBlockId(currentBlockid + 1);
-          }}
-        >
-          block suivant
-        </div> */}
-      {/* </div> */}
       <div
         style={{
           flexDirection: "row",
