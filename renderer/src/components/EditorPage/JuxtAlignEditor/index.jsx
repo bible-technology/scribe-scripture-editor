@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useContext } from 'react';
+import ReactMarkdown from 'react-markdown'
 
 // import { setupIonicReact } from '@ionic/react'
 // import { useTranslation } from 'react-i18next';
@@ -34,6 +35,7 @@ export default function JuxtAlignEditor() {
     helpAldearyOpenedOnce,
     zoomLeftJuxtalign,
     zoomRightJuxtalign,
+    userSettingsJson,
     // setFileName,
     // setGlobalTotalSentences,
     // setItemArrays,
@@ -44,6 +46,7 @@ export default function JuxtAlignEditor() {
     setHelpAldearyOpenedOnce,
     setZoomLeftJuxtalign,
     setZoomRightJuxtalign,
+    setUserSettingsJson,
   } = useContext(SentenceContext);
 
   // const {
@@ -99,7 +102,6 @@ export default function JuxtAlignEditor() {
   const [currentSetenceId, setcurrentSentenceId] = useState(
     blocksSentenceId[0]
   );
-  const [userSettingsJson, setUserSettingsJson] = useState(null);
 
   const [currentWords, setCurrentWords] = useState([]);
   const [idsWord, setIdsWord] = useState([]);
@@ -107,7 +109,7 @@ export default function JuxtAlignEditor() {
   const [hoverNotSelectedWord, setHoverNotSelectedWord] = useState([]);
 
   const modifyPLSE = () => {
-    if (plse.blocks[currentBlockid].alignments.length > 0) {
+    if (plse.blocks[currentBlockid] && plse.blocks[currentBlockid].alignments.length > 0) {
       for (let i = 0; i < plse.blocks[currentBlockid].alignments.length; i++) {
         if (
           currentChuncksId
@@ -126,7 +128,7 @@ export default function JuxtAlignEditor() {
         words: currentWords,
         md5Chunck: currentChuncksId,
       });
-    } else {
+    } else if (plse.blocks[currentBlockid]) {
       plse.blocks[currentBlockid].alignments.push({
         sentences: currentSetenceId,
         words: currentWords,
@@ -136,28 +138,19 @@ export default function JuxtAlignEditor() {
   };
 
   useEffect(() => {
-    async function getUserSettings() {
-      if (!helpAldearyOpenedOnce) {
-        let tmpUsrSet = await readUserSettings();
-        setUserSettingsJson(tmpUsrSet);
-      }
-    }
-    getUserSettings();
-  }, [helpAldearyOpenedOnce]);
-
-  useEffect(() => {
-    if (openHelp && !helpAldearyOpenedOnce) {
+    if (!helpAldearyOpenedOnce) {
       setHelpAldearyOpenedOnce(true);
     }
     if (userSettingsJson && !userSettingsJson.juxtalignHelperOpened) {
       userSettingsJson.juxtalignHelperOpened = true;
+      setUserSettingsJson(userSettingsJson);
       // write file back
       saveUserSettings(userSettingsJson);
     }
   }, [openHelp]);
 
   useEffect(() => {
-    if (currentChuncksId != '') {
+    if (currentChuncksId != '' && plse.blocks[currentBlockid]) {
       for (let i = 0; i < plse.blocks[currentBlockid].alignments.length; i++) {
         if (currentChuncksId === plse.blocks[currentBlockid].alignments[i].md5Chunck) {
           setCurrentWords(plse.blocks[currentBlockid].alignments[i].words);
@@ -169,10 +162,10 @@ export default function JuxtAlignEditor() {
   }, [currentChuncksId]);
 
   const changeBlockId = (bid) => {
-    if (bid >= 0 && bid < plse.blocks.length) {
-      modifyPLSE();
-      setCurrentBlockId(bid);
-    }
+    // if (bid >= 0 && bid < plse.blocks.length) {
+    modifyPLSE();
+    setCurrentBlockId(bid);
+    // }
   };
 
   useEffect(() => {
@@ -188,46 +181,42 @@ export default function JuxtAlignEditor() {
   }, [curIndex, sentences, setCurIndex]);
 
   useEffect(() => {
-    let tabl = [];
-    for (
-      let i = 0;
-      i <=
-      XRegExp.match(plse.blocks[currentBlockid].tradText, mainRegex, "all")
-        .length;
-      i++
-    ) {
-      tabl.push(i);
-    }
-    for (let i = 0; i < plse.blocks[currentBlockid].alignments.length; i++) {
-      plse.blocks[currentBlockid].alignments[i].words.map((w) => {
-        tabl.splice(tabl.indexOf(w), 1);
-      });
-    }
-
-
-    if (!plse.blocks[currentBlockid].chunckAlign) {
-      let chunckAlign = {}
-      for (let i = 0; i < plse.blocks[currentBlockid].sentences.length; i++) {
-        sentences[plse.blocks[currentBlockid].sentences[i]].chunks.map(c => chunckAlign[c.checksum] = false)
+    if (plse.blocks[currentBlockid]) {
+      let tabl = [];
+      for (let i = 0; i <= XRegExp.match(plse.blocks[currentBlockid].tradText, mainRegex, "all").length; i++) {
+        tabl.push(i);
       }
-      plse.blocks[currentBlockid].chunckAlign = chunckAlign
-
-    }
-
-    if (!plse.blocksAlign) {
-      let blocksAlign = []
-      for (let i = 0; i < plse.blocks.length; i++) {
-        blocksAlign.push(false)
+      for (let i = 0; i < plse.blocks[currentBlockid].alignments.length; i++) {
+        plse.blocks[currentBlockid].alignments[i].words.map((w) => {
+          tabl.splice(tabl.indexOf(w), 1);
+        });
       }
-      plse.blocksAlign = blocksAlign
-    } else {
-      setIsCurrentSentenceAlign(plse.blocksAlign[currentBlockid])
+
+
+      if (!plse.blocks[currentBlockid].chunckAlign) {
+        let chunckAlign = {}
+        for (let i = 0; i < plse.blocks[currentBlockid].sentences.length; i++) {
+          sentences[plse.blocks[currentBlockid].sentences[i]].chunks.map(c => chunckAlign[c.checksum] = false)
+        }
+        plse.blocks[currentBlockid].chunckAlign = chunckAlign
+
+      }
+
+      if (!plse.blocksAlign) {
+        let blocksAlign = []
+        for (let i = 0; i < plse.blocks.length; i++) {
+          blocksAlign.push(false)
+        }
+        plse.blocksAlign = blocksAlign
+      } else {
+        setIsCurrentSentenceAlign(plse.blocksAlign[currentBlockid])
+      }
+      setIdsWord(tabl);
+      setBlockSentenceId(plse.blocks[currentBlockid].sentences);
+      setCurrentChuncksId(
+        sentences[plse.blocks[currentBlockid].sentences[0]].chunks[0].checksum
+      );
     }
-    setIdsWord(tabl);
-    setBlockSentenceId(plse.blocks[currentBlockid].sentences);
-    setCurrentChuncksId(
-      sentences[plse.blocks[currentBlockid].sentences[0]].chunks[0].checksum
-    );
   }, [currentBlockid]);
 
   const myFunctionPlusTrue = () => {
@@ -326,21 +315,10 @@ export default function JuxtAlignEditor() {
                     className="sentencesWrapper"
                     data-isCurrentSentenceAlignAndChunck={isCurrentSentenceAlign}
                     onMouseEnter={() => {
-                      if (c.checksum != currentChuncksId) {
-                        for (
-                          let i = 0;
-                          i < plse.blocks[currentBlockid].alignments.length;
-                          i++
-                        ) {
-                          if (
-                            c.checksum ===
-                            plse.blocks[currentBlockid].alignments[i].md5Chunck
-                          ) {
-
-
-                            setHoverNotSelectedWord(
-                              plse.blocks[currentBlockid].alignments[i].words
-                            );
+                      if (plse.blocks[currentBlockid] && c.checksum != currentChuncksId) {
+                        for (let i = 0; i < plse.blocks[currentBlockid].alignments.length; i++) {
+                          if (c.checksum === plse.blocks[currentBlockid].alignments[i].md5Chunck) {
+                            setHoverNotSelectedWord(plse.blocks[currentBlockid].alignments[i].words);
                           }
                         }
                       }
@@ -364,7 +342,7 @@ export default function JuxtAlignEditor() {
                       className="sentences"
                       style={{ fontSize: zoomLeftJuxtalign }}
                     >
-                      {c.gloss}
+                      <ReactMarkdown>{c.gloss}</ReactMarkdown>
                     </div>
                   </div>
                 ))
@@ -383,7 +361,7 @@ export default function JuxtAlignEditor() {
                 }
             }
           >
-            <AlignedButton
+            {plse.blocks[currentBlockid] != undefined ? (<AlignedButton
               isCurrentSentenceAlign={isCurrentSentenceAlign}
               onClick={() => {
                 setIsCurrentSentenceAlign(!isCurrentSentenceAlign);
@@ -391,33 +369,21 @@ export default function JuxtAlignEditor() {
                   setIsAlignModalOpen(true);
                 }
               }}
-            />
+            />) : <></>}
           </div>
         </div>
         <div
           className="divb"
           id="wrapper"
           onWheel={onWheel}
-          onClick={() => {
-            modifyPLSE();
-          }}
-          onMouseOver={() => {
-            setLeft(false);
-          }}
+          onClick={() => { modifyPLSE(); }}
+          onMouseOver={() => { setLeft(false); }}
           style={{ overflowY: "scroll", flex: 1 }}
         >
           <div style={{ display: "flex", flexWrap: "wrap", margin: 15 }}>
-            {XRegExp.match(
-              plse.blocks[currentBlockid].tradText,
-              mainRegex,
-              "all"
-            )
+            {plse.blocks[currentBlockid] != undefined ? XRegExp.match(plse.blocks[currentBlockid].tradText, mainRegex, "all")
               .map((w) => {
-                if (
-                  XRegExp(
-                    "([\\p{Letter}\\p{Number}\\p{Mark}\\u2060]{1,127})"
-                  ).test(w)
-                ) {
+                if (XRegExp("([\\p{Letter}\\p{Number}\\p{Mark}\\u2060]{1,127})").test(w)) {
                   return [w, true];
                 } else {
                   return [w, false];
@@ -529,7 +495,11 @@ export default function JuxtAlignEditor() {
                     {wt[0]}
                   </div>
                 )
-              )}
+              )
+              :
+              // TODO translation
+              <div> No content for this sentence </div>
+            }
           </div>
         </div>
       </div>
@@ -561,7 +531,7 @@ export default function JuxtAlignEditor() {
                   />
                 </button>
               </div>
-              <img src={Help.src} height={307} width={581} alt="align helper" />
+              <img src={Help.src} height={450} width={721} alt="align helper" />
 
             </div>
             <div className="container">
@@ -586,13 +556,13 @@ export default function JuxtAlignEditor() {
           </div>
         )}
       </div>
-      <ModalSureEverythingAlign
+      {plse.blocks[currentBlockid] != undefined ? (<ModalSureEverythingAlign
         setOptionDontShowAlignModal={setOptionDontShowAlignModal}
         optionDontShowAlignModal={optionDontShowAlignModal}
         isAlignModalOpen={isAlignModalOpen}
         setIsAlignModalOpen={setIsAlignModalOpen}
         shouldOpen={plse.blocks[currentBlockid].chunckAlign}
-      />
+      />) : <></>}
     </div>
   );
 }

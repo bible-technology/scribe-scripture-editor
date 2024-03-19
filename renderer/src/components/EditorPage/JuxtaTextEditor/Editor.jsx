@@ -18,6 +18,7 @@ import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // es
 import SentenceContextProvider from '@/components/context/SentenceContext';
 import { useReadJuxtaFile } from '@/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile';
 import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta.js';
+import { readUserSettings } from '@/core/projects/userSettings';
 
 export default function Editor(props) {
   const {
@@ -79,6 +80,8 @@ export default function Editor(props) {
   const [itemArrays, setItemArrays] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
 
+  const [userSettingsJson, setUserSettingsJson] = useState(null);
+
   const setGlobalItemArrays = (index, itemArr) => {
     const newItemArrays = [...itemArrays];
     newItemArrays[index] = itemArr;
@@ -109,6 +112,20 @@ export default function Editor(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
+
+  useEffect(() => {
+    async function getUserSettings() {
+      console.log("function Called!")
+      if (!userSettingsJson) {
+        console.log("userSettingsJson updated!")
+        let tmpUsrSet = await readUserSettings();
+        setHelpAldearyOpenedOnce(true);
+        setUserSettingsJson(tmpUsrSet);
+      }
+    }
+    console.log("useEffect!")
+    getUserSettings();
+  }, [helpAldearyOpenedOnce]);
 
   useAutoSaveIndication(isSaving);
 
@@ -204,7 +221,6 @@ export default function Editor(props) {
 
   useEffect(() => {
     tryLoadSentences();
-    console.log('reload sentences!');
   }, [usfmData]);
 
   const observer = new IntersectionObserver((entries) => onIntersection({ setChapterNumber, scrollLock, entries }), {
@@ -274,6 +290,7 @@ export default function Editor(props) {
               helpAldearyOpenedOnce,
               zoomLeftJuxtalign,
               zoomRightJuxtalign,
+              userSettingsJson,
               setFileName,
               setGlobalSentences,
               setOriginText,
@@ -287,6 +304,7 @@ export default function Editor(props) {
               setHelpAldearyOpenedOnce,
               setZoomLeftJuxtalign,
               setZoomRightJuxtalign,
+              setUserSettingsJson,
               getItems,
             }}
           >
