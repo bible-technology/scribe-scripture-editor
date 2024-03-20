@@ -303,3 +303,17 @@ p.paragraph:has(.chapter) {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   max-width: min-content;
 }
+
+.selectPDFprintRender:focus{
+  box-shadow: none;
+
+}
+.selectPDFprintRender{
+  padding-left: 32px;
+	justify-content:space-between;
+	background-color: #363739;
+	border: 1px;
+	display: flex;
+	border-radius: 4px;
+	color: white;
+}
