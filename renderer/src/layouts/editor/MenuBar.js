@@ -12,7 +12,7 @@ import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import UserProfile from '@/components/Profile/UserProfile';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import LogoIcon from '@/icons/logo.svg';
 
 export default function TopMenuBar() {
@@ -34,7 +34,7 @@ export default function TopMenuBar() {
   useEffect(() => {
     (async () => {
       if (selectedProject && !projectname) {
-        const splitProjectName = await splitStringByLastOccurance(selectedProject, '_');
+        const splitProjectName = await splitStringByLastOccurence(selectedProject, '_');
         setprojectname(splitProjectName);
       }
     })();

@@ -5,16 +5,16 @@ import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateObsSB';
 
 const createObsSB = (
-username,
-projectFields,
-language,
-langCode,
-direction,
-copyright,
-id,
-project,
-call,
-update,
+  username,
+  projectFields,
+  language,
+  langCode,
+  direction,
+  copyright,
+  id,
+  project,
+  call,
+  update,
 ) => {
   logger.debug('createObsSB.js', 'In createObsSB');
   return new Promise((resolve) => {
@@ -54,7 +54,7 @@ update,
     } else {
       json.copyright.licenses[0].ingredient = 'license.md';
     }
-    logger.debug('createObsSB.js', 'Created the Translation SB');
+    logger.debug('createObsSB.js', 'Created the OBS SB');
     resolve(json);
   });
 };

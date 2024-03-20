@@ -23,7 +23,7 @@ const headCells = [
   },
   {
     // id: 'type', numeric: false, disablePadding: true, label: 'Flavor',
-    id: 'type', numeric: false, disablePadding: true, label: 'label-flavour',
+    id: 'type', numeric: false, disablePadding: true, label: 'label-flavor',
   },
   {
     id: 'date', numeric: true, disablePadding: false, label: 'label-created-date',

@@ -25,7 +25,7 @@ export const useReadReferenceUsfmFile = ({
 
   const {
     actions: {
-      setRefernceLoading,
+      setReferenceLoading,
       setCounter,
     },
   } = useContext(ReferenceContext);
@@ -74,7 +74,7 @@ export const useReadReferenceUsfmFile = ({
                     setSnackText(t('dynamic-msg-load-ref-bible-snack', { refName }));
                     setNotify('success');
                     setDisplayScreen(false);
-                    setRefernceLoading({
+                    setReferenceLoading({
                       status: true,
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });
@@ -94,7 +94,7 @@ export const useReadReferenceUsfmFile = ({
                     setSnackText(t('dynamic-msg-load-ref-bible-snack', { refName }));
                     setNotify('success');
                     setDisplayScreen(false);
-                    setRefernceLoading({
+                    setReferenceLoading({
                       status: true,
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });

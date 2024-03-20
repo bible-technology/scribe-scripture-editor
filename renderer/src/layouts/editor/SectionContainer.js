@@ -7,11 +7,14 @@ import packageInfo from '../../../../package.json';
 import SectionPlaceholder1 from './SectionPlaceholder1';
 import SectionPlaceholder2 from './SectionPlaceholder2';
 import TextEditor from '@/components/EditorPage/TextEditor'; // eslint-disable-line 
+import JuxtaTextEditor from '@/components/EditorPage/JuxtaTextEditor'; // eslint-disable-line 
 
+// Nicolas : when you open a project it starts here
 const MainPlayer = dynamic(
   () => import('@/components/EditorPage/AudioEditor/MainPlayer'),
   { ssr: false },
 );
+
 const SectionContainer = () => {
   const [editor, setEditor] = useState();
 
@@ -37,6 +40,7 @@ const SectionContainer = () => {
         <SectionPlaceholder2 editor={editor} />
         {(editor === 'textTranslation' && <TextEditor />)
           || (editor === 'textStories' && <ObsEditor />)
+          || (editor === 'x-juxtalinear' && <JuxtaTextEditor />)
           || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
       </div>
       {(editor === 'audioTranslation' && (<MainPlayer />))}

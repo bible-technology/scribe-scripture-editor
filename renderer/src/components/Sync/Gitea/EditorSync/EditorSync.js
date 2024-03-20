@@ -306,7 +306,7 @@ function EditorSync({ selectedProject }) {
 }
 
 EditorSync.propTypes = {
-    selectedProject: PropTypes.string,
-  };
+  selectedProject: PropTypes.string,
+};
 
 export default EditorSync;

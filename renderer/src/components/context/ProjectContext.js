@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import { saveProjectsMeta, saveSupabaseProjectsMeta } from '../../core/projects/saveProjetcsMeta';
@@ -402,6 +402,8 @@ const ProjectContextProvider = ({ children }) => {
     }
   };
 
+  // Nicolas : actually create the project
+  // Nicolas : ignore Supabase or Web... Code
   const createProject = async (call, project, update, projectType) => {
     logger.debug('ProjectContext.js', 'In createProject');
     await createProjectCommonUtils();
@@ -454,6 +456,7 @@ const ProjectContextProvider = ({ children }) => {
     const status = saveSupabaseProjectsMeta(projectMetaObj);
     return status;
   };
+
   const resetProjectStates = () => {
     const initialState = {
       language: '',
@@ -481,7 +484,7 @@ const ProjectContextProvider = ({ children }) => {
           projectMeta?.projects.forEach((meta) => {
             const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
             const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurance(projectName, '_').then((arr) => {
+            splitStringByLastOccurence(projectName, '_').then((arr) => {
               if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
                 && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
                 setSelectedProjectMeta(meta);
@@ -504,7 +507,7 @@ const ProjectContextProvider = ({ children }) => {
           projectMeta?.projects.forEach((meta) => {
             const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
             const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurance(projectName, '_').then((arr) => {
+            splitStringByLastOccurence(projectName, '_').then((arr) => {
               if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
                 && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
                 setSelectedProjectMeta(meta);

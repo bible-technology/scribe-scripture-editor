@@ -44,7 +44,7 @@ export const createObsContent = (
     OBSData.forEach(async (storyJson) => {
       const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
       if (bookAvailable(importedFiles, currentFileName)) {
-        logger.debug('createObsContent.js', `${currentFileName} is been Imported`);
+        logger.debug('createObsContent.js', `${currentFileName} has been Imported`);
         const file = importedFiles.filter((obj) => (obj.id === currentFileName));
         const fs = window.require('fs');
         if (!fs.existsSync(folder)) {
@@ -95,7 +95,7 @@ export const createObsContent = (
     if (fileFront.files.length > 0) {
       fileFront.name = fileFront.files[0].id;
       fileFront.content = fileFront.files[0].content;
-      logger.debug('createObsContent.js', `${fileFront.name} is been Imported`);
+      logger.debug('createObsContent.js', `${fileFront.name} has been Imported`);
     } else {
       fileFront.name = 'front.md';
       fileFront.content = OBSFront;
@@ -115,7 +115,7 @@ export const createObsContent = (
     if (fileBack.files.length > 0) {
       fileBack.name = fileBack.files[0].id;
       fileBack.content = fileBack.files[0].content;
-      logger.debug('createObsContent.js', `${fileBack.name} is been Imported`);
+      logger.debug('createObsContent.js', `${fileBack.name} has been Imported`);
     } else {
       fileBack.name = 'back.md';
       fileBack.content = OBSBack;
@@ -145,7 +145,7 @@ export const createObsContent = (
     logger.debug('createObsContent.js', 'in Edit obs content files');
     importedFiles.forEach((file) => {
       if (file.id !== 'front.md' && file.id !== 'back.md') {
-        logger.debug('createObsContent.js', `${file.id} is been Imported`);
+        logger.debug('createObsContent.js', `${file.id} has been Imported`);
         const currentStory = OBSData.filter((obj) => (
           (obj.storyId).toString().padStart(2, 0) === (file.id).split('.')[0]));
         const fs = window.require('fs');

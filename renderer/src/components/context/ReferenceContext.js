@@ -6,13 +6,13 @@ import React, {
 import PropTypes from 'prop-types';
 
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 
-export const ReferenceContext = createContext({});
+export const ReferenceContext = createContext();
 
 export default function ReferenceContextProvider({ children }) {
   const initialBook = '1ti';
@@ -40,7 +40,7 @@ export default function ReferenceContextProvider({ children }) {
   const [fontSize, setFontsize] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
-  const [refernceLoading, setRefernceLoading] = useState({
+  const [referenceLoading, setReferenceLoading] = useState({
     status: false,
     text: '',
   });
@@ -94,8 +94,9 @@ export default function ReferenceContextProvider({ children }) {
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
+        let resProj;
         // const _projectname = projectName?.split('_');
-        const _projectname = await splitStringByLastOccurance(projectName, '_');
+        const _projectname = await splitStringByLastOccurence(projectName, '_');
         localforage.getItem('projectmeta').then((val) => {
           Object?.entries(val).forEach(
             ([, _value]) => {
@@ -104,8 +105,15 @@ export default function ReferenceContextProvider({ children }) {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
+                      // Nicolas : add a case for juxta here ?
+                      case 'x-juxtalinear':
+                        resProj = resources.project['x-juxtalinear'];
+                        setBookmarksVerses(resProj.bookMarks);
+                        setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resProj?.font);
+                        break;
                       case 'textTranslation':
-                        setBookmarksVerses(resources.project?.textTranslation.bookMarks);
+                        setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.textTranslation?.font);
                         break;
@@ -199,7 +207,7 @@ export default function ReferenceContextProvider({ children }) {
       fontSize,
       layout,
       row,
-      refernceLoading,
+      referenceLoading,
       counter,
       bookmarksVerses,
       myEditorRef,
@@ -247,7 +255,7 @@ export default function ReferenceContextProvider({ children }) {
       setFontsize,
       setLayout,
       setRow,
-      setRefernceLoading,
+      setReferenceLoading,
       setCounter,
       setBookmarksVerses,
       setCloseNavigation,

@@ -7,9 +7,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { readUsfm } from '@/components/Projects/utils/readUsfm';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
+import { updateJsonJuxta } from './utils/updateJsonJuxta';
 
 const grammar = require('usfm-grammar');
 
@@ -103,6 +105,7 @@ export default function ImportPopUp(props) {
     const files = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
+        // Nicolas add a juxta type here
         case 'Translation': {
           const usfm = fs.readFileSync(filePath, 'utf8');
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
@@ -110,7 +113,7 @@ export default function ImportPopUp(props) {
           if (isJsonValid) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
             replaceConformation(true);
-            logger.debug('ImportPopUp. js', 'Valid USFM file.');
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
           } else {
@@ -165,6 +168,53 @@ export default function ImportPopUp(props) {
           break;
         }
 
+        case 'Juxta': {
+          const file = fs.readFileSync(filePath, 'utf8');
+          const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
+
+          const fileExt = filename.split('.').pop()?.toLowerCase();
+          if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
+              || fileExt === undefined) {
+            const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
+            const isJsonValid = myUsfmParser.validate();
+            // if the USFM is valid
+            if (isJsonValid) {
+              replaceConformation(true);
+              logger.debug('ImportPopUp.js', 'Valid USFM file.');
+              // then we get the book code and we transform our data to our Juxta json file
+              const jsonOutput = myUsfmParser.toJSON();
+              const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
+              files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
+            } else {
+              logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+              setNotify('failure');
+              setSnackText(t('dynamic-msg-invalid-usfm-file'));
+              setOpenSnackBar(true);
+            }
+          } else if (fileExt === 'json') {
+            // Nicolas : TODO add a validator for our juxta type
+            // Nicolas : TODO change the way I get the bookcode
+            const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
+            if (updatedFile.error) {
+              logger.warn('ImportPopUp.js', 'Invalid filename.');
+              setNotify('failure');
+              // Nicolas : TODO translations
+              setSnackText(updatedFile.error);
+              setOpenSnackBar(true);
+              break;
+            }
+            logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
+            files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid file.');
+            setNotify('failure');
+            // Nicolas : TODO translations
+            setSnackText('invalid file type');
+            setOpenSnackBar(true);
+          }
+          break;
+        }
+
         default:
           break;
       }
@@ -198,6 +248,13 @@ export default function ImportPopUp(props) {
       case 'OBS':
         setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
         setLabelImportFiles(t('label-choose-md-files'));
+      break;
+
+      // Nicolas : added juxta here
+      case 'Juxta':
+        setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
+        // Nicolas : TODO translation here
+        setLabelImportFiles('Choose json files');
       break;
 
       default:

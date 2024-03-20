@@ -42,7 +42,7 @@ const checkHelpsVersionUpdate = async (reference, selectResource) => {
         }
         if (subject && lang && owner) {
         // fetch(`https://git.door43.org/api/catalog/v5/search?subject=${subject}&lang=${lang}&owner=${owner}`)
-        fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&subject=${subject}&lang=${lang}&owner=${owner}`)
+        fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&metadataType=sb&subject=${subject}&lang=${lang}&owner=${owner}`)
         .then((res) => res.json())
         .then((resultMeta) => {
             // console.log({ resultMeta });
