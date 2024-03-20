@@ -164,7 +164,7 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
     const fs = window.require('fs');
     if (fs.existsSync(path.join(folder, currentResourceProject.name, project.path))) {
       const filecontent = await fs.readFileSync(path.join(folder, currentResourceProject.name, project.path), 'utf8');
-      // find checksum & size by read the file
+      // find checksum & size by reading the file
       const checksum = md5(filecontent);
       const stats = fs.statSync(path.join(folder, currentResourceProject.name, project.path));
       resourceBurritoFile.ingredients[project.path] = {
@@ -294,6 +294,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                 const existingResource = fs.readdirSync(folder, { withFileTypes: true }).filter((dir) => dir.isDirectory());
                 // eslint-disable-next-line no-loop-func
                 existingResource.forEach((element) => {
+                  logger.debug('blablabla', path.join(folder, element.name, 'metadata.json'));
                   if (fs.existsSync(path.join(folder, element.name, 'metadata.json'))) {
                     let filecontentMeta = fs.readFileSync(path.join(folder, element.name, 'metadata.json'), 'utf8');
                     filecontentMeta = JSON.parse(filecontentMeta);
@@ -311,6 +312,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
               }
               if (!resourceExist) {
                 // eslint-disable-next-line no-await-in-loop
+                logger.debug("createDownloadedResourceSB.js : resource.metadata_json_url", resource.metadata_json_url);
                 await fetch(resource.metadata_json_url)
                   .then((res) => res.json())
                   // eslint-disable-next-line no-loop-func
@@ -336,6 +338,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                         if (!fs.existsSync(folder)) {
                           fs.mkdirSync(folder, { recursive: true });
                         }
+                        logger.debug('createDownloadedResourceSB.js => In create downloaded resource SB - downloading zip content ',path.join(folder, `${currentProjectName}.zip`));
                         // wririntg zip to local
                         await fs.writeFileSync(path.join(folder, `${currentProjectName}.zip`), Buffer.from(blob));
                         logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - downloading zip content completed ');
@@ -447,13 +450,13 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
 
                         // finally remove zip and rename base folder to projectname_id
                         logger.debug('createDownloadedResourceSB.js', 'deleting zip file - rename project with project + id in scribe format');
-                        if (fs.existsSync(folder)) {
-                          fs.renameSync(path.join(folder, currentResourceProject.name), path.join(folder, currentProjectName));
-                          fs.unlinkSync(path.join(folder, `${currentProjectName}.zip`), () => {
-                            logger.debug('createDownloadedResourceSB.js', 'error in deleting zip');
-                            throw new Error(`Removing Resource Zip Failed :  ${currentResourceProject.name}`);
-                          });
-                        }
+                        // if (fs.existsSync(folder)) {
+                        //   fs.renameSync(path.join(folder, currentResourceProject.name), path.join(folder, currentProjectName));
+                        //   fs.unlinkSync(path.join(folder, `${currentProjectName}.zip`), () => {
+                        //     logger.debug('createDownloadedResourceSB.js', 'error in deleting zip');
+                        //     throw new Error(`Removing Resource Zip Failed :  ${currentResourceProject.name}`);
+                        //   });
+                        // }
                       }).catch((err) => {
                         throw new Error(`Download Resource file Failed :  ${err}`);
                       });

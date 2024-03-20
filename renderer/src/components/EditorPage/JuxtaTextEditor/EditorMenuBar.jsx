@@ -60,7 +60,8 @@ export default function EditorMenuBar(props) {
               />
             )}
           </div>
-          <div
+          {/** TODO : bookmark behavior */}
+          {/* <div
             role="button"
             tabIndex="0"
             title="bookmark"
@@ -70,7 +71,7 @@ export default function EditorMenuBar(props) {
               className="h-5 mr-4 w-5 text-white cursor-pointer"
               aria-hidden="true"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       {/* <div className="mx-2.5 min-h-[33px] flex items-center justify-center">

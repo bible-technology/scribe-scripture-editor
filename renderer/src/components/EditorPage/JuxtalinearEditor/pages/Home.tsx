@@ -50,6 +50,7 @@ const Home: React.FC = () => {
     itemArrays,
     curIndex,
     fileName,
+    jsonFileContent,
     setFileName,
     setGlobalTotalSentences,
     setItemArrays,
@@ -57,6 +58,8 @@ const Home: React.FC = () => {
     setCurIndex,
     setGlobalSentences,
     setGlobalItemArrays,
+    setJsonFileContent,
+    getItems,
   } = useContext(SentenceContext);
 
   const {
@@ -75,76 +78,18 @@ const Home: React.FC = () => {
       refName,
       //  closeNavigation,
     }, actions: {
+      onChangeBook,
       onChangeChapter,
       onChangeVerse,
     },
   } = useContext(ReferenceContext);
 
-  const [jsonFileContent, setJsonFileContent] = useState<IOutput>(null);
   const clickRef = useRef(0);
   // const usfmOpenRef = useRef<HTMLInputElement>(null);
   // const jsonOpenRef = useRef<HTMLInputElement>(null);
-  const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
   const [editStates, setEditStates] = useState<boolean[]>(new Array(1).fill(false));
 
   // const [mode, setMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-  const remakeSentences = (stcs: ISentence[]) => {
-    let checksumSentences = '';
-    let checksumChuncks = '';
-    let currentCs = '';
-    return stcs.map((stc) => {
-      checksumChuncks = '';
-      currentCs = '';
-      const counts: { [key: string]: any } = {};
-      const chunks = stc.chunks.filter(({source}) => source[0]).map((chunk) => {
-        const source = chunk.source.map((src) => {
-          if (counts[src.content] === undefined) {
-            counts[src.content] = 0;
-          } else {
-            counts[src.content] += 1;
-          }
-          return { ...src, index: counts[src.content] };
-        });
-        currentCs = md5(normalizeString(JSON.stringify(source) + chunk.gloss)) as string;
-        checksumChuncks += currentCs;
-        return {
-          source,
-          gloss: chunk.gloss,
-          checksum: currentCs
-        };
-      });
-      currentCs = md5(checksumChuncks) as string;
-      checksumSentences += currentCs;
-      return {
-        originalSource: stc.originalSource,
-        chunks,
-        sourceString: stc.sourceString,
-        checksum: checksumSentences
-      };
-    });
-  };
-
-  const tryLoadSentences = () => {
-    // const projectName = await localforage.getItem('currentProject');
-    // const blob = new Blob([usfmData[0] as string], { type: 'application/json' });
-    // saveAs(blob, 'cake.json');
-    if(bookAvailable) {
-      const resContent = JSON.parse(usfmData[0].data);
-      setJsonFileContent(resContent);
-      setFileName(readFileName);
-      setCurIndex(0);
-      setGlobalTotalSentences(remakeSentences(resContent.sentences));
-      setOriginText(resContent.sentences.map((sentence: { sourceString: string; }) => sentence.sourceString));
-      if (resContent.sentences.length) {
-        setItemArrays([getItems(resContent.sentences)]);
-      }
-    }
-  }
-
-  useEffect(() => {
-    tryLoadSentences();
-  }, [bookAvailable, usfmData]);
 
   useEffect(() => {
     if (sentences.length && sentences[curIndex]) {
@@ -159,11 +104,11 @@ const Home: React.FC = () => {
   }, [sentences, curIndex]);
 
   const handleTabPress = useCallback(() => {
-    if(itemArrays[curIndex]) {
+    if (itemArrays[curIndex]) {
       const contTrue = editStates.indexOf(true);
-      if(contTrue != -1) {
+      if (contTrue != -1) {
         setEditState(contTrue, false);
-        setEditState((contTrue+1) % editStates.length, true);
+        setEditState((contTrue + 1) % editStates.length, true);
       } else {
         setEditState(0, true);
       }
@@ -191,8 +136,8 @@ const Home: React.FC = () => {
   const remakeSentence = (stc: ISentence) => {
     let checksumChuncks = '';
     let currentCs = '';
-    const counts: {[key: string]: any} = {};
-    const chunks = stc.chunks.filter(({source}) => source[0]).map((chunk) => {
+    const counts: { [key: string]: any } = {};
+    const chunks = stc.chunks.filter(({ source }) => source[0]).map((chunk) => {
       const source = chunk.source.map((src) => {
         if (!counts[src.content]) {
           counts[src.content] = 0;
@@ -218,8 +163,8 @@ const Home: React.FC = () => {
   }
 
   useEffect(() => {
-    if(sentences[0] !== undefined && jsonFileContent) {
-      sentences[0].chunks.filter(({source}) => source[0]).forEach((chunck) => {
+    if (sentences[0] !== undefined && jsonFileContent) {
+      sentences[0].chunks.filter(({ source }) => source[0]).forEach((chunck) => {
         chunck.source.filter(e => e);
       });
       jsonFileContent.sentences = sentences;
@@ -227,46 +172,6 @@ const Home: React.FC = () => {
       saveToFile(jsonStr, bookId);
     }
   }, [setGlobalItemArrays]);
-
-  const getItems = (res: ISentence[] = null) => {
-    if(res !== null) {
-      return res[0].chunks
-        .map(({ source, gloss, checksum }, index: number) => {
-          return {
-            chunk: source
-              .filter((s) => s)
-              .map((s: ISource, n: number) => {
-                return {
-                  id: `item-${index * 1000 + n}`,
-                  content: s.content,
-                  index: s.index,
-                };
-              }),
-            gloss,
-            checksum,
-          };
-        })
-        .filter(({ chunk }) => chunk.length);
-    } else {
-      return sentences[curIndex].chunks
-      .map(({ source, gloss, checksum }, index: number) => {
-        return {
-          chunk: source
-            .filter((s) => s)
-            .map((s: ISource, n: number) => {
-              return {
-                id: `item-${index * 1000 + n}`,
-                content: s.content,
-                index: s.index
-              };
-            }),
-          gloss,
-          checksum,
-        };
-      })
-      .filter(({ chunk }) => chunk.length);
-    }
-  };
 
   const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
     const result = Array.from(list);
@@ -364,7 +269,7 @@ const Home: React.FC = () => {
               ...newChunks.slice(rowN + 1),
             ];
           }
-          
+
           const newSentence = remakeSentence({
             originalSource: sentences[curIndex].originalSource,
             chunks: newChunks,
@@ -506,7 +411,7 @@ const Home: React.FC = () => {
                                   }
                                 >
                                   <Stack flexDirection={'row'} gap={'6px'}>
-                                  <Box>{item.content}</Box>
+                                    <Box>{item.content}</Box>
                                     {item.index ? (
                                       <Box sx={{ fontSize: '10px' }}>
                                         {item.index + 1}

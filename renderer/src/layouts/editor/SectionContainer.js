@@ -40,7 +40,6 @@ const SectionContainer = () => {
         <SectionPlaceholder2 editor={editor} />
         {(editor === 'textTranslation' && <TextEditor />)
           || (editor === 'textStories' && <ObsEditor />)
-          // NicolasEdits : added Juxta - I need a 'JuxtalinearEditor'
           || (editor === 'x-juxtalinear' && <JuxtaTextEditor />)
           || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
       </div>
