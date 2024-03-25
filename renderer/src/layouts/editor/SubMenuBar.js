@@ -18,7 +18,7 @@ import FramePdfPopup from '@/layouts/editor/FramePdfPopup.jsx';
 import menuStyles from './MenuBar.module.css';
 import packageInfo from '../../../../package.json';
 import { newPath, sbStorageDownload } from '../../../../supabase';
-import { PrinterIcon } from '@heroicons/react/24/outline';
+import { PrinterIcon, FolderIcon } from '@heroicons/react/24/outline';
 
 const activate = () => {
   // console.log('rename');
@@ -63,6 +63,8 @@ export default function SubMenuBar() {
     setOpenSideBar(true);
   };
   const { t } = useTranslation();
+
+  const [openBouquetPicker, setOpenBouquetPicker] = useState(false);
   // const networkState = useNetwork();
   // const FileMenuItems = [
   //   {
@@ -306,6 +308,22 @@ export default function SubMenuBar() {
               />
             </div>
 
+            <div
+              aria-label="add-panels"
+              title={'Open bouquet picker'}
+              // title={t('TODO')}
+              type="div"
+              role="button"
+              className={`group ${menuStyles.btn} transition-all`}
+              onClick={() => setOpenBouquetPicker(true)}
+            >
+              <FolderIcon
+                aria-label="open-lock"
+                className="h-6 w-6 text-black cursor-pointer"
+                aria-hidden="true"
+              />
+            </div>
+
             {/* Editor sync 2 new one */}
             <EditorSync selectedProject={selectedProject} />
 
@@ -357,6 +375,16 @@ export default function SubMenuBar() {
                 <FramePdfPopup
                   openPdfPopup={openPdfPopup}
                   setOpenPdfPopup={setOpenPdfPopup}
+                />
+              </div>
+            )}
+
+            {/* popup for print to PDF */}
+            {openBouquetPicker && (
+              <div className="fixed z-50 ">
+                <FramePdfPopup
+                  openPdfPopup={openBouquetPicker}
+                  setOpenPdfPopup={setOpenBouquetPicker}
                 />
               </div>
             )}
