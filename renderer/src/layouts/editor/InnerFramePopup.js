@@ -3,8 +3,6 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewer } from '@react-pdf/renderer';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-import { zoomPlugin } from '@react-pdf-viewer/zoom';
-import { ZoomInIcon, ZoomOutIcon } from '@react-pdf-viewer/zoom';
 
 import { selectOption } from './selectOptions';
 
@@ -27,7 +25,7 @@ function Fontsizes() {
 }
 
 export default function InnerFramePopup() {
-  const [zoom,setZoom]=useState(1)
+	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
 	const [pageNumber, setPageNumber] = useState(1);
 	const [pdfPath, setPdfPath] = useState(
@@ -90,19 +88,18 @@ export default function InnerFramePopup() {
 					</div>
 				</div>
 				<div
-                onClick={() => setZoom(prev => prev+0.2)}
-
+					onClick={() => setZoom((prev) => prev + 0.1)}
 					style={{
 						position: 'absolute',
 						width: 40,
-            height:40,
+						height: 40,
 						backgroundColor: '#303134',
-            borderRadius: 30,
+						borderRadius: 30,
 						bottom: 60,
 						left: 10,
 						zIndex: 1,
 						display: 'flex',
-						padding: 6  ,
+						padding: 6,
 						fontSize: 24,
 						justifyContent: 'center',
 						alignItems: 'center',
@@ -110,20 +107,19 @@ export default function InnerFramePopup() {
 					}}>
 					+
 				</div>
-        <div
-                onClick={() => setZoom(prev => prev-0.2)}
-
+				<div
+					onClick={() => setZoom((prev) => prev - 0.1)}
 					style={{
 						position: 'absolute',
 						width: 40,
-            height:40,
+						height: 40,
 						backgroundColor: '#303134',
-            borderRadius: 30,
+						borderRadius: 30,
 						bottom: 10,
 						left: 10,
 						zIndex: 1,
 						display: 'flex',
-						padding: 6  ,
+						padding: 6,
 						fontSize: 24,
 						justifyContent: 'center',
 						alignItems: 'center',
@@ -145,12 +141,13 @@ export default function InnerFramePopup() {
 						onLoadSuccess={onDocumentLoadSuccess}>
 						{Array.from({ length: numPages }, (_, i) => i + 1).map(
 							(page, ind) => (
-								<Page
-									pageNumber={page}
-									key={`pages_${ind}`}
-									className={'pageContainer'}
-                  scale={zoom}
-								/>
+									<Page
+										pageNumber={page}
+										key={`pages_${ind}`}
+										className={'pageContainer'}
+										scale={zoom}
+									/>
+						
 							),
 						)}
 					</Document>
@@ -180,4 +177,4 @@ export default function InnerFramePopup() {
 	);
 }
 
-const buttonStyle ={}
+const buttonStyle = {};

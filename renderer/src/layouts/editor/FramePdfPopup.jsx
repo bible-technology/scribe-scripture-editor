@@ -14,6 +14,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const [openSnackBar, setOpenSnackBar] = useState(false);
 	const [snackText, setSnackText] = useState('');
 	const [error, setError] = useState('');
+	const [currentTab, setCurrentTab] = useState(0);
 	const removeSection = () => {
 		setOpenPdfPopup(false);
 	};
@@ -64,11 +65,33 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 										display: 'flex',
 										justifyContent: 'space-between',
 									}}>
-									<div style={tabStyleSelected}>pdf</div>
-									<div style={tabStyleNotSelected}>
-										korrenummi
+									<div
+										onClick={() => setCurrentTab(0)}
+										style={
+											currentTab === 0
+												? tabStyleSelected
+												: tabStyleNotSelected
+										}>
+										PDF
 									</div>
-									<div style={tabStyleNotSelected}>word</div>
+									<div
+										onClick={() => setCurrentTab(1)}
+										style={
+											currentTab === 1
+												? tabStyleSelected
+												: tabStyleNotSelected
+										}>
+										Korennummi
+									</div>
+									<div
+										onClick={() => setCurrentTab(2)}
+										style={
+											currentTab === 2
+												? tabStyleSelected
+												: tabStyleNotSelected
+										}>
+										Word
+									</div>
 								</div>
 							</div>
 						</div>
@@ -85,7 +108,11 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 								<div
 									style={{ backgroundColor: '#292A2D' }}
 									className='bg-gray-50 items-center p-3 justify-between w-full h-full'>
-									<InnerFramePopup />
+									{currentTab === 0 ? (
+										<InnerFramePopup />
+									) : (
+										<div>no Tab</div>
+									)}
 								</div>
 							</div>
 						</div>
@@ -125,6 +152,11 @@ const tabStyleSelected = {
 	paddingLeft: 12,
 	paddingRight: 12,
 	backgroundColor: 'white',
+	borderWidth: 3,
+	borderStyle: 'solid',
+	alignContent: 'center',
 	paddingTop: 3,
 	paddingBottom: 3,
+	justifyContent: 'center',
+	display: 'flex',
 };
