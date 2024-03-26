@@ -1,0 +1,32 @@
+.confirm_modal_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px
+}
+
+.confirm_modal_title {
+  border-bottom: 1px solid #0d948875;
+}
+
+.confirm_modal_actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.confirm_modal_actions button {
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.confirm_modal_actions button.cancel {
+  background-color: #ef4444;
+  color: white;
+}
+
+.confirm_modal_actions button.confirm {
+  background-color: #059669;
+  color: white;
+}

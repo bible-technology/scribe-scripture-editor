@@ -1,0 +1,32 @@
+.form_content_wrap {
+    display: flex;
+}
+
+.form_content_inputs>div {
+    display: flex;
+    margin: 0.5rem 0.5rem;
+}
+
+.form_content_inputs>div>div:nth-child(1) {
+    width: 100px;
+}
+
+.form_content_inputs>div>div:nth-child(2) {
+    width: 400px;
+}
+
+.form_content_inputs>div>div:nth-child(2)>* {
+    width: 100%;
+    padding: 0.5rem;
+
+}
+
+.form_content_btn-wrap {
+    display: flex;
+    align-items: flex-end;
+    margin: 0.5rem;
+}
+
+.form_content_btn-wrap button {
+    padding: 0.5rem 1rem;
+}
