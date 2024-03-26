@@ -304,16 +304,50 @@ p.paragraph:has(.chapter) {
   max-width: min-content;
 }
 
-.selectPDFprintRender:focus{
+.selectPDFprintRender:focus {
   box-shadow: none;
 
 }
-.selectPDFprintRender{
+
+.selectPDFprintRender {
   padding-left: 32px;
-	justify-content:space-between;
-	background-color: #363739;
-	border: 1px;
-	display: flex;
-	border-radius: 4px;
-	color: white;
+  justify-content: space-between;
+  background-color: #363739;
+  border: 1px;
+  display: flex;
+  border-radius: 4px;
+  color: white;
 }
+
+/**
+  SCRIPTURE CONTENT PICKER BLOCK START SECTION
+*/
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.list-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-wrap {
+  width: 100%;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.2rem 2rem;
+}
+
+.btn-wrap svg {
+  cursor: pointer;
+}
+
+/**
+  SCRIPTURE CONTENT PICKER BLOCK END SECTION
+*/

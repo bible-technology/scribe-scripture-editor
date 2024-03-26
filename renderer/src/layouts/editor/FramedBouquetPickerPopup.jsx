@@ -10,8 +10,8 @@ import InnerFramePopup from '@/layouts/editor/InnerFramePopup';
 
 export default function FramedBouquetPickerPopup(
   {
-    openPdfPopup,
-    setOpenPdfPopup,
+    openBouquetPicker,
+    setOpenBouquetPicker,
   },
 ) {
   const cancelButtonRef = useRef(null);
@@ -20,13 +20,13 @@ export default function FramedBouquetPickerPopup(
   const [error, setError] = useState('');
 
   const removeSection = () => {
-    setOpenPdfPopup(false);
+    setOpenBouquetPicker(false);
   };
 
   return (
     <>
       <Transition
-        show={openPdfPopup}
+        show={openBouquetPicker}
         as={Fragment}
         enter="transition duration-100 ease-out"
         enterFrom="transform scale-95 opacity-0"
@@ -40,7 +40,7 @@ export default function FramedBouquetPickerPopup(
           className="fixed inset-0 z-10 overflow-y-auto"
           initialFocus={cancelButtonRef}
           static
-          open={openPdfPopup}
+          open={openBouquetPicker}
           onClose={removeSection}
         >
 
@@ -48,7 +48,7 @@ export default function FramedBouquetPickerPopup(
           <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
             <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
               {/* <h1 className="text-white font-bold text-sm">{t('TODO')}</h1> */}
-              <h1 className="text-white font-bold text-sm">Print to PDF</h1>
+              <h1 className="text-white font-bold text-sm">Bouquet picker</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               <button
                 type="button"
