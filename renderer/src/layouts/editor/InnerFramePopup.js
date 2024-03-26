@@ -3,8 +3,10 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewer } from '@react-pdf/renderer';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-
+import { SortableList } from './SortableList';
 import { selectOption } from './selectOptions';
+import localForage from 'localforage';
+import packageInfo from '../../../../package.json'
 
 const path = require('path');
 const fs = window.require('fs');
@@ -14,9 +16,24 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	import.meta.url,
 ).toString();
 
-console.log(pdfjs.GlobalWorkerOptions.workerSrc);
 
 function Fontsizes() {
+
+	let test = localForage.getItem('userProfile').then(async (user) => {
+		const fs = window.require('fs');
+		const path = require('path');
+		const newpath = localStorage.getItem('userPath');
+		const currentUser = user?.username;
+		const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'projects');
+		const projects = fs.readdirSync(folder);
+
+		for(let project of projects){
+			let jsontest = fs.readFileSync(folder + "/" +project+"/"+ "metadata.json",'utf-8')
+			let jsonParse = JSON.parse(jsontest)
+			console.log(jsonParse.type.flavorType.flavor.name," ","[",jsonParse.identification.name.en,"]")
+		}
+	})
+	
 	let options = [];
 	for (let i = 12; i < 48; i += 2) {
 		options.push(i);
@@ -25,6 +42,21 @@ function Fontsizes() {
 }
 
 export default function InnerFramePopup() {
+	//list of all non selected choice
+	const [possibleSelection, setPossibleSelection] = useState([
+		'Add content',
+		'Juxta Handbook',
+		'TJX',
+		'USFM',
+	]);
+	//the order Of The Selected choice
+	const [orderSelection, setOrderSelection] = useState([
+		'Front cover',
+		'Current trad',
+	]);
+	//all the selected choice
+	const [selected, setSelected] = useState(['Front cover', 'Current trad']);
+
 	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
 	const [pageNumber, setPageNumber] = useState(1);
@@ -141,13 +173,12 @@ export default function InnerFramePopup() {
 						onLoadSuccess={onDocumentLoadSuccess}>
 						{Array.from({ length: numPages }, (_, i) => i + 1).map(
 							(page, ind) => (
-									<Page
-										pageNumber={page}
-										key={`pages_${ind}`}
-										className={'pageContainer'}
-										scale={zoom}
-									/>
-						
+								<Page
+									pageNumber={page}
+									key={`pages_${ind}`}
+									className={'pageContainer'}
+									scale={zoom}
+								/>
 							),
 						)}
 					</Document>
@@ -172,6 +203,25 @@ export default function InnerFramePopup() {
 					{selectOption('Font', ['Gentium', 'Calibry'])}
 					{selectOption('Font size', Fontsizes())}
 				</div>
+				<div
+					style={{
+						display: 'flex',
+						fontSize: 24,
+						justifyContent: 'center',
+						color: 'white',
+						padding: 12,
+					}}>
+					Content
+				</div>
+				<SortableList
+					orderSelection={orderSelection}
+					setOrderSelection={setOrderSelection}
+					selected={selected}
+					setSelected={setSelected}
+					possibleSelection={possibleSelection}
+					setPossibleSelection={setPossibleSelection}
+				/>
+				
 			</div>
 		</div>
 	);

@@ -317,3 +317,58 @@ p.paragraph:has(.chapter) {
 	border-radius: 4px;
 	color: white;
 }
+
+
+
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sortable-list {
+  padding: 25px;
+  border-radius: 7px;
+  padding: 30px 25px 20px;
+}
+.sortable-list .item {
+  list-style: none;
+  display: flex;
+  cursor: move;
+  background: #fff;
+  align-items: center;
+  border-radius: 5px;
+  padding: 10px 13px;
+  margin-bottom: 11px;
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.06); */
+  border: 1px solid #ccc;
+  justify-content: space-between;
+}
+.item .details {
+  display: flex;
+  align-items: center;
+}
+.item .details img {
+  height: 43px;
+  width: 43px;
+  pointer-events: none;
+  margin-right: 12px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.item .details span {
+  font-size: 1.13rem;
+}
+.item i {
+  color: #474747;
+  font-size: 1.13rem;
+}
+.item.dragging {
+  opacity: 0.6;
+}
+.item.dragging :where(.details, i) {
+  opacity: 0;
+}
