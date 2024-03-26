@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import {
   ScriptureContentMeta,
   ScriptureContentPickerCallback,
-} from '../../../scripture-content-picker-interfaces';
+} from '../../../ScriptureContentPickerInterfaces';
 import { ScriptureSourceContext } from '../contexts/scripture-content-picker-context';
 import {
   ScriptureReader,

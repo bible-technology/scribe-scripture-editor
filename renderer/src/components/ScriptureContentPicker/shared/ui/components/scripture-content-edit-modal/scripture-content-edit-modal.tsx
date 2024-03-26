@@ -4,7 +4,7 @@ import {
   ScriptureContentSrcType,
   ScriptureContentMetaExcludeTypeInfo,
   ScriptureContentType,
-} from '../../../../scripture-content-picker-interfaces';
+} from '../../../../ScriptureContentPickerInterfaces';
 import styles from './scripture-content-edit-modal.module.css';
 import Modal from 'react-modal';
 import {

@@ -1,7 +1,7 @@
 import {
   ScriptureContentMeta,
   ScriptureContentPickerCallback,
-} from '../../../scripture-content-picker-interfaces';
+} from '../../../ScriptureContentPickerInterfaces';
 import { isBrowser } from './utils';
 
 export abstract class ScriptureReader {

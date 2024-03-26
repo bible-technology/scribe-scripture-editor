@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from 'react';
-import styles from './tag.module.css';
 import { darkenHexColor } from '../../../utils';
 
 export interface TagProps {
@@ -12,7 +11,7 @@ export function Tag({ color, children }: TagProps) {
   const darkColor: string = darkenHexColor(color, 0.7);
   return (
     <span
-      className={styles['container']}
+      className={'containerTag'}
       style={{
         color: darkColor,
         background: color,

@@ -8,7 +8,7 @@ import {
   ScriptureContentMeta,
   ScriptureContentLocalLabel,
   ScriptureContentMetaExcludeTypeInfo,
-} from './scripture-content-picker-interfaces';
+} from './ScriptureContentPickerInterfaces';
 
 import {
   ScriptureContentTypeMenu,

@@ -6,7 +6,7 @@ import {
   ScriptureContentMetaExcludeTypeInfo,
   ScriptureContentLocalLabel,
   ScriptureContentPickerCallback,
-} from '../../../scripture-content-picker-interfaces';
+} from '../../../ScriptureContentPickerInterfaces';
 
 export type ComponentType = 'picker' | 'config';
 

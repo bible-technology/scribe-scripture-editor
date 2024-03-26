@@ -10,7 +10,7 @@ import EditIcon from './edit-icon';
 import type {
   ScriptureContentMetaExcludeTypeInfo,
   ScriptureContentType,
-} from '../../../../scripture-content-picker-interfaces';
+} from '../../../../ScriptureContentPickerInterfaces';
 
 import { ScriptureContentEditModal } from '../scripture-content-edit-modal/scripture-content-edit-modal';
 import { ScriptureContentConfirmModal } from '../scripture-content-confirm-modal/scripture-content-confirm-modal';

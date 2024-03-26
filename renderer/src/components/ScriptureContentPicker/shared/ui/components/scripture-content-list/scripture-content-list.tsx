@@ -5,7 +5,7 @@ import type {
   ScriptureContentGroup,
   ScriptureContentLocalLabel,
   ScriptureContent,
-} from '../../../../scripture-content-picker-interfaces';
+} from '../../../../ScriptureContentPickerInterfaces';
 
 import { ScriptureContentListItem } from '../scripture-content-list-item/scripture-content-list-item';
 import React from 'react';

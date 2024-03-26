@@ -4,7 +4,7 @@ import {
   ScriptureSource,
   ScriptureContentGroup,
   ScriptureContentPickerCallback,
-} from './scripture-content-picker-interfaces';
+} from './ScriptureContentPickerInterfaces';
 import {
   ScriptureContentTypeMenu,
   ScriptureContentList,
@@ -44,13 +44,13 @@ export function PickerComponent({ }: PickerComponentProps) {
     contentType && isScriptureSource(source) ? source[contentType] : {};
 
   return (
-    <div className={'container'}>
+    <div className={'container bouquet-picker'}>
       <ScriptureContentTypeMenu
         items={contentTypes}
         onSelectMenuItem={changeContentType}
         selectedItem={contentType}
       />
-      <div className={'list-wrap'}>
+      <div className={'list-wrap bouquet-picker'}>
         {contentType && <ScriptureContentList group={scriptureContentGroup} />}
       </div>
     </div>
