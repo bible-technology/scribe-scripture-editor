@@ -311,7 +311,6 @@ p.paragraph:has(.chapter) {
 
 .selectPDFprintRender {
   padding-left: 32px;
-<<<<<<< HEAD
 	justify-content:space-between;
 	background-color: #363739;
 	border: 1px;
@@ -374,14 +373,7 @@ p.paragraph:has(.chapter) {
 .item.dragging :where(.details, i) {
   opacity: 0;
 }
-=======
-  justify-content: space-between;
-  background-color: #363739;
-  border: 1px;
-  display: flex;
-  border-radius: 4px;
-  color: white;
-}
+  
 
 /**
   SCRIPTURE CONTENT PICKER BLOCK START SECTION
@@ -486,4 +478,3 @@ p.paragraph:has(.chapter) {
 /**
   SCRIPTURE CONTENT PICKER BLOCK END SECTION
 */
->>>>>>> 44e2359e59b795e73594db3edb023a864565fdc2
