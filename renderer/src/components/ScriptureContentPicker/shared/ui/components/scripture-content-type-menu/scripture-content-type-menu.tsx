@@ -1,4 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import styles from './scripture-content-type-menu.module.css';
 
 import type { ScriptureContentType } from '../../../../ScriptureContentPickerInterfaces';
 import React from 'react';
@@ -15,11 +16,11 @@ export function ScriptureContentTypeMenu({
   selectedItem,
 }: ScriptureContentTypeMenuProps) {
   return (
-    <div className={'containerContentType bouquet-picker'}>
+    <div className={styles['container']}>
       {items.map((type) => (
         <li
           key={type}
-          className={selectedItem === type ? 'selected' : ''}
+          className={selectedItem === type ? styles.selected : ''}
           onClick={() => onSelectMenuItem(type)}
         >
           {type}

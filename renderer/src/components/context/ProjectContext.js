@@ -22,6 +22,7 @@ export const ProjectContext = React.createContext();
 const ProjectContextProvider = ({ children }) => {
   const [editorSave, setEditorSave] = useState('');
   const [openPdfPopup, setOpenPdfPopup] = useState(false);
+  const [listResourcesForPdf, setListResourcesForPdf] = useState({ book: {}, OBS: {}, tNotes: {}, 'OBS-TN': {} });
   const [drawer, setDrawer] = useState(false);
   const [scrollLock, setScrollLock] = useState(false);
   const [sideTabTitle, setSideTabTitle] = useState('New');
@@ -542,6 +543,7 @@ const ProjectContextProvider = ({ children }) => {
       openExportPopUp,
       selectedProjectMeta,
       openPdfPopup,
+      listResourcesForPdf,
     },
     actions: {
       setDrawer,
@@ -567,6 +569,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenExportPopUp,
       setSelectedProjectMeta,
       setOpenPdfPopup,
+      setListResourcesForPdf,
     },
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -8,6 +8,9 @@ import ScriptureContentPicker from '@/components/ScriptureContentPicker/Scriptur
 import { Button, Modal } from '@material-ui/core';
 import localForage from 'localforage';
 import packageInfo from '../../../../package.json';
+import { ProjectContext } from '@/components/context/ProjectContext';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+
 export function SortableList({
 	orderSelection,
 	setOrderSelection,
@@ -16,47 +19,18 @@ export function SortableList({
 	possibleSelection,
 	setPossibleSelection,
 }) {
-	let pickerJson = { book: {} };
+	const {
+    states: {
+      listResourcesForPdf,
+    },
+    actions: {
+      setListResourcesForPdf,
+    },
+  } = useContext(ProjectContext);
+
 	const [open, setOpen] = useState(false);
 
-	localForage.getItem('userProfile').then(async (user) => {
-		const fs = window.require('fs');
-		const path = require('path');
-		const newpath = localStorage.getItem('userPath');
-		const currentUser = user?.username;
-		const folder = path.join(
-			newpath,
-			packageInfo.name,
-			'users',
-			`${currentUser}`,
-			'projects',
-		);
-		const projects = fs.readdirSync(folder);
-
-		for (let project of projects) {
-			let jsontest = fs.readFileSync(
-				folder + '/' + project + '/' + 'metadata.json',
-				'utf-8',
-			);
-			let jsonParse = JSON.parse(jsontest);
-			let projectS = '[' + jsonParse.identification.name.en + ']';
-			for (var pathI in jsonParse.ingredients) {
-				let book = pathI.split('/')[1].split('.')[0];
-
-				pickerJson.book[book + projectS] = {
-					description: `book : ${book} from ${projectS}`,
-					language: jsonParse.meta.generator.defaultLocale,
-					src: {
-						type: 'fs',
-						path: `${folder}/${project}/${pathI}`,
-					},
-					books: [book],
-				};
-			}
-		}
-	});
-
-	useEffect(() => {}, [selected.length]);
+	useEffect(() => console.log(selected), [selected]);
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -187,10 +161,11 @@ export function SortableList({
 					<div
 						style={{
 							backgroundColor: 'white',
-							width: 'fit-content',
+							width: '50%',
 							height: '50%',
-						}}>
-						<ScriptureContentPicker
+						}}
+						>
+						{listResourcesForPdf ? (<ScriptureContentPicker
 							onSelect={(e) => {
 								setSelected((prev) => [...prev, e.description]);
 								setOrderSelection((prev) => [
@@ -199,8 +174,8 @@ export function SortableList({
 								]);
 								setOpen(false);
 							}}
-							source={pickerJson}
-						/>
+							source={listResourcesForPdf}
+						/>) : <LoadingSpinner />}
 					</div>
 				</Modal>
 			</div>

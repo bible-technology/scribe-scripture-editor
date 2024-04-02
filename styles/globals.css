@@ -311,12 +311,12 @@ p.paragraph:has(.chapter) {
 
 .selectPDFprintRender {
   padding-left: 32px;
-	justify-content:space-between;
-	background-color: #363739;
-	border: 1px;
-	display: flex;
-	border-radius: 4px;
-	color: white;
+  justify-content: space-between;
+  background-color: #363739;
+  border: 1px;
+  display: flex;
+  border-radius: 4px;
+  color: white;
 }
 
 
@@ -327,6 +327,7 @@ p.paragraph:has(.chapter) {
   border-radius: 7px;
   padding: 30px 25px 20px;
 }
+
 .sortable-list .item {
   list-style: none;
   display: flex;
@@ -340,10 +341,12 @@ p.paragraph:has(.chapter) {
   border: 1px solid #ccc;
   justify-content: space-between;
 }
+
 .item .details {
   display: flex;
   align-items: center;
 }
+
 .item .details img {
   height: 43px;
   width: 43px;
@@ -352,25 +355,28 @@ p.paragraph:has(.chapter) {
   object-fit: cover;
   border-radius: 50%;
 }
+
 .item .details span {
   font-size: 1.13rem;
 }
+
 .item i {
   color: #474747;
   font-size: 1.13rem;
 }
+
 .item.dragging {
   opacity: 0.6;
 }
+
 .item.dragging :where(.details, i) {
   opacity: 0;
 }
-  
+
 
 /**
   SCRIPTURE CONTENT PICKER BLOCK START SECTION
 */
-
 
 .bouquet-picker {
   box-sizing: border-box;
@@ -427,6 +433,7 @@ p.paragraph:has(.chapter) {
 .picker-container {
   width: 600px;
   height: 400px;
+  background: 'white';
 }
 
 .picker-config-container {

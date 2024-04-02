@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext, Fragment } from 'react';
+import React, { useRef, useState, useContext, Fragment, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import ResourcesSidebar from '@/components/Resources/ResourcesSideBar';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -6,8 +6,11 @@ import ResourceTabPane from '@/components/Resources/ResourceTabPane';
 import { useTranslation } from 'react-i18next';
 import { Dialog, Transition } from '@headlessui/react';
 import { ListResources } from '@/components/Resources/ListResources';
+import { ProjectContext } from '@/components/context/ProjectContext';
 import { SnackBar } from '@/components/SnackBar';
+import localForage from 'localforage';
 import InnerFramePopup from '@/layouts/editor/InnerFramePopup';
+import packageInfo from '../../../../package.json';
 // import * as logger from '../../logger';
 export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const cancelButtonRef = useRef(null);
@@ -18,6 +21,75 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const removeSection = () => {
 		setOpenPdfPopup(false);
 	};
+	const {
+		states: {
+			listResourcesForPdf,
+		},
+		actions: {
+			setListResourcesForPdf,
+		},
+	} = useContext(ProjectContext);
+
+
+	useEffect(() => {
+		// we take all the exiting keys from the already existing 'listResourcesForPdf'
+		let pickerJson = Object.keys(listResourcesForPdf).reduce((a, v) => ({ ...a, [v]: {} }), {});
+		localForage.getItem('userProfile').then(async (user) => {
+			const fs = window.require('fs');
+			const path = require('path');
+			const newpath = localStorage.getItem('userPath');
+			const currentUser = user?.username;
+			const folder = path.join(
+				newpath,
+				packageInfo.name,
+				'users',
+				`${currentUser}`,
+				'projects',
+			);
+			const projects = fs.readdirSync(folder);
+
+			let currentMetadataPath = '';
+			for (let project of projects) {
+				currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
+				if (fs.existsSync(currentMetadataPath)) {
+					let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
+					let jsonParse = JSON.parse(jsontest);
+					let projectS = '[' + jsonParse.identification.name.en + ']';
+					let fileName;
+					if (jsonParse.type.flavorType.flavor.name === 'textTranslation'
+						|| jsonParse.type.flavorType.flavor.name === 'x-juxtalinear') {
+						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
+							fileName = pathKey.split('/')[1];
+							pickerJson.book[fileName + ' ' + projectS] = {
+								description: `${fileName} from project ${projectS}`,
+								language: jsonParse.meta.defaultLocale,
+								src: {
+									type: 'fs',
+									path: `${folder}/${project}/${pathKey}`,
+								},
+								books: val.scope ? Object.keys(val.scope) : [],
+							};
+						}
+					} else if (jsonParse.type.flavorType.flavor.name === 'textStories') {
+						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
+							fileName = pathKey.split('/')[1];
+							pickerJson.OBS[fileName + ' ' + projectS] = {
+								description: `${fileName} from project ${projectS}`,
+								language: jsonParse.meta.defaultLocale,
+								src: {
+									type: 'fs',
+									path: `${folder}/${project}/${pathKey}`,
+								},
+								books: val.scope ? Object.keys(val.scope) : [],
+							};
+						}
+					}
+				}
+			}
+		});
+		setListResourcesForPdf(pickerJson);
+	}, [openPdfPopup]);
+
 	return (
 		<>
 			<Transition

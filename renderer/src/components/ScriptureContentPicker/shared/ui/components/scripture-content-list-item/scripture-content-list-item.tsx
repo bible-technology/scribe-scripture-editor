@@ -66,11 +66,11 @@ export function ScriptureContentListItem({
 
   return (
     <div
-      className={`${'container'} ${styles[componentType]}`}
+      className={`${styles['container']}  ${styles[componentType]}`}
       onClick={handleClick}
     >
-      <div className={'labels'}>
-        <p className={'local-label'}>{content.localLabel}</p>
+      <div className={styles['labels']}>
+        <p className={styles['local-label']}>{content.localLabel}</p>
         <p>
           {description} &#40; {language} &#41;
         </p>
