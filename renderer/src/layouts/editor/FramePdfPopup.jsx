@@ -150,7 +150,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 										}>
 										PDF
 									</div>
-									<div
+									{/* <div
 										onClick={() => setCurrentTab(1)}
 										style={
 											currentTab === 1
@@ -167,7 +167,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 												: tabStyleNotSelected
 										}>
 										Word
-									</div>
+									</div> */}
 								</div>
 							</div>
 						</div>
