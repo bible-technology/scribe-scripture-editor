@@ -5,8 +5,7 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { SortableList } from './SortableList';
 import { selectOption } from './selectOptions';
-import localForage from 'localforage';
-import packageInfo from '../../../../package.json'
+
 
 const path = require('path');
 const fs = window.require('fs');
@@ -16,24 +15,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	import.meta.url,
 ).toString();
 
-
 function Fontsizes() {
-
-	let test = localForage.getItem('userProfile').then(async (user) => {
-		const fs = window.require('fs');
-		const path = require('path');
-		const newpath = localStorage.getItem('userPath');
-		const currentUser = user?.username;
-		const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'projects');
-		const projects = fs.readdirSync(folder);
-
-		for(let project of projects){
-			let jsontest = fs.readFileSync(folder + "/" +project+"/"+ "metadata.json",'utf-8')
-			let jsonParse = JSON.parse(jsontest)
-			console.log(jsonParse.type.flavorType.flavor.name," ","[",jsonParse.identification.name.en,"]")
-		}
-	})
-	
 	let options = [];
 	for (let i = 12; i < 48; i += 2) {
 		options.push(i);
@@ -42,6 +24,7 @@ function Fontsizes() {
 }
 
 export default function InnerFramePopup() {
+	
 	//list of all non selected choice
 	const [possibleSelection, setPossibleSelection] = useState([
 		'Add content',
@@ -221,8 +204,8 @@ export default function InnerFramePopup() {
 					possibleSelection={possibleSelection}
 					setPossibleSelection={setPossibleSelection}
 				/>
-				
 			</div>
+		
 		</div>
 	);
 }

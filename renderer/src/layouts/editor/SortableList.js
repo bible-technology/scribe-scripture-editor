@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-
+import FramedBouquetPickerPopup from './FramedBouquetPickerPopup';
+import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
+import { Button, Modal } from '@material-ui/core';
+import localForage from 'localforage';
+import packageInfo from '../../../../package.json';
 export function SortableList({
 	orderSelection,
 	setOrderSelection,
@@ -12,7 +16,45 @@ export function SortableList({
 	possibleSelection,
 	setPossibleSelection,
 }) {
-	console.log(orderSelection);
+	let pickerJson = { book: {} };
+	const [open, setOpen] = useState(false);
+
+	localForage.getItem('userProfile').then(async (user) => {
+		const fs = window.require('fs');
+		const path = require('path');
+		const newpath = localStorage.getItem('userPath');
+		const currentUser = user?.username;
+		const folder = path.join(
+			newpath,
+			packageInfo.name,
+			'users',
+			`${currentUser}`,
+			'projects',
+		);
+		const projects = fs.readdirSync(folder);
+
+		for (let project of projects) {
+			let jsontest = fs.readFileSync(
+				folder + '/' + project + '/' + 'metadata.json',
+				'utf-8',
+			);
+			let jsonParse = JSON.parse(jsontest);
+			let projectS = '[' + jsonParse.identification.name.en + ']';
+			for (var pathI in jsonParse.ingredients) {
+				let book = pathI.split('/')[1].split('.')[0];
+
+				pickerJson.book[book + projectS] = {
+					description: `book : ${book} from ${projectS}`,
+					language: jsonParse.meta.generator.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${folder}/${project}/${pathI}`,
+					},
+					books: [book],
+				};
+			}
+		}
+	});
 
 	useEffect(() => {}, [selected.length]);
 
@@ -123,38 +165,44 @@ export function SortableList({
 					alignItems: 'center',
 					justifyContent: 'space-between',
 				}}>
-				<select
-					onChange={(e) => {
-						if (e.target.value != 'Add content') {
-							setPossibleSelection((prev) => {
-								let test = [...prev];
-
-								test.splice(test.indexOf(e.target.value), 1);
-								console.log(test);
-								return test;
-							});
-
-							setSelected((prev) => [...prev, e.target.value]);
-							setOrderSelection((prev) => [
-								...prev,
-								e.target.value,
-							]);
-						}
+				<Button
+					style={{
+						borderRadius: 4,
+						backgroundColor: '#F50',
+						borderStyle: 'solid',
+						borderColor: '#F50',
+            color:'white'
 					}}
-					value={'Add content'}
-					className='selectPDFprintRender'
-					id='payment'
-					name='payment'>
-					{possibleSelection.map((o) => (
-						<option
-							style={{
-								backgroundColor: '#363739',
+					onClick={() => setOpen(true)}>
+					Add
+				</Button>
+				<Modal
+					open={open}
+					onClose={() => setOpen(false)}
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+					}}>
+					<div
+						style={{
+							backgroundColor: 'white',
+							width: 'fit-content',
+							height: '50%',
+						}}>
+						<ScriptureContentPicker
+							onSelect={(e) => {
+								setSelected((prev) => [...prev, e.description]);
+								setOrderSelection((prev) => [
+									...prev,
+									e.description,
+								]);
+								setOpen(false);
 							}}
-							value={o}>
-							{o}
-						</option>
-					))}
-				</select>
+							source={pickerJson}
+						/>
+					</div>
+				</Modal>
 			</div>
 		</div>
 	);
