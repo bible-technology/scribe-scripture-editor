@@ -60,28 +60,32 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 						|| jsonParse.type.flavorType.flavor.name === 'x-juxtalinear') {
 						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
 							fileName = pathKey.split('/')[1];
-							pickerJson.book[fileName + ' ' + projectS] = {
-								description: `${fileName} from project ${projectS}`,
-								language: jsonParse.meta.defaultLocale,
-								src: {
-									type: 'fs',
-									path: `${folder}/${project}/${pathKey}`,
-								},
-								books: val.scope ? Object.keys(val.scope) : [],
-							};
+							if (fileName !== 'scribe-settings.json' && fileName !== 'license.md') {
+								pickerJson.book[projectS + ' ' + fileName] = {
+									description: `${fileName} from project ${projectS}`,
+									language: jsonParse.meta.defaultLocale,
+									src: {
+										type: 'fs',
+										path: `${folder}/${project}/${pathKey}`,
+									},
+									books: val.scope ? Object.keys(val.scope) : [],
+								};
+							}
 						}
 					} else if (jsonParse.type.flavorType.flavor.name === 'textStories') {
 						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
 							fileName = pathKey.split('/')[1];
-							pickerJson.OBS[fileName + ' ' + projectS] = {
-								description: `${fileName} from project ${projectS}`,
-								language: jsonParse.meta.defaultLocale,
-								src: {
-									type: 'fs',
-									path: `${folder}/${project}/${pathKey}`,
-								},
-								books: val.scope ? Object.keys(val.scope) : [],
-							};
+							if (fileName !== 'scribe-settings.json' && fileName !== 'license.md') {
+								pickerJson.OBS[projectS + ' ' + fileName] = {
+									description: `${fileName} from project ${projectS}`,
+									language: jsonParse.meta.defaultLocale,
+									src: {
+										type: 'fs',
+										path: `${folder}/${project}/${pathKey}`,
+									},
+									books: val.scope ? Object.keys(val.scope) : [],
+								};
+							}
 						}
 					}
 				}

@@ -20,17 +20,35 @@ export function SortableList({
 	setPossibleSelection,
 }) {
 	const {
-    states: {
-      listResourcesForPdf,
-    },
-    actions: {
-      setListResourcesForPdf,
-    },
-  } = useContext(ProjectContext);
+		states: {
+			listResourcesForPdf,
+		},
+		actions: {
+			setListResourcesForPdf,
+		},
+	} = useContext(ProjectContext);
 
-	const [open, setOpen] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
+	const [searchText, setSearchText] = useState('');
+	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(Object.keys(listResourcesForPdf).reduce((a, v) => ({ ...a, [v]: {} }), {}));
 
-	useEffect(() => console.log(selected), [selected]);
+	useEffect(() => {
+		if (searchText.length > 2) {
+			let contentTypes = Object.keys(listResourcesForPdf);
+			let newListResources = contentTypes.reduce((a, v) => ({ ...a, [v]: {} }), {});
+			let regexSearch = new RegExp(`.*${searchText}.*`, 'i');
+			contentTypes.forEach((contentType) => {
+				for (let [pathKey, val] of Object.entries(listResourcesForPdf[contentType]).sort()) {
+					if (regexSearch.test(pathKey.replace('[', '').replace(']', ''))) {
+						newListResources[contentType][pathKey] = val;
+					}
+				}
+			});
+			setLocalListResourcesForPdf(newListResources);
+		} else {
+			setLocalListResourcesForPdf(listResourcesForPdf);
+		}
+	}, [searchText, setSearchText, openModal, setOpenModal]);
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -95,6 +113,15 @@ export function SortableList({
 		setOrderSelection(t);
 	};
 
+	const handleInputSearch = (e) => {
+		setSearchText(e.target.value);
+	}
+
+	const handleOpenModal = (isOpen) => {
+		setOpenModal(isOpen);
+		setSearchText('');
+	}
+
 	return (
 		<div>
 			<ul className='sortable-list'>
@@ -145,18 +172,19 @@ export function SortableList({
 						backgroundColor: '#F50',
 						borderStyle: 'solid',
 						borderColor: '#F50',
-            color:'white'
+						color: 'white'
 					}}
-					onClick={() => setOpen(true)}>
+					onClick={() => handleOpenModal(true)}>
 					Add
 				</Button>
 				<Modal
-					open={open}
-					onClose={() => setOpen(false)}
+					open={openModal}
+					onClose={() => handleOpenModal(false)}
 					style={{
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
+						flexDirection: 'row',
 					}}>
 					<div
 						style={{
@@ -164,18 +192,23 @@ export function SortableList({
 							width: '50%',
 							height: '50%',
 						}}
-						>
-						{listResourcesForPdf ? (<ScriptureContentPicker
-							onSelect={(e) => {
-								setSelected((prev) => [...prev, e.description]);
-								setOrderSelection((prev) => [
-									...prev,
-									e.description,
-								]);
-								setOpen(false);
-							}}
-							source={listResourcesForPdf}
-						/>) : <LoadingSpinner />}
+					>
+						<div className={'picker-container'}>
+							<div className={'searchContainer'}>
+								<input className={'searchInput'} type="text" placeholder="Search" onInput={handleInputSearch} />
+							</div>
+							{localListResourcesForPdf ? (<ScriptureContentPicker
+								onSelect={(e) => {
+									setSelected((prev) => [...prev, e.description]);
+									setOrderSelection((prev) => [
+										...prev,
+										e.description,
+									]);
+									handleOpenModal(false);
+								}}
+								source={localListResourcesForPdf}
+							/>) : <LoadingSpinner />}
+						</div>
 					</div>
 				</Modal>
 			</div>

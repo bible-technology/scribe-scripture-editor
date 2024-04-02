@@ -97,6 +97,7 @@ export default function InnerFramePopup() {
 						justifyContent: 'center',
 						alignItems: 'center',
 						color: 'white',
+						userSelect: 'none',
 					}}>
 					<div>
 						{pageNumber} / {numPages ? numPages : 'none'}
@@ -119,6 +120,8 @@ export default function InnerFramePopup() {
 						justifyContent: 'center',
 						alignItems: 'center',
 						color: 'white',
+						cursor: 'pointer',
+						userSelect: 'none',
 					}}>
 					+
 				</div>
@@ -139,8 +142,10 @@ export default function InnerFramePopup() {
 						justifyContent: 'center',
 						alignItems: 'center',
 						color: 'white',
+						cursor: 'pointer',
+						userSelect: 'none',
 					}}>
-					-
+					&ndash;
 				</div>
 				{/* PDF Viewer */}
 				<div
@@ -150,6 +155,7 @@ export default function InnerFramePopup() {
 						display: 'flex',
 						justifyContent: 'center',
 						padding: '8px',
+						zIndex: 0,
 					}}>
 					<Document
 						file={myPdfFile}
