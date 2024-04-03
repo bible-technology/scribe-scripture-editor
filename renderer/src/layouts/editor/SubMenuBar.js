@@ -65,7 +65,7 @@ export default function SubMenuBar() {
   };
   const { t } = useTranslation();
 
-  const [openBouquetPicker, setOpenBouquetPicker] = useState(false);
+  // const [openBouquetPicker, setOpenBouquetPicker] = useState(false);
   // const networkState = useNetwork();
   // const FileMenuItems = [
   //   {
@@ -309,7 +309,7 @@ export default function SubMenuBar() {
               />
             </div>
 
-            <div
+            {/* <div
               aria-label="add-panels"
               title={'Open bouquet picker'}
               // title={t('TODO')}
@@ -323,7 +323,7 @@ export default function SubMenuBar() {
                 className="h-6 w-6 text-black cursor-pointer"
                 aria-hidden="true"
               />
-            </div>
+            </div> */}
 
             {/* Editor sync 2 new one */}
             <EditorSync selectedProject={selectedProject} />
@@ -381,14 +381,14 @@ export default function SubMenuBar() {
             )}
 
             {/* popup for print to PDF */}
-            {openBouquetPicker && (
+            {/* {openBouquetPicker && (
               <div className="fixed z-50 ">
                 <FramedBouquetPickerPopup
                   openBouquetPicker={openBouquetPicker}
                   setOpenBouquetPicker={setOpenBouquetPicker}
                 />
               </div>
-            )}
+            )} */}
 
           </div>
         </div>

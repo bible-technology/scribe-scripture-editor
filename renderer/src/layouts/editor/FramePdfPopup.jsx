@@ -11,6 +11,7 @@ import { SnackBar } from '@/components/SnackBar';
 import localForage from 'localforage';
 import InnerFramePopup from '@/layouts/editor/InnerFramePopup';
 import packageInfo from '../../../../package.json';
+import readLocalResources from '@/components/Resources/useReadLocalResources';
 // import * as logger from '../../logger';
 export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const cancelButtonRef = useRef(null);
@@ -30,6 +31,55 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 		},
 	} = useContext(ProjectContext);
 
+	/**
+	 * 
+	 * @param {object[]} burritoArray a burrito resource array
+	 * 		* projectDir
+	 * 		* value
+	 * 		* type
+	 */
+	const fromBurritoArrayToList = (burritoArray) => {
+		console.log(JSON.stringify(burritoArray[0].value, null, 4));
+		// burritoArray.forEach((bur) => {
+
+		// });
+		// return {
+		// 	description: `${fileName} from project ${projectS}`,
+		// 	language: jsonParse.meta.defaultLocale,
+		// 	src: {
+		// 		type: 'fs',
+		// 		path: `${folder}/${project}/${pathKey}`,
+		// 	},
+		// 	books: val.scope ? Object.keys(val.scope) : [],
+		// };
+	}
+
+	const pushEachIngredients = (picker, jsonParse, resourceType, projectName, pathFolder) => {
+		let fileName, tmpScope, tmpRangeScope;
+		let projectLocaleName = '[' + jsonParse.identification.name.en + ']';
+		for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
+			fileName = pathKey.split('/')[1];
+			tmpRangeScope = '';
+			tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
+				tmpRangeScope = key[0];
+				if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
+				return tmpRangeScope;
+			}).join(', ') : '';
+			if (fileName !== 'scribe-settings.json'
+				&& fileName !== 'license.md'
+				&& fileName !== 'versification.json') {
+				picker[resourceType][projectLocaleName + ' ' + tmpScope] = {
+					description: `${fileName} from project ${projectLocaleName}`,
+					language: jsonParse.meta.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${pathFolder}/${projectName}/${pathKey}`,
+					},
+					books: val.scope ? Object.keys(val.scope) : [],
+				};
+			}
+		}
+	}
 
 	useEffect(() => {
 		// we take all the exiting keys from the already existing 'listResourcesForPdf'
@@ -55,13 +105,21 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 					let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
 					let jsonParse = JSON.parse(jsontest);
 					let projectS = '[' + jsonParse.identification.name.en + ']';
-					let fileName;
+					let fileName, tmpScope, tmpRangeScope;
 					if (jsonParse.type.flavorType.flavor.name === 'textTranslation'
 						|| jsonParse.type.flavorType.flavor.name === 'x-juxtalinear') {
 						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
 							fileName = pathKey.split('/')[1];
-							if (fileName !== 'scribe-settings.json' && fileName !== 'license.md') {
-								pickerJson.book[projectS + ' ' + fileName] = {
+							tmpRangeScope = '';
+							tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
+								tmpRangeScope = key[0];
+								if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
+								return tmpRangeScope;
+							}).join(', ') : '';
+							if (fileName !== 'scribe-settings.json'
+								&& fileName !== 'license.md'
+								&& fileName !== 'versification.json') {
+								pickerJson.book[projectS + ' ' + tmpScope] = {
 									description: `${fileName} from project ${projectS}`,
 									language: jsonParse.meta.defaultLocale,
 									src: {
@@ -75,8 +133,16 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 					} else if (jsonParse.type.flavorType.flavor.name === 'textStories') {
 						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
 							fileName = pathKey.split('/')[1];
-							if (fileName !== 'scribe-settings.json' && fileName !== 'license.md') {
-								pickerJson.OBS[projectS + ' ' + fileName] = {
+							tmpRangeScope = '';
+							tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
+								tmpRangeScope = key[0];
+								if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
+								return tmpRangeScope;
+							}).join(', ') : '';
+							if (fileName !== 'scribe-settings.json'
+								&& fileName !== 'license.md' && fileName !== 'LICENSE.md'
+								&& fileName !== 'versification.json') {
+								pickerJson.OBS[projectS + ' ' + tmpScope] = {
 									description: `${fileName} from project ${projectS}`,
 									language: jsonParse.meta.defaultLocale,
 									src: {
@@ -90,8 +156,15 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 					}
 				}
 			}
-		});
-		setListResourcesForPdf(pickerJson);
+			return currentUser;
+		})
+			.then((currentUser) => {
+				setListResourcesForPdf(pickerJson);
+				return currentUser;
+			})
+			// after reading project resources
+			// we read true resources from common and from the user
+			.then((currentUser) => readLocalResources(currentUser, fromBurritoArrayToList));
 	}, [openPdfPopup]);
 
 	return (
