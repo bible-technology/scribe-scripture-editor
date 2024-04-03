@@ -10,6 +10,7 @@ import localForage from 'localforage';
 import packageInfo from '../../../../package.json';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { FieldPicker } from './fieldPicker/FieldPicker';
 
 export function SortableList({
 	orderSelection,
@@ -20,26 +21,46 @@ export function SortableList({
 	setPossibleSelection,
 }) {
 	const {
-		states: {
-			listResourcesForPdf,
-		},
-		actions: {
-			setListResourcesForPdf,
-		},
+		states: { listResourcesForPdf },
+		actions: { setListResourcesForPdf },
 	} = useContext(ProjectContext);
+	const {
+		states: { language },
+		actions: { setLanguage },
+	} = useContext(ProjectContext);
+	
+	setLanguage('fr')
+	console.log(language)
+
+	const [jsonSpec, setJsonSpec] = useState('{}');
+	const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
 
 	const [openModal, setOpenModal] = useState(false);
 	const [searchText, setSearchText] = useState('');
-	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(Object.keys(listResourcesForPdf).reduce((a, v) => ({ ...a, [v]: {} }), {}));
+	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(
+		Object.keys(listResourcesForPdf).reduce(
+			(a, v) => ({ ...a, [v]: {} }),
+			{},
+		),
+	);
 
 	useEffect(() => {
 		if (searchText.length > 2) {
 			let contentTypes = Object.keys(listResourcesForPdf);
-			let newListResources = contentTypes.reduce((a, v) => ({ ...a, [v]: {} }), {});
+			let newListResources = contentTypes.reduce(
+				(a, v) => ({ ...a, [v]: {} }),
+				{},
+			);
 			let regexSearch = new RegExp(`.*${searchText}.*`, 'i');
 			contentTypes.forEach((contentType) => {
-				for (let [pathKey, val] of Object.entries(listResourcesForPdf[contentType]).sort()) {
-					if (regexSearch.test(pathKey.replace('[', '').replace(']', ''))) {
+				for (let [pathKey, val] of Object.entries(
+					listResourcesForPdf[contentType],
+				).sort()) {
+					if (
+						regexSearch.test(
+							pathKey.replace('[', '').replace(']', ''),
+						)
+					) {
 						newListResources[contentType][pathKey] = val;
 					}
 				}
@@ -115,12 +136,12 @@ export function SortableList({
 
 	const handleInputSearch = (e) => {
 		setSearchText(e.target.value);
-	}
+	};
 
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
 		setSearchText('');
-	}
+	};
 
 	return (
 		<div>
@@ -134,22 +155,33 @@ export function SortableList({
 					</li>
 				))}
 				<li id={'etd'} className='item' draggable='true' key={'etd'}>
-					<Accordion>
+					<Accordion style={{width:'100%'}}>	
 						<AccordionSummary
 							id='panel-header'
 							aria-controls='panel-content'>
 							<div
 								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
+									width: '100%',
+									wordWrap: 'break-word',
 								}}>
-								<div>Header</div>
-								<div>+</div>
+								Section four coloumn spread test
 							</div>
 						</AccordionSummary>
-						<AccordionDetails>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit.
+						<AccordionDetails style={{ width: '100%' }}>
+							{fourColumnSpread.fields.map((f) => (
+								<div
+									key={f.id} // Ensure each child element has a unique key
+									style={{
+										borderBottomWidth: 1,
+										borderBottomStyle: 'solid',
+										wordWrap: 'break-word', // Allow content to wrap if it exceeds the width
+									}}>
+									<FieldPicker
+										setJsonSpec={setJsonSpec}
+										fieldInfo={f}
+										lang={language}></FieldPicker>
+								</div>
+							))}
 						</AccordionDetails>
 					</Accordion>
 				</li>
@@ -172,7 +204,7 @@ export function SortableList({
 						backgroundColor: '#F50',
 						borderStyle: 'solid',
 						borderColor: '#F50',
-						color: 'white'
+						color: 'white',
 					}}
 					onClick={() => handleOpenModal(true)}>
 					Add
@@ -191,23 +223,34 @@ export function SortableList({
 							backgroundColor: 'white',
 							width: '50%',
 							height: '50%',
-						}}
-					>
+						}}>
 						<div className={'picker-container'}>
 							<div className={'searchContainer'}>
-								<input className={'searchInput'} type="text" placeholder="Search" onInput={handleInputSearch} />
+								<input
+									className={'searchInput'}
+									type='text'
+									placeholder='Search'
+									onInput={handleInputSearch}
+								/>
 							</div>
-							{localListResourcesForPdf ? (<ScriptureContentPicker
-								onSelect={(e) => {
-									setSelected((prev) => [...prev, e.description]);
-									setOrderSelection((prev) => [
-										...prev,
-										e.description,
-									]);
-									handleOpenModal(false);
-								}}
-								source={localListResourcesForPdf}
-							/>) : <LoadingSpinner />}
+							{localListResourcesForPdf ? (
+								<ScriptureContentPicker
+									onSelect={(e) => {
+										setSelected((prev) => [
+											...prev,
+											e.description,
+										]);
+										setOrderSelection((prev) => [
+											...prev,
+											e.description,
+										]);
+										handleOpenModal(false);
+									}}
+									source={localListResourcesForPdf}
+								/>
+							) : (
+								<LoadingSpinner />
+							)}
 						</div>
 					</div>
 				</Modal>
