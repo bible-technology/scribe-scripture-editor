@@ -207,7 +207,7 @@ export const ListResources = ({
                       role="button"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta?.name}
+                      {resource?.value?.meta?.language_title ?? resource?.value?.meta?.name }
                       <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
                         {resource?.value?.meta?.owner}
                       </span>

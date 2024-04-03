@@ -13,7 +13,7 @@ export const fetchTranslationResource = async (urlpath, setResource, selectResou
   // https://git.door43.org/api/v1/catalog/search?metadataType=rc
   // https://qa.door43.org/api/v1/repos/search?flavor=x-juxtalinear
   const baseUrl = `${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&metadataType=sb`;
-  let url = `${baseUrl}subject=${urlpath}`;
+  let url = `${baseUrl}&subject=${urlpath}`;
   if (selectedPreProd) {
     url += '&stage=preprod';
   }
