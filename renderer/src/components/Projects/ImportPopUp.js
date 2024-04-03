@@ -14,6 +14,7 @@ import CloseIcon from '@/illustrations/close-button-black.svg';
 import { updateJsonJuxta } from './utils/updateJsonJuxta';
 
 const grammar = require('usfm-grammar');
+const advanceSettings = require('../../lib/AdvanceSettings.json');
 
 export default function ImportPopUp(props) {
   const {
@@ -35,10 +36,16 @@ export default function ImportPopUp(props) {
   const { t } = useTranslation();
   const [labelImportFiles, setLabelImportFiles] = useState(t('label-choose-usfm-files'));
   const {
+    states: {
+      canonSpecification,
+    },
     actions: {
       setImportedFiles,
+      setCanonSpecification,
     },
   } = useContext(ProjectContext);
+
+  const compareArrays = (a, b) => a.length === b.length && a.every((element, index) => element === b[index]);
 
   function close() {
     logger.debug('ImportPopUp.js', 'Closing the Import UI');
@@ -46,11 +53,13 @@ export default function ImportPopUp(props) {
     setShow(false);
     closePopUp();
   }
+
   function clear() {
     logger.debug('ImportPopUp.js', 'Clearing the data from the path box');
     setFolderPath([]);
     setBooks([]);
   }
+
   const getBooks = (filePaths) => {
     logger.debug('ImportPopUp.js', 'In getBooks for displaying books name using the paths');
     const book = [];
@@ -67,6 +76,7 @@ export default function ImportPopUp(props) {
     });
     setBooks(book);
   };
+
   const openFileDialogSettingData = async () => {
     logger.debug('ImportPopUp.js', 'Inside openFileDialogSettingData');
     const options = {
@@ -103,6 +113,7 @@ export default function ImportPopUp(props) {
     logger.debug('ImportPopUp.js', 'Inside importFiles');
     const fs = window.require('fs');
     const files = [];
+    let bookCodeList = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
         // Nicolas add a juxta type here
@@ -116,6 +127,7 @@ export default function ImportPopUp(props) {
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');
@@ -135,6 +147,7 @@ export default function ImportPopUp(props) {
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');
@@ -185,6 +198,7 @@ export default function ImportPopUp(props) {
               const jsonOutput = myUsfmParser.toJSON();
               const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
               files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
+              bookCodeList.push(jsonOutput.book.bookCode);
             } else {
               logger.warn('ImportPopUp.js', 'Invalid USFM file.');
               setNotify('failure');
@@ -205,6 +219,7 @@ export default function ImportPopUp(props) {
             }
             logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
             files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
+            bookCodeList.push(updatedFile.bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid file.');
             setNotify('failure');
@@ -214,14 +229,33 @@ export default function ImportPopUp(props) {
           }
           break;
         }
-
         default:
           break;
       }
     });
+    if(canonSpecification && canonSpecification.title === 'All Books') {
+      let newCanonSpecification = {
+        currentScope: bookCodeList,
+        id: 4,
+        locked: true,
+        title: 'Other',
+      }
+      if (bookCodeList.length === advanceSettings.canonSpecification[2].length
+          && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+        newCanonSpecification.title = advanceSettings.canonSpecification[2].title;
+      } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length
+        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+        newCanonSpecification.title = advanceSettings.canonSpecification[1].title;
+      } else if (bookCodeList.length === advanceSettings.canonSpecification[0].length
+        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+        newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
+      }
+      setCanonSpecification(newCanonSpecification);
+    }
     setImportedFiles(files);
     close();
   };
+
   const importProject = async () => {
     logger.debug('ImportPopUp.js', 'Inside importProject');
     if (folderPath.length > 0) {

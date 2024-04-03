@@ -33,7 +33,7 @@ const ProjectContextProvider = ({ children }) => {
   const [canonList, setCanonList] = useState(
     advanceSettings.canonSpecification,
   );
-  const [canonSpecification, setcanonSpecification] = useState(
+  const [canonSpecification, setCanonSpecification] = useState(
     advanceSettings.canonSpecification[0],
   );
   const [versification] = useState(advanceSettings.versification);
@@ -465,7 +465,7 @@ const ProjectContextProvider = ({ children }) => {
     };
     setNewProjectFields({ ...initialState });
     setCopyRight();
-    setcanonSpecification('OT');
+    setCanonSpecification('OT');
     setVersificationScheme('kjv');
   };
 
@@ -547,7 +547,7 @@ const ProjectContextProvider = ({ children }) => {
     actions: {
       setDrawer,
       setCopyRight,
-      setcanonSpecification,
+      setCanonSpecification,
       setVersificationScheme,
       handleProjectFields,
       resetProjectStates,

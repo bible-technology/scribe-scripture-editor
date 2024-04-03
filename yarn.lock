@@ -22820,7 +22820,7 @@ xregexp@^4.1.1, xregexp@^4.4.0, xregexp@^4.4.1:
 
 xregexp@^5.1.1:
   version "5.1.1"
-  resolved "https://registry.npmjs.org/xregexp/-/xregexp-5.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-5.1.1.tgz#6d3fe18819e3143aaf52f9284d34f49a59583ebb"
   integrity sha512-fKXeVorD+CzWvFs7VBuKTYIW63YD1e1osxwQ8caZ6o1jg6pDAbABDG54LCIq0j5cy7PjRvGIq6sef9DYPXpncg==
   dependencies:
     "@babel/runtime-corejs3" "^7.16.5"

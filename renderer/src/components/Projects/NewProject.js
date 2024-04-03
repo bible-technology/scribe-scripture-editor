@@ -110,6 +110,7 @@ export default function NewProject({ call, project, closeEdit }) {
       setLanguage,
       createProject,
       setNewProjectFields,
+      setCanonSpecification,
     },
   } = React.useContext(ProjectContext);
   const { t } = useTranslation();
@@ -132,6 +133,12 @@ export default function NewProject({ call, project, closeEdit }) {
   const handleDropDown = (currentSelection) => {
     setHeaderDropDown(currentSelection);
   };
+
+  useEffect(() => {
+    // TODO canonSpecification
+    // console.log("canonSpecification ==",canonSpecification);
+    // console.log("newProjectFields ==",newProjectFields);
+  }, [canonSpecification, setCanonSpecification])
 
   function getAbbreviation(text) {
     if (typeof text !== 'string' || !text) {
@@ -444,7 +451,7 @@ export default function NewProject({ call, project, closeEdit }) {
                       <button
                         type="button"
                         aria-label="create"
-                        className="w-40 h-10 my-5 bg-success leading-loose rounded shadow text-xs font-base text-white tracking-wide font-light uppercase"
+                        className="w-40 h-10 my-5 bg-success leading-loose rounded shadow font-base text-white tracking-wide font-bold uppercase"
                         onClick={() => validate()}
                       >
                         {t('btn-create-project')}

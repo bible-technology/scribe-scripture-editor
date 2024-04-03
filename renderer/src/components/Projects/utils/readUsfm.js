@@ -2,6 +2,7 @@
 import { SofriaRenderFromProskomma } from 'proskomma-json-tools';
 import { Proskomma } from 'proskomma-core';
 import md5 from 'md5';
+import xre from 'xregexp';
 
 /**
  * Reads and processes a USFM file using Proskomma.
@@ -106,10 +107,13 @@ export const readUsfm = (srcUsfm, bookCode) => {
         action: ({ workspace, context, output }) => {
           const element = context.sequences[0].element;
           workspace.currentSentenceString += element.text;
+          const re = xre('[\u05c3]'); // hebrew line parsing
+          const regText = xre.match(element.text, re, 'all');
           if (
             element.text.includes('.')
             || element.text.includes('?')
             || element.text.includes('!')
+            || regText.length > 0
           ) {
             if (workspace.currentSentence.length > 0) {
               output.sentences.push({
