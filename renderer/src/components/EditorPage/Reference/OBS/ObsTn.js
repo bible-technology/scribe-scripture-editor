@@ -83,8 +83,9 @@ function ObsTnCard({
               if (offlineResource.data?.value?.dublin_core?.format?.toLowerCase() === 'text/tsv') {
                 logger.debug('inside OBS TN offline TSV resource');
                 let tsvFileName = offlineResource.data?.value?.projects[0]?.path;
+                let fullPathTsv = path.join(folder, projectName, tsvFileName);
                 // sometimes people put the path of the content dir instead of the name of the tsv file
-                if(fs.lstatSync(path.join(folder, projectName, tsvFileName),).isDirectory()) {
+                if(!fs.existsSync(fullPathTsv) || fs.lstatSync(fullPathTsv).isDirectory()) {
                   tsvFileName = fs.readdirSync(path.join(folder, projectName)).filter(fn => fn.endsWith('.tsv'))[0];
                 }
                 const obsTsvData = await fs.readFileSync(path.join(folder, projectName, tsvFileName), 'utf8');
