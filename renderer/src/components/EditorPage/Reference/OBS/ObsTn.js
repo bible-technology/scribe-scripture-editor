@@ -15,6 +15,7 @@ import tsvJSON from './TsvToJson';
 import ObsTsvToChapterLevelMd from './ObsTsvToChapterLevel';
 import packageInfo from '../../../../../../package.json';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
+import { SnackBar } from '@/components/SnackBar';
 
 function ObsTnCard({
   resource,
@@ -33,6 +34,9 @@ function ObsTnCard({
   const [index, setIndex] = useState(0);
   const [items, setItems] = useState([]);
   const [markdown, setMarkdown] = useState();
+  const [snackBar, setOpenSnackBar] = React.useState(false);
+  const [snackText, setSnackText] = React.useState('');
+  const [notify, setNotify] = React.useState();
 
   const {
     state: {
@@ -96,6 +100,11 @@ function ObsTnCard({
                     logger.debug('inside OBS TN offline TSV resource : generated chapter Md level occurencenot Array');
                     setItems(chapterTsvData);
                   });
+                } else {
+                  setNotify('failure');
+                  // TODO translation
+                  setSnackText('Impossible to read the data from the selected resource. Please contact the owner of the resource project.');
+                  setOpenSnackBar(true);
                 }
               } else {
                 const contentDir = offlineResource.data?.value?.projects[0]?.path;
@@ -150,7 +159,17 @@ function ObsTnCard({
         setIndex={(v) => setIndex(v)}
         font={font}
       />
-    ) : items[0] ? <LoadingScreen /> : <EmptyScreen />
+    ) : items[0] ? <LoadingScreen /> : (
+      <>
+        <EmptyScreen />
+        <SnackBar
+          openSnackBar={snackBar}
+          snackText={snackText}
+          setOpenSnackBar={setOpenSnackBar}
+          setSnackText={setSnackText}
+          error={notify}
+        />
+      </>)
   );
 }
 
