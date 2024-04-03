@@ -182,7 +182,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     } else {
       setOpenSnackBar(true);
       setNotify('warning');
-      setSnackText('Please Wait, Download in progrss');
+      setSnackText('Please Wait, Download in progress');
     }
   };
 

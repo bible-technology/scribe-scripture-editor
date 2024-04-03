@@ -41,7 +41,7 @@ const SnackBar = ({
 
   useEffect(() => {
     if (openSnackBar) {
-      setTimeLeft(error === 'failure' ? 12 : 8);
+      setTimeLeft(error === 'failure' ? 30 : 8);
     }
   }, [openSnackBar]);
 

@@ -16,7 +16,7 @@ export const updateJsonJuxta = (jsonString, bookCode) => {
     return srcJson;
   }
   if (!/^[A-Z\d]{3}$/.test(bookCode)) {
-    return { error: `Expected a Paratext-style book code, eg 'TIT' or '1CO', not '${bookCode}'` };
+    return { error: `Expected a Paratext-style book code (3 characters long and caps), e.g. 'TIT' or '1CO', not '${bookCode}'` };
   }
   let checksumSentences = '';
   let checksumChuncks = '';
