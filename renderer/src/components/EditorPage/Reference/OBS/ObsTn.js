@@ -14,6 +14,7 @@ import * as logger from '../../../../logger';
 import tsvJSON from './TsvToJson';
 import ObsTsvToChapterLevelMd from './ObsTsvToChapterLevel';
 import packageInfo from '../../../../../../package.json';
+import EmptyScreen from '@/components/Loading/EmptySrceen';
 
 function ObsTnCard({
   resource,
@@ -71,7 +72,6 @@ function ObsTnCard({
     async function fetchOfflineData() {
       try {
       localForage.getItem('userProfile').then(async (user) => {
-          // console.log('inside offline fetch function :  ', offlineResource);
           logger.debug('OfflineResourceFetch.js', 'reading offline obs-tn ', offlineResource.data?.projectDir);
           const fs = window.require('fs');
           const path = require('path');
@@ -88,20 +88,21 @@ function ObsTnCard({
                 if(!fs.existsSync(fullPathTsv) || fs.lstatSync(fullPathTsv).isDirectory()) {
                   tsvFileName = fs.readdirSync(path.join(folder, projectName)).filter(fn => fn.endsWith('.tsv'))[0];
                 }
-                const obsTsvData = await fs.readFileSync(path.join(folder, projectName, tsvFileName), 'utf8');
-                const obsTsvJson = obsTsvData && await tsvJSON(obsTsvData);
-                logger.debug('inside OBS TN offline TSV resource : created TSV JSON');
-                await ObsTsvToChapterLevelMd(obsTsvJson, chapter).then((chapterTsvData) => {
-                  logger.debug('inside OBS TN offline TSV resource : generated chapter Md level occurencenot Array');
-                  setItems(chapterTsvData);
-                });
+                if(tsvFileName && fs.existsSync(path.join(folder, projectName, tsvFileName)) && fs.lstatSync(path.join(folder, projectName, tsvFileName)).isFile()) {
+                  const obsTsvData = await fs.readFileSync(path.join(folder, projectName, tsvFileName), 'utf8');
+                  const obsTsvJson = obsTsvData && await tsvJSON(obsTsvData);
+                  logger.debug('inside OBS TN offline TSV resource : created TSV JSON');
+                  await ObsTsvToChapterLevelMd(obsTsvJson, chapter).then((chapterTsvData) => {
+                    logger.debug('inside OBS TN offline TSV resource : generated chapter Md level occurencenot Array');
+                    setItems(chapterTsvData);
+                  });
+                }
               } else {
                 const contentDir = offlineResource.data?.value?.projects[0]?.path;
                 const notesDir = path.join(folder, projectName, contentDir, chapter.toString().padStart(2, 0));
                 const items = [];
                 fs.readdir(notesDir, async (err, files) => {
                   if (err) {
-                    // console.log(`Unable to scan directory: ${ err}`);
                     logger.debug('OfflineResourceFetch.js', 'reading offline dir not found err :  ', err);
                     throw err;
                   }
@@ -149,7 +150,7 @@ function ObsTnCard({
         setIndex={(v) => setIndex(v)}
         font={font}
       />
-    ) : <LoadingScreen />
+    ) : items[0] ? <LoadingScreen /> : <EmptyScreen />
   );
 }
 
