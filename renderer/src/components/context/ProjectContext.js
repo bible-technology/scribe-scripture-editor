@@ -50,6 +50,7 @@ const ProjectContextProvider = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState();
   const [selectedProjectMeta, setSelectedProjectMeta] = useState();
   const [importedFiles, setImportedFiles] = useState([]);
+  const [importedBookCodes, setImportedBookCodes] = useState([]);
   const [sideBarTab, setSideBarTab] = useState('');
   const [openImportPopUp, setOpenImportPopUp] = useState(false);
   const [openExportPopUp, setOpenExportPopUp] = useState(false);
@@ -543,6 +544,7 @@ const ProjectContextProvider = ({ children }) => {
       openImportPopUp,
       openExportPopUp,
       selectedProjectMeta,
+      importedBookCodes,
     },
     actions: {
       setDrawer,
@@ -567,6 +569,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenImportPopUp,
       setOpenExportPopUp,
       setSelectedProjectMeta,
+      setImportedBookCodes,
     },
   };
 

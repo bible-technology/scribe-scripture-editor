@@ -40,6 +40,7 @@ export default function ImportPopUp(props) {
       canonSpecification,
     },
     actions: {
+      setImportedBookCodes,
       setImportedFiles,
       setCanonSpecification,
     },
@@ -252,6 +253,7 @@ export default function ImportPopUp(props) {
       }
       setCanonSpecification(newCanonSpecification);
     }
+    setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
     close();
   };

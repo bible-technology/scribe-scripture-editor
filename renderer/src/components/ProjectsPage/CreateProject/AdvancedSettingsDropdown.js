@@ -54,7 +54,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
       setCopyRight,
     },
   } = React.useContext(ProjectContext);
-  const [isShow, setIsShow] = React.useState(true);
+  const [isShow, setIsShow] = React.useState(!projectType === 'Juxta');
   const [bibleNav, setBibleNav] = React.useState(false);
   const [handleNav, setHandleNav] = React.useState();
   const [currentScope, setCurrentScope] = React.useState();
