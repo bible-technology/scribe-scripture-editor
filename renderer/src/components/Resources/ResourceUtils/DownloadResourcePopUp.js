@@ -74,8 +74,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     });
   };
 
-  console.log({ selectedTypeFilter });
-
   const fetchResource = async (filter) => {
     logger.debug('DownloadResourcePopUp.js', 'fetching resource as per filter applied');
     setLoading(true);
@@ -286,7 +284,6 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
 
   useEffect(() => {
     logger.debug('DownloadResourcePopUp.js', 'in useEffect initial load of resource');
-    console.log('calling use Effect =============');
     setSelectedTypeFilter([]);
     fetchResource(false);
     // setLoading(true)

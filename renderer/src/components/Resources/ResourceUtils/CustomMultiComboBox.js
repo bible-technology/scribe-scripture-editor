@@ -14,7 +14,6 @@ function CustomMultiComboBox({
   if (customData.length === 1) {
     setSelectedList(customData[0]);
   } else if (customData.length > 1) {
-    console.log('selectedList : ====> ', selectedList);
     // eslint-disable-next-line no-nested-ternary
     filteredData = (query === '')
       ? customData.slice(0, 100).concat(selectedList.filter((item) => customData.slice(0, 100).indexOf(item) === -1)) // showing initial 100
