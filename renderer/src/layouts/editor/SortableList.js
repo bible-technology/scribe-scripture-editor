@@ -11,6 +11,7 @@ import packageInfo from '../../../../package.json';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { FieldPicker } from './fieldPicker/FieldPicker';
+import { ScriptureContentSearchBar } from './ScriptureContentSearchBar';
 
 export function SortableList({
 	orderSelection,
@@ -36,40 +37,6 @@ export function SortableList({
 	const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
 
 	const [openModal, setOpenModal] = useState(false);
-	const [searchText, setSearchText] = useState('');
-	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(
-		Object.keys(listResourcesForPdf).reduce(
-			(a, v) => ({ ...a, [v]: {} }),
-			{},
-		),
-	);
-
-	useEffect(() => {
-		if (searchText.length > 2) {
-			let contentTypes = Object.keys(listResourcesForPdf);
-			let newListResources = contentTypes.reduce(
-				(a, v) => ({ ...a, [v]: {} }),
-				{},
-			);
-			let regexSearch = new RegExp(`.*${searchText}.*`, 'i');
-			contentTypes.forEach((contentType) => {
-				for (let [pathKey, val] of Object.entries(
-					listResourcesForPdf[contentType],
-				).sort()) {
-					if (
-						regexSearch.test(
-							pathKey.replace('[', '').replace(']', ''),
-						)
-					) {
-						newListResources[contentType][pathKey] = val;
-					}
-				}
-			});
-			setLocalListResourcesForPdf(newListResources);
-		} else {
-			setLocalListResourcesForPdf(listResourcesForPdf);
-		}
-	}, [searchText, setSearchText, openModal, setOpenModal]);
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -134,13 +101,8 @@ export function SortableList({
 		setOrderSelection(t);
 	};
 
-	const handleInputSearch = (e) => {
-		setSearchText(e.target.value);
-	};
-
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
-		setSearchText('');
 	};
 
 	return (
@@ -209,51 +171,13 @@ export function SortableList({
 					onClick={() => handleOpenModal(true)}>
 					Add
 				</Button>
-				<Modal
-					open={openModal}
-					onClose={() => handleOpenModal(false)}
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						flexDirection: 'row',
-					}}>
-					<div
-						style={{
-							backgroundColor: 'white',
-							width: '50%',
-							height: '50%',
-						}}>
-						<div className={'picker-container'}>
-							<div className={'searchContainer'}>
-								<input
-									className={'searchInput'}
-									type='text'
-									placeholder='Search'
-									onInput={handleInputSearch}
-								/>
-							</div>
-							{localListResourcesForPdf ? (
-								<ScriptureContentPicker
-									onSelect={(e) => {
-										setSelected((prev) => [
-											...prev,
-											e.description,
-										]);
-										setOrderSelection((prev) => [
-											...prev,
-											e.description,
-										]);
-										handleOpenModal(false);
-									}}
-									source={localListResourcesForPdf}
-								/>
-							) : (
-								<LoadingSpinner />
-							)}
-						</div>
-					</div>
-				</Modal>
+				<ScriptureContentSearchBar
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					handleOpenModal={handleOpenModal}
+					setOrderSelection={setOrderSelection}
+					setSelected={setSelected}
+				/>
 			</div>
 		</div>
 	);

@@ -6,10 +6,6 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { SortableList } from './SortableList';
 import { selectOption } from './selectOptions';
 
-
-const path = require('path');
-const fs = window.require('fs');
-
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	'pdfjs-dist/build/pdf.worker.min.js',
 	import.meta.url,
@@ -24,6 +20,8 @@ function Fontsizes() {
 }
 
 export default function InnerFramePopup() {
+	const path = require('path');
+	const fs = window.require('fs');
 	
 	//list of all non selected choice
 	const [possibleSelection, setPossibleSelection] = useState([
