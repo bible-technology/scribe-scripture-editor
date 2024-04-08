@@ -280,4 +280,5 @@ export const Ne = {
     'msg-helps-filepath': 'वैध manifest.yaml सँग संसाधन फाइलपाथलाई मद्दत गर्दछ',
     'tooltip-supported-resources': 'समर्थित स्रोतहरू TN, TW, TQ, TA हुन्',
     'label-upload-help-resources': 'मद्दत स्रोतहरू अपलोड गर्नुहोस्',
+    'label-filter': 'फिल्टर',
 };

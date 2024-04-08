@@ -276,4 +276,5 @@ export const Fa = {
     'label-check-updates': 'Check updates',
     'label-documentation': 'Documentation',
     'label-tech-support': 'Tech Support',
+    'label-filter': 'Filter',
 };
