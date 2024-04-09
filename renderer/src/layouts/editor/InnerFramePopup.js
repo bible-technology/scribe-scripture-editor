@@ -26,19 +26,13 @@ function Fontsizes() {
 export default function InnerFramePopup() {
 	
 	//list of all non selected choice
-	const [possibleSelection, setPossibleSelection] = useState([
-		'Add content',
-		'Juxta Handbook',
-		'TJX',
-		'USFM',
-	]);
+
 	//the order Of The Selected choice
 	const [orderSelection, setOrderSelection] = useState([
-		'Front cover',
-		'Current trad',
+	
 	]);
 	//all the selected choice
-	const [selected, setSelected] = useState(['Front cover', 'Current trad']);
+	const [selected, setSelected] = useState([]);
 
 	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
@@ -207,8 +201,6 @@ export default function InnerFramePopup() {
 					setOrderSelection={setOrderSelection}
 					selected={selected}
 					setSelected={setSelected}
-					possibleSelection={possibleSelection}
-					setPossibleSelection={setPossibleSelection}
 				/>
 			</div>
 		

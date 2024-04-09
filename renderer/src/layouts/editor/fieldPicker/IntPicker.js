@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from 'react';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import { NumericFormat } from 'react-number-format';
+
+export function IntPicker({ fieldInfo, setJsonSpec, require, lang }) {
+  const [value, setValue] = useState('');
+  useEffect(() => {
+    setJsonSpec((prev) => {
+      const newState = JSON.parse(prev);
+      newState[fieldInfo.id] = value;
+      return JSON.stringify(newState);
+    });
+  }, [value]);
+
+  
+  const handleBlur = (event) => {
+    const newValue = event.target.value.trim(); // Trim any whitespace
+    setValue(newValue);
+  };
+
+  const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
+    props,
+    ref,
+  ) {
+    const { onChange, ...other } = props;
+
+    return (
+      <NumericFormat
+        {...other}
+        getInputRef={ref}
+        onChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+      />
+    );
+  });
+
+  return (
+    <Stack>
+      <TextField
+        label={fieldInfo.label[lang]}
+        value={value}
+        onBlur={handleBlur}
+        name='numberformat'
+        id='formatted-numberformat-input'
+        InputProps={{
+          inputComponent: NumericFormatCustom,
+        }}
+        variant='standard'
+      />
+    </Stack>
+  );
+}

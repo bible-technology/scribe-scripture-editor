@@ -68,7 +68,7 @@ const ProjectContextProvider = ({ children }) => {
     setLicenseList((advanceSettings.copyright).push({
       id: 'Other', title: 'Custom', licence: '', locked: false,
     }));
-    // setLanguages([advanceSettings.languages]);
+    setLanguages([advanceSettings.languages]);
     const json = {
       version: environment.AG_USER_SETTING_VERSION,
       history: {

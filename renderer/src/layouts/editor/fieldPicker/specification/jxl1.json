@@ -1,0 +1,1166 @@
+{
+  "front": {
+    "sectionType": "front",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "html",
+        "label": {
+          "en": "HTML Source",
+          "fr": "Source pour HTML"
+        },
+        "typeName": "html",
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "markdown": {
+    "sectionType": "markdown",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "md",
+        "label": {
+          "en": "Markdown Source",
+          "fr": "Source pour markdown"
+        },
+        "typeName": "md",
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "obs": {
+    "sectionType": "obs",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "obs",
+        "label": {
+          "en": "OBS Source",
+          "fr": "Source pour OBS"
+        },
+        "typeName": "obs",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "firstStory",
+        "label": {
+          "en": "First Story Number",
+          "fr": "N° de première histoire OBS"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "lastStory",
+        "label": {
+          "en": "Last Story Number",
+          "fr": "N° de dernière histoire OBS"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "obsPlusNotes": {
+    "sectionType": "obsPlusNotes",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "obs",
+        "label": {
+          "en": "OBS Source",
+          "fr": "Source pour OBS"
+        },
+        "typeName": "obs",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "firstStory",
+        "label": {
+          "en": "First Story Number",
+          "fr": "N° de première histoire OBS"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "lastStory",
+        "label": {
+          "en": "Last Story Number",
+          "fr": "N° de dernière histoire OBS"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "obsNotes",
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "bookNote": {
+    "sectionType": "bookNote",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "4ColumnSpread": {
+    "sectionType": "4ColumnSpread",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeLiteral": "verso",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "scripture",
+        "label": {
+          "en": "Scripture Texts",
+          "fr": "Textes bibliques"
+        },
+        "nValues": [
+          4,
+          4
+        ],
+        "typeSpec": [
+          {
+            "id": "scripture#Text",
+            "label": {
+              "en": "Scripture # Text Label",
+              "fr": "Etiquette pour texte biblique #"
+            },
+            "typeName": "string",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Src",
+            "label": {
+              "en": "Source # Text Source",
+              "fr": "Source pour texte biblique #"
+            },
+            "typeName": "translationText",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Type",
+            "label": {
+              "en": "Scripture # Text Type",
+              "fr": "Type de texte biblique #"
+            },
+            "typeEnum": [
+              {
+                "id": "greek",
+                "label": {
+                  "en": "Greek",
+                  "fr": "Grec"
+                }
+              },
+              {
+                "id": "hebrew",
+                "label": {
+                  "en": "Hebrew",
+                  "fr": "Hébreu"
+                }
+              },
+              {
+                "id": "translation",
+                "label": {
+                  "en": "Translation",
+                  "fr": "Traduction"
+                }
+              }
+            ],
+            "nValues": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "jxlSpread": {
+    "sectionType": "jxlSpread",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeLiteral": "verso",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "firstSentence",
+        "label": {
+          "en": "First Sentence Number",
+          "fr": "N° de première phrase"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "lastSentence",
+        "label": {
+          "en": "Last Sentence Number",
+          "fr": "N° de dernière phrase"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "lhs",
+        "label": {
+          "en": "Scripture Texts",
+          "fr": "Textes bibliques"
+        },
+        "nValues": [
+          1,
+          5
+        ],
+        "typeSpec": [
+          {
+            "id": "scripture#Text",
+            "label": {
+              "en": "Scripture # Text Label",
+              "fr": "Etiquette pour texte biblique #"
+            },
+            "typeName": "string",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Src",
+            "label": {
+              "en": "Source # Text Source",
+              "fr": "Source pour texte biblique #"
+            },
+            "typeName": "translationText",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Type",
+            "label": {
+              "en": "Scripture # Text Type",
+              "fr": "Type de texte biblique #"
+            },
+            "typeEnum": [
+              {
+                "id": "greek",
+                "label": {
+                  "en": "Greek",
+                  "fr": "Grec"
+                }
+              },
+              {
+                "id": "hebrew",
+                "label": {
+                  "en": "Hebrew",
+                  "fr": "Hébreu"
+                }
+              },
+              {
+                "id": "translation",
+                "label": {
+                  "en": "Translation",
+                  "fr": "Traduction"
+                }
+              }
+            ],
+            "nValues": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "jxlSimple": {
+    "sectionType": "jxlSimple",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "jxl",
+        "label": {
+          "en": "Juxta Source",
+          "fr": "Source pour Juxta"
+        },
+        "typeName": "juxta",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "firstSentence",
+        "label": {
+          "en": "First Sentence Number",
+          "fr": "N° de première phrase"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "lastSentence",
+        "label": {
+          "en": "Last Sentence Number",
+          "fr": "N° de dernière phrase"
+        },
+        "typeName": "integer",
+        "nValues": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "2Column": {
+    "sectionType": "2Column",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeLiteral": "verso",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "scripture",
+        "label": {
+          "en": "Scripture Texts",
+          "fr": "Textes bibliques"
+        },
+        "nValues": [
+          2,
+          2
+        ],
+        "typeSpec": [
+          {
+            "id": "scripture#Text",
+            "label": {
+              "en": "Scripture # Text Label",
+              "fr": "Etiquette pour texte biblique #"
+            },
+            "typeName": "string",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Src",
+            "label": {
+              "en": "Source # Text Source",
+              "fr": "Source pour texte biblique #"
+            },
+            "typeName": "translationText",
+            "nValues": [
+              1,
+              1
+            ]
+          },
+          {
+            "id": "scripture#Type",
+            "label": {
+              "en": "Scripture # Text Type",
+              "fr": "Type de texte biblique #"
+            },
+            "typeEnum": [
+              {
+                "id": "greek",
+                "label": {
+                  "en": "Greek",
+                  "fr": "Grec"
+                }
+              },
+              {
+                "id": "hebrew",
+                "label": {
+                  "en": "Hebrew",
+                  "fr": "Hébreu"
+                }
+              },
+              {
+                "id": "translation",
+                "label": {
+                  "en": "Translation",
+                  "fr": "Traduction"
+                }
+              }
+            ],
+            "nValues": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "bcvBible": {
+    "sectionType": "bcvBible",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "scriptureText",
+        "label": {
+          "en": "Scripture Text Label",
+          "fr": "Etiquette pour texte biblique"
+        },
+        "typeName": "string",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureSrc",
+        "label": {
+          "en": "Scripture Text Source",
+          "fr": "Source pour texte biblique"
+        },
+        "typeName": "translationText",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureType",
+        "label": {
+          "en": "Scripture Text Type",
+          "fr": "Type de texte biblique"
+        },
+        "typeEnum": [
+          {
+            "id": "greek",
+            "label": {
+              "en": "Greek",
+              "fr": "Grec"
+            }
+          },
+          {
+            "id": "hebrew",
+            "label": {
+              "en": "Hebrew",
+              "fr": "Hébreu"
+            }
+          },
+          {
+            "id": "translation",
+            "label": {
+              "en": "Translation",
+              "fr": "Traduction"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "paraBible": {
+    "sectionType": "paraBible",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeLiteral": "verso",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureText",
+        "label": {
+          "en": "Scripture Text Label",
+          "fr": "Etiquette pour texte biblique"
+        },
+        "typeName": "string",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureSrc",
+        "label": {
+          "en": "Scripture Text Source",
+          "fr": "Source pour texte biblique"
+        },
+        "typeName": "translationText",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureType",
+        "label": {
+          "en": "Scripture Text Type",
+          "fr": "Type de texte biblique"
+        },
+        "typeEnum": [
+          {
+            "id": "greek",
+            "label": {
+              "en": "Greek",
+              "fr": "Grec"
+            }
+          },
+          {
+            "id": "hebrew",
+            "label": {
+              "en": "Hebrew",
+              "fr": "Hébreu"
+            }
+          },
+          {
+            "id": "translation",
+            "label": {
+              "en": "Translation",
+              "fr": "Traduction"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "biblePlusNotes": {
+    "sectionType": "biblePlusNotes",
+    "requiresBook": true,
+    "fields": [
+      {
+        "id": "startOn",
+        "label": {
+          "en": "Start Page Side",
+          "fr": "Côté pour première page"
+        },
+        "typeEnum": [
+          {
+            "id": "recto",
+            "label": {
+              "en": "Recto",
+              "fr": "Recto"
+            }
+          },
+          {
+            "id": "verso",
+            "label": {
+              "en": "Verso",
+              "fr": "Verso"
+            }
+          },
+          {
+            "id": "either",
+            "label": {
+              "en": "Next Page",
+              "fr": "Page suivante"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "showPageNumber",
+        "label": {
+          "en": "Show Page Number",
+          "fr": "Afficher numéro de page"
+        },
+        "typeName": "boolean",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "notes",
+        "label": {
+          "en": "Notes Source",
+          "fr": "Source pour notes"
+        },
+        "typeName": "tNotes",
+        "nValues": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "scriptureText",
+        "label": {
+          "en": "Scripture Text Label",
+          "fr": "Etiquette pour texte biblique"
+        },
+        "typeName": "string",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureSrc",
+        "label": {
+          "en": "Scripture Text Source",
+          "fr": "Source pour texte biblique"
+        },
+        "typeName": "translationText",
+        "nValues": [
+          1,
+          1
+        ]
+      },
+      {
+        "id": "scriptureType",
+        "label": {
+          "en": "Scripture Text Type",
+          "fr": "Type de texte biblique"
+        },
+        "typeEnum": [
+          {
+            "id": "greek",
+            "label": {
+              "en": "Greek",
+              "fr": "Grec"
+            }
+          },
+          {
+            "id": "hebrew",
+            "label": {
+              "en": "Hebrew",
+              "fr": "Hébreu"
+            }
+          },
+          {
+            "id": "translation",
+            "label": {
+              "en": "Translation",
+              "fr": "Traduction"
+            }
+          }
+        ],
+        "nValues": [
+          1,
+          1
+        ]
+      }
+    ]
+  }
+}
+

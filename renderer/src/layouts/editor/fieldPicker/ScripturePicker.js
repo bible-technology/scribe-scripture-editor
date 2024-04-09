@@ -4,7 +4,6 @@ import { Button } from "@mui/material";
 export function ScripturePicker({ require, fieldInfo, setJsonSpec,lang }) {
   const [scriptureJson, setScriptureJson] = useState("{}");
   const [numberOfScripture, setNumberOfScripture] = useState(1);
-  console.log(numberOfScripture);
   useEffect(() => {
     setJsonSpec((prev) => {
       const newState = JSON.parse(prev);
@@ -31,8 +30,7 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec,lang }) {
         <Button
           onClick={() => {
             setNumberOfScripture((prev) => {
-              console.log(prev);
-              console.log(prev > fieldInfo.nValues[0]);
+            
               if (prev > fieldInfo.nValues[0]) {
                 return prev - 1;
               } else {

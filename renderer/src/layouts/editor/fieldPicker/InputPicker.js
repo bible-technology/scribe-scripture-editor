@@ -6,7 +6,6 @@ import { FormControl } from "@mui/material";
 
 export function InputPicker({ fieldInfo, setJsonSpec, require,lang }) {
   const [input, setInput] = useState("");
-  console.log(input);
   useEffect(() => {
     setJsonSpec((prev) => {
       const newState = JSON.parse(prev);
