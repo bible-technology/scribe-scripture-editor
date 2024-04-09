@@ -12,7 +12,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { FieldPicker } from './fieldPicker/FieldPicker';
 import { ScriptureContentSearchBar } from './ScriptureContentSearchBar';
-import { PdfGen } from 'jxl-pdf';
+// import { PdfGen } from 'jxl-pdf';
 
 export function SortableList({
 	orderSelection,
@@ -36,7 +36,8 @@ export function SortableList({
 
 	const [jsonSpec, setJsonSpec] = useState('{}');
 	// const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
-	const fourColumnSpread = PdfGen.handlerInfo()["4ColumnSpread"];
+	const fourColumnSpread = global.PdfGen.handlerInfo()["4ColumnSpread"];
+	console.log('global.PdfGen==',fourColumnSpread);
 
 	const [openModal, setOpenModal] = useState(false);
 
