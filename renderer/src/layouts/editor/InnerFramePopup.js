@@ -5,7 +5,8 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { SortableList } from './SortableList';
 import { selectOption } from './selectOptions';
-
+import { Button } from '@mui/material';
+import i18n from 'src/translations/i18n';
 
 const path = require('path');
 const fs = window.require('fs');
@@ -25,6 +26,7 @@ function Fontsizes() {
 
 export default function InnerFramePopup() {
 	
+	const jxl2 = require("./fieldPicker/specification/jxl2.json")
 	//list of all non selected choice
 
 	//the order Of The Selected choice
@@ -32,8 +34,9 @@ export default function InnerFramePopup() {
 	
 	]);
 	//all the selected choice
-	const [selected, setSelected] = useState([]);
+	const [selected, setSelected] = useState({});
 
+	const [metaInfo ,setMetaInfo] = useState('{}')
 	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
 	const [pageNumber, setPageNumber] = useState(1);
@@ -45,6 +48,8 @@ export default function InnerFramePopup() {
 		),
 	);
 
+	console.log(selected)
+
 	function readPdf(localPath) {
 		if (fs.existsSync(localPath)) {
 			const data = fs.readFileSync(path.join(localPath));
@@ -52,7 +57,12 @@ export default function InnerFramePopup() {
 		}
 	}
 	const myPdfFile = useMemo(() => readPdf(pdfPath), [pdfPath]);
-
+	const handleChange = (type,value) => {
+		
+		let t = JSON.parse(metaInfo)
+		t[type] = jxl2[type][value]
+		setMetaInfo(JSON.stringify(t))
+	}
 	function onDocumentLoadSuccess({ numPages }) {
 		setNumPages(numPages);
 	}
@@ -182,9 +192,9 @@ export default function InnerFramePopup() {
 						borderStyle: 'solid',
 						borderColor: '#575757',
 					}}>
-					{selectOption('Paper size', ['A3', 'A4', 'A5'])}
-					{selectOption('Font', ['Gentium', 'Calibry'])}
-					{selectOption('Font size', Fontsizes())}
+					{selectOption("fonts",  "fonts",jxl2.fonts,handleChange)}
+					{selectOption('Pages',  "pages" ,jxl2.pages,handleChange)}
+					{selectOption('Sizes', "sizes",jxl2.sizes ,handleChange)}
 				</div>
 				<div
 					style={{
@@ -203,9 +213,20 @@ export default function InnerFramePopup() {
 					setSelected={setSelected}
 				/>
 			</div>
-		
+			<Button
+					style={{
+						borderRadius: 4,
+						backgroundColor: '#F50',
+						borderStyle: 'solid',
+						borderColor: '#F50',
+						color: 'white',
+					}}
+					onClick={() =>{console.log({order:orderSelection,metaData:JSON.parse(metaInfo),content:selected})}}>
+					Print
+				</Button>
 		</div>
 	);
 }
 
 const buttonStyle = {};
+

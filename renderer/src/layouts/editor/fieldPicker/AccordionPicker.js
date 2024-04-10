@@ -1,14 +1,23 @@
 import { useEffect, useState, useRef } from 'react';
-import { FieldPicker } from '../FieldPicker';
+import { FieldPicker } from './FieldPicker';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-export function AccordionPicker({ language, setJsonSpec, keySpecification }) {
+export function AccordionPicker({ language, setSelected, keySpecification,idjson }) {
 	const [open, setOpen] = useState(false);
+	const [jsonSpecEntry, setJsonSpecEntry] = useState('{}');
+	const jsonSpec = require('./specification/jxl1.json');
 
-	const jsonSpec = require('./jxl1.json');
-	console.log(keySpecification);
-	return (
+	useEffect(()=>{
+		setSelected(prev => {
+			console.log('ici')
+			prev[idjson].content = JSON.parse(jsonSpecEntry)
+			return prev
+			
+		})
+	},[jsonSpecEntry])
+	console.log(jsonSpecEntry)
+	return (	
 		<Accordion
 			style={{ width: '100%' }}
 			onChange={() => setOpen((prev) => !prev)}>
@@ -38,7 +47,7 @@ export function AccordionPicker({ language, setJsonSpec, keySpecification }) {
 								borderBottomStyle: 'solid',
 							}}>
 							<FieldPicker
-								setJsonSpec={setJsonSpec}
+								setJsonSpec={setJsonSpecEntry}
 								fieldInfo={f}
 								lang={language}></FieldPicker>
 						</div>

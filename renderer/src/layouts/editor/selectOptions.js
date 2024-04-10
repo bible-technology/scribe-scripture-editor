@@ -1,4 +1,6 @@
-export function selectOption(title, options) {
+import i18n from "src/translations/i18n";
+
+export function selectOption(title,type,option,handleChange) {
 	return (
 		<div
 			style={{
@@ -23,13 +25,16 @@ export function selectOption(title, options) {
 			<select
 				className='selectPDFprintRender'
 				id='payment'
-				name='payment'>
-				{options.map((o) => (
+				name='payment'
+				onChange={(e) => {handleChange(type,e.target.value)}}>
+				{Object.keys(option).map((o) => (
 					<option
+						id={o}
+						value={o}
 						style={{
 							backgroundColor: '#363739',
 						}}>
-						{o}
+						{option[o].label[i18n.language]?  option[o].label[i18n.language]:option[o].label["en"]}
 					</option>
 				))}
 			</select>

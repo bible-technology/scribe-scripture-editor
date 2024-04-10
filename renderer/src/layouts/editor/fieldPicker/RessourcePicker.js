@@ -12,7 +12,6 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey }) {
 			let j = JSON.parse(prev);
 
 			j[fieldInfo.id] = selected;
-			console.log(j);
 			return JSON.stringify(j);
 		});
 	}, [selected]);
@@ -35,7 +34,6 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey }) {
 		),
 	);
 
-	console.log(localListResourcesForPdf);
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
 		setSearchText('');
@@ -161,9 +159,7 @@ function keyToRessource(elem){
 	if(elem ==="juxta"){
 		return "jxl"
 	}
-	if(elem === "md"){
-		return "md"
-	}
+
 	if(elem==="tNotes"){
 		return "tNotes"
 	}

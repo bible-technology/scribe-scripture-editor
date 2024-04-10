@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import FramedBouquetPickerPopup from './FramedBouquetPickerPopup';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 import { Button, Modal } from '@material-ui/core';
-import { AccordionPicker } from './fieldPicker/specification/AccordionPicker';
+import { AccordionPicker } from './fieldPicker/AccordionPicker';
 import i18n from 'src/translations/i18n';
 export function SortableList({
 	orderSelection,
@@ -12,11 +12,10 @@ export function SortableList({
 	setSelected,
 }) {
 	const jsonTruc = require('./fieldPicker/specification/jxl1.json');
-	const [jsonSpec, setJsonSpec] = useState('{}');
 	const listChoice = Object.keys(jsonTruc);
 	const [openModal, setOpenModal] = useState(false);
 
-	console.log(selected);
+	console.log(orderSelection);
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -71,7 +70,7 @@ export function SortableList({
 				});
 			});
 		};
-	}, [selected.length]); // Empty dependency array ensures this effect runs only once after initial render
+	}, [Object.keys(selected).length]); // Empty dependency array ensures this effect runs only once after initial render
 
 	const updateElemOrder = (items) => {
 		const t = [];
@@ -88,16 +87,17 @@ export function SortableList({
 	return (
 		<div>
 			<ul className='sortable-list'>
-				{selected.map((e, index) => (
+				{Object.keys(selected).map((k, index) => (
 					<li
-						id={'etd'}
+						id={index}
 						className='item'
 						draggable='true'
-						key={e + "_" + index}>
+						key={k + "_" + index}>
 						<AccordionPicker
 							language={i18n.language}
-							setJsonSpec={setJsonSpec}
-							keySpecification={e}
+							setSelected={setSelected}
+							keySpecification={selected[k].type}
+							idjson={index}
 						/>
 					</li>
 				))}
@@ -141,14 +141,19 @@ export function SortableList({
 							borderRadius: 10,
 						}}>
 						<div>
-							{listChoice.map((c) => (
+							{listChoice.map((c,id) => (
 								<div
 									className='pdfChoice'
 									onClick={() => {
-										setSelected((prev) => [...prev, c]);
+										setSelected((prev) => {
+											
+											let nb = Object.keys(prev).length
+											prev[nb] = {type:c,content:{}}
+											return prev
+										});
 										setOrderSelection((prev) => [
 											...prev,
-											c,
+											prev.length
 										]);
 										handleOpenModal(false);
 									}}>

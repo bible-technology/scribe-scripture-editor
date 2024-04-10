@@ -1,4 +1,10 @@
-import React, { useRef, useState, useContext, Fragment, useEffect } from 'react';
+import React, {
+	useRef,
+	useState,
+	useContext,
+	Fragment,
+	useEffect,
+} from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import ResourcesSidebar from '@/components/Resources/ResourcesSideBar';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -23,25 +29,19 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 		setOpenPdfPopup(false);
 	};
 	const {
-		states: {
-			listResourcesForPdf,
-		},
-		actions: {
-			setListResourcesForPdf,
-		},
+		states: { listResourcesForPdf },
+		actions: { setListResourcesForPdf },
 	} = useContext(ProjectContext);
 
 	/**
-	 * 
+	 *
 	 * @param {object[]} burritoArray a burrito resource array
 	 * 		* projectDir
 	 * 		* value
 	 * 		* type
 	 */
 	const fromBurritoArrayToList = (burritoArray) => {
-		console.log(JSON.stringify(burritoArray[0].value, null, 4));
 		// burritoArray.forEach((bur) => {
-
 		// });
 		// return {
 		// 	description: `${fileName} from project ${projectS}`,
@@ -52,119 +52,56 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 		// 	},
 		// 	books: val.scope ? Object.keys(val.scope) : [],
 		// };
-	}
+	};
 
-	const pushEachIngredients = (picker, jsonParse, resourceType, projectName, pathFolder) => {
-		let fileName, tmpScope, tmpRangeScope;
-		let projectLocaleName = '[' + jsonParse.identification.name.en + ']';
-		for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
-			fileName = pathKey.split('/')[1];
-			tmpRangeScope = '';
-			tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
-				tmpRangeScope = key[0];
-				if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
-				return tmpRangeScope;
-			}).join(', ') : '';
-			if (fileName !== 'scribe-settings.json'
-				&& fileName !== 'license.md'
-				&& fileName !== 'versification.json') {
-				picker[resourceType][projectLocaleName + ' ' + tmpScope] = {
-					description: `${fileName} from project ${projectLocaleName}`,
-					language: jsonParse.meta.defaultLocale,
-					src: {
-						type: 'fs',
-						path: `${pathFolder}/${projectName}/${pathKey}`,
-					},
-					books: val.scope ? Object.keys(val.scope) : [],
-				};
-			}
-		}
-	}
+	// const pushEachIngredients = (
+	// 	picker,
+	// 	jsonParse,
+	// 	resourceType,
+	// 	projectName,
+	// 	pathFolder,
+	// ) => {
+	// 	let fileName, tmpScope, tmpRangeScope;
 
 	useEffect(() => {
 		// we take all the exiting keys from the already existing 'listResourcesForPdf'
-		let pickerJson = Object.keys(listResourcesForPdf).reduce((a, v) => ({ ...a, [v]: {} }), {});
-		localForage.getItem('userProfile').then(async (user) => {
-			const fs = window.require('fs');
-			const path = require('path');
-			const newpath = localStorage.getItem('userPath');
-			const currentUser = user?.username;
-			const folder = path.join(
-				newpath,
-				packageInfo.name,
-				'users',
-				`${currentUser}`,
-				'projects',
-			);
-			const projects = fs.readdirSync(folder);
-
-			let currentMetadataPath = '';
-			for (let project of projects) {
-				currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
-				if (fs.existsSync(currentMetadataPath)) {
-					let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
-					let jsonParse = JSON.parse(jsontest);
-					let projectS = '[' + jsonParse.identification.name.en + ']';
-					let fileName, tmpScope, tmpRangeScope;
-					if (jsonParse.type.flavorType.flavor.name === 'textTranslation'
-						|| jsonParse.type.flavorType.flavor.name === 'x-juxtalinear') {
-						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
-							fileName = pathKey.split('/')[1];
-							tmpRangeScope = '';
-							tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
-								tmpRangeScope = key[0];
-								if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
-								return tmpRangeScope;
-							}).join(', ') : '';
-							if (fileName !== 'scribe-settings.json'
-								&& fileName !== 'license.md'
-								&& fileName !== 'versification.json') {
-								pickerJson.book[projectS + ' ' + tmpScope] = {
-									description: `${fileName} from project ${projectS}`,
-									language: jsonParse.meta.defaultLocale,
-									src: {
-										type: 'fs',
-										path: `${folder}/${project}/${pathKey}`,
-									},
-									books: val.scope ? Object.keys(val.scope) : [],
-								};
-							}
-						}
-					} else if (jsonParse.type.flavorType.flavor.name === 'textStories') {
-						for (let [pathKey, val] of Object.entries(jsonParse.ingredients)) {
-							fileName = pathKey.split('/')[1];
-							tmpRangeScope = '';
-							tmpScope = val.scope ? Object.entries(val.scope).map((key) => {
-								tmpRangeScope = key[0];
-								if (key[1] && key[1][0]) tmpRangeScope += ':' + key[1];
-								return tmpRangeScope;
-							}).join(', ') : '';
-							if (fileName !== 'scribe-settings.json'
-								&& fileName !== 'license.md' && fileName !== 'LICENSE.md'
-								&& fileName !== 'versification.json') {
-								pickerJson.OBS[projectS + ' ' + tmpScope] = {
-									description: `${fileName} from project ${projectS}`,
-									language: jsonParse.meta.defaultLocale,
-									src: {
-										type: 'fs',
-										path: `${folder}/${project}/${pathKey}`,
-									},
-									books: val.scope ? Object.keys(val.scope) : [],
-								};
-							}
-						}
-					}
-				}
-			}
-			return currentUser;
-		})
+		let pickerJson = Object.keys(listResourcesForPdf).reduce(
+			(a, v) => ({ ...a, [v]: {} }),
+			{},
+		);
+		localForage
+			.getItem('userProfile')
+			.then(async (user) => {
+				const path = require('path');
+				const newpath = localStorage.getItem('userPath');
+				const currentUser = user?.username;
+				const folderProject = path.join(
+					newpath,
+					packageInfo.name,
+					'users',
+					`${currentUser}`,
+					'projects',
+				);
+				const folderRessources = path.join(
+					newpath,
+					packageInfo.name,
+					'users',
+					`${currentUser}`,
+					'resources',
+				);
+				creatSection(folderProject, pickerJson);
+				creatSection(folderRessources, pickerJson);
+				return currentUser;
+			})
 			.then((currentUser) => {
 				setListResourcesForPdf(pickerJson);
 				return currentUser;
 			})
 			// after reading project resources
 			// we read true resources from common and from the user
-			.then((currentUser) => readLocalResources(currentUser, fromBurritoArrayToList));
+			.then((currentUser) =>
+				readLocalResources(currentUser, fromBurritoArrayToList),
+			);
 	}, [openPdfPopup]);
 
 	return (
@@ -309,3 +246,107 @@ const tabStyleSelected = {
 	justifyContent: 'center',
 	display: 'flex',
 };
+
+function creatSection(folder, pickerJson) {
+	const path = require('path');
+	const newpath = localStorage.getItem('userPath');
+	const fs = window.require('fs');
+
+	const projects = fs.readdirSync(folder);
+
+	let currentMetadataPath = '';
+	for (let project of projects) {
+		currentMetadataPath = path.join(
+			folder,
+			'/',
+			project,
+			'/',
+			'metadata.json',
+		);
+		if (fs.existsSync(currentMetadataPath)) {
+			let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
+			let jsonParse = JSON.parse(jsontest);
+			let projectS;
+			let jsonParseIngre;
+
+			if (jsonParse.identification?.name.en) {
+				jsonParseIngre = jsonParse.ingredients;
+				projectS = '[' + jsonParse.identification.name.en + ']';
+			} else {
+				jsonParseIngre = jsonParse.meta.ingredients;
+				projectS = '[' + jsonParse.meta.full_name + ']';
+			}
+
+			let fileName, tmpScope, tmpRangeScope;
+
+			for (let [pathKey, val] of Object.entries(jsonParseIngre)) {
+				fileName = pathKey.split('/')[1];
+				tmpRangeScope = '';
+				tmpScope = val.scope
+					? Object.entries(val.scope)
+							.map((key) => {
+								tmpRangeScope = key[0];
+								if (key[1] && key[1][0])
+									tmpRangeScope += ':' + key[1];
+								return tmpRangeScope;
+							})
+							.join(', ')
+					: '';
+
+				if (
+					fileName !== 'scribe-settings.json' &&
+					fileName !== 'license.md' &&
+					fileName !== 'versification.json' &&
+					fileName !== 'LICENSE.md' &&
+					fileName !== 'manifest.yaml' &&
+					fileName !== 'media.yaml'
+				) {
+					if (
+						jsonParse?.type?.flavorType?.flavor?.name ===
+						'textTranslation'
+					) {
+						pickerJson.book[projectS + ' ' + tmpScope] = {
+							description: `${fileName} from project ${projectS}`,
+							language: jsonParse.meta.defaultLocale,
+							src: {
+								type: 'fs',
+								path: `${folder}/${project}/${pathKey}`,
+							},
+							books: val.scope ? Object.keys(val.scope) : [],
+						};
+					} else if (
+						jsonParse?.meta?.flavor === 'x-OBSTranslationNotes'
+					) {
+						fileName = jsonParseIngre[pathKey].path.split('/')[1];
+						pickerJson['OBS-TN'][projectS + ' ' + tmpScope] = {
+							description: `${fileName} from project ${projectS}`,
+							language: jsonParse.meta.defaultLocale,
+							src: {
+								type: 'fs',
+								path: `${folder}/${project}/${fileName}`,
+							},
+							books: val.scope ? Object.keys(val.scope) : [],
+						};
+					} else if (
+						jsonParse?.type?.flavorType?.flavor?.name ===
+						'textStories'
+					) {
+						fileName = 'content';
+						pickerJson.OBS[
+							`OBS ${jsonParse.resourceMeta.full_name}`
+						] = {
+							description: `OBS ${jsonParse.resourceMeta.full_name}`,
+							language: jsonParse.meta.defaultLocale,
+							src: {
+								type: 'fs',
+								path: `${folder}/${project}/${fileName}`,
+							},
+							books: [],
+						};
+						break;
+					}
+				}
+			}
+		}
+	}
+}
