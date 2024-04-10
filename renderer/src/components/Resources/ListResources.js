@@ -56,7 +56,6 @@ export const ListResources = ({
   const { t } = useTranslation();
   const [translationWordList, settranslationWordList] = useState([]);
   const [translationNote, setTranslationNote] = useState([]);
-  // Nicolas : added juxtalinear useState
   const [juxtalinear, setJuxtalinear] = useState([]);
   const [translationQuestion, setTranslationQuestion] = useState([]);
   const [translationWord, settranslationWord] = useState([]);
@@ -98,7 +97,6 @@ export const ListResources = ({
       setLoading(true);
       logger.debug('ResourcesPopUp.js', `get available selected resources ${selectResource}`);
       switch (selectResource) {
-        // Nicolas : add a case here to list juxta in popup menu
         case 'jxl':
           await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
           break;
@@ -137,7 +135,6 @@ export const ListResources = ({
   useEffect(() => {
     const getCurrentOnlineOfflineHelpsResources = (selectResource) => {
       const resources = [
-        // Nicolas : add another resource Juxtalinear
         { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
         { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },

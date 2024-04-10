@@ -159,8 +159,6 @@ function useProjectsSort() {
                       _project.type.flavorType.flavor
                         .name
                       ) {
-                        // Nicolas : add description for juxta here
-                        // NicolasEdits : added Juxta
                         case 'x-juxtalinear':
                           proj = _project.project;
                           if (proj) {

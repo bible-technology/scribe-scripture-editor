@@ -38,6 +38,8 @@ export default function ImportPopUp(props) {
   const {
     states: {
       canonSpecification,
+      importedBookCodes,
+      importedFiles,
     },
     actions: {
       setImportedBookCodes,
@@ -46,7 +48,9 @@ export default function ImportPopUp(props) {
     },
   } = useContext(ProjectContext);
 
-  const compareArrays = (a, b) => a.length === b.length && a.every((element, index) => element === b[index]);
+  const compareArrays = (a, b) => a.length === b.length
+                                  && a.every((element) => b.indexOf(element) !== -1)
+                                  && b.every((element) => a.indexOf(element) !== -1);
 
   function close() {
     logger.debug('ImportPopUp.js', 'Closing the Import UI');
@@ -117,7 +121,6 @@ export default function ImportPopUp(props) {
     let bookCodeList = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
-        // Nicolas add a juxta type here
         case 'Translation': {
           const usfm = fs.readFileSync(filePath, 'utf8');
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
@@ -207,8 +210,7 @@ export default function ImportPopUp(props) {
               setOpenSnackBar(true);
             }
           } else if (fileExt === 'json') {
-            // Nicolas : TODO add a validator for our juxta type
-            // Nicolas : TODO change the way I get the bookcode
+            // TODO add a validator for our juxta type
             const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
             if (updatedFile.error) {
               logger.warn('ImportPopUp.js', 'Invalid filename.');
@@ -234,7 +236,12 @@ export default function ImportPopUp(props) {
           break;
       }
     });
-    if(canonSpecification && canonSpecification.title === 'All Books') {
+    if(canonSpecification) {
+      // importedBookCodes.forEach((bc) => {
+      //   if(bookCodeList.indexOf(bc) === -1) {
+      //     bookCodeList.push(bc);
+      //   }
+      // });
       let newCanonSpecification = {
         currentScope: bookCodeList,
         id: 4,
@@ -286,10 +293,9 @@ export default function ImportPopUp(props) {
         setLabelImportFiles(t('label-choose-md-files'));
       break;
 
-      // Nicolas : added juxta here
       case 'Juxta':
         setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
-        // Nicolas : TODO translation here
+        // Nicolas : TODO translation
         setLabelImportFiles('Choose json files');
       break;
 

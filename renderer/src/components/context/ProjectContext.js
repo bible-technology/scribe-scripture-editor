@@ -403,8 +403,6 @@ const ProjectContextProvider = ({ children }) => {
     }
   };
 
-  // Nicolas : actually create the project
-  // Nicolas : ignore Supabase or Web... Code
   const createProject = async (call, project, update, projectType) => {
     logger.debug('ProjectContext.js', 'In createProject');
     await createProjectCommonUtils();

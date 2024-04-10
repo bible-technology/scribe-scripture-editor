@@ -48,8 +48,6 @@ const solutions = [
     href: '##',
     icon: ImageIcon,
   },
-  // Nicolas : if I wanna add a mode on the UI, I can call it here
-  // NicolasEdits : added Juxta
   {
     name: 'Juxta',
     href: '##',
@@ -64,7 +62,6 @@ function TargetLanguageTag(props) {
   );
 }
 
-// Nicolas : the dropdown I'm looking for
 function BibleHeaderTagDropDown(headerDropDown, handleDropDown, call) {
   return (
     call === 'new'
@@ -109,15 +106,11 @@ export default function NewProject({ call, project, closeEdit }) {
       language,
       canonSpecification,
       importedBookCodes,
-      importedFiles,
     },
     actions: {
       setLanguage,
       createProject,
       setNewProjectFields,
-      setCanonSpecification,
-      setImportedFiles,
-      setImportedBookCodes,
     },
   } = React.useContext(ProjectContext);
   const { t } = useTranslation();
@@ -130,12 +123,9 @@ export default function NewProject({ call, project, closeEdit }) {
   const [metadata, setMetadata] = React.useState();
   const [openModal, setOpenModal] = React.useState(false);
   const [openModalJuxtaWrongSetOfBooks, setOpenModalJuxtaWrongSetOfBooks] = React.useState(false);
-  const [userWantToDownloadJuxtas, setUserWantToDownloadJuxtas] = React.useState('');
   const [projectLangData, setProjectLangData] = React.useState({});
   const [openPopUp, setOpenPopUp] = React.useState(false);
   const [replaceWarning, setReplaceWarning] = React.useState(false);
-  const [downloadingResources, setDownloadingResources] = React.useState(false);
-
 
   const [error, setError] = React.useState({
     projectName: {},
@@ -153,12 +143,6 @@ export default function NewProject({ call, project, closeEdit }) {
       setReplaceWarning(true);
     }
   }
-
-  useEffect(() => {
-    // TODO canonSpecification
-    // console.log("canonSpecification ==",canonSpecification);
-    // console.log("newProjectFields ==",newProjectFields);
-  }, [canonSpecification, setCanonSpecification])
 
   function getAbbreviation(text) {
     if (typeof text !== 'string' || !text) {
@@ -199,192 +183,19 @@ export default function NewProject({ call, project, closeEdit }) {
     }
   };
 
-  async function userAcceptedToDownloadGreekJuxtas() {
-    setUserWantToDownloadJuxtas("download");
-  }
-
-  async function importGreeksFromDoor43() {
-    let pathFolderFiles = '';
-    let user = '';
-    let bookCodeList = [];
-    const fs = window.require('fs');
-    const path = require('path');
-    const JSZip = require('jszip');
-    const newpath = localStorage.getItem('userPath');
-    await localforage.getItem('userProfile').then((usr) => user = usr);
-    const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
-
-    let alreadyExists = false;
-    let downloadProjectName = '';
-    fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&metadataType=sb&lang=el-x-koine&title=unfoldingWord®%20Greek%20New%20Testament&partialMatch=false&sort=released`)
-      .then((res) => res.json())
-      .then((myJson) => myJson.data.at(-1))
-      .then(async (data) => {
-        console.log(data);
-        console.log("importedBookCodes ==",importedBookCodes);
-        const existingResource = fs.readdirSync(folder, { withFileTypes: true });
-        downloadProjectName = `${data?.name}_${data?.owner}_${data?.release?.tag_name}`;
-        existingResource?.forEach((element) => {
-          if (downloadProjectName === element.name) {
-            alreadyExists = true;
-            pathFolderFiles = path.join(folder, downloadProjectName)
-            return;
-          }
-        });
-        // if we already have the resources we get out of the function
-        if(alreadyExists) return;
-
-        // otherwise we download it
-        try {
-          logger.debug('NewProject.js', 'Download Started');
-          setLoading(true);
-          logger.debug('NewProject.js', 'In helps-resource download user fetch - ', user?.username);
-
-          // download and unzip the content
-          await fetch(data?.zipball_url)
-            .then((res) => res.arrayBuffer())
-            .then(async (blob) => {
-              logger.debug('NewProject.js', 'In resource download - downloading zip content ');
-              if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder, { recursive: true });
-              }
-              // wririntg zip to local
-              await fs.writeFileSync(path.join(folder, `${data?.name}.zip`), Buffer.from(blob));
-              logger.debug('NewProject.js', 'In resource download - downloading zip content completed ');
-
-              // extract zip
-              logger.debug('NewProject.js', 'In resource download - Unzip downloaded resource');
-              const filecontent = await fs.readFileSync(path.join(folder, `${data?.name}.zip`));
-              const result = await JSZip.loadAsync(filecontent);
-              const keys = Object.keys(result.files);
-
-              // eslint-disable-next-line no-restricted-syntax
-              for (const key of keys) {
-                const item = result.files[key];
-                if (item.dir) {
-                  if(item.name.match('ugnt').length > 0) {
-                    pathFolderFiles = path.join(folder, downloadProjectName);
-                  }
-                  fs.mkdirSync(path.join(folder, item.name), { recursive: true });
-                } else {
-                  // eslint-disable-next-line no-await-in-loop
-                  const bufferContent = Buffer.from(await item.async('arraybuffer'));
-                  fs.writeFileSync(path.join(folder, item.name), bufferContent);
-                }
-              }
-              // let resourceMeta = {};
-              await fetch(data.metadata_json_url)
-                .then((res) => res.json())
-                .then(async (data) => {
-                    // adding offline true tag in  meta for identification
-                    data.agOffline = true;
-                    data.meta = data;
-                    data.lastUpdatedAg = moment().format();
-                    await fs.writeFileSync(path.join(folder, data?.name, 'metadata.json'), JSON.stringify(data));
-                }).catch((err) => {
-                    logger.debug('NewProject.js', 'failed to save yml metadata.json : ', err);
-                });
-
-              // finally remove zip and rename base folder to projectname_id
-              logger.debug('NewProject.js', 'deleting zip file - rename project with project + id in scribe format');
-              if (fs.existsSync(folder)) {
-                fs.renameSync(path.join(folder, data?.name), path.join(folder, downloadProjectName));
-                fs.unlinkSync(path.join(folder, `${data?.name}.zip`), (err) => {
-                  if (err) {
-                    logger.debug('NewProject.js', 'error in deleting zip');
-                    throw new Error(`Removing Resource Zip Failed :  ${data?.name}.zip`);
-                  }
-                });
-              }
-            });
-          logger.debug('NewProject.js', 'download completed');
-          setLoading(false);
-        } catch (err) {
-          setLoading(false);
-          throw err;
-        }
-      }).then(() => {
-        const grammar = require('usfm-grammar');
-        console.log('pathFolderFiles', pathFolderFiles);
-        console.log('alreadyExists', alreadyExists);
-        
-        const files = importedFiles ? [...importedFiles] : [];
-        const greekResources = fs.readdirSync(pathFolderFiles, { withFileTypes: true });
-        console.log('greekResources ==', pathFolderFiles);
-        let filePath = '';
-        const re = new RegExp(/[A-Z\d]{3}/g);
-        let matchedBookName;
-        for(let greekUsfm of greekResources) {
-          matchedBookName = greekUsfm.name.match(re);
-          console.log('matchedBookName', matchedBookName);
-          if(!matchedBookName || (matchedBookName[0] && importedBookCodes.includes(matchedBookName[0]))) {
-            continue;
-          }
-          if(matchedBookName[0] && !canonSpecification.currentScope.includes(matchedBookName[0])) continue;
-
-          filePath = path.join(pathFolderFiles, greekUsfm.name);
-          const file = fs.readFileSync(filePath, 'utf8');
-          const filename = greekUsfm.name;
-          
-          console.log('filePath == ', filePath);
-          const fileExt = filename.split('.').pop()?.toLowerCase();
-          console.log('fileExt == ', fileExt);
-          if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
-          || fileExt === undefined || fileExt === 'TXT' || fileExt === 'USFM' || fileExt === 'SFM') {
-            const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
-            const isJsonValid = myUsfmParser.validate();
-            console.log('isJsonValid == ', isJsonValid);
-            // if the USFM is valid
-            if (isJsonValid) {
-              console.log('before callReplace');
-              callReplace(true);
-              console.log('AFTER callReplace');
-              logger.debug('NewProject.js', 'Valid USFM file.');
-              // then we get the book code and we transform our data to our Juxta json file
-              const jsonOutput = myUsfmParser.toJSON();
-    
-              // if the current file was NOT imported by the user, we create the juxta out of it
-              if(importedBookCodes.includes(jsonOutput.book.bookCode)) continue;
-              // if the current file is NOT in the canonSpecification set by the user, we don't do anything
-              if(!canonSpecification.currentScope.includes(jsonOutput.book.bookCode)) continue;
-    
-              console.log('juxtaification of ', jsonOutput.book.bookCode);
-              const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
-              console.log('juxtaJson ', juxtaJson);
-              files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
-              console.log('my file');
-              bookCodeList.push(jsonOutput.book.bookCode);
-              console.log("bookCodeList",bookCodeList);
-            }
-          } else {
-            logger.warn('NewProject.js', 'Invalid file.');
-            setNotify('failure');
-            // Nicolas : TODO translations
-            setSnackText(`invalid file type : ${filePath}`);
-            setOpenSnackBar(true);
-          }
-          matchedBookName = null;
-        }
-    
-        setImportedBookCodes(bookCodeList);
-        setImportedFiles(files);
-      });
-  }
-
-  useEffect(() => {
-    async function downloadAsynchronouslyTheBooks() {
-      setDownloadingResources(true);
-      // DO THE WORK HERE
-      console.log("OKAY ACCEPTED");
-      await importGreeksFromDoor43();
-      logger.warn('NewProject.js', 'Calling createTheProject function');
-      createTheProject(false);
-      setUserWantToDownloadJuxtas('');
-    }
-    if(userWantToDownloadJuxtas === 'download' && !downloadingResources) {
-      downloadAsynchronouslyTheBooks();
-    }
-  }, [userWantToDownloadJuxtas, setUserWantToDownloadJuxtas]);
+  // useEffect(() => {
+  //   async function downloadAsynchronouslyTheBooks() {
+  //     setDownloadingResources(true);
+  //     // DO THE WORK HERE
+  //     await importGreeksFromDoor43();
+  //     logger.warn('NewProject.js', 'Calling createTheProject function');
+  //     createTheProject(false);
+  //     setUserWantToDownloadJuxtas('');
+  //   }
+  //   if(userWantToDownloadJuxtas === 'download' && !downloadingResources) {
+  //     downloadAsynchronouslyTheBooks();
+  //   }
+  // }, [userWantToDownloadJuxtas, setUserWantToDownloadJuxtas]);
 
   /**
    * Works only for 1-depth arrays
@@ -392,7 +203,9 @@ export default function NewProject({ call, project, closeEdit }) {
    * @param {Array} b 
    * @returns {Boolean} true if the two arrays are equal
    */
-  const compareArrays = (a, b) => a.length === b.length && a.every((element, index) => element === b[index]);
+  const compareArrays = (a, b) => a.length === b.length
+                                  && a.every((element) => b.indexOf(element) !== -1)
+                                  && b.every((element) => a.indexOf(element) !== -1);
 
   const createTheProject = (update) => {
     logger.debug('NewProject.js', 'Creating new project.');
@@ -413,12 +226,11 @@ export default function NewProject({ call, project, closeEdit }) {
       }
     });
   };
-  // Nicolas : the button that calls all the domino to create a project
+  
   const validate = async () => {
     logger.debug('NewProject.js', 'Validating the fields.');
     setLoading(true);
     let create = true;
-    let awaitForUserChoiceJuxta = false;
     if (newProjectFields.projectName && newProjectFields.abbreviation) {
       logger.debug('NewProject.js', 'Validating all the fields.');
       const checkName = await validateField([isLengthValidated(newProjectFields.projectName, { minLen: 5, maxLen: 40 }), isTextValidated(newProjectFields.projectName, 'nonSpecChar')]);
@@ -447,13 +259,10 @@ export default function NewProject({ call, project, closeEdit }) {
         setOpenSnackBar(true);
       }
       
-      if (create && !compareArrays(importedBookCodes, canonSpecification)) {
+      // juxta scope != imported books
+      if (create && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
         create = false;
-        setNotify('warning');
-        setSnackText(t('Please no.'));
         setOpenModalJuxtaWrongSetOfBooks(true);
-        awaitForUserChoiceJuxta = true;
-        setOpenSnackBar(true);
       }
       
       setError({
@@ -473,10 +282,8 @@ export default function NewProject({ call, project, closeEdit }) {
         setOpenModal(true);
         setLoading(false);
       } else {
-        if(!awaitForUserChoiceJuxta) {
-          logger.warn('NewProject.js', 'Calling createTheProject function');
-          createTheProject(false);
-        }
+        logger.warn('NewProject.js', 'Calling createTheProject function');
+        createTheProject(false);
       }
     } else {
       setLoading(false);
@@ -524,7 +331,6 @@ export default function NewProject({ call, project, closeEdit }) {
         setHeaderDropDown('Audio');
         break;
 
-      // NicolasEdits : added Juxta
       case 'x-juxtalinear':
         setHeaderDropDown('Juxta');
         break;
@@ -731,11 +537,12 @@ export default function NewProject({ call, project, closeEdit }) {
       />
       <ConfirmationModal
         openModal={openModalJuxtaWrongSetOfBooks}
-        title="modal-title-wrong-books-juxta-confirmation"
+        title="Canon specification error"
         setOpenModal={setOpenModalJuxtaWrongSetOfBooks}
-        confirmMessage={'You\'ll have a big juxta here'}
+        confirmMessage={'Your imported resources must correspond to your canon specifications'}
         buttonName={t('btn-ok')}
-        closeModal={userAcceptedToDownloadGreekJuxtas}
+        closeModal={() => {}}
+        showCancelButton={false}
       />
     </ProjectsLayout>
   );

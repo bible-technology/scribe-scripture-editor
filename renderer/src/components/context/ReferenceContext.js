@@ -105,7 +105,6 @@ export default function ReferenceContextProvider({ children }) {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
-                      // Nicolas : add a case for juxta here ?
                       case 'x-juxtalinear':
                         resProj = resources.project['x-juxtalinear'];
                         setBookmarksVerses(resProj.bookMarks);

@@ -9,7 +9,6 @@ import SectionPlaceholder2 from './SectionPlaceholder2';
 import TextEditor from '@/components/EditorPage/TextEditor'; // eslint-disable-line 
 import JuxtaTextEditor from '@/components/EditorPage/JuxtaTextEditor'; // eslint-disable-line 
 
-// Nicolas : when you open a project it starts here
 const MainPlayer = dynamic(
   () => import('@/components/EditorPage/AudioEditor/MainPlayer'),
   { ssr: false },

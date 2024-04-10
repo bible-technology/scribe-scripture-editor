@@ -66,7 +66,6 @@ export const factoryCreateContent = async ({
       );
       break;
     case 'Juxta':
-      // Nicolas : Todo createVersificationJuxta ??
       promise = await createJuxtaContent(
         username,
         project,
