@@ -260,7 +260,7 @@ export default function NewProject({ call, project, closeEdit }) {
       }
       
       // juxta scope != imported books
-      if (create && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
+      if (create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
         create = false;
         setOpenModalJuxtaWrongSetOfBooks(true);
       }

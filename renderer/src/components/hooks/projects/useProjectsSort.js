@@ -169,7 +169,7 @@ function useProjectsSort() {
                               ?.description;
                             isArchived = projJuxta
                               ?.isArchived;
-                            starred = projJuxta.starred;
+                            starred = projJuxta?.starred;
                           }
                           flavorType = 'Juxtalinear';
                           break;
