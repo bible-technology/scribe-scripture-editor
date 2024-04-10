@@ -110,7 +110,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       switch (selectResource) {
         case 'bible':
           url = `${baseUrl}&lang=en&subject=${subjectTypeArray.bible[0].name}`;
-          setSelectedTypeFilter([subjectTypeArray.bible[0]]);
+          // setSelectedTypeFilter([subjectTypeArray.bible[0]]);
           break;
         case 'obs':
           url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
