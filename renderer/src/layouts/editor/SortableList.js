@@ -5,6 +5,15 @@ import ScriptureContentPicker from '@/components/ScriptureContentPicker/Scriptur
 import { Button, Modal } from '@material-ui/core';
 import { AccordionPicker } from './fieldPicker/AccordionPicker';
 import i18n from 'src/translations/i18n';
+
+import localForage from 'localforage';
+import packageInfo from '../../../../package.json';
+import { ProjectContext } from '@/components/context/ProjectContext';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { FieldPicker } from './fieldPicker/FieldPicker';
+import { ScriptureContentSearchBar } from './ScriptureContentSearchBar';
+import { PdfGen } from 'jxl-pdf';
+import i18n from 'src/translations/i18n';
 export function SortableList({
 	orderSelection,
 	setOrderSelection,
@@ -13,9 +22,25 @@ export function SortableList({
 }) {
 	const jsonTruc = require('./fieldPicker/specification/jxl1.json');
 	const listChoice = Object.keys(jsonTruc);
+
+
+	const {
+		states: { listResourcesForPdf },
+		actions: { setListResourcesForPdf },
+	} = useContext(ProjectContext);
+	const {
+		states: { language },
+		actions: { setLanguage },
+	} = useContext(ProjectContext);
+	
+	setLanguage('fr')
+	console.log(language)
+
+	const [jsonSpec, setJsonSpec] = useState('{}');
+	// const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
+	const fourColumnSpread = PdfGen.handlerInfo()["4ColumnSpread"];
 	const [openModal, setOpenModal] = useState(false);
 
-	console.log(orderSelection);
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -123,7 +148,7 @@ export function SortableList({
 						color: 'white',
 					}}
 					onClick={() => handleOpenModal(true)}>
-					Addetd
+					Add content
 				</Button>
 				<Modal
 					open={openModal}
