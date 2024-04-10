@@ -109,7 +109,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       // initial load
       switch (selectResource) {
         case 'bible':
-          url = `${baseUrl}&subject=Bible&lang=en&subject=${subjectTypeArray.bible[0].name}`;
+          url = `${baseUrl}&lang=en&subject=${subjectTypeArray.bible[0].name}`;
           break;
         case 'obs':
           url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
