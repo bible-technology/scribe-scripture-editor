@@ -111,6 +111,7 @@ export default function NewProject({ call, project, closeEdit }) {
       setLanguage,
       createProject,
       setNewProjectFields,
+      setImportedBookCodes,
     },
   } = React.useContext(ProjectContext);
   const { t } = useTranslation();
@@ -218,6 +219,7 @@ export default function NewProject({ call, project, closeEdit }) {
       setSnackText(status[0].value);
       setOpenSnackBar(true);
       if (status[0].type === 'success') {
+        setImportedBookCodes([]);
         if (call === 'edit') {
           closeEdit();
         } else {
@@ -469,6 +471,8 @@ export default function NewProject({ call, project, closeEdit }) {
                   >
                     {t('btn-import-books')}
                   </button>
+                  {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
+                  {headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
                   <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
                 </div>
               </div>
@@ -537,9 +541,14 @@ export default function NewProject({ call, project, closeEdit }) {
       />
       <ConfirmationModal
         openModal={openModalJuxtaWrongSetOfBooks}
-        title="Canon specification error"
+        title={(!importedBookCodes || importedBookCodes.length === 0) ?
+          'Book resource needed' :
+          'Canon specification error'}
         setOpenModal={setOpenModalJuxtaWrongSetOfBooks}
-        confirmMessage={'Your imported resources must correspond to your canon specifications'}
+        confirmMessage={
+          (!importedBookCodes || importedBookCodes.length === 0) ?
+          'No resource imported.' :
+          'Your imported resources must correspond to your canon specifications'}
         buttonName={t('btn-ok')}
         closeModal={() => {}}
         showCancelButton={false}
