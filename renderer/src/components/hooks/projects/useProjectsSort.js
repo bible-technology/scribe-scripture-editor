@@ -263,9 +263,9 @@ function useProjectsSort() {
       if (_project.identification.name.en !== name) { return; }
 
       const flavorName = _project.type.flavorType.flavor.name;
-      logger.debug(`flavorName == ${flavorName}`);
+      logger.debug('useProjectSort.js', `flavorName == ${flavorName}`);
       const dirNameMap = {
-        textTranslation: 'juxtalinear',
+        textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
         'x-juxtalinear': 'x-juxtalinear',
@@ -274,7 +274,6 @@ function useProjectsSort() {
       const dirName = dirNameMap[flavorName];
       if (!dirName) { return; }
 
-      logger.debug(`_project.project == ${JSON.stringify(_project.project, null, 4)}`);
       const status = _project.project[dirName].isArchived;
       _project.project[dirName].isArchived = !status;
       _project.project[dirName].lastSeen = moment().format();
