@@ -25,8 +25,8 @@ function useProjectsSort() {
   const [loading, setLoading] = React.useState(false);
   const [activeNotificationCount, setActiveNotificationCount] = React.useState(0);
 
-  const starrtedData = [];
-  const unstarrtedData = [];
+  const starredData = [];
+  const unstarredData = [];
   const allProjects = [];
 
   useEffect(() => {
@@ -233,10 +233,10 @@ function useProjectsSort() {
                   }
                 })
                 .then(() => {
-                  setStarredRow(starrtedData);
-                  setStarredProjets(starrtedData);
-                  setUnStarredRow(unstarrtedData);
-                  setUnStarredProjets(unstarrtedData);
+                  setStarredRow(starredData);
+                  setStarredProjets(starredData);
+                  setUnStarredRow(unstarredData);
+                  setUnStarredProjets(unstarredData);
                   setProjects(allProjects);
                 });
             })
@@ -263,7 +263,6 @@ function useProjectsSort() {
       if (_project.identification.name.en !== name) { return; }
 
       const flavorName = _project.type.flavorType.flavor.name;
-      logger.debug('useProjectSort.js', `flavorName == ${flavorName}`);
       const dirNameMap = {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
@@ -300,6 +299,7 @@ function useProjectsSort() {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        'x-juxtalinear': 'x-juxtalinear',
       };
       return dirNameMap[flavorName];
     };
