@@ -32,7 +32,8 @@ type myFixture = {
   english: string,
   hindi: string,
   russian: string,
-  farsi: string
+  farsi: string,
+  arabic: string
 }
 const myFixtureTest = myTest.extend<myFixture>({
   userName: "Playwright user",
@@ -60,6 +61,7 @@ const myFixtureTest = myTest.extend<myFixture>({
   hindi: "Hindi",
   russian: "Russian",
   farsi: "Farsi",
+  arabic: "Arabic",
   textUnderscore: "Translation_test_project",
   obsUnderscore: "Obs_test_project",
   syncName: "Sync_Collab_Test",
