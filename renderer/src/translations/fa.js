@@ -277,6 +277,7 @@ export const Fa = {
     'label-check-updates': 'بررسی بروز رسانی ها',
     'label-documentation': 'Documentation',
     'label-tech-support': 'Tech Support',
+    'label-filter': 'Filter',
     'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
     'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
     'label-upload-help-resources': 'Upload Help Resources',

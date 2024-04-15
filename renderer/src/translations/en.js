@@ -280,4 +280,5 @@ export const En = {
     'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
     'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
     'label-upload-help-resources': 'Upload Help Resources',
+    'label-filter': 'Filter',
 };
