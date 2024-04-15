@@ -59,14 +59,6 @@ export function ScriptureContentSearchBar({
 		}
 	}, [searchText, setSearchText, openModal, setOpenModal]);
 
-	const updateElemOrder = (items) => {
-		const t = [];
-		items.forEach((item) => {
-			t.push(item.id);
-		});
-		setOrderSelection(t);
-	};
-
 	const handleInputSearch = (e) => {
 		setSearchText(e.target.value);
 	};

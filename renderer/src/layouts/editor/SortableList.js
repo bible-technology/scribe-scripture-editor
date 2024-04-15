@@ -28,8 +28,8 @@ export function SortableList({
 	setLanguage('fr')
 
 	const [jsonSpec, setJsonSpec] = useState('{}');
-	// const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
 	const fourColumnSpread = global.PdfGen.handlerInfo()["4ColumnSpread"];
+	
 	const [openModal, setOpenModal] = useState(false);
 
 
