@@ -1,19 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
 
-import FramedBouquetPickerPopup from './FramedBouquetPickerPopup';
-import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 import { Button, Modal } from '@material-ui/core';
 import { AccordionPicker } from './fieldPicker/AccordionPicker';
 import i18n from 'src/translations/i18n';
 
-import localForage from 'localforage';
-import packageInfo from '../../../../package.json';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { FieldPicker } from './fieldPicker/FieldPicker';
-import { ScriptureContentSearchBar } from './ScriptureContentSearchBar';
-import { PdfGen } from 'jxl-pdf';
-import i18n from 'src/translations/i18n';
+
 export function SortableList({
 	orderSelection,
 	setOrderSelection,
@@ -34,11 +26,10 @@ export function SortableList({
 	} = useContext(ProjectContext);
 	
 	setLanguage('fr')
-	console.log(language)
 
 	const [jsonSpec, setJsonSpec] = useState('{}');
 	// const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
-	const fourColumnSpread = PdfGen.handlerInfo()["4ColumnSpread"];
+	const fourColumnSpread = global.PdfGen.handlerInfo()["4ColumnSpread"];
 	const [openModal, setOpenModal] = useState(false);
 
 
