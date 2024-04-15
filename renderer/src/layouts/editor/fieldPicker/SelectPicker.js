@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useEffect } from 'react';
-export  function SelectPicker({fieldInfo,require,setJsonSpec}) {
+export  function SelectPicker({fieldInfo,require,setJsonSpec,lang}) {
   const [form, setForm] = React.useState('');
 
   useEffect(() => {
@@ -20,18 +20,19 @@ export  function SelectPicker({fieldInfo,require,setJsonSpec}) {
     setForm(event.target.value);
   };
   return (
-    <Box sx={{ minWidth:"100%",maxWidth:"100%"}}>
-      <FormControl fullWidth error={require && form === ''}>
+    <Box sx={{ width: "100%" ,width: "100%" }}>
+			<FormControl fullWidth error={require && form === ''}>
         <InputLabel id="filled-search">{fieldInfo.label.fr}</InputLabel>
         <Select
           labelId="filled-search"
           id="filled-search"
           value={form}
-          label={fieldInfo.label.fr}
+          label={fieldInfo.label[lang]}
           onChange={handleChange}
         >
-          {fieldInfo.typeEnum.map(e => <MenuItem value={e}>{e.label.fr}</MenuItem>)}
+          {fieldInfo.typeEnum.map(e => <MenuItem value={e}>{e.label[lang]}</MenuItem>)}
         </Select>
       </FormControl>
     </Box>
   );}
+  

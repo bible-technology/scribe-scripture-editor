@@ -1,11 +1,11 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import FramedBouquetPickerPopup from './FramedBouquetPickerPopup';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 import { Button, Modal } from '@material-ui/core';
+import { AccordionPicker } from './fieldPicker/AccordionPicker';
+import i18n from 'src/translations/i18n';
+
 import localForage from 'localforage';
 import packageInfo from '../../../../package.json';
 import { ProjectContext } from '@/components/context/ProjectContext';
@@ -19,9 +19,11 @@ export function SortableList({
 	setOrderSelection,
 	selected,
 	setSelected,
-	possibleSelection,
-	setPossibleSelection,
 }) {
+	const jsonTruc = require('./fieldPicker/specification/jxl1.json');
+	const listChoice = Object.keys(jsonTruc);
+
+
 	const {
 		states: { listResourcesForPdf },
 		actions: { setListResourcesForPdf },
@@ -37,9 +39,9 @@ export function SortableList({
 	const [jsonSpec, setJsonSpec] = useState('{}');
 	// const fourColumnSpread = require('./fieldPicker/specification/fourColumnSpread.json');
 	const fourColumnSpread = global.PdfGen.handlerInfo()["4ColumnSpread"];
-	console.log('global.PdfGen==',fourColumnSpread);
 
 	const [openModal, setOpenModal] = useState(false);
+
 
 	useEffect(() => {
 		const sortableList = document.querySelector('.sortable-list');
@@ -94,7 +96,7 @@ export function SortableList({
 				});
 			});
 		};
-	}, [selected.length]); // Empty dependency array ensures this effect runs only once after initial render
+	}, [Object.keys(selected).length]); // Empty dependency array ensures this effect runs only once after initial render
 
 	const updateElemOrder = (items) => {
 		const t = [];
@@ -111,45 +113,20 @@ export function SortableList({
 	return (
 		<div>
 			<ul className='sortable-list'>
-				{selected.map((e, index) => (
-					<li id={e} className='item' draggable='true' key={index}>
-						<div className='details'>
-							<span>{e}</span>
-						</div>
-						<i className='uil uil-draggabledots'></i>
+				{Object.keys(selected).map((k, index) => (
+					<li
+						id={index}
+						className='item'
+						draggable='true'
+						key={k + "_" + index}>
+						<AccordionPicker
+							language={i18n.language}
+							setSelected={setSelected}
+							keySpecification={selected[k].type}
+							idjson={index}
+						/>
 					</li>
 				))}
-				<li id={'etd'} className='item' draggable='true' key={'etd'}>
-					<Accordion style={{width:'100%'}}>	
-						<AccordionSummary
-							id='panel-header'
-							aria-controls='panel-content'>
-							<div
-								style={{
-									width: '100%',
-									wordWrap: 'break-word',
-								}}>
-								Section four coloumn spread test
-							</div>
-						</AccordionSummary>
-						<AccordionDetails style={{ width: '100%' }}>
-							{fourColumnSpread.fields.map((f) => (
-								<div
-									key={f.id} // Ensure each child element has a unique key
-									style={{
-										borderBottomWidth: 1,
-										borderBottomStyle: 'solid',
-										wordWrap: 'break-word', // Allow content to wrap if it exceeds the width
-									}}>
-									<FieldPicker
-										setJsonSpec={setJsonSpec}
-										fieldInfo={f}
-										lang={language}></FieldPicker>
-								</div>
-							))}
-						</AccordionDetails>
-					</Accordion>
-				</li>
 			</ul>
 
 			<div
@@ -172,15 +149,46 @@ export function SortableList({
 						color: 'white',
 					}}
 					onClick={() => handleOpenModal(true)}>
-					Add
+					Add content
 				</Button>
-				<ScriptureContentSearchBar
-					openModal={openModal}
-					setOpenModal={setOpenModal}
-					handleOpenModal={handleOpenModal}
-					setOrderSelection={setOrderSelection}
-					setSelected={setSelected}
-				/>
+				<Modal
+					open={openModal}
+					onClose={() => handleOpenModal(false)}
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						flexDirection: 'row',
+					}}>
+					<div
+						style={{
+							backgroundColor: 'white',
+							width: '50%',
+							borderRadius: 10,
+						}}>
+						<div>
+							{listChoice.map((c,id) => (
+								<div
+									className='pdfChoice'
+									onClick={() => {
+										setSelected((prev) => {
+											
+											let nb = Object.keys(prev).length
+											prev[nb] = {type:c,content:{}}
+											return prev
+										});
+										setOrderSelection((prev) => [
+											...prev,
+											prev.length
+										]);
+										handleOpenModal(false);
+									}}>
+									{c}
+								</div>
+							))}
+						</div>
+					</div>
+				</Modal>
 			</div>
 		</div>
 	);

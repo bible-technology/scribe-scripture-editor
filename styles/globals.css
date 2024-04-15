@@ -332,13 +332,11 @@ p.paragraph:has(.chapter) {
   list-style: none;
   display: flex;
   cursor: move;
-  background: #fff;
+ 
   align-items: center;
   border-radius: 5px;
   padding: 10px 13px;
-  margin-bottom: 11px;
   /* box-shadow: 0 2px 4px rgba(0,0,0,0.06); */
-  border: 1px solid #ccc;
   justify-content: space-between;
 }
 
@@ -373,6 +371,18 @@ p.paragraph:has(.chapter) {
   opacity: 0;
 }
 
+.pdfChoice{
+  font-size: medium;
+  margin: 12px;
+  padding: 6px;
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.pdfChoice:hover{
+  background-color: #a2dfea;
+}
 
 /**
   SCRIPTURE CONTENT PICKER BLOCK START SECTION

@@ -36,7 +36,7 @@ export function ListPicker({ fieldInfo, require, setJsonSpec, lang }) {
             {option.label[lang]}
           </Checkbox>
           <div style={{ display: "flex", alignSelf: "center" }}>
-            {option.label[lang]}{" "}
+            {option.label[lang]}
           </div>
         </div>
       ))}
