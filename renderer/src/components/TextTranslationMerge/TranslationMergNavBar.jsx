@@ -26,7 +26,7 @@ function TranslationMergNavBar({
                 key={book}
                 // className="w-full"
                 className={`w-full py-2 mb-4 ${resolvedBooks.includes(book)
-                  ? 'line-through decoration-2 pointer-events-none'
+                  ? 'pointer-events-none'
                   : `${selectedBook === book ? 'bg-primary/70' : 'hover:bg-primary cursor-pointer'}`} `}
 
               // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
@@ -38,10 +38,11 @@ function TranslationMergNavBar({
                   className="w-full text-center"
 
                 >
-                  {bookId[1]}
+                  <span className={`${resolvedBooks.includes(book) && 'line-through decoration-2'}`}>{bookId[1]}</span>
+
                 </button>
                 {/* chapter selection */}
-                {selectedBook === book && (
+                {selectedBook === book && !resolvedBooks.includes(book) && (
 
                   <div className="bg-white w-[95%] mx-auto my-2 grid grid-cols-3 gap-2 border border-gray-400 rounded-md min-h-[50px] p-2">
                     {conflictedChapters?.map((chNo) => (

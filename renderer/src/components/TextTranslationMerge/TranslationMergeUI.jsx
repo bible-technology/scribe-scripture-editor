@@ -155,11 +155,15 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
   };
 
   const resolveAndMarkDoneChapter = () => {
+    setChapterResolveDone(false);
     const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
     setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
     if (restOfTheChapters?.length === 0) {
       // completed conflicts for that particualr book
       setResolvedBooks((prev) => [...prev, selectedBook]);
+    } else {
+      // current book have pending chapter , // Switch to next chapter or book
+      setSelectedChapter(restOfTheChapters[0]);
     }
     // store the jsons to the backend (/.merge/projectName/BookID.json)
     const fs = window.require('fs');
@@ -171,7 +175,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
       if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
         fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
       }
-      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, `${usfmJsons}.json`), JSON.stringify({ usfmJsons }));
+      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify({ usfmJsons }));
     });
   };
 
