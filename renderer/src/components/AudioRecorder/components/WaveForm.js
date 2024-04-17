@@ -29,6 +29,7 @@ const AudioWaveForm = (props) => {
     barGap,
     barWidth,
     barRadius,
+    setAudioPlayBack,
   } = props;
 
   const waveformRef = useRef(null);
@@ -65,6 +66,22 @@ const AudioWaveForm = (props) => {
     wavesurfer.current?.load(currentUrl);
     // wavesurfer.current?.setVolume(volume);
     wavesurfer.current?.setPlaybackRate(speed);
+    wavesurfer.current.on('ready', () => {
+      const duration = wavesurfer?.current?.getDuration();
+      if (duration && duration !== Infinity) {
+        setAudioPlayBack(duration);
+      } else {
+        setAudioPlayBack(0);
+      }
+    });
+
+    wavesurfer.current.on('audioprocess', (time) => {
+      setAudioPlayBack(time);
+    });
+
+    wavesurfer.current.on('seeking', (time) => {
+      setAudioPlayBack(time);
+    });
   };
 
   const createRecForm = async () => {
@@ -88,6 +105,7 @@ const AudioWaveForm = (props) => {
         if (wavesurfer.current) {
           wavesurfer.current.destroy();
           wavesurfer.current.microphone.destroy();
+          setAudioPlayBack(0);
         }
       };
     }
@@ -236,4 +254,5 @@ AudioWaveForm.propTypes = {
   resumeRecording: PropTypes.func,
   setTrigger: PropTypes.func,
   interaction: PropTypes.bool,
+  setAudioPlayBack: PropTypes.any,
 };
