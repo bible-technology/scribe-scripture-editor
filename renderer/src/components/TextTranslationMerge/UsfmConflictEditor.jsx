@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/20/solid';
 
 function UsfmConflictEditor({
-  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters, selectedBook,
+  usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters, selectedBook, resolvedBooks, conflictedChapters,
 }) {
   const [resolveAllActive, setResolveALlActive] = useState(true);
   const [resetAlll, setResetAll] = useState(false);
@@ -15,6 +15,8 @@ function UsfmConflictEditor({
   // console.log({
   //   usfmJsons, currentProjectMeta, selectedChapter,
   // });
+
+  console.log('conflicted chapters ]]]]]]]]]]]]]] : ', conflictedChapters);
 
   const resolveAllTogether = (type) => {
     usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
@@ -144,9 +146,9 @@ function UsfmConflictEditor({
             <button
               type="button"
               onClick={() => resetAllResolved()}
-              disabled={resetAlll === false}
+              disabled={resetAlll === false || !conflictedChapters?.includes(selectedChapter)}
               title={t('tooltip-merge-all-reset-btn')}
-              className={`px-2.5 py-0.5 bg-gray-300  font-semibold tracking-wider text-xs uppercase rounded-xl ${resetAlll ? 'text-black' : 'text-gray-400'}`}
+              className={`px-2.5 py-0.5 bg-gray-300  font-semibold tracking-wider text-xs uppercase rounded-xl ${(conflictedChapters?.includes(selectedChapter) && resetAlll) ? 'text-black' : 'text-gray-400'}`}
             >
               {t('label-reset')}
             </button>
@@ -172,17 +174,20 @@ function UsfmConflictEditor({
               >
                 <span className="font-medium self-center">{item.verseNumber}</span>
                 {/* conflict is / was there */}
-                {(item?.resolved && !resolvedChapters.includes(selectedChapter)) ? (
+                {/* {(item?.resolved && !resolvedChapters.includes(selectedChapter)) ? ( */}
+                {(item?.resolved) ? (
 
                   // conflict resolved section (Data from resolved.resolvedContent)
                   item.resolved.status ? (
                     <div>
                       <div className="flex gap-2 border border-gray-500 w-full p-1 rounded-md relative">
                         <div>{item.resolved.resolvedContent.verseText}</div>
-                        <ArrowPathRoundedSquareIcon
-                          className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
-                          onClick={() => handleResetSingle(item.verseNumber)}
-                        />
+                        {conflictedChapters?.includes(selectedChapter) && (
+                          <ArrowPathRoundedSquareIcon
+                            className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
+                            onClick={() => handleResetSingle(item.verseNumber)}
+                          />
+                        )}
                       </div>
                     </div>
                   )

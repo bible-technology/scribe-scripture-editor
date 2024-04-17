@@ -267,6 +267,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
                             setUsfmJsons={setUsfmJsons}
                             setChapterResolveDone={setChapterResolveDone}
                             resolvedChapters={[]}
+                            resolvedBooks={resolvedBooks}
+                            conflictedChapters={conflictedChapters[selectedBook]}
                           />
                         </div>
                       )
