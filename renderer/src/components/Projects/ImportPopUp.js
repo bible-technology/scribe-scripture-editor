@@ -12,6 +12,7 @@ import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { updateJsonJuxta } from './utils/updateJsonJuxta';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 
 const grammar = require('usfm-grammar');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
@@ -236,30 +237,26 @@ export default function ImportPopUp(props) {
           break;
       }
     });
-    if(canonSpecification) {
-      // importedBookCodes.forEach((bc) => {
-      //   if(bookCodeList.indexOf(bc) === -1) {
-      //     bookCodeList.push(bc);
-      //   }
-      // });
-      let newCanonSpecification = {
-        currentScope: bookCodeList,
-        id: 4,
-        locked: true,
-        title: 'Other',
-      }
-      if (bookCodeList.length === advanceSettings.canonSpecification[2].length
-          && compareArrays(advanceSettings.currentScope, bookCodeList)) {
-        newCanonSpecification.title = advanceSettings.canonSpecification[2].title;
-      } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length
-        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
-        newCanonSpecification.title = advanceSettings.canonSpecification[1].title;
-      } else if (bookCodeList.length === advanceSettings.canonSpecification[0].length
-        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
-        newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
-      }
-      setCanonSpecification(newCanonSpecification);
+    let newCanonSpecification = {
+      currentScope: bookCodeList,
+      id: 4,
+      locked: false,
+      title: t('label-other'),
     }
+    if (bookCodeList.length === advanceSettings.canonSpecification[2].length
+        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[2].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
+    } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length
+      && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[1].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
+    } else if (bookCodeList.length === advanceSettings.canonSpecification[0].length
+      && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[0].id;
+    }
+    setCanonSpecification(newCanonSpecification);
     setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
     close();
