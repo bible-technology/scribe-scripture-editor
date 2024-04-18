@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { SnackBar } from '@/components/SnackBar';
 import PropTypes from 'prop-types';
 import {
   ArchiveBoxIcon,
@@ -35,6 +36,16 @@ export default function ProjectsLayout(props) {
     data: undefined,
   });
 
+  const [snackBar, setOpenSnackBar] = useState(false);
+  const [snackText, setSnackText] = useState('');
+  const [notify, setNotify] = useState();
+
+  const triggerSnackBar = (status, message) => {
+    setNotify(status);
+    setSnackText(message);
+    setOpenSnackBar(true);
+  };
+
   function closeMergeWindow() {
     setConflictPopup({
       open: false,
@@ -55,15 +66,16 @@ export default function ProjectsLayout(props) {
   }
 
   return (
-    <div className="flex overflow-auto scrollbars-width absolute w-full h-full ">
+    <>
+      <div className="flex overflow-auto scrollbars-width absolute w-full h-full ">
 
-      <SideBar />
+        <SideBar />
 
-      <div className="w-full">
+        <div className="w-full">
 
-        <TopMenuBar />
+          <TopMenuBar />
 
-        {title && (
+          {title && (
           <header className="bg-white shadow">
             {!isTwoCol
               ? (
@@ -92,7 +104,7 @@ export default function ProjectsLayout(props) {
                         && (
                           <div className="fixed z-50 ">
                             {conflictPopup.data?.projectType === 'textTranslation'
-                            ? <TranslationMergeUI conflictData={conflictPopup} closeMergeWindow={closeMergeWindow} />
+                            ? <TranslationMergeUI conflictData={conflictPopup} closeMergeWindow={closeMergeWindow} triggerSnackBar={triggerSnackBar} />
                             : <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />}
                           </div>
                         )}
@@ -144,13 +156,20 @@ export default function ProjectsLayout(props) {
           </header>
         )}
 
-        <div className="max-h-[85%] overflow-y-auto  ">
-          {children}
+          <div className="max-h-[85%] overflow-y-auto  ">
+            {children}
+          </div>
+
         </div>
-
       </div>
-
-    </div>
+      <SnackBar
+        openSnackBar={snackBar}
+        snackText={snackText}
+        setOpenSnackBar={setOpenSnackBar}
+        setSnackText={setSnackText}
+        error={notify}
+      />
+    </>
 
   );
 }

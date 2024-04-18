@@ -1,19 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import React, {
-  useRef, Fragment, useState, useEffect, useContext, useMemo,
+  useRef, Fragment, useState, useEffect,
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { AutographaContext } from '@/components/context/AutographaContext';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { readUsfmFile } from '@/core/projects/userSettings';
 import localforage from 'localforage';
+import { flushSync } from 'react-dom';
 import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
-import useGetCurrentProjectMeta from '../Sync/hooks/useGetCurrentProjectMeta';
 import LoadingScreen from '../Loading/LoadingScreen';
-import ImportUsfmUI from './ImportUsfmUI';
 import UsfmConflictEditor from './UsfmConflictEditor';
 import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
@@ -21,9 +19,7 @@ import packageInfo from '../../../../package.json';
 const grammar = require('usfm-grammar');
 const path = require('path');
 
-function TranslationMergeUI({ conflictData, closeMergeWindow }) {
-  console.log({ conflictData });
-
+function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar }) {
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [model, setModel] = React.useState({
@@ -95,7 +91,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     return usfm;
   }
 
-  console.log({ conflictedChapters, selectedBook, usfmJsons });
+  // console.log({ conflictedChapters, selectedBook, usfmJsons });
 
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
@@ -149,8 +145,36 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     setLoading(false);
   };
 
-  const handleFinishedResolution = () => {
-    console.log('in finish complete resolution ===============> ');
+  const handleFinishedResolution = async () => {
+    const fs = window.require('fs');
+
+    flushSync(() => {
+      setLoading(true);
+      setFinishedConflict(false);
+    });
+
+    const resolvedBooks = { ...usfmJsons };
+    delete resolvedBooks.conflictMeta;
+    console.log('after delete ============> ', resolvedBooks, usfmJsons);
+    // TODO : Disable all clicks when loading is true
+
+    // loop over the resolved books
+    // eslint-disable-next-line no-restricted-syntax
+    for (const bookName of Object.keys(resolvedBooks)) {
+      const resolvedMergeJson = resolvedBooks[bookName]?.mergeJson;
+      // eslint-disable-next-line no-await-in-loop
+      const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
+      const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
+      // overwrite the source file with new file
+      fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), generatedUSFM);
+    }
+
+    // remove .merge/project
+    await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
+
+    setLoading(false);
+    triggerSnackBar('success', 'Conflict Resolved Successfully');
+    closeMergeWindow();
   };
 
   const resolveAndMarkDoneChapter = () => {
@@ -184,6 +208,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
   useEffect(() => {
     if (resolvedBooks.length >= Object.keys(conflictedChapters).length) {
       setFinishedConflict(true);
+    } else {
+      setFinishedConflict(false);
     }
   }, [resolvedBooks, conflictedChapters]);
 
@@ -348,6 +374,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
         buttonName={model.buttonName}
         closeModal={() => handleOnAbortMerge(model.buttonName)}
       />
+
     </>
   );
 }

@@ -38,11 +38,11 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
       if (conflictedIngFilePaths.length > 0) {
         // move imported project to backup folder
         const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-
-        if (!fs.existsSync(path.join(USFMMergeDirPath, `${incomingMeta.projectName}_${incomingMeta.id[0]}`))) {
-          fs.mkdirSync(path.join(USFMMergeDirPath, `${incomingMeta.projectName}_${incomingMeta.id[0]}`), { recursive: true });
+        const projectDirName = `${incomingMeta.projectName}_${incomingMeta.id[0]}`;
+        if (!fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+          fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
         }
-        await fse.copy(incomingPath, path.join(USFMMergeDirPath, `${incomingMeta.projectName}_${incomingMeta.id[0]}`, 'incoming'));
+        await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
 
         // TODO : CREATE A BACKUP in GIT - with a proper message of backup before merge and Timestamp (Idea is to manual git reset to commit based on timestamp)
         // conflcit section
@@ -51,12 +51,14 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           data: {
             projectType: 'textTranslation',
             files: conflictedIngFilePaths,
-            incomingPath: path.join(USFMMergeDirPath, `${incomingMeta.projectName}_${incomingMeta.id[0]}`, 'incoming'),
+            incomingPath: path.join(USFMMergeDirPath, projectDirName, 'incoming'),
             incomingMeta,
             currentMeta: updatedCurrentMeta,
             projectId: incomingMeta.id[0],
             projectName: incomingMeta.projectName,
-            projectFullName: `${incomingMeta.projectName}_${incomingMeta.id[0]}`,
+            projectFullName: projectDirName,
+            sourceProjectPath: path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', projectDirName),
+            projectMergePath: path.join(USFMMergeDirPath, projectDirName),
             currentUser,
           },
         });

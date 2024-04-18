@@ -12,11 +12,9 @@ function UsfmConflictEditor({
   const [resetAlll, setResetAll] = useState(false);
   const { t } = useTranslation();
 
-  // console.log({
-  //   usfmJsons, currentProjectMeta, selectedChapter,
-  // });
-
-  console.log('conflicted chapters ]]]]]]]]]]]]]] : ', conflictedChapters);
+  console.log({
+    usfmJsons, currentProjectMeta, selectedChapter,
+  });
 
   const resolveAllTogether = (type) => {
     usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
@@ -32,6 +30,9 @@ function UsfmConflictEditor({
           // assign to resolved section
           verseObj.resolved.status = true;
           verseObj.resolved.resolvedContent = currentData;
+          // set the current data to the verse => contents and verse => verseText
+          verseObj.contents = currentData.contents;
+          verseObj.verseText = currentData.verseText;
         }
       });
     setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
@@ -44,6 +45,9 @@ function UsfmConflictEditor({
       .contents.find((item) => item?.verseNumber === verseNum);
     currentVerseObj.resolved.status = false;
     currentVerseObj.resolved.resolvedContent = null;
+    // reset the default contents and verseText with current data
+    currentVerseObj.contents = currentVerseObj.current.contents;
+    currentVerseObj.verseText = currentVerseObj.current.verseText;
     setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
     setResolveALlActive(true);
     setResetAll(false);
@@ -56,6 +60,9 @@ function UsfmConflictEditor({
         if (verseObj?.resolved?.status === true) {
           verseObj.resolved.status = false;
           verseObj.resolved.resolvedContent = null;
+          // reset the default contents and verseText with current data
+          verseObj.contents = verseObj.current.contents;
+          verseObj.verseText = verseObj.current.verseText;
         }
       });
     setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
@@ -69,7 +76,9 @@ function UsfmConflictEditor({
       .contents.find((item) => item?.verseNumber === verseNum);
     let currentData = {};
     if (type === 'current') {
+      // INFO: the the resolved data is now storing in contents and verseText , which can be used to USFM generation easily
       currentData = { verseText: currentVerseObj.verseText, contents: currentVerseObj.contents, verseNumber: verseNum };
+      // the content & verse text by default have the current content
     } else {
       currentData = currentVerseObj.incoming;
     }
@@ -77,6 +86,9 @@ function UsfmConflictEditor({
     // assign to resolved section
     currentVerseObj.resolved.status = true;
     currentVerseObj.resolved.resolvedContent = currentData;
+    // set the current data to the verse => contents and verse => verseText
+    currentVerseObj.contents = currentData.contents;
+    currentVerseObj.verseText = currentData.verseText;
     setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], mergeJson: usfmJsons[selectedBook].mergeJson } }));
   };
 
@@ -174,14 +186,14 @@ function UsfmConflictEditor({
               >
                 <span className="font-medium self-center">{item.verseNumber}</span>
                 {/* conflict is / was there */}
-                {/* {(item?.resolved && !resolvedChapters.includes(selectedChapter)) ? ( */}
                 {(item?.resolved) ? (
 
                   // conflict resolved section (Data from resolved.resolvedContent)
                   item.resolved.status ? (
                     <div>
                       <div className="flex gap-2 border border-gray-500 w-full p-1 rounded-md relative">
-                        <div>{item.resolved.resolvedContent.verseText}</div>
+                        {/* <div>{item.resolved.resolvedContent.verseText}</div> */}
+                        <div>{item.verseText}</div>
                         {conflictedChapters?.includes(selectedChapter) && (
                           <ArrowPathRoundedSquareIcon
                             className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
@@ -202,7 +214,7 @@ function UsfmConflictEditor({
                             className=" p-1"
                           // onClick={() => handleResolveSingle('current', item.verseNumber)}
                           >
-                            {item.verseText}
+                            {item.current.verseText}
                           </div>
                           <div
                             title="Click to accept incoming change"
