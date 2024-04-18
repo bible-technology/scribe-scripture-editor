@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { readUsfmFile } from '@/core/projects/userSettings';
-import DiffMatchPatch from 'diff-match-patch';
 import localforage from 'localforage';
 import TranslationMergNavBar from './TranslationMergNavBar';
 import * as logger from '../../logger';
@@ -151,13 +150,15 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
   };
 
   const handleFinishedResolution = () => {
-
+    console.log('in finish complete resolution ===============> ');
   };
 
   const resolveAndMarkDoneChapter = () => {
     setChapterResolveDone(false);
+    // remove current chapter from conflicted list
     const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
     setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
+
     if (restOfTheChapters?.length === 0) {
       // completed conflicts for that particualr book
       setResolvedBooks((prev) => [...prev, selectedBook]);
@@ -179,10 +180,18 @@ function TranslationMergeUI({ conflictData, closeMergeWindow }) {
     });
   };
 
+  // useEffect to trigger comleted all conflict Resolution
+  useEffect(() => {
+    if (resolvedBooks.length >= Object.keys(conflictedChapters).length) {
+      setFinishedConflict(true);
+    }
+  }, [resolvedBooks, conflictedChapters]);
+
   // store conflict data to usfm jsons meta
   useEffect(() => {
     setUsfmJsons((prev) => ({ ...prev, conflictMeta: conflictData.data }));
     setSelectedBook(conflictData?.data?.files[0]);
+    // TODO : Auto Select first Chapter of the selected Book
   }, [conflictData]);
 
   // handle conflict check for a book on book nav
