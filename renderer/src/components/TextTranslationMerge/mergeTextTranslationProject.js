@@ -47,6 +47,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
         const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
         const projectDirName = `${incomingMeta.projectName}_${incomingMeta.id[0]}`;
         const sourceProjectPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', projectDirName);
+        let existingIncomingMeta;
         let isNewProjectMerge = true;
         if (!fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
           fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
@@ -57,6 +58,13 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           await commitChanges(fs, sourceProjectPath, commitAuthor, backupMessage, true);
         } else {
           isNewProjectMerge = false;
+          // read existing meta of incoming instead of using the new because the merge is inprogress
+          if (fs.existsSync(path.join(path.join(USFMMergeDirPath, projectDirName, 'incoming', 'metadata.json')))) {
+            existingIncomingMeta = fs.readFileSync(path.join(path.join(USFMMergeDirPath, projectDirName, 'incoming', 'metadata.json')), 'utf-8');
+            existingIncomingMeta = JSON.parse(existingIncomingMeta);
+          } else {
+            throw new Error('Can not proceed Merge, Unable to find the metadata for imported Project');
+          }
         }
 
         // conflcit section - set values and open conflict window
@@ -66,7 +74,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
             projectType: 'textTranslation',
             files: conflictedIngFilePaths,
             incomingPath: path.join(USFMMergeDirPath, projectDirName, 'incoming'),
-            incomingMeta,
+            incomingMeta: isNewProjectMerge ? incomingMeta : existingIncomingMeta,
             currentMeta: updatedCurrentMeta,
             projectId: incomingMeta.id[0],
             projectName: incomingMeta.projectName,
@@ -79,6 +87,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
         });
       } else {
         // TODO : ADD A MESSGAGE HERE -nothing to merge
+        return;
       }
 
       setProcessMerge(false);
@@ -90,5 +99,6 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
   } catch (err) {
     setProcessMerge(false);
     console.error('Failue in MergeText Process : ', err);
+    throw new Error(err);
   }
 };
