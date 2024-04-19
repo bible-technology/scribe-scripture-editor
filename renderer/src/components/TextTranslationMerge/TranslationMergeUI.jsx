@@ -15,6 +15,7 @@ import LoadingScreen from '../Loading/LoadingScreen';
 import UsfmConflictEditor from './UsfmConflictEditor';
 import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
+import { commitChanges } from '../Sync/Isomorphic/utils';
 
 const grammar = require('usfm-grammar');
 const path = require('path');
@@ -121,9 +122,13 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
             console.log('process usfm : ', err);
           });
           const mergeJson = processOutArr[0];
+          const conflcitedChapters = processOutArr[1];
           console.log('processOutArr[1] : ', processOutArr[1]);
           currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], current: currentJson.data, mergeJson } }));
           setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] }));
+          if (conflcitedChapters && conflcitedChapters?.length > 0) {
+            setSelectedChapter(conflcitedChapters[0]);
+          }
           setLoading(false);
 
           // old UI logic of import and parse already saved book
@@ -171,6 +176,10 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
 
     // remove .merge/project
     await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
+    // commit all changes after merge finish
+    const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+    const backupMessage = `Scribe Internal Commit After Text Merge Finish : ${usfmJsons.conflictMeta.projectFullName}  : ${new Date()}`;
+    await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
 
     setLoading(false);
     triggerSnackBar('success', 'Conflict Resolved Successfully');
@@ -217,7 +226,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   useEffect(() => {
     setUsfmJsons((prev) => ({ ...prev, conflictMeta: conflictData.data }));
     setSelectedBook(conflictData?.data?.files[0]);
-    // TODO : Auto Select first Chapter of the selected Book
   }, [conflictData]);
 
   // handle conflict check for a book on book nav
@@ -226,6 +234,10 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       (async () => {
         setLoading(true);
         if (conflictedChapters[selectedBook]) {
+          // TODO : Auto Select first Chapter of the selected Book
+          if (conflictedChapters[selectedBook] && conflictedChapters[selectedBook].length > 0) {
+            setSelectedChapter(conflictedChapters[selectedBook][0]);
+          }
           setLoading(false);
         } else {
           await checkForConflictInSelectedBook(selectedBook);

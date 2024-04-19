@@ -1,5 +1,6 @@
 import updateTranslationSB from '@/core/burrito/updateTranslationSB';
 import packageInfo from '../../../../package.json';
+import { commitChanges } from '../Sync/Isomorphic/utils';
 
 export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta) => {
   try {
@@ -36,16 +37,29 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
 
       console.log('conflict', { conflictedIngFilePaths });
       if (conflictedIngFilePaths.length > 0) {
-        // move imported project to backup folder
+        /**
+         *  Check the current Project is new or inprogres
+         * Check the current ProjectName in => ./merge/ProjectName
+         * move imported project to backup folder
+         * create a GIT Backup before start merge : Create a COMMIT with Proper Msg and Timestamp
+         * TODO: Idea is to manual git reset to commit based on timestamp
+        */
         const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
         const projectDirName = `${incomingMeta.projectName}_${incomingMeta.id[0]}`;
+        const sourceProjectPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', projectDirName);
+        let isNewProjectMerge = true;
         if (!fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
           fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
+          await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
+          // commit existing changes before merge start
+          const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+          const backupMessage = `Scribe Internal Commit Before Text Merge Start : ${projectDirName}  : ${new Date()}`;
+          await commitChanges(fs, sourceProjectPath, commitAuthor, backupMessage, true);
+        } else {
+          isNewProjectMerge = false;
         }
-        await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
 
-        // TODO : CREATE A BACKUP in GIT - with a proper message of backup before merge and Timestamp (Idea is to manual git reset to commit based on timestamp)
-        // conflcit section
+        // conflcit section - set values and open conflict window
         setConflictPopup({
           open: true,
           data: {
@@ -57,9 +71,10 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
             projectId: incomingMeta.id[0],
             projectName: incomingMeta.projectName,
             projectFullName: projectDirName,
-            sourceProjectPath: path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', projectDirName),
+            sourceProjectPath,
             projectMergePath: path.join(USFMMergeDirPath, projectDirName),
             currentUser,
+            isNewProjectMerge,
           },
         });
       } else {
