@@ -26,6 +26,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           const incomingMd5 = val.checksum.md5;
           if (currentMd5 && incomingMd5) {
             if (currentMd5 !== incomingMd5) {
+              console.log('MD5s xxxxxxxxxxxxxx : ', { bookId, currentMd5, incomingMd5 }, currentMd5 === incomingIngredients);
               conflictedIngFilePaths.push(key);
             }
           } else {
@@ -86,8 +87,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           },
         });
       } else {
-        // TODO : ADD A MESSGAGE HERE -nothing to merge
-        return;
+        return 'noConflict';
       }
 
       setProcessMerge(false);

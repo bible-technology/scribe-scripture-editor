@@ -61,6 +61,12 @@ export default function ImportProjectPopUp(props) {
     completedSteps: 0,
   });
 
+  const triggerSnackBar = (status, message) => {
+    setNotify(status);
+    setSnackText(message);
+    setOpenSnackBar(true);
+  };
+
   async function close(triggeredFrom) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
     removeExtractedZipDir()
@@ -193,8 +199,15 @@ export default function ImportProjectPopUp(props) {
       await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
     }else if (sbData?.burritoType === 'scripture / textTranslation') {
       console.log("Started Indentify Merge conflicts ------");
-      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData)
-      console.log("completed merge idenitfy process ------");
+      try {
+        const response = await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData)
+        if(response === "noConflict") {
+          triggerSnackBar('success', "No Conflict Found",)
+        }
+        console.log("completed merge idenitfy process ------");
+      } catch(err) {
+
+      }
     }
     setMerge(false)
     setSbData({});

@@ -98,6 +98,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
+    console.log('..............................>>>>>>>>>>>>>>>>>>> ', usfmJsons.conflictMeta, selectedBook);
     const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
@@ -198,7 +199,21 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     closeMergeWindow();
   };
 
-  const resolveAndMarkDoneChapter = () => {
+  // Function to write back the current usfmJSON data as config in the .merge
+  const writeBackConflictConfigData = async (projectFullName, configData) => {
+    const fs = window.require('fs');
+    const newpath = localStorage.getItem('userPath');
+    const path = require('path');
+    localforage.getItem('userProfile').then((user) => {
+      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
+      if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
+        fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
+      }
+      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify(configData));
+    });
+  };
+
+  const resolveAndMarkDoneChapter = async () => {
     setChapterResolveDone(false);
     // remove current chapter from conflicted list
     const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
@@ -213,10 +228,9 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       setSelectedChapter(restOfTheChapters[0]);
     }
     // store the jsons to the backend (/.merge/projectName/BookID.json)
-    const fs = window.require('fs');
+
     const { projectFullName } = usfmJsons.conflictMeta;
-    const newpath = localStorage.getItem('userPath');
-    const path = require('path');
+
     // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
     const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
     // initial time (if resolved chapters exist for the project)
@@ -226,13 +240,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters: restOfTheChapters, isBookResolved } };
     }
     setUsfmJsons(currentUSFMJsonsData);
-    localforage.getItem('userProfile').then((user) => {
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-      if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
-        fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
-      }
-      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify(currentUSFMJsonsData));
-    });
+    await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
   };
 
   /**
@@ -250,19 +258,27 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
         let bookToSelect;
         const resolvedBooksArr = [];
         const conflictedChsOfBooks = {};
-        // eslint-disable-next-line no-restricted-syntax
-        for (const book in usfmJsonsContent.conflictMeta.resolvedStatus) {
-          if (book in usfmJsonsContent.conflictMeta.resolvedStatus) {
-            const currentBook = usfmJsonsContent.conflictMeta.resolvedStatus[book];
-            if (!currentBook.isBookResolved && !bookToSelect) {
-              bookToSelect = book;
+
+        // loading config - config have data of atleast 1 chapter of any book resolved ( checkpoint )
+        if (usfmJsonsContent.conflictMeta.resolvedStatus) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const book in usfmJsonsContent.conflictMeta.resolvedStatus) {
+            if (book in usfmJsonsContent.conflictMeta.resolvedStatus) {
+              const currentBook = usfmJsonsContent.conflictMeta.resolvedStatus[book];
+              if (!currentBook.isBookResolved && !bookToSelect) {
+                bookToSelect = book;
+              }
+              if (currentBook.isBookResolved) {
+                resolvedBooksArr.push(book);
+              }
+              conflictedChsOfBooks[book] = currentBook.conflictedChapters;
             }
-            if (currentBook.isBookResolved) {
-              resolvedBooksArr.push(book);
-            }
-            conflictedChsOfBooks[book] = currentBook.conflictedChapters;
           }
+        } else {
+          // checkpoint - stored on initially and not worked on any chapter
+          bookToSelect = usfmJsonsContent.conflictMeta.files[0];
         }
+
         setSelectedBook(bookToSelect);
         setResolvedBooks(resolvedBooksArr);
         setConflictedChapters(conflictedChsOfBooks);
@@ -273,6 +289,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       console.error('Unable to get the inprogress config');
     }
   };
+
+  console.log({ conflictData, conflictedChapters, resolvedBooks });
 
   // useEffect to trigger comleted all conflict Resolution
   useEffect(() => {
@@ -309,6 +327,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
           setLoading(false);
         } else {
           await checkForConflictInSelectedBook(selectedBook);
+          await writeBackConflictConfigData(usfmJsons.conflictMeta.projectFullName, usfmJsons);
         }
       })();
     } else {
