@@ -50,7 +50,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       setModel({
         openModel: true,
         title: t('modal-title-abort-conflict-resolution'),
-        confirmMessage: t('msg-abort-conflict-resolution'),
+        confirmMessage: t('text-msg-abort-conflict-resolution'),
         buttonName: t('label-abort'),
       });
     }

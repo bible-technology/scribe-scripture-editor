@@ -262,6 +262,7 @@ export const En = {
     'label-overwrite': 'Overwrite',
     'modal-title-abort-conflict-resolution': 'Abort Conflict Resolution',
     'msg-abort-conflict-resolution': 'Do you want to abort conflict Resolution process. If you abort , you will loose all your progress and need to start over.',
+    'text-msg-abort-conflict-resolution': 'Do you want to abort conflict Resolution process. Please ensure you have reached a checkpoint to continue later. The checkpoint is the completion of each chapter. If you abort in the middle of a chapter , you will loose all your progress of the chapter and need to start over the chapter.',
     'label-done': 'Done',
     'label-resolved': 'Resolved',
     'label-resolve-conflict': 'Resolve Conflict',

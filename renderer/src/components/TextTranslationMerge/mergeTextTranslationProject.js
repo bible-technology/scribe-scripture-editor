@@ -87,6 +87,8 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           },
         });
       } else {
+        setProcessMerge(false);
+        console.log('No Conflict =================>');
         return 'noConflict';
       }
 
