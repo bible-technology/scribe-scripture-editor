@@ -98,7 +98,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
-    console.log('..............................>>>>>>>>>>>>>>>>>>> ', usfmJsons.conflictMeta, selectedBook);
     const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
@@ -120,7 +119,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
         if (currentBookUsfm) {
           const currentJson = await parseUsfm(currentBookUsfm);
           // generate the merge object with current , incoming , merge verses
-          const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(importedJson.data, currentJson.data).catch((err) => {
+          const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(currentJson.data, importedJson.data).catch((err) => {
             console.log('process usfm : ', err);
           });
           const mergeJson = processOutArr[0];
@@ -290,16 +289,19 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     }
   };
 
-  console.log({ conflictData, conflictedChapters, resolvedBooks });
+  console.log({
+    conflictData, conflictedChapters, resolvedBooks, finishedConflict,
+  });
 
   // useEffect to trigger comleted all conflict Resolution
   useEffect(() => {
-    if (resolvedBooks.length >= Object.keys(conflictedChapters).length) {
+    console.log('finish check =============> ', resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length.length);
+    if (resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length) {
       setFinishedConflict(true);
     } else {
       setFinishedConflict(false);
     }
-  }, [resolvedBooks, conflictedChapters]);
+  }, [resolvedBooks]);
 
   // store conflict data to usfm jsons meta
   useEffect(() => {
