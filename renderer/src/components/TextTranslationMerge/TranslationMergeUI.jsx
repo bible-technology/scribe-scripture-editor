@@ -174,8 +174,12 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       // eslint-disable-next-line no-await-in-loop
       const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
 
+      // TODO : convert here to PERF
+
+      const perfUSFM = '';
+
       // overwrite the source file with new file
-      fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), generatedUSFM);
+      fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), perfUSFM);
 
       // get and update the usfms ingredients
       const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`));
