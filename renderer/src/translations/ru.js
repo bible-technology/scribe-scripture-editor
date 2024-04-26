@@ -280,4 +280,5 @@ export const Ru = {
     'msg-helps-filepath': 'Помогает найти путь к ресурсу файла с реальным файлом manifest.yaml.',
     'tooltip-supported-resources': 'поддерживаемые ресурсы: TN, TW, TQ, TA',
     'label-upload-help-resources': 'Загрузить справочные ресурсы',
+    'label-filter': 'фильтр',
 };

@@ -183,7 +183,7 @@
     "usfm-editor": "0.8.7",
     "usfm-grammar": "^2.3.0",
     "uuid": "^8.3.2",
-    "wavesurfer.js": "^6.6.2",
+    "wavesurfer.js": "^6.6.4",
     "webpack-node-externals": "^3.0.0",
     "winston": "^3.7.2",
     "word-aligner": "1.0.0",

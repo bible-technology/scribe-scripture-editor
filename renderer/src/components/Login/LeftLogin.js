@@ -138,12 +138,14 @@ const LeftLogin = () => {
   };
   function formSubmit(event) {
     event.preventDefault();
-    if (values.username.length < 3 || values.username.length > 15) {
+    const newValue = values;
+    newValue.username = newValue.username.trim();
+    if (newValue.username.length < 3 || newValue.username.length > 15) {
       displayError('The input has to be between 3 and 15 characters long');
-    } else if (users.length > 0 && users.find((item) => (item.username.toLowerCase() === values.username.toLowerCase().trim()))) {
+    } else if (users.length > 0 && users.find((item) => (item.username.toLowerCase() === newValue.username.toLowerCase()))) {
       displayError('User exists, Check archived and active tab by click on view more.');
     } else {
-      handleSubmit(values);
+      handleSubmit(newValue);
       setValues({});
     }
   }

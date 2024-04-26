@@ -19920,7 +19920,7 @@ watchpack@2.4.0, watchpack@^2.4.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wavesurfer.js@^6.6.2:
+wavesurfer.js@^6.6.4:
   version "6.6.4"
   resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-6.6.4.tgz#45e2d613fbfd60d906362ed6e11b649f481e4485"
   integrity sha512-nBbc0pD/3FdClxKUKL1UW2V9AJPL+JOjC8T6/YF9/FCAn4uo+H6Y8VBkXo9UJXIHoBewoc7iXj3tPeL0UCJhjA==
