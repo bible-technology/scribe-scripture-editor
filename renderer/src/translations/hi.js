@@ -280,4 +280,5 @@ export const Hi = {
     'msg-helps-filepath': 'आप manifest.yaml सर्वर के लिए एक त्वरित संसाधन सेट कर सकते हैं।',
     'tooltip-supported-resources': 'समर्थित संसाधन TN, TW, TQ, TA हैं।',
     'label-upload-help-resources': 'सहायता संसाधन अपलोड करें',
+    'label-filter': 'फ़िल्टर',
 };
