@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { Button, Modal } from '@material-ui/core';
+import { Button, Modal } from '@mui/material';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 
-export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey }) {
+export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
 	useEffect(() => {
@@ -68,7 +68,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey }) {
 
 	return (
 		<div
-			style={{
+			style={open?{
 				display: 'flex',
 				flexDirection: 'column',
 				paddingLeft: 22,
@@ -77,7 +77,8 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey }) {
 				paddingTop: 10,
 				alignItems: 'center',
 				justifyContent: 'space-between',
-			}}>
+				
+			}:{display:'none'}}>
 			<div style={{ display: 'flex', flexDirection: 'row',alignItems: 'center',
 				justifyContent: 'space-between',width:"100%" }}>
 				<div>{ressourceKey} </div>

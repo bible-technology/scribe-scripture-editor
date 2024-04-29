@@ -5,20 +5,14 @@ import React, {
 	Fragment,
 	useEffect,
 } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/solid';
-import ResourcesSidebar from '@/components/Resources/ResourcesSideBar';
-import { ReferenceContext } from '@/components/context/ReferenceContext';
-import ResourceTabPane from '@/components/Resources/ResourceTabPane';
-import { useTranslation } from 'react-i18next';
+import Button from '@material-ui/core/Button';
 import { Dialog, Transition } from '@headlessui/react';
-import { ListResources } from '@/components/Resources/ListResources';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { SnackBar } from '@/components/SnackBar';
 import localForage from 'localforage';
 import InnerFramePopup from '@/layouts/editor/InnerFramePopup';
 import packageInfo from '../../../../package.json';
 import readLocalResources from '@/components/Resources/useReadLocalResources';
-// import * as logger from '../../logger';
 export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const cancelButtonRef = useRef(null);
 	const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -122,83 +116,128 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 					static
 					open={openPdfPopup}
 					onClose={removeSection}>
-					<Dialog.Overlay className='fixed inset-0 bg-black opacity-30' />
-					<div className='flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto'>
+					<Dialog.Overlay className='fixed inset-0 bg-black opacity-0' />
+					<div
+						style={{
+							flexDirection: 'column',
+							display: 'flex',
+							marginTop: 10,
+							width: '80%',
+							alignContent: 'center',
+							alignItems: 'center',
+							marginTop: 5,
+							justifyContent: 'center', // Add this line to center horizontally
+							margin: 'auto',
+							position: 'relative',
+						}}>
 						<div
-							style={{ backgroundColor: '#292A2D' }}
-							className='bg-black relative flex justify-between px-3 items-center rounded-t-lg '>
-							{/* <h1 className="text-white font-bold text-sm">{t('TODO')}</h1> */}
+							style={{
+								display: 'flex',
+								borderRadius: 12,
+								justifyContent: 'center',
+								alignContent: 'center',
+								margin: 'auto',
+								flexDirection: 'column',
+								width: '100%',
+								backgroundColor: '#292A2D',
+							}}>
+							<div
+								style={{
+									textAlign: 'center',
+									width: '100%',
+									fontSize: 24,
+									padding: 12,
+									color: 'white',
+								}}
+								className='text-white font-bold text-sm'>
+								Export
+							</div>
 							<div
 								style={{
 									display: 'flex',
-									justifyContent: 'center',
-									alignContent: 'center',
-									margin: 'auto',
-									flexDirection: 'column',
+									justifyContent: 'space-between',
+									backgroundColor: '#EEEEEE',
+									paddingLeft: '30%',
+									paddingRight: '30%',
+									alignItems: 'center',
+									paddingTop: 10,
+									paddingBottom: 10,
 								}}>
-								<div
-									style={{
-										textAlign: 'center',
-										width: '100%',
-										fontSize: 24,
-										padding: 12,
-									}}
-									className='text-white font-bold text-sm'>
-									Export
-								</div>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-									}}>
-									<div
-										onClick={() => setCurrentTab(0)}
+								<Button
+									onClick={() => setCurrentTab(0)}
+									size='tiny'
+									style={
+										currentTab === 0
+											? tabStyleSelected
+											: tabStyleNotSelected
+									}>
+									{/* <text
 										style={
 											currentTab === 0
-												? tabStyleSelected
-												: tabStyleNotSelected
+												? fontStyle
+												: {
+														...fontStyle,
+														color: 'black',
+												  }
 										}>
 										PDF
-									</div>
-									{/* <div
-										onClick={() => setCurrentTab(1)}
+									</text> */}
+								</Button>
+								<Button
+									onClick={() => setCurrentTab(1)}
+									style={
+										currentTab === 1
+											? tabStyleSelected
+											: tabStyleNotSelected
+									}>
+									<text
 										style={
 											currentTab === 1
-												? tabStyleSelected
-												: tabStyleNotSelected
+												? fontStyle
+												: {
+														...fontStyle,
+														color: 'black',
+												  }
 										}>
-										Korennummi
-									</div>
-									<div
-										onClick={() => setCurrentTab(2)}
+										Korennumi
+									</text>
+								</Button>
+								<Button
+									onClick={() => setCurrentTab(2)}
+									style={
+										currentTab === 2
+											? tabStyleSelected
+											: tabStyleNotSelected
+									}>
+									<text
 										style={
 											currentTab === 2
-												? tabStyleSelected
-												: tabStyleNotSelected
+												? fontStyle
+												: {
+														...fontStyle,
+														color: 'black',
+												  }
 										}>
 										Word
-									</div> */}
-								</div>
+									</text>
+								</Button>
 							</div>
 						</div>
 
 						<div
-							style={{ backgroundColor: '#292A2D' }}
-							className='flex'>
-							<div
-								style={{
-									backgroundColor: '#292A2D',
-									borderColor: '#292A2D',
-								}}
-								className='h-[85vh] w-full  bg-gray-50 items-center p-3 justify-between'>
+							style={{
+								backgroundColor: '#FFFFFF',
+								width: '100%',
+							}}>
+							<div className='h-[85vh] w-full  bg-gray-50 items-center  justify-between'>
 								<div
-									style={{ backgroundColor: '#292A2D' }}
-									className='bg-gray-50 items-center p-3 justify-between w-full h-full'>
-									{currentTab === 0 ? (
+									style={{ backgroundColor: '#EEEEEE' }}
+									className='bg-gray-50 items-center  justify-between w-full h-full'>
+									{/* {currentTab === 0 ? (
 										<InnerFramePopup />
 									) : (
 										<div>no Tab</div>
-									)}
+									)} */}
 								</div>
 							</div>
 						</div>
@@ -217,34 +256,39 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 }
 
 const tabStyleNotSelected = {
-	fontSize: 24,
-	marginLeft: 74,
-	marginRight: 74,
-	color: 'white',
-	borderRadius: 28,
-	paddingLeft: 12,
-	paddingRight: 12,
+	display: 'flex',
+	width: 'fit-content',
+	justifyContent: 'center',
+	alignItems: 'center',
+	borderRadius: 4,
 	borderStyle: 'solid',
-	borderWidth: 3,
-	paddingTop: 3,
-	paddingBottom: 3,
+	fontColor: 'white',
+	borderWidth: 2,
+	borderColor: '#F50',
+	backgroundColor: '#E3E3E3',
 };
 
 const tabStyleSelected = {
-	fontSize: 24,
-	marginLeft: 74,
-	marginRight: 74,
-	borderRadius: 28,
-	paddingLeft: 12,
-	paddingRight: 12,
-	backgroundColor: 'white',
-	borderWidth: 3,
-	borderStyle: 'solid',
-	alignContent: 'center',
-	paddingTop: 3,
-	paddingBottom: 3,
-	justifyContent: 'center',
 	display: 'flex',
+	width: 'fit-content',
+	justifyContent: 'center',
+	alignItems: 'center',
+	borderRadius: 4,
+	borderStyle: 'solid',
+	fontColor: 'white',
+	borderWidth: 2,
+	borderColor: '#F50',
+	backgroundColor: '#F50',
+};
+const fontStyle = {
+	color: '#FFF',
+	textAlign: 'center',
+	fontFamily: 'Lato',
+	fontSize: 20,
+	fontStyle: 'normal',
+	fontWeight: 700,
+	lineHeight: 'normal',
+	textTransform: 'uppercase',
 };
 
 function creatSection(folder, pickerJson) {

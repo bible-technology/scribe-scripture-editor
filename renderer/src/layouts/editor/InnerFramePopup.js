@@ -1,13 +1,26 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewer } from '@react-pdf/renderer';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { Modal } from '@material-ui/core';
+import { BCVWrapperSortableList } from './pdfGenWrappers/BCVWrapperSortableList';
+import { OBSWrapperSortableList } from './pdfGenWrappers/OBSWrapperSortableList';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-import { SortableList } from './SortableList';
 import { selectOption } from './selectOptions';
-import { Button } from '@mui/material';
-import i18n from 'src/translations/i18n';
-
+import { ProjectContext } from '@/components/context/ProjectContext';
+import Switch from '@material-ui/core/Switch';
+import { styled } from '@material-ui/core/styles';
+const StyledSwitch = styled(Switch)(({ theme }) => ({
+	'& .MuiSwitch-switchBase.Mui-checked': {
+		color: '#FF5500',
+		'&:hover': {
+			backgroundColor: '#FF5500',
+		},
+	},
+	'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+		backgroundColor: '#FF5500',
+	},
+}));
 const path = require('path');
 const fs = window.require('fs');
 
@@ -16,32 +29,47 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	import.meta.url,
 ).toString();
 
-function Fontsizes() {
-	let options = [];
-	for (let i = 12; i < 48; i += 2) {
-		options.push(i);
-	}
-	return options;
-}
+const test = (values) => {
+	console.log(values);
+};
 
 export default function InnerFramePopup() {
+	const [name, setName] = useState();
+	const {
+		states: { canonSpecification, canonList },
+		actions: { setcanonSpecification },
+	} = useContext(ProjectContext);
+
+	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
+
 	const path = require('path');
 	const fs = window.require('fs');
-	
-	const jxl2 = require("./fieldPicker/specification/jxl2.json")
+
+	const jxl2 = require('./fieldPicker/specification/jxl2.json');
 	//list of all non selected choice
-
+	const [update, setUpdate] = useState(true);
 	//the order Of The Selected choice
-	const [orderSelection, setOrderSelection] = useState([
-	
-	]);
-	//all the selected choice
-	const [selected, setSelected] = useState({});
 
-	const [metaInfo ,setMetaInfo] = useState('{}')
+	const [orderSelection, setOrderSelection] = useState([0]);
+	const [selected, setSelected] = useState({
+		0: {
+			type: 'obsWrapper',
+			content: {
+				content: { 0: { type: 'obs', content: {} } },
+				order: [0],
+			},
+		},
+	});
+	console.log(selected);
+	const [advanceMode, setAdvenceMode] = useState(false);
+
+	const [metaInfo, setMetaInfo] = useState('{}');
 	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
 	const [pageNumber, setPageNumber] = useState(1);
+	const [openModal, setOpenModal] = useState(false);
+
+	console.log(orderSelection);
 	const [pdfPath, setPdfPath] = useState(
 		path.join(
 			localStorage.getItem('userPath'),
@@ -50,8 +78,14 @@ export default function InnerFramePopup() {
 		),
 	);
 
-	console.log(selected)
+	const [bibleNav, setBibleNav] = useState(true);
 
+	function closeBooks() {
+		setBibleNav(false);
+	}
+	const handleOpenModal = (isOpen) => {
+		setOpenModal(isOpen);
+	};
 	function readPdf(localPath) {
 		if (fs.existsSync(localPath)) {
 			const data = fs.readFileSync(path.join(localPath));
@@ -59,28 +93,83 @@ export default function InnerFramePopup() {
 		}
 	}
 	const myPdfFile = useMemo(() => readPdf(pdfPath), [pdfPath]);
-	const handleChange = (type,value) => {
-		
-		let t = JSON.parse(metaInfo)
-		t[type] = jxl2[type][value]
-		setMetaInfo(JSON.stringify(t))
-	}
+	const handleChange = (type, value) => {
+		let t = JSON.parse(metaInfo);
+		t[type] = jxl2[type][value];
+		setMetaInfo(JSON.stringify(t));
+	};
 	function onDocumentLoadSuccess({ numPages }) {
 		setNumPages(numPages);
 	}
+
+	let sortableListClassName = 'sortable-TESTWRAPPER-list';
+	let itemClassName = 'sortable-test1-item';
+	false;
+	useEffect(() => {
+		const sortableList = document.querySelector(
+			`.${sortableListClassName}`,
+		);
+		const items = sortableList.querySelectorAll(`.${itemClassName}`);
+		items.forEach((item) => {
+			item.addEventListener('dragstart', () => {
+				setTimeout(() => item.classList.add('dragging'), 0);
+			});
+			item.addEventListener('dragend', () => {
+				item.classList.remove('dragging');
+			});
+		});
+		const initSortableList = (e) => {
+			if (update) {
+				e.preventDefault();
+				e.stopPropagation();
+				const draggingItem = document.querySelector(
+					`.${itemClassName}.dragging`,
+				);
+				if (!draggingItem) {
+					return;
+				}
+				let siblings = [
+					...sortableList.querySelectorAll(
+						`.${itemClassName}:not(.dragging)`,
+					),
+				];
+
+				let nextSibling = siblings.find((sibling) => {
+					console.log(sibling.offsetHeight);
+					return (
+						e.clientY <= sibling.offsetTop + sibling.offsetHeight
+					);
+				});
+
+				sortableList.insertBefore(draggingItem, nextSibling);
+			}
+		};
+
+		sortableList.addEventListener('dragover', initSortableList);
+		sortableList.addEventListener('dragenter', (e) => e.preventDefault());
+
+		return () => {
+			sortableList.removeEventListener('dragover', initSortableList);
+			items.forEach((item) => {
+				item.removeEventListener('dragstart', () => {
+					setTimeout(() => item.classList.add('dragging'), 0);
+				});
+			});
+		};
+	}, [update]);
 
 	return (
 		<div
 			style={{
 				display: 'flex',
 				height: '100%',
-				backgroundColor: '#303134',
+				backgroundColor: '#FFFFFF',
 				width: '100%',
 			}}>
 			<div
 				style={{
 					position: 'relative',
-					width: '70%',
+					width: '50%',
 					display: 'flex',
 					flexDirection: 'column',
 					flex: 1,
@@ -182,7 +271,7 @@ export default function InnerFramePopup() {
 
 			<div
 				style={{
-					width: '40%',
+					width: '50%',
 					borderLeft: '2px solid gray',
 					overflowY: 'scroll',
 					padding: 20,
@@ -194,41 +283,162 @@ export default function InnerFramePopup() {
 						borderStyle: 'solid',
 						borderColor: '#575757',
 					}}>
-					{selectOption("fonts",  "fonts",jxl2.fonts,handleChange)}
-					{selectOption('Pages',  "pages" ,jxl2.pages,handleChange)}
-					{selectOption('Sizes', "sizes",jxl2.sizes ,handleChange)}
+					{selectOption('fonts', 'fonts', jxl2.fonts, handleChange)}
+					{selectOption('Pages', 'pages', jxl2.pages, handleChange)}
+					{selectOption('Sizes', 'sizes', jxl2.sizes, handleChange)}
 				</div>
 				<div
 					style={{
+						fontFamily: "Lato",
+						fontWeight: 400,
 						display: 'flex',
 						fontSize: 24,
 						justifyContent: 'center',
-						color: 'white',
+						color: 'Black',
 						padding: 12,
+						justifyContent:'left'
 					}}>
 					Content
 				</div>
-				<SortableList
-					orderSelection={orderSelection}
-					setOrderSelection={setOrderSelection}
-					selected={selected}
-					setSelected={setSelected}
-				/>
-			</div>
-			<Button
+				<div style={{ display: 'flex' }}>
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							color: 'black',
+							fontFamily: "Lato",
+						fontWeight: 400,
+						fontSize: 20,
+
+						}}>
+						advanced
+					</div>
+					<StyledSwitch
+						onChange={() => setAdvenceMode((prev) => !prev)}
+					/>
+				</div>
+				<ul className={'sortable-TESTWRAPPER-list'}>
+					{Object.keys(selected).map((k, index) => {
+						if (selected[k].type === 'obsWrapper') {
+							return (
+								<li
+									id={'PREMUER'}
+									className={'sortable-test1-item'}
+									draggable='true'
+									key={'PREMUER'}
+									style={{ margin: 10 }}>
+									<OBSWrapperSortableList
+										setFinalPrint={setSelected}
+										wrapperType={selected[k].type}
+										keyWrapper={k}
+										setUpdate={setUpdate}
+										advanceMode={advanceMode}
+										changePrintData={setSelected}
+										changePrintOrder={setOrderSelection}
+									/>
+								</li>
+							);
+						}
+						if (selected[k].type === 'bcvWrapper') {
+							return (
+								<li
+									id={'PREMUER'}
+									className={'sortable-test1-item'}
+									draggable='true'
+									key={'PREMUER'}
+									style={{ margin: 10 }}>
+									<BCVWrapperSortableList
+										setFinalPrint={setSelected}
+										wrapperType={selected[k].type}
+										keyWrapper={k}
+										setUpdate={setUpdate}
+										advanceMode={advanceMode}
+										changePrintData={setSelected}
+										changePrintOrder={setOrderSelection}
+									/>
+								</li>
+							);
+						}
+					})}
+				</ul>
+				<div
 					style={{
-						borderRadius: 4,
-						backgroundColor: '#F50',
-						borderStyle: 'solid',
-						borderColor: '#F50',
-						color: 'white',
-					}}
-					onClick={() =>{console.log({order:orderSelection,metaData:JSON.parse(metaInfo),content:selected})}}>
-					Print
-				</Button>
+						display: 'flex',
+						justifyContent: 'center',
+						padding: 15,
+					}}>
+					<div
+						style={{
+							borderRadius: 4,
+							backgroundColor: '#F50',
+							borderStyle: 'solid',
+							borderColor: '#F50',
+							color: 'white',
+						}}
+						onClick={() => handleOpenModal(true)}>
+						Wrapper
+					</div>
+					<div
+						style={{
+							borderRadius: 4,
+							backgroundColor: '#F50',
+							borderStyle: 'solid',
+							borderColor: '#F50',
+							color: 'white',
+							padding: 15,
+						}}
+						onClick={() => {
+							console.log({
+								order: orderSelection,
+								metaData: JSON.parse(metaInfo),
+								content: selected,
+							});
+						}}>
+						Print
+					</div>
+				</div>
+			</div>
+			<Modal
+				open={openModal}
+				onClose={() => handleOpenModal(false)}
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					flexDirection: 'row',
+				}}>
+				<div
+					style={{
+						backgroundColor: 'white',
+						width: '50%',
+						borderRadius: 10,
+					}}>
+					<div>
+						{Object.keys(init).map((c, id) => (
+							<div
+								className='pdfChoice'
+								onClick={() => {
+									setSelected((prev) => {
+										let t = { ...prev };
+										let nb = Object.keys(t).length;
+										t[nb] = { type: c, content: {} };
+
+										return t;
+									});
+									setOrderSelection((prev) => [
+										...prev,
+										prev.length,
+									]);
+									handleOpenModal(false);
+								}}>
+								{c}
+							</div>
+						))}
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 }
 
 const buttonStyle = {};
-

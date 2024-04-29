@@ -17,12 +17,11 @@ export default function SelectBook({
 }) {
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
-
+  console.log()
   function toggleNT() {
     setOpenNT(true);
     setOpenOT(false);
   }
-
   function toggleOT() {
     setOpenOT(true);
     setOpenNT(false);
@@ -32,6 +31,7 @@ export default function SelectBook({
     setOpenNT(true);
     setOpenOT(true);
   }
+
 
   function bookSelect(e, bookId) {
     e.preventDefault();
@@ -138,7 +138,8 @@ export default function SelectBook({
                       key={book.name}
                       role="presentation"
                       aria-label={`nt-${book.name}`}
-                      onClick={(e) => (multiSelectBook
+                      onClick={(e) => (
+                        multiSelectBook
                         ? selectMultipleBooks(e, book.key, book.name)
                         : bookSelect(e, book.key, book.name))}
                       className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}

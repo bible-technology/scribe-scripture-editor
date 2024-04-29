@@ -1,9 +1,8 @@
 import * as React from "react";
 
-import MenuItem from "@mui/material/MenuItem";
-import { Checkbox } from "@mui/material";
+import { Checkbox } from "@material-ui/core";
 import { useEffect } from "react";
-export function ListPicker({ fieldInfo, require, setJsonSpec, lang }) {
+export function ListPicker({ fieldInfo, require, setJsonSpec, lang,open }) {
   const [list, setList] = React.useState([]);
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export function ListPicker({ fieldInfo, require, setJsonSpec, lang }) {
   }, [list.length]);
 
   return (
-    <div>
+    <div style={open?{}:{display:'none'}}>
       {fieldInfo.typeEnum.map((option) => (
         <div style={{ display: "flex" }}>
           <Checkbox

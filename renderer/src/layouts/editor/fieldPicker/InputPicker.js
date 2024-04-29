@@ -2,9 +2,8 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
-import { FormControl } from "@mui/material";
 
-export function InputPicker({ fieldInfo, setJsonSpec, require,lang }) {
+export function InputPicker({ fieldInfo, setJsonSpec, require,lang,open }) {
   const [input, setInput] = useState("");
   useEffect(() => {
     setJsonSpec((prev) => {
@@ -15,6 +14,7 @@ export function InputPicker({ fieldInfo, setJsonSpec, require,lang }) {
   }, [input]);
 
   return (
+    <div style={open?{}:{display:'none'}}>
     <Box
       component="form"
       sx={{
@@ -33,5 +33,6 @@ export function InputPicker({ fieldInfo, setJsonSpec, require,lang }) {
           helperText={require && input === ""? "*Require.":""}
         />
     </Box>
+    </div>
   );
 }

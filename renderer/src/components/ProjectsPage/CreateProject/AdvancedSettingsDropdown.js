@@ -193,6 +193,8 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   };
   const selectCanon = (val) => {
     const value = val;
+    console.log(val)
+    
     if (call === 'edit' && value.title === 'Other') {
       if (canonSpecification.title === 'Other') {
         value.currentScope = canonSpecification.currentScope;
