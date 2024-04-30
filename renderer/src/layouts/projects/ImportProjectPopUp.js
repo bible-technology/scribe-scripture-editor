@@ -200,10 +200,7 @@ export default function ImportProjectPopUp(props) {
     }else if (sbData?.burritoType === 'scripture / textTranslation') {
       console.log("Started Indentify Merge conflicts ------");
       try {
-        const response = await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData)
-        if(response === "noConflict") {
-          triggerSnackBar('success', "No Conflict Found",)
-        }
+        await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar)
         console.log("completed merge idenitfy process ------");
       } catch(err) {
 

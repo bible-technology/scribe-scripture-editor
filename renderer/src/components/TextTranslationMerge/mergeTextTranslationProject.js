@@ -2,7 +2,7 @@ import updateTranslationSB from '@/core/burrito/updateTranslationSB';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
 
-export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta) => {
+export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta, triggerSnackBar) => {
   try {
     // update the metadata of current md5 --- updateTranslationSB (src/core/burrito/)
     const fse = window.require('fs-extra');
@@ -88,8 +88,8 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
         });
       } else {
         setProcessMerge(false);
+        triggerSnackBar('success', 'No Conflict Found');
         console.log('No Conflict =================>');
-        return 'noConflict';
       }
 
       setProcessMerge(false);
