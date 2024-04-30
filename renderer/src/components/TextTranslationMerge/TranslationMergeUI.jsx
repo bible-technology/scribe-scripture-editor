@@ -490,7 +490,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
 
   // handle conflict check for a book on book nav
   useEffect(() => {
-    if (!loading && usfmJsons?.conflictMeta && selectedBook) {
+    if (!loading && usfmJsons?.conflictMeta) {
+      // if (!loading && usfmJsons?.conflictMeta && selectedBook) {
       (async () => {
         setLoading(true);
         if (conflictedChapters[selectedBook]) {

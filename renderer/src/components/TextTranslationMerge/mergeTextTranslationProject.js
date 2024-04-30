@@ -2,9 +2,12 @@ import updateTranslationSB from '@/core/burrito/updateTranslationSB';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
 
-export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta, triggerSnackBar) => {
+export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta, triggerSnackBar, startOver = false) => {
   try {
     // update the metadata of current md5 --- updateTranslationSB (src/core/burrito/)
+    console.log({
+ incomingPath, currentUser, incomingMeta, startOver,
+});
     const fse = window.require('fs-extra');
     const fs = window.require('fs');
     const path = require('path');
@@ -50,16 +53,20 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
         const sourceProjectPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects', projectDirName);
         let existingIncomingMeta;
         let isNewProjectMerge = true;
+        console.log({ isNewProjectMerge });
         if (!fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+          console.log('not exist directory ===========');
           fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
           await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
+          console.log('After copy 0000000000000000000');
           // commit existing changes before merge start
           const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
-          const backupMessage = `Scribe Internal Commit Before Text Merge Start : ${projectDirName}  : ${new Date()}`;
+          const backupMessage = `Scribe Internal Commit Before Text Merge Start : ${projectDirName}  : ${new Date()} , startOver : ${startOver}`;
           await commitChanges(fs, sourceProjectPath, commitAuthor, backupMessage, true);
         } else {
           isNewProjectMerge = false;
-          // read existing meta of incoming instead of using the new because the merge is inprogress
+          // read existing meta of incoming instead of using the new because the merge is
+          console.log('exist directory ===========xxxxxxxxxx');
           if (fs.existsSync(path.join(path.join(USFMMergeDirPath, projectDirName, 'incoming', 'metadata.json')))) {
             existingIncomingMeta = fs.readFileSync(path.join(path.join(USFMMergeDirPath, projectDirName, 'incoming', 'metadata.json')), 'utf-8');
             existingIncomingMeta = JSON.parse(existingIncomingMeta);

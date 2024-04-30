@@ -18,7 +18,7 @@ import * as logger from '../../logger';
 import ConfirmationModal from '../editor/ConfirmationModal';
 import burrito from '../../lib/BurritoTemplete.json';
 import { mergeProject } from './Import/mergeProject';
-
+import packageInfo from '../../../../package.json';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { mergeTextTranslationProject } from '@/components/TextTranslationMerge/mergeTextTranslationProject';
 
@@ -47,6 +47,12 @@ export default function ImportProjectPopUp(props) {
     title: '',
     confirmMessage: '',
     buttonName: '',
+    buttonName2: {
+      active: false,
+      loading: false,
+      name: null,
+      action: () => {},
+    }
     });
   const { action: { FetchProjects } } = useContext(AutographaContext);
   const {
@@ -71,14 +77,13 @@ export default function ImportProjectPopUp(props) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
     removeExtractedZipDir()
     setValid(false);
-    setSbData()
-    setFolderPath()
     closePopUp(false);
     setShow(false);
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
   }
 
   const openFileDialogSettingData = async () => {
+    setFolderPath()
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
     // const options = { properties: ['openFile','openDirectory'] };
     const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
@@ -137,7 +142,14 @@ export default function ImportProjectPopUp(props) {
       title: '',
       confirmMessage: '',
       buttonName: '',
+      buttonName2: {
+        active: false,
+        loading: false,
+        name: null,
+        action: () => {},
+      }
     });
+    setProcessMerge(false)
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
   };
 
@@ -180,12 +192,37 @@ export default function ImportProjectPopUp(props) {
       callImport(false);
     }
   };
+
+  const startTextTranslationMergeProcess = async (startOver=false) => {
+    try {
+      if(startOver) {
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+        await fs.rmSync(path.join(USFMMergeDirPath,projectDirName), { recursive: true, force: true });
+      }
+      // start conflict checks continue / start over
+      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar, startOver)
+      console.log("completed merge idenitfy process ------");
+      setSbData({});
+      setFolderPath()
+    } catch(err) {
+      setSbData({});
+      console.error("error in merge process : ", err);
+    }
+  }
   
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
       checkBurritoVersion();
-    } else {
+    }
+    else if(model.buttonName === t('label-startover')) {
+      startTextTranslationMergeProcess(true)
+    }
+    else {
       callImport(true);
     }
   };
@@ -200,19 +237,42 @@ export default function ImportProjectPopUp(props) {
     }else if (sbData?.burritoType === 'scripture / textTranslation') {
       console.log("Started Indentify Merge conflicts ------");
       try {
-        await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar)
-        console.log("completed merge idenitfy process ------");
+        // confirm the user need to comtinue or start over the conflict process before move
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+        if(fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+          console.log("in IF ###############");
+          setModel({
+            openModel: true,
+            title: "Confirm",
+            confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
+            buttonName: t('label-startover'),
+            buttonName2 : {
+              active: true,
+              loading: false,
+              name:t('label-continue'),
+              action: () => startTextTranslationMergeProcess(false),
+            }
+          });
+        } else {
+          console.log("in ELSE ###############");
+          await startTextTranslationMergeProcess(false)
+        }
       } catch(err) {
-
+        setMerge(false)
+        setProcessMerge(false)
+        console.log("error merge fucntion : ", err);
       }
     }
     setMerge(false)
-    setSbData({});
     close()
     logger.debug('importProjectPopUp.js', 'git merge process done');
   }
 
-  console.log({sbData});
+  console.log({sbData, model});
 
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
@@ -230,6 +290,12 @@ export default function ImportProjectPopUp(props) {
           title: t('modal-title-replace-resource'),
           confirmMessage: t('dynamic-msg-confirm-replace-resource'),
           buttonName: t('btn-replace'),
+          buttonName2 : {
+            active: merge,
+            loading: processMerge,
+            name:t('label-merge'),
+            action: () => MergeFunction(),
+          }
         });
       } else {
         logger.debug('ImportProjectPopUp.js', 'Its a new project');
@@ -428,12 +494,7 @@ export default function ImportProjectPopUp(props) {
         confirmMessage={model.confirmMessage}
         buttonName={model.buttonName}
         closeModal={() => callFunction()}
-        buttonName2={{
-          active: merge,
-          loading: processMerge,
-          name:t('label-merge'),
-          action: () => MergeFunction(),
-        }}
+        buttonName2={model?.buttonName2}
       />
     </>
   );
