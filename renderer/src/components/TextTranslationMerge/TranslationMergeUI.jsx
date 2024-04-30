@@ -16,6 +16,7 @@ import UsfmConflictEditor from './UsfmConflictEditor';
 import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
+import { useGrammartoPerf } from '@/hooks2/useGrammartoPerf';
 
 const grammar = require('usfm-grammar');
 const path = require('path');
@@ -39,8 +40,14 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const [selectedBook, setSelectedBook] = useState();
   const [conflictedChapters, setConflictedChapters] = useState({});
   const [chapterResolveDone, setChapterResolveDone] = useState(false);
-  const [finishedConflict, setFinishedConflict] = useState(false);
-  const [resolvedChapters, setResolvedChapters] = useState({});
+  const [finishedConflict, setFinishedConflict] = useState([]);
+  // const [resolvedChapters, setResolvedChapters] = useState({});
+
+  const [currentPerfInputArr, setCurrentPerfInputArr] = useState([]);
+  const [currentPerfResolveBookCode, setCurrentPerfResolveBookCode] = useState('');
+  const [generatedPerfUSFM, setGeneratedPerfUSFM] = useState();
+
+  useGrammartoPerf(currentPerfInputArr, currentPerfResolveBookCode, setGeneratedPerfUSFM);
 
   const removeSection = async (abort = false) => {
     if (abort === false) {
@@ -98,6 +105,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
+    console.log('READ ON CONTINUE LOAD ========> ', usfmJsons.conflictMeta.incomingPath, ' selected : ', selectedBook);
     const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
@@ -151,13 +159,83 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     setLoading(false);
   };
 
-  const handleFinishedResolution = async () => {
+  console.log('PERF STATES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', { currentPerfInputArr, currentPerfResolveBookCode });
+
+  // Previous function to handle all books together ( JSON => usfm all together at the end )
+  // const handleFinishedResolution = async () => {
+  //   const fs = window.require('fs');
+
+  //   flushSync(() => {
+  //     setLoading(true);
+  //     setFinishedConflict(false);
+  //   });
+
+  //   const resolvedBooks = { ...usfmJsons };
+  //   delete resolvedBooks.conflictMeta;
+
+  //   const currentSourceMeta = usfmJsons?.conflictMeta?.currentMeta;
+
+  //   // TODO : Disable all clicks when loading is true
+
+  //   const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
+  //   // loop over the resolved books
+  //   // eslint-disable-next-line no-restricted-syntax
+  //   for (const bookName of Object.keys(resolvedBooks)) {
+  //     const resolvedMergeJson = resolvedBooks[bookName]?.mergeJson;
+  //     // eslint-disable-next-line no-await-in-loop
+  //     const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
+
+  //     // TODO : convert here to PERF
+
+  //     const perfUSFM = '';
+
+  //     // overwrite the source file with new file
+  //     fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), generatedUSFM);
+
+  //     // get and update the usfms ingredients
+  //     const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`));
+  //     currentSourceMeta.ingredients[bookName].checksum.md5 = md5(generatedUSFM);
+  //     currentSourceMeta.ingredients[bookName].size = stat.size;
+  //   }
+
+  //   // write updated metadata here
+  //   fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(currentSourceMeta));
+
+  //   // remove .merge/project
+  //   await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
+  //   // commit all changes after merge finish
+  //   const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+  //   const backupMessage = `Scribe Internal Commit After Text Merge Finish : ${usfmJsons.conflictMeta.projectFullName}  : ${new Date()}`;
+  //   await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
+
+  //   setLoading(false);
+  //   triggerSnackBar('success', 'Conflict Resolved Successfully');
+  //   closeMergeWindow();
+  // };
+
+  const handleFinishMergeProcess = async () => {
+    try {
+      setLoading(true);
+      console.log('Done everything ');
+      const fs = window.require('fs');
+      // remove temp merge path of project
+      await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
+      setLoading(false);
+      triggerSnackBar('success', 'Conflict Resolved Successfully');
+      closeMergeWindow();
+    } catch (err) {
+      console.error('Error Finish Process : ', err);
+      setLoading(false);
+    }
+  };
+
+  const handleFinishedBookResolution = async () => {
     const fs = window.require('fs');
 
-    flushSync(() => {
-      setLoading(true);
-      setFinishedConflict(false);
-    });
+    // flushSync(() => {
+    //   setLoading(true);
+    //   // setFinishedConflict((prev) => ([...prev, currentBook]));
+    // });
 
     const resolvedBooks = { ...usfmJsons };
     delete resolvedBooks.conflictMeta;
@@ -167,83 +245,113 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     // TODO : Disable all clicks when loading is true
 
     const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
-    // loop over the resolved books
-    // eslint-disable-next-line no-restricted-syntax
-    for (const bookName of Object.keys(resolvedBooks)) {
-      const resolvedMergeJson = resolvedBooks[bookName]?.mergeJson;
-      // eslint-disable-next-line no-await-in-loop
-      const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
 
-      // TODO : convert here to PERF
+    // work on single book
+    const resolvedMergeJson = resolvedBooks[selectedBook]?.mergeJson;
+    const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
 
-      const perfUSFM = '';
-
-      // overwrite the source file with new file
-      fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), perfUSFM);
-
-      // get and update the usfms ingredients
-      const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`));
-      currentSourceMeta.ingredients[bookName].checksum.md5 = md5(generatedUSFM);
-      currentSourceMeta.ingredients[bookName].size = stat.size;
+    if (generatedUSFM && resolvedMergeJson.book.bookCode) {
+      setCurrentPerfInputArr([{
+        selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
+        bookCode: resolvedMergeJson.book.bookCode.toLowerCase(),
+        data: generatedUSFM,
+      }]);
+      setCurrentPerfResolveBookCode(resolvedMergeJson.book.bookCode.toUpperCase());
+    } else {
+      console.error('Can not generate usfm of current book : ', selectedBook);
     }
 
+    // // loop over the resolved books
+    // // eslint-disable-next-line no-restricted-syntax
+    // for (const bookName of Object.keys(resolvedBooks)) {
+    //   const resolvedMergeJson = resolvedBooks[bookName]?.mergeJson;
+    //   // eslint-disable-next-line no-await-in-loop
+    //   const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
+
+    //   // TODO : convert here to PERF
+
+    //   const perfUSFM = '';
+
+    //   // overwrite the source file with new file
+    //   fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), generatedUSFM);
+
+    //   // get and update the usfms ingredients
+    //   const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`));
+    //   currentSourceMeta.ingredients[bookName].checksum.md5 = md5(generatedUSFM);
+    //   currentSourceMeta.ingredients[bookName].size = stat.size;
+
     // write updated metadata here
-    fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(currentSourceMeta));
+    // fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(currentSourceMeta));
 
-    // remove .merge/project
-    await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
-    // commit all changes after merge finish
-    const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
-    const backupMessage = `Scribe Internal Commit After Text Merge Finish : ${usfmJsons.conflictMeta.projectFullName}  : ${new Date()}`;
-    await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
+    // // remove .merge/project
+    // await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
+    // // commit all changes after merge finish
+    // const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+    // const backupMessage = `Scribe Internal Commit After Text Merge Finish : ${usfmJsons.conflictMeta.projectFullName}  : ${new Date()}`;
+    // await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
 
-    setLoading(false);
-    triggerSnackBar('success', 'Conflict Resolved Successfully');
-    closeMergeWindow();
+    // setLoading(false);
+    // triggerSnackBar('success', 'Conflict Resolved Successfully');
+    // closeMergeWindow();
   };
 
   // Function to write back the current usfmJSON data as config in the .merge
   const writeBackConflictConfigData = async (projectFullName, configData) => {
-    const fs = window.require('fs');
-    const newpath = localStorage.getItem('userPath');
-    const path = require('path');
-    localforage.getItem('userProfile').then((user) => {
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-      if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
-        fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
-      }
-      fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify(configData));
-    });
+    try {
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const path = require('path');
+      localforage.getItem('userProfile').then((user) => {
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
+        if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
+          fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
+        }
+        fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify(configData));
+        setLoading(false);
+      });
+    } catch (err) {
+      console.error('Error Writeback config : ', err);
+      setLoading(false);
+    }
   };
 
   const resolveAndMarkDoneChapter = async () => {
-    setChapterResolveDone(false);
-    // remove current chapter from conflicted list
-    const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
-    setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
-    let isBookResolved = false;
-    if (restOfTheChapters?.length === 0) {
-      // completed conflicts for that particualr book
-      setResolvedBooks((prev) => [...prev, selectedBook]);
-      isBookResolved = true;
-    } else {
-      // current book have pending chapter , // Switch to next chapter or book
-      setSelectedChapter(restOfTheChapters[0]);
-    }
-    // store the jsons to the backend (/.merge/projectName/BookID.json)
+    try {
+      setChapterResolveDone(false);
+      // remove current chapter from conflicted list
+      const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
+      setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
+      let isBookResolved = false;
+      if (restOfTheChapters?.length === 0) {
+        // completed conflicts for that particualr book
+        flushSync(() => {
+          setLoading(true);
+        });
+        await handleFinishedBookResolution(selectedBook);
+        setResolvedBooks((prev) => [...prev, selectedBook]);
+        isBookResolved = true;
+      } else {
+        // current book have pending chapter , // Switch to next chapter or book
+        setSelectedChapter(restOfTheChapters[0]);
+      }
+      // store the jsons to the backend (/.merge/projectName/BookID.json)
 
-    const { projectFullName } = usfmJsons.conflictMeta;
+      // const { projectFullName } = usfmJsons.conflictMeta;
 
-    // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
-    const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
-    // initial time (if resolved chapters exist for the project)
-    if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
-      currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters: restOfTheChapters, isBookResolved };
-    } else {
-      currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters: restOfTheChapters, isBookResolved } };
+      // // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
+      // const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
+      // // initial time (if resolved chapters exist for the project)
+      // if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
+      //   currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters: restOfTheChapters, isBookResolved };
+      // } else {
+      //   currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters: restOfTheChapters, isBookResolved } };
+      // }
+      // setUsfmJsons(currentUSFMJsonsData);
+      // await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
+    } catch (err) {
+      console.error('Failed resolve book : ', err);
+      setLoading(false);
     }
-    setUsfmJsons(currentUSFMJsonsData);
-    await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
   };
 
   /**
@@ -297,6 +405,66 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     conflictData, conflictedChapters, resolvedBooks, finishedConflict,
   });
 
+  /**
+   * Function overwrite the org usmf with generated perf usfm
+   * update config of the merge
+   * update metadata with new perf data
+   * reset perf states
+   */
+  const writeBackPerfUSFMandUpdateConfig = async (generatedPerfUSFM) => {
+    try {
+      console.log('generated perf in useEffect &&&&&&&&&&&&&&&&&&&&&&&& : ', generatedPerfUSFM);
+      const fs = window.require('fs');
+      setChapterResolveDone(false);
+      setCurrentPerfInputArr([]);
+      const { projectFullName } = usfmJsons.conflictMeta;
+
+      // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
+      const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
+      // initial time (if resolved chapters exist for the project)
+      if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
+        currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters, isBookResolved: true };
+      } else {
+        currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters, isBookResolved: true } };
+      }
+      setUsfmJsons(currentUSFMJsonsData);
+
+      // overwrite the source file with new file
+      // const currentSourceMeta = usfmJsons?.conflictMeta?.currentMeta;
+      // work on single book
+      const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
+      fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${currentPerfResolveBookCode.toUpperCase()}.usfm`), generatedPerfUSFM);
+
+      const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${currentPerfResolveBookCode.toUpperCase()}.usfm`));
+
+      // read source meta - update the for the current book - write back
+      const sourceMeta = fs.readFileSync(path.join(sourceIngredientPath, 'metadata.json'));
+      const sourceMetaJson = JSON.parse(sourceMeta);
+      sourceMetaJson.ingredients[selectedBook].checksum.md5 = md5(generatedPerfUSFM);
+      sourceMetaJson.ingredients[selectedBook].size = stat.size;
+      fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(sourceMetaJson));
+
+      // commit for the overwritten usfm
+      const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+      const backupMessage = `Scribe Internal Commit - conflict resolved for book : ${currentPerfResolveBookCode.toUpperCase()}  : ${new Date()}`;
+      await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
+
+      await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
+      setCurrentPerfResolveBookCode('');
+      setLoading(false);
+    } catch (err) {
+      console.error('error writeBackPerfUSFMandUpdateConfig : ', err);
+      setLoading(false);
+    }
+  };
+
+  // perf updation handle
+  useEffect(() => {
+    if (generatedPerfUSFM) {
+      writeBackPerfUSFMandUpdateConfig(generatedPerfUSFM);
+    }
+  }, [generatedPerfUSFM]);
+
   // useEffect to trigger comleted all conflict Resolution
   useEffect(() => {
     console.log('finish check =============> ', resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length.length);
@@ -322,7 +490,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
 
   // handle conflict check for a book on book nav
   useEffect(() => {
-    if (!loading && usfmJsons?.conflictMeta) {
+    if (!loading && usfmJsons?.conflictMeta && selectedBook) {
       (async () => {
         setLoading(true);
         if (conflictedChapters[selectedBook]) {
@@ -378,7 +546,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
             </div>
 
             {/* contents section */}
-            <div className="bg-[#e7e7e7] w-[80vw] h-[80vh]">
+            <div className={`bg-[#e7e7e7] w-[80vw] h-[80vh] ${loading && 'pointer-events-none'}`}>
               <div className="p-2 h-full border grid grid-cols-6 gap-2">
 
                 <TranslationMergNavBar
@@ -444,23 +612,25 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
                       finishedConflict ? (
                         <button
                           type="button"
-                          onClick={() => handleFinishedResolution()}
+                          onClick={() => handleFinishMergeProcess()}
                           className="px-4 py-1  rounded-md uppercase bg-success/75 cursor-pointer hover:bg-success text-white"
                         >
                           Finish
                         </button>
                       ) : (
 
-                        <button
-                          type="button"
-                          onClick={() => resolveAndMarkDoneChapter()}
-                          disabled={!chapterResolveDone}
-                          className={`px-4 py-1  rounded-md uppercase
+                        !resolvedBooks.includes(selectedBook) && (
+                          <button
+                            type="button"
+                            onClick={() => resolveAndMarkDoneChapter()}
+                            disabled={!chapterResolveDone}
+                            className={`px-4 py-1  rounded-md uppercase
                         ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '}
                         `}
-                        >
-                          Resolve
-                        </button>
+                          >
+                            {conflictedChapters?.[selectedBook]?.length <= 1 ? 'Resolve Book' : 'Done'}
+                          </button>
+                        )
                       )
                     )}
                   </div>
