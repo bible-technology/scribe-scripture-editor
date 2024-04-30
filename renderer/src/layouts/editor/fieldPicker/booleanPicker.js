@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Checkbox } from '@mui/material';
 
-export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang,open }) {
+export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang,open=true }) {
 	const [selected, setSelected] = useState(false);
 
 	useEffect(() => {

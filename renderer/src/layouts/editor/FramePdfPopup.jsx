@@ -5,7 +5,6 @@ import React, {
 	Fragment,
 	useEffect,
 } from 'react';
-import Button from '@material-ui/core/Button';
 import { Dialog, Transition } from '@headlessui/react';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { SnackBar } from '@/components/SnackBar';
@@ -103,6 +102,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 			<Transition
 				show={openPdfPopup}
 				as={Fragment}
+				style={{ marginTop: 10 }}
 				enter='transition duration-100 ease-out'
 				enterFrom='transform scale-95 opacity-0'
 				enterTo='transform scale-100 opacity-100'
@@ -125,7 +125,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 							width: '80%',
 							alignContent: 'center',
 							alignItems: 'center',
-							marginTop: 5,
+							marginTop: 10,
 							justifyContent: 'center', // Add this line to center horizontally
 							margin: 'auto',
 							position: 'relative',
@@ -163,7 +163,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 									paddingTop: 10,
 									paddingBottom: 10,
 								}}>
-								<Button
+								<div
 									onClick={() => setCurrentTab(0)}
 									size='tiny'
 									style={
@@ -171,7 +171,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 											? tabStyleSelected
 											: tabStyleNotSelected
 									}>
-									{/* <text
+									<text
 										style={
 											currentTab === 0
 												? fontStyle
@@ -181,9 +181,9 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 												  }
 										}>
 										PDF
-									</text> */}
-								</Button>
-								<Button
+									</text>
+								</div>
+								<div
 									onClick={() => setCurrentTab(1)}
 									style={
 										currentTab === 1
@@ -201,8 +201,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 										}>
 										Korennumi
 									</text>
-								</Button>
-								<Button
+								</div>
+								<div
 									onClick={() => setCurrentTab(2)}
 									style={
 										currentTab === 2
@@ -220,7 +220,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 										}>
 										Word
 									</text>
-								</Button>
+								</div>
 							</div>
 						</div>
 
@@ -233,11 +233,11 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 								<div
 									style={{ backgroundColor: '#EEEEEE' }}
 									className='bg-gray-50 items-center  justify-between w-full h-full'>
-									{/* {currentTab === 0 ? (
+									{currentTab === 0 ? (
 										<InnerFramePopup />
 									) : (
 										<div>no Tab</div>
-									)} */}
+									)}
 								</div>
 							</div>
 						</div>
@@ -266,6 +266,7 @@ const tabStyleNotSelected = {
 	borderWidth: 2,
 	borderColor: '#F50',
 	backgroundColor: '#E3E3E3',
+	padding: 5,
 };
 
 const tabStyleSelected = {
@@ -279,6 +280,7 @@ const tabStyleSelected = {
 	borderWidth: 2,
 	borderColor: '#F50',
 	backgroundColor: '#F50',
+	padding: 5,
 };
 const fontStyle = {
 	color: '#FFF',
@@ -292,6 +294,7 @@ const fontStyle = {
 };
 
 function creatSection(folder, pickerJson) {
+	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
 	const fs = window.require('fs');
@@ -307,6 +310,7 @@ function creatSection(folder, pickerJson) {
 			'/',
 			'metadata.json',
 		);
+		console.log(project);
 		if (fs.existsSync(currentMetadataPath)) {
 			let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
 			let jsonParse = JSON.parse(jsontest);
@@ -322,75 +326,121 @@ function creatSection(folder, pickerJson) {
 			}
 
 			let fileName, tmpScope, tmpRangeScope;
-
-			for (let [pathKey, val] of Object.entries(jsonParseIngre)) {
-				fileName = pathKey.split('/')[1];
-				tmpRangeScope = '';
-				tmpScope = val.scope
-					? Object.entries(val.scope)
-							.map((key) => {
-								tmpRangeScope = key[0];
-								if (key[1] && key[1][0])
-									tmpRangeScope += ':' + key[1];
-								return tmpRangeScope;
-							})
-							.join(', ')
-					: '';
-
-				if (
-					fileName !== 'scribe-settings.json' &&
-					fileName !== 'license.md' &&
-					fileName !== 'versification.json' &&
-					fileName !== 'LICENSE.md' &&
-					fileName !== 'manifest.yaml' &&
-					fileName !== 'media.yaml'
-				) {
-					if (
-						jsonParse?.type?.flavorType?.flavor?.name ===
-						'textTranslation'
-					) {
-						pickerJson.book[projectS + ' ' + tmpScope] = {
-							description: `${fileName} from project ${projectS}`,
-							language: jsonParse.meta.defaultLocale,
-							src: {
-								type: 'fs',
-								path: `${folder}/${project}/${pathKey}`,
-							},
-							books: val.scope ? Object.keys(val.scope) : [],
-						};
-					} else if (
-						jsonParse?.meta?.flavor === 'x-OBSTranslationNotes'
-					) {
-						fileName = jsonParseIngre[pathKey].path.split('/')[1];
-						pickerJson['OBS-TN'][projectS + ' ' + tmpScope] = {
-							description: `${fileName} from project ${projectS}`,
-							language: jsonParse.meta.defaultLocale,
-							src: {
-								type: 'fs',
-								path: `${folder}/${project}/${fileName}`,
-							},
-							books: val.scope ? Object.keys(val.scope) : [],
-						};
-					} else if (
-						jsonParse?.type?.flavorType?.flavor?.name ===
-						'textStories'
-					) {
-						fileName = 'content';
-						pickerJson.OBS[
-							`OBS ${jsonParse.resourceMeta.full_name}`
-						] = {
-							description: `OBS ${jsonParse.resourceMeta.full_name}`,
-							language: jsonParse.meta.defaultLocale,
-							src: {
-								type: 'fs',
-								path: `${folder}/${project}/${fileName}`,
-							},
-							books: [],
-						};
-						break;
-					}
+			if (
+				jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation'
+			) {
+				if (jsonParse.resourceMeta) {
+					pickerJson.book[jsonParse.resourceMeta?.full_name] = {
+						description: `${jsonParse.resourceMeta?.full_name}`,
+						language: `${jsonParse.resourceMeta?.language}`,
+						src: {
+							type: 'fs',
+							path: `${folder}/${project}`,
+						},
+						books: [],
+					};
+				} else if (jsonParse.identification) {
+					pickerJson.book[
+						jsonParse.identification.name[
+							jsonParse.languages[0].tag
+						]
+					] = {
+						description: `${
+							jsonParse.identification.name[
+								jsonParse.languages[0].tag
+							]
+						}`,
+						language: `${jsonParse.languages[0].tag}`,
+						src: {
+							type: 'fs',
+							path: `${folder}/${project}`,
+						},
+						books: [],
+					};
 				}
+			} else if (
+				jsonParse?.type?.flavorType?.flavor?.name === 'textStories'
+			) {
+				fileName = 'content';
+				pickerJson.OBS[`OBS ${jsonParse.resourceMeta?.full_name}`] = {
+					description: `OBS ${jsonParse.resourceMeta?.full_name}`,
+					language: jsonParse.meta.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${folder}/${project}/${fileName}`,
+					},
+					books: [],
+				};
 			}
+
+			// for (let [pathKey, val] of Object.entries(jsonParseIngre)) {
+			// 	fileName = pathKey.split('/')[1];
+			// 	tmpRangeScope = '';
+			// 	tmpScope = val.scope
+			// 		? Object.entries(val.scope)
+			// 				.map((key) => {
+			// 					tmpRangeScope = key[0];
+			// 					if (key[1] && key[1][0])
+			// 						tmpRangeScope += ':' + key[1];
+			// 					return tmpRangeScope;
+			// 				})
+			// 				.join(', ')
+			// 		: '';
+
+			// 	if (
+			// 		fileName !== 'scribe-settings.json' &&
+			// 		fileName !== 'license.md' &&
+			// 		fileName !== 'versification.json' &&
+			// 		fileName !== 'LICENSE.md' &&
+			// 		fileName !== 'manifest.yaml' &&
+			// 		fileName !== 'media.yaml'
+			// 	) {
+			// 		if (
+			// 			jsonParse?.type?.flavorType?.flavor?.name ===
+			// 			'textTranslation'
+			// 		) {
+			// 			pickerJson.book[projectS + ' ' + tmpScope] = {
+			// 				description: `${fileName} from project ${projectS}`,
+			// 				language: jsonParse.meta.defaultLocale,
+			// 				src: {
+			// 					type: 'fs',
+			// 					path: `${folder}/${project}/${pathKey}`,
+			// 				},
+			// 				books: val.scope ? Object.keys(val.scope) : [],
+			// 			};
+			// 		} else if (
+			// 			jsonParse?.meta?.flavor === 'x-OBSTranslationNotes'
+			// 		) {
+			// 			fileName = jsonParseIngre[pathKey].path.split('/')[1];
+			// 			pickerJson['OBS-TN'][projectS + ' ' + tmpScope] = {
+			// 				description: `${fileName} from project ${projectS}`,
+			// 				language: jsonParse.meta.defaultLocale,
+			// 				src: {
+			// 					type: 'fs',
+			// 					path: `${folder}/${project}/${fileName}`,
+			// 				},
+			// 				books: val.scope ? Object.keys(val.scope) : [],
+			// 			};
+			// 		} else if (
+			// 			jsonParse?.type?.flavorType?.flavor?.name ===
+			// 			'textStories'
+			// 		) {
+			// 			fileName = 'content';
+			// 			pickerJson.OBS[
+			// 				`OBS ${jsonParse.resourceMeta.full_name}`
+			// 			] = {
+			// 				description: `OBS ${jsonParse.resourceMeta.full_name}`,
+			// 				language: jsonParse.meta.defaultLocale,
+			// 				src: {
+			// 					type: 'fs',
+			// 					path: `${folder}/${project}/${fileName}`,
+			// 				},
+			// 				books: [],
+			// 			};
+			// 			break;
+			// 		}
+			// 	}
+			// }
 		}
 	}
 }

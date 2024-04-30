@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 
 import { NumericFormat } from 'react-number-format';
 
-export function IntPicker({ fieldInfo, setJsonSpec, require, lang,open }) {
+export function IntPicker({ fieldInfo, setJsonSpec, require, lang,open=true }) {
   const [value, setValue] = useState('');
   useEffect(() => {
     setJsonSpec((prev) => {

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { Checkbox } from "@material-ui/core";
 import { useEffect } from "react";
-export function ListPicker({ fieldInfo, require, setJsonSpec, lang,open }) {
+export function ListPicker({ fieldInfo, require, setJsonSpec, lang,open=true }) {
   const [list, setList] = React.useState([]);
 
   useEffect(() => {

@@ -165,6 +165,9 @@ export default function InnerFramePopup() {
 				height: '100%',
 				backgroundColor: '#FFFFFF',
 				width: '100%',
+				borderBottomWidth:2,
+				borderStyle:'solid',
+				borderColor:'#EEEEEE',
 			}}>
 			<div
 				style={{
@@ -287,158 +290,206 @@ export default function InnerFramePopup() {
 					{selectOption('Pages', 'pages', jxl2.pages, handleChange)}
 					{selectOption('Sizes', 'sizes', jxl2.sizes, handleChange)}
 				</div>
-				<div
-					style={{
-						fontFamily: "Lato",
-						fontWeight: 400,
-						display: 'flex',
-						fontSize: 24,
-						justifyContent: 'center',
-						color: 'Black',
-						padding: 12,
-						justifyContent:'left'
-					}}>
-					Content
-				</div>
-				<div style={{ display: 'flex' }}>
+				<div style={{ padding: 5 }}>
 					<div
 						style={{
 							display: 'flex',
-							alignItems: 'center',
-							color: 'black',
-							fontFamily: "Lato",
-						fontWeight: 400,
-						fontSize: 20,
-
+							flexDirection: 'row',
+							justifyContent: 'space-between',
 						}}>
-						advanced
+						<div
+							style={{
+								fontFamily: 'Lato',
+								fontWeight: 400,
+								display: 'flex',
+								fontSize: 24,
+								justifyContent: 'center',
+								color: 'Black',
+								padding: 12,
+								justifyContent: 'left',
+							}}>
+							Content
+						</div>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								color: 'black',
+								fontFamily: 'Lato',
+								fontWeight: 400,
+								fontSize: 20,
+							}}>
+							advanced mode
+						</div>
 					</div>
-					<StyledSwitch
-						onChange={() => setAdvenceMode((prev) => !prev)}
-					/>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+						}}>
+						<div
+							style={{
+								backgroundColor: '#464646',
+								borderRadius: 25,
+								justifyContent: 'center',
+								color: 'white',
+								alignContent: 'center',
+								justifyItems: 'center',
+								textAlign: 'center',
+								alignItems: 'center',
+								paddingTop: 5,
+								paddingBottom: 5,
+								paddingLeft: 11,
+								paddingRight: 11,
+							}}
+							onClick={() => {}}>
+							Reset parameters
+						</div>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								marginRight:25,
+							}}>
+							<StyledSwitch
+								onChange={() => setAdvenceMode((prev) => !prev)}
+							/>
+							<div
+								style={{
+									alignSelf: 'center',
+									display: 'flex',
+									alignItems: 'center',
+									color: 'black',
+									fontFamily: 'Lato',
+									fontWeight: 400,
+									fontSize: 20,
+								}}>
+								{advanceMode ? 'On' : 'Off'}
+							</div>
+						</div>
+					</div>
+					<ul className={'sortable-TESTWRAPPER-list'}>
+						{Object.keys(selected).map((k, index) => {
+							if (selected[k].type === 'obsWrapper') {
+								return (
+									<li
+										id={'PREMUER'}
+										className={'sortable-test1-item'}
+										draggable='true'
+										key={'PREMUER'}
+										style={{ margin: 10 }}>
+										<OBSWrapperSortableList
+											setFinalPrint={setSelected}
+											wrapperType={selected[k].type}
+											keyWrapper={k}
+											setUpdate={setUpdate}
+											advanceMode={advanceMode}
+											changePrintData={setSelected}
+											changePrintOrder={setOrderSelection}
+										/>
+									</li>
+								);
+							}
+							if (selected[k].type === 'bcvWrapper') {
+								return (
+									<li
+										id={'PREMUER'}
+										className={'sortable-test1-item'}
+										draggable='true'
+										key={'PREMUER'}
+										style={{ margin: 10 }}>
+										<BCVWrapperSortableList
+											setFinalPrint={setSelected}
+											wrapperType={selected[k].type}
+											keyWrapper={k}
+											setUpdate={setUpdate}
+											advanceMode={advanceMode}
+											changePrintData={setSelected}
+											changePrintOrder={setOrderSelection}
+										/>
+									</li>
+								);
+							}
+						})}
+					</ul>
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'center',
+							padding: 15,
+						}}>
+						<div
+							style={{
+								borderRadius: 4,
+								backgroundColor: '#F50',
+								borderStyle: 'solid',
+								borderColor: '#F50',
+								color: 'white',
+							}}
+							onClick={() => handleOpenModal(true)}>
+							Wrapper
+						</div>
+						<div
+							style={{
+								borderRadius: 4,
+								backgroundColor: '#F50',
+								borderStyle: 'solid',
+								borderColor: '#F50',
+								color: 'white',
+								padding: 15,
+							}}
+							onClick={() => {
+								console.log({
+									order: orderSelection,
+									metaData: JSON.parse(metaInfo),
+									content: selected,
+								});
+							}}>
+							Print
+						</div>
+					</div>
 				</div>
-				<ul className={'sortable-TESTWRAPPER-list'}>
-					{Object.keys(selected).map((k, index) => {
-						if (selected[k].type === 'obsWrapper') {
-							return (
-								<li
-									id={'PREMUER'}
-									className={'sortable-test1-item'}
-									draggable='true'
-									key={'PREMUER'}
-									style={{ margin: 10 }}>
-									<OBSWrapperSortableList
-										setFinalPrint={setSelected}
-										wrapperType={selected[k].type}
-										keyWrapper={k}
-										setUpdate={setUpdate}
-										advanceMode={advanceMode}
-										changePrintData={setSelected}
-										changePrintOrder={setOrderSelection}
-									/>
-								</li>
-							);
-						}
-						if (selected[k].type === 'bcvWrapper') {
-							return (
-								<li
-									id={'PREMUER'}
-									className={'sortable-test1-item'}
-									draggable='true'
-									key={'PREMUER'}
-									style={{ margin: 10 }}>
-									<BCVWrapperSortableList
-										setFinalPrint={setSelected}
-										wrapperType={selected[k].type}
-										keyWrapper={k}
-										setUpdate={setUpdate}
-										advanceMode={advanceMode}
-										changePrintData={setSelected}
-										changePrintOrder={setOrderSelection}
-									/>
-								</li>
-							);
-						}
-					})}
-				</ul>
-				<div
+				<Modal
+					open={openModal}
+					onClose={() => handleOpenModal(false)}
 					style={{
 						display: 'flex',
+						alignItems: 'center',
 						justifyContent: 'center',
-						padding: 15,
+						flexDirection: 'row',
 					}}>
 					<div
 						style={{
-							borderRadius: 4,
-							backgroundColor: '#F50',
-							borderStyle: 'solid',
-							borderColor: '#F50',
-							color: 'white',
-						}}
-						onClick={() => handleOpenModal(true)}>
-						Wrapper
-					</div>
-					<div
-						style={{
-							borderRadius: 4,
-							backgroundColor: '#F50',
-							borderStyle: 'solid',
-							borderColor: '#F50',
-							color: 'white',
-							padding: 15,
-						}}
-						onClick={() => {
-							console.log({
-								order: orderSelection,
-								metaData: JSON.parse(metaInfo),
-								content: selected,
-							});
+							backgroundColor: 'white',
+							width: '50%',
+							borderRadius: 10,
 						}}>
-						Print
-					</div>
-				</div>
-			</div>
-			<Modal
-				open={openModal}
-				onClose={() => handleOpenModal(false)}
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					flexDirection: 'row',
-				}}>
-				<div
-					style={{
-						backgroundColor: 'white',
-						width: '50%',
-						borderRadius: 10,
-					}}>
-					<div>
-						{Object.keys(init).map((c, id) => (
-							<div
-								className='pdfChoice'
-								onClick={() => {
-									setSelected((prev) => {
-										let t = { ...prev };
-										let nb = Object.keys(t).length;
-										t[nb] = { type: c, content: {} };
+						<div>
+							{Object.keys(init).map((c, id) => (
+								<div
+									className='pdfChoice'
+									onClick={() => {
+										setSelected((prev) => {
+											let t = { ...prev };
+											let nb = Object.keys(t).length;
+											t[nb] = { type: c, content: {} };
 
-										return t;
-									});
-									setOrderSelection((prev) => [
-										...prev,
-										prev.length,
-									]);
-									handleOpenModal(false);
-								}}>
-								{c}
-							</div>
-						))}
+											return t;
+										});
+										setOrderSelection((prev) => [
+											...prev,
+											prev.length,
+										]);
+										handleOpenModal(false);
+									}}>
+									{c}
+								</div>
+							))}
+						</div>
 					</div>
-				</div>
-			</Modal>
+				</Modal>
+			</div>
 		</div>
 	);
 }
-
-const buttonStyle = {};

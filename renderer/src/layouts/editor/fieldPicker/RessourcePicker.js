@@ -4,7 +4,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { Button, Modal } from '@mui/material';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 
-export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open }) {
+export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
 	useEffect(() => {
@@ -21,6 +21,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open }) {
 		actions: { setListResourcesForPdf },
 	} = useContext(ProjectContext);
 
+	console.log(listResourcesForPdf)
 	const [searchText, setSearchText] = useState('');
 	const [openModal, setOpenModal] = useState(false);
 
@@ -120,7 +121,9 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open }) {
 								onInput={handleInputSearch}
 							/>
 						</div>
+						
 						{localListResourcesForPdf ? (
+							
 							<ScriptureContentPicker
 								onSelect={(e) => {
 									setSelected(e.src.path);

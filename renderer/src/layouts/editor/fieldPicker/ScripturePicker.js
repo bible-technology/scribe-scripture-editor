@@ -7,8 +7,11 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec,lang }) {
   useEffect(() => {
     setJsonSpec((prev) => {
       const newState = JSON.parse(prev);
-      newState[fieldInfo.id] = scriptureJson;
+      console.log(JSON.parse(scriptureJson))
+      newState[fieldInfo.id] = JSON.parse(scriptureJson)
+      console.log(newState)
       return JSON.stringify(newState);
+      
     });
   }, [scriptureJson]);
 
@@ -70,13 +73,11 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec,lang }) {
           >
             {fieldInfo.typeSpec.map((f) => {
               return (
-                <div style={{ padding: 15 }}>
                   <FieldPicker
                     fieldInfo={changeIndexOfScripture(f, i + 1)}
                     setJsonSpec={setScriptureJson}
                     lang={lang}
-                  ></FieldPicker>
-                </div>
+                 />
               );
             })}
           </div>
@@ -93,6 +94,5 @@ function changeIndexOfScripture(fieldInfo, index) {
   for (const lang in label) {
     updatedLabel[lang] = label[lang].replace(/#/g, index); // Using a regular expression with the 'g' flag to replace all occurrences
   }
-
   return { id: newId, label: updatedLabel, ...rest }; // Return a new object with modified id, label, and other properties
 }

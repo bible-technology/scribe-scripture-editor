@@ -34,6 +34,7 @@ export function BCVWrapperSortableList({
 	changePrintData,
 	changePrintOrder,
 }) {
+		
 	const choice = require('../fieldPicker/specification/WrapperSection.json');
 	const listChoice = choice[wrapperType];
 	const initialBook = 'mat';
@@ -66,8 +67,6 @@ export function BCVWrapperSortableList({
 	const sortableListClassName = `sortable-${keyWrapper}-list`;
 	const itemClassName = `sortable-${keyWrapper}-item`;
 
-
-
 	console.log(selected);
 	useEffect(() => {
 		setFinalPrint((prev) => {
@@ -85,14 +84,15 @@ export function BCVWrapperSortableList({
 	}, [selected]);
 
 	useEffect(() => {
-		changePrintData(prev => {
-		const copyData = {...prev}
-		copyData[keyWrapper].ranges = []
-		for(let i = 0; i<selectedBooks.length;i++){
-			copyData[keyWrapper].ranges.push({book:selectedBooks[i]})
-		}
-		return copyData
-	})},[selectedBooks.length])	
+		changePrintData((prev) => {
+			const copyData = { ...prev };
+			copyData[keyWrapper].ranges = [];
+			for (let i = 0; i < selectedBooks.length; i++) {
+				copyData[keyWrapper].ranges.push({ book: selectedBooks[i] });
+			}
+			return copyData;
+		});
+	}, [selectedBooks.length]);
 	useEffect(() => {
 		const sortableList = document.querySelector(
 			`.${sortableListClassName}`,
@@ -159,13 +159,33 @@ export function BCVWrapperSortableList({
 		setOpenModal(isOpen);
 	};
 	return (
-		<div style={{ width: '100%', backgroundColor: '#363739', padding: 15 }}>
+		<div
+		style={
+			LoopMode
+				? {
+						width: '100%',
+						borderStyle: 'solid',
+						borderColor: '#EEEEEE',
+						borderWidth: 1,
+						backgroundColor: '#FFEEE5',
+						padding: 15,
+					}
+				: 
+				{
+						width: '100%',
+						borderStyle: 'solid',
+						borderColor: '#EEEEEE',
+						borderWidth: 1,
+						backgroundColor: '#FCFAFA',
+						padding: 15,
+					}
+		}>
 			<div style={{ display: 'flex', justifyContent: 'end' }}>
-				<div
+			<div
 					style={{
 						display: 'flex',
 						alignItems: 'center',
-						color: 'white',
+						color: 'black',
 					}}>
 					loop
 				</div>
@@ -176,7 +196,7 @@ export function BCVWrapperSortableList({
 						display: 'flex',
 						justifyContent: 'center',
 						fontSize: 24,
-						color: 'white',
+						color: 'black',
 					}}>
 					{wrapperType}
 				</div>
@@ -206,7 +226,7 @@ export function BCVWrapperSortableList({
 								changePrintData((prev) => {
 									console.log(prev);
 									const updatedSelected = {
-										...prev
+										...prev,
 									};
 									const up = {};
 
@@ -334,7 +354,6 @@ export function BCVWrapperSortableList({
 					</div>
 				</div>
 			</Modal>
-
 			<ul className={sortableListClassName}>
 				{Object.keys(JSON.parse(selected)).map((k, index) => (
 					<li
@@ -413,7 +432,7 @@ export function BCVWrapperSortableList({
 																];
 														}
 													});
-													
+
 													return JSON.stringify(up);
 												});
 											}}>
@@ -428,7 +447,6 @@ export function BCVWrapperSortableList({
 					</li>
 				))}
 			</ul>
-
 			<div
 				style={{
 					display: 'flex',

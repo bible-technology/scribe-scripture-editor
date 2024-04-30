@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 
-export function InputPicker({ fieldInfo, setJsonSpec, require,lang,open }) {
+export function InputPicker({ fieldInfo, setJsonSpec, require,lang,open=true }) {
   const [input, setInput] = useState("");
   useEffect(() => {
     setJsonSpec((prev) => {

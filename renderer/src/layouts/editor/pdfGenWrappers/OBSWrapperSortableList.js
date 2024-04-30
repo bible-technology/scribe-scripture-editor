@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import Switch from '@material-ui/core/Switch';
 import { alpha, styled } from '@material-ui/core/styles';
 import { NumericFormat } from 'react-number-format';
-import TextField from '@material-ui/core/TextField';
+import { TextField } from '@mui/material';
 import React from 'react';
 const LoopSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {
@@ -195,13 +195,32 @@ export function OBSWrapperSortableList({
 		setOpenModal(isOpen);
 	};
 	return (
-		<div style={{ width: '100%', backgroundColor: '#363739', padding: 15 }}>
+		<div
+			style={
+				LoopMode
+					? {
+							width: '100%',
+							borderStyle: 'solid',
+							borderColor: '#EEEEEE',
+							borderWidth: 1,
+							backgroundColor: '#FFEEE5',
+							padding: 15,
+					  }
+					: {
+							width: '100%',
+							borderStyle: 'solid',
+							borderColor: '#EEEEEE',
+							borderWidth: 1,
+							backgroundColor: '#FCFAFA',
+							padding: 15,
+					  }
+			}>
 			<div style={{ display: 'flex', justifyContent: 'end' }}>
 				<div
 					style={{
 						display: 'flex',
 						alignItems: 'center',
-						color: 'white',
+						color: 'black',
 					}}>
 					loop
 				</div>
@@ -212,7 +231,7 @@ export function OBSWrapperSortableList({
 						display: 'flex',
 						justifyContent: 'center',
 						fontSize: 24,
-						color: 'white',
+						color: 'black',
 					}}>
 					{wrapperType}
 				</div>
@@ -273,29 +292,31 @@ export function OBSWrapperSortableList({
 				)}
 			</div>
 			{advanceMode ? (
-				<div>
-						<TextField
-							label={'obs start'}
-							value={startObs}
-							name='numberformat'
-							onBlur={handleBlurStart}
-							id='formatted-numberformat-input'
-							InputProps={{
-								inputComponent: NumericFormatCustom,
-							}}
-							variant='standard'
-						/>
-						<TextField
-							label={'obs end'}
-							value={endObs}
-							name='numberformat'
-							onBlur={handleBlurEnd}
-							id='formatted-numberformat-input'
-							InputProps={{
-								inputComponent: NumericFormatCustom,
-							}}
-							variant='standard'
-						/>
+				<div
+					style={{
+						justifyContent: 'space-between',
+						display: 'flex',
+					}}>
+					<TextField
+						label={'obs start'}
+						value={startObs}
+						onBlur={handleBlurStart}
+						id='formatted-numberformat-input'
+						InputProps={{
+							inputComponent: NumericFormatCustom,
+						}}
+						variant='standard'
+					/>
+					<TextField
+						label={'obs end'}
+						value={endObs}
+						onBlur={handleBlurEnd}
+						id='formatted-numberformat-input'
+						InputProps={{
+							inputComponent: NumericFormatCustom,
+						}}
+						variant='standard'
+					/>
 				</div>
 			) : (
 				<></>

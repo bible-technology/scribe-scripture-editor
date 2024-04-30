@@ -62,8 +62,7 @@ export function FieldPicker({
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				lang={lang}
-				open={open}
-				></ScripturePicker>
+				open={open}></ScripturePicker>
 		);
 	} else if (
 		fieldInfo.typeName === 'translationText' ||
@@ -79,7 +78,7 @@ export function FieldPicker({
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				ressourceKey={fieldInfo.typeName}
-        require={require}
+				require={require}
 				open={open}
 			/>
 		);
@@ -90,7 +89,7 @@ export function FieldPicker({
 				fieldInfo={fieldInfo}
 				lang={lang}
 				open={open}
-        require={require}
+				require={require}
 			/>
 		);
 	} else {
