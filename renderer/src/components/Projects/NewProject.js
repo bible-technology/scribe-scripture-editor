@@ -262,7 +262,7 @@ export default function NewProject({ call, project, closeEdit }) {
       }
       
       // juxta scope != imported books
-      if (create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
+      if (call === 'new' && create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
         create = false;
         setOpenModalJuxtaWrongSetOfBooks(true);
       }
@@ -472,7 +472,7 @@ export default function NewProject({ call, project, closeEdit }) {
                     {t('btn-import-books')}
                   </button>
                   {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
-                  {headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
+                  {call !== 'edit' && headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
                   <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
                 </div>
               </div>
