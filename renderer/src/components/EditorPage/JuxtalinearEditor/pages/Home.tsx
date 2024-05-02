@@ -184,7 +184,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (!loadingSentencesInProgress && sentences[0] !== undefined
       && jsonFileContent
-      && jsonFileContent.bookCode === bookId.toUpperCase()) {
+      && jsonFileContent.bookCode.toUpperCase() === bookId.toUpperCase()) {
       sentences[0].chunks.filter(({ source }) => source[0]).forEach((chunck) => {
         chunck.source.filter(e => e);
       });
