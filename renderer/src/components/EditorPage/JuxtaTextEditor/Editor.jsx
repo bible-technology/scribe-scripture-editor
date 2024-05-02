@@ -48,6 +48,7 @@ export default function Editor(props) {
 
   const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
   const [jsonFileContent, setJsonFileContent] = useState(null);
+  const [loadingSentencesInProgress, setLoadingSentencesInProgress] = useState(true);
 
   const {
     states: { openSideBar, scrollLock },
@@ -77,9 +78,11 @@ export default function Editor(props) {
   const [userSettingsJson, setUserSettingsJson] = useState(null);
 
   const setGlobalItemArrays = (index, itemArr) => {
+    setLoadingSentencesInProgress(true);
     const newItemArrays = [...itemArrays];
     newItemArrays[index] = itemArr;
     setItemArrays(newItemArrays);
+    setLoadingSentencesInProgress(false);
   }
 
   const setGlobalSentences = (index, sentence) => {
@@ -197,9 +200,11 @@ export default function Editor(props) {
         setItemArrays([getItems(resContent.sentences)]);
       }
     }
+    setLoadingSentencesInProgress(false);
   }
 
   useEffect(() => {
+    setLoadingSentencesInProgress(true);
     tryLoadSentences();
   }, [usfmData]);
 
@@ -267,6 +272,8 @@ export default function Editor(props) {
               curIndex,
               jsonFileContent,
               userSettingsJson,
+              loadingSentencesInProgress,
+              setLoadingSentencesInProgress,
               setFileName,
               setGlobalSentences,
               setOriginText,

@@ -51,6 +51,8 @@ const Home: React.FC = () => {
     curIndex,
     fileName,
     jsonFileContent,
+    loadingSentencesInProgress,
+    setLoadingSentencesInProgress,
     setFileName,
     setGlobalTotalSentences,
     setItemArrays,
@@ -162,8 +164,27 @@ const Home: React.FC = () => {
     };
   }
 
+  const glossChangeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    n: number
+  ) => {
+    const newItemArrays = [...itemArrays[curIndex]];
+    newItemArrays[n].gloss = e.target.value;
+    const newChunks = [...sentences[curIndex].chunks];
+    newChunks[n].gloss = e.target.value;
+    setGlobalItemArrays(curIndex, newItemArrays)
+    setGlobalSentences(curIndex, remakeSentence({
+      originalSource: sentences[curIndex].originalSource,
+      chunks: newChunks,
+      sourceString: sentences[curIndex].sourceString,
+      checksum: '',
+    }));
+  }
+
   useEffect(() => {
-    if (sentences[0] !== undefined && jsonFileContent) {
+    if (!loadingSentencesInProgress && sentences[0] !== undefined
+      && jsonFileContent
+      && jsonFileContent.bookCode === bookId.toUpperCase()) {
       sentences[0].chunks.filter(({ source }) => source[0]).forEach((chunck) => {
         chunck.source.filter(e => e);
       });
@@ -333,23 +354,6 @@ const Home: React.FC = () => {
     });
     setGlobalSentences(curIndex, newSentence);
     setEditStates(new Array(newChunks.length).fill(false));
-  }
-
-  const glossChangeHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    n: number
-  ) => {
-    const newItemArrays = [...itemArrays[curIndex]];
-    newItemArrays[n].gloss = e.target.value;
-    const newChunks = [...sentences[curIndex].chunks];
-    newChunks[n].gloss = e.target.value;
-    setGlobalItemArrays(curIndex, newItemArrays)
-    setGlobalSentences(curIndex, remakeSentence({
-      originalSource: sentences[curIndex].originalSource,
-      chunks: newChunks,
-      sourceString: sentences[curIndex].sourceString,
-      checksum: '',
-    }));
   }
 
   return (
