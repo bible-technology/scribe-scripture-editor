@@ -336,18 +336,18 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       }
       // store the jsons to the backend (/.merge/projectName/BookID.json)
 
-      // const { projectFullName } = usfmJsons.conflictMeta;
+      const { projectFullName } = usfmJsons.conflictMeta;
 
-      // // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
-      // const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
-      // // initial time (if resolved chapters exist for the project)
-      // if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
-      //   currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters: restOfTheChapters, isBookResolved };
-      // } else {
-      //   currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters: restOfTheChapters, isBookResolved } };
-      // }
-      // setUsfmJsons(currentUSFMJsonsData);
-      // await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
+      // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
+      const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
+      // initial time (if resolved chapters exist for the project)
+      if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
+        currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters: restOfTheChapters, isBookResolved };
+      } else {
+        currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters: restOfTheChapters, isBookResolved } };
+      }
+      setUsfmJsons(currentUSFMJsonsData);
+      await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
     } catch (err) {
       console.error('Failed resolve book : ', err);
       setLoading(false);
@@ -417,20 +417,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       const fs = window.require('fs');
       setChapterResolveDone(false);
       setCurrentPerfInputArr([]);
-      const { projectFullName } = usfmJsons.conflictMeta;
 
-      // resolved chapters of each book and resolved books in the conflictMeta and store in the BE
-      const currentUSFMJsonsData = JSON.parse(JSON.stringify(usfmJsons));
-      // initial time (if resolved chapters exist for the project)
-      if (currentUSFMJsonsData.conflictMeta?.resolvedStatus) {
-        currentUSFMJsonsData.conflictMeta.resolvedStatus[selectedBook] = { conflictedChapters, isBookResolved: true };
-      } else {
-        currentUSFMJsonsData.conflictMeta.resolvedStatus = { [selectedBook]: { conflictedChapters, isBookResolved: true } };
-      }
-      setUsfmJsons(currentUSFMJsonsData);
-
-      // overwrite the source file with new file
-      // const currentSourceMeta = usfmJsons?.conflictMeta?.currentMeta;
       // work on single book
       const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
       fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${currentPerfResolveBookCode.toUpperCase()}.usfm`), generatedPerfUSFM);
@@ -449,7 +436,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       const backupMessage = `Scribe Internal Commit - conflict resolved for book : ${currentPerfResolveBookCode.toUpperCase()}  : ${new Date()}`;
       await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
 
-      await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
       setCurrentPerfResolveBookCode('');
       setLoading(false);
     } catch (err) {
