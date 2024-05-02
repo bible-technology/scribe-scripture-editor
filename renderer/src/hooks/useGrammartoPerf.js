@@ -41,7 +41,8 @@ export const useGrammartoPerf = (perfArr = [], selectedBook = '', setGeneratedPe
 
   console.log({ selectedDocument });
 
-  const { bookCode, h: bookName } = selectedDocument || {};
+  // const { bookCode, h: bookName } = selectedDocument || {};
+  const { bookCode } = selectedDocument || {};
   const ready = (docSetId && bookCode) || false;
 
   console.log({ bookCode, ready });

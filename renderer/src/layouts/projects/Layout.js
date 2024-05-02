@@ -9,11 +9,11 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import TranslationMergeUI from '@/components/TextTranslationMerge/TranslationMergeUI.jsx';
 import SideBar from './SideBar';
 import TopMenuBar from './TopMenuBar';
 import ImportProjectPopUp from './ImportProjectPopUp';
 import ConflictResolverUI from './Import/ConflictResolverUI';
-import TranslationMergeUI from '@/components/TextTranslationMerge/TranslationMergeUI';
 
 export default function ProjectsLayout(props) {
   const {
