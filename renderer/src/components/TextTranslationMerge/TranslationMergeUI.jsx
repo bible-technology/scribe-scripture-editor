@@ -359,10 +359,12 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
        * read usfm json data from backend
        */
   const getInprogressMergeProject = async (data) => {
+    console.log('Loading Existing Project ================= ..................', { data });
     const fs = window.require('fs');
     if (fs.existsSync(path.join(data.projectMergePath, 'usfmJsons.json'))) {
       let usfmJsonsContent = fs.readFileSync(path.join(data.projectMergePath, 'usfmJsons.json'), 'utf8');
       usfmJsonsContent = JSON.parse(usfmJsonsContent);
+      console.log({ usfmJsonsContent });
       if (usfmJsonsContent) {
         setUsfmJsons(usfmJsonsContent);
         // check the books is already resolved or not => then select current book and unresolved chapters
@@ -384,6 +386,13 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
               }
               conflictedChsOfBooks[book] = currentBook.conflictedChapters;
             }
+          }
+
+          // bookToSelect == undefined => All books in the resolved Status are completly resolved
+          if (!bookToSelect) {
+            const pendingBook = usfmJsonsContent.conflictMeta.files.find((bukName) => !(bukName in usfmJsonsContent.conflictMeta.resolvedStatus));
+            // if pendingBook == undefined means all files conflict are resolved
+            bookToSelect = pendingBook || usfmJsonsContent.conflictMeta.files[0];
           }
         } else {
           // checkpoint - stored on initially and not worked on any chapter
@@ -451,7 +460,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     }
   }, [generatedPerfUSFM]);
 
-  // useEffect to trigger comleted all conflict Resolution
+  // useEffect to trigger completed all conflict Resolution
   useEffect(() => {
     console.log('finish check =============> ', resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length.length);
     if (resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length) {
