@@ -279,11 +279,13 @@ export default function ImportProjectPopUp(props) {
     if (folderPath) {
       setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
       setValid(false);
+      let IsMergeOption = false
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
         // currently MERGE feature only Enabled for OBS projects
         if (sbData?.burritoType === 'gloss / textStories' || sbData?.burritoType === 'scripture / textTranslation'){
           setMerge(true)
+          IsMergeOption = true
         }
         setModel({
           openModel: true,
@@ -291,7 +293,7 @@ export default function ImportProjectPopUp(props) {
           confirmMessage: t('dynamic-msg-confirm-replace-resource'),
           buttonName: t('btn-replace'),
           buttonName2 : {
-            active: merge,
+            active: IsMergeOption,
             loading: processMerge,
             name:t('label-merge'),
             action: () => MergeFunction(),
