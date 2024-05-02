@@ -105,7 +105,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
-    console.log('READ ON CONTINUE LOAD ========> ', usfmJsons.conflictMeta.incomingPath, ' selected : ', selectedBook);
     const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
     if (IncomingUsfm) {
       const importedJson = await parseUsfm(IncomingUsfm);
@@ -158,8 +157,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     }
     setLoading(false);
   };
-
-  console.log('PERF STATES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', { currentPerfInputArr, currentPerfResolveBookCode });
 
   // Previous function to handle all books together ( JSON => usfm all together at the end )
   // const handleFinishedResolution = async () => {

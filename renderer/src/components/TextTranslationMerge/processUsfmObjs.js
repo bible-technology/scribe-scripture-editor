@@ -10,8 +10,13 @@ async function processAndIdentiyVerseChangeinUSFMJsons(currentJson, IncomingJson
         chapter.contents.forEach((content) => {
           if (content.verseNumber) {
             const IncomingVerse = IncomingChap.contents.find((ch) => ch.verseNumber === content.verseNumber);
-            // console.log(IncomingVerse);
-            if (content.verseText !== IncomingVerse.verseText) {
+            /**
+             * handle conflict detection coniditons
+             * conflict only if
+             *  - both have valid string ([a-zA-Z0-9]) and not same
+             *  - valid content in incoming , current can be anything
+             * */
+            if ((content.verseText !== IncomingVerse.verseText) && (/[a-zA-Z0-9]/.test(IncomingVerse.verseText))) {
               // add incoming data
               content.current = JSON.parse(JSON.stringify(content));
               content.incoming = IncomingVerse;
