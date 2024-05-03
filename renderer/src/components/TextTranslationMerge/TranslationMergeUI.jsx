@@ -100,8 +100,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     return usfm;
   }
 
-  // console.log({ conflictedChapters, selectedBook, usfmJsons });
-
   const checkForConflictInSelectedBook = async (selectedBook) => {
     // parse imported
     const fs = window.require('fs');
@@ -138,18 +136,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
             setSelectedChapter(conflcitedChapters[0]);
           }
           setLoading(false);
-
-          // old UI logic of import and parse already saved book
-          // if (savedConflictsBooks.includes(`${importedJson.data.book.bookCode.toLowerCase()}.json`)) {
-          //   setExistImportedBook({ status: true, bookId: importedJson.data.book.bookCode.toLowerCase() });
-          //   console.log('existing book');
-          //   setModel({
-          //     openModel: true,
-          //     title: t('modal-title-abort-conflict-resolution'),
-          //     confirmMessage: t('msg-conflict-resolution-duplicate-book', { bookId: importedJson.data.book.bookCode.toUpperCase() }),
-          //     buttonName: t('label-startover'),
-          //   });
-          // }
         }
       }
     } else {
@@ -227,21 +213,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   };
 
   const handleFinishedBookResolution = async () => {
-    const fs = window.require('fs');
-
-    // flushSync(() => {
-    //   setLoading(true);
-    //   // setFinishedConflict((prev) => ([...prev, currentBook]));
-    // });
-
     const resolvedBooks = { ...usfmJsons };
     delete resolvedBooks.conflictMeta;
-
-    const currentSourceMeta = usfmJsons?.conflictMeta?.currentMeta;
-
-    // TODO : Disable all clicks when loading is true
-
-    const sourceIngredientPath = path.join(usfmJsons.conflictMeta.sourceProjectPath);
 
     // work on single book
     const resolvedMergeJson = resolvedBooks[selectedBook]?.mergeJson;
@@ -257,39 +230,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     } else {
       console.error('Can not generate usfm of current book : ', selectedBook);
     }
-
-    // // loop over the resolved books
-    // // eslint-disable-next-line no-restricted-syntax
-    // for (const bookName of Object.keys(resolvedBooks)) {
-    //   const resolvedMergeJson = resolvedBooks[bookName]?.mergeJson;
-    //   // eslint-disable-next-line no-await-in-loop
-    //   const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
-
-    //   // TODO : convert here to PERF
-
-    //   const perfUSFM = '';
-
-    //   // overwrite the source file with new file
-    //   fs.writeFileSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`), generatedUSFM);
-
-    //   // get and update the usfms ingredients
-    //   const stat = fs.statSync(path.join(sourceIngredientPath, 'ingredients', `${resolvedMergeJson.book.bookCode}.usfm`));
-    //   currentSourceMeta.ingredients[bookName].checksum.md5 = md5(generatedUSFM);
-    //   currentSourceMeta.ingredients[bookName].size = stat.size;
-
-    // write updated metadata here
-    // fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(currentSourceMeta));
-
-    // // remove .merge/project
-    // await fs.rmSync(usfmJsons.conflictMeta.projectMergePath, { recursive: true, force: true });
-    // // commit all changes after merge finish
-    // const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
-    // const backupMessage = `Scribe Internal Commit After Text Merge Finish : ${usfmJsons.conflictMeta.projectFullName}  : ${new Date()}`;
-    // await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
-
-    // setLoading(false);
-    // triggerSnackBar('success', 'Conflict Resolved Successfully');
-    // closeMergeWindow();
   };
 
   // Function to write back the current usfmJSON data as config in the .merge
@@ -352,9 +292,9 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   };
 
   /**
-       * existing project merge
-       * read usfm json data from backend
-       */
+   * existing project merge
+   * read usfm json data from backend
+   */
   const getInprogressMergeProject = async (data) => {
     console.log('Loading Existing Project ================= ..................', { data });
     const fs = window.require('fs');
@@ -499,7 +439,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
         }
       })();
     } else {
-      // TODO : add a message loading is showing some other process is going on
+      // INFO : loading is showing : some other process is going on
     }
   }, [selectedBook, usfmJsons.conflictMeta]);
 
