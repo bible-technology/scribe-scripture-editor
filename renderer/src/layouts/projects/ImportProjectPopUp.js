@@ -83,7 +83,6 @@ export default function ImportProjectPopUp(props) {
   }
 
   const openFileDialogSettingData = async () => {
-    setFolderPath()
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
     // const options = { properties: ['openFile','openDirectory'] };
     const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
@@ -115,6 +114,7 @@ export default function ImportProjectPopUp(props) {
     } else {
       logger.debug('ImportProjectPopUp.js', 'Didn\'t select any project');
       setSbData({});
+      setFolderPath()
       close("else");
     }
     setFolderPath(selectedFolderPath);
@@ -172,6 +172,7 @@ export default function ImportProjectPopUp(props) {
       if (status[0].type === 'success') {
         setSbData({});
         close("Success");
+        setFolderPath()
         FetchProjects();
         router.push('/projects');
       }
@@ -350,7 +351,7 @@ export default function ImportProjectPopUp(props) {
                     {t('label-import-project')}
                   </div>
                   <button
-                    onClick={() => close('Backdrop')}
+                    onClick={() => { setFolderPath(); setSbData({}); close('Backdrop') }}
                     type="button"
                     className="focus:outline-none"
                   >
@@ -455,7 +456,7 @@ export default function ImportProjectPopUp(props) {
 
                       <button
                         type="button"
-                        onClick={() => close('cancel')}
+                        onClick={() => {setFolderPath(); setSbData({}); close('cancel')}}
                         className="py-2 px-6 rounded shadow bg-error text-white uppercase text-xs tracking-widest font-semibold"
                       >
                         {t('btn-cancel')}

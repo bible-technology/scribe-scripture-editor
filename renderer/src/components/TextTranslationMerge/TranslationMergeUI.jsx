@@ -434,6 +434,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       const sourceMeta = fs.readFileSync(path.join(sourceIngredientPath, 'metadata.json'));
       const sourceMetaJson = JSON.parse(sourceMeta);
       sourceMetaJson.ingredients[selectedBook].checksum.md5 = md5(generatedPerfUSFM);
+      console.log('Updated MD5 ================================> ', { selectedBook }, md5(generatedPerfUSFM));
       sourceMetaJson.ingredients[selectedBook].size = stat.size;
       fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(sourceMetaJson));
 
