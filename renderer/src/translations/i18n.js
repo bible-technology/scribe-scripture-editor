@@ -8,6 +8,8 @@ import { Ru } from './ru';
 import { Fa } from './fa';
 import { Fr } from './fr';
 import { Ne } from './ne';
+import { Es } from './es';
+import { Id } from './id';
 
 i18n
   .use(initReactI18next)
@@ -34,6 +36,12 @@ i18n
       },
       ar: {
         translation: Ar,
+      },
+      es: {
+        translation: Es,
+      },
+      id: {
+        translation: Id,
       },
     },
 });
