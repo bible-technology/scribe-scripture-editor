@@ -144,7 +144,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     setLoading(false);
   };
 
-  // Previous function to handle all books together ( JSON => usfm all together at the end )
+  // INFO :  Previous function to handle all books together ( JSON => usfm all together at the end )
   // const handleFinishedResolution = async () => {
   //   const fs = window.require('fs');
 
@@ -296,7 +296,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
    * read usfm json data from backend
    */
   const getInprogressMergeProject = async (data) => {
-    console.log('Loading Existing Project ================= ..................', { data });
     const fs = window.require('fs');
     if (fs.existsSync(path.join(data.projectMergePath, 'usfmJsons.json'))) {
       let usfmJsonsContent = fs.readFileSync(path.join(data.projectMergePath, 'usfmJsons.json'), 'utf8');
@@ -400,7 +399,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
 
   // useEffect to trigger completed all conflict Resolution
   useEffect(() => {
-    console.log('finish check =============> ', resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length.length);
     if (resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length) {
       setFinishedConflict(true);
     } else {
@@ -514,29 +512,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
                           />
                         </div>
                       )
-
-                      // (usfmJsons.current && usfmJsons.imported && !existImportedBook.status) ? (
-                      //   <div className="h-[70vh] overflow-auto">
-                      //     <UsfmConflictEditor
-                      //       usfmJsons={usfmJsons}
-                      //       currentProjectMeta={currentProjectMeta}
-                      //       selectedChapter={selectedChapter}
-                      //       setUsfmJsons={setUsfmJsons}
-                      //       setChapterResolveDone={setChapterResolveDone}
-                      //       resolvedChapters={resolvedChapters}
-                      //     />
-                      //   </div>
-                      // )
-                      //   : (
-                      //     <ImportUsfmUI
-                      //       buttonName={`${t('btn-import')} Usfm`}
-                      //       currentProjectMeta={currentProjectMeta}
-                      //       handleImportUsfm={handleImportUsfm}
-                      //       savedConflictsBooks={savedConflictsBooks}
-                      //       resumeConflictResolution={resumeConflictResolution}
-                      //     />
-                      //   )
-
                     )}
 
                   </div>
