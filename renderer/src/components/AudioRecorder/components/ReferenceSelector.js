@@ -32,6 +32,7 @@ export default function ReferenceSelector({ data, versepath, verse }) {
                 // url={story.audio} for development
                 url={story.audio ? path.join(versepath, story.audio) : ''}
                 show
+                setAudioPlayBack={() => {}}
               />
             </div>
           </div>
