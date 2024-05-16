@@ -17,7 +17,7 @@ export async function writeRecfile(file, filePath, fs) {
     });
 }
 
-// fucntion to walkthough the directory and identify audios
+// function to walkthough the directory and identify audios
 export async function walk(dir, path, fs) {
     logger.debug('ExportProjectUtils.js', `in walk through dir : ${dir} : ${path}`);
     let files = await fs.readdirSync(dir);

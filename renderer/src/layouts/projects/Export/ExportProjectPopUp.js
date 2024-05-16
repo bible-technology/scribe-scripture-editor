@@ -104,7 +104,7 @@ export default function ExportProjectPopUp(props) {
             deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
             .then(async () => {
               // convert to zip if text translation and zip checked
-              if (project?.type === 'Text Translation' && checkZip) {
+              if (checkZip) {
                 const AdmZip = window.require('adm-zip');
                 const zip = new AdmZip();
                 zip.addLocalFolder(path.join(folderPath, project.name));
@@ -136,27 +136,30 @@ export default function ExportProjectPopUp(props) {
   };
 
   const updateBurritoVersion = (username, fs, path, folder) => {
+    logger.debug('ExportProjectPopUp.js', 'Inside updateBurritoVersion');
     setTotalExported(1); // 1 step of 2 finished
     if (project?.type === 'Text Translation') {
-    updateTranslationSB(username, project, openModal)
-        .then(() => {
-          updateCommon(fs, path, folder, project);
-        });
-      } else if (project?.type === 'OBS') {
-        updateObsSB(username, project, openModal)
-        .then(() => {
-          updateCommon(fs, path, folder, project);
-        });
-      }
+      updateTranslationSB(username, project, openModal)
+      .then(() => {
+        updateCommon(fs, path, folder, project);
+      });
+    } else if (project?.type === 'OBS') {
+      updateObsSB(username, project, openModal)
+      .then(() => {
+        updateCommon(fs, path, folder, project);
+      });
+    } else {
+      updateCommon(fs, path, folder, project);
+    }
     setOpenModal(false);
   };
 
   const ExportActions = {
     setNotify, setSnackText, setOpenSnackBar, setTotalExported, setTotalExports, setExportstart, resetExportProgress, setCheckText,
-   };
-     const ExportStates = {
+  };
+  const ExportStates = {
     checkText, audioExport, folderPath, project, exportStart,
-   };
+  };
 
   const exportBible = async () => {
     const fs = window.require('fs');
@@ -175,6 +178,7 @@ export default function ExportProjectPopUp(props) {
         });
         setExportstart(true); // export start for all type of export
         if (project?.type === 'Audio') {
+          logger.debug('ExportProjectPopUp.js', 'Inside exportBible : export audio');
           if (audioExport === 'default' || audioExport === 'chapter') {
             exportDefaultAudio(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
           } else {
@@ -182,12 +186,14 @@ export default function ExportProjectPopUp(props) {
             exportFullAudio(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
           }
         } else if (burrito?.meta?.version !== metadata?.meta?.version) {
-            setTotalExports(2); // total 2 steps process
-            setOpenModal(true);
+          logger.debug('ExportProjectPopUp.js', 'Inside exportBible : burrito ok');
+          setTotalExports(2); // total 2 steps process
+          setOpenModal(true);
         } else {
-            setTotalExports(2); // total 2 steps process
-            updateBurritoVersion(username, fs, path, folder);
-          }
+          logger.debug('ExportProjectPopUp.js', 'Inside exportBible : updating burrito');
+          setTotalExports(2); // total 2 steps process
+          updateBurritoVersion(username, fs, path, folder);
+        }
       });
     } else {
       logger.warn('ExportProjectPopUp.js', 'Invalid Path');
@@ -310,7 +316,7 @@ export default function ExportProjectPopUp(props) {
                       </div>
                     </div>
                     )}
-                    {project?.type === 'Text Translation' && (
+                    {(project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && (
 
                     <div className="w-full py-3 flex">
                       <div className="flex flex-row justify-end mr-3">
