@@ -22,6 +22,8 @@ const languages = [
   { title: 'French', code: 'fr' },
   { title: 'Nepali', code: 'ne' },
   { title: 'Arabic', code: 'ar' },
+  { title: 'Spanish', code: 'es' },
+  { title: 'Bahasa Indonesia', code: 'id' },
 ];
 
 function ProgressCircle({ isFilled, count, text }) {
@@ -321,7 +323,7 @@ export default function UserProfile() {
                   {t('label-app-language')}
                   <span className="text-error">*</span>
                 </h4>
-                <CustomList selected={appLang} setSelected={setAppLang} options={languages} show />
+                <CustomList selected={appLang} setSelected={setAppLang} options={languages} width={52} show />
                 {/* <input type="text" value="English" disabled className="bg-gray-100 w-96 block rounded shadow-sm sm:text-sm border-gray-200 h-10 font-light" /> */}
               </div>
 

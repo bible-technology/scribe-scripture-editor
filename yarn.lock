@@ -10209,10 +10209,11 @@ follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.9, fol
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
   integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
 
-font-detect-rhl@1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/font-detect-rhl/-/font-detect-rhl-1.0.8.tgz#5d9231c1c3d451b6d6ddb430af2d3f5438cbf851"
-  integrity sha512-x54euWvS2l2kuN5jq5tb8dkdX1mDZLLrrFgVgCuMRcvTvIj2HfARNalfY8oiDE8065eG08oKzVwuzK87A5Wujw==
+font-detect-rhl@1.0.5-1:
+  version "1.0.5-1"
+  resolved "https://registry.yarnpkg.com/font-detect-rhl/-/font-detect-rhl-1.0.5-1.tgz#4a421265df97ee672eb515a7f9cae2853ca860f4"
+  integrity sha512-gIRKZvNHp751pSI2bWk3kl3ybeUYiO8fXlo4xJQldp4Esp4yPkGslArJgEQXyROCBPdqU/kTyvA7eWWyE/y9oQ==
+
   dependencies:
     prop-types "^15.6.1"
     use-deep-compare "^1.1.0"
