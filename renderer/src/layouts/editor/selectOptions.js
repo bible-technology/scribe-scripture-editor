@@ -30,6 +30,7 @@ export function selectOption(title, type, option, handleChange) {
 				id='payment'
 				name='payment'
 				onChange={(e) => {
+					console.log(e.target.value)
 					handleChange(type, e.target.value);
 				}}>
 				{Object.keys(option).map((o) => (

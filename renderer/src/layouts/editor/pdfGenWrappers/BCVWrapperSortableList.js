@@ -9,6 +9,8 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Switch from '@material-ui/core/Switch';
 import { alpha, styled } from '@material-ui/core/styles';
+import Trash from './../../../../../public/icons/trash.svg';
+import Layout from '../../../../../public/icons/basil/Solid/Interface/Layout.svg';
 
 const LoopSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {
@@ -34,7 +36,6 @@ export function BCVWrapperSortableList({
 	changePrintData,
 	changePrintOrder,
 }) {
-		
 	const choice = require('../fieldPicker/specification/WrapperSection.json');
 	const listChoice = choice[wrapperType];
 	const initialBook = 'mat';
@@ -57,8 +58,10 @@ export function BCVWrapperSortableList({
 
 	setLanguage('fr');
 	const [openModal, setOpenModal] = useState(false);
-	const [orderSelection, setOrderSelection] = useState([]);
-	const [selected, setSelected] = useState('{}');
+	const [orderSelection, setOrderSelection] = useState([0]);
+	const [selected, setSelected] = useState(
+		'{"0": { "type": "bcvBible", "content": {} }}',
+	);
 
 	const [selectedBooks, setSelectedBooks] = useState([]);
 	const [openModalBook, setOpenModalBook] = useState(false);
@@ -86,13 +89,13 @@ export function BCVWrapperSortableList({
 	useEffect(() => {
 		changePrintData((prev) => {
 			const copyData = { ...prev };
-			copyData[keyWrapper].ranges = [];
-			for (let i = 0; i < selectedBooks.length; i++) {
-				copyData[keyWrapper].ranges.push({ book: selectedBooks[i] });
-			}
+			copyData[keyWrapper]['books'] = [];
+			copyData[keyWrapper]['books'] = selectedBooks;
 			return copyData;
 		});
 	}, [selectedBooks.length]);
+
+
 	useEffect(() => {
 		const sortableList = document.querySelector(
 			`.${sortableListClassName}`,
@@ -148,6 +151,8 @@ export function BCVWrapperSortableList({
 		};
 	}, [Object.keys(JSON.parse(selected)).length]);
 
+	
+
 	const updateElemOrder = (items) => {
 		const t = [];
 		items.forEach((item) => {
@@ -160,55 +165,65 @@ export function BCVWrapperSortableList({
 	};
 	return (
 		<div
-		style={
-			LoopMode
-				? {
-						width: '100%',
-						borderStyle: 'solid',
-						borderColor: '#EEEEEE',
-						borderWidth: 1,
-						backgroundColor: '#FFEEE5',
-						padding: 15,
-					}
-				: 
-				{
-						width: '100%',
-						borderStyle: 'solid',
-						borderColor: '#EEEEEE',
-						borderWidth: 1,
-						backgroundColor: '#FCFAFA',
-						padding: 15,
-					}
-		}>
+			style={
+				LoopMode
+					? {
+							width: '100%',
+							borderStyle: 'solid',
+							borderColor: '#EEEEEE',
+							borderWidth: 1,
+							borderRadius:10,
+
+							backgroundColor: '#FFEEE5',
+							padding: 15,
+					  }
+					: {
+							width: '100%',
+							borderStyle: 'solid',
+							borderColor: '#EEEEEE',
+							borderWidth: 1,
+							backgroundColor: '#FCFAFA',
+							borderRadius:10,
+							padding: 15,
+					  }
+			}>
 			<div style={{ display: 'flex', justifyContent: 'end' }}>
-			<div
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						color: 'black',
-					}}>
-					loop
-				</div>
-				<LoopSwitch onChange={() => setLoopMode((prev) => !prev)} />
+				{advanceMode ? (
+					<div>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								color: 'black',
+							}}>
+							loop
+						</div>
+						<LoopSwitch
+							onChange={() => setLoopMode((prev) => !prev)}
+						/>
+					</div>
+				) : (
+					<></>
+				)}
 				<div
 					style={{
 						margin: 'auto',
 						display: 'flex',
 						justifyContent: 'center',
+						alignItems: 'center', // Added alignment to center vertically
 						fontSize: 24,
 						color: 'black',
 					}}>
-					{wrapperType}
+					<div style={{ width: 25, height: 25, marginRight: 8 }}>
+						<Layout />
+					</div>
+					Translation
 				</div>
 				{advanceMode ? (
 					<div style={{ display: 'flex' }}>
 						<Button
 							style={{
-								borderRadius: 4,
-								height: 40,
-								backgroundColor: '#F50',
 								borderStyle: 'solid',
-								borderColor: '#F50',
 								color: 'white',
 							}}
 							onClick={() => {
@@ -245,11 +260,10 @@ export function BCVWrapperSortableList({
 											}
 										},
 									);
-									console.log(up);
 									return up;
 								});
 							}}>
-							Remove
+							<Trash style={{ height: 35, width: 35 }} />
 						</Button>
 					</div>
 				) : (
@@ -458,7 +472,7 @@ export function BCVWrapperSortableList({
 					alignItems: 'center',
 					justifyContent: 'space-between',
 				}}>
-				{advanceMode ? (
+				{advanceMode && LoopMode ? (
 					<Button
 						style={{
 							borderRadius: 4,
@@ -468,10 +482,13 @@ export function BCVWrapperSortableList({
 							color: 'white',
 						}}
 						onClick={() => handleOpenModal(true)}>
-						Add content to Wrapper
+						Add
 					</Button>
 				) : (
-					<></>
+					<div
+					style={{		
+						padding:17
+					}}/>
 				)}
 
 				<Modal

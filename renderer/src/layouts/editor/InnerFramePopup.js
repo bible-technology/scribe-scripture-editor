@@ -9,7 +9,10 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { selectOption } from './selectOptions';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import Switch from '@material-ui/core/Switch';
+import { Button } from '@mui/material';
+
 import { styled } from '@material-ui/core/styles';
+import ExpandMore from '../../../../public/icons/expand_more.svg';
 const StyledSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {
 		color: '#FF5500',
@@ -60,9 +63,7 @@ export default function InnerFramePopup() {
 			},
 		},
 	});
-	console.log(selected);
 	const [advanceMode, setAdvenceMode] = useState(false);
-
 	const [metaInfo, setMetaInfo] = useState('{}');
 	const [zoom, setZoom] = useState(1);
 	const [numPages, setNumPages] = useState();
@@ -95,7 +96,7 @@ export default function InnerFramePopup() {
 	const myPdfFile = useMemo(() => readPdf(pdfPath), [pdfPath]);
 	const handleChange = (type, value) => {
 		let t = JSON.parse(metaInfo);
-		t[type] = jxl2[type][value];
+		t[type] = value;
 		setMetaInfo(JSON.stringify(t));
 	};
 	function onDocumentLoadSuccess({ numPages }) {
@@ -135,9 +136,8 @@ export default function InnerFramePopup() {
 				];
 
 				let nextSibling = siblings.find((sibling) => {
-					console.log(sibling.offsetHeight);
 					return (
-						e.clientY <= sibling.offsetTop + sibling.offsetHeight
+						e.clientY <= sibling.offsetTop - sibling.offsetHeight /2 
 					);
 				});
 
@@ -165,9 +165,9 @@ export default function InnerFramePopup() {
 				height: '100%',
 				backgroundColor: '#FFFFFF',
 				width: '100%',
-				borderBottomWidth:2,
-				borderStyle:'solid',
-				borderColor:'#EEEEEE',
+				borderBottomWidth: 2,
+				borderStyle: 'solid',
+				borderColor: '#EEEEEE',
 			}}>
 			<div
 				style={{
@@ -299,13 +299,10 @@ export default function InnerFramePopup() {
 						}}>
 						<div
 							style={{
-								fontFamily: 'Lato',
-								fontWeight: 400,
+								fontWeight: 'regular',
 								display: 'flex',
 								fontSize: 24,
-								justifyContent: 'center',
 								color: 'Black',
-								padding: 12,
 								justifyContent: 'left',
 							}}>
 							Content
@@ -350,7 +347,7 @@ export default function InnerFramePopup() {
 							style={{
 								display: 'flex',
 								justifyContent: 'space-between',
-								marginRight:25,
+								marginRight: 25,
 							}}>
 							<StyledSwitch
 								onChange={() => setAdvenceMode((prev) => !prev)}
@@ -374,10 +371,10 @@ export default function InnerFramePopup() {
 							if (selected[k].type === 'obsWrapper') {
 								return (
 									<li
-										id={'PREMUER'}
+										id={'index'}
 										className={'sortable-test1-item'}
 										draggable='true'
-										key={'PREMUER'}
+										key={'index'}
 										style={{ margin: 10 }}>
 										<OBSWrapperSortableList
 											setFinalPrint={setSelected}
@@ -413,24 +410,51 @@ export default function InnerFramePopup() {
 							}
 						})}
 					</ul>
+					{advanceMode ? (
+						<div
+							style={{
+								borderRadius: 6,
+								borderWidth: 1,
+								borderStyle: 'solid',
+								borderCollor: '#EEEEEE',
+								display: 'flex',
+								padding: 1,
+								flexDirection: 'column',
+								alignItems: 'flexStart',
+								alignSelf: 'stretch',
+								backgroundColor: '#FCFAFA',
+								padding: 12,
+								margin: 12,
+							}}>
+							<div
+								style={{
+									display: 'flex',
+									width: 80,
+									height: 28,
+									paddingLeft: 12,
+									borderRadius: 4,
+									paddingRight: 6,
+									justifyContent: 'space-between',
+									alignItems: 'center',
+									backgroundColor: '#F50',
+									color: 'white',
+								}}
+								onClick={() => handleOpenModal(true)}>
+								Add
+								<ExpandMore />
+							</div>
+						</div>
+					) : (
+						<></>
+					)}
+
 					<div
 						style={{
 							display: 'flex',
 							justifyContent: 'center',
 							padding: 15,
 						}}>
-						<div
-							style={{
-								borderRadius: 4,
-								backgroundColor: '#F50',
-								borderStyle: 'solid',
-								borderColor: '#F50',
-								color: 'white',
-							}}
-							onClick={() => handleOpenModal(true)}>
-							Wrapper
-						</div>
-						<div
+						<Button
 							style={{
 								borderRadius: 4,
 								backgroundColor: '#F50',
@@ -440,14 +464,14 @@ export default function InnerFramePopup() {
 								padding: 15,
 							}}
 							onClick={() => {
-								console.log({
+								transformPrintDataToKitchenFoset('test', {
 									order: orderSelection,
 									metaData: JSON.parse(metaInfo),
 									content: selected,
 								});
 							}}>
 							Print
-						</div>
+						</Button>
 					</div>
 				</div>
 				<Modal
@@ -474,7 +498,6 @@ export default function InnerFramePopup() {
 											let t = { ...prev };
 											let nb = Object.keys(t).length;
 											t[nb] = { type: c, content: {} };
-
 											return t;
 										});
 										setOrderSelection((prev) => [
@@ -492,4 +515,28 @@ export default function InnerFramePopup() {
 			</div>
 		</div>
 	);
+}
+
+function transformPrintDataToKitchenFoset(header, jsonData) {
+	let kitchenFoset = [];
+	console.log(jsonData);
+	for (let i = 0; i < jsonData.order.length; i++) {
+		let currentWrapper = jsonData.content[jsonData.order[i]];
+		console.log(currentWrapper);
+
+		let elem = {...currentWrapper}
+		delete elem["content"]; 
+		elem.sections = []
+
+		for (let t = 0; t < currentWrapper.content.order.length; t++) {
+			console.log(currentWrapper);
+			elem.sections.push(
+				currentWrapper.content.content[currentWrapper.content.order[t]],
+			);
+		}
+		kitchenFoset.push(elem);
+		
+	}
+
+	console.log({global:header,sections:kitchenFoset});
 }

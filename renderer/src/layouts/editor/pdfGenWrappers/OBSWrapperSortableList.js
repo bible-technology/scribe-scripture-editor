@@ -11,6 +11,9 @@ import Switch from '@material-ui/core/Switch';
 import { alpha, styled } from '@material-ui/core/styles';
 import { NumericFormat } from 'react-number-format';
 import { TextField } from '@mui/material';
+import Trash from './../../../../../public/icons/trash.svg';
+import ImageIcon from '../../../../../public/icons/basil/Solid/Files/Image.svg';
+
 import React from 'react';
 const LoopSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {
@@ -80,9 +83,10 @@ export function OBSWrapperSortableList({
 
 	setLanguage('fr');
 	const [openModal, setOpenModal] = useState(false);
-	const [orderSelection, setOrderSelection] = useState([]);
-	const [selected, setSelected] = useState('{}');
-
+	const [orderSelection, setOrderSelection] = useState([0]);
+	const [selected, setSelected] = useState(
+		'{"0": { "type": "obs", "content": {} }}',
+	);
 	const [startObs, setStartObs] = useState('');
 	const [endObs, setEndObs] = useState('');
 
@@ -120,9 +124,9 @@ export function OBSWrapperSortableList({
 			const copyData = { ...prev };
 			if (startObs !== '' && endObs !== '') {
 				if (parseInt(startObs) <= parseInt(endObs)) {
-					copyData[keyWrapper].ranges = [
-						{ storyRange: `${startObs}-${endObs}` },
-					];
+					copyData[keyWrapper][
+						'storyRange'
+					] = `${startObs}-${endObs}`;
 				}
 			}
 			console.log(copyData);
@@ -205,6 +209,7 @@ export function OBSWrapperSortableList({
 							borderWidth: 1,
 							backgroundColor: '#FFEEE5',
 							padding: 15,
+							borderRadius: 10,
 					  }
 					: {
 							width: '100%',
@@ -213,37 +218,47 @@ export function OBSWrapperSortableList({
 							borderWidth: 1,
 							backgroundColor: '#FCFAFA',
 							padding: 15,
+							borderRadius: 10,
 					  }
 			}>
 			<div style={{ display: 'flex', justifyContent: 'end' }}>
-				<div
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						color: 'black',
-					}}>
-					loop
-				</div>
-				<LoopSwitch onChange={() => setLoopMode((prev) => !prev)} />
+				{advanceMode ? (
+					<div>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								color: 'black',
+							}}>
+							loop
+						</div>
+						<LoopSwitch
+							onChange={() => setLoopMode((prev) => !prev)}
+						/>
+					</div>
+				) : (
+					<></>
+				)}
+
 				<div
 					style={{
 						margin: 'auto',
 						display: 'flex',
 						justifyContent: 'center',
+						alignItems: 'center', // Added alignment to center vertically
 						fontSize: 24,
 						color: 'black',
 					}}>
-					{wrapperType}
+					<div style={{ width: 35, height: 35, marginRight: 8 }}>
+						<ImageIcon />
+					</div>
+					Obs
 				</div>
 				{advanceMode ? (
 					<div style={{ display: 'flex' }}>
 						<Button
 							style={{
-								borderRadius: 4,
-								height: 40,
-								backgroundColor: '#F50',
 								borderStyle: 'solid',
-								borderColor: '#F50',
 								color: 'white',
 							}}
 							onClick={() => {
@@ -284,7 +299,7 @@ export function OBSWrapperSortableList({
 									return up;
 								});
 							}}>
-							Remove
+							<Trash style={{ height: 35, width: 35 }} />
 						</Button>
 					</div>
 				) : (
@@ -426,7 +441,7 @@ export function OBSWrapperSortableList({
 					alignItems: 'center',
 					justifyContent: 'space-between',
 				}}>
-				{advanceMode ? (
+				{advanceMode && LoopMode ? (
 					<Button
 						style={{
 							borderRadius: 4,
@@ -436,10 +451,14 @@ export function OBSWrapperSortableList({
 							color: 'white',
 						}}
 						onClick={() => handleOpenModal(true)}>
-						Add content to Wrapper
+						Add
 					</Button>
 				) : (
-					<></>
+					<div
+						style={{
+						
+							padding:17
+						}}></div>
 				)}
 
 				<Modal

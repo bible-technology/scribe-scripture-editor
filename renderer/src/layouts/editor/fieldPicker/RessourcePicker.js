@@ -21,7 +21,6 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 		actions: { setListResourcesForPdf },
 	} = useContext(ProjectContext);
 
-	console.log(listResourcesForPdf)
 	const [searchText, setSearchText] = useState('');
 	const [openModal, setOpenModal] = useState(false);
 
