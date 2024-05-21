@@ -34,7 +34,7 @@ export function selectOption(title,type,option,handleChange) {
 						style={{
 							backgroundColor: '#363739',
 						}}>
-						{option[o].label[i18n.language]?  option[o].label[i18n.language]:option[o].label["en"]}
+						{option[o].label[i18n.language] ?  option[o].label[i18n.language] : option[o].label["en"]}
 					</option>
 				))}
 			</select>

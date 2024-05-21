@@ -28,7 +28,10 @@ export default function InnerFramePopup() {
 	const path = require('path');
 	const fs = window.require('fs');
 	
-	const jxl2 = require("./fieldPicker/specification/jxl2.json")
+	// const jxl2 = require("./fieldPicker/specification/jxl2.json")
+	const jxl2 = global.PdfGen.pageInfo();
+	console.log('pageInfo ==',jxl2);
+	console.log('from require',require("./fieldPicker/specification/jxl2.json"));
 	//list of all non selected choice
 
 	//the order Of The Selected choice

@@ -12,7 +12,7 @@ export function SortableList({
 	selected,
 	setSelected,
 }) {
-	const jsonTruc = require('./fieldPicker/specification/jxl1.json');
+	const jsonTruc = global.PdfGen.handlerInfo();
 	const listChoice = Object.keys(jsonTruc);
 
 
@@ -25,10 +25,7 @@ export function SortableList({
 		actions: { setLanguage },
 	} = useContext(ProjectContext);
 	
-	setLanguage('fr')
-
-	const [jsonSpec, setJsonSpec] = useState('{}');
-	const fourColumnSpread = global.PdfGen.handlerInfo()["4ColumnSpread"];
+	setLanguage('fr');
 	
 	const [openModal, setOpenModal] = useState(false);
 
