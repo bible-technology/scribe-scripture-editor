@@ -10,6 +10,7 @@ export function FieldPicker({
 	fieldInfo,
 	setJsonSpec,
 	lang,
+	open,
 	listResourcesForPdf,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
@@ -21,6 +22,7 @@ export function FieldPicker({
 					fieldInfo={fieldInfo}
 					require={require}
 					lang={lang}
+					open={open}
 				/>
 			);
 		} else {
@@ -30,6 +32,7 @@ export function FieldPicker({
 					fieldInfo={fieldInfo}
 					require={require}
 					lang={lang}
+					open={open}
 				/>
 			);
 		}
@@ -40,6 +43,7 @@ export function FieldPicker({
 				fieldInfo={fieldInfo}
 				require={require}
 				lang={lang}
+				open={open}
 			/>
 		);
 	} else if (fieldInfo.typeName && fieldInfo.typeName === 'string') {
@@ -49,6 +53,7 @@ export function FieldPicker({
 				fieldInfo={fieldInfo}
 				require={require}
 				lang={lang}
+				open={open}
 			/>
 		);
 	} else if (fieldInfo.id === 'scripture') {
@@ -56,7 +61,8 @@ export function FieldPicker({
 			<ScripturePicker
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
-				lang={lang}></ScripturePicker>
+				lang={lang}
+				open={open}></ScripturePicker>
 		);
 	} else if (
 		fieldInfo.typeName === 'translationText' ||
@@ -72,7 +78,8 @@ export function FieldPicker({
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				ressourceKey={fieldInfo.typeName}
-        require={require}
+				require={require}
+				open={open}
 			/>
 		);
 	} else if (fieldInfo.typeName === 'integer') {
@@ -81,7 +88,8 @@ export function FieldPicker({
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				lang={lang}
-        require={require}
+				open={open}
+				require={require}
 			/>
 		);
 	} else {

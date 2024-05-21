@@ -1,0 +1,16 @@
+{
+	"bcvWrapper": [
+		"bookNote",
+		"4ColumnSpread",
+		"2Column",
+		"bcvBible",
+		"biblePlusNotes",
+		"paraBible",
+		"markdown",
+		"jxlSpread",
+		"jxlSimple"
+	],
+	"obsWrapper": ["obs", "obsPlusNotes"],
+	"JxlWrapper": ["jxlSpread", "jxlSimple"],
+	"markdown": ["markdown"]
+}

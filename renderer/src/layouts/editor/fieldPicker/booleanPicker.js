@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Checkbox } from '@mui/material';
 
-export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang }) {
+export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang,open=true }) {
 	const [selected, setSelected] = useState(false);
 
 	useEffect(() => {
@@ -13,9 +13,10 @@ export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang }) {
 		});
 	}, [selected]);
 	return (
-		<div style={{ display: 'flex' }}>
+		<div style={open?{ display: 'flex' }:{display:'none'}}>
 			<Checkbox
 				value={selected}
+				style={{}}
 				onChange={() => setSelected((prev) => !prev)}
 			/>
 			<div style={{ display: 'flex', alignSelf: 'center' }}>

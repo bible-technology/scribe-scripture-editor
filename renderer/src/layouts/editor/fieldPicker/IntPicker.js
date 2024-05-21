@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
+
 import { NumericFormat } from 'react-number-format';
 
-export function IntPicker({ fieldInfo, setJsonSpec, require, lang }) {
+export function IntPicker({ fieldInfo, setJsonSpec, require, lang,open=true }) {
   const [value, setValue] = useState('');
   useEffect(() => {
     setJsonSpec((prev) => {
@@ -42,7 +42,7 @@ export function IntPicker({ fieldInfo, setJsonSpec, require, lang }) {
   });
 
   return (
-    <Stack>
+    <div style={open?{}:{display:'none'}}>
       <TextField
         label={fieldInfo.label[lang]}
         value={value}
@@ -54,6 +54,6 @@ export function IntPicker({ fieldInfo, setJsonSpec, require, lang }) {
         }}
         variant='standard'
       />
-    </Stack>
+    </div>
   );
 }
