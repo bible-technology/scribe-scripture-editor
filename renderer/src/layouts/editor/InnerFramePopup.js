@@ -16,9 +16,9 @@ import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplat
 export default function InnerFramePopup() {
 
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
-
-	const jsonWithHeaderChoice = require('./pdfGenInterface/pdfGenWrappers/fieldPicker/specification/jxl2.json');
-
+	
+	const jsonWithHeaderChoice = global.PdfGen.pageInfo();
+	console.log(jsonWithHeaderChoice)
 	//use to know if we can drag or not 
 	const [update, setUpdate] = useState(true);
 
