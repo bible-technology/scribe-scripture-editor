@@ -34,7 +34,7 @@ Autogrpha-DB/
 /build
 /dist
 .next/
-
+.todo
 # misc
 .DS_Store
 *.pem
@@ -74,3 +74,4 @@ coverage
 
 # Optional REPL history
 .node_repl_history
+

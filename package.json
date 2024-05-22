@@ -125,6 +125,7 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.15.15",
+    "@mui/styles": "^5.15.18",
     "@ory/kratos-client": "^0.10.1",
     "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.4",

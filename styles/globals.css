@@ -533,3 +533,38 @@ p.paragraph:has(.chapter) {
   SCRIPTURE CONTENT PICKER BLOCK END SECTION
 */
 
+
+/*
+MODAL SECTION SELECTION BLOCK START
+*/
+.styleText {
+	text-align: center;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.styleCard {
+	background-color: #F9F9F9;
+	display: flex;
+	padding: 8px;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.styleCard:hover {
+	background-color: #EEEEEE;
+}
+
+.styleIcon {
+	width: 72px;
+	height: 72px;
+	margin: 12px 9.5px 12px 30.5px;
+	justify-content: flex-end;
+	display: flex;
+}
+/*
+MODAL SECTION SELECTION BLOCK END
+*/
