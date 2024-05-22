@@ -3,10 +3,8 @@ import { useState, useMemo, useEffect, useContext } from 'react';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Modal } from '@material-ui/core';
 import { BCVWrapperSortableList } from './pdfGenInterface/pdfGenWrappers/HeaderWrapper/BCVHeaderWrapper';
-import { OBSWrapperSortableList } from './pdfGenInterface/pdfGenWrappers/HeaderWrapper/OBSHeaderWrapper';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { selectOption } from './selectOptions';
-import { ProjectContext } from '@/components/context/ProjectContext';
 import { Button } from '@mui/material';
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { PdfPreview } from './pdfGenInterface/PdfPreview';
@@ -18,7 +16,6 @@ export default function InnerFramePopup() {
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
 	
 	const jsonWithHeaderChoice = global.PdfGen.pageInfo();
-	console.log(jsonWithHeaderChoice)
 	//use to know if we can drag or not 
 	const [update, setUpdate] = useState(true);
 
@@ -261,7 +258,6 @@ export default function InnerFramePopup() {
 					</div>
 					<ul className={'sortable-TESTWRAPPER-list'}>
 						{Object.keys(selected).map((k, index) => {
-							if (selected[k].type === 'obsWrapper') {
 								return (
 									<li
 										id={'index'}
@@ -281,27 +277,7 @@ export default function InnerFramePopup() {
 									</li>
 								);
 							}
-							if (selected[k].type === 'bcvWrapper') {
-								return (
-									<li
-										id={'PREMUER'}
-										className={'sortable-test1-item'}
-										draggable='true'
-										key={'PREMUER'}
-										style={{ margin: 10 }}>
-										<BCVWrapperSortableList
-											setFinalPrint={setSelected}
-											wrapperType={selected[k].type}
-											keyWrapper={k}
-											setUpdate={setUpdate}
-											advanceMode={advanceMode}
-											changePrintData={setSelected}
-											changePrintOrder={setOrderSelection}
-										/>
-									</li>
-								);
-							}
-						})}
+							)}
 					</ul>
 					{advanceMode ? (
 						<div

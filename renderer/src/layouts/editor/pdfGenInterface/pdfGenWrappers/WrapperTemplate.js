@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-import { AccordionPicker } from './fieldPicker/specification/AccordionPicker';
+import { AccordionPicker } from './SectionAccordion';
 import i18n from 'src/translations/i18n';
 import Trash from './../../../../../public/icons/trash.svg';
 import { ModalSectionSelection } from './modalSectionSelection';
@@ -16,35 +16,38 @@ export function WrapperTemplate({
 	changePrintData,
 	changePrintOrder,
 }) {
-	const [openModal, setOpenModal] = useState(false);
-	const [orderSelection, setOrderSelection] = useState([0]);
-	const [selected, setSelected] = useState(
-		'{"0": { "type": "obs", "content": {} }}',
-	);
+	const [openModalSectionSelection, setOpenModalSectionSelection] =
+		useState(false);
+	const [orderSections, setOrderSelections] = useState([0]);
+	const [sections, setSections] = useState(firstElem(wrapperType));
 
-	const choice = require('./fieldPicker/specification/WrapperSection.json');
+	//choice is the possible section by wrapper
+	const choice = require('./fieldPicker/WrapperSection.json');
 	const listChoice = choice[wrapperType];
 	const [LoopMode, setLoopMode] = useState(false);
 
 	const sortableListClassName = `sortable-${keyWrapper}-list`;
 	const itemClassName = `sortable-${keyWrapper}-item`;
 
+	//update Order selection
 	useEffect(() => {
 		setFinalPrint((prev) => {
 			const t = { ...prev };
-			t[keyWrapper].content.order = orderSelection;
+			t[keyWrapper].content.order = orderSections;
 			return t;
 		});
-	}, [orderSelection]);
+	}, [orderSections]);
 
+	//update final print Json
 	useEffect(() => {
 		setFinalPrint((prev) => {
 			const t = { ...prev };
-			t[keyWrapper].content.content = JSON.parse(selected);
+			t[keyWrapper].content.content = JSON.parse(sections);
 			return t;
 		});
-	}, [selected]);
+	}, [sections]);
 
+	//Sortable list logic
 	useEffect(() => {
 		const sortableList = document.querySelector(
 			`.${sortableListClassName}`,
@@ -98,17 +101,17 @@ export function WrapperTemplate({
 				});
 			});
 		};
-	}, [Object.keys(JSON.parse(selected)).length]);
+	}, [Object.keys(JSON.parse(sections)).length]);
 
 	const updateElemOrder = (items) => {
 		const t = [];
 		items.forEach((item) => {
 			t.push(parseInt(item.id));
 		});
-		setOrderSelection(t);
+		setOrderSelections(t);
 	};
 	const handleOpenModal = (isOpen) => {
-		setOpenModal(isOpen);
+		setOpenModalSectionSelection(isOpen);
 	};
 	return (
 		<div
@@ -165,7 +168,6 @@ export function WrapperTemplate({
 							onClick={() => {
 								changePrintOrder((prev) => {
 									let t = [...prev];
-									console.log(t);
 									t.splice(t.indexOf(keyWrapper), 1);
 									for (let i = 0; i < t.length; i++) {
 										if (t[i] > keyWrapper) {
@@ -174,8 +176,8 @@ export function WrapperTemplate({
 									}
 									return t;
 								});
+
 								changePrintData((prev) => {
-									console.log(prev);
 									const updatedSelected = {
 										...prev,
 									};
@@ -183,7 +185,6 @@ export function WrapperTemplate({
 
 									Object.keys(updatedSelected).forEach(
 										(key) => {
-											console.log(key);
 											if (parseInt(key) > keyWrapper) {
 												let newIndex =
 													parseInt(key) - 1;
@@ -196,7 +197,6 @@ export function WrapperTemplate({
 											}
 										},
 									);
-									console.log(up);
 									return up;
 								});
 							}}>
@@ -209,7 +209,7 @@ export function WrapperTemplate({
 			</div>
 
 			<ul className={sortableListClassName}>
-				{Object.keys(JSON.parse(selected)).map((k, index) => (
+				{Object.keys(JSON.parse(sections)).map((k, index) => (
 					<li
 						id={index}
 						className={itemClassName}
@@ -223,8 +223,8 @@ export function WrapperTemplate({
 								language={i18n.language}
 								wrapperType={wrapperType}
 								advanceMode={advanceMode}
-								setSelected={setSelected}
-								keySpecification={JSON.parse(selected)[k].type}
+								setSelected={setSections}
+								keySpecification={JSON.parse(sections)[k].type}
 								idjson={k}
 								removeButton={
 									advanceMode ? (
@@ -238,7 +238,7 @@ export function WrapperTemplate({
 												color: 'white',
 											}}
 											onClick={() => {
-												setOrderSelection((prev) => {
+												setOrderSelections((prev) => {
 													let t = [...prev];
 													t.splice(
 														t.indexOf(index),
@@ -255,7 +255,7 @@ export function WrapperTemplate({
 													}
 													return t;
 												});
-												setSelected((prev) => {
+												setSections((prev) => {
 													const updatedSelected = {
 														...JSON.parse(prev),
 													};
@@ -264,7 +264,6 @@ export function WrapperTemplate({
 													Object.keys(
 														updatedSelected,
 													).forEach((key) => {
-														console.log(key);
 														if (
 															parseInt(key) >
 															index
@@ -332,22 +331,39 @@ export function WrapperTemplate({
 						}}></div>
 				)}
 				<ModalSectionSelection
-					open={openModal}
-					setOpen={setOpenModal}
+					open={openModalSectionSelection}
+					setOpen={setOpenModalSectionSelection}
 					table={listChoice}
 					setSelected={(c) => {
-						setSelected((prev) => {
+						setSections((prev) => {
 							let t = { ...JSON.parse(prev) };
 							let nb = Object.keys(t).length;
 							t[nb] = { type: c, content: {} };
 
 							return JSON.stringify(t);
 						});
-						setOrderSelection((prev) => [...prev, prev.length]);
-						setOpenModal(false);
+						setOrderSelections((prev) => [...prev, prev.length]);
+						setOpenModalSectionSelection(false);
 					}}
 				/>
 			</div>
 		</div>
 	);
+}
+
+function firstElem(wrapperType) {
+	let type;
+	if (wrapperType === 'bcvWrapper') {
+		type = 'bcvBible';
+	}
+	if (wrapperType === 'obsWrapper') {
+		type = 'obs';
+	}
+	if (wrapperType === 'JxlWrapper') {
+		type = 'JxlSimple';
+	}
+	if (wrapperType === 'markdown') {
+		type = markdown;
+	}
+	return `{"0": { "type": "${type}", "content": {} }}`;
 }

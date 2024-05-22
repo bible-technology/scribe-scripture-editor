@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FieldPicker } from '../FieldPicker';
+import { FieldPicker } from './fieldPicker/FieldPicker';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -16,7 +16,7 @@ export function AccordionPicker({
 	const [open, setOpen] = useState(true);
 	const [jsonSpecEntry, setJsonSpecEntry] = useState('{}');
 
-	const jsonSpec = require('./jxl1.json');
+	const jsonSpec = global.PdfGen.handlerInfo()
 
 	const handleAccordionChange = () => {
 		setOpen((prevOpen) => !prevOpen);

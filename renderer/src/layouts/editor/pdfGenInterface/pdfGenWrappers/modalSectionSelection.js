@@ -10,20 +10,12 @@ import Obs from './../../../../../../public/icons/sectionIcons/obs.svg';
 import ObsPlusNote from './../../../../../../public/icons/sectionIcons/obsPlusNotes.svg';
 import Note from './../../../../../../public/icons/sectionIcons/bookNote.svg';
 import  "../../../../../../styles/globals.css"
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { Modal } from '@mui/material';
 
 export function ModalSectionSelection({ setSelected, open, setOpen, table }) {
-	const Item = styled(Paper)(({ theme }) => ({
-		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-		...theme.typography.body2,
-		padding: theme.spacing(1),
-		textAlign: 'center',
-		color: theme.palette.text.secondary,
-	}));
+
 
 	return (
 		<Modal
