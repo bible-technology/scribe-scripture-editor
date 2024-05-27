@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Checkbox } from '@mui/material';
 
-export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang,open=true }) {
+import { Checkbox } from '@mui/material';
+export function BooleanPicker({
+	setJsonSpec,
+	fieldInfo,
+	require,
+	lang,
+	open = true,
+}) {
 	const [selected, setSelected] = useState(false);
 
 	useEffect(() => {
+		console.log(selected)
 		setJsonSpec((prev) => {
 			let j = JSON.parse(prev);
 
@@ -13,14 +20,26 @@ export function BooleanPicker({ setJsonSpec, fieldInfo, require, lang,open=true 
 		});
 	}, [selected]);
 	return (
-		<div style={open?{ display: 'flex' }:{display:'none'}}>
+		<div
+		style={open?{flexDirection:'row',display:'flex',justifyContent:'left'}:{display:'none'}}>
 			<Checkbox
-				value={selected}
-				style={{}}
-				onChange={() => setSelected((prev) => !prev)}
+				onChange={() => setSelected(prev => !prev)}
+				sx={{
+					color: 'rgba(115, 115, 115, 1)',
+					'&.Mui-checked': {
+						color: 'rgba(255, 85, 0, 1)',
+						'&:hover': {
+							color: 'rgba(255, 119, 51, 1)',
+						},
+					},
+					'&:hover': {
+						color: 'rgba(255, 170, 128, 1)',
+					},
+
+				}}
 			/>
 			<div style={{ display: 'flex', alignSelf: 'center' }}>
-				{fieldInfo.label[lang]}{' '}
+				{fieldInfo.label[lang]}
 			</div>
 		</div>
 	);

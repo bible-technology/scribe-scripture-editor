@@ -6,6 +6,7 @@ import Trash from './../../../../../public/icons/trash.svg';
 import { ModalSectionSelection } from './modalSectionSelection';
 import { OBSWrapperSortableList } from './HeaderWrapper/OBSHeaderWrapper';
 import { BCVWrapperSortableList } from './HeaderWrapper/BCVHeaderWrapper';
+import { v4 as uuidv4 } from 'uuid';
 
 export function WrapperTemplate({
 	setFinalPrint,
@@ -18,12 +19,14 @@ export function WrapperTemplate({
 }) {
 	const [openModalSectionSelection, setOpenModalSectionSelection] =
 		useState(false);
+
 	const [orderSections, setOrderSelections] = useState([0]);
 	const [sections, setSections] = useState(firstElem(wrapperType));
 
 	//choice is the possible section by wrapper
-	const choice = require('./fieldPicker/WrapperSection.json');
-	const listChoice = choice[wrapperType];
+
+	const listChoiceSectionByWrapper =
+		require('./fieldPicker/WrapperSection.json')[wrapperType];
 	const [LoopMode, setLoopMode] = useState(false);
 
 	const sortableListClassName = `sortable-${keyWrapper}-list`;
@@ -113,35 +116,25 @@ export function WrapperTemplate({
 	const handleOpenModal = (isOpen) => {
 		setOpenModalSectionSelection(isOpen);
 	};
+
 	return (
 		<div
-			style={
-				LoopMode
-					? {
-							width: '100%',
-							borderStyle: 'solid',
-							borderColor: '#EEEEEE',
-							borderWidth: 1,
-							backgroundColor: '#FFEEE5',
-							padding: 15,
-							borderRadius: 10,
-					  }
-					: {
-							width: '100%',
-							borderStyle: 'solid',
-							borderColor: '#EEEEEE',
-							borderWidth: 1,
-							backgroundColor: '#FCFAFA',
-							padding: 15,
-							borderRadius: 10,
-					  }
-			}>
+			style={{
+				width: '100%',
+				borderStyle: 'solid',
+				borderColor: '#EEEEEE',
+				borderWidth: 1,
+				backgroundColor: '#FCFAFA',
+				padding: 15,
+				borderRadius: 10,
+			}}>
 			{wrapperType === 'bcvWrapper' ? (
 				<BCVWrapperSortableList
 					keyWrapper={keyWrapper}
 					advanceMode={advanceMode}
 					changePrintData={changePrintData}
 					setLoopMode={setLoopMode}
+					loopMode={LoopMode}
 				/>
 			) : (
 				<></>
@@ -152,200 +145,243 @@ export function WrapperTemplate({
 					advanceMode={advanceMode}
 					changePrintData={changePrintData}
 					setLoopMode={setLoopMode}
+					loopMode={LoopMode}
 				/>
 			) : (
 				<></>
 			)}
+			<div
+				style={
+					LoopMode
+						? {
+								backgroundColor: '#FFEEE5',
+						  }
+						: {
+								backgroundColor: '#EEEEEE',
+						  }
+				}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'end',
+					}}>
+					{advanceMode ? (
+						<div style={{ display: 'flex' }}>
+							<Button
+								style={{
+									borderStyle: 'solid',
+									color: 'white',
+								}}
+								onClick={() => {
+									changePrintOrder((prev) => {
+										let t = [...prev];
+										t.splice(t.indexOf(keyWrapper), 1);
+										for (let i = 0; i < t.length; i++) {
+											if (t[i] > keyWrapper) {
+												t[i] -= 1;
+											}
+										}
+										return t;
+									});
 
-			<div style={{ display: 'flex', justifyContent: 'end' }}>
-				{advanceMode ? (
-					<div style={{ display: 'flex' }}>
+									changePrintData((prev) => {
+										const updatedSelected = {
+											...prev,
+										};
+										const up = {};
+
+										Object.keys(updatedSelected).forEach(
+											(key) => {
+												if (
+													parseInt(key) > keyWrapper
+												) {
+													let newIndex =
+														parseInt(key) - 1;
+													up[newIndex] =
+														updatedSelected[key];
+												} else if (
+													parseInt(key) < keyWrapper
+												) {
+													up[key] =
+														updatedSelected[key];
+												}
+											},
+										);
+										return up;
+									});
+								}}>
+								<Trash color={'black'} style={{height: 35, width: 35 }} />
+							</Button>
+						</div>
+					) : (
+						<></>
+					)}
+				</div>
+
+				<ul className={sortableListClassName}>
+					{Object.keys(JSON.parse(sections)).map((k, index) => (
+						<li
+							id={index}
+							className={itemClassName}
+							draggable='true'
+							key={k + '_' + index}
+							onDragStart={() => setUpdate(false)}
+							onDragEnd={() => setUpdate(true)}
+							style={{ padding: 5 }}>
+							<div
+								style={{
+									flexDirection: 'row',
+									display: 'flex',
+								}}>
+								<AccordionPicker
+									language={i18n.language}
+									wrapperType={wrapperType}
+									advanceMode={advanceMode}
+									setSelected={setSections}
+									keySpecification={
+										JSON.parse(sections)[k].type
+									}
+									idjson={k}
+									removeButton={
+										advanceMode ? (
+											<Button
+												style={{
+													borderRadius: 4,
+													height: 40,
+													backgroundColor: '#F50',
+													borderStyle: 'solid',
+													borderColor: '#F50',
+													color: 'white',
+												}}
+												onClick={() => {
+													setOrderSelections(
+														(prev) => {
+															let t = [...prev];
+															t.splice(
+																t.indexOf(
+																	index,
+																),
+																1,
+															);
+															for (
+																let i = 0;
+																i < t.length;
+																i++
+															) {
+																if (
+																	t[i] > index
+																) {
+																	t[i] -= 1;
+																}
+															}
+															return t;
+														},
+													);
+													setSections((prev) => {
+														const updatedSelected =
+															{
+																...JSON.parse(
+																	prev,
+																),
+															};
+														const up = {};
+
+														Object.keys(
+															updatedSelected,
+														).forEach((key) => {
+															if (
+																parseInt(key) >
+																index
+															) {
+																let newIndex =
+																	parseInt(
+																		key,
+																	) - 1;
+																up[newIndex] =
+																	updatedSelected[
+																		key
+																	];
+															} else if (
+																parseInt(key) <
+																index
+															) {
+																up[key] =
+																	updatedSelected[
+																		key
+																	];
+															}
+														});
+
+														return JSON.stringify(
+															up,
+														);
+													});
+												}}>
+												Remove
+											</Button>
+										) : (
+											<></>
+										)
+									}
+								/>
+							</div>
+						</li>
+					))}
+				</ul>
+
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						paddingLeft: 22,
+						paddingRight: 22,
+						justifyContent: 'center',
+						paddingTop: 10,
+						alignItems: 'center',
+						justifyContent: 'space-between',
+					}}>
+					{advanceMode && LoopMode ? (
 						<Button
 							style={{
+								borderRadius: 4,
+								backgroundColor: '#F50',
 								borderStyle: 'solid',
+								borderColor: '#F50',
 								color: 'white',
 							}}
-							onClick={() => {
-								changePrintOrder((prev) => {
-									let t = [...prev];
-									t.splice(t.indexOf(keyWrapper), 1);
-									for (let i = 0; i < t.length; i++) {
-										if (t[i] > keyWrapper) {
-											t[i] -= 1;
-										}
-									}
-									return t;
-								});
-
-								changePrintData((prev) => {
-									const updatedSelected = {
-										...prev,
-									};
-									const up = {};
-
-									Object.keys(updatedSelected).forEach(
-										(key) => {
-											if (parseInt(key) > keyWrapper) {
-												let newIndex =
-													parseInt(key) - 1;
-												up[newIndex] =
-													updatedSelected[key];
-											} else if (
-												parseInt(key) < keyWrapper
-											) {
-												up[key] = updatedSelected[key];
-											}
-										},
-									);
-									return up;
-								});
-							}}>
-							<Trash style={{ height: 35, width: 35 }} />
+							onClick={() => handleOpenModal(true)}>
+							Add
 						</Button>
-					</div>
-				) : (
-					<></>
-				)}
-			</div>
+					) : (
+						<div
+							style={{
+								padding: 17,
+							}}></div>
+					)}
+					<ModalSectionSelection
+						open={openModalSectionSelection}
+						setOpen={setOpenModalSectionSelection}
+						table={listChoiceSectionByWrapper}
+						setSelected={(c) => {
+							setSections((prev) => {
+								let t = { ...JSON.parse(prev) };
+								let nb = Object.keys(t).length;
+								t[nb] = {
+									id: `${uuidv4()}`,
+									type: c,
+									content: {},
+								};
 
-			<ul className={sortableListClassName}>
-				{Object.keys(JSON.parse(sections)).map((k, index) => (
-					<li
-						id={index}
-						className={itemClassName}
-						draggable='true'
-						key={k + '_' + index}
-						onDragStart={() => setUpdate(false)}
-						onDragEnd={() => setUpdate(true)}
-						style={{ padding: 5 }}>
-						<div style={{ flexDirection: 'row', display: 'flex' }}>
-							<AccordionPicker
-								language={i18n.language}
-								wrapperType={wrapperType}
-								advanceMode={advanceMode}
-								setSelected={setSections}
-								keySpecification={JSON.parse(sections)[k].type}
-								idjson={k}
-								removeButton={
-									advanceMode ? (
-										<Button
-											style={{
-												borderRadius: 4,
-												height: 40,
-												backgroundColor: '#F50',
-												borderStyle: 'solid',
-												borderColor: '#F50',
-												color: 'white',
-											}}
-											onClick={() => {
-												setOrderSelections((prev) => {
-													let t = [...prev];
-													t.splice(
-														t.indexOf(index),
-														1,
-													);
-													for (
-														let i = 0;
-														i < t.length;
-														i++
-													) {
-														if (t[i] > index) {
-															t[i] -= 1;
-														}
-													}
-													return t;
-												});
-												setSections((prev) => {
-													const updatedSelected = {
-														...JSON.parse(prev),
-													};
-													const up = {};
-
-													Object.keys(
-														updatedSelected,
-													).forEach((key) => {
-														if (
-															parseInt(key) >
-															index
-														) {
-															let newIndex =
-																parseInt(key) -
-																1;
-															up[newIndex] =
-																updatedSelected[
-																	key
-																];
-														} else if (
-															parseInt(key) <
-															index
-														) {
-															up[key] =
-																updatedSelected[
-																	key
-																];
-														}
-													});
-
-													return JSON.stringify(up);
-												});
-											}}>
-											Remove
-										</Button>
-									) : (
-										<></>
-									)
-								}
-							/>
-						</div>
-					</li>
-				))}
-			</ul>
-
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					paddingLeft: 22,
-					paddingRight: 22,
-					justifyContent: 'center',
-					paddingTop: 10,
-					alignItems: 'center',
-					justifyContent: 'space-between',
-				}}>
-				{advanceMode && LoopMode ? (
-					<Button
-						style={{
-							borderRadius: 4,
-							backgroundColor: '#F50',
-							borderStyle: 'solid',
-							borderColor: '#F50',
-							color: 'white',
+								return JSON.stringify(t);
+							});
+							setOrderSelections((prev) => [
+								...prev,
+								prev.length,
+							]);
+							setOpenModalSectionSelection(false);
 						}}
-						onClick={() => handleOpenModal(true)}>
-						Add
-					</Button>
-				) : (
-					<div
-						style={{
-							padding: 17,
-						}}></div>
-				)}
-				<ModalSectionSelection
-					open={openModalSectionSelection}
-					setOpen={setOpenModalSectionSelection}
-					table={listChoice}
-					setSelected={(c) => {
-						setSections((prev) => {
-							let t = { ...JSON.parse(prev) };
-							let nb = Object.keys(t).length;
-							t[nb] = { type: c, content: {} };
-
-							return JSON.stringify(t);
-						});
-						setOrderSelections((prev) => [...prev, prev.length]);
-						setOpenModalSectionSelection(false);
-					}}
-				/>
+					/>
+				</div>
 			</div>
 		</div>
 	);
@@ -365,5 +401,6 @@ function firstElem(wrapperType) {
 	if (wrapperType === 'markdown') {
 		type = markdown;
 	}
-	return `{"0": { "type": "${type}", "content": {} }}`;
+
+	return `{"0": {"id":"${uuidv4()}", "type": "${type}", "content": {} }}`;
 }
