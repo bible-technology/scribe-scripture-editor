@@ -240,15 +240,8 @@ export function WrapperTemplate({
 											onClick={() => {
 												setOrderSelections((prev) => {
 													let t = [...prev];
-													t.splice(
-														t.indexOf(index),
-														1,
-													);
-													for (
-														let i = 0;
-														i < t.length;
-														i++
-													) {
+													t.splice(t.indexOf(index),1);
+													for (let i = 0; i < t.length; i++) {
 														if (t[i] > index) {
 															t[i] -= 1;
 														}
@@ -261,28 +254,12 @@ export function WrapperTemplate({
 													};
 													const up = {};
 
-													Object.keys(
-														updatedSelected,
-													).forEach((key) => {
-														if (
-															parseInt(key) >
-															index
-														) {
-															let newIndex =
-																parseInt(key) -
-																1;
-															up[newIndex] =
-																updatedSelected[
-																	key
-																];
-														} else if (
-															parseInt(key) <
-															index
-														) {
-															up[key] =
-																updatedSelected[
-																	key
-																];
+													Object.keys(updatedSelected,).forEach((key) => {
+														if (parseInt(key) > index) {
+															let newIndex = parseInt(key) - 1;
+															up[newIndex] = updatedSelected[key];
+														} else if (parseInt(key) < index) {
+															up[key] =	updatedSelected[key];
 														}
 													});
 
