@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { FieldPicker } from './FieldPicker';
 import { Button } from '@mui/material';
-export function ScripturePicker({ require, fieldInfo, setJsonSpec, lang }) {
+export function ScripturePicker({
+	fieldInfo,
+	setJsonSpec,
+	lang,
+	open = true,
+}) {
 	const [scriptureJson, setScriptureJson] = useState('{}');
 	const [numberOfScripture, setNumberOfScripture] = useState(
 		fieldInfo.nValues[0],
@@ -18,7 +23,6 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec, lang }) {
 	useEffect(() => {
 		setScriptureJson((prev) => {
 			const newState = JSON.parse(prev);
-			console.log(fieldInfo.typeSpec);
 			fieldInfo.typeSpec.map((t) => {
 				delete newState[t.id.replace('#', numberOfScripture + 1)];
 			});
@@ -28,11 +32,15 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec, lang }) {
 
 	return (
 		<div
-			style={{
-				margin: '10%',
-				borderLeftStyle: 'solid',
-				borderLeftWidth: 1,
-			}}>
+			style={
+				open
+					? {
+							margin: '10%',
+							borderLeftStyle: 'solid',
+							borderLeftWidth: 1,
+					  }
+					: { display: 'none' }
+			}>
 			<div
 				style={{
 					display: 'flex',
@@ -43,7 +51,6 @@ export function ScripturePicker({ require, fieldInfo, setJsonSpec, lang }) {
 					disabled={fieldInfo.nValues[0] === fieldInfo.nValues[1]}
 					onClick={() => {
 						setNumberOfScripture((prev) => {
-							console.log(prev, fieldInfo);
 							if (prev >= fieldInfo.nValues[0]) {
 								return prev - 1;
 							} else {

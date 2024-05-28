@@ -5,7 +5,6 @@ import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook'
 import { useBibleReference } from 'bible-reference-rcl';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-
 import Layout from '../../../../../../public/icons/basil/Solid/Interface/Layout.svg';
 import { TextOnlyTooltip,LoopSwitch } from '../fieldPicker/customMuiComponent';
 
@@ -14,9 +13,10 @@ export function BCVWrapperSortableList({
 	keyWrapper,
 	advanceMode,
 	changePrintData,
-	setLoopMode
+	setLoopMode,
+	loopMode
 }) {
-	
+	//Start get all book from current project
 	const initialBook = 'mat';
 	const initialChapter = '1';
 	const initialVerse = '1';
@@ -34,14 +34,15 @@ export function BCVWrapperSortableList({
 		states: { canonList },
 	} = useContext(ProjectContext);
 
+	//end get all book from current project
 	const [selectedBooks, setSelectedBooks] = useState([]);
 	const [openModalBook, setOpenModalBook] = useState(false);
 
 	useEffect(() => {
 		changePrintData((prev) => {
 			const copyData = { ...prev };
-			copyData[keyWrapper]['books'] = [];
-			copyData[keyWrapper]['books'] = selectedBooks;
+			copyData[keyWrapper]['ranges'] = [];
+			copyData[keyWrapper]['ranges'] = selectedBooks;
 			return copyData;
 		});
 	}, [selectedBooks.length]);
@@ -85,6 +86,7 @@ export function BCVWrapperSortableList({
 								Loop mode
 							</div>
 							<LoopSwitch
+							defaultChecked={loopMode}
 								onChange={() => setLoopMode((prev) => !prev)}
 							/>
 						</TextOnlyTooltip>

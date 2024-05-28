@@ -15,8 +15,8 @@ export function AccordionPicker({
 }) {
 	const [open, setOpen] = useState(true);
 	const [jsonSpecEntry, setJsonSpecEntry] = useState('{}');
-
-	const jsonSpec = global.PdfGen.handlerInfo()
+	console.log(jsonSpecEntry)
+	const jsonSpec = global.PdfGenStatic.handlerInfo()
 
 	const handleAccordionChange = () => {
 		setOpen((prevOpen) => !prevOpen);

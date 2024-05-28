@@ -1,4 +1,4 @@
-import { Tooltip, tooltipClasses } from '@mui/material';
+import { Tooltip, tooltipClasses,Checkbox,checkboxClasses } from '@mui/material';
 import { styled } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import { alpha } from '@mui/material';
@@ -23,6 +23,11 @@ export const TextOnlyTooltip = styled(({ className, ...props }) => (
 		color: '#FFFFFF',
 	},
 }));
+
+const mainColor = "red"
+const lightErrorColor = "blue"
+const errorColor = "green"
+const lightColor = "rgba(255, 238, 229, 1)"
 
 export const LoopSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {

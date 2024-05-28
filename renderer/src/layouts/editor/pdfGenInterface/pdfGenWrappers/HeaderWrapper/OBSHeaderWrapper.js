@@ -3,13 +3,14 @@ import { NumericFormat } from 'react-number-format';
 import { TextField } from '@mui/material';
 import ImageIcon from '../../../../../../public/icons/basil/Solid/Files/Image.svg';
 import React from 'react';
-import { LoopSwitch ,TextOnlyTooltip} from '../fieldPicker/customMuiComponent';
+import { LoopSwitch, TextOnlyTooltip } from '../fieldPicker/customMuiComponent';
 
 export function OBSWrapperSortableList({
 	keyWrapper,
 	advanceMode,
 	changePrintData,
-	setLoopMode
+	setLoopMode,
+	loopMode,
 }) {
 	const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
 		props,
@@ -36,7 +37,6 @@ export function OBSWrapperSortableList({
 	const [startObs, setStartObs] = useState('');
 	const [endObs, setEndObs] = useState('');
 
-
 	const handleBlurStart = (event) => {
 		const newValue = event.target.value.trim(); // Trim any whitespace
 		setStartObs(newValue);
@@ -51,9 +51,7 @@ export function OBSWrapperSortableList({
 			const copyData = { ...prev };
 			if (startObs !== '' && endObs !== '') {
 				if (parseInt(startObs) <= parseInt(endObs)) {
-					copyData[keyWrapper][
-						'storyRange'
-					] = `${startObs}-${endObs}`;
+					copyData[keyWrapper]['ranges'] = [`${startObs}-${endObs}`];
 				}
 			}
 			return copyData;
@@ -128,6 +126,7 @@ export function OBSWrapperSortableList({
 								Loop mode
 							</div>
 							<LoopSwitch
+								defaultChecked={loopMode}
 								onChange={() => setLoopMode((prev) => !prev)}
 							/>
 						</TextOnlyTooltip>

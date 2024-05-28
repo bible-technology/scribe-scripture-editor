@@ -189,7 +189,7 @@
     "use-deep-compare": "^1.1.0",
     "usfm-editor": "0.8.7",
     "usfm-grammar": "^2.3.0",
-    "uuid": "^8.3.2",
+    "uuid": "^9.0.1",
     "wavesurfer.js": "^6.6.2",
     "webpack-node-externals": "^3.0.0",
     "winston": "^3.7.2",
