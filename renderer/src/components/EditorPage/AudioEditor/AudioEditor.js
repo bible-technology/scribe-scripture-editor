@@ -40,7 +40,6 @@ const AudioEditor = ({ editor }) => {
       setAudioContent,
       setAudioCurrentChapter,
       setAudioPath,
-      setEditorFontSize,
     },
   } = useContext(ReferenceContext);
 
