@@ -162,6 +162,7 @@ export const createVersificationUSFM = (
               refResources: call === 'edit' ? currentBurrito.project?.textTranslation.refResources : [],
               bookMarks: call === 'edit' ? currentBurrito.project?.textTranslation.bookMarks : [],
               font: '',
+              fontSize: 1,
             },
           },
           sync: { services: { door43: [] } },
@@ -347,6 +348,7 @@ export const createWebVersificationUSFM = async (
           },
           sync: { services: { door43: [] } },
           font: '',
+          fontSize: 1,
         };
         if (call === 'edit') {
           settings.sync = currentBurrito?.sync;

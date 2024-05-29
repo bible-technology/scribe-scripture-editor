@@ -18,7 +18,7 @@ export default function EditorMenuBar(props) {
     setVerseNumber,
     handleSelectedFont,
     setTriggerVerseInsert,
-    setEditorFontSize,
+    handleEditorFontSize,
     editorFontSize,
   } = props;
 
@@ -31,10 +31,10 @@ export default function EditorMenuBar(props) {
 
   const handleFontSize = (status) => {
     if (status === 'dec' && editorFontSize > 0.70) {
-      setEditorFontSize(editorFontSize - 0.2);
+      handleEditorFontSize(editorFontSize - 0.2);
     }
     if (status === 'inc' && editorFontSize < 2) {
-      setEditorFontSize(editorFontSize + 0.2);
+      handleEditorFontSize(editorFontSize + 0.2);
     }
   };
 

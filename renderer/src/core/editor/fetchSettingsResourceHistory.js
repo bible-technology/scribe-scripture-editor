@@ -116,6 +116,7 @@ export async function fetchSettingsResourceHistory(
                                   owner: '',
                                   offlineResource: { offline: false },
                                   font: '',
+                                  fontSize: 1,
                                 }
                                 ));
                               } else if (_columnnum === historyColumn && _rownum === '2') {
@@ -134,6 +135,7 @@ export async function fetchSettingsResourceHistory(
                                   owner: '',
                                   offlineResource: { offline: false },
                                   font: '',
+                                  fontSize: 1,
                                 }
                                 ));
                               }
@@ -158,6 +160,7 @@ export async function fetchSettingsResourceHistory(
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
                             font: _value?.font,
+                            fontSize: _value?.fontSize || 1,
                           });
                       }
                       if (_rownum === '2') {
@@ -170,6 +173,7 @@ export async function fetchSettingsResourceHistory(
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
                             font: _value?.font,
+                            fontSize: _value?.fontSize || 1,
                           });
                       }
                   },

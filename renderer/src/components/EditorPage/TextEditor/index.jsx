@@ -30,7 +30,7 @@ export default function TextEditor() {
   const {
     state: { bookId, selectedFont, editorFontSize },
     actions: {
-      handleSelectedFont, onChangeChapter, onChangeVerse, setEditorFontSize,
+      handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
     },
   } = useContext(ReferenceContext);
 
@@ -104,7 +104,7 @@ export default function TextEditor() {
     bookName,
     bookChange,
     bookAvailable,
-    setEditorFontSize,
+    handleEditorFontSize,
     setBookChange,
     setChapterNumber,
     setVerseNumber,

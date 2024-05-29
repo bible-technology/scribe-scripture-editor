@@ -19,7 +19,11 @@ import { getDetails } from './utils/getDetails';
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
-  const { state: { obsNavigation, loadData }, actions: { setLoadData } } = useContext(ReferenceContext);
+  const {
+ state: {
+ obsNavigation, loadData,
+}, actions: { setLoadData },
+} = useContext(ReferenceContext);
 
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');
@@ -89,6 +93,7 @@ const ObsEditor = () => {
                         );
                         localforage.setItem('projectmeta', value);
                         // This func will update the scribe-setting.json file
+                        // saveReferenceResource(selectedFont, editorFontSize);
                         saveReferenceResource();
                       });
                     });

@@ -71,6 +71,8 @@ const SectionPlaceholder2 = ({ editor }) => {
       font4,
       fontSize3,
       fontSize4,
+      selectedFont,
+      editorFontSize,
     },
     actions: {
       setRow,
@@ -234,6 +236,8 @@ const SectionPlaceholder2 = ({ editor }) => {
         setReferenceColumnTwoData2,
         setOpenResource3,
         setOpenResource4,
+        selectedFont,
+        editorFontSize,
       );
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -244,6 +248,7 @@ const SectionPlaceholder2 = ({ editor }) => {
     referenceColumnTwoData1.offlineResource, referenceColumnTwoData2.offlineResource,
     referenceColumnTwoData1.font, referenceColumnTwoData2.font,
     resetResourceOnDeleteOffline?.referenceColumnTwoData1Reset, resetResourceOnDeleteOffline?.referenceColumnTwoData2Reset,
+    referenceColumnTwoData1.fontSize, referenceColumnTwoData2.fontSize,
   ]);
 
   // referenceColumnTwoData1, referenceColumnTwoData2 openResource1, openResource2,
@@ -299,6 +304,8 @@ const SectionPlaceholder2 = ({ editor }) => {
     if (referenceColumnTwoData2.font) {
       setFont4(referenceColumnTwoData2?.font);
     }
+    setFontsize3(referenceColumnTwoData1?.fontSize || 1);
+    setFontsize4(referenceColumnTwoData2?.fontSize || 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_obsNavigation1, _obsNavigation2, referenceColumnTwoData1, referenceColumnTwoData2]);
 

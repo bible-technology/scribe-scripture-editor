@@ -69,6 +69,8 @@ const SectionPlaceholder1 = ({ editor }) => {
       font2,
       fontSize1,
       fontSize2,
+      editorFontSize,
+      selectedFont,
     },
     actions: {
       setRow,
@@ -229,6 +231,8 @@ const SectionPlaceholder1 = ({ editor }) => {
         setReferenceColumnOneData2,
         setOpenResource1,
         setOpenResource2,
+        selectedFont,
+        editorFontSize,
       );
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -238,7 +242,9 @@ const SectionPlaceholder1 = ({ editor }) => {
     referenceColumnOneData2?.owner, removingSection, addingSection, referenceColumnOneData2?.offlineResource,
     referenceColumnOneData1?.offlineResource, referenceColumnOneData2?.font,
     referenceColumnOneData1?.font, resetResourceOnDeleteOffline?.referenceColumnOneData1Reset,
-    resetResourceOnDeleteOffline?.referenceColumnOneData2Reset, referenceColumnOneData2, referenceColumnOneData1]);
+    resetResourceOnDeleteOffline?.referenceColumnOneData2Reset, referenceColumnOneData2, referenceColumnOneData1,
+    referenceColumnOneData1?.fontSize, referenceColumnOneData2?.fontSize,
+  ]);
 
   // referenceColumnOneData2 referenceColumnOneData1
   const CustomNavigation1 = (
@@ -299,6 +305,8 @@ const SectionPlaceholder1 = ({ editor }) => {
     if (referenceColumnOneData2.font) {
       setFont2(referenceColumnOneData2?.font);
     }
+    setFontsize1(referenceColumnOneData1?.fontSize);
+    setFontsize2(referenceColumnOneData2?.fontSize);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_obsNavigation1, _obsNavigation2, referenceColumnOneData1, referenceColumnOneData2]);
 

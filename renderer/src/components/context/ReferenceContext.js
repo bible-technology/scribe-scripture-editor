@@ -95,6 +95,15 @@ export default function ReferenceContextProvider({ children }) {
     }
   };
 
+  // define functon to change editor font size and call saveReference
+  const handleEditorFontSize = async (currentFontSize) => {
+    if (isElectron()) {
+      setEditorFontSize(currentFontSize);
+      // INFO : implement a debounce for this call if needed
+      saveReferenceResource(selectedFont, currentFontSize);
+    }
+  };
+
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
@@ -112,17 +121,20 @@ export default function ReferenceContextProvider({ children }) {
                         setBookmarksVerses(resources.project?.textTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.textTranslation?.font);
+                        setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
                         break;
                       case 'textStories':
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
                         setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
                         setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
                         setSelectedFont(resources.project?.textStories?.font);
+                        setEditorFontSize(resources.project?.textStories?.fontSize);
                         break;
                       case 'audioTranslation':
                         setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.audioTranslation?.font);
+                        setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
                         break;
                       default:
                         break;
@@ -237,6 +249,7 @@ export default function ReferenceContextProvider({ children }) {
       onChangeChapter,
       onChangeVerse,
       applyBooksFilter,
+      handleEditorFontSize,
       setAnchorEl,
       handleClick,
       setRefName,

@@ -43,7 +43,7 @@ export default function Editor({
       setBookmarksVerses,
       setObsNavigation,
       handleSelectedFont,
-      setEditorFontSize,
+      handleEditorFontSize,
     },
   } = useContext(ReferenceContext);
   const [bookMarked, setBookMarks] = useState(false);
@@ -55,10 +55,10 @@ export default function Editor({
 
   const handleFontSize = (status) => {
     if (status === 'dec' && editorFontSize > 0.70) {
-      setEditorFontSize(editorFontSize - 0.2);
+      handleEditorFontSize(editorFontSize - 0.2);
     }
     if (status === 'inc' && editorFontSize < 2) {
-      setEditorFontSize(editorFontSize + 0.2);
+      handleEditorFontSize(editorFontSize + 0.2);
     }
   };
 

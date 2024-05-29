@@ -96,6 +96,11 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
       } else {
         setting.project[sbDataObject.type.flavorType.flavor.name].font = (setting.project[sbDataObject.type.flavorType.flavor.name].font) ? (setting.project[sbDataObject.type.flavorType.flavor.name].font) : '';
       }
+      if (!setting.fontSize) {
+        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = 1;
+      } else {
+        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) ? (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) : 1;
+      }
       settings = setting;
     }
     settings.project[sbDataObject.type.flavorType.flavor.name].lastSeen = moment().format();
