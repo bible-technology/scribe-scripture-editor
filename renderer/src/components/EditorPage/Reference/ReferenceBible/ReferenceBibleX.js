@@ -13,6 +13,7 @@ const ReferenceBibleX = ({
   refName,
   bookId,
   font,
+  fontSize,
 }) => {
   const {
     states: {
@@ -47,6 +48,7 @@ const ReferenceBibleX = ({
     refName,
     scrollLock,
     font,
+    fontSize,
   };
   return (
     <>

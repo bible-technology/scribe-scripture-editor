@@ -8,12 +8,13 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
   const {
     state: {
       selectedFont,
-      fontSize,
+      editorFontSize,
     },
     actions: {
       setSelectedStory,
     },
 } = useContext(ReferenceContext);
+
   const { states: { scrollLock } } = useContext(ProjectContext);
   const { t } = useTranslation();
   const handleChange = (e) => {
@@ -90,7 +91,7 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
               className="flex-grow text-justify ml-2 p-2 text-xl"
               style={{
                 fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${fontSize}rem`,
+                fontSize: `${editorFontSize}rem`,
               }}
             />
           </div>
@@ -118,8 +119,8 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
               onInput={(e) => handleAutoHeight(e)}
               style={{
                 fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${fontSize}rem`,
-                lineHeight: (fontSize > 1.3) ? 1.5 : '',
+                fontSize: `${editorFontSize}rem`,
+                lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
               }}
             />
           </div>
@@ -140,8 +141,8 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
               className="flex-grow text-justify ml-2 p-2 text-sm"
               style={{
                 fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${fontSize}rem`,
-                lineHeight: (fontSize > 1.3) ? 1.5 : '',
+                fontSize: `${editorFontSize}rem`,
+                lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
               }}
             />
           </div>

@@ -23,6 +23,7 @@ function ObsTwlCard({
   resourceId,
   offlineResource,
   font,
+  fontSize,
   ...props
 }) {
   const [index, setIndex] = useState(1);
@@ -104,6 +105,7 @@ function ObsTwlCard({
         index={index}
         setIndex={(v) => setIndex(v)}
         font={font}
+        fontSize={fontSize}
       />
     ) : (
       <LoadingScreen />

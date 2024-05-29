@@ -32,7 +32,7 @@ export default function TopMenuBar() {
 
   const {
     state: {
-      fontSize,
+      editorFontSize: fontSize,
     },
     actions: {
       setFontsize,
