@@ -32,7 +32,7 @@ export default function Editor({
   const {
     state: {
       selectedFont,
-      fontSize,
+      editorFontSize,
       bookmarksVerses,
       bookName,
       chapter,
@@ -43,6 +43,7 @@ export default function Editor({
       setBookmarksVerses,
       setObsNavigation,
       handleSelectedFont,
+      setEditorFontSize,
     },
   } = useContext(ReferenceContext);
   const [bookMarked, setBookMarks] = useState(false);
@@ -50,6 +51,15 @@ export default function Editor({
   const handleUnlockScroll = (e) => {
     e.preventDefault();
     setScrollLock(!scrollLock);
+  };
+
+  const handleFontSize = (status) => {
+    if (status === 'dec' && editorFontSize > 0.70) {
+      setEditorFontSize(editorFontSize - 0.2);
+    }
+    if (status === 'inc' && editorFontSize < 2) {
+      setEditorFontSize(editorFontSize + 0.2);
+    }
   };
 
   useEffect(() => {
@@ -148,7 +158,34 @@ export default function Editor({
         <div aria-label="editor-pane" className="h-4 flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate">
           {t('label-editor-pane')}
         </div>
-        <div className="flex ml-auto">
+        <div className="flex ml-auto items-center gap-4">
+          <button
+            type="button"
+            className="inline-flex items-center justify-center border rounded-md shadow-sm
+                  text-xs h-fit py-1
+                  focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300"
+          >
+            <div
+              aria-label="decrease-font"
+              onClick={() => { handleFontSize('dec'); }}
+              role="button"
+              tabIndex="0"
+              title={t('tooltip-editor-font-dec')}
+              className="h-5 w-5 text-gray-300 hover:text-white font-bold border-r border-gray-200 text-center flex items-center pl-1.5 "
+            >
+              {t('label-editor-font-char')}
+            </div>
+            <div
+              aria-label="increase-font"
+              className="h-5 w-5  hover:text-white font-bold text-lg text-center flex items-center pl-1 text-gray-300"
+              onClick={() => { handleFontSize('inc'); }}
+              role="button"
+              title={t('tooltip-editor-font-inc')}
+              tabIndex="0"
+            >
+              {t('label-editor-font-char')}
+            </div>
+          </button>
           <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="h-6 mr-2 w-6 text-white cursor-pointer" />
           {/* <InsertMenu handleClick={handleClick} selectedText={selectedText} /> */}
         </div>
@@ -183,8 +220,8 @@ export default function Editor({
       <div
         style={{
           fontFamily: selectedFont || 'sans-serif',
-          fontSize: `${fontSize}rem`,
-          lineHeight: (fontSize > 1.3) ? 1.5 : '',
+          fontSize: `${editorFontSize}rem`,
+          lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
           direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
         }}
         aria-label="editor"

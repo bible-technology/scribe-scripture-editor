@@ -4,6 +4,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/TextEditor/BibleNavigationX';
+import { useTranslation } from 'react-i18next';
 import BibleNavigationX from './BibleNavigationX';
 import Buttons from './Buttons';
 import InsertMenu from './InsertMenu';
@@ -17,16 +18,29 @@ export default function EditorMenuBar(props) {
     setVerseNumber,
     handleSelectedFont,
     setTriggerVerseInsert,
+    setEditorFontSize,
+    editorFontSize,
   } = props;
+
+  const { t } = useTranslation();
 
   const {
     states: { scrollLock },
     actions: { setScrollLock },
   } = useContext(ProjectContext);
 
+  const handleFontSize = (status) => {
+    if (status === 'dec' && editorFontSize > 0.70) {
+      setEditorFontSize(editorFontSize - 0.2);
+    }
+    if (status === 'inc' && editorFontSize < 2) {
+      setEditorFontSize(editorFontSize + 0.2);
+    }
+  };
+
   return (
     <div className="relative min-h-[66px] flex flex-col bg-secondary rounded-t-md overflow-hidden">
-      <div className="flex min-h-[33px] items-center justify-between ">
+      <div className="flex min-h-[33px] items-center justify-between gap-2">
         <BibleNavigationX
           chapterNumber={chapterNumber}
           setChapterNumber={setChapterNumber}
@@ -39,6 +53,35 @@ export default function EditorMenuBar(props) {
         >
           Editor
         </div>
+
+        <button
+          type="button"
+          className="inline-flex items-center justify-center border rounded-md shadow-sm
+                  text-xs h-fit py-1
+                  focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300"
+        >
+          <div
+            aria-label="decrease-font"
+            onClick={() => { handleFontSize('dec'); }}
+            role="button"
+            tabIndex="0"
+            title={t('tooltip-editor-font-dec')}
+            className="h-5 w-5 text-gray-300 hover:text-white font-bold border-r border-gray-200 text-center flex items-center pl-1.5 "
+          >
+            {t('label-editor-font-char')}
+          </div>
+          <div
+            aria-label="increase-font"
+            className="h-5 w-5  hover:text-white font-bold text-lg text-center flex items-center pl-1 text-gray-300"
+            onClick={() => { handleFontSize('inc'); }}
+            role="button"
+            title={t('tooltip-editor-font-inc')}
+            tabIndex="0"
+          >
+            {t('label-editor-font-char')}
+          </div>
+        </button>
+
         <div
           title="navigation lock/unlock"
           className="flex items-center mr-auto"
