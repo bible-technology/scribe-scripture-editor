@@ -37,7 +37,11 @@ export default function ReferenceContextProvider({ children }) {
   const [font2, setFont2] = useState('sans-serif');
   const [font3, setFont3] = useState('sans-serif');
   const [font4, setFont4] = useState('sans-serif');
-  const [fontSize, setFontsize] = React.useState(1);
+  const [editorFontSize, setEditorFontSize] = React.useState(1);
+  const [fontSize1, setFontsize1] = React.useState(1);
+  const [fontSize2, setFontsize2] = React.useState(1);
+  const [fontSize3, setFontsize3] = React.useState(1);
+  const [fontSize4, setFontsize4] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
   const [refernceLoading, setRefernceLoading] = useState({
@@ -196,7 +200,11 @@ export default function ReferenceContextProvider({ children }) {
       font2,
       font3,
       font4,
-      fontSize,
+      fontSize1,
+      fontSize2,
+      fontSize3,
+      fontSize4,
+      editorFontSize,
       layout,
       row,
       refernceLoading,
@@ -244,7 +252,11 @@ export default function ReferenceContextProvider({ children }) {
       setFont2,
       setFont3,
       setFont4,
-      setFontsize,
+      setEditorFontSize,
+      setFontsize1,
+      setFontsize2,
+      setFontsize3,
+      setFontsize4,
       setLayout,
       setRow,
       setRefernceLoading,

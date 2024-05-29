@@ -7,7 +7,7 @@ import ObsTnCard from './OBS/ObsTn';
 import ObsTwlCard from './OBS/ObsTwlCard';
 
 const TranslationHelps = ({
- selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font,
+ selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font, fontSize,
 }) => {
   const {
     state: {
@@ -40,6 +40,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'twl':
@@ -56,6 +57,7 @@ const TranslationHelps = ({
               owner="test_org"
               server="https://git.door43.org"
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'twlm':
@@ -72,6 +74,7 @@ const TranslationHelps = ({
               owner={owner}
               server="https://git.door43.org"
               font={font}
+              fontSize={fontSize}
             />
             );
         case 'tq':
@@ -90,6 +93,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'tw':
@@ -106,6 +110,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
             );
         case 'ta':
@@ -123,6 +128,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
             );
         case 'bible':
@@ -135,6 +141,7 @@ const TranslationHelps = ({
               chapter={chapter}
               verse={verse}
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'obs':
@@ -147,6 +154,7 @@ const TranslationHelps = ({
               chapter={chapter}
               verse={verse}
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'obs-tn':
@@ -163,6 +171,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
           );
         case 'obs-tq':
@@ -179,6 +188,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
           );
           case 'obs-twlm':
@@ -195,6 +205,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               offlineResource={offlineResource}
               font={font}
+              fontSize={fontSize}
             />
           );
         default:
