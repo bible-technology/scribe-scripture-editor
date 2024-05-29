@@ -267,7 +267,7 @@ export default function EditorSection({
                   )}
                 </>
               )}
-              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible  pl-2 ite">
+              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible  pl-2 items-center">
 
                 <button
                   type="button"
