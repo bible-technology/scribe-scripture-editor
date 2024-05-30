@@ -104,7 +104,7 @@ export default function ExportProjectPopUp(props) {
             deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
             .then(async () => {
               // convert to zip if text translation and zip checked
-              if (checkZip) {
+              if ((project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && checkZip) {
                 const AdmZip = window.require('adm-zip');
                 const zip = new AdmZip();
                 zip.addLocalFolder(path.join(folderPath, project.name));
