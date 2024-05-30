@@ -17,6 +17,8 @@ import { useCallback, useEffect, useState } from 'react';
 import PlayIcon from '@/icons/basil/Outline/Media/Play.svg';
 import PauseIcon from '@/icons/basil/Outline/Media/Pause.svg';
 
+const LS_AUDIO_VOLUME_KEY = 'audio-volume';
+
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const Player = ({
@@ -36,7 +38,8 @@ const Player = ({
   location,
 }) => {
   const { t } = useTranslation();
-  const [volume, setVolume] = useState(0.5);
+  // const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState((Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) && typeof Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY) === 'number')) ? Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) : 0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const speed = [0.5, 1, 1.5, 2];
   const path = require('path');
@@ -44,6 +47,23 @@ const Player = ({
   const [playTime, setPlayTime] = useState(0);
   // state to check stopwatch running or not
   const [isRunning, setIsRunning] = useState(false);
+
+  const handleVolumeChange = (action, value = 0.1, sliding = false) => {
+    // sliding the value will be tha actual value of slide
+    if (sliding) {
+      setVolume(value);
+    } else if (action === 'inc' && !sliding) {
+    // if not sliding the value will be the step value
+      setVolume((prev) => (prev > 0.9 ? prev : prev + value));
+    } else if (action === 'dec' && !sliding) {
+      setVolume((prev) => (prev < 0.1 ? prev : prev - value));
+    }
+  };
+
+  // volume
+  useEffect(() => {
+    localStorage.setItem(LS_AUDIO_VOLUME_KEY, volume);
+  }, [volume]);
 
   useEffect(() => {
     let intervalId;
@@ -137,10 +157,12 @@ const Player = ({
         changeTake('take3');
         break;
       case 187: // --> + (not in number area)
-        setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        // setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        handleVolumeChange('inc');
         break;
-      case 189: // --> - (left to +)
-        setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
+        case 189: // --> - (left to +)
+        handleVolumeChange('dec');
+        // setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
         break;
 
       default:
@@ -372,9 +394,7 @@ const Player = ({
                   type="button"
                   className="rounded-md hover:bg-primary"
                   title="-"
-                  onClick={() => setVolume(
-                  volume < 0.1 ? volume : volume - 0.1,
-                )}
+                  onClick={() => handleVolumeChange('dec')}
                 >
                   <MinusIcon
                     className="w-4 h-4"
@@ -388,14 +408,14 @@ const Player = ({
                   max={1}
                   step={0.1}
                   value={volume}
+                  onChange={(e) => handleVolumeChange('', Number(e.target.value), true)}
                 />
+
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
                   title="+"
-                  onClick={() => setVolume(
-                  volume > 0.9 ? volume : volume + 0.1,
-                )}
+                  onClick={() => handleVolumeChange('inc')}
                 >
                   <PlusIcon
                     className="w-4 h-4"
