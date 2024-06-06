@@ -15,6 +15,7 @@ const ReferenceCard = ({
   font,
   setResetTrigger,
   resetTrigger,
+  fontSize,
 }) => {
   const {
     state: {
@@ -43,7 +44,12 @@ const ReferenceCard = ({
         setItemIndex={setItemIndex}
       />
     )}
-      <div style={{ fontFamily: font || 'sans-serif' }}>
+      <div style={{
+          fontFamily: font || 'sans-serif',
+          fontSize: `${fontSize}rem`,
+          lineHeight: (fontSize > 1.3) ? 1.5 : '',
+        }}
+      >
         <CardContent
           item={item}
           items={items}

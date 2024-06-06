@@ -12,7 +12,7 @@ import {
 //   const newPath = require('../../../../supabase').newPath
 // }
 
-export const updateAgSettings = async (username, projectName, data, font) => {
+export const updateAgSettings = async (username, projectName, data, font, fontSize = 1) => {
   logger.debug('updateAgSettings.js', 'In updateAgSettings');
   const newpath = localStorage.getItem('userPath');
   const fs = window.require('fs');
@@ -31,10 +31,15 @@ export const updateAgSettings = async (username, projectName, data, font) => {
     if (!setting.project[data.type.flavorType.flavor.name].font) {
       setting.project[data.type.flavorType.flavor.name].font = font || '';
     }
+    if (!setting.project[data.type.flavorType.flavor.name].fontSize) {
+      setting.project[data.type.flavorType.flavor.name].fontSize = fontSize || 1;
+    }
   }
   const savedFont = JSON.stringify(setting.project[data.type.flavorType.flavor.name].font);
+  const savedFontSize = JSON.stringify(setting.project[data.type.flavorType.flavor.name].fontSize);
   setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
   setting.project[data.type.flavorType.flavor.name].font = font || JSON.parse(savedFont);
+  setting.project[data.type.flavorType.flavor.name].fontSize = fontSize || JSON.parse(savedFontSize);
   logger.debug('updateAgSettings.js', `Updating the ${environment.PROJECT_SETTING_FILE}`);
   await fs.writeFileSync(folder, JSON.stringify(setting));
 };
@@ -57,6 +62,11 @@ export const updateWebAgSettings = async (username, projectName, data) => {
     } else {
       setting.project[data.type.flavorType.flavor.name].font = (setting.project[data.type.flavorType.flavor.name].font) ? (setting.project[data.type.flavorType.flavor.name].font) : '';
     }
+    if (!setting.project[data.type.flavorType.flavor.name].fontSize) {
+      setting.project[data.type.flavorType.flavor.name].fontSize = 1;
+    } else {
+      setting.project[data.type.flavorType.flavor.name].fontSize = (setting.project[data.type.flavorType.flavor.name].fontSize) ? (setting.project[data.type.flavorType.flavor.name].fontSize) : 1;
+    }
   }
   await sbStorageUpload(folder, JSON.stringify(setting), {
     // cacheControl: '3600',
@@ -64,7 +74,7 @@ export const updateWebAgSettings = async (username, projectName, data) => {
   });
 };
 
-export const saveReferenceResource = (font = '') => {
+export const saveReferenceResource = (font = '', fontSize = 1) => {
   logger.debug('updateAgSettings.js', 'In saveReferenceResource for saving the reference data');
   localforage.getItem('currentProject').then(async (projectName) => {
     const _projectname = await splitStringByLastOccurance(projectName, '_');
@@ -78,7 +88,7 @@ export const saveReferenceResource = (font = '') => {
               if (id[0] === _projectname[1]) {
                 localforage.getItem('userProfile').then(async (value) => {
                   if (isElectron()) {
-                    await updateAgSettings(value?.username, projectName, resources, font);
+                    await updateAgSettings(value?.username, projectName, resources, font, fontSize);
                   } else {
                     await updateWebAgSettings(value?.user?.email, projectName, resources);
                   }

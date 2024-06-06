@@ -31,7 +31,7 @@ const AudioEditor = ({ editor }) => {
       audioContent,
       audioPath,
       selectedFont,
-      fontSize,
+      editorFontSize,
       // eslint-disable-next-line no-unused-vars
       updateWave, // updateWave is used to update the waveform in the Editor after recording audio
     }, actions: {
@@ -219,7 +219,7 @@ const AudioEditor = ({ editor }) => {
         verse={verse}
         location={audioPath}
         updateWave={updateWave}
-        fontSize={fontSize}
+        fontSize={editorFontSize}
         selectedFont={selectedFont}
       />
 )}

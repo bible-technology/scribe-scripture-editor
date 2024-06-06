@@ -11,7 +11,7 @@ export default function ReferenceScribex(props) {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
   const {
-    usfmData, bookAvailable, refName, bookId, scrollLock, font,
+    usfmData, bookAvailable, refName, bookId, scrollLock, font, fontSize,
   } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
@@ -24,11 +24,11 @@ export default function ReferenceScribex(props) {
     newStateId,
     documents: usfmData,
   });
-  const {
-    state: {
-      fontSize,
-    },
-  } = useContext(ReferenceContext);
+  // const {
+  //   state: {
+
+  //   },
+  // } = useContext(ReferenceContext);
 
   useEffect(() => {
     setSelectedBook(bookId.toUpperCase());

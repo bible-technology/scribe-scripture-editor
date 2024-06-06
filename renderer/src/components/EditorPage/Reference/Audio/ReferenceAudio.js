@@ -25,6 +25,8 @@ const ReferenceAudio = ({
   chapter,
   verse,
   bookId,
+  font,
+  fontSize,
 }) => {
   const {
     actions: {
@@ -227,6 +229,8 @@ const ReferenceAudio = ({
               data={bookData}
               versepath={mp3Path}
               verse={verse}
+              font={font}
+              fontSize={fontSize}
             //   goToVerse={{
             //     chapter: parseInt(chapter, 10),
             //     verse: parseInt(verse, 10),

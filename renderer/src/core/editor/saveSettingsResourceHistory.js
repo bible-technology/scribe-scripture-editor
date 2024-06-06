@@ -19,6 +19,8 @@ export async function saveSettingsResourceHistory(
     setReferenceColumnData2,
     setOpenResourceR1,
     setOpenResourceR2,
+    selectedFont,
+    editorFontSize,
 ) {
     logger.debug('SaveSettingsResourceHistory.js', 'In save reference hsotory func');
     // removingSection : "1" and openResourceR2 :false and sectionPlaceholderNum: "1" -> reference 2 to reference 1
@@ -70,6 +72,7 @@ export async function saveSettingsResourceHistory(
                       owner: referenceColumnData2?.owner,
                       offlineResource: referenceColumnData2.offlineResource,
                       font: referenceColumnData2?.font,
+                      fontSize: referenceColumnData2?.fontSize || 1,
                     }
                     ));
                     setReferenceColumnData2((prev) => ({
@@ -81,6 +84,7 @@ export async function saveSettingsResourceHistory(
                       owner: '',
                       offlineResource: { offline: false },
                       font: '',
+                      fontSize: 1,
                     }
                     ));
                     setOpenResourceR1(false);
@@ -95,6 +99,7 @@ export async function saveSettingsResourceHistory(
                         navigation: { book: '1TI', chapter: '1' },
                         offline: referenceToUse.offlineResource,
                         font: referenceToUse?.font,
+                        fontSize: referenceToUse?.fontSize || 1,
                       },
                     };
                 }
@@ -111,6 +116,7 @@ export async function saveSettingsResourceHistory(
                       navigation: { book: '1TI', chapter: '1' },
                       offline: referenceColumnData1.offlineResource,
                       font: referenceColumnData1?.font,
+                      fontSize: referenceColumnData1?.fontSize || 1,
                     },
                     2: {
                       resouceId: referenceColumnData2?.selectedResource,
@@ -120,6 +126,7 @@ export async function saveSettingsResourceHistory(
                       navigation: { book: '1TI', chapter: '1' },
                       offline: referenceColumnData2.offlineResource,
                       font: referenceColumnData2?.font,
+                      fontSize: referenceColumnData2?.fontSize || 1,
                     },
                   };
                 }
@@ -139,7 +146,7 @@ export async function saveSettingsResourceHistory(
         setRemovingSection();
         setAddingSection();
         localforage.setItem('projectmeta', value).then(() => {
-          saveReferenceResource();
+          saveReferenceResource(selectedFont, editorFontSize);
             resolve();
         });
       }
