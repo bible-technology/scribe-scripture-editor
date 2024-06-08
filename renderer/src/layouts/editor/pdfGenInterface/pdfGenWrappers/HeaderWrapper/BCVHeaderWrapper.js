@@ -113,8 +113,7 @@ export function BCVWrapperSortableList({
 				<div className='py-5 flex flex-wrap gap-3 uppercase text-sm font-medium '>
 					<div
 						className={
-							selectedBooks.length ===
-							canonList[0].currentScope.length
+							selectedBooks.length === canonList[0].currentScope.length
 								? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 								: 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 						}
@@ -127,14 +126,11 @@ export function BCVWrapperSortableList({
 					</div>
 					<div
 						className={
-							selectedBooks.sort().toString() ===
-							canonList[1].currentScope.sort().toString()
+							selectedBooks.sort().toString() === canonList[1].currentScope.sort().toString()
 								? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 								: 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 						}
-						onClick={() =>
-							setSelectedBooks(canonList[1].currentScope)
-						}
+						onClick={() => setSelectedBooks(canonList[1].currentScope)}
 						role='button'
 						aria-label='old-testament'
 						tabIndex='0'>
@@ -142,8 +138,7 @@ export function BCVWrapperSortableList({
 					</div>
 					<div
 						className={
-							selectedBooks.sort().toString() ===
-							canonList[2].currentScope.sort().toString()
+							selectedBooks.sort().toString() === canonList[2].currentScope.sort().toString()
 								? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 								: 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 						}
@@ -157,15 +152,11 @@ export function BCVWrapperSortableList({
 					</div>
 					<div
 						className={
-							selectedBooks.length > 0 &&
-							selectedBooks.length <
-								canonList[0].currentScope.length &&
-							selectedBooks.sort().toString() !=
-								canonList[2].currentScope.sort().toString() &&
-							selectedBooks.sort().toString() !=
-								canonList[1].currentScope.sort().toString()
-								? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
-								: 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
+							selectedBooks.length > 0 && selectedBooks.length < canonList[0].currentScope.length
+								&& selectedBooks.sort().toString() != canonList[2].currentScope.sort().toString()
+								&& selectedBooks.sort().toString() != canonList[1].currentScope.sort().toString()
+									? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
+									: 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'
 						}
 						onClick={() => setOpenModalBook(true)}
 						role='button'

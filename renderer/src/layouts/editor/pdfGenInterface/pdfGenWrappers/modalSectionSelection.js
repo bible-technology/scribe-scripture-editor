@@ -52,8 +52,7 @@ const TwoColumnItem = (
 		<div className='styleIcon'>
 			<TwoColumn />
 		</div>
-    <div className='styleText'>
-Two resources in two columns</div>
+    <div className='styleText'>Two resources in two columns</div>
 	</div>
 );
 
