@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useContext } from 'react';
+const fs = window.require('fs');
 
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Modal } from '@material-ui/core';
@@ -17,17 +18,21 @@ import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplat
 
 export default function InnerFramePopup() {
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
+
 	const jsonWithHeaderChoice = global.PdfGenStatic.pageInfo();
 	//use to know if we can drag or not
 	const [update, setUpdate] = useState(true);
 
 	//the order Of The Selected choice
 	const [orderSelection, setOrderSelection] = useState([0]);
-
 	//is the json is validate or not
 	const [isJsonValidate, setIsJsonValidate] = useState(false);
-
+	const [messagePrint, setMessagePrint] = useState('');
 	//the actual kitchenFaucet
+
+	const pdfCallBacks = (json) => {
+		setMessagePrint((prev) => json.msg + '\n' + prev);
+	};
 	const [selected, setSelected] = useState({
 		0: {
 			type: 'obsWrapper',
@@ -40,17 +45,8 @@ export default function InnerFramePopup() {
 	});
 
 	useEffect(() => {
-		console.log(
-			global.PdfGenInstance.validateConfig(
-				transformPrintDataToKitchenFoset({
-					order: orderSelection,
-					metaData: JSON.parse(headerInfo),
-					content: selected,
-				}),
-			),
-		);
 		if (
-			global.PdfGenInstance.validateConfig(
+			global.PdfGenStatic.validateConfig(
 				transformPrintDataToKitchenFoset({
 					order: orderSelection,
 					metaData: JSON.parse(headerInfo),
@@ -139,6 +135,26 @@ export default function InnerFramePopup() {
 		};
 	}, [update]);
 
+	const openFileDialogSettingData = async () => {
+		const options = {
+			properties: ['openDirectory'],
+		};
+		const { dialog } = window.require('@electron/remote');
+		const chosenFolder = await dialog.showOpenDialog(options);
+		if (chosenFolder.filePaths.length > 0) {
+			setHeaderInfo((prev) => {
+				let t = { ...JSON.parse(prev) };
+				t['outputPath'] = chosenFolder.filePaths[0] + '/test.pdf';
+				t['workingDir'] =
+					chosenFolder.filePaths[0] + '/' + uuidv4() + '_temp';
+				fs.mkdirSync(t['workingDir']);
+				t['verbose'] = false;
+				return JSON.stringify(t);
+			});
+		} else {
+			close();
+		}
+	};
 	return (
 		<div
 			style={{
@@ -150,8 +166,6 @@ export default function InnerFramePopup() {
 				borderStyle: 'solid',
 				borderColor: '#EEEEEE',
 			}}>
-			<PdfPreview></PdfPreview>
-
 			<div
 				style={{
 					width: '50%',
@@ -299,10 +313,10 @@ export default function InnerFramePopup() {
 						{Object.keys(selected).map((k, index) => {
 							return (
 								<li
-									id={'index'}
+									id={k}
 									className={'sortable-test1-item'}
 									draggable='true'
-									key={'index'}
+									key={k}
 									style={{ margin: 10 }}>
 									<WrapperTemplate
 										setFinalPrint={setSelected}
@@ -362,6 +376,20 @@ export default function InnerFramePopup() {
 							padding: 15,
 						}}>
 						<Button
+							style={{
+								borderRadius: 4,
+								backgroundColor: '#F50',
+								borderStyle: 'solid',
+								borderColor: '#F50',
+								color: 'white',
+								padding: 15,
+							}}
+							onClick={() => {
+								openFileDialogSettingData();
+							}}>
+							choose export file
+						</Button>
+						<Button
 							style={
 								isJsonValidate
 									? {
@@ -381,14 +409,27 @@ export default function InnerFramePopup() {
 											padding: 15,
 									  }
 							}
-							onClick={() => {
-								transformPrintDataToKitchenFoset({
-									order: orderSelection,
-									metaData: JSON.parse(headerInfo),
-									content: selected,
-								});
+							onClick={async () => {
+								setMessagePrint('');
+								let t = new global.PdfGenStatic(
+									transformPrintDataToKitchenFoset({
+										order: orderSelection,
+										metaData: JSON.parse(headerInfo),
+										content: selected,
+									}),
+									pdfCallBacks,
+								);
+								const path = t.options.global.workingDir;
+								await t
+									.doPdf()
+									.then((e) =>
+										fs.rmdirSync(path, {
+											recursive: true,
+											force: true,
+										}),
+									);
 							}}>
-							Print
+							print
 						</Button>
 					</div>
 				</div>
@@ -412,15 +453,15 @@ export default function InnerFramePopup() {
 								<div
 									className='pdfChoice'
 									onClick={() => {
+										let i = Math.max(orderSelection) + 1;
 										setSelected((prev) => {
 											let t = { ...prev };
-											let nb = Object.keys(t).length;
-											t[nb] = { type: c, content: {} };
+											t[i] = { type: c, content: {} };
 											return t;
 										});
 										setOrderSelection((prev) => [
 											...prev,
-											prev.length,
+											i,
 										]);
 										handleOpenModalAddWrapper(false);
 									}}>
@@ -431,6 +472,9 @@ export default function InnerFramePopup() {
 					</div>
 				</Modal>
 			</div>
+			<div style={{ width: "50%", whiteSpace: 'pre-wrap' }}>
+			{messagePrint}
+		</div>
 		</div>
 	);
 }
@@ -442,15 +486,15 @@ function transformPrintDataToKitchenFoset(jsonData) {
 			let currentWrapper = jsonData.content[jsonData.order[i]];
 
 			let elem = { ...currentWrapper };
+			if (!elem.ranges) {
+				if (elem.type === 'obsWrapper') {
+					elem.ranges = ['1-50'];
+				}
+			}
 			delete elem['content'];
 			elem.sections = [];
 			if (currentWrapper.content.order) {
 				for (let t = 0; t < currentWrapper.content.order.length; t++) {
-					console.log(
-						currentWrapper.content.content[
-							currentWrapper.content.order[t]
-						],
-					);
 					elem.sections.push(
 						currentWrapper.content.content[
 							currentWrapper.content.order[t]

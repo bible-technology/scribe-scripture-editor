@@ -20,9 +20,9 @@ fetchFonts();
 // Since we disabled nodeIntegration we can reintroduce
 // needed node functionality here
 process.once('loaded', () => {
-  global.PdfGenInstance = new PdfGen();
-  global.PdfGenStatic = PdfGen
+
   global.ipcRenderer = ipcRenderer;
   global.log = log;
+  global.PdfGenStatic = PdfGen
   global.fonts = _fonts;
 });

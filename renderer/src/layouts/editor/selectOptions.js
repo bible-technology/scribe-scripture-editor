@@ -32,6 +32,10 @@ export function selectOption(title, type, option, handleChange) {
 				onChange={(e) => {
 					handleChange(type, e.target.value);
 				}}>
+				<option value='' disabled selected hidden>
+					Please Choose...
+				</option>
+
 				{Object.keys(option).map((o) => (
 					<option
 						id={o}

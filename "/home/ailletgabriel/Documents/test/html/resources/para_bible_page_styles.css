@@ -1,0 +1,366 @@
+@page {
+    size: 595pt 842pt;
+    margin-bottom: 50pt;
+    margin-top: 60pt;
+    @footnote {
+        float: bottom;
+        margin-top: 10pt;
+    }
+}
+@page :first {
+    margin-top: 40pt;
+}
+@page :left {
+    margin-left: 44pt;
+    margin-right: 72pt;
+}
+@page :right {
+    margin-left: 72pt;
+    margin-right: 44pt;
+}
+
+
+body {
+    font-size: 9pt;
+    line-height: 10pt;
+    font-family: "Gentium Book Plus", serif;
+    text-align: justify;
+    text-align-last: left;
+}
+
+div.chapters {
+    columns: 2;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+
+h1 {
+    font-size: 18pt;
+    line-height: 20pt;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 0pt;
+    border-bottom: 0pt solid black;
+    padding-bottom: 0pt;
+    width: 479pt;
+    font-family: "Gentium Book Plus", serif;
+    break-after: avoid;
+}
+
+
+::footnote-call {
+    font-weight: bold;
+    font-size: 7;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.5em;
+    padding-left: 1pt;
+}
+
+::footnote-marker {
+    font-weight: bold;
+}
+
+/* paras CSS format : */
+.paras_default {
+    color: purple;
+}
+.paras_usfm_b {
+}
+.paras_usfm_d {
+    font-style: italic;
+}
+.paras_usfm_f {
+    font-size: 7pt;
+    line-height: 10pt;
+    float: footnote;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_hanging_graft {
+}
+.paras_usfm_imt {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_imt2 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 15pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_imt3 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 12pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_ip {
+    text-indent: 12pt;
+}
+.paras_usfm_ipi {
+    padding-left: 12pt;
+    text-indent: 12pt;
+}
+.paras_usfm_io {
+    padding-left: 12pt;
+}
+.paras_usfm_iot {
+    font-weight: bold;
+    font-size: 10pt;
+    line-height: 20pt;
+}
+.paras_usfm_is {
+    font-style: italic;
+    font-size: 18pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_is2 {
+    font-style: italic;
+    font-size: 15pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_is3 {
+    font-style: italic;
+    font-size: 12pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_li {
+    list-style-type: disc;
+    padding-left: 24pt;
+    text-indent: -12pt;
+}
+.paras_usfm_li2 {
+    list-style-type: disc;
+    padding-left: 36pt;
+    text-indent: -12pt;
+}
+.paras_usfm_li3 {
+    list-style-type: disc;
+    padding-left: 48pt;
+    text-indent: -12pt;
+}
+.paras_usfm_m {
+}
+.paras_usfm_mi {
+    padding-left: 12pt;
+}
+.paras_usfm_mr {
+    font-size: 10pt;
+    line-height: 20pt;
+    font-style: italic;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_ms {
+    font-size: 10pt;
+    line-height: 20pt;
+    font-weight: bold;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_ms2 {
+    font-weight: bold;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_mt {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_mt2 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 15pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_mt3 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 12pt;
+    line-height: 20pt;
+    text-align: center;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_nb {
+}
+.paras_usfm_p {
+    text-indent: 12pt;
+}
+.paras_usfm_pc {
+    text-align: center;
+}
+.paras_usfm_pi {
+    padding-left: 12pt;
+    text-indent: 12pt;
+}
+.paras_usfm_pi2 {
+    padding-left: 24pt;
+    text-indent: 12pt;
+}
+.paras_usfm_pi3 {
+    padding-left: 36pt;
+    text-indent: 12pt;
+}
+.paras_usfm_q {
+    padding-left: 12pt;
+    text-align: left;
+    line-height: 10pt;
+}
+.paras_usfm_q2 {
+    padding-left: 24pt;
+    text-align: left;
+}
+.paras_usfm_q3 {
+    padding-left: 36pt;
+    text-align: left;
+}
+.paras_usfm_q4 {
+    padding-left: 48pt;
+    text-align: left;
+}
+.paras_usfm_qa {
+    font-weight: bold;
+    font-size: 18pt;
+    line-height: 20pt;
+}
+.paras_usfm_qr {
+    text-align: right;
+}
+.paras_usfm_r {
+    font-weight: bold;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_s {
+    font-style: italic;
+    font-size: 18pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_s2 {
+    font-style: italic;
+    font-size: 15pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_s3 {
+    font-style: italic;
+    font-size: 12pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_sr {
+    font-size: 12pt;
+    line-height: 20pt;
+    font-family: "Gentium Book Plus", serif;
+}
+.paras_usfm_tr {
+}
+.paras_usfm_x {
+    font-size: 7pt;
+    line-height: 10pt;
+    float: footnote;
+    font-family: "Gentium Book Plus", serif;
+}
+/* marks CSS format : */
+.marks_default {
+}
+.marks_chapter_label {
+    font-size: 40pt;
+    height: 30pt;
+    line-height: 25pt;
+    float: left;
+    padding: 0;
+    margin: 0 6pt 0 0;
+    text-indent: 0;
+    vertical-align: middle;
+}
+p:has(.marks_chapter_label) {
+    text-indent: 0;
+}
+.marks_verses_label {
+    font-weight: bold;
+    font-size: 70%;
+    line-height: 1;
+    margin-right: 2pt;
+    vertical-align: top;
+}
+/* wrappers CSS format : */
+.wrappers_default {
+}
+.wrappers_usfm_add {
+    font-style: italic;
+}
+.wrappers_usfm_bd {
+    font-weight: bold;
+}
+.wrappers_usfm_bdit {
+    font-weight: bold;
+    font-style: italic;
+}
+.wrappers_usfm_bk {
+    font-weight: bold;
+}
+.wrappers_chapter {
+}
+.wrappers_usfm_fl {
+}
+.wrappers_usfm_fm {
+}
+.wrappers_usfm_fq {
+    font-style: italic;
+}
+.wrappers_usfm_fqa {
+    font-style: italic;
+}
+.wrappers_usfm_fr {
+    font-weight: bold;
+}
+.wrappers_usfm_ft {
+}
+.wrappers_usfm_it {
+    font-style: italic;
+}
+.wrappers_usfm_nd {
+    font-weight: bold;
+    font-size: smaller;
+    text-transform: uppercase;
+}
+.wrappers_usfm_qs {
+    font-style: italic;
+}
+.wrappers_usfm_sc {
+    font-size: smaller;
+    text-transform: uppercase;
+}
+.wrappers_usfm_tl {
+    font-style: italic;
+}
+.wrappers_verses {
+}
+.wrappers_usfm_wj {
+}
+.wrappers_usfm_xk {
+}
+.wrappers_usfm_xo {
+    font-weight: bold;
+}
+.wrappers_usfm_xt {
+}

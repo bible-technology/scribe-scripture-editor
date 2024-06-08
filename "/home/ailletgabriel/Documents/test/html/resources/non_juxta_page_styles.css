@@ -1,0 +1,294 @@
+@page {
+    size: 595pt 842pt;
+    margin-bottom: 50pt;
+    margin-top: 60pt;
+    @footnote {
+        float: bottom;
+        margin-top: 10pt;
+    }
+}
+@page :first {
+    margin-top: 40pt;
+}
+@page :left {
+    margin-left: 44pt;
+    margin-right: 72pt;
+}
+@page :right {
+    margin-left: 72pt;
+    margin-right: 44pt;
+}
+
+
+body {
+    font-family: "Gentium Book Plus", serif;
+    font-size: 9pt;
+    line-height: 10pt;
+}
+
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+
+h1 {
+    font-size: 18pt;
+    line-height: 20pt;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 0pt;
+    border-bottom: 0pt solid black;
+    padding-bottom: 0pt;
+    width: 479pt;
+    font-family: "Gentium Book Plus", serif;
+    break-after: avoid;
+}
+
+
+.front {}
+
+.front_body {
+    columns: 2;
+    column-gap: 12pt;
+    text-align: left;
+}
+
+.front_body p {
+    margin-bottom: 10pt;
+}
+
+.front_body h2 {
+    margin-bottom: 10pt;
+    font-size: 9pt;
+    line-height: 10pt;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+    font-family: "Gentium Book Plus", serif;
+}
+.half_page {
+    break-before: page;
+}
+.half_page h2 {
+    font-weight: bold;
+    font-family: "Gentium Book Plus", serif;
+}
+.title_page {
+    text-align: center;
+    font-size: 14pt;
+    line-height: 20pt;
+}
+.title_page > h1 {
+    text-align: center;
+    font-size: 18pt;
+    border: none;
+    margin-bottom: 60pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+.title_page > h3 {
+    text-align: center;
+    font-size: 14pt;
+    border: none;
+    font-family: "Gentium Book Plus", serif;
+}
+
+h3.pub_details {
+    margin-top: 144pt;
+    font-weight: normal;
+    font-size: 12pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+h3.pub_details2 {
+    margin-top: 288pt;
+    font-weight: normal;
+    font-size: 12pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+h3.descriptif {
+    margin-bottom: 60pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+p.resource {
+    margin-bottom: 18pt;
+}
+
+p.small-gap {
+    margin-bottom: 10pt;
+}
+
+.half_page .front_body {
+    margin-top: 50pt;
+    columns: 1;
+    text-align: left;
+    font-family: Courrier, monospace;
+    font-size: 8pt;
+    line-height: 10pt;
+}
+.half_page .front_body ul {
+    list-style-type: none;
+}
+.half_page .front_body ul li {
+    margin-bottom: 10pt;
+}
+.preface .front_body h2, .technologie .front_body h2 {
+    margin: 0;
+    margin-bottom: 10pt;
+    font-size: 9pt;
+    line-height: 10pt;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+    font-family: "Gentium Book Plus", serif;
+}
+.mode_emploi {}
+
+.mode_emploi_key {
+    margin-bottom: 0;
+}
+
+.image_number {
+    font-weight: bold;
+    padding-right: 0.5em;
+}
+.mode_emploi_key p {
+    text-align: left;
+    padding-left: 1em;
+    text-indent: -1em;
+    margin-bottom: 0;
+}
+.mode_emploi_image_div {
+    columns: 1;
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+}
+.mode_emploi_image {
+    width: 388pt;
+    padding: 3pt;
+    border: solid 1pt black;
+}
+.saisi_figure {
+    columns: 1;
+}
+.saisi_image_div {
+    columns: 1;
+    margin-bottom: 10pt;
+}
+.saisi_image {
+    width: 388pt;
+    padding: 3pt;
+    border: solid 1pt black;
+}
+.bookNote {
+    break-after: page;
+}
+
+.bookNoteBody {
+    columns: 1;
+}
+
+::footnote-call {
+    font-weight: bold;
+    font-size: 70%;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.5em;
+    padding-left: 1pt;
+}
+
+::footnote-marker {
+    font-weight: bold;
+}
+
+.note {
+    font-size: 7pt;
+    line-height: 10pt;
+    text-align: justify;
+    float: footnote;
+    margin-bottom: 0pt;
+    padding-left: 6pt;
+    text-indent: -6pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+.note_n {
+    font-weight: bold;
+    font-size: 6pt;
+    vertical-align: top;
+}
+
+.note .b {
+    font-weight: bold;
+}
+
+.note_h2, .note_h3, .note_h4, .note_body {
+    margin-bottom: 10pt;
+}
+
+.note_h2, .note_h3, .note_h4 {
+    -webkit-column-break-after: avoid;
+}
+
+.note_h2 {
+    font-weight: bold;
+}
+
+.note_h3 {
+    margin-top: 10pt;
+    font-style: italic;
+}
+
+.note_h4 {
+    font-style: italic;
+}
+
+.note_body {
+    text-align: left;
+}
+
+.note_list1 {
+    padding-left: 1em;
+    font-weight: bold;
+}
+
+.note_list2 {
+    display: list-item;
+    list-style-type: circle;
+    list-style-position: inside;
+    padding-left: 2em;
+}
+
+
+.exp {
+    font-size: 70%;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.5em;
+}
+.hr {
+    text-align: center;
+    margin-bottom: 20pt;
+    margin-top: 10pt;
+}
+h2 {
+    -webkit-column-break-after: avoid;
+}
+ul {
+    break-inside: auto;
+}
+.technologie .front_body ul li {
+    margin-bottom: 10pt;
+}
+.matieres .front_body {
+    columns: 1;
+    font-size: 12pt;
+    line-height: 14pt;
+}
+.matieres .pageNumber {
+    float: right;
+}

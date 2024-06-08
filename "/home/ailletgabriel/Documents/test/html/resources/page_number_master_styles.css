@@ -1,0 +1,18 @@
+@page {
+    size: 595pt 842pt;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+body {
+    font-family: "Gentium Book Plus", serif;
+    font-size: 9pt;
+    line-height: 10pt;
+}
+
+
+.pagenum {
+    padding-top: 802pt;
+    text-align: center;
+    page-break-after: always;
+}

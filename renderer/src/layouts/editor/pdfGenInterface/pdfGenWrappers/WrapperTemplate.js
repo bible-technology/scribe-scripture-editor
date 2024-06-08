@@ -41,8 +41,10 @@ export function WrapperTemplate({
 		});
 	}, [orderSections]);
 
+	
 	//update final print Json
 	useEffect(() => {
+		console.log(sections)
 		setFinalPrint((prev) => {
 			const t = { ...prev };
 			t[keyWrapper].content.content = JSON.parse(sections);
@@ -174,43 +176,43 @@ export function WrapperTemplate({
 								}}
 								onClick={() => {
 									changePrintOrder((prev) => {
-										let t = [...prev];
-										t.splice(t.indexOf(keyWrapper), 1);
-										for (let i = 0; i < t.length; i++) {
-											if (t[i] > keyWrapper) {
-												t[i] -= 1;
-											}
-										}
-										return t;
+											let t = [...prev];
+											console.log(keyWrapper)
+											t.splice(t.indexOf(parseInt(keyWrapper)), 1);
+											console.log(t)
+											return t;
+											
 									});
 
 									changePrintData((prev) => {
-										const updatedSelected = {
-											...prev,
-										};
-										const up = {};
+											const updatedSelected = JSON.parse(JSON.stringify(prev))
+											const up = {};
+											console.log(updatedSelected)
+											// Object.keys(updatedSelected).forEach(
+											// 		(key) => {
+											// 				if (
+											// 						parseInt(key) > keyWrapper
+											// 				) {
+											// 						let newIndex =
+											// 								parseInt(key) - 1;
+											// 						up[newIndex] =
+											// 								updatedSelected[key];
+											// 				} else if (
+											// 						parseInt(key) < keyWrapper
+											// 				) {
+											// 						up[key] =
+											// 								updatedSelected[key];
+											// 				}
+											// 		},
+											// );
 
-										Object.keys(updatedSelected).forEach(
-											(key) => {
-												if (
-													parseInt(key) > keyWrapper
-												) {
-													let newIndex =
-														parseInt(key) - 1;
-													up[newIndex] =
-														updatedSelected[key];
-												} else if (
-													parseInt(key) < keyWrapper
-												) {
-													up[key] =
-														updatedSelected[key];
-												}
-											},
-										);
-										return up;
+											// Remove the last key in the map as it's not required
+											delete updatedSelected[parseInt(keyWrapper)];
+											console.log(updatedSelected)
+											return updatedSelected;
 									});
-								}}>
-								<Trash color={'black'} style={{height: 35, width: 35 }} />
+							}}>
+								<Trash color={'black'} style={	{height: 35, width: 35 }} />
 							</Button>
 						</div>
 					) : (

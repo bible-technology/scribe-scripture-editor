@@ -1,0 +1,93 @@
+@page {
+    size: 595pt 842pt;
+    margin-bottom: 50pt;
+    margin-top: 60pt;
+    @footnote {
+        float: bottom;
+        margin-top: 10pt;
+    }
+}
+@page :first {
+    margin-top: 40pt;
+}
+@page :left {
+    margin-left: 44pt;
+    margin-right: 72pt;
+}
+@page :right {
+    margin-left: 72pt;
+    margin-right: 44pt;
+}
+
+
+body {
+    font-family: "Gentium Book Plus", serif;
+    font-size: 9pt;
+    line-height: 10pt;
+}
+
+
+h1 {
+    font-size: 18pt;
+    line-height: 20pt;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 0pt;
+    border-bottom: 0pt solid black;
+    padding-bottom: 0pt;
+    width: 479pt;
+    font-family: "Gentium Book Plus", serif;
+    break-after: avoid;
+}
+
+
+h1 {
+    page-break-before: recto;
+}
+
+h2 {
+    font-family: "Gentium Book Plus", serif;
+    font-size:15pt;
+    line-height:20pt;
+}
+h3 {
+    font-family: "Gentium Book Plus", serif;
+    font-size: 12pt;
+    line-height: 20pt;
+}
+h4 {
+    font-family: "Gentium Book Plus", serif;
+    font-size:10pt;
+    line-height:20pt;
+}
+p {
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+}
+
+img {
+    float: right;
+    width: %IMGWIDTH%pt;
+    padding-left: 10pt;
+    padding-bottom: 10pt;
+}
+
+.storysection {
+    page-break-inside: avoid;
+    overflow: auto;
+}
+
+.storypara {
+    font-weight: bold;
+}
+
+.storynotes {
+    font-family: "Open Sans Condensed Light", sans-serif
+}
+
+p.note {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 12pt;
+    text-indent: -12pt;
+}

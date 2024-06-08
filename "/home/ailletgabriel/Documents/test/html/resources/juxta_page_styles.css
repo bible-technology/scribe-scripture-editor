@@ -1,0 +1,246 @@
+@page {
+    size: 1190pt 842pt;
+    margin-right: 44pt;
+    margin-left: 44pt;
+    margin-bottom: 50pt;
+    margin-top: 60pt;
+
+    @top-center {
+    }
+
+    @footnote {
+        float: bottom;
+        columns: 2;
+        column-gap: 144pt;
+        margin-top: 10pt;
+    }
+}
+
+
+body {
+    font-family: "Gentium Book Plus", serif;
+    font-size: 9pt;
+    line-height: 10pt;
+}
+
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+
+h1 {
+    font-size: 18pt;
+    line-height: 20pt;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 0pt;
+    border-bottom: 0pt solid black;
+    padding-bottom: 0pt;
+    width: 479pt;
+    font-family: "Gentium Book Plus", serif;
+    break-after: avoid;
+}
+
+
+.jxlGreek {
+    width: 233.5pt;
+    text-align: right;
+    line-height: 10pt;
+    font-size: 9pt;
+    vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    padding-right: 6pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+.jxlHebrew {
+    width: 233.5pt;
+    text-align: right;
+    line-height: 10pt;
+    font-size: 9pt;
+    vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    padding-right: 6pt;
+    font-family: "Ezra SIL", serif;
+}
+
+.jxlGloss {
+    width: 233.5pt;
+    line-height: 10pt;
+    font-size: 9pt;
+    vertical-align: baseline;
+    padding: 0;
+    padding-left: 6pt;
+}
+
+
+
+h2.phraseN {
+    font-size: 9pt;
+    line-height: 10pt;
+    font-weight: bold;
+    margin: 0;
+    padding-bottom: 5pt;
+    margin-bottom: 4pt;
+    border-bottom: solid 1pt black;
+    width: 479pt;
+    text-align: left;
+    font-family: "Gentium Book Plus", serif;
+}
+
+h2.sentenceRef {
+    font-size: 9pt;
+    line-height: 10pt;
+    font-weight: bold;
+    margin: 0;
+    padding-bottom: 5pt;
+    margin-bottom: 4pt;
+    border-bottom: solid 1pt black;
+    width: 479pt;
+    text-align: right;
+    font-family: "Gentium Book Plus", serif;
+}
+
+.transAbbr {
+    font-family: "Gentium Book Plus", serif;
+    font-weight: bold;
+    font-style: italic;
+    padding-right: 4pt;
+}
+
+.transAbbr {
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+.leftPane {
+    display: inline-block;
+    width: 479pt;
+    vertical-align: top;
+    margin-right: 72pt;
+}
+
+.rightPane {
+    width: 479pt;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 72pt;
+}
+
+.rightPane table {
+    width: 479pt;
+    border-collapse: collapse;
+}
+
+.sentence {
+    string-set: sentenceN attr(data-n), cvRef attr(data-cv);
+    page-break-inside: avoid;
+    vertical-align: top;
+    padding-bottom: 10pt;
+}
+
+.firstLeft, .otherLeft {
+    text-align: left;
+    margin-bottom: "Gentium Book Plus", serifpt;
+    padding-left: 6pt;
+    text-indent: -6pt;
+}
+
+.chapterNote {
+    page-break-inside: avoid;
+    break-before: page;
+    padding-bottom: 20pt;
+    font-family: "Open Sans", sans-serif;
+}
+
+.bookNote {
+    break-after: page;
+    font-family: "Open Sans Condensed Light", sans-serif;
+}
+
+.bookNoteBody {
+    columns: 2;
+    column-gap: 144pt;
+}
+
+.chapterNoteBody {
+    columns: 2;
+    column-gap: 144pt;
+}
+
+::footnote-call {
+    font-weight: bold;
+    font-size: 70%;
+    vertical-align: baseline;
+    position: relative;
+    top: -0.5em;
+    padding-left: 1pt;
+}
+
+::footnote-marker {
+    font-weight: bold;
+}
+
+.note {
+    font-size: 7pt;
+    line-height: 10pt;
+    text-align: justify;
+    float: footnote;
+    margin-bottom: 0pt;
+    padding-left: 6pt;
+    text-indent: -6pt;
+    font-family: "Gentium Book Plus", serif;
+}
+
+.note_n {
+    font-weight: bold;
+    font-size: 6pt;
+    vertical-align: top;
+}
+
+.note .b {
+    font-weight: bold;
+}
+
+.note_h2, .note_h3, .note_h4, .note_body {
+    margin-bottom: 10pt;
+}
+
+.note_h2, .note_h3, .note_h4 {
+    -webkit-column-break-after: avoid;
+}
+
+.note_h2 {
+    font-weight: bold;
+}
+
+.note_h3 {
+    margin-top: 10pt;
+    font-style: italic;
+}
+
+.note_h4 {
+    font-style: italic;
+}
+
+.note_body {
+    text-align: left;
+}
+
+.note_list1 {
+    padding-left: 1em;
+    font-weight: bold;
+}
+
+.note_list2 {
+    display: list-item;
+    list-style-type: circle;
+    list-style-position: inside;
+    padding-left: 2em;
+}
+

@@ -118,7 +118,7 @@ function EditorSync({ selectedProject }) {
               title={t('label-save-to-cloud')}
               type="div"
               role="button"
-              onClick={() => setOpenPdfPopup(true)}
+              // onClick={() => setOpenPdfPopup(true)}
               className={`group ${menuStyles.btn}
             transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
               syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
