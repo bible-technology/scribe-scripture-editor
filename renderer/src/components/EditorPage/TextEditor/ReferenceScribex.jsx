@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
 import { useDeepCompareEffect } from 'use-deep-compare';
-import { ReferenceContext } from '@/components/context/ReferenceContext';
+// import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import usePerf from './hooks/usePerf';
 import htmlMap from './hooks/htmlmap';
