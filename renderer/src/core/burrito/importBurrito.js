@@ -394,6 +394,11 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           } else {
             setting.font = (setting.project[metadata.type.flavorType.flavor.name].font) ? (setting.project[metadata.type.flavorType.flavor.name].font) : '';
           }
+          if (!setting.project[metadata.type.flavorType.flavor.name]?.fontSize) {
+            setting.project[metadata.type.flavorType.flavor.name].fontSize = 1;
+          } else {
+            setting.fontSize = (setting.project[metadata.type.flavorType.flavor.name]?.fontSize) ? (setting.project[metadata.type.flavorType.flavor.name].fontSize) : 1;
+          }
           settings = setting;
         }
         settings.project[metadata.type.flavorType.flavor.name].lastSeen = moment().format();

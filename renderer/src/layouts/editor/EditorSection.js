@@ -40,6 +40,8 @@ export default function EditorSection({
   setAddingSection,
   font,
   setFont,
+  fontSize,
+  setFontsize,
 }) {
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -47,7 +49,6 @@ export default function EditorSection({
   const { t } = useTranslation();
   const {
     state: {
-      fontSize,
       layout,
       openResource1,
       openResource2,
@@ -59,6 +60,7 @@ export default function EditorSection({
   const {
     states: { scrollLock, selectedProjectMeta },
   } = useContext(ProjectContext);
+
   function removeResource() {
     setOpenModal(true);
   }
@@ -130,6 +132,15 @@ export default function EditorSection({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openResourcePopUp, title]);
+
+  const handleFontSize = (status) => {
+    if (status === 'dec' && fontSize > 0.70) {
+      setFontsize(fontSize - 0.2);
+    }
+    if (status === 'inc' && fontSize < 2) {
+      setFontsize(fontSize + 0.2);
+    }
+  };
 
   const addRow = () => {
     if (sectionNum >= 0 && sectionNum < 2) {
@@ -224,7 +235,10 @@ export default function EditorSection({
                     />
                   )}
 
-                    <div className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                    <div
+                      className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                      title={title}
+                    >
                       {title}
                     </div>
                   </div>
@@ -233,14 +247,20 @@ export default function EditorSection({
                   {scrollLock && title ? (
                     <>
                       {CustomNavigation}
-                      <div className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                      <div
+                        title={title}
+                        className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                      >
                         {title}
                       </div>
                     </>
                   ) : (
                     <div className="flex">
                       <div className="py-2 uppercase tracking-wider text-xs font-semibold">
-                        <div className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate">
+                        <div
+                          title={title}
+                          className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                        >
                           {title}
                         </div>
                       </div>
@@ -248,10 +268,40 @@ export default function EditorSection({
                   )}
                 </>
               )}
-              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible ">
+              <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible  pl-2 items-center">
+
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center border rounded-md shadow-sm
+                  text-xs h-fit py-1
+                  focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300"
+                >
+                  <div
+                    aria-label="decrease-font"
+                    onClick={() => { handleFontSize('dec'); }}
+                    role="button"
+                    tabIndex="0"
+                    title={t('tooltip-editor-font-dec')}
+                    className="h-5 w-5 hover:text-black font-bold border-r border-gray-200 text-center flex items-center pl-1.5 "
+                  >
+                    {t('label-editor-font-char')}
+                  </div>
+                  <div
+                    aria-label="increase-font"
+                    className="h-5 w-5 hover:text-black font-bold text-lg text-center flex items-center pl-1"
+                    onClick={() => { handleFontSize('inc'); }}
+                    role="button"
+                    title={t('tooltip-editor-font-inc')}
+                    tabIndex="0"
+                  >
+                    {t('label-editor-font-char')}
+                  </div>
+                </button>
+
                 <MenuDropdown
                   selectedFont={font || 'sans-serif'}
                   setSelectedFont={setFont}
+                  showIcon={false}
                 />
                 <button
                   aria-label="resources-selector"

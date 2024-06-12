@@ -14,7 +14,7 @@ import {
 } from 'font-detect-rhl';
 
 export default function MenuDropdown({
- selectedFont, setSelectedFont, buttonStyle,
+ selectedFont, setSelectedFont, buttonStyle, showIcon = true,
 }) {
   const detectedFonts = useDetectFonts({ fonts: fontsArray });
   const [query, setQuery] = useState('');
@@ -37,12 +37,16 @@ export default function MenuDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={buttonStyle || 'cursor-pointer py-2 px-2 text-left sm:text-sm'}
+        className={buttonStyle || 'cursor-pointer py-2 px-2 text-left sm:text-sm flex '}
       >
-        <TextAa
-          className="w-5 h-5 text-grey-800"
-          aria-hidden="true"
-        />
+        {showIcon ? (
+          <TextAa
+            className="w-5 h-5 text-grey-800"
+            aria-hidden="true"
+          />
+        ) : (
+          <span className="self-center justify-self-center">Font</span>
+        )}
       </button>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog

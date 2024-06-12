@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
-export default function ReferenceSelector({ data, versepath, verse }) {
+export default function ReferenceSelector({
+ data, versepath, verse, font, fontSize,
+}) {
   const path = require('path');
   return (
     <div className="bg-white col-span-3 m-3 rounded-md shadow overflow-hidden">
@@ -21,7 +23,14 @@ export default function ReferenceSelector({ data, versepath, verse }) {
                   {story.verseNumber}
                 </div>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p
+                className="text-sm text-gray-600 leading-relaxed"
+                style={{
+                fontFamily: font || 'sans-serif',
+                fontSize: `${fontSize}rem`,
+                lineHeight: (fontSize > 1.3) ? 1.5 : '',
+              }}
+              >
                 {story.verseText}
               </p>
             </div>
@@ -32,6 +41,7 @@ export default function ReferenceSelector({ data, versepath, verse }) {
                 // url={story.audio} for development
                 url={story.audio ? path.join(versepath, story.audio) : ''}
                 show
+                setAudioPlayBack={() => {}}
               />
             </div>
           </div>

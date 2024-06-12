@@ -41,6 +41,7 @@ const SectionPlaceholder1 = ({ editor }) => {
     owner: '',
     offlineResource: { offline: false },
     font: '',
+    fontSize: 1,
   });
   const [referenceColumnOneData2, setReferenceColumnOneData2] = useState({
     languageId: '',
@@ -50,6 +51,7 @@ const SectionPlaceholder1 = ({ editor }) => {
     owner: '',
     offlineResource: { offline: false },
     font: '',
+    fontSize: 1,
   });
   const [loadResource1, setLoadResource1] = useState(false);
   const [loadResource2, setLoadResource2] = useState(false);
@@ -65,6 +67,10 @@ const SectionPlaceholder1 = ({ editor }) => {
       resetResourceOnDeleteOffline,
       font1,
       font2,
+      fontSize1,
+      fontSize2,
+      editorFontSize,
+      selectedFont,
     },
     actions: {
       setRow,
@@ -73,6 +79,8 @@ const SectionPlaceholder1 = ({ editor }) => {
       setOpenResource2,
       setFont1,
       setFont2,
+      setFontsize1,
+      setFontsize2,
       // applyBooksFilter,
       setResetResourceOnDeleteOffline,
     },
@@ -135,6 +143,7 @@ const SectionPlaceholder1 = ({ editor }) => {
         owner: '',
         offlineResource: { offline: false },
         font: '',
+        fontSize: 1,
       }
       ));
       setResetResourceOnDeleteOffline((prev) => ({
@@ -156,6 +165,7 @@ const SectionPlaceholder1 = ({ editor }) => {
         owner: '',
         offlineResource: { offline: false },
         font: '',
+        fontSize: 1,
       }
       ));
       setResetResourceOnDeleteOffline((prev) => ({
@@ -221,6 +231,8 @@ const SectionPlaceholder1 = ({ editor }) => {
         setReferenceColumnOneData2,
         setOpenResource1,
         setOpenResource2,
+        selectedFont,
+        editorFontSize,
       );
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -230,7 +242,9 @@ const SectionPlaceholder1 = ({ editor }) => {
     referenceColumnOneData2?.owner, removingSection, addingSection, referenceColumnOneData2?.offlineResource,
     referenceColumnOneData1?.offlineResource, referenceColumnOneData2?.font,
     referenceColumnOneData1?.font, resetResourceOnDeleteOffline?.referenceColumnOneData1Reset,
-    resetResourceOnDeleteOffline?.referenceColumnOneData2Reset, referenceColumnOneData2, referenceColumnOneData1]);
+    resetResourceOnDeleteOffline?.referenceColumnOneData2Reset, referenceColumnOneData2, referenceColumnOneData1,
+    referenceColumnOneData1?.fontSize, referenceColumnOneData2?.fontSize,
+  ]);
 
   // referenceColumnOneData2 referenceColumnOneData1
   const CustomNavigation1 = (
@@ -291,13 +305,15 @@ const SectionPlaceholder1 = ({ editor }) => {
     if (referenceColumnOneData2.font) {
       setFont2(referenceColumnOneData2?.font);
     }
+    setFontsize1(referenceColumnOneData1?.fontSize);
+    setFontsize2(referenceColumnOneData2?.fontSize);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_obsNavigation1, _obsNavigation2, referenceColumnOneData1, referenceColumnOneData2]);
 
   useEffect(() => {
-    setReferenceColumnOneData1((prev) => ({ ...prev, font: font1 }));
-    setReferenceColumnOneData2((prev) => ({ ...prev, font: font2 }));
-  }, [font1, font2]);
+    setReferenceColumnOneData1((prev) => ({ ...prev, font: font1, fontSize: fontSize1 }));
+    setReferenceColumnOneData2((prev) => ({ ...prev, font: font2, fontSize: fontSize2 }));
+  }, [font1, font2, fontSize1, fontSize2]);
 
   return (
     <>
@@ -327,6 +343,8 @@ const SectionPlaceholder1 = ({ editor }) => {
                   setAddingSection={setAddingSection}
                   font={font1}
                   setFont={setFont1}
+                  fontSize={fontSize1}
+                  setFontsize={setFontsize1}
                 >
                   {
                     (loadResource1 === true)
@@ -342,6 +360,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                                 chapter={_chapter1}
                                 verse={_verse1}
                                 font={font1}
+                                fontSize={fontSize1}
                               />
                             </ScribexContextProvider>
                           )}
@@ -353,6 +372,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                             <ReferenceObs
                               stories={stories1}
                               font={font1}
+                              fontSize={fontSize1}
                               title={referenceColumnOneData1.refName}
                             />
                           )}
@@ -365,6 +385,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                         chapter={_chapter1}
                         verse={_verse1}
                         font={font1}
+                        fontSize={fontSize1}
                       />
                     )) || (
                     <TranslationHelps
@@ -377,6 +398,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                       story={_obsNavigation1}
                       offlineResource={referenceColumnOneData1.offlineResource}
                       font={font1}
+                      fontSize={fontSize1}
                     />
                       )
                     )
@@ -405,6 +427,8 @@ const SectionPlaceholder1 = ({ editor }) => {
                   setAddingSection={setAddingSection}
                   font={font2}
                   setFont={setFont2}
+                  fontSize={fontSize2}
+                  setFontsize={setFontsize2}
                 >
                   {
                     (loadResource2 === true)
@@ -420,6 +444,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                                 chapter={_chapter2}
                                 verse={_verse2}
                                 font={font2}
+                                fontSize={fontSize2}
                               />
                             </ScribexContextProvider>
                           )}
@@ -431,6 +456,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                             <ReferenceObs
                               stories={stories2}
                               font={font2}
+                              fontSize={fontSize2}
                               title={referenceColumnOneData2.refName}
                             />
                           )}
@@ -443,6 +469,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                         chapter={_chapter1}
                         verse={_verse1}
                         font={font2}
+                        fontSize={fontSize2}
                       />
                     )) || (
                     <TranslationHelps
@@ -455,6 +482,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                       story={_obsNavigation2}
                       offlineResource={referenceColumnOneData2.offlineResource}
                       font={font2}
+                      fontSize={fontSize2}
                     />
                       )
                     )

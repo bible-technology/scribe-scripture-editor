@@ -18,14 +18,15 @@ const style = {
     fontStyle: 'italic',
   },
 };
-const ReferenceObs = ({ stories, font, title }) => {
+const ReferenceObs = ({
+ stories, font, title, fontSize,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [direction, setDirection] = useState('ltr');
   const [networkState, setNetworkState] = useState({ online: true });
   const {
  state: {
     selectedStory,
-    fontSize,
   },
   actions: {
     setSelectedStory,

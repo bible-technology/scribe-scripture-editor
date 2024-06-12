@@ -9638,6 +9638,7 @@ font-detect-rhl@1.0.5-1:
   version "1.0.5-1"
   resolved "https://registry.yarnpkg.com/font-detect-rhl/-/font-detect-rhl-1.0.5-1.tgz#4a421265df97ee672eb515a7f9cae2853ca860f4"
   integrity sha512-gIRKZvNHp751pSI2bWk3kl3ybeUYiO8fXlo4xJQldp4Esp4yPkGslArJgEQXyROCBPdqU/kTyvA7eWWyE/y9oQ==
+
   dependencies:
     prop-types "^15.6.1"
     use-deep-compare "^1.1.0"
