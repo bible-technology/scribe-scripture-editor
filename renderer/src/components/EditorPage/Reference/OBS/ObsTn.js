@@ -29,6 +29,7 @@ function ObsTnCard({
   resourceId,
   offlineResource,
   font,
+  fontSize,
   ...props
 }) {
   const [index, setIndex] = useState(0);
@@ -158,6 +159,7 @@ function ObsTnCard({
         index={index}
         setIndex={(v) => setIndex(v)}
         font={font}
+        fontSize={fontSize}
       />
     ) : items[0] ? <LoadingScreen /> : (
       <>

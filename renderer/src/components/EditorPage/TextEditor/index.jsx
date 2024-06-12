@@ -27,8 +27,10 @@ export default function TextEditor() {
   const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
-    state: { bookId, selectedFont },
-    actions: { handleSelectedFont, onChangeChapter, onChangeVerse },
+    state: { bookId, selectedFont, editorFontSize },
+    actions: {
+      handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
+    },
   } = useContext(ReferenceContext);
 
   const {
@@ -93,6 +95,7 @@ export default function TextEditor() {
     ...perfState,
     ...actions,
     ...perfActions,
+    editorFontSize,
     selectedFont,
     chapterNumber,
     verseNumber,
@@ -100,6 +103,7 @@ export default function TextEditor() {
     bookName,
     bookChange,
     bookAvailable,
+    handleEditorFontSize,
     setBookChange,
     setChapterNumber,
     setVerseNumber,

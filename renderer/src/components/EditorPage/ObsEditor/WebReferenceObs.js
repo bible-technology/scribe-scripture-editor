@@ -26,7 +26,7 @@ const ReferenceObs = ({ stories }) => {
  state: {
     selectedStory,
     selectedFont,
-    fontSize,
+    fontSize1: fontSize,
   },
   actions: {
     setSelectedStory,
