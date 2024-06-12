@@ -16,13 +16,10 @@ export function SelectPicker({
 	const [form, setForm] = React.useState('');
 
 	useEffect(() => {
-    console.log(form)
-    console.log(fieldInfo)
 		setJsonSpec((prev) => {
 
 			const newState = JSON.parse(prev);
 			newState[fieldInfo.id] = form;
-      console.log(newState[fieldInfo.id])
 			return JSON.stringify(newState);
 		});
 	}, [form]);
@@ -34,19 +31,13 @@ export function SelectPicker({
 		<div style={open ? {} : { display: 'none' }}>
 			<Box sx={{ width: '100%' }}>
 				<FormControl fullWidth error={require && form === ''}>
-					{/* <InputLabel 
-          
-          id='select-label'>
-						{fieldInfo.label[lang]}
-					</InputLabel> */}
+			
 					<Select
 						sx={{
 							'& .MuiSelect-select': {
                 borderColor:'rgba(115, 115, 115, 1)',
                 borderWidth:3,
-								backgroundColor: form
-									? 'rgba(255, 204, 179, 1)'
-									: '#FFFFFF',
+								backgroundColor:  '#FFFFFF',
 								'&:hover': {
 									backgroundColor: 'rgba(255, 238, 229, 1)', // Hover color
 								},

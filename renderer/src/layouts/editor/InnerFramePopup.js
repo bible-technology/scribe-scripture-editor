@@ -17,12 +17,12 @@ import {
 import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplate';
 
 export default function InnerFramePopup() {
+
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
 
 	const jsonWithHeaderChoice = global.PdfGenStatic.pageInfo();
 	//use to know if we can drag or not
 	const [update, setUpdate] = useState(true);
-
 	//the order Of The Selected choice
 	const [orderSelection, setOrderSelection] = useState([0]);
 	//is the json is validate or not
@@ -31,7 +31,7 @@ export default function InnerFramePopup() {
 	//the actual kitchenFaucet
 
 	const pdfCallBacks = (json) => {
-		setMessagePrint((prev) => json.msg + '\n' + prev);
+		setMessagePrint((prev) => prev + '\n' + MessageToPeople(json));
 	};
 	const [selected, setSelected] = useState({
 		0: {
@@ -44,21 +44,6 @@ export default function InnerFramePopup() {
 		},
 	});
 
-	useEffect(() => {
-		if (
-			global.PdfGenStatic.validateConfig(
-				transformPrintDataToKitchenFoset({
-					order: orderSelection,
-					metaData: JSON.parse(headerInfo),
-					content: selected,
-				}),
-			).length === 0
-		) {
-			setIsJsonValidate(true);
-		} else {
-			setIsJsonValidate(false);
-		}
-	}, [selected]);
 	//advenceMode allow adding new Wrapper
 	const [advanceMode, setAdvenceMode] = useState(false);
 
@@ -113,8 +98,7 @@ export default function InnerFramePopup() {
 
 				let nextSibling = siblings.find((sibling) => {
 					return (
-						e.clientY <=
-						sibling.offsetTop - sibling.offsetHeight / 2
+						e.clientY <= sibling.offsetTop + sibling.offsetHeight
 					);
 				});
 
@@ -135,6 +119,31 @@ export default function InnerFramePopup() {
 		};
 	}, [update]);
 
+	useEffect(() => {
+		if (
+			global.PdfGenStatic.validateConfig(
+				transformPrintDataToKitchenFoset({
+					order: orderSelection,
+					metaData: JSON.parse(headerInfo),
+					content: selected,
+				}),
+			).length === 0
+		) {
+			let header = JSON.parse(headerInfo);
+			console.log(header);
+			if (
+				header.workingDir &&
+				header.outputPath &&
+				header.sizes &&
+				header.fonts &&
+				header.pages
+			)
+			
+				setIsJsonValidate(true);
+		} else {
+			setIsJsonValidate(false);
+		}
+	}, [selected, headerInfo]);
 	const openFileDialogSettingData = async () => {
 		const options = {
 			properties: ['openDirectory'],
@@ -142,12 +151,11 @@ export default function InnerFramePopup() {
 		const { dialog } = window.require('@electron/remote');
 		const chosenFolder = await dialog.showOpenDialog(options);
 		if (chosenFolder.filePaths.length > 0) {
+			
+
 			setHeaderInfo((prev) => {
 				let t = { ...JSON.parse(prev) };
 				t['outputPath'] = chosenFolder.filePaths[0] + '/test.pdf';
-				t['workingDir'] =
-					chosenFolder.filePaths[0] + '/' + uuidv4() + '_temp';
-				fs.mkdirSync(t['workingDir']);
 				t['verbose'] = false;
 				return JSON.stringify(t);
 			});
@@ -155,6 +163,29 @@ export default function InnerFramePopup() {
 			close();
 		}
 	};
+
+	useEffect(() => {	
+		const fs = window.require('fs');
+		const os = window.require('os');
+		const path = window.require('path');
+
+	// Get the temporary directory of the system
+	const tmpDir = os.tmpdir();
+		console.log('ici')
+	fs.mkdtemp(`${tmpDir}${path.sep}`, (err, folder) => {
+			if (err) {
+					console.log(err);
+			} else {
+				console.log('ici')
+				setHeaderInfo((prev) => {
+					let t = { ...JSON.parse(prev) };
+					t['workingDir'] = folder
+					return JSON.stringify(t);
+
+				})
+			}
+	})},[])
+	
 	return (
 		<div
 			style={{
@@ -410,7 +441,18 @@ export default function InnerFramePopup() {
 									  }
 							}
 							onClick={async () => {
-								setMessagePrint('');
+								console.log(
+									transformPrintDataToKitchenFoset({
+										order: orderSelection,
+										metaData: JSON.parse(headerInfo),
+										content: selected,
+									}),
+								);
+								// console.log(transformPrintDataToKitchenFoset({
+								// 	order: orderSelection,
+								// 	metaData: JSON.parse(headerInfo),
+								// 	content: selected,
+								// }))
 								let t = new global.PdfGenStatic(
 									transformPrintDataToKitchenFoset({
 										order: orderSelection,
@@ -419,15 +461,20 @@ export default function InnerFramePopup() {
 									}),
 									pdfCallBacks,
 								);
+
 								const path = t.options.global.workingDir;
-								await t
-									.doPdf()
-									.then((e) =>
-										fs.rmdirSync(path, {
-											recursive: true,
-											force: true,
-										}),
-									);
+								setMessagePrint(prev => prev + '\n' + 'working in '+path)
+								console.log(transformPrintDataToKitchenFoset({
+									order: orderSelection,
+									metaData: JSON.parse(headerInfo),
+									content: selected,
+								}))
+								// await t.doPdf().then((e) =>
+								// 	fs.rmdirSync(path, {
+								// 		recursive: true,
+								// 		force: true,
+								// 	}),
+								// );
 							}}>
 							print
 						</Button>
@@ -472,9 +519,17 @@ export default function InnerFramePopup() {
 					</div>
 				</Modal>
 			</div>
-			<div style={{ width: "50%", whiteSpace: 'pre-wrap' }}>
-			{messagePrint}
-		</div>
+			<div
+				style={{
+					width: '50%',
+					height: '100%',
+					whiteSpace: 'pre-wrap',
+					overflow: 'scroll',
+
+					padding: 12,
+				}}>
+				{messagePrint}
+			</div>
 		</div>
 	);
 }
@@ -507,4 +562,55 @@ function transformPrintDataToKitchenFoset(jsonData) {
 		}
 	}
 	return { global: jsonData.metaData, sections: kitchenFoset };
+}
+
+function MessageToPeople(json) {
+	console.log(json);
+	let message = '';
+	for (let i = 0; i < json.level; i++) {
+		message += '\t';
+	}
+	if (json.type === 'step') {
+		message += 'Starting step ' + json.args[0];
+	} else if (json.type === 'section') {
+		message += 'Starting to prepare ' + json.args[0];
+	} else if (json.type === 'wrappedSection') {
+		message +=
+			'Preparing section of type ' +
+			json.args[0] +
+			' from ' +
+			json.args[1].split('-')[0]
+			if(json.args[1].split('-')[1]){
+				message += 	' to ' +
+				json.args[1].split('-')[1];
+			}
+		
+	}else if (json.type === 'pdf'){
+		message += 'Writing pdf of ' + json.args[1]
+	}
+	 else {
+		message += json.msg;
+	}
+	return message;
+}
+
+function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
+	const fs = require('fs');
+	const os = require('os');
+	const path = require('path');
+
+	return new Promise((resolve, reject) => {
+		const tempPath = path.join(os.tmpdir(), 'foobar-');
+		fs.mkdtemp(tempPath, (err, folder) => {
+			if (err) return reject(err);
+
+			const file_name = path.join(folder, name);
+
+			fs.writeFile(file_name, data, encoding, (error_file) => {
+				if (error_file) return reject(error_file);
+
+				resolve(file_name);
+			});
+		});
+	});
 }

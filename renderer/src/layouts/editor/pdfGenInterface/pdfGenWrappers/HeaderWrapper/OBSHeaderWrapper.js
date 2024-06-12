@@ -60,36 +60,48 @@ export function OBSWrapperSortableList({
 
 	return (
 		<div>
-			{advanceMode ? (
-				<div
+			<div
 					style={{
-						justifyContent: 'space-between',
+						margin: 'auto',
 						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center', // Added alignment to center vertically
+						fontSize: 24,
+						color: 'black',
 					}}>
-					<TextField
-						label={'obs start'}
-						value={startObs}
-						onBlur={handleBlurStart}
-						id='formatted-numberformat-input'
-						InputProps={{
-							inputComponent: NumericFormatCustom,
-						}}
-						variant='standard'
-					/>
-					<TextField
-						label={'obs end'}
-						value={endObs}
-						onBlur={handleBlurEnd}
-						id='formatted-numberformat-input'
-						InputProps={{
-							inputComponent: NumericFormatCustom,
-						}}
-						variant='standard'
-					/>
+					<div style={{ width: 35, height: 35, marginRight: 8 }}>
+						<ImageIcon />
+					</div>
+					Obs
 				</div>
-			) : (
-				<></>
-			)}
+			<div
+				style={{
+					justifyContent: 'space-between',
+					display: 'flex',
+					padding:5
+				}}>
+				<TextField
+					label={'obs start'}
+					value={startObs}
+					onBlur={handleBlurStart}
+					id='formatted-numberformat-input'
+					InputProps={{
+						inputComponent: NumericFormatCustom,
+					}}
+					variant='standard'
+				/>
+				<TextField
+					label={'obs end'}
+					value={endObs}
+					onBlur={handleBlurEnd}
+					id='formatted-numberformat-input'
+					InputProps={{
+						inputComponent: NumericFormatCustom,
+					}}
+					variant='standard'
+				/>
+			</div>
+
 			<div style={{ display: 'flex', justifyContent: 'end' }}>
 				{advanceMode ? (
 					<div>
@@ -135,20 +147,7 @@ export function OBSWrapperSortableList({
 					<></>
 				)}
 
-				<div
-					style={{
-						margin: 'auto',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center', // Added alignment to center vertically
-						fontSize: 24,
-						color: 'black',
-					}}>
-					<div style={{ width: 35, height: 35, marginRight: 8 }}>
-						<ImageIcon />
-					</div>
-					Obs
-				</div>
+				
 			</div>
 		</div>
 	);

@@ -10,11 +10,10 @@ export function BooleanPicker({
 }) {
 	const [selected, setSelected] = useState(false);
 
+	
 	useEffect(() => {
-		console.log(selected)
 		setJsonSpec((prev) => {
 			let j = JSON.parse(prev);
-
 			j[fieldInfo.id] = selected;
 			return JSON.stringify(j);
 		});

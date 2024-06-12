@@ -294,7 +294,6 @@ const fontStyle = {
 };
 
 function creatSection(folder, pickerJson) {
-	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
 	const fs = window.require('fs');
@@ -371,76 +370,20 @@ function creatSection(folder, pickerJson) {
 					},
 					books: [],
 				};
+			} else if (
+				jsonParse?.meta?.repo?.flavor_type === 'parascriptural'
+			) {
+				fileName = 'content';
+				pickerJson.tNotes[`tNotes ${jsonParse.meta.repo.full_name}`] = {
+					description: `tNotes ${jsonParse.meta.repo.full_name}`,
+					language: jsonParse.meta.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${folder}/${project}/${fileName}`,
+					},
+					books: [],
+				};
 			}
-
-			// for (let [pathKey, val] of Object.entries(jsonParseIngre)) {
-			// 	fileName = pathKey.split('/')[1];
-			// 	tmpRangeScope = '';
-			// 	tmpScope = val.scope
-			// 		? Object.entries(val.scope)
-			// 				.map((key) => {
-			// 					tmpRangeScope = key[0];
-			// 					if (key[1] && key[1][0])
-			// 						tmpRangeScope += ':' + key[1];
-			// 					return tmpRangeScope;
-			// 				})
-			// 				.join(', ')
-			// 		: '';
-
-			// 	if (
-			// 		fileName !== 'scribe-settings.json' &&
-			// 		fileName !== 'license.md' &&
-			// 		fileName !== 'versification.json' &&
-			// 		fileName !== 'LICENSE.md' &&
-			// 		fileName !== 'manifest.yaml' &&
-			// 		fileName !== 'media.yaml'
-			// 	) {
-			// 		if (
-			// 			jsonParse?.type?.flavorType?.flavor?.name ===
-			// 			'textTranslation'
-			// 		) {
-			// 			pickerJson.book[projectS + ' ' + tmpScope] = {
-			// 				description: `${fileName} from project ${projectS}`,
-			// 				language: jsonParse.meta.defaultLocale,
-			// 				src: {
-			// 					type: 'fs',
-			// 					path: `${folder}/${project}/${pathKey}`,
-			// 				},
-			// 				books: val.scope ? Object.keys(val.scope) : [],
-			// 			};
-			// 		} else if (
-			// 			jsonParse?.meta?.flavor === 'x-OBSTranslationNotes'
-			// 		) {
-			// 			fileName = jsonParseIngre[pathKey].path.split('/')[1];
-			// 			pickerJson['OBS-TN'][projectS + ' ' + tmpScope] = {
-			// 				description: `${fileName} from project ${projectS}`,
-			// 				language: jsonParse.meta.defaultLocale,
-			// 				src: {
-			// 					type: 'fs',
-			// 					path: `${folder}/${project}/${fileName}`,
-			// 				},
-			// 				books: val.scope ? Object.keys(val.scope) : [],
-			// 			};
-			// 		} else if (
-			// 			jsonParse?.type?.flavorType?.flavor?.name ===
-			// 			'textStories'
-			// 		) {
-			// 			fileName = 'content';
-			// 			pickerJson.OBS[
-			// 				`OBS ${jsonParse.resourceMeta.full_name}`
-			// 			] = {
-			// 				description: `OBS ${jsonParse.resourceMeta.full_name}`,
-			// 				language: jsonParse.meta.defaultLocale,
-			// 				src: {
-			// 					type: 'fs',
-			// 					path: `${folder}/${project}/${fileName}`,
-			// 				},
-			// 				books: [],
-			// 			};
-			// 			break;
-			// 		}
-			// 	}
-			// }
 		}
 	}
 }

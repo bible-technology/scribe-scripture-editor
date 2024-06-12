@@ -109,7 +109,7 @@ export function BCVWrapperSortableList({
 					Translation
 				</div>
 			</div>
-			{advanceMode ? (
+			
 				<div className='py-5 flex flex-wrap gap-3 uppercase text-sm font-medium '>
 					<div
 						className={
@@ -165,9 +165,7 @@ export function BCVWrapperSortableList({
 						{t('label-custom')}
 					</div>
 				</div>
-			) : (
-				<></>
-			)}
+			
 			<Modal
 				open={openModalBook}
 				onClose={() => setOpenModalBook(false)}

@@ -14,6 +14,19 @@ export function FieldPicker({
 	listResourcesForPdf,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
+	console.log(fieldInfo, 'ici')
+
+	if(typeof(fieldInfo.typeLiteral) === typeof(true) || fieldInfo.typeLiteral){
+
+		setJsonSpec((prev) => {
+      const newState = JSON.parse(prev);
+      newState[fieldInfo.id] = fieldInfo.typeLiteral;
+      return JSON.stringify(newState);
+    });
+		return <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+    <div>{fieldInfo.label[lang]} :</div>
+    <div style={{ fontSize: 16 }}>{fieldInfo.typeLiteral}</div>
+  </div>	}
 	if (fieldInfo.typeEnum) {
 		if (1 === fieldInfo.nValues[1]) {
 			return (

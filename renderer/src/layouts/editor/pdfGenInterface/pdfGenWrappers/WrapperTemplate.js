@@ -41,17 +41,16 @@ export function WrapperTemplate({
 		});
 	}, [orderSections]);
 
-	
 	//update final print Json
 	useEffect(() => {
-		console.log(sections)
+		console.log(sections);
 		setFinalPrint((prev) => {
 			const t = { ...prev };
 			t[keyWrapper].content.content = JSON.parse(sections);
 			return t;
 		});
 	}, [sections]);
-
+	
 	//Sortable list logic
 	useEffect(() => {
 		const sortableList = document.querySelector(
@@ -167,57 +166,62 @@ export function WrapperTemplate({
 						display: 'flex',
 						justifyContent: 'end',
 					}}>
-					{advanceMode ? (
-						<div style={{ display: 'flex' }}>
-							<Button
-								style={{
-									borderStyle: 'solid',
-									color: 'white',
-								}}
-								onClick={() => {
-									changePrintOrder((prev) => {
-											let t = [...prev];
-											console.log(keyWrapper)
-											t.splice(t.indexOf(parseInt(keyWrapper)), 1);
-											console.log(t)
-											return t;
-											
-									});
+					<div style={{ display: 'flex' }}>
+						<Button
+							style={{
+								borderStyle: 'solid',
+								color: 'white',
+							}}
+							onClick={() => {
+								changePrintOrder((prev) => {
+									let t = [...prev];
+									console.log(keyWrapper);
+									t.splice(
+										t.indexOf(parseInt(keyWrapper)),
+										1,
+									);
+									console.log(t);
+									return t;
+								});
 
-									changePrintData((prev) => {
-											const updatedSelected = JSON.parse(JSON.stringify(prev))
-											const up = {};
-											console.log(updatedSelected)
-											// Object.keys(updatedSelected).forEach(
-											// 		(key) => {
-											// 				if (
-											// 						parseInt(key) > keyWrapper
-											// 				) {
-											// 						let newIndex =
-											// 								parseInt(key) - 1;
-											// 						up[newIndex] =
-											// 								updatedSelected[key];
-											// 				} else if (
-											// 						parseInt(key) < keyWrapper
-											// 				) {
-											// 						up[key] =
-											// 								updatedSelected[key];
-											// 				}
-											// 		},
-											// );
+								changePrintData((prev) => {
+									const updatedSelected = JSON.parse(
+										JSON.stringify(prev),
+									);
+									const up = {};
+									console.log(updatedSelected);
+									// Object.keys(updatedSelected).forEach(
+									// 		(key) => {
+									// 				if (
+									// 						parseInt(key) > keyWrapper
+									// 				) {
+									// 						let newIndex =
+									// 								parseInt(key) - 1;
+									// 						up[newIndex] =
+									// 								updatedSelected[key];
+									// 				} else if (
+									// 						parseInt(key) < keyWrapper
+									// 				) {
+									// 						up[key] =
+									// 								updatedSelected[key];
+									// 				}
+									// 		},
+									// );
 
-											// Remove the last key in the map as it's not required
-											delete updatedSelected[parseInt(keyWrapper)];
-											console.log(updatedSelected)
-											return updatedSelected;
-									});
+									// Remove the last key in the map as it's not required
+									delete updatedSelected[
+										parseInt(keyWrapper)
+									];
+									console.log(updatedSelected);
+									return updatedSelected;
+								});
 							}}>
-								<Trash color={'black'} style={	{height: 35, width: 35 }} />
-							</Button>
-						</div>
-					) : (
-						<></>
-					)}
+							<Trash
+								color={'black'}
+								style={{ height: 35, width: 35 }}
+							/>
+						</Button>
+					</div>
 				</div>
 
 				<ul className={sortableListClassName}>

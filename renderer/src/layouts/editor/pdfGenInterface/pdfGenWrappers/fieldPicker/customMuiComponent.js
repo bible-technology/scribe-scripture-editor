@@ -24,11 +24,6 @@ export const TextOnlyTooltip = styled(({ className, ...props }) => (
 	},
 }));
 
-const mainColor = "red"
-const lightErrorColor = "blue"
-const errorColor = "green"
-const lightColor = "rgba(255, 238, 229, 1)"
-
 export const LoopSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-switchBase.Mui-checked': {
 		color: '#FF5500',

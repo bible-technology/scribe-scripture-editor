@@ -8,12 +8,15 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
 	useEffect(() => {
-		setJsonSpec((prev) => {
-			let j = JSON.parse(prev);
-
-			j[fieldInfo.id] = selected;
-			return JSON.stringify(j);
-		});
+		if(selected != ''){
+			setJsonSpec((prev) => {
+				let j = JSON.parse(prev);
+	
+				j[fieldInfo.id] = selected;
+				return JSON.stringify(j);
+			});
+		}
+		
 	}, [selected]);
 
 	const {
@@ -33,7 +36,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 			{},
 		),
 	);
-
+	
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
 		setSearchText('');
