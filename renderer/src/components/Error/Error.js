@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Configuration, PublicApi } from '@ory/kratos-client';
+// import { Configuration, PublicApi } from '@ory/kratos-client';
 import React from 'react';
 // import configData from '../../config.json';
 
