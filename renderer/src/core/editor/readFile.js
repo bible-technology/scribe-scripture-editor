@@ -20,9 +20,9 @@ export const readFile = async ({
         return new Promise((resolve) => {
             if (fs.existsSync(projectsPath)) {
                 const fileContent = fs.readFileSync(
-                    path.join(projectsPath),
-                    'utf8',
-                );
+                        path.join(projectsPath),
+                        'utf8',
+                    );
                 resolve(fileContent);
             }
         });

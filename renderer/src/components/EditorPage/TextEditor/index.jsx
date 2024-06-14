@@ -16,7 +16,6 @@ import Editor from './Editor';
 export default function TextEditor() {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
-  // const { usfmData, bookAvailable } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
   const [chapterNumber, setChapterNumber] = useState(1);

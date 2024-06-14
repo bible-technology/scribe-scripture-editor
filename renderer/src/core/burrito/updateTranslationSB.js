@@ -1,6 +1,6 @@
 import moment from 'moment';
 import * as logger from '../../logger';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 import packageInfo from '../../../../package.json';
 
 const path = require('path');

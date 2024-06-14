@@ -170,12 +170,12 @@ export default function EditorSection({
 
   useEffect(() => {
     // Since we are adding reference resources from different places the data we have are inconsistant.
-    // Looking for flavor from the flavours because flavor is only available for scripture and gloss(obs), not for Translation resources
-    const flavours = ['obs', 'bible', 'audio'];
+    // Looking for flavor from the flavors because flavor is only available for scripture and gloss(obs), not for Translation resources
+    const flavors = ['obs', 'bible', 'audio'];
     if (
       referenceResources.offlineResource.offline === false
       && title
-      && flavours.includes(referenceResources.selectedResource)
+      && flavors.includes(referenceResources.selectedResource)
     ) {
       logger.debug(
         'EditorSection.js',

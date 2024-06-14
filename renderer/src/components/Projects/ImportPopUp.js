@@ -7,11 +7,15 @@ import { Dialog, Transition } from '@headlessui/react';
 import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { readUsfm } from '@/components/Projects/utils/readUsfm';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
+import { updateJsonJuxta } from './utils/updateJsonJuxta';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 
 const grammar = require('usfm-grammar');
+const advanceSettings = require('../../lib/AdvanceSettings.json');
 
 export default function ImportPopUp(props) {
   const {
@@ -33,10 +37,21 @@ export default function ImportPopUp(props) {
   const { t } = useTranslation();
   const [labelImportFiles, setLabelImportFiles] = useState(t('label-choose-usfm-files'));
   const {
+    states: {
+      canonSpecification,
+      importedBookCodes,
+      importedFiles,
+    },
     actions: {
+      setImportedBookCodes,
       setImportedFiles,
+      setCanonSpecification,
     },
   } = useContext(ProjectContext);
+
+  const compareArrays = (a, b) => a.length === b.length
+                                  && a.every((element) => b.indexOf(element) !== -1)
+                                  && b.every((element) => a.indexOf(element) !== -1);
 
   function close() {
     logger.debug('ImportPopUp.js', 'Closing the Import UI');
@@ -44,11 +59,13 @@ export default function ImportPopUp(props) {
     setShow(false);
     closePopUp();
   }
+
   function clear() {
     logger.debug('ImportPopUp.js', 'Clearing the data from the path box');
     setFolderPath([]);
     setBooks([]);
   }
+
   const getBooks = (filePaths) => {
     logger.debug('ImportPopUp.js', 'In getBooks for displaying books name using the paths');
     const book = [];
@@ -65,6 +82,7 @@ export default function ImportPopUp(props) {
     });
     setBooks(book);
   };
+
   const openFileDialogSettingData = async () => {
     logger.debug('ImportPopUp.js', 'Inside openFileDialogSettingData');
     const options = {
@@ -101,6 +119,7 @@ export default function ImportPopUp(props) {
     logger.debug('ImportPopUp.js', 'Inside importFiles');
     const fs = window.require('fs');
     const files = [];
+    let bookCodeList = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
         case 'Translation': {
@@ -110,9 +129,10 @@ export default function ImportPopUp(props) {
           if (isJsonValid) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
             replaceConformation(true);
-            logger.debug('ImportPopUp. js', 'Valid USFM file.');
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');
@@ -132,6 +152,7 @@ export default function ImportPopUp(props) {
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');
@@ -165,13 +186,82 @@ export default function ImportPopUp(props) {
           break;
         }
 
+        case 'Juxta': {
+          const file = fs.readFileSync(filePath, 'utf8');
+          const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
+
+          const fileExt = filename.split('.').pop()?.toLowerCase();
+          if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
+              || fileExt === undefined) {
+            const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
+            const isJsonValid = myUsfmParser.validate();
+            // if the USFM is valid
+            if (isJsonValid) {
+              replaceConformation(true);
+              logger.debug('ImportPopUp.js', 'Valid USFM file.');
+              // then we get the book code and we transform our data to our Juxta json file
+              const jsonOutput = myUsfmParser.toJSON();
+              const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
+              files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
+              bookCodeList.push(jsonOutput.book.bookCode);
+            } else {
+              logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+              setNotify('failure');
+              setSnackText(t('dynamic-msg-invalid-usfm-file'));
+              setOpenSnackBar(true);
+            }
+          } else if (fileExt === 'json') {
+            // TODO add a validator for our juxta type
+            const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
+            if (updatedFile.error) {
+              logger.warn('ImportPopUp.js', 'Invalid filename.');
+              setNotify('failure');
+              // Nicolas : TODO translations
+              setSnackText(updatedFile.error);
+              setOpenSnackBar(true);
+              break;
+            }
+            logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
+            files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
+            bookCodeList.push(updatedFile.bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid file.');
+            setNotify('failure');
+            // Nicolas : TODO translations
+            setSnackText('invalid file type');
+            setOpenSnackBar(true);
+          }
+          break;
+        }
         default:
           break;
       }
     });
+    let newCanonSpecification = {
+      currentScope: bookCodeList,
+      id: 4,
+      locked: false,
+      title: t('label-other'),
+    }
+    if (bookCodeList.length === advanceSettings.canonSpecification[2].length
+        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[2].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
+    } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length
+      && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[1].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
+    } else if (bookCodeList.length === advanceSettings.canonSpecification[0].length
+      && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
+      newCanonSpecification.id = advanceSettings.canonSpecification[0].id;
+    }
+    setCanonSpecification(newCanonSpecification);
+    setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
     close();
   };
+
   const importProject = async () => {
     logger.debug('ImportPopUp.js', 'Inside importProject');
     if (folderPath.length > 0) {
@@ -198,6 +288,12 @@ export default function ImportPopUp(props) {
       case 'OBS':
         setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
         setLabelImportFiles(t('label-choose-md-files'));
+      break;
+
+      case 'Juxta':
+        setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
+        // Nicolas : TODO translation
+        setLabelImportFiles('Choose json files');
       break;
 
       default:

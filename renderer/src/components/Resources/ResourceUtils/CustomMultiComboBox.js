@@ -56,18 +56,18 @@ function CustomMultiComboBox({
                     {filteredData.length > 0
                     ? filteredData.map((data) => (
                       // <Combobox.Option key={data?.id || data?.pk} className={`${selectedList.includes(data) ? 'bg-gray-400' : ''} hover:bg-gray-300 p-1`} value={data}>
-                      <Combobox.Option key={data?.name || data?.id || data?.pk} className=" hover:bg-gray-300 p-1" value={data} aria-label={data[filterParams]}>
+                      <Combobox.Option key={data?.name || data?.id || data?.pk} className=" hover:bg-gray-300 p-1 prevent-select" value={data} aria-label={data[filterParams]}>
                         {data[filterParams] }
                         {' '}
                         {showLangCode.show && (
-                        <span className="text-green-600">
+                        <span className="text-green-600 prevent-select">
                           (
                           {data[showLangCode.langkey]}
                           )
                         </span>
                         )}
                       </Combobox.Option>
-                    )) : query?.length > 2 && <Combobox.Option> No Match Found </Combobox.Option>}
+                    )) : query?.length > 2 && <Combobox.Option disabled className="prevent-select"> No Match Found </Combobox.Option>}
                   </div>
                 </div>
               </Combobox.Options>

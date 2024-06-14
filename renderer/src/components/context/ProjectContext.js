@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import { saveProjectsMeta, saveSupabaseProjectsMeta } from '../../core/projects/saveProjetcsMeta';
@@ -33,7 +33,7 @@ const ProjectContextProvider = ({ children }) => {
   const [canonList, setCanonList] = useState(
     advanceSettings.canonSpecification,
   );
-  const [canonSpecification, setcanonSpecification] = useState(
+  const [canonSpecification, setCanonSpecification] = useState(
     advanceSettings.canonSpecification[0],
   );
   const [versification] = useState(advanceSettings.versification);
@@ -50,6 +50,7 @@ const ProjectContextProvider = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState();
   const [selectedProjectMeta, setSelectedProjectMeta] = useState();
   const [importedFiles, setImportedFiles] = useState([]);
+  const [importedBookCodes, setImportedBookCodes] = useState([]);
   const [sideBarTab, setSideBarTab] = useState('');
   const [openImportPopUp, setOpenImportPopUp] = useState(false);
   const [openExportPopUp, setOpenExportPopUp] = useState(false);
@@ -454,6 +455,7 @@ const ProjectContextProvider = ({ children }) => {
     const status = saveSupabaseProjectsMeta(projectMetaObj);
     return status;
   };
+
   const resetProjectStates = () => {
     const initialState = {
       language: '',
@@ -462,7 +464,7 @@ const ProjectContextProvider = ({ children }) => {
     };
     setNewProjectFields({ ...initialState });
     setCopyRight();
-    setcanonSpecification('OT');
+    setCanonSpecification('OT');
     setVersificationScheme('kjv');
   };
 
@@ -481,7 +483,7 @@ const ProjectContextProvider = ({ children }) => {
           projectMeta?.projects.forEach((meta) => {
             const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
             const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurance(projectName, '_').then((arr) => {
+            splitStringByLastOccurence(projectName, '_').then((arr) => {
               if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
                 && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
                 setSelectedProjectMeta(meta);
@@ -504,7 +506,7 @@ const ProjectContextProvider = ({ children }) => {
           projectMeta?.projects.forEach((meta) => {
             const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
             const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurance(projectName, '_').then((arr) => {
+            splitStringByLastOccurence(projectName, '_').then((arr) => {
               if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
                 && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
                 setSelectedProjectMeta(meta);
@@ -540,11 +542,12 @@ const ProjectContextProvider = ({ children }) => {
       openImportPopUp,
       openExportPopUp,
       selectedProjectMeta,
+      importedBookCodes,
     },
     actions: {
       setDrawer,
       setCopyRight,
-      setcanonSpecification,
+      setCanonSpecification,
       setVersificationScheme,
       handleProjectFields,
       resetProjectStates,
@@ -564,6 +567,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenImportPopUp,
       setOpenExportPopUp,
       setSelectedProjectMeta,
+      setImportedBookCodes,
     },
   };
 
