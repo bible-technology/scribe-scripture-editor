@@ -1,21 +1,21 @@
 import moment from 'moment';
-import burrito from '../../lib/AudioBurritoTemplete.json';
+import burrito from '../../lib/AudioBurritoTemplate.json';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateTranslationSB';
 
 const createAudioSB = (
-username,
-projectFields,
-selectedScope,
-language,
-langCode,
-direction,
-copyright,
-id,
-project,
-call,
-update,
+  username,
+  projectFields,
+  selectedScope,
+  language,
+  langCode,
+  direction,
+  copyright,
+  id,
+  project,
+  call,
+  update,
 ) => {
   logger.debug('createAudioSB.js', 'In createAudioSB');
   const localizedNames = {};

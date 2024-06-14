@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '@/core/handleElectron';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
@@ -77,20 +77,20 @@ export const updateWebAgSettings = async (username, projectName, data) => {
 export const saveReferenceResource = (font = '', fontSize = 1) => {
   logger.debug('updateAgSettings.js', 'In saveReferenceResource for saving the reference data');
   localforage.getItem('currentProject').then(async (projectName) => {
-    const _projectname = await splitStringByLastOccurance(projectName, '_');
+    const _projectname = await splitStringByLastOccurence(projectName, '_');
     // const _projectname = projectName?.split('_');
-    localforage.getItem('projectmeta').then((value) => {
-      Object.entries(value).forEach(
+    localforage.getItem('projectmeta').then((projectmeta) => {
+      Object.entries(projectmeta).forEach(
         ([, _value]) => {
           Object.entries(_value).forEach(
             ([, resources]) => {
               const id = Object.keys(resources.identification.primary[packageInfo.name]);
               if (id[0] === _projectname[1]) {
-                localforage.getItem('userProfile').then(async (value) => {
+                localforage.getItem('userProfile').then(async (userProfile) => {
                   if (isElectron()) {
-                    await updateAgSettings(value?.username, projectName, resources, font, fontSize);
+                    await updateAgSettings(userProfile?.username, projectName, resources, font, fontSize);
                   } else {
-                    await updateWebAgSettings(value?.user?.email, projectName, resources);
+                    await updateWebAgSettings(userProfile?.username, projectName, resources, font, fontSize);
                   }
                 });
               }

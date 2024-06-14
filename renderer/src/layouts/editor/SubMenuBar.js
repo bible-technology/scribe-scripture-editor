@@ -158,7 +158,7 @@ export default function SubMenuBar() {
 
       {/* <StatsModal openModal={openStatsModal} open={openStats} /> */}
 
-      {/* <Transition appear show={refernceLoading.status} as={Fragment}>
+      {/* <Transition appear show={referenceLoading.status} as={Fragment}>
         <Dialog
           as={Fragment}
           // className="fixed inset-0 z-10 overflow-y-auto"
@@ -194,7 +194,7 @@ export default function SubMenuBar() {
                     <XMarkIcon />
                   </button>
                   <p>
-                    {refernceLoading.text}
+                    {referenceLoading.text}
                     {counter > 0 ? counter : ''}
                   </p>closeSnackBar
                 </div> */}

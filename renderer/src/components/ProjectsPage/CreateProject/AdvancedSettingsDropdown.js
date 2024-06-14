@@ -50,7 +50,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     },
     actions: {
       setVersificationScheme,
-      setcanonSpecification,
+      setCanonSpecification,
       setCopyRight,
     },
   } = React.useContext(ProjectContext);
@@ -74,16 +74,16 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     logger.debug('AdvancedSettingsDropdown.js', 'In loadScope for loading a exact scope from burrito');
     const vals = Object.keys(project.type.flavorType.currentScope).map((key) => key);
     if (vals.length === 66) {
-      setcanonSpecification({ title: t('label-all'), currentScope: vals });
+      setCanonSpecification({ title: t('label-all'), currentScope: vals });
       setCurrentScope({ title: t('label-all'), currentScope: vals });
     } else if (vals.length === 39 && vals.every((val) => OT.includes(val))) {
-      setcanonSpecification({ title: t('label-old-testament'), currentScope: vals });
+      setCanonSpecification({ title: t('label-old-testament'), currentScope: vals });
       setCurrentScope({ title: t('label-old-testament'), currentScope: vals });
     } else if (vals.length === 27 && vals.every((val) => NT.includes(val))) {
-      setcanonSpecification({ title: t('label-new-testament'), currentScope: vals });
+      setCanonSpecification({ title: t('label-new-testament'), currentScope: vals });
       setCurrentScope({ title: t('label-new-testament'), currentScope: vals });
     } else {
-      setcanonSpecification({ title: t('label-other'), currentScope: vals });
+      setCanonSpecification({ title: t('label-other'), currentScope: vals });
       setCurrentScope({ title: t('label-other'), currentScope: vals });
     }
   };
@@ -202,7 +202,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     } else if (canonSpecification.title === 'Other' && value.title === 'Other') {
       value.currentScope = canonSpecification.currentScope;
     }
-    setcanonSpecification(value);
+    setCanonSpecification(value);
     openBibleNav('edit');
   };
   useEffect(() => {
@@ -265,7 +265,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                 <div>
                   {/* <CustomList
                     selected={canonSpecification}
-                    setSelected={setcanonSpecification}
+                    setSelected={setCanonSpecification}
                     options={canonList}
                     show
                   /> */}

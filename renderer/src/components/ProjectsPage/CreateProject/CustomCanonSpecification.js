@@ -18,7 +18,7 @@ const CustomCanonSpecification = ({
   const { t } = useTranslation();
   const {
     states: { canonSpecification, canonList },
-    actions: { setcanonSpecification },
+    actions: { setCanonSpecification },
   } = React.useContext(ProjectContext);
 
   const [selectedBooks, setSelectedBooks] = React.useState([]);
@@ -27,14 +27,14 @@ const CustomCanonSpecification = ({
     state: { bookList },
   } = useBibleReference({ initialBook, initialChapter, initialVerse });
   const saveCanon = () => {
-    setcanonSpecification({
+    setCanonSpecification({
       id: canonList.length + 1, title: name, currentScope: selectedBooks, lock: false,
     });
     closeBibleNav();
   };
   const editCanon = () => {
     logger.debug('CustomCanonSpecification.js', 'In editCanon for editing the current scope');
-    setcanonSpecification({
+    setCanonSpecification({
       id: canonSpecification.id, title: name, currentScope: selectedBooks, lock: false,
     });
     closeBibleNav();

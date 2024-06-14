@@ -25,8 +25,8 @@ function useProjectsSort() {
   const [loading, setLoading] = React.useState(false);
   const [activeNotificationCount, setActiveNotificationCount] = React.useState(0);
 
-  const starrtedData = [];
-  const unstarrtedData = [];
+  const starredData = [];
+  const unstarredData = [];
   const allProjects = [];
 
   useEffect(() => {
@@ -153,10 +153,26 @@ function useProjectsSort() {
                       let flavorType;
                       let isArchived;
                       let starred;
+                      let proj;
+                      let projJuxta;
                       switch (
                       _project.type.flavorType.flavor
                         .name
                       ) {
+                        case 'x-juxtalinear':
+                          proj = _project.project;
+                          if (proj) {
+                            projJuxta = proj['x-juxtalinear'];
+                            lastSeen = projJuxta
+                              ?.lastSeen;
+                            description = projJuxta
+                              ?.description;
+                            isArchived = projJuxta
+                              ?.isArchived;
+                            starred = projJuxta?.starred;
+                          }
+                          flavorType = 'Juxtalinear';
+                          break;
                         case 'textTranslation':
                           lastSeen = _project.project
                             ?.textTranslation
@@ -217,10 +233,10 @@ function useProjectsSort() {
                   }
                 })
                 .then(() => {
-                  setStarredRow(starrtedData);
-                  setStarredProjets(starrtedData);
-                  setUnStarredRow(unstarrtedData);
-                  setUnStarredProjets(unstarrtedData);
+                  setStarredRow(starredData);
+                  setStarredProjets(starredData);
+                  setUnStarredRow(unstarredData);
+                  setUnStarredProjets(unstarredData);
                   setProjects(allProjects);
                 });
             })
@@ -251,6 +267,7 @@ function useProjectsSort() {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        'x-juxtalinear': 'x-juxtalinear',
       };
 
       const dirName = dirNameMap[flavorName];
@@ -282,6 +299,7 @@ function useProjectsSort() {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        'x-juxtalinear': 'x-juxtalinear',
       };
       return dirNameMap[flavorName];
     };
