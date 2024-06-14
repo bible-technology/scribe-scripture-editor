@@ -8,14 +8,14 @@ import localForage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
+import EmptyScreen from '@/components/Loading/EmptySrceen';
+import { SnackBar } from '@/components/SnackBar';
 import { getObsTn } from './getObsTn';
 import ObsResourceCard from './ObsResourceCard';
 import * as logger from '../../../../logger';
 import tsvJSON from './TsvToJson';
 import ObsTsvToChapterLevelMd from './ObsTsvToChapterLevel';
 import packageInfo from '../../../../../../package.json';
-import EmptyScreen from '@/components/Loading/EmptySrceen';
-import { SnackBar } from '@/components/SnackBar';
 
 function ObsTnCard({
   resource,
@@ -88,12 +88,12 @@ function ObsTnCard({
               if (offlineResource.data?.value?.dublin_core?.format?.toLowerCase() === 'text/tsv') {
                 logger.debug('inside OBS TN offline TSV resource');
                 let tsvFileName = offlineResource.data?.value?.projects[0]?.path;
-                let fullPathTsv = path.join(folder, projectName, tsvFileName);
+                const fullPathTsv = path.join(folder, projectName, tsvFileName);
                 // sometimes people put the path of the content dir instead of the name of the tsv file
-                if(!fs.existsSync(fullPathTsv) || fs.lstatSync(fullPathTsv).isDirectory()) {
-                  tsvFileName = fs.readdirSync(path.join(folder, projectName)).filter(fn => fn.endsWith('.tsv'))[0];
+                if (!fs.existsSync(fullPathTsv) || fs.lstatSync(fullPathTsv).isDirectory()) {
+                  tsvFileName = fs.readdirSync(path.join(folder, projectName)).filter((fn) => fn.endsWith('.tsv'))[0];
                 }
-                if(tsvFileName && fs.existsSync(path.join(folder, projectName, tsvFileName)) && fs.lstatSync(path.join(folder, projectName, tsvFileName)).isFile()) {
+                if (tsvFileName && fs.existsSync(path.join(folder, projectName, tsvFileName)) && fs.lstatSync(path.join(folder, projectName, tsvFileName)).isFile()) {
                   const obsTsvData = await fs.readFileSync(path.join(folder, projectName, tsvFileName), 'utf8');
                   const obsTsvJson = obsTsvData && await tsvJSON(obsTsvData);
                   logger.debug('inside OBS TN offline TSV resource : created TSV JSON');
@@ -171,7 +171,8 @@ function ObsTnCard({
           setSnackText={setSnackText}
           error={notify}
         />
-      </>)
+      </>
+)
   );
 }
 

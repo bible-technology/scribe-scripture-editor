@@ -203,6 +203,7 @@ export const ListResources = ({
                       )}
                       role="button"
                       tabIndex="0"
+                      aria-label="upload"
                     >
                       {resource?.value?.meta?.language_title ?? resource?.value?.meta?.name }
                       <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
@@ -228,6 +229,7 @@ export const ListResources = ({
                         resource,
                       )}
                       role="button"
+                      aria-label="language"
                       tabIndex="0"
                     >
                       {resource?.value?.meta?.language}
@@ -246,6 +248,7 @@ export const ListResources = ({
                       resource,
                       )}
                       role="button"
+                      aria-label="version"
                       tabIndex="0"
                     >
                       {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource.value.meta.released).split('T')[0]}`}
@@ -264,6 +267,7 @@ export const ListResources = ({
                         resource,
                       )}
                       role="button"
+                      aria-label="tag"
                       tabIndex="0"
                     >
                       {resource?.value?.meta?.release.tag_name}

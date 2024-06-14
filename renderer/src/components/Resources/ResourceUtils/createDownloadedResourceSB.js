@@ -312,7 +312,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
               }
               if (!resourceExist) {
                 // eslint-disable-next-line no-await-in-loop
-                logger.debug("createDownloadedResourceSB.js : resource.metadata_json_url", resource.metadata_json_url);
+                logger.debug('createDownloadedResourceSB.js : resource.metadata_json_url', resource.metadata_json_url);
                 await fetch(resource.metadata_json_url)
                   .then((res) => res.json())
                   // eslint-disable-next-line no-loop-func
@@ -338,7 +338,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
                         if (!fs.existsSync(folder)) {
                           fs.mkdirSync(folder, { recursive: true });
                         }
-                        logger.debug('createDownloadedResourceSB.js => In create downloaded resource SB - downloading zip content ',path.join(folder, `${currentProjectName}.zip`));
+                        logger.debug('createDownloadedResourceSB.js => In create downloaded resource SB - downloading zip content ', path.join(folder, `${currentProjectName}.zip`));
                         // wririntg zip to local
                         await fs.writeFileSync(path.join(folder, `${currentProjectName}.zip`), Buffer.from(blob));
                         logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB - downloading zip content completed ');

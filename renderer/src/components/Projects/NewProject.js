@@ -12,7 +12,6 @@ import { SnackBar } from '@/components/SnackBar';
 import useValidator from '@/components/hooks/useValidator';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
-import { readUsfm } from '@/components/Projects/utils/readUsfm';
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
 import { BookOpenIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
@@ -24,8 +23,6 @@ import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
 import burrito from '../../lib/BurritoTemplate.json';
-import localforage from 'localforage';
-import packageInfo from '../../../../package.json';
 // eslint-disable-next-line no-unused-vars
 const solutions = [
   {
@@ -200,8 +197,8 @@ export default function NewProject({ call, project, closeEdit }) {
 
   /**
    * Works only for 1-depth arrays
-   * @param {Array} a 
-   * @param {Array} b 
+   * @param {Array} a
+   * @param {Array} b
    * @returns {Boolean} true if the two arrays are equal
    */
   const compareArrays = (a, b) => a.length === b.length
@@ -228,7 +225,7 @@ export default function NewProject({ call, project, closeEdit }) {
       }
     });
   };
-  
+
   const validate = async () => {
     logger.debug('NewProject.js', 'Validating the fields.');
     setLoading(true);
@@ -260,13 +257,13 @@ export default function NewProject({ call, project, closeEdit }) {
         setSnackText(t('Scope is not selected or scope is empty. Please add scope.'));
         setOpenSnackBar(true);
       }
-      
+
       // juxta scope != imported books
       if (call === 'new' && create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
         create = false;
         setOpenModalJuxtaWrongSetOfBooks(true);
       }
-      
+
       setError({
         ...error, projectName: checkName, abbr: checkAbbr, description: checkDesc,
       });
@@ -305,7 +302,7 @@ export default function NewProject({ call, project, closeEdit }) {
   function closeImportPopUp() {
     setOpenPopUp(false);
   }
-  
+
   const loadData = async (project) => {
     logger.debug('NewProject.js', 'In loadData for loading current project details in Edit page');
     setNewProjectFields({
@@ -541,14 +538,15 @@ export default function NewProject({ call, project, closeEdit }) {
       />
       <ConfirmationModal
         openModal={openModalJuxtaWrongSetOfBooks}
-        title={(!importedBookCodes || importedBookCodes.length === 0) ?
-          'Book resource needed' :
-          'Canon specification error'}
+        title={(!importedBookCodes || importedBookCodes.length === 0)
+          ? 'Book resource needed'
+          : 'Canon specification error'}
         setOpenModal={setOpenModalJuxtaWrongSetOfBooks}
         confirmMessage={
-          (!importedBookCodes || importedBookCodes.length === 0) ?
-          'No resource imported.' :
-          'Your imported resources must correspond to your canon specifications'}
+          (!importedBookCodes || importedBookCodes.length === 0)
+          ? 'No resource imported.'
+          : 'Your imported resources must correspond to your canon specifications'
+}
         buttonName={t('btn-ok')}
         closeModal={() => {}}
         showCancelButton={false}

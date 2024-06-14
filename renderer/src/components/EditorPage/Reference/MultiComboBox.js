@@ -52,6 +52,7 @@ function MultiComboBox({
                   <div
                     key={option}
                     role="button"
+                    aria-label="select"
                     tabIndex={-2}
                     className="flex px-2 py-1 cursor-pointer justify-between hover:bg-gray-200 rounded-md"
                     onClick={() => setselectedOption(option)}
