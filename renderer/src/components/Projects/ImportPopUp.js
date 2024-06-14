@@ -12,7 +12,6 @@ import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { updateJsonJuxta } from './utils/updateJsonJuxta';
-import { ReferenceContext } from '@/components/context/ReferenceContext';
 
 const grammar = require('usfm-grammar');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
@@ -37,11 +36,6 @@ export default function ImportPopUp(props) {
   const { t } = useTranslation();
   const [labelImportFiles, setLabelImportFiles] = useState(t('label-choose-usfm-files'));
   const {
-    states: {
-      canonSpecification,
-      importedBookCodes,
-      importedFiles,
-    },
     actions: {
       setImportedBookCodes,
       setImportedFiles,
@@ -119,7 +113,7 @@ export default function ImportPopUp(props) {
     logger.debug('ImportPopUp.js', 'Inside importFiles');
     const fs = window.require('fs');
     const files = [];
-    let bookCodeList = [];
+    const bookCodeList = [];
     folderPath.forEach((filePath) => {
       switch (projectType) {
         case 'Translation': {
@@ -237,12 +231,12 @@ export default function ImportPopUp(props) {
           break;
       }
     });
-    let newCanonSpecification = {
+    const newCanonSpecification = {
       currentScope: bookCodeList,
       id: 4,
       locked: false,
       title: t('label-other'),
-    }
+    };
     if (bookCodeList.length === advanceSettings.canonSpecification[2].length
         && compareArrays(advanceSettings.currentScope, bookCodeList)) {
       newCanonSpecification.title = advanceSettings.canonSpecification[2].title;

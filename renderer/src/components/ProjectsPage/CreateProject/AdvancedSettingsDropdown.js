@@ -276,6 +276,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       onClick={() => selectCanon(canonList[0])}
                       role="button"
                       tabIndex="0"
+                      aria-label="all books"
                     >
                       {t('label-all')}
                     </div>

@@ -112,6 +112,7 @@ export default function CustomNavigation({
             onClick={openBooks}
             role="button"
             tabIndex="-2"
+            aria-label="open books"
           >
             <ChevronDownIcon className="focus:outline-none inline h-4 w-4 mx-1 text-white" aria-hidden="true" />
           </span>
@@ -120,6 +121,7 @@ export default function CustomNavigation({
             className="focus:outline-none bg-white py-4 bg-opacity-10"
             onClick={selectBook}
             role="button"
+            aria-label="Select books"
             tabIndex="-1"
           >
             <ChevronDownIcon className="focus:outline-none inline h-4 w-4 mx-1 text-white" aria-hidden="true" />

@@ -250,7 +250,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
   if (projectNameExists === false || projectMetaObj.call === 'edit') {
     await burritoChecksAndCreation(
       projectMetaObj.projectType,
-      (projectMetaObj.projectType === 'Translation' || projectMetaObj.projectType === 'Juxta')
+      (projectMetaObj.projectType === 'Translation' || projectMetaObj.projectType === 'Juxta'),
     );
   } else {
     logger.warn('saveProjectsMeta.js', 'Project already exists');

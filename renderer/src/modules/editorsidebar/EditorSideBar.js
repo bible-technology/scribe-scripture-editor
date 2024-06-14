@@ -117,6 +117,7 @@ export default function EditorSideBar(props) {
                     <div
                       onClick={() => dispatch({ type: 'search' })}
                       role="button"
+                      aria-label="Magnify"
                       tabIndex="0"
                       className={`text-white h-full
                         w-full hover:bg-primary

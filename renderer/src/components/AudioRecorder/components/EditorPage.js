@@ -31,6 +31,7 @@ const EditorPage = ({
           && (
           <div
             role="button"
+            aria-label="select verse"
             tabIndex={0}
             key={mainChunk.verseNumber}
             className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
