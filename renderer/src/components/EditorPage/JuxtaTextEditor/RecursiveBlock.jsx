@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { HtmlPerfEditor } from '@xelah/type-perf-html';
 import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/cursorUtils';
 import { getCurrentVerse, getCurrentChapter } from '@/components/EditorPage/JuxtaTextEditor/utils/getReferences';
-import { on } from 'ws';
 
 const getTarget = ({ content }) => {
   const div = document.createElement('div');

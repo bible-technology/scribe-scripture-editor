@@ -144,6 +144,7 @@ function ObsTnCard({
   }, [chapter, languageId, owner, resourceId, offlineResource, scrollLock]);
 
   return (
+    // eslint-disable-next-line no-nested-ternary
     markdown ? (
       <ObsResourceCard
         {...props}

@@ -6,7 +6,6 @@ import { getCurrentCursorPosition, pasteTextAtCursorPosition } from '@/util/curs
 import {
   getCurrentVerse, getCurrentChapter,
 } from '@/components/EditorPage/TextEditor/utils/getReferences';
-import { on } from 'ws';
 
 const getTarget = ({ content }) => {
   const div = document.createElement('div');
