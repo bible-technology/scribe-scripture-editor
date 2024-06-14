@@ -225,7 +225,6 @@ export default function NewProject({ call, project, closeEdit }) {
       }
     });
   };
-
   const validate = async () => {
     logger.debug('NewProject.js', 'Validating the fields.');
     setLoading(true);
@@ -257,13 +256,11 @@ export default function NewProject({ call, project, closeEdit }) {
         setSnackText(t('Scope is not selected or scope is empty. Please add scope.'));
         setOpenSnackBar(true);
       }
-
       // juxta scope != imported books
       if (call === 'new' && create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
         create = false;
         setOpenModalJuxtaWrongSetOfBooks(true);
       }
-
       setError({
         ...error, projectName: checkName, abbr: checkAbbr, description: checkDesc,
       });
@@ -302,7 +299,6 @@ export default function NewProject({ call, project, closeEdit }) {
   function closeImportPopUp() {
     setOpenPopUp(false);
   }
-
   const loadData = async (project) => {
     logger.debug('NewProject.js', 'In loadData for loading current project details in Edit page');
     setNewProjectFields({
@@ -546,7 +542,7 @@ export default function NewProject({ call, project, closeEdit }) {
           (!importedBookCodes || importedBookCodes.length === 0)
           ? 'No resource imported.'
           : 'Your imported resources must correspond to your canon specifications'
-}
+        }
         buttonName={t('btn-ok')}
         closeModal={() => {}}
         showCancelButton={false}

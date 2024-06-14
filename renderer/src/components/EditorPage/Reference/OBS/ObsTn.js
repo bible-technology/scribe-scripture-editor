@@ -172,7 +172,7 @@ function ObsTnCard({
           error={notify}
         />
       </>
-)
+    )
   );
 }
 
