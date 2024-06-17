@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { ProjectContext } from '@/components/context/ProjectContext';
 // import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
-import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/JuxtaTextEditor/BibleNavigationX';
 import BibleNavigationX from './BibleNavigationX';
 // import Buttons from './Buttons';

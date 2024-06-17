@@ -18,9 +18,19 @@
 		"no-underscore-dangle": "off",
 		"no-unused-expressions": "off",
 		"max-len": "off",
-		"no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+		"no-plusplus": [
+			"error",
+			{
+				"allowForLoopAfterthoughts": true
+			}
+		],
 		"prefer-destructuring": "off",
-		"no-param-reassign": [2, { "props": false }],
+		"no-param-reassign": [
+			2,
+			{
+				"props": false
+			}
+		],
 		"camelcase": "off",
 		"consistent-return": "off",
 		"react/function-component-definition": [
@@ -31,13 +41,19 @@
 					"function-expression",
 					"arrow-function"
 				],
-				"unnamedComponents": ["function-expression", "arrow-function"]
+				"unnamedComponents": [
+					"function-expression",
+					"arrow-function"
+				]
 			}
 		],
 		"react/jsx-filename-extension": [
 			1,
 			{
-				"extensions": [".js", ".jsx"]
+				"extensions": [
+					".js",
+					".jsx"
+				]
 			}
 		],
 		"react/jsx-no-bind": [
@@ -56,18 +72,28 @@
 		"import/prefer-default-export": "off",
 		"import/no-extraneous-dependencies": "off",
 		"jsx-a11y/click-events-have-key-events": "off",
+		"jsx-a11y/control-has-associated-label": "off",
 		"react/require-default-props": "off",
 		"react/forbid-prop-types": "off",
 		"linebreak-style": 0,
 		"global-require": 0,
-		"eslint linebreak-style": [0, "error", "windows"],
+		"eslint linebreak-style": [
+			0,
+			"error",
+			"windows"
+		],
 		"import/no-unresolved": [
 			"error",
 			{
-				"ignore": [".svg"]
+				"ignore": [
+					".svg"
+				]
 			}
 		],
-		"curly": ["error", "all"],
+		"curly": [
+			"error",
+			"all"
+		],
 		"template-curly-spacing": "off",
 		"indent": "off"
 	},
@@ -92,18 +118,43 @@
 		"import/resolver": {
 			"alias": {
 				"map": [
-					["@/components", "./renderer/src/components/"],
-					["@/layouts", "./renderer/src/layouts/"],
-					["@/modules", "./renderer/src/modules/"],
-					["@/util", "./renderer/src/util/"],
-					["@/core", "./renderer/src/core/"],
-					["@/hooks", "./renderer/src/hooks/"]
+					[
+						"@/components",
+						"./renderer/src/components/"
+					],
+					[
+						"@/layouts",
+						"./renderer/src/layouts/"
+					],
+					[
+						"@/modules",
+						"./renderer/src/modules/"
+					],
+					[
+						"@/util",
+						"./renderer/src/util/"
+					],
+					[
+						"@/core",
+						"./renderer/src/core/"
+					],
+					[
+						"@/hooks",
+						"./renderer/src/hooks/"
+					]
 				],
 				"node": {
-					"extensions": [".js", ".jsx", ".ts", ".tsx"]
+					"extensions": [
+						".js",
+						".jsx",
+						".ts",
+						".tsx"
+					]
 				}
 			}
 		}
 	},
-	"plugins": ["react"]
+	"plugins": [
+		"react"
+	]
 }

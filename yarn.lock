@@ -3513,13 +3513,6 @@
     read-package-json-fast "^2.0.3"
     which "^2.0.2"
 
-"@ory/kratos-client@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@ory/kratos-client/-/kratos-client-0.10.1.tgz#4957233e4ef6e1845e28765d32244ef89e69b93b"
-  integrity sha512-WfoEW1HKeKUkG+57oShb6D3xENM3DpRbUxvVxbPZkJUKzFlXpBzbX71k2oQ6ajv6cy0ULVEKFLNcHpAoGjraNA==
-  dependencies:
-    axios "^0.21.4"
-
 "@parcel/watcher-android-arm64@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.4.1.tgz#c2c19a3c442313ff007d2d7a9c2c1dd3e1c9ca84"
@@ -5960,13 +5953,6 @@ axios@0.19.0:
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
-
-axios@^0.21.4:
-  version "0.21.4"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
-  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
-  dependencies:
-    follow-redirects "^1.14.0"
 
 axios@^0.27.2:
   version "0.27.2"
@@ -10204,7 +10190,7 @@ follow-redirects@1.5.10:
   dependencies:
     debug "=3.1.0"
 
-follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.9, follow-redirects@^1.15.2:
+follow-redirects@^1.0.0, follow-redirects@^1.14.9, follow-redirects@^1.15.2:
   version "1.15.6"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
   integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
@@ -22264,7 +22250,7 @@ ws@^7.4.6:
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
 
-ws@^8.13.0, ws@^8.14.2, ws@^8.8.0:
+ws@^8.13.0, ws@^8.14.2:
   version "8.16.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.16.0.tgz#d1cd774f36fbc07165066a60e40323eab6446fd4"
   integrity sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==

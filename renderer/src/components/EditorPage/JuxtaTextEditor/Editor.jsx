@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable arrow-body-style */
 import React, { useContext, useEffect, useState } from 'react';
 import md5 from 'md5';
 
@@ -8,6 +9,9 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { ScribexContext } from '@/components/context/ScribexContext';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 // eslint-disable-next-line import/no-unresolved, import/extensions
+import SentenceContextProvider from '@/components/context/SentenceContext';
+import { useReadJuxtaFile } from '@/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile';
+import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta';
 import { functionMapping } from './utils/insertFunctionMap';
 
 // import RecursiveBlock from './RecursiveBlock';
@@ -15,9 +19,6 @@ import { functionMapping } from './utils/insertFunctionMap';
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
 import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // eslint-disable-line
-import SentenceContextProvider from '@/components/context/SentenceContext';
-import { useReadJuxtaFile } from '@/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile';
-import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta.js';
 // import { readUserSettings } from '@/core/projects/userSettings';
 
 export default function Editor(props) {
@@ -68,10 +69,8 @@ export default function Editor(props) {
   const style = isSaving ? { cursor: 'progress' } : {};
 
   const [fileName, setFileName] = useState('');
-  const [sentences, setGlobalTotalSentences] = useState(
-    new Array(),
-  );
-  const [originText, setOriginText] = useState([])
+  const [sentences, setGlobalTotalSentences] = useState([]);
+  const [originText, setOriginText] = useState([]);
   const [itemArrays, setItemArrays] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
 
@@ -83,13 +82,13 @@ export default function Editor(props) {
     newItemArrays[index] = itemArr;
     setItemArrays(newItemArrays);
     setLoadingSentencesInProgress(false);
-  }
+  };
 
   const setGlobalSentences = (index, sentence) => {
     const newSentences = [...sentences];
     newSentences[index] = sentence;
     setGlobalTotalSentences(newSentences);
-  }
+  };
 
   useEffect(() => {
     setBookChange(false);
@@ -129,21 +128,21 @@ export default function Editor(props) {
           }
           return { ...src, index: counts[src.content] };
         });
-        currentCs = md5(normalizeString(JSON.stringify(source) + chunk.gloss)) + '';
+        currentCs = `${md5(normalizeString(JSON.stringify(source) + chunk.gloss))}`;
         checksumChuncks += currentCs;
         return {
           source,
           gloss: chunk.gloss,
-          checksum: currentCs
+          checksum: currentCs,
         };
       });
-      currentCs = md5(checksumChuncks) + '';
+      currentCs = `${md5(checksumChuncks)}`;
       checksumSentences += currentCs;
       return {
         originalSource: stc.originalSource,
         chunks,
         sourceString: stc.sourceString,
-        checksum: checksumSentences
+        checksum: checksumSentences,
       };
     });
   };
@@ -167,25 +166,24 @@ export default function Editor(props) {
           };
         })
         .filter(({ chunk }) => chunk.length);
-    } else {
-      return sentences[curIndex].chunks
-        .map(({ source, gloss, checksum }, index) => {
-          return {
-            chunk: source
-              .filter((s) => s)
-              .map((s, n) => {
-                return {
-                  id: `item-${index * 1000 + n}`,
-                  content: s.content,
-                  index: s.index
-                };
-              }),
-            gloss,
-            checksum,
-          };
-        })
-        .filter(({ chunk }) => chunk.length);
     }
+    return sentences[curIndex].chunks
+      .map(({ source, gloss, checksum }, index) => {
+        return {
+          chunk: source
+            .filter((s) => s)
+            .map((s, n) => {
+              return {
+                id: `item-${index * 1000 + n}`,
+                content: s.content,
+                index: s.index,
+              };
+            }),
+          gloss,
+          checksum,
+        };
+      })
+      .filter(({ chunk }) => chunk.length);
   };
 
   const tryLoadSentences = () => {
@@ -201,7 +199,7 @@ export default function Editor(props) {
       }
     }
     setLoadingSentencesInProgress(false);
-  }
+  };
 
   useEffect(() => {
     setLoadingSentencesInProgress(true);

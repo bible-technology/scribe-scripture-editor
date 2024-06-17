@@ -141,7 +141,6 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.10.12",
-    "@ory/kratos-client": "^0.10.1",
     "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@supabase/supabase-js": "^2.26.0",
@@ -232,7 +231,6 @@
     "workbox-routing": "^7.0.0",
     "workbox-strategies": "^7.0.0",
     "workbox-streams": "^7.0.0",
-    "ws": "^8.8.0",
     "xregexp": "^5.1.1",
     "yarn": "^1.22.19"
   },

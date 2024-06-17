@@ -106,6 +106,7 @@ export default function EditorMenuBar(props) {
           <div
             role="button"
             tabIndex="0"
+            aria-label="bookmark"
             title="bookmark"
             className="focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
           >

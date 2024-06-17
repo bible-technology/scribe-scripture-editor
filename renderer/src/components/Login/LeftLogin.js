@@ -213,6 +213,7 @@ const LeftLogin = () => {
                 hover:text-white border-b-[1px] border-[#E3E3E3] font-semibold "
               tabIndex={0}
               role="button"
+              aria-label="submit"
               onClick={() => {
                 handleSubmit({ username: user?.username });
               }}
@@ -302,6 +303,7 @@ const LeftLogin = () => {
                                 <div
                                   role="button"
                                   tabIndex={0}
+                                  aria-label="submit"
                                   dataId={user.username}
                                   onClick={() => { handleSubmit({ username: user.username }); }}
                                   className="w-full p-4 py-3 text-sm rounded-lg cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
@@ -325,6 +327,7 @@ const LeftLogin = () => {
                                 <div
                                   role="button"
                                   tabIndex={0}
+                                  aria-label="restor user"
                                   className="w-full p-4 py-3 rounded text-sm cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
                                 >
                                   <p className="text-md font-semibold  ">

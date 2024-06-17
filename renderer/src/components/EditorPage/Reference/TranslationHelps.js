@@ -26,7 +26,6 @@ const TranslationHelps = ({
     <>
       {(() => {
       switch (selectedResource) {
-        // Nicolas : do we add a juxta type here ?
         case 'tn':
           return (
             <TranslationHelpsCard

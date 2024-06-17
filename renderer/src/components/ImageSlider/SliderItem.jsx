@@ -23,7 +23,7 @@ function SliderItem({ index, activeIndex, children }) {
     <div
       role="button"
       tabIndex={-1}
-      className="absolute h-full w-full  overflow-hidden rounded-xl
+      className="absolute h-full w-full overflow-hidden rounded-xl
         drop-shadow-[0_8px_30px_rgb(255,255,255,0.12)] transition-all duration-500 ease-in-out"
       style={{
         transform: cssTransformProperties,
@@ -31,6 +31,7 @@ function SliderItem({ index, activeIndex, children }) {
         display: cssDisplay,
         zIndex: `${1}`,
       }}
+      aria-label="slide image"
     >
       {children}
     </div>

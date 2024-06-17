@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as localForage from 'localforage';
 import React from 'react';
-import { Configuration, PublicApi } from '@ory/kratos-client';
+// import { Configuration, PublicApi } from '@ory/kratos-client';
 import * as logger from '../../logger';
 // import configData from '../../config.json';
 // import { isElectron } from '../../core/handleElectron';
