@@ -26,6 +26,8 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
       const { offlineResource } = referenceResources;
       localForage.getItem('userProfile').then(async (user) => {
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;
@@ -98,6 +100,8 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
       const { offlineResource } = referenceResources;
       localForage.getItem('userProfile').then(async (user) => {
           const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;

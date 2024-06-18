@@ -9,6 +9,8 @@ export const readUserSettings = async () => {
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, environment.USER_SETTING_FILE);
 
@@ -33,6 +35,8 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
         const currentUser = await localForage.getItem('userProfile');
         const newpath = localStorage.getItem('userPath');
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         const path = require('path');
         const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
@@ -73,6 +77,8 @@ export const saveJsonFiles = async (data, fileType, dirName = 'ingredients') => 
         const currentUser = await localForage.getItem('userProfile');
         const newpath = localStorage.getItem('userPath');
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         const path = require('path');
         const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
@@ -102,6 +108,8 @@ export const saveUserSettings = async (userSettingsJson) => {
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, environment.USER_SETTING_FILE);
     await fs.writeFileSync(file, JSON.stringify(userSettingsJson));

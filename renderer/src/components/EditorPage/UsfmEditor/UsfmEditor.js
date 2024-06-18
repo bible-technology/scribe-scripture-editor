@@ -348,6 +348,8 @@ const UsfmEditor = () => {
         localforage.getItem('currentProject').then((projectName) => {
           const path = require('path');
           const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
           const newpath = localStorage.getItem('userPath');
           const projectsDir = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName);
           const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');

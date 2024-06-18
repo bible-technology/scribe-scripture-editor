@@ -39,6 +39,8 @@ export const createJuxtaContent = (
   logger.debug('createJuxtaContent.js', `call == ${call}`);
 
   const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder, { recursive: true });
   }

@@ -93,6 +93,8 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
       let title = licenceTitle;
       let myLicence = {};
       const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
       if ((title === 'Custom' || !title) && !selectNew) {
         myLicence.title = 'Custom';
         myLicence.locked = false;

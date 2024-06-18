@@ -58,6 +58,8 @@ const MainPlayer = () => {
   const loadChapter = async () => {
     if (audioCurrentChapter) {
       const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
       const path = require('path');
       // Fetching the Audios
       const chapters = await fs.readdirSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum));
@@ -102,6 +104,8 @@ const MainPlayer = () => {
   // Setting up the default audio from the takes
   const changeDefault = (value) => {
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     let i = 1;
     // Checking whether the take has any audio
@@ -127,6 +131,8 @@ const MainPlayer = () => {
       projectsDir, path,
     }) => {
       const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
       const result = take.replace(/take/g, '');
       // Fetching the mp3 files
       const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter));
@@ -179,6 +185,8 @@ const MainPlayer = () => {
     // We have used trigger to identify whether the call is from DeleteAudio or Re-record
     if (trigger === 'delete') {
       const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
       const path = require('path');
       const result = take.replace(/take/g, '');
       let versePosition;

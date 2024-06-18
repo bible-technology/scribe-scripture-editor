@@ -11,6 +11,8 @@ export const uploadProjectToBranchRepoExist = async (selectedGiteaProject, ignor
     } = selectedGiteaProject;
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     const projectId = Object.keys(metaDataSB.identification.primary.scribe)[0];
     const projectName = metaDataSB.identification.name.en;
@@ -74,6 +76,8 @@ export const backupLocalProject = async (selectedGiteaProject, actions) => {
     const newpath = localStorage.getItem('userPath');
     const fse = window.require('fs-extra');
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', selectedGiteaProject?.localUsername, 'projects', `${projectName}_${projectId}`);
     const projectBackupPath = path.join(newpath, packageInfo.name, 'users', selectedGiteaProject?.localUsername, 'projects-backups');
@@ -93,6 +97,8 @@ export const undoMergeOrDeleteOldBackup = async (selectedGiteaProject, backupNam
   logger.debug('ProjectMErgeUtils.js', 'in undo merge or delete old backup');
   const newpath = localStorage.getItem('userPath');
   const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
   const path = require('path');
   const projectBackupPath = path.join(newpath, packageInfo.name, 'users', selectedGiteaProject?.localUsername, 'projects-backups');
   // Sorted files in directory on creation date

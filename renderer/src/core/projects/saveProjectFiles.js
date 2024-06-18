@@ -7,6 +7,8 @@ const saveProjectsFiles = ({
 }) => {
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
         fs.mkdirSync(path.join(newpath, packageInfo.name, 'users', username, 'projects', projectname), {
             recursive: true,

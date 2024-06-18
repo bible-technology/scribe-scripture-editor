@@ -12,6 +12,8 @@ export default async function readLocalResources(username, setSubMenuItems) {
   if (isElectron()) {
     const parseData = [];
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
     const projectsDir = path.join(newpath, packageInfo.name, 'users', username, 'resources');// Read user resources

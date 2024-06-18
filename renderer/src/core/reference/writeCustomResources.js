@@ -6,6 +6,8 @@ const path = require('path');
 
 export async function writeCustomResources({ resourceUrl }) {
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const newpath = localStorage.getItem('userPath');
       let currentUser;
       await localforage.getItem('userProfile').then((value) => {

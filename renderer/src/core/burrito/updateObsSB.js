@@ -33,6 +33,8 @@ const updateObsSB = async (username, project, updateBurrito) => new Promise((res
     const newpath = localStorage.getItem('userPath');
     const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.name}_${project.id[0]}`);
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
     const sb = fs.readFileSync(path.join(folder, 'metadata.json'));
     let metadata = JSON.parse(sb);
     // eslint-disable-next-line no-unused-vars

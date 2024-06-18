@@ -69,6 +69,8 @@ const AudioEditor = ({ editor }) => {
                     if (key === bookId.toUpperCase()) {
                       _books.push(bookId.toUpperCase());
                       const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
                       const path = require('path');
                       let bookContent = [];
                       const exists = fs.existsSync(path.join(projectsDir, 'text-1', 'ingredients', `${bookId.toUpperCase()}.usfm`));

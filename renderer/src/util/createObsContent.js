@@ -37,6 +37,8 @@ export const createObsContent = (
     }
     const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.projectName}_${id}`, ingredientsDirName);
     const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
 
     logger.debug('createObsContent.js', 'Creating the story md files');
     // eslint-disable-next-line import/no-dynamic-require
@@ -47,6 +49,8 @@ export const createObsContent = (
         logger.debug('createObsContent.js', `${currentFileName} has been Imported`);
         const file = importedFiles.filter((obj) => (obj.id === currentFileName));
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         if (!fs.existsSync(folder)) {
           fs.mkdirSync(folder, { recursive: true });
         }
@@ -65,6 +69,8 @@ export const createObsContent = (
         logger.debug('createObsContent.js', 'Creating the md file using RCL function JsonToMd');
         const file = JsonToMd(storyJson, '');
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         if (!fs.existsSync(folder)) {
           fs.mkdirSync(folder, { recursive: true });
         }
@@ -149,6 +155,8 @@ export const createObsContent = (
         const currentStory = OBSData.filter((obj) => (
           (obj.storyId).toString().padStart(2, 0) === (file.id).split('.')[0]));
         const fs = window.require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
         // if (!fs.existsSync(folder)) {
         //   fs.mkdirSync(folder, { recursive: true });
         // }
