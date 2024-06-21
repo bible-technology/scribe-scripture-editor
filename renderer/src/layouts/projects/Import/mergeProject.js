@@ -50,8 +50,6 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     const mainBranch = `${packageInfo.name}-main`;
     let currentActiveBranch = mainBranch;
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const fse = window.require('fs-extra');
     // read incoming meta
     let incomingMeta = await readIngredients({

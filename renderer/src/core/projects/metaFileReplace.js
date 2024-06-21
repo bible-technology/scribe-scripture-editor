@@ -4,8 +4,6 @@ const metaFileReplace = ({ userData }) => {
     const newpath = localStorage.getItem('userPath');
     const status = [];
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const path = require('path');
     const json = JSON.stringify(userData);
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', 'username', 'projects', 'projects.json');

@@ -11,8 +11,6 @@ const path = require('path');
 
 export async function parseObs(conflictData, selectedFileName) {
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
 
     const filePath = path.join(conflictData.data.mergeDirPath, selectedFileName);
 
@@ -163,8 +161,6 @@ export async function updateAndSaveStory(story, currentUser, projectName, mergeD
 
   const path = require('path');
   const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
 
     story.forEach((s) => {
       if (Object.prototype.hasOwnProperty.call(s, 'title')) {
@@ -190,8 +186,6 @@ export async function createAllMdInDir(dirPath) {
     // function to create 50 md story in a dir
     logger.debug('mergeObsUtils.js', 'Inside createAllMd - create empty md in a dir');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     await OBSData.forEach(async (storyJson) => {
       const currentFileName = `${storyJson.storyId.toString().padStart(2, 0)}.md`;
       const file = await JsonToMd(storyJson, '');
@@ -217,8 +211,6 @@ export async function copyFilesTempToOrginal(conflictData) {
   try {
     const path = require('path');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const fse = window.require('fs-extra');
 
     // copy all md from merge main to project main

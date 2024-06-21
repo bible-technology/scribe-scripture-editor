@@ -33,8 +33,6 @@ export const checkImportDuplicate = async (folderList, projectName, metadata, pr
 export const checkDuplicate = async (metadata, currentUser, resource) => {
   logger.debug('importBurrito.js', 'In checkDuplicate');
   const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
   const projectName = metadata.identification?.name?.en;
   let existingProject;
   let id;
@@ -85,8 +83,6 @@ gracefulFs.gracefulify(fs);
 export const viewBurrito = async (filePath, currentUser, resource) => {
   logger.debug('importBurrito.js', 'Inside viewBurrito');
   const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
   const result = {};
   if (fs.existsSync(path.join(filePath, 'metadata.json'))) {
     logger.debug('importBurrito.js', 'Project has Burrito file metadata.json.');
@@ -191,8 +187,6 @@ const checkTheProjectIsAudioChapterLevel = async (metadata) => {
 const importBurrito = async (filePath, currentUser, updateBurritoVersion, concatedLangs = []) => {
   logger.debug('importBurrito.js', 'Inside importBurrito');
   const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
   const fse = window.require('fs-extra');
   const status = [];
   const newpath = localStorage.getItem('userPath');

@@ -189,8 +189,6 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
   try {
     logger.debug('SyncFromGiteaUtils.js', 'Inside Import Project core');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const newpath = localStorage.getItem('userPath');
     const sbDataObject = { ...sbData };
     const projectDir = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects');

@@ -34,8 +34,6 @@ export const createAudioVersification = (
         // eslint-disable-next-line import/no-dynamic-require
         const file = require(`../lib/versification/${scheme.file}`);
         const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
         if (!fs.existsSync(folder)) {
           fs.mkdirSync(folder, { recursive: true });
         }

@@ -162,8 +162,6 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
   currentResourceMeta?.projects.forEach(async (project) => {
     logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito for TextTransaltion');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     if (fs.existsSync(path.join(folder, currentResourceProject.name, project.path))) {
       const filecontent = await fs.readFileSync(path.join(folder, currentResourceProject.name, project.path), 'utf8');
       // find checksum & size by reading the file
@@ -187,8 +185,6 @@ export const generateResourceIngredientsOBS = async (currentResourceMeta, path, 
   logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito of OBS');
   files.forEach(async (file) => { // en_obs/content/01.md, en_obs/content/front/title.md
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const endPart = file.split('/').pop();
     const regX = /^\d{2}.md$/;
     if (regX.test(endPart) || ['intro.md', 'title.md'].indexOf(endPart) > -1) {
@@ -277,8 +273,6 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
       logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB user fetch - ', user?.username);
       const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
       const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
       let resourceBurritoFile = {};
       let currentResourceMeta = '';
       let currentResourceProject = '';

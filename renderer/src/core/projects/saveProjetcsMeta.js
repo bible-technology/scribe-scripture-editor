@@ -55,8 +55,6 @@ export const saveProjectsMeta = async (projectMetaObj) => {
   const newpath = localStorage.getItem('userPath');
   const status = [];
   const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
   const path = require('path');
   let currentUser;
   await localforage.getItem('userProfile').then((value) => {

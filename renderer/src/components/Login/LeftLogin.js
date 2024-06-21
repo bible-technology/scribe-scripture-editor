@@ -98,8 +98,6 @@ const LeftLogin = () => {
       // The below code is commented for UI dev purpose.
       if (handleValidation(values)) {
         const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
         logger.debug(
           'LeftLogin.js',
           'Triggers handleLogin to check whether the user is existing or not',

@@ -175,8 +175,6 @@ const ProjectContextProvider = ({ children }) => {
       return;
     }
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const file = path.join(newpath, packageInfo.name, 'users', currentUser, environment.USER_SETTING_FILE);
     if (fs.existsSync(file)) {
       const agUserSettings = await fs.readFileSync(file);
@@ -275,8 +273,6 @@ gracefulFs.gracefulify(fs);
       setUsername(value.username);
     });
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const file = path.join(newpath, packageInfo.name, 'users', currentUser, environment.USER_SETTING_FILE);
     if (fs.existsSync(file)) {
       const agUserSettings = await fs.readFileSync(file);

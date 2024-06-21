@@ -19,8 +19,6 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
   await localForage.getItem('userProfile').then(async (user) => {
     const newpath = localStorage.getItem('userPath');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const path = require('path');
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', user?.username, 'projects', `${projectName}_${projectId}`);
     // Create A REPO for the project

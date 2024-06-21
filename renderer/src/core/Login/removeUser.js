@@ -4,8 +4,6 @@ import packageInfo from '../../../../package.json';
 export const removeUser = async (userName) => {
     const newpath = await localStorage.getItem('userPath');
     const fs = window.require('fs');
-const gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
     const path = require('path');
     const folder = path.join(newpath, packageInfo.name, 'users', userName.toLowerCase());
     const file = path.join(newpath, packageInfo.name, 'users', 'users.json');
