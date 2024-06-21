@@ -16,7 +16,7 @@ function isBackendProjectExist(ProjectDir) {
         localforage.getItem('userProfile').then(async (value) => {
             if (isElectron()) {
                 const newpath = localStorage.getItem('userPath');
-                const fs = require('graceful-fs');
+                const fs = window.require('fs');
                 if (value?.username) {
                     const resourcePath = path.join(newpath, packageInfo.name, 'users', value.username, 'resources', ProjectDir);
                     // check for path exist or not and resolve true or false will work for pane 1 now add for other panes

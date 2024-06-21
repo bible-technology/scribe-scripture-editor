@@ -64,7 +64,7 @@ export default function TaNavigation({ languageId, referenceResources }) {
       // console.log('offline data : ', { taList, offlineResource });
       localForage.getItem('userProfile').then(async (user) => {
         logger.debug('TaNavigation.js', 'reading offline helps ', offlineResource.data?.projectDir);
-        const fs = require('graceful-fs');
+        const fs = window.require('fs');
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;

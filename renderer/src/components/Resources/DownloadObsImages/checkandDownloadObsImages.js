@@ -48,7 +48,7 @@ export const checkandDownloadObsImages = async () => {
   // check for the folder and images
   // const imageCdnBaseUrl = 'https://cdn.door43.org/obs/jpg/360px/';
   if (isElectron()) {
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
     const obsImagePath = path.join(newpath, packageInfo.name, 'common', environment.OBS_IMAGE_DIR);

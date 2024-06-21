@@ -111,7 +111,7 @@ export default function ImportPopUp(props) {
 
   const importFiles = (folderPath) => {
     logger.debug('ImportPopUp.js', 'Inside importFiles');
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const files = [];
     const bookCodeList = [];
     folderPath.forEach((filePath) => {

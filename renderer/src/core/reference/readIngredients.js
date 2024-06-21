@@ -4,7 +4,7 @@ export const readIngredients = async ({
   filePath,
 }) => {
   logger.debug('readIngreadients.js', 'In readIngredients');
-  const fs = require('graceful-fs');
+  const fs = window.require('fs');
   const path = require('path');
   return new Promise((resolve) => {
     if (fs.existsSync(filePath)) {

@@ -25,7 +25,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
     if (referenceResources && referenceResources?.offlineResource?.offline) {
       const { offlineResource } = referenceResources;
       localForage.getItem('userProfile').then(async (user) => {
-        const fs = require('graceful-fs');
+        const fs = window.require('fs');
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;
@@ -97,7 +97,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
       const taArrayOffline = [];
       const { offlineResource } = referenceResources;
       localForage.getItem('userProfile').then(async (user) => {
-          const fs = require('graceful-fs');
+          const fs = window.require('fs');
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;

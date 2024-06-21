@@ -53,7 +53,7 @@ export default function ImportResource({
   };
 
   const importReference = async (projectsDir, name, burritoType) => {
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const fse = window.require('fs-extra');
     const path = require('path');
     let dirPath;
@@ -84,7 +84,7 @@ export default function ImportResource({
       setFolderPath('');
   };
   const uploadRefBible = async () => {
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     try {
       const user = await localforage.getItem('userProfile');

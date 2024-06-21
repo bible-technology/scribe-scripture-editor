@@ -39,7 +39,6 @@ const nextConfig = {
 
     return config;
   },
-  output: "export",
   images: {
     // limit of 25 deviceSizes values
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -52,18 +51,6 @@ const nextConfig = {
     loader: 'akamai',
     // minimumCacheTTL is in seconds, must be integer 0 or more
     minimumCacheTTL: 60,
-  },
-  experimental: {
-    optimizePackageImports: [
-      '@mui/lab',
-      'translation-helps-rcl',
-      'tc-ui-toolkit',
-      'usfm-editor',
-      'proskomma-json-tools',
-      'proskomma-core',
-      'proskomma-react-hooks',
-      'react-beautiful-dnd',
-    ],
   },
   // webpack5: true, available as default from v11
   // externals: [nodeExternals()],

@@ -92,7 +92,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     if (isElectron()) {
       let title = licenceTitle;
       let myLicence = {};
-      const fs = require('graceful-fs');
+      const fs = window.require('fs');
       if ((title === 'Custom' || !title) && !selectNew) {
         myLicence.title = 'Custom';
         myLicence.locked = false;

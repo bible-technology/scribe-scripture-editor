@@ -8,7 +8,7 @@ export const readRefMeta = async ({
   projectsDir,
 }) => {
   if (isElectron()) {
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     return new Promise((resolve) => {
       if (fs.existsSync(projectsDir)) {

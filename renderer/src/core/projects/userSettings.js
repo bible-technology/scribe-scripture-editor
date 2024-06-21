@@ -8,7 +8,7 @@ export const readUserSettings = async () => {
     logger.debug('userSettings.js', 'In readUserSettings');
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, environment.USER_SETTING_FILE);
 
@@ -32,7 +32,7 @@ export const readJsonFiles = async (fileType, dirName = 'ingredients') => {
         logger.debug('userSettings.js', 'In readSettings');
         const currentUser = await localForage.getItem('userProfile');
         const newpath = localStorage.getItem('userPath');
-        const fs = require('graceful-fs');
+        const fs = window.require('fs');
         const path = require('path');
         const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
@@ -72,7 +72,7 @@ export const saveJsonFiles = async (data, fileType, dirName = 'ingredients') => 
         logger.debug('userSettings.js', 'In saveUserSettings');
         const currentUser = await localForage.getItem('userProfile');
         const newpath = localStorage.getItem('userPath');
-        const fs = require('graceful-fs');
+        const fs = window.require('fs');
         const path = require('path');
         const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
         let filePath;
@@ -101,7 +101,7 @@ export const saveUserSettings = async (userSettingsJson) => {
     logger.debug('userSettings.js', 'In saveUserSettings');
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
-    const fs = require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, environment.USER_SETTING_FILE);
     await fs.writeFileSync(file, JSON.stringify(userSettingsJson));
