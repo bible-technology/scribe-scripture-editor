@@ -8,7 +8,7 @@ export const readRefBurrito = async ({
 }) => {
     if (isElectron()) {
         logger.debug('readRefBurrito.js', 'In readRefBurrito');
-        const fs = window.require('fs');
+        const fs = require('graceful-fs');
         const path = require('path');
         return new Promise((resolve) => {
             if (fs.existsSync(metaPath)) {

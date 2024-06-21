@@ -55,7 +55,7 @@ export const createVersificationUSFM = (
           if (bookAvailable(importedFiles, book)) {
             logger.debug('createVersificationUSFM.js', `${book} is been Imported`);
             const file = importedFiles.filter((obj) => (obj.id === book));
-            const fs = window.require('fs');
+            const fs = require('graceful-fs');
             if (!fs.existsSync(folder)) {
               fs.mkdirSync(folder, { recursive: true });
             }
@@ -101,7 +101,7 @@ export const createVersificationUSFM = (
               const isJsonValid = myJsonParser.validate();
               if (isJsonValid) {
                 const reCreatedUsfm = myJsonParser.toUSFM();
-                const fs = window.require('fs');
+                const fs = require('graceful-fs');
                 if (!fs.existsSync(folder)) {
                   fs.mkdirSync(folder, { recursive: true });
                 }
@@ -121,7 +121,7 @@ export const createVersificationUSFM = (
             }
           }
         });
-        const fs = window.require('fs');
+        const fs = require('graceful-fs');
         logger.debug('createVersificationUSFM.js', 'Creating versification.json file in ingredients');
         await fs.writeFileSync(path.join(folder, 'versification.json'), JSON.stringify(file));
         const stats = fs.statSync(path.join(folder, 'versification.json'));

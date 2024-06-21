@@ -161,7 +161,7 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
   // generating ingredients content in metadata
   currentResourceMeta?.projects.forEach(async (project) => {
     logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito for TextTransaltion');
-    const fs = window.require('fs');
+    const fs = require('graceful-fs');
     if (fs.existsSync(path.join(folder, currentResourceProject.name, project.path))) {
       const filecontent = await fs.readFileSync(path.join(folder, currentResourceProject.name, project.path), 'utf8');
       // find checksum & size by reading the file
@@ -184,7 +184,7 @@ export const generateResourceIngredientsTextTransaltion = async (currentResource
 export const generateResourceIngredientsOBS = async (currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, files) => {
   logger.debug('createDownloadedResourceSB.js', 'In adding ingredients to burrito of OBS');
   files.forEach(async (file) => { // en_obs/content/01.md, en_obs/content/front/title.md
-    const fs = window.require('fs');
+    const fs = require('graceful-fs');
     const endPart = file.split('/').pop();
     const regX = /^\d{2}.md$/;
     if (regX.test(endPart) || ['intro.md', 'title.md'].indexOf(endPart) > -1) {
@@ -272,7 +272,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
     localForage.getItem('userProfile').then(async (user) => {
       logger.debug('createDownloadedResourceSB.js', 'In create downloaded resource SB user fetch - ', user?.username);
       const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
-      const fs = window.require('fs');
+      const fs = require('graceful-fs');
       let resourceBurritoFile = {};
       let currentResourceMeta = '';
       let currentResourceProject = '';

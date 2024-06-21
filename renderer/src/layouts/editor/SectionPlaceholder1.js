@@ -288,11 +288,11 @@ const SectionPlaceholder1 = ({ editor }) => {
       // if (isElectron()) {
       localforage.getItem('userProfile').then(async (user) => {
         if (_obsNavigation1 && referenceColumnOneData1.refName && referenceColumnOneData1.selectedResource === 'obs') {
-          const fs = window.require('fs');
+          const fs = require('graceful-fs');
           setStories1(core(fs, _obsNavigation1, referenceColumnOneData1.refName, user.username));
         }
         if (_obsNavigation2 && referenceColumnOneData2.refName && referenceColumnOneData2.selectedResource === 'obs') {
-          const fs = window.require('fs');
+          const fs = require('graceful-fs');
           setStories2(core(fs, _obsNavigation2, referenceColumnOneData2.refName, user.username));
         }
       });

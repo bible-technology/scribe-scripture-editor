@@ -15,6 +15,7 @@ import {
 } from '../../../../supabase';
 
 const path = require('path');
+const fs = require('graceful-fs');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
 
 export const ProjectContext = React.createContext();
@@ -174,7 +175,7 @@ const ProjectContextProvider = ({ children }) => {
       logger.error('ProjectContext.js', 'Unable to find current user');
       return;
     }
-    const fs = window.require('fs');
+    // const fs = require('graceful-fs');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser, environment.USER_SETTING_FILE);
     if (fs.existsSync(file)) {
       const agUserSettings = await fs.readFileSync(file);
@@ -272,7 +273,7 @@ const ProjectContextProvider = ({ children }) => {
       currentUser = value.username;
       setUsername(value.username);
     });
-    const fs = window.require('fs');
+    // const fs = require('graceful-fs');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser, environment.USER_SETTING_FILE);
     if (fs.existsSync(file)) {
       const agUserSettings = await fs.readFileSync(file);

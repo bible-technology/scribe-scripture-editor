@@ -35,7 +35,7 @@ const updateTranslationSB = async (username, project, updateBurrito) => new Prom
   logger.debug('updateTranslationSB.js', 'In updateTranslationSB for updating the burrito.');
     const newpath = localStorage.getItem('userPath');
     const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.name}_${project.id[0]}`);
-    const fs = window.require('fs');
+    const fs = require('graceful-fs');
     const sb = fs.readFileSync(path.join(folder, 'metadata.json'));
     let metadata = JSON.parse(sb);
     // eslint-disable-next-line no-unused-vars

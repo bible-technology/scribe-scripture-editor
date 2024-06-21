@@ -14,7 +14,7 @@ export async function readCustomResources({ resourceId, translationData }) {
     // {id: 'tw', resourceType: "translationWords"},
     // { id: 'obs-tq', resourceType: 'obsTranslationQuestions' },
   ];
-  const fs = window.require('fs');
+  const fs = require('graceful-fs');
   const newpath = localStorage.getItem('userPath');
   const userProfile = await localforage.getItem('userProfile');
   const currentUser = userProfile.username;

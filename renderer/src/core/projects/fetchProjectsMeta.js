@@ -15,7 +15,7 @@ const fetchProjectsMeta = async ({ currentUser }) => {
   if (isElectron()) {
     logger.debug('fetchProjectsMeta.js', 'In fetchProjectsMeta');
     const newpath = localStorage.getItem('userPath');
-    const fs = window.require('fs');
+    const fs = require('graceful-fs');
     const path = require('path');
     const projectsMetaPath = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects');
     fs.mkdirSync(projectsMetaPath, { recursive: true });

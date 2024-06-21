@@ -118,7 +118,7 @@ function RemoveResource({
         logger.warn('removeResource.js', 'inside removing resource call');
         localForage.getItem('userProfile').then(async (user) => {
             logger.debug('DownloadResourcePopUp.js', 'In resource download user fetch - ', user?.username);
-            const fs = window.require('fs');
+            const fs = require('graceful-fs');
             const newpath = localStorage.getItem('userPath');
             const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
             let resourceName = null;

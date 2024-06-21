@@ -16,7 +16,7 @@ export const getorPutAppLangage = async (method, currentUser, appLang) => {
   if (isElectron()) {
     logger.error('handleProfile.js', 'In updateAppLang, for updating the App language Selection');
     const newpath = localStorage.getItem('userPath');
-    const fs = window.require('fs');
+    const fs = require('graceful-fs');
     const path = require('path');
     let file;
     if (currentUser) {
@@ -68,7 +68,7 @@ export const getorPutAppLangage = async (method, currentUser, appLang) => {
 const updateJson = async (userdata) => {
   logger.error('handleProfile.js', 'In UpdateJson, for updating the current user details');
   const newpath = localStorage.getItem('userPath');
-  const fs = window.require('fs');
+  const fs = require('graceful-fs');
   const path = require('path');
   const file = path.join(newpath, packageInfo.name, 'users', 'users.json');
   const status = [];

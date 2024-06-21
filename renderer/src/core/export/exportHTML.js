@@ -103,7 +103,7 @@ export const exportHTML = () => {
             new Date(),
           )}.html`,
         );
-        const fs = window.require('fs');
+        const fs = require('graceful-fs');
         fs.writeFile(filepath, inlineData, (err) => {
           if (err) {
             logger.info('dynamic-msg-went-wrong', err);
@@ -165,7 +165,7 @@ export const exportHTML = () => {
           new Date(),
         )}.html`,
       );
-      const fs = window.require('fs');
+      const fs = require('graceful-fs');
       fs.writeFile(filepath, inlineData, (err) => {
         if (err) {
           logger.info('dynamic-msg-went-wrong', err);

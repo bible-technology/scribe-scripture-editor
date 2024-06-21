@@ -290,11 +290,11 @@ const SectionPlaceholder2 = ({ editor }) => {
   useEffect(() => {
     localforage.getItem('userProfile').then((user) => {
       if (_obsNavigation1 && referenceColumnTwoData1.refName && referenceColumnTwoData1.selectedResource === 'obs') {
-        const fs = window.require('fs');
+        const fs = require('graceful-fs');
         setStories1(core(fs, _obsNavigation1, referenceColumnTwoData1.refName, user.username));
       }
       if (_obsNavigation2 && referenceColumnTwoData2.refName && referenceColumnTwoData2.selectedResource === 'obs') {
-        const fs = window.require('fs');
+        const fs = require('graceful-fs');
         setStories2(core(fs, _obsNavigation2, referenceColumnTwoData2.refName, user.username));
       }
     });
