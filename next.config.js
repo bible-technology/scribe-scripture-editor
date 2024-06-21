@@ -52,6 +52,9 @@ const nextConfig = {
     // minimumCacheTTL is in seconds, must be integer 0 or more
     minimumCacheTTL: 60,
   },
+  experimental: {
+    optimizePackageImports: ['@mui/lab', 'translation-helps-rcl'],
+  },
   // webpack5: true, available as default from v11
   // externals: [nodeExternals()],
 };
