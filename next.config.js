@@ -53,7 +53,16 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
   experimental: {
-    optimizePackageImports: ['@mui/lab', 'translation-helps-rcl', 'tc-ui-toolkit', 'usfm-editor'],
+    optimizePackageImports: [
+      '@mui/lab',
+      'translation-helps-rcl',
+      'tc-ui-toolkit',
+      'usfm-editor',
+      'proskomma-json-tools',
+      'proskomma-core',
+      'proskomma-react-hooks',
+      'react-beautiful-dnd',
+    ],
   },
   // webpack5: true, available as default from v11
   // externals: [nodeExternals()],
