@@ -97,8 +97,8 @@ jobs:
                   mkdir -p artifacts
                   mv dist/*.exe artifacts
             - name: Upload artifacts
-                uses: actions/upload-artifact@v1
-                with:
+              uses: actions/upload-artifact@v1
+              with:
                 name: Scribe
                 path: artifacts
 
