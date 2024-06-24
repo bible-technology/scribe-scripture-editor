@@ -142,9 +142,9 @@ jobs:
               run: yarn add dmg-license
 
             - name: package
-                id: package
-                run: |
-                    yarn dist
+              id: package
+              run: |
+                  yarn dist
 
             - name: Cleanup artifacts
               run: |
