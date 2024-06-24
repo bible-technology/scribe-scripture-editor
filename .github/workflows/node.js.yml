@@ -4,158 +4,106 @@
 name: Node.js CI
 
 on:
-    push:
-        branches: [development]
+  push:
+    branches: [development]
 
 jobs:
-    build:
-        runs-on: ${{ matrix.os }}
-        env:
-            CI: false
-        strategy:
-            matrix:
-                node-version: [18.20.3]
-                os: [ubuntu-latest]
+  build:
+    runs-on: ${{ matrix.os }}
+    env:
+      CI: false
+    strategy:
+      matrix:
+        node-version: [18.20.3]
+        os: [ubuntu-latest, macos-latest]
 
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: |
-                  node --version
-                  yarn --version
-            - name: set @bitregistry translation-help
-              run: yarn config set '@bit:registry' https://node.bit.dev
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          node --version
+          yarn --version
 
-            - name: yarn install
-              run: yarn install
+      - name: set @bitregistry translation-help
+        run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: set max memory allocation
-              run: export NODE_OPTIONS=–max_old_space_size=4096
+      - name: set max memory allocation
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            set NODE_OPTIONS=–max_old_space_size=4096
+          else
+            export NODE_OPTIONS=–max_old_space_size=4096
+          fi
 
-            #             - name: Read version and commit sha
-            #               run: |
-            #                   echo "::set-env name=HASH::$(echo $GITHUB_SHA | cut -c1-7)"
-            #                   echo "::set-env name=APP_VERSION::$(node -p -e "require('./package.json').version")"
+      - name: install dependencies
+        run: yarn install
 
-            #             - name: Set artifact name
-            #               run: echo "::set-env name=ARTIFACT_NAME::$(echo "Autographa-linux-x64-$APP_VERSION.deb")"
+      - name: install graceful-fs
+        run: yarn add graceful-fs
 
-            - name: package
-              id: package
-              run: |
-                  yarn dist
+      - name: update build script to use graceful-fs
+        run: |
+          echo "const fs = require('graceful-fs');" > pre-build.js
+          echo "require('./build');" >> pre-build.js
 
-            - name: Cleanup artifacts
-              run: |
-                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v1
-              with:
-                  name: Scribe
-                  path: dist
+      - name: run build script
+        run: node pre-build.js
 
-    build-windows:
-        runs-on: ${{ matrix.os }}
-        env:
-            CI: false
-        strategy:
-            matrix:
-                node-version: [18.20.3]
-                os: [windows-latest]
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: |
-                  node --version
-                  yarn --version
+      - name: Cleanup artifacts
+        run: |
+          mkdir artifacts
+          mv dist/* artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: Scribe
+          path: artifacts
 
-            - name: set @bitregistry translation-help
-              run: yarn config set '@bit:registry' https://node.bit.dev
+  build-win:
+    runs-on: ubuntu-latest
+    env:
+      CI: false
+    strategy:
+      matrix:
+        node-version: [18.20.3]
 
-            - name: set max memory allocation
-              run: set NODE_OPTIONS=-max_old_space_size=4096
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          node --version
+          yarn --version
 
-            - name: install graceful-fs
-              run: yarn add graceful-fs
+      - name: set @bitregistry translation-help
+        run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: yarn install
-              run: yarn install
+      - name: set max memory allocation
+        run: export NODE_OPTIONS=-max_old_space_size=4096
 
-            - name: packaging
-              id: packaging
-              run: |
-                  node -e "const fs = require('fs'); const gracefulFs = require('graceful-fs'); gracefulFs.gracefulify(fs);"
-                  yarn dist
+      - name: install dependencies
+        run: yarn install
 
-            - name: Cleanup artifacts
-              if: matrix.os != 'windows-latest'
-              run: |
-                  mkdir artifacts
-                  mv "dist/(*.exe,*.deb,*.AppImage,*.dmg)" artifacts || true
-            - name: Cleanup artifacts Win
-              if: matrix.os == 'windows-latest'
-              run: |
-                  mkdir artifacts
-                  mv dist/*.exe artifacts
-            - name: Upload artifacts ${{ env.ARTIFACT_X64 }}
-              uses: actions/upload-artifact@v1
-              with:
-                  name: Scribe
-                  path: artifacts
+      - name: install wine
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install -y wine32 wine64
 
-    build-mac:
-        runs-on: ${{ matrix.os }}
-        env:
-            CI: false
-        strategy:
-            matrix:
-                node-version: [18.20.3]
-                os: [macos-latest]
+      - name: build executable
+        run: yarn dist --win --x64
 
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: |
-                  node --version
-                  yarn --version
-            - name: set @bitregistry translation-help
-              run: yarn config set '@bit:registry' https://node.bit.dev
-
-            - name: yarn install
-              run: yarn install
-
-            - name: install dmg-license
-              run: yarn add dmg-license
-
-            - name: set max memory allocation
-              run: export NODE_OPTIONS=–max_old_space_size=4096
-
-            #             - name: Read version and commit sha
-            #               run: |
-            #                   echo "::set-env name=HASH::$(echo $GITHUB_SHA | cut -c1-7)"
-            #                   echo "::set-env name=APP_VERSION::$(node -p -e "require('./package.json').version")"
-            #             - name: Set artifact name
-            #               run: echo "::set-env name=ARTIFACT_NAME::$(echo "Autographa-mac-x64-$APP_VERSION.dmg")"
-
-            - name: package
-              id: package
-              run: |
-                  yarn dist
-
-            - name: Cleanup artifacts
-              run: |
-                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v1
-              with:
-                  name: Scribe
-                  path: dist
+      - name: Cleanup artifacts
+        run: |
+          mkdir -p artifacts
+          mv dist/*.exe artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: Scribe
+          path: artifacts
