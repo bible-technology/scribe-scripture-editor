@@ -71,31 +71,31 @@ jobs:
               with:
                   node-version: 18.20.3
             - run: |
-                node --version
-                yarn --version
+                  node --version
+                  yarn --version
 
             - name: set @bitregistry translation-help
-                run: yarn config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: set max memory allocation
-                run: export NODE_OPTIONS=-max_old_space_size=4096
+              run: export NODE_OPTIONS=-max_old_space_size=4096
 
             - name: install dependencies
-                run: yarn install
+              run: yarn install
 
             - name: install wine
-                run: |
-                sudo dpkg --add-architecture i386
-                sudo apt update
-                sudo apt install -y wine32 wine64
+              run: |
+                  sudo dpkg --add-architecture i386
+                  sudo apt update
+                  sudo apt install -y wine32 wine64
 
             - name: build executable
-                run: yarn dist --win --x64
+              run: yarn dist --win --x64
 
             - name: Cleanup artifacts
-                run: |
-                mkdir -p artifacts
-                mv dist/*.exe artifacts
+              run: |
+                  mkdir -p artifacts
+                  mv dist/*.exe artifacts
             - name: Upload artifacts
                 uses: actions/upload-artifact@v1
                 with:
@@ -120,17 +120,17 @@ jobs:
                   node --version
                   yarn --version
             - name: set @bitregistry translation-help
-                run: yarn config set '@bit:registry' https://node.bit.dev
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
             - name: Install Homebrew
-                run: |
-                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
-                eval "$(/opt/homebrew/bin/brew shellenv)"
+              run: |
+                  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
 
             - name: Install canvas dependencies
-                run: |
-                    brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
+              run: |
+                  brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=-max_old_space_size=4096
