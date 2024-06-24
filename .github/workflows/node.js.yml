@@ -130,7 +130,7 @@ jobs:
 
             - name: Install canvas dependencies
               run: |
-                  brew install pango jpeg librsvg
+                  brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
                   brew reinstall jpeg
                   echo 'export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"' >> $HOME/.zprofile
                   echo 'export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"' >> $HOME/.zprofile
