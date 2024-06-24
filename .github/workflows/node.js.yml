@@ -78,14 +78,11 @@ jobs:
             - name: set @bitregistry translation-help
               run: yarn config set '@bit:registry' https://node.bit.dev
 
-            - name: yarn install
-              run: yarn install
-
             - name: set max memory allocation
               run: set NODE_OPTIONS=–max_old_space_size=4096
 
-            - name: set MaxOpenFiles
-              run: Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Services for Unix" -Name "MaxOpenFiles" -Value "6000"
+            - name: yarn install
+              run: yarn install
 
             #             - name: Read version and commit sha
             #               run:

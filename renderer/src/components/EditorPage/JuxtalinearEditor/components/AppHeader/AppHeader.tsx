@@ -5,7 +5,13 @@ import {
   IoArrowBackCircleOutline,
   IoArrowForwardCircleOutline,
 } from "react-icons/io5";
-import { AppBar, Toolbar, Button, Box, Stack, Input } from "@mui/material";
+// AppBar, Toolbar, Button, Box, Stack, Input
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Input from "@mui/material/Input";
 
 import { SentenceContext } from '@/components/context/SentenceContext';
 
@@ -15,10 +21,10 @@ export const AppHeader: React.FC = () => {
     sentences,
     // itemArrays,
     curIndex,
-    setFileName,
-    setGlobalTotalSentences,
-    setItemArrays,
-    setOriginText,
+    // setFileName,
+    // setGlobalTotalSentences,
+    // setItemArrays,
+    // setOriginText,
     setCurIndex,
     setChapterNumber,
     setVerseNumber,
@@ -61,7 +67,7 @@ export const AppHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    if(sentences.length && sentences[curIndex]) {
+    if (sentences.length && sentences[curIndex]) {
       const [chap, vers] = sentences[curIndex].chunks[0].source[0].cv.split(":").map((digit: string) => parseInt(digit, 10));
       setChapterNumber(chap);
       setVerseNumber(vers);
@@ -69,7 +75,7 @@ export const AppHeader: React.FC = () => {
   }, [curIndex, setCurIndex]);
 
   useEffect(() => {
-    if(closeNavigation) {
+    if (closeNavigation) {
       setCurIndex(getSentenceFromCV());
     }
   }, [closeNavigation]);
@@ -85,18 +91,18 @@ export const AppHeader: React.FC = () => {
 
     let chap: number, vers: number;
     let doBreak: boolean;
-    for(let i = 0; i < sentences.length; i++) {
+    for (let i = 0; i < sentences.length; i++) {
       doBreak = false;
-      for(let chunk of sentences[i].chunks) {
-        for(let src of chunk.source) {
+      for (let chunk of sentences[i].chunks) {
+        for (let src of chunk.source) {
           [chap, vers] = src.cv.split(":").map((digit) => parseInt(digit));
-          if(chap < chapter && vers < verse) {
+          if (chap < chapter && vers < verse) {
             doBreak = true;
             break;
           }
-          if(chap == chapter && vers == verse) return i;
+          if (chap == chapter && vers == verse) return i;
         }
-        if(doBreak) break;
+        if (doBreak) break;
       }
     }
     return 0;
@@ -131,7 +137,7 @@ export const AppHeader: React.FC = () => {
   const startVerse = () => firstSource()?.cv.split(":")[1] ?? 0;
 
   const endVerse = () => lastSource()?.cv.split(":")[1] ?? 0;
-  
+
   const indexChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
