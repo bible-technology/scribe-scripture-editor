@@ -130,7 +130,15 @@ jobs:
 
             - name: Install canvas dependencies
               run: |
-                  brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
+                  brew install pango jpeg librsvg
+                  brew reinstall jpeg
+                  echo 'export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"' >> $HOME/.zprofile
+                  echo 'export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"' >> $HOME/.zprofile
+                  echo 'export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"' >> $HOME/.zprofile
+                  echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
+                  /opt/homebrew/opt/python@3.12/bin/pip3 install setuptools
+                  /opt/homebrew/opt/python@3.12/bin/pip3 install distutils
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=-max_old_space_size=4096
