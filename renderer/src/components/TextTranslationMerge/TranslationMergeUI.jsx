@@ -171,7 +171,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const handleFinishedBookResolution = async () => {
     const resolvedBooks = { ...usfmJsons };
     delete resolvedBooks.conflictMeta;
-
+    console.log('handle finish book resolution ===> ', resolvedBooks);
     // work on single book
     const resolvedMergeJson = resolvedBooks[selectedBook]?.mergeJson;
     const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
@@ -213,9 +213,12 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       setChapterResolveDone(false);
       // remove current chapter from conflicted list
       const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
-      setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters }));
+      setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters || [] }));
       let isBookResolved = false;
-      if (restOfTheChapters?.length === 0) {
+      if (!restOfTheChapters) {
+        setResolvedBooks((prev) => [...prev, selectedBook]);
+        // isBookResolved = true;
+      } else if (restOfTheChapters?.length === 0) {
         // completed conflicts for that particualr book
         flushSync(() => {
           setLoading(true);
@@ -262,7 +265,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
         setError('Imported Usfm is invalid');
       } else {
         // Parse current project same book
-        const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
+        // const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
 
         setError('');
 
@@ -285,7 +288,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
           currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], current: currentJson.data, mergeJson } }));
           // if processOutArr leng = 0 ; there is not actual conflict on content. so do auto resolve for the book
           if (conflcitedChapters?.length > 0) {
-            setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] }));
+            setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] || [] }));
             if (conflcitedChapters && conflcitedChapters?.length > 0) {
               setSelectedChapter(conflcitedChapters[0]);
             }
@@ -312,7 +315,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     if (fs.existsSync(path.join(data.projectMergePath, 'usfmJsons.json'))) {
       let usfmJsonsContent = fs.readFileSync(path.join(data.projectMergePath, 'usfmJsons.json'), 'utf8');
       usfmJsonsContent = JSON.parse(usfmJsonsContent);
-      console.log({ usfmJsonsContent });
       if (usfmJsonsContent) {
         setUsfmJsons(usfmJsonsContent);
         // check the books is already resolved or not => then select current book and unresolved chapters
@@ -332,7 +334,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
               if (currentBook.isBookResolved) {
                 resolvedBooksArr.push(book);
               }
-              conflictedChsOfBooks[book] = currentBook.conflictedChapters;
+              conflictedChsOfBooks[book] = currentBook.conflictedChapters || [];
             }
           }
 
@@ -437,7 +439,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       // if (!loading && usfmJsons?.conflictMeta && selectedBook) {
       (async () => {
         setLoading(true);
-        if (conflictedChapters[selectedBook]) {
+        if (conflictedChapters[selectedBook]?.length > 0) {
           // Auto Select first Chapter of the selected Book
           if (conflictedChapters[selectedBook] && conflictedChapters[selectedBook].length > 0) {
             setSelectedChapter(conflictedChapters[selectedBook][0]);
