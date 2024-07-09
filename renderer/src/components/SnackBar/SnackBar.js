@@ -5,7 +5,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Popover, Transition } from '@headlessui/react';
 import PropTypes from 'prop-types';
 
-const colors = { success: '#82E0AA', failure: '#F5B7B1', warning: '#F8C471' };
+const colors = {
+ success: '#82E0AA', failure: '#F5B7B1', warning: '#F8C471', info: '#17a2b8',
+};
 const SnackBar = ({
   openSnackBar,
   snackText,

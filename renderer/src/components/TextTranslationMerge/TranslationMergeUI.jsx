@@ -100,50 +100,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     return usfm;
   }
 
-  const checkForConflictInSelectedBook = async (selectedBook) => {
-    // parse imported
-    const fs = window.require('fs');
-    const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
-    if (IncomingUsfm) {
-      const importedJson = await parseUsfm(IncomingUsfm);
-      if (!importedJson.valid) {
-        setError('Imported Usfm is invalid');
-      } else {
-        // Parse current project same book
-        const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
-
-        setError('');
-
-        setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], imported: importedJson.data } }));
-
-        // setSelectedBookId(importedJson.data.book.bookCode.toLowerCase());
-        // const currentBookPath = Object.keys(usfmJsons.conflictMeta.currentMeta.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
-        const { projectFullName } = usfmJsons.conflictMeta;
-        const currentBookUsfm = await readUsfmFile(selectedBook, projectFullName);
-        // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
-        if (currentBookUsfm) {
-          const currentJson = await parseUsfm(currentBookUsfm);
-          // generate the merge object with current , incoming , merge verses
-          const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(currentJson.data, importedJson.data).catch((err) => {
-            console.log('process usfm : ', err);
-          });
-          const mergeJson = processOutArr[0];
-          const conflcitedChapters = processOutArr[1];
-          console.log('processOutArr[1] : ', processOutArr[1]);
-          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], current: currentJson.data, mergeJson } }));
-          setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] }));
-          if (conflcitedChapters && conflcitedChapters?.length > 0) {
-            setSelectedChapter(conflcitedChapters[0]);
-          }
-          setLoading(false);
-        }
-      }
-    } else {
-      setError('unable to read imported USFM');
-    }
-    setLoading(false);
-  };
-
   // INFO :  Previous function to handle all books together ( JSON => usfm all together at the end )
   // const handleFinishedResolution = async () => {
   //   const fs = window.require('fs');
@@ -289,6 +245,62 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       console.error('Failed resolve book : ', err);
       setLoading(false);
     }
+  };
+
+  /**
+   *
+   * @param {*} selectedBook
+   * function checks the conflict in the book , indenitify the conflicted chapters, generate usfmJson
+   */
+  const checkForConflictInSelectedBook = async (selectedBook) => {
+    // parse imported
+    const fs = window.require('fs');
+    const IncomingUsfm = fs.readFileSync(path.join(usfmJsons.conflictMeta.incomingPath, selectedBook), 'utf8');
+    if (IncomingUsfm) {
+      const importedJson = await parseUsfm(IncomingUsfm);
+      if (!importedJson.valid) {
+        setError('Imported Usfm is invalid');
+      } else {
+        // Parse current project same book
+        const importedBookCode = `${importedJson.data.book.bookCode.toLowerCase()}.usfm`;
+
+        setError('');
+
+        setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], imported: importedJson.data } }));
+
+        // setSelectedBookId(importedJson.data.book.bookCode.toLowerCase());
+        // const currentBookPath = Object.keys(usfmJsons.conflictMeta.currentMeta.ingredients).find((code) => code.toLowerCase().endsWith(importedBookCode));
+        const { projectFullName } = usfmJsons.conflictMeta;
+        const currentBookUsfm = await readUsfmFile(selectedBook, projectFullName);
+        // console.log('FOUND ====> ', { currentBookPath, currentBookUsfm });
+        if (currentBookUsfm) {
+          const currentJson = await parseUsfm(currentBookUsfm);
+          // generate the merge object with current , incoming , merge verses
+          const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(currentJson.data, importedJson.data).catch((err) => {
+            console.log('process usfm : ', err);
+          });
+          const mergeJson = processOutArr[0];
+          const conflcitedChapters = processOutArr[1];
+          console.log('processOutArr[1] : ', processOutArr[1]);
+          currentJson && currentJson?.valid && setUsfmJsons((prev) => ({ ...prev, [selectedBook]: { ...prev[selectedBook], current: currentJson.data, mergeJson } }));
+          // if processOutArr leng = 0 ; there is not actual conflict on content. so do auto resolve for the book
+          if (conflcitedChapters?.length > 0) {
+            setConflictedChapters((prev) => ({ ...prev, [selectedBook]: processOutArr[1] }));
+            if (conflcitedChapters && conflcitedChapters?.length > 0) {
+              setSelectedChapter(conflcitedChapters[0]);
+            }
+          } else {
+            // resolve the book automatically ; the conflict in md5 only not on content
+            await resolveAndMarkDoneChapter();
+            triggerSnackBar('info', 'No conflict in verse level. The conflict may be because of extra tags.');
+          }
+          setLoading(false);
+        }
+      }
+    } else {
+      setError('unable to read imported USFM');
+    }
+    setLoading(false);
   };
 
   /**
