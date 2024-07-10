@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "rimraf dist renderer/.next renderer/out",
-    "start": "electron .",
+    "start": "electron . --dev",
     "dev": "next dev",
     "prod": "yarn build && next start",
     "test": "jest",
@@ -164,7 +164,6 @@
     "crypto-js": "^4.1.1",
     "dotenv": "^16.3.1",
     "easy-file-system": "^2.1.242",
-    "electron-is-dev": "2.0.0",
     "electron-log": "4.4.7",
     "electron-next": "^3.1.5",
     "electron-updater": "^5.0.1",
