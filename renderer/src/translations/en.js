@@ -27,7 +27,7 @@ export const En = {
     'projects-page': 'Projects',
     'label-search': 'Search',
     'label-project': 'Project',
-    'label-flavour': 'Flavour',
+    'label-flavor': 'Flavor',
     'label-project-type': 'Type',
     'label-project-name': 'Project Name',
     'label-language': 'Language Name',
@@ -147,7 +147,7 @@ export const En = {
     'btn-replace': 'Replace',
     'btn-remove': 'Remove',
     'btn-deactivate': 'Deactivate',
-    'btn-load-tn': 'load translation noted',
+    'btn-load-tn': 'load translation note',
     'tooltip-import-resource-info-circle': 'Select a directory/project that has a Scripture Burrito file i.e. metadata.json file.',
     'tooltip-import-open-file-location': 'open folder location',
     'dynamic-msg-import-resource-snack': 'Resource upload successful! Please check the resource list',
@@ -280,4 +280,5 @@ export const En = {
     'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
     'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
     'label-upload-help-resources': 'Upload Help Resources',
+    'label-filter': 'Filter',
 };

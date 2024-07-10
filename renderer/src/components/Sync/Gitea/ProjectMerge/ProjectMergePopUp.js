@@ -10,7 +10,7 @@ import { VerticalLinearStepper } from '../../VerticalStepperProgress';
 import { mergeProgressSteps } from './ProjectMergeConst';
 import { LoadingSpinner } from '../../../LoadingSpinner';
 import { tryMergeProjects } from './MergeActions';
-import burrito from '../../../../lib/BurritoTemplete.json';
+import burrito from '../../../../lib/BurritoTemplate.json';
 import { backupLocalProject, deleteCreatedMergeBranch, undoMergeOrDeleteOldBackup } from './ProjectMergeUtils';
 import { environment } from '../../../../../environment';
 import { importServerProject } from '../SyncFromGiteaUtils';

@@ -39,7 +39,7 @@ export default function Editor(props) {
 
   const {
     state: {
-      chapter, selectedFont, fontSize, projectScriptureDir,
+      chapter, selectedFont, editorFontSize, projectScriptureDir,
     },
   } = useContext(ReferenceContext);
 
@@ -166,8 +166,8 @@ export default function Editor(props) {
       id="fulleditor"
       style={{
         fontFamily: selectedFont || 'sans-serif',
-        fontSize: `${fontSize}rem`,
-        lineHeight: (fontSize > 1.3) ? 1.5 : '',
+        fontSize: `${editorFontSize}rem`,
+        lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
         direction: `${projectScriptureDir === 'RTL' ? 'rtl' : 'auto'}`,
       }}
       className="border-l-2 border-r-2 border-secondary pb-16 overflow-auto h-full scrollbars-width leading-8"

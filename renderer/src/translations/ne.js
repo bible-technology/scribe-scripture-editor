@@ -27,7 +27,7 @@ export const Ne = {
     'projects-page': 'पृष्‍ठ प्रोजेक्ट',
     'label-search': 'खोज्नुहोस्',
     'label-project': 'रोजेक्‍ट',
-    'label-flavour': 'स्वाद',
+    'label-flavor': 'स्वाद',
     'label-project-type': 'प्रोजेक्टको प्रकार',
     'label-project-name': 'प्रोजेक्टको नाम',
     'label-language': 'भाषा',
@@ -280,4 +280,5 @@ export const Ne = {
     'msg-helps-filepath': 'वैध manifest.yaml सँग संसाधन फाइलपाथलाई मद्दत गर्दछ',
     'tooltip-supported-resources': 'समर्थित स्रोतहरू TN, TW, TQ, TA हुन्',
     'label-upload-help-resources': 'मद्दत स्रोतहरू अपलोड गर्नुहोस्',
+    'label-filter': 'फिल्टर',
 };

@@ -27,7 +27,7 @@ export const Hi = {
     'projects-page': 'प्रोजेक्ट्स',
     'label-search': 'खोजें',
     'label-project': 'प्रोजेक्ट',
-    'label-flavour': 'स्वाद',
+    'label-flavor': 'स्वाद',
     'label-project-type': 'प्रकार',
     'label-project-name': 'प्रोजेक्ट का नाम',
     'label-language': 'भाषा',
@@ -280,4 +280,5 @@ export const Hi = {
     'msg-helps-filepath': 'आप manifest.yaml सर्वर के लिए एक त्वरित संसाधन सेट कर सकते हैं।',
     'tooltip-supported-resources': 'समर्थित संसाधन TN, TW, TQ, TA हैं।',
     'label-upload-help-resources': 'सहायता संसाधन अपलोड करें',
+    'label-filter': 'फ़िल्टर',
 };

@@ -138,12 +138,14 @@ const LeftLogin = () => {
   };
   function formSubmit(event) {
     event.preventDefault();
-    if (values.username.length < 3 || values.username.length > 15) {
+    const newValue = values;
+    newValue.username = newValue.username.trim();
+    if (newValue.username.length < 3 || newValue.username.length > 15) {
       displayError('The input has to be between 3 and 15 characters long');
-    } else if (users.length > 0 && users.find((item) => (item.username.toLowerCase() === values.username.toLowerCase().trim()))) {
+    } else if (users.length > 0 && users.find((item) => (item.username.toLowerCase() === newValue.username.toLowerCase()))) {
       displayError('User exists, Check archived and active tab by click on view more.');
     } else {
-      handleSubmit(values);
+      handleSubmit(newValue);
       setValues({});
     }
   }
@@ -211,6 +213,7 @@ const LeftLogin = () => {
                 hover:text-white border-b-[1px] border-[#E3E3E3] font-semibold "
               tabIndex={0}
               role="button"
+              aria-label="submit"
               onClick={() => {
                 handleSubmit({ username: user?.username });
               }}
@@ -300,6 +303,7 @@ const LeftLogin = () => {
                                 <div
                                   role="button"
                                   tabIndex={0}
+                                  aria-label="submit"
                                   dataId={user.username}
                                   onClick={() => { handleSubmit({ username: user.username }); }}
                                   className="w-full p-4 py-3 text-sm rounded-lg cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
@@ -323,6 +327,7 @@ const LeftLogin = () => {
                                 <div
                                   role="button"
                                   tabIndex={0}
+                                  aria-label="restor user"
                                   className="w-full p-4 py-3 rounded text-sm cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
                                 >
                                   <p className="text-md font-semibold  ">

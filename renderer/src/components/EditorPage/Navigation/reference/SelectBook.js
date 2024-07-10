@@ -67,9 +67,9 @@ export default function SelectBook({
     <>
       <div className="flex flex-row text-center bg-gray-800 text-white text-sm font-bold tracking-wide uppercase">
         <div className="w-40 m-auto grid grid-cols-3 gap-0 bg-primary">
-          <div role="button" onClick={toggle} className="p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer" tabIndex={0}>{t('btn-all')}</div>
-          <div role="button" onClick={toggleOT} tabIndex={-1} className={openOT === false ? 'p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer' : 'p-2 border-r-2 border-black hover:bg-black border-opacity-5 cursor-pointer'}>{t('btn-ot')}</div>
-          <div role="button" onClick={toggleNT} tabIndex={-2} className={openNT === false ? 'p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer' : 'p-2 border-r-2 border-black hover:bg-black border-opacity-5 cursor-pointer'}>{t('btn-nt')}</div>
+          <div role="button" aria-label="toggle all books" onClick={toggle} className="p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer" tabIndex={0}>{t('btn-all')}</div>
+          <div role="button" aria-label="toggle OT books" onClick={toggleOT} tabIndex={-1} className={openOT === false ? 'p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer' : 'p-2 border-r-2 border-black hover:bg-black border-opacity-5 cursor-pointer'}>{t('btn-ot')}</div>
+          <div role="button" aria-label="toggle NT books" onClick={toggleNT} tabIndex={-2} className={openNT === false ? 'p-2 bg-black hover:bg-primary backdrop-opacity-20 cursor-pointer' : 'p-2 border-r-2 border-black hover:bg-black border-opacity-5 cursor-pointer'}>{t('btn-nt')}</div>
         </div>
         <div className="flex justify-end">
           {children}

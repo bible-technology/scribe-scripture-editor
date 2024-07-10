@@ -115,7 +115,7 @@
 
 // // describe('Starred content table test', () => {
 // //   test('Check each content in the starred row', () => {
-// //     render(intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />));
+// //     render(intl(<Projects starredData={starrted} unstarredData={unstarrted} />));
 // //     const starredrowname = document.querySelector('#starredrow-name');
 // //     expect(starredrowname.textContent).toBe('English NIV');
 // //     const starredrowlanguage = document.querySelector('#starredrow-language');
@@ -127,7 +127,7 @@
 // //   });
 
 // //   test('Check for starrred rows gets unstarred', () => {
-// //     render(intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />));
+// //     render(intl(<Projects starredData={starrted} unstarredData={unstarrted} />));
 // //     const starredrow = document.querySelector('#starredrow');
 // //     expect(starredrow.children.length).toBe(4);
 // //     const starredbutton = document.querySelector('#starredicon');
@@ -137,7 +137,7 @@
 
 // //   test('check for search state change', async () => {
 // //     const { getByTestId } = render(
-// //       intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />),
+// //       intl(<Projects starredData={starrted} unstarredData={unstarrted} />),
 // //     );
 // //     const searchbox = getByTestId('searchfield');
 // //     await act(async () => {
@@ -148,7 +148,7 @@
 
 // //   test('Check content after search in the starred row', async () => {
 // //     const { getByTestId } = render(
-// //       intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />),
+// //       intl(<Projects starredData={starrted} unstarredData={unstarrted} />),
 // //     );
 // //     const searchbox = getByTestId('searchfield');
 // //     await act(async () => {
@@ -167,7 +167,7 @@
 
 // // describe('Unstarred content fields test', () => {
 // //   test('Check each content in the unstarred row', () => {
-// //     render(intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />));
+// //     render(intl(<Projects starredData={starrted} unstarredData={unstarrted} />));
 // //     const unstarredrowname = document.querySelector('#unstarredrow-name');
 // //     expect(unstarredrowname.textContent).toBe('Arabic NIV');
 // //     const unstarredrowlanguage = document.querySelector(
@@ -180,7 +180,7 @@
 // //     expect(unstarredrowtime.textContent).toBe('2 months ago');
 // //   });
 // //   test('Check for unstarrred rows gets starred', () => {
-// //     render(intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />));
+// //     render(intl(<Projects starredData={starrted} unstarredData={unstarrted} />));
 // //     const unstarredrow = document.querySelector('#unstarredrow');
 // //     expect(unstarredrow.children.length).toBe(5);
 // //     const unstarredbutton = document.querySelector('#unstarredicon');
@@ -190,7 +190,7 @@
 
 // //   test('Check content after search in the unstarred row', async () => {
 // //     const { getByTestId } = render(
-// //       intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />),
+// //       intl(<Projects starredData={starrted} unstarredData={unstarrted} />),
 // //     );
 // //     const searchbox = getByTestId('searchfield');
 // //     await act(async () => {
@@ -211,7 +211,7 @@
 
 // // describe('Sorting check', () => {
 // //   test('Check whether items gets sorted', () => {
-// //     render(intl(<Projects starrtedData={starrted} unstarrtedData={unstarrted} />));
+// //     render(intl(<Projects starredData={starrted} unstarredData={unstarrted} />));
 // //     const sortbar = document.querySelector('#sorthead');
 // //     fireEvent.click(sortbar);
 // //     const starredrowname = document.querySelector('#starredrow-name');

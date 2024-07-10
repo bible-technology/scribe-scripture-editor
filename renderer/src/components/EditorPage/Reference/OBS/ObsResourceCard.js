@@ -17,6 +17,7 @@ function ObsResourceCard({
   isLoading,
   setIndex,
   font,
+  fontSize,
 }) {
   const {
     state: { filters, markdownView },
@@ -36,7 +37,12 @@ function ObsResourceCard({
         itemIndex={index}
         setItemIndex={setIndex}
       />
-      <div style={{ fontFamily: font || 'sans-serif' }}>
+      <div style={{
+          fontFamily: font || 'sans-serif',
+          fontSize: `${fontSize}rem`,
+          lineHeight: (fontSize > 1.3) ? 1.5 : '',
+        }}
+      >
         <CardContent
           item={[]}
           items={items}

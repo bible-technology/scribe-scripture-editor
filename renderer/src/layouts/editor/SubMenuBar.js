@@ -39,6 +39,10 @@ export default function SubMenuBar() {
       row,
       // openResource1,
       // openResource3,
+      fontSize1,
+      fontSize2,
+      fontSize3,
+      fontSize4,
 
     },
     actions: {
@@ -46,8 +50,13 @@ export default function SubMenuBar() {
       setOpenResource3,
       setLayout,
       setRow,
+      setFontsize1,
+      setFontsize2,
+      setFontsize3,
+      setFontsize4,
     },
   } = useContext(ReferenceContext);
+
   const {
     states: {
       editorSave,
@@ -135,20 +144,20 @@ export default function SubMenuBar() {
       supabaseResourceType();
     }
   });
-  const {
-    state: {
-      fontSize,
-    },
-    actions: {
-      setFontsize,
-    },
-  } = useContext(ReferenceContext);
+
+  // All Panel together
   const handleFontSize = (status) => {
-    if (status === 'dec' && fontSize > 0.70) {
-      setFontsize(fontSize - 0.2);
+    if (status === 'dec') {
+      fontSize1 > 0.70 && setFontsize1(fontSize1 - 0.2);
+      fontSize2 > 0.70 && setFontsize2(fontSize2 - 0.2);
+      fontSize3 > 0.70 && setFontsize3(fontSize3 - 0.2);
+      fontSize4 > 0.70 && setFontsize4(fontSize4 - 0.2);
     }
-    if (status === 'inc' && fontSize < 2) {
-      setFontsize(fontSize + 0.2);
+    if (status === 'inc') {
+      fontSize1 < 2 && setFontsize1(fontSize1 + 0.2);
+      fontSize2 < 2 && setFontsize2(fontSize2 + 0.2);
+      fontSize3 < 2 && setFontsize3(fontSize3 + 0.2);
+      fontSize4 < 2 && setFontsize4(fontSize4 + 0.2);
     }
   };
   return (
@@ -156,7 +165,7 @@ export default function SubMenuBar() {
 
       {/* <StatsModal openModal={openStatsModal} open={openStats} /> */}
 
-      {/* <Transition appear show={refernceLoading.status} as={Fragment}>
+      {/* <Transition appear show={referenceLoading.status} as={Fragment}>
         <Dialog
           as={Fragment}
           // className="fixed inset-0 z-10 overflow-y-auto"
@@ -192,7 +201,7 @@ export default function SubMenuBar() {
                     <XMarkIcon />
                   </button>
                   <p>
-                    {refernceLoading.text}
+                    {referenceLoading.text}
                     {counter > 0 ? counter : ''}
                   </p>closeSnackBar
                 </div> */}

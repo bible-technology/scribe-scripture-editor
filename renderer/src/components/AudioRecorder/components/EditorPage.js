@@ -31,6 +31,7 @@ const EditorPage = ({
           && (
           <div
             role="button"
+            aria-label="select verse"
             tabIndex={0}
             key={mainChunk.verseNumber}
             className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
@@ -82,6 +83,7 @@ const EditorPage = ({
                 url={location && (mainChunk[mainChunk.default] ? path.join(location, mainChunk[mainChunk.default]) : '')}
                 show={false}
                 interaction={false}
+                setAudioPlayBack={() => {}}
               />
             </div>
             {/* <div className="bg-white mt-5 border border-gray-200 rounded-lg relative">

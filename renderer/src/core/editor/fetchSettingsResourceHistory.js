@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import isBackendProjectExist from '../projects/existProjectInBackEnd';
 import * as logger from '../../logger';
 
@@ -59,7 +59,7 @@ export async function fetchSettingsResourceHistory(
         const refsHistory = [];
         const rows = [];
         localforage.getItem('currentProject').then(async (projectName) => {
-        const _projectname = await splitStringByLastOccurance(projectName, '_');
+        const _projectname = await splitStringByLastOccurence(projectName, '_');
         // const _projectname = projectName?.split('_');
         // looping through all projects to get the history
         localforage.getItem('projectmeta').then((value) => {
@@ -116,6 +116,7 @@ export async function fetchSettingsResourceHistory(
                                   owner: '',
                                   offlineResource: { offline: false },
                                   font: '',
+                                  fontSize: 1,
                                 }
                                 ));
                               } else if (_columnnum === historyColumn && _rownum === '2') {
@@ -134,6 +135,7 @@ export async function fetchSettingsResourceHistory(
                                   owner: '',
                                   offlineResource: { offline: false },
                                   font: '',
+                                  fontSize: 1,
                                 }
                                 ));
                               }
@@ -158,6 +160,7 @@ export async function fetchSettingsResourceHistory(
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
                             font: _value?.font,
+                            fontSize: _value?.fontSize || 1,
                           });
                       }
                       if (_rownum === '2') {
@@ -170,6 +173,7 @@ export async function fetchSettingsResourceHistory(
                             owner: _value?.owner,
                             offlineResource: _value?.offline,
                             font: _value?.font,
+                            fontSize: _value?.fontSize || 1,
                           });
                       }
                   },

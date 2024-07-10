@@ -15,7 +15,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import UserProfile from '@/components/Profile/UserProfile';
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import styles from './MenuBar.module.css';
 import LogoIcon from '@/icons/logo.svg';
 
@@ -32,7 +32,7 @@ export default function TopMenuBar() {
 
   const {
     state: {
-      fontSize,
+      editorFontSize: fontSize,
     },
     actions: {
       setFontsize,
@@ -48,7 +48,7 @@ export default function TopMenuBar() {
     (async () => {
       const selectedProject = await localforage.getItem('currentProject');
       if (selectedProject && !projectname) {
-        const splitProjectName = await splitStringByLastOccurance(selectedProject, '_');
+        const splitProjectName = await splitStringByLastOccurence(selectedProject, '_');
         setprojectname(splitProjectName);
       }
     })();

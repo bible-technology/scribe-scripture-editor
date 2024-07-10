@@ -14,7 +14,7 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { environment } from '../../../environment';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
@@ -22,7 +22,7 @@ import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
 import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
-import burrito from '../../lib/BurritoTemplete.json';
+import burrito from '../../lib/BurritoTemplate.json';
 // eslint-disable-next-line no-unused-vars
 const solutions = [
   {
@@ -44,6 +44,11 @@ const solutions = [
     name: 'OBS',
     href: '##',
     icon: ImageIcon,
+  },
+  {
+    name: 'Juxta',
+    href: '##',
+    icon: BookOpenIcon,
   },
 ];
 
@@ -97,11 +102,13 @@ export default function NewProject({ call, project, closeEdit }) {
       languages,
       language,
       canonSpecification,
+      importedBookCodes,
     },
     actions: {
       setLanguage,
       createProject,
       setNewProjectFields,
+      setImportedBookCodes,
     },
   } = React.useContext(ProjectContext);
   const { t } = useTranslation();
@@ -113,7 +120,11 @@ export default function NewProject({ call, project, closeEdit }) {
   const [loading, setLoading] = React.useState(false);
   const [metadata, setMetadata] = React.useState();
   const [openModal, setOpenModal] = React.useState(false);
+  const [openModalJuxtaWrongSetOfBooks, setOpenModalJuxtaWrongSetOfBooks] = React.useState(false);
   const [projectLangData, setProjectLangData] = React.useState({});
+  const [openPopUp, setOpenPopUp] = React.useState(false);
+  const [replaceWarning, setReplaceWarning] = React.useState(false);
+
   const [error, setError] = React.useState({
     projectName: {},
     abbr: {},
@@ -124,6 +135,12 @@ export default function NewProject({ call, project, closeEdit }) {
   const handleDropDown = (currentSelection) => {
     setHeaderDropDown(currentSelection);
   };
+
+  function callReplace(value) {
+    if (call === 'edit' && value === true) {
+      setReplaceWarning(true);
+    }
+  }
 
   function getAbbreviation(text) {
     if (typeof text !== 'string' || !text) {
@@ -164,8 +181,33 @@ export default function NewProject({ call, project, closeEdit }) {
     }
   };
 
+  // useEffect(() => {
+  //   async function downloadAsynchronouslyTheBooks() {
+  //     setDownloadingResources(true);
+  //     // DO THE WORK HERE
+  //     await importGreeksFromDoor43();
+  //     logger.warn('NewProject.js', 'Calling createTheProject function');
+  //     createTheProject(false);
+  //     setUserWantToDownloadJuxtas('');
+  //   }
+  //   if(userWantToDownloadJuxtas === 'download' && !downloadingResources) {
+  //     downloadAsynchronouslyTheBooks();
+  //   }
+  // }, [userWantToDownloadJuxtas, setUserWantToDownloadJuxtas]);
+
+  /**
+   * Works only for 1-depth arrays
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Boolean} true if the two arrays are equal
+   */
+  const compareArrays = (a, b) => a.length === b.length
+                                  && a.every((element) => b.indexOf(element) !== -1)
+                                  && b.every((element) => a.indexOf(element) !== -1);
+
   const createTheProject = (update) => {
     logger.debug('NewProject.js', 'Creating new project.');
+    // headerDropDown === projectType
     const value = createProject(call, metadata, update, headerDropDown);
     value.then((status) => {
       logger.debug('NewProject.js', status[0].value);
@@ -174,6 +216,7 @@ export default function NewProject({ call, project, closeEdit }) {
       setSnackText(status[0].value);
       setOpenSnackBar(true);
       if (status[0].type === 'success') {
+        setImportedBookCodes([]);
         if (call === 'edit') {
           closeEdit();
         } else {
@@ -204,6 +247,7 @@ export default function NewProject({ call, project, closeEdit }) {
         logger.warn('NewProject.js', 'Validation failed for Description.');
         create = false;
       }
+
       // custom scope section error
       if (create && (!canonSpecification || !canonSpecification?.currentScope || canonSpecification?.currentScope?.length === 0)) {
         create = false;
@@ -211,6 +255,11 @@ export default function NewProject({ call, project, closeEdit }) {
         setNotify('warning');
         setSnackText(t('Scope is not selected or scope is empty. Please add scope.'));
         setOpenSnackBar(true);
+      }
+      // juxta scope != imported books
+      if (call === 'new' && create && headerDropDown === 'Juxta' && !compareArrays(importedBookCodes, canonSpecification.currentScope)) {
+        create = false;
+        setOpenModalJuxtaWrongSetOfBooks(true);
       }
       setError({
         ...error, projectName: checkName, abbr: checkAbbr, description: checkDesc,
@@ -236,13 +285,12 @@ export default function NewProject({ call, project, closeEdit }) {
       setLoading(false);
     }
   };
+
   const updateBurritoVersion = () => {
     setOpenModal(false);
     logger.warn('NewProject.js', 'Calling createTheProject function with burrito update');
     createTheProject(true);
   };
-  const [openPopUp, setOpenPopUp] = React.useState(false);
-  const [replaceWarning, setReplaceWarning] = React.useState(false);
 
   function openImportPopUp() {
     setOpenPopUp(true);
@@ -250,11 +298,6 @@ export default function NewProject({ call, project, closeEdit }) {
 
   function closeImportPopUp() {
     setOpenPopUp(false);
-  }
-  function callReplace(value) {
-    if (call === 'edit' && value === true) {
-      setReplaceWarning(true);
-    }
   }
   const loadData = async (project) => {
     logger.debug('NewProject.js', 'In loadData for loading current project details in Edit page');
@@ -281,6 +324,10 @@ export default function NewProject({ call, project, closeEdit }) {
 
       case 'audioTranslation':
         setHeaderDropDown('Audio');
+        break;
+
+      case 'x-juxtalinear':
+        setHeaderDropDown('Juxta');
         break;
 
       default:
@@ -417,6 +464,8 @@ export default function NewProject({ call, project, closeEdit }) {
                   >
                     {t('btn-import-books')}
                   </button>
+                  {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
+                  {call !== 'edit' && headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
                   <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
                 </div>
               </div>
@@ -482,6 +531,21 @@ export default function NewProject({ call, project, closeEdit }) {
         confirmMessage="This action will replace if the existing contents, Press OK to Avoid or CANCEL to continue edit with replace"
         buttonName={t('btn-ok')}
         closeModal={closeEdit}
+      />
+      <ConfirmationModal
+        openModal={openModalJuxtaWrongSetOfBooks}
+        title={(!importedBookCodes || importedBookCodes.length === 0)
+          ? 'Book resource needed'
+          : 'Canon specification error'}
+        setOpenModal={setOpenModalJuxtaWrongSetOfBooks}
+        confirmMessage={
+          (!importedBookCodes || importedBookCodes.length === 0)
+          ? 'No resource imported.'
+          : 'Your imported resources must correspond to your canon specifications'
+        }
+        buttonName={t('btn-ok')}
+        closeModal={() => {}}
+        showCancelButton={false}
       />
     </ProjectsLayout>
   );

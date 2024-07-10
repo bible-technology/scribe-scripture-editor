@@ -332,7 +332,7 @@ p.paragraph:has(.chapter) {
   list-style: none;
   display: flex;
   cursor: move;
- 
+
   align-items: center;
   border-radius: 5px;
   padding: 10px 13px;
@@ -371,7 +371,7 @@ p.paragraph:has(.chapter) {
   opacity: 0;
 }
 
-.pdfChoice{
+.pdfChoice {
   font-size: medium;
   margin: 12px;
   padding: 6px;
@@ -380,7 +380,7 @@ p.paragraph:has(.chapter) {
   border-width: 1px;
 }
 
-.pdfChoice:hover{
+.pdfChoice:hover {
   background-color: #a2dfea;
 }
 
@@ -538,33 +538,65 @@ p.paragraph:has(.chapter) {
 MODAL SECTION SELECTION BLOCK START
 */
 .styleText {
-	text-align: center;
-	font-size: 12px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 16px;
+  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
 }
 
 .styleCard {
-	background-color: #F9F9F9;
-	display: flex;
-	padding: 8px;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
+  background-color: #F9F9F9;
+  display: flex;
+  padding: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .styleCard:hover {
-	background-color: #EEEEEE;
+  background-color: #EEEEEE;
 }
 
 .styleIcon {
-	width: 72px;
-	height: 72px;
-	margin: 12px 9.5px 12px 30.5px;
-	justify-content: flex-end;
-	display: flex;
+  width: 72px;
+  height: 72px;
+  margin: 12px 9.5px 12px 30.5px;
+  justify-content: flex-end;
+  display: flex;
 }
+
 /*
 MODAL SECTION SELECTION BLOCK END
 */
+#sundesmosToolbar {
+  background-color: #E5E7EB;
+  border-color: white;
+}
+
+.chunk-row:hover {
+  background-color: rgba(135, 206, 250, 0.3);
+}
+
+div.draggable {
+  border-color: #121212;
+  border-width: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .source-text {
+    color: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .source-text {
+    color: #121212;
+  }
+}
+
+.prevent-select {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

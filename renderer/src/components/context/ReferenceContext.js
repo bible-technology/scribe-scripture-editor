@@ -6,13 +6,13 @@ import React, {
 import PropTypes from 'prop-types';
 
 import * as localforage from 'localforage';
-import { splitStringByLastOccurance } from '@/util/splitStringByLastMarker';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 
-export const ReferenceContext = createContext({});
+export const ReferenceContext = createContext();
 
 export default function ReferenceContextProvider({ children }) {
   const initialBook = '1ti';
@@ -37,10 +37,14 @@ export default function ReferenceContextProvider({ children }) {
   const [font2, setFont2] = useState('sans-serif');
   const [font3, setFont3] = useState('sans-serif');
   const [font4, setFont4] = useState('sans-serif');
-  const [fontSize, setFontsize] = React.useState(1);
+  const [editorFontSize, setEditorFontSize] = React.useState(1);
+  const [fontSize1, setFontsize1] = React.useState(1);
+  const [fontSize2, setFontsize2] = React.useState(1);
+  const [fontSize3, setFontsize3] = React.useState(1);
+  const [fontSize4, setFontsize4] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
-  const [refernceLoading, setRefernceLoading] = useState({
+  const [referenceLoading, setReferenceLoading] = useState({
     status: false,
     text: '',
   });
@@ -91,11 +95,21 @@ export default function ReferenceContextProvider({ children }) {
     }
   };
 
+  // define functon to change editor font size and call saveReference
+  const handleEditorFontSize = async (currentFontSize) => {
+    if (isElectron()) {
+      setEditorFontSize(currentFontSize);
+      // INFO : implement a debounce for this call if needed
+      saveReferenceResource(selectedFont, currentFontSize);
+    }
+  };
+
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
+        let resProj;
         // const _projectname = projectName?.split('_');
-        const _projectname = await splitStringByLastOccurance(projectName, '_');
+        const _projectname = await splitStringByLastOccurence(projectName, '_');
         localforage.getItem('projectmeta').then((val) => {
           Object?.entries(val).forEach(
             ([, _value]) => {
@@ -104,21 +118,30 @@ export default function ReferenceContextProvider({ children }) {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
+                      case 'x-juxtalinear':
+                        resProj = resources.project['x-juxtalinear'];
+                        setBookmarksVerses(resProj.bookMarks);
+                        setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
+                        setSelectedFont(resProj?.font);
+                        break;
                       case 'textTranslation':
-                        setBookmarksVerses(resources.project?.textTranslation.bookMarks);
+                        setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
                         setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.textTranslation?.font);
+                        setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
                         break;
                       case 'textStories':
                         setBookmarksVerses(resources.project?.textStories.bookMarks);
                         setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
                         setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
                         setSelectedFont(resources.project?.textStories?.font);
+                        setEditorFontSize(resources.project?.textStories?.fontSize);
                         break;
                       case 'audioTranslation':
                         setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
                         setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
                         setSelectedFont(resources.project?.audioTranslation?.font);
+                        setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
                         break;
                       default:
                         break;
@@ -196,10 +219,14 @@ export default function ReferenceContextProvider({ children }) {
       font2,
       font3,
       font4,
-      fontSize,
+      fontSize1,
+      fontSize2,
+      fontSize3,
+      fontSize4,
+      editorFontSize,
       layout,
       row,
-      refernceLoading,
+      referenceLoading,
       counter,
       bookmarksVerses,
       myEditorRef,
@@ -229,6 +256,7 @@ export default function ReferenceContextProvider({ children }) {
       onChangeChapter,
       onChangeVerse,
       applyBooksFilter,
+      handleEditorFontSize,
       setAnchorEl,
       handleClick,
       setRefName,
@@ -244,10 +272,14 @@ export default function ReferenceContextProvider({ children }) {
       setFont2,
       setFont3,
       setFont4,
-      setFontsize,
+      setEditorFontSize,
+      setFontsize1,
+      setFontsize2,
+      setFontsize3,
+      setFontsize4,
       setLayout,
       setRow,
-      setRefernceLoading,
+      setReferenceLoading,
       setCounter,
       setBookmarksVerses,
       setCloseNavigation,

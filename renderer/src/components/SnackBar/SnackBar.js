@@ -13,7 +13,7 @@ const SnackBar = ({
   setSnackText,
   error,
 }) => {
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(error === 'failure' ? 15 : 8);
 
   const closeSnackBar = () => {
     setOpenSnackBar(false);
@@ -41,7 +41,7 @@ const SnackBar = ({
 
   useEffect(() => {
     if (openSnackBar) {
-      setTimeLeft(10);
+      setTimeLeft(error === 'failure' ? 30 : 8);
     }
   }, [openSnackBar]);
 

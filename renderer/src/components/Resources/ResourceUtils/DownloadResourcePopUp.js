@@ -109,7 +109,8 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       // initial load
       switch (selectResource) {
         case 'bible':
-          url = `${baseUrl}&subject=Bible&lang=en`;
+          url = `${baseUrl}&lang=en&subject=${subjectTypeArray.bible[0].name}`;
+          // setSelectedTypeFilter([subjectTypeArray.bible[0]]);
           break;
         case 'obs':
           url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
@@ -182,7 +183,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     } else {
       setOpenSnackBar(true);
       setNotify('warning');
-      setSnackText('Please Wait, Download in progrss');
+      setSnackText('Please Wait, Download in progress');
     }
   };
 
@@ -284,6 +285,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
 
   useEffect(() => {
     logger.debug('DownloadResourcePopUp.js', 'in useEffect initial load of resource');
+    setSelectedTypeFilter([]);
     fetchResource(false);
     // setLoading(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -322,7 +324,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             />
           </button>
           <div className="flex flex-wrap gap-2 mt-2 mb-2">
-            {selectedLangFilter.map((language, idx) => (
+            {selectedLangFilter?.map((language, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
@@ -341,13 +343,13 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
           <CustomMultiComboBox
             selectedList={selectedTypeFilter}
             setSelectedList={setSelectedTypeFilter}
-            customData={selectResource === 'bible' ? subjectTypeArray.bible : subjectTypeArray.obs}
+            customData={selectResource === 'bible' ? subjectTypeArray.bible : [subjectTypeArray.obs]}
             placeholder="Select Types"
             dropArrow
             multiSelect
           />
           <div className="flex flex-wrap gap-2 mt-2 mb-2">
-            { selectResource === 'bible' && selectedTypeFilter?.map((type, idx) => (
+            { selectResource === 'bible' && Array.isArray(selectedTypeFilter) && selectedTypeFilter?.map((type, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
@@ -385,7 +387,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             className="bg-success leading-loose rounded shadow text-xs px-2 font-base text-white tracking-wide uppercase"
             onClick={handleSaveFilter}
           >
-            {t('label-save-filter')}
+            {t('label-filter')}
           </button>
         </div>
       </div>

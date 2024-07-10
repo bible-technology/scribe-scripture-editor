@@ -56,6 +56,7 @@ export const ListResources = ({
   const { t } = useTranslation();
   const [translationWordList, settranslationWordList] = useState([]);
   const [translationNote, setTranslationNote] = useState([]);
+  const [juxtalinear, setJuxtalinear] = useState([]);
   const [translationQuestion, setTranslationQuestion] = useState([]);
   const [translationWord, settranslationWord] = useState([]);
   const [translationAcademy, setTranslationAcademy] = useState([]);
@@ -96,6 +97,9 @@ export const ListResources = ({
       setLoading(true);
       logger.debug('ResourcesPopUp.js', `get available selected resources ${selectResource}`);
       switch (selectResource) {
+        case 'jxl':
+          await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
+          break;
         case 'tn':
           await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction);
           break;
@@ -131,6 +135,7 @@ export const ListResources = ({
   useEffect(() => {
     const getCurrentOnlineOfflineHelpsResources = (selectResource) => {
       const resources = [
+        { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
         { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
         { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
@@ -198,8 +203,9 @@ export const ListResources = ({
                       )}
                       role="button"
                       tabIndex="0"
+                      aria-label="upload"
                     >
-                      {resource?.value?.meta?.name}
+                      {resource?.value?.meta?.language_title ?? resource?.value?.meta?.name }
                       <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
                         {resource?.value?.meta?.owner}
                       </span>
@@ -223,6 +229,7 @@ export const ListResources = ({
                         resource,
                       )}
                       role="button"
+                      aria-label="language"
                       tabIndex="0"
                     >
                       {resource?.value?.meta?.language}
@@ -241,6 +248,7 @@ export const ListResources = ({
                       resource,
                       )}
                       role="button"
+                      aria-label="version"
                       tabIndex="0"
                     >
                       {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource.value.meta.released).split('T')[0]}`}
@@ -259,6 +267,7 @@ export const ListResources = ({
                         resource,
                       )}
                       role="button"
+                      aria-label="tag"
                       tabIndex="0"
                     >
                       {resource?.value?.meta?.release.tag_name}

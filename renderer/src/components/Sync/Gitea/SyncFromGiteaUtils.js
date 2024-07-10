@@ -73,18 +73,19 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
     logger.debug('SyncFromGiteaUtils', `Updating ${environment.PROJECT_SETTING_FILE} file`);
     const scribe = fs.readFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE));
     let settings = JSON.parse(scribe);
+    const sbFlavName = sbDataObject.type.flavorType.flavor.name;
     if (settings.version !== environment.AG_SETTING_VERSION) {
       // eslint-disable-next-line prefer-const
       let setting = settings;
       setting.version = environment.AG_SETTING_VERSION;
-      setting.project[sbDataObject.type.flavorType.flavor.name].scriptDirection = settings.project[sbDataObject.type.flavorType.flavor.name]?.scriptDirection ? settings.project[sbDataObject.type.flavorType.flavor.name]?.scriptDirection : '';
-      setting.project[sbDataObject.type.flavorType.flavor.name].starred = settings.project[sbDataObject.type.flavorType.flavor.name]?.starred ? settings.project[sbDataObject.type.flavorType.flavor.name]?.starred : false;
-      setting.project[sbDataObject.type.flavorType.flavor.name].isArchived = settings.project[sbDataObject.type.flavorType.flavor.name]?.isArchived ? settings.project[sbDataObject.type.flavorType.flavor.name]?.isArchived : false;
-      setting.project[sbDataObject.type.flavorType.flavor.name].versification = settings.project[sbDataObject.type.flavorType.flavor.name]?.versification ? settings.project[sbDataObject.type.flavorType.flavor.name]?.versification : 'ENG';
-      setting.project[sbDataObject.type.flavorType.flavor.name].description = settings.project[sbDataObject.type.flavorType.flavor.name]?.description ? settings.project[sbDataObject.type.flavorType.flavor.name]?.description : '';
-      setting.project[sbDataObject.type.flavorType.flavor.name].copyright = settings.project[sbDataObject.type.flavorType.flavor.name]?.copyright ? settings.project[sbDataObject.type.flavorType.flavor.name]?.copyright : { title: 'Custom' };
-      setting.project[sbDataObject.type.flavorType.flavor.name].refResources = settings.project[sbDataObject.type.flavorType.flavor.name]?.refResources ? settings.project[sbDataObject.type.flavorType.flavor.name]?.refResources : [];
-      setting.project[sbDataObject.type.flavorType.flavor.name].bookMarks = settings.project[sbDataObject.type.flavorType.flavor.name]?.bookMarks ? settings.project[sbDataObject.type.flavorType.flavor.name]?.bookMarks : [];
+      setting.project[sbFlavName].scriptDirection = settings.project[sbFlavName]?.scriptDirection ? settings.project[sbFlavName]?.scriptDirection : '';
+      setting.project[sbFlavName].starred = settings.project[sbFlavName]?.starred ? settings.project[sbFlavName]?.starred : false;
+      setting.project[sbFlavName].isArchived = settings.project[sbFlavName]?.isArchived ? settings.project[sbFlavName]?.isArchived : false;
+      setting.project[sbFlavName].versification = settings.project[sbFlavName]?.versification ? settings.project[sbFlavName]?.versification : 'ENG';
+      setting.project[sbFlavName].description = settings.project[sbFlavName]?.description ? settings.project[sbFlavName]?.description : '';
+      setting.project[sbFlavName].copyright = settings.project[sbFlavName]?.copyright ? settings.project[sbFlavName]?.copyright : { title: 'Custom' };
+      setting.project[sbFlavName].refResources = settings.project[sbFlavName]?.refResources ? settings.project[sbFlavName]?.refResources : [];
+      setting.project[sbFlavName].bookMarks = settings.project[sbFlavName]?.bookMarks ? settings.project[sbFlavName]?.bookMarks : [];
       // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
       if (!setting.sync && !setting.sync?.services) {
         setting.sync = { services: { door43: [] } };
@@ -92,13 +93,18 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
         setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
       }
       if (!setting.font) {
-        setting.project[sbDataObject.type.flavorType.flavor.name].font = '';
+        setting.project[sbFlavName].font = '';
       } else {
-        setting.project[sbDataObject.type.flavorType.flavor.name].font = (setting.project[sbDataObject.type.flavorType.flavor.name].font) ? (setting.project[sbDataObject.type.flavorType.flavor.name].font) : '';
+        setting.project[sbFlavName].font = (setting.project[sbFlavName].font) ? (setting.project[sbFlavName].font) : '';
+      }
+      if (!setting.fontSize) {
+        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = 1;
+      } else {
+        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) ? (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) : 1;
       }
       settings = setting;
     }
-    settings.project[sbDataObject.type.flavorType.flavor.name].lastSeen = moment().format();
+    settings.project[sbFlavName].lastSeen = moment().format();
     await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
   }
 }

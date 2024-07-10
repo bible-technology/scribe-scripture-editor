@@ -17,6 +17,8 @@ import { useCallback, useEffect, useState } from 'react';
 import PlayIcon from '@/icons/basil/Outline/Media/Play.svg';
 import PauseIcon from '@/icons/basil/Outline/Media/Pause.svg';
 
+const LS_AUDIO_VOLUME_KEY = 'audio-volume';
+
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const Player = ({
@@ -36,10 +38,52 @@ const Player = ({
   location,
 }) => {
   const { t } = useTranslation();
-  const [volume, setVolume] = useState(0.5);
+  // const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState((Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) && typeof Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY) === 'number')) ? Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) : 0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const speed = [0.5, 1, 1.5, 2];
   const path = require('path');
+  const [time, setTime] = useState(0);
+  const [playTime, setPlayTime] = useState(0);
+  // state to check stopwatch running or not
+  const [isRunning, setIsRunning] = useState(false);
+
+  const handleVolumeChange = (action, value = 0.1, sliding = false) => {
+    // sliding the value will be tha actual value of slide
+    if (sliding) {
+      setVolume(value);
+    } else if (action === 'inc' && !sliding) {
+    // if not sliding the value will be the step value
+      setVolume((prev) => (prev > 0.9 ? prev : prev + value));
+    } else if (action === 'dec' && !sliding) {
+      setVolume((prev) => (prev < 0.1 ? prev : prev - value));
+    }
+  };
+
+  // volume
+  useEffect(() => {
+    localStorage.setItem(LS_AUDIO_VOLUME_KEY, volume);
+  }, [volume]);
+
+  useEffect(() => {
+    let intervalId;
+    if (isRunning) {
+      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
+      intervalId = setInterval(() => setTime(time + 1), 10);
+    }
+    return () => clearInterval(intervalId);
+  }, [isRunning, time]);
+
+  // playTime is the total time of audio & time is recording time
+  // Minutes calculation
+  const minutes = playTime > 0 ? Math.floor(playTime / 60) : (time > 0 ? Math.floor((time % 360000) / 6000) : 0);
+
+  // Seconds calculation
+  const seconds = playTime > 0 ? Math.floor(playTime % 60) : (time > 0 ? Math.floor((time % 6000) / 100) : 0);
+
+  // Milliseconds calculation
+  const milliseconds = playTime > 0 ? Math.floor((playTime - Math.floor(playTime)) * 100) : (time > 0 ? time % 100 : 0);
+
   const handleRecord = () => {
     // check whether its a first record or re-recording
     if (url[take]) {
@@ -52,6 +96,8 @@ const Player = ({
     } else {
       // Recording for the first time
       setTrigger('record');
+      setTime(0);
+      setIsRunning(true);
     }
   };
   const handleDelete = () => {
@@ -111,10 +157,12 @@ const Player = ({
         changeTake('take3');
         break;
       case 187: // --> + (not in number area)
-        setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        // setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
+        handleVolumeChange('inc');
         break;
-      case 189: // --> - (left to +)
-        setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
+        case 189: // --> - (left to +)
+        handleVolumeChange('dec');
+        // setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
         break;
 
       default:
@@ -177,6 +225,20 @@ const Player = ({
               </Listbox.Options>
             </Listbox>
           </div>
+          <div className="flex flex-col px-10 items-center border-r border-r-gray-800">
+            <div className="flex flex-col items-center text-xl">
+              <div className="text-xs text-gray-300 uppercase tracking-wider">
+                m:s:ms
+              </div>
+              <div>
+                {minutes.toString().padStart(2, '0')}
+                :
+                {seconds.toString().padStart(2, '0')}
+                :
+                {milliseconds.toString().padStart(2, '0')}
+              </div>
+            </div>
+          </div>
           <div className="flex flex-row items-center justify-evenly border-r border-r-gray-800">
             <div className="flex flex-col items-center">
               {((trigger === 'record' || trigger === 'recResume') && (
@@ -188,7 +250,7 @@ const Player = ({
                   type="button"
                   title="P"
                   className="p-2 bg-error rounded-md hover:bg-dark"
-                  onClick={() => setTrigger('recPause')}
+                  onClick={() => { setTrigger('recPause'); setIsRunning(false); }}
                 >
                   <PauseIcon
                     fill="currentColor"
@@ -207,7 +269,7 @@ const Player = ({
                   type="button"
                   title="E"
                   className="p-2 bg-dark rounded-md hover:bg-error"
-                  onClick={() => setTrigger('recResume')}
+                  onClick={() => { setTrigger('recResume'); setIsRunning(true); }}
                 >
                   <PlayIcon
                     fill="currentColor"
@@ -244,7 +306,7 @@ const Player = ({
                 type="button"
                 title="S"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
-                onClick={() => setTrigger('recStop')}
+                onClick={() => { setTrigger('recStop'); setIsRunning(false); }}
               >
                 <StopIcon
                   fill="currentColor"
@@ -263,7 +325,7 @@ const Player = ({
                 type="button"
                 title="<"
                 className="p-2 bg-dark rounded-md hover:bg-error"
-                onClick={() => setTrigger('rewind')}
+                onClick={() => { setTrigger('rewind'); setTime(0); setPlayTime(0); }}
               >
                 <ArrowPathIcon
                   className="w-5 h-5"
@@ -332,9 +394,7 @@ const Player = ({
                   type="button"
                   className="rounded-md hover:bg-primary"
                   title="-"
-                  onClick={() => setVolume(
-                  volume < 0.1 ? volume : volume - 0.1,
-                )}
+                  onClick={() => handleVolumeChange('dec')}
                 >
                   <MinusIcon
                     className="w-4 h-4"
@@ -343,19 +403,19 @@ const Player = ({
                 </button>
                 <input
                   type="range"
-                  className="md:w-12 w-full xl:w-44"
+                  className="md:w-12 w-full xl:w-44 accent-primary"
                   min={0}
                   max={1}
                   step={0.1}
                   value={volume}
+                  onChange={(e) => handleVolumeChange('', Number(e.target.value), true)}
                 />
+
                 <button
                   type="button"
                   className="rounded-md hover:bg-primary"
                   title="+"
-                  onClick={() => setVolume(
-                  volume > 0.9 ? volume : volume + 0.1,
-                )}
+                  onClick={() => handleVolumeChange('inc')}
                 >
                   <PlusIcon
                     className="w-4 h-4"
@@ -385,7 +445,7 @@ const Player = ({
             } text-xs font-bold ${
               url?.take1 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
-                onClick={() => changeTake('take1')}
+                onClick={() => { changeTake('take1'); setTime(0); setPlayTime(0); }}
                 title="select : A"
                 onDoubleClick={() => changeDefault(1)}
               >
@@ -406,7 +466,7 @@ const Player = ({
             } text-xs font-bold ${
               url?.take2 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
-                onClick={() => changeTake('take2')}
+                onClick={() => { changeTake('take2'); setTime(0); setPlayTime(0); }}
                 title="select : B"
                 onDoubleClick={() => changeDefault(2)}
               >
@@ -427,7 +487,7 @@ const Player = ({
             } text-xs font-bold ${
               url?.take3 ? 'text-white' : 'text-black'
             } uppercase tracking-wider rounded-full`}
-                onClick={() => changeTake('take3')}
+                onClick={() => { changeTake('take3'); setTime(0); setPlayTime(0); }}
                 title="select : C"
                 onDoubleClick={() => changeDefault(3)}
               >
@@ -474,6 +534,7 @@ const Player = ({
             speed={currentSpeed}
             show={false}
             setTrigger={setTrigger}
+            setAudioPlayBack={setPlayTime}
           />
         </div>
       </div>

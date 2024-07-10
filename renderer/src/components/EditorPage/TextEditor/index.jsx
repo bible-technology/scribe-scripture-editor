@@ -16,7 +16,6 @@ import Editor from './Editor';
 export default function TextEditor() {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
-  // const { usfmData, bookAvailable } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
   const [chapterNumber, setChapterNumber] = useState(1);
@@ -28,8 +27,10 @@ export default function TextEditor() {
   const { usfmData, bookAvailable } = useReadUsfmFile();
 
   const {
-    state: { bookId, selectedFont },
-    actions: { handleSelectedFont, onChangeChapter, onChangeVerse },
+    state: { bookId, selectedFont, editorFontSize },
+    actions: {
+      handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
+    },
   } = useContext(ReferenceContext);
 
   const {
@@ -59,7 +60,7 @@ export default function TextEditor() {
   useEffect(() => {
     onChangeChapter(chapterNumber, 1);
     onChangeVerse(verseNumber, 1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterNumber, verseNumber]);
 
   const { catalog } = useCatalog({ proskomma, stateId, verbose });
@@ -94,6 +95,7 @@ export default function TextEditor() {
     ...perfState,
     ...actions,
     ...perfActions,
+    editorFontSize,
     selectedFont,
     chapterNumber,
     verseNumber,
@@ -101,6 +103,7 @@ export default function TextEditor() {
     bookName,
     bookChange,
     bookAvailable,
+    handleEditorFontSize,
     setBookChange,
     setChapterNumber,
     setVerseNumber,
