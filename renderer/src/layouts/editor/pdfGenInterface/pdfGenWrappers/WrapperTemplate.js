@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Button } from '@material-ui/core';
 import { AccordionPicker } from './SectionAccordion';
 import i18n from 'src/translations/i18n';
 import Trash from './../../../../../public/icons/trash.svg';
-import { ModalSectionSelection } from './modalSectionSelection';
 import { OBSWrapperSortableList } from './HeaderWrapper/OBSHeaderWrapper';
 import { BCVWrapperSortableList } from './HeaderWrapper/BCVHeaderWrapper';
 import { v4 as uuidv4 } from 'uuid';
-
+import { ProjectContext } from '@/components/context/ProjectContext';
 export function WrapperTemplate({
 	setFinalPrint,
+	projectInfo,
 	wrapperType,
 	keyWrapper,
 	setUpdate,
@@ -17,16 +17,11 @@ export function WrapperTemplate({
 	changePrintData,
 	changePrintOrder,
 }) {
-	const [openModalSectionSelection, setOpenModalSectionSelection] =
-		useState(false);
-
 	const [orderSections, setOrderSelections] = useState([0]);
-	const [sections, setSections] = useState(firstElem(wrapperType));
+	const [sections, setSections] = useState(firstElem(projectInfo));
 
 	//choice is the possible section by wrapper
 
-	const listChoiceSectionByWrapper =
-		require('./fieldPicker/WrapperSection.json')[wrapperType];
 	const [LoopMode, setLoopMode] = useState(false);
 
 	const sortableListClassName = `sortable-${keyWrapper}-list`;
@@ -43,14 +38,14 @@ export function WrapperTemplate({
 
 	//update final print Json
 	useEffect(() => {
-		console.log(sections);
+		console.log(JSON.parse(sections));
 		setFinalPrint((prev) => {
 			const t = { ...prev };
 			t[keyWrapper].content.content = JSON.parse(sections);
 			return t;
 		});
 	}, [sections]);
-	
+
 	//Sortable list logic
 	useEffect(() => {
 		const sortableList = document.querySelector(
@@ -189,25 +184,6 @@ export function WrapperTemplate({
 										JSON.stringify(prev),
 									);
 									const up = {};
-									console.log(updatedSelected);
-									// Object.keys(updatedSelected).forEach(
-									// 		(key) => {
-									// 				if (
-									// 						parseInt(key) > keyWrapper
-									// 				) {
-									// 						let newIndex =
-									// 								parseInt(key) - 1;
-									// 						up[newIndex] =
-									// 								updatedSelected[key];
-									// 				} else if (
-									// 						parseInt(key) < keyWrapper
-									// 				) {
-									// 						up[key] =
-									// 								updatedSelected[key];
-									// 				}
-									// 		},
-									// );
-
 									// Remove the last key in the map as it's not required
 									delete updatedSelected[
 										parseInt(keyWrapper)
@@ -242,8 +218,10 @@ export function WrapperTemplate({
 								<AccordionPicker
 									language={i18n.language}
 									wrapperType={wrapperType}
+									projectInfo={projectInfo}
 									advanceMode={advanceMode}
 									setSelected={setSections}
+									setOrderSelections={setOrderSelections}
 									keySpecification={
 										JSON.parse(sections)[k].type
 									}
@@ -251,14 +229,6 @@ export function WrapperTemplate({
 									removeButton={
 										advanceMode ? (
 											<Button
-												style={{
-													borderRadius: 4,
-													height: 40,
-													backgroundColor: '#F50',
-													borderStyle: 'solid',
-													borderColor: '#F50',
-													color: 'white',
-												}}
 												onClick={() => {
 													setOrderSelections(
 														(prev) => {
@@ -323,7 +293,14 @@ export function WrapperTemplate({
 														);
 													});
 												}}>
-												Remove
+												<Trash
+													color={'black'}
+													style={{
+														fill:'black',	
+														height: 35,
+														width: 35,
+													}}
+												/>
 											</Button>
 										) : (
 											<></>
@@ -355,7 +332,22 @@ export function WrapperTemplate({
 								borderColor: '#F50',
 								color: 'white',
 							}}
-							onClick={() => handleOpenModal(true)}>
+							onClick={() => {
+								setOrderSelections((prev) => [
+									...prev,
+									prev.length,
+								]);
+								setSections((prev) => {
+									prev = JSON.parse(prev);
+									let len = Object.keys(prev).length;
+									prev[len] = {
+										id: uuidv4(),
+										type: 'null',
+										content: {},
+									};
+									return JSON.stringify(prev);
+								});
+							}}>
 							Add
 						</Button>
 					) : (
@@ -364,49 +356,14 @@ export function WrapperTemplate({
 								padding: 17,
 							}}></div>
 					)}
-					<ModalSectionSelection
-						open={openModalSectionSelection}
-						setOpen={setOpenModalSectionSelection}
-						table={listChoiceSectionByWrapper}
-						setSelected={(c) => {
-							setSections((prev) => {
-								let t = { ...JSON.parse(prev) };
-								let nb = Object.keys(t).length;
-								t[nb] = {
-									id: `${uuidv4()}`,
-									type: c,
-									content: {},
-								};
-
-								return JSON.stringify(t);
-							});
-							setOrderSelections((prev) => [
-								...prev,
-								prev.length,
-							]);
-							setOpenModalSectionSelection(false);
-						}}
-					/>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-function firstElem(wrapperType) {
-	let type;
-	if (wrapperType === 'bcvWrapper') {
-		type = 'bcvBible';
-	}
-	if (wrapperType === 'obsWrapper') {
-		type = 'obs';
-	}
-	if (wrapperType === 'JxlWrapper') {
-		type = 'JxlSimple';
-	}
-	if (wrapperType === 'markdown') {
-		type = markdown;
-	}
-
-	return `{"0": {"id":"${uuidv4()}", "type": "${type}", "content": {} }}`;
+function firstElem(projectInfo) {
+	console.log(projectInfo)
+	return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${projectInfo.path}","content": {} }}`;
 }
+

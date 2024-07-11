@@ -14515,10 +14515,10 @@ just-diff@^5.0.1:
   resolved "https://registry.yarnpkg.com/just-diff/-/just-diff-5.2.0.tgz#60dca55891cf24cd4a094e33504660692348a241"
   integrity sha512-6ufhP9SHjb7jibNFrNxyFZ6od3g+An6Ai9mhGRvcYe8UJlH0prseN64M+6ZBBUoKYHZsitDP42gAJ8+eVWr3lw==
 
-jxl-pdf@^0.2.13:
-  version "0.2.17"
-  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.2.17.tgz#08e424c3fb41e30662e7bb7f6e17bd6f411ab245"
-  integrity sha512-xfa6pmki1TVLs5omUZyUlGwHaHM1PeMyvgZp+u9MOLP5zOb7KGHAZfS5X0MF8YptSuIUPymAnEOdIpUIpFRk8A==
+jxl-pdf@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.3.0.tgz#9e944ae2a4836671b96b65d80a7758a0e36fdddb"
+  integrity sha512-XHT3nFnQEj/bKjgINvYfJbVf/7g+TIrao1+mKkT4ok/mlwilYi0T3wXOZiUQQoGIWxgr67kvZW0Myypey+Eldg==
   dependencies:
     commander "^11.1.0"
     fontkit "^2.0.2"
@@ -14528,8 +14528,8 @@ jxl-pdf@^0.2.13:
     os "^0.1.2"
     path "^0.12.7"
     pdf-lib "^1.17.1"
-    proskomma-core "^0.10.4"
-    proskomma-json-tools "^0.8.4"
+    proskomma-core "^0.10.9"
+    proskomma-json-tools "^0.8.16"
     puppeteer "^21.6.1"
     text-diff "^1.0.1"
 
@@ -18587,12 +18587,16 @@ prop-types@15.8.1, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.8, 
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
+<<<<<<< HEAD
 property-information@^6.0.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/property-information/-/property-information-6.5.0.tgz#6212fbb52ba757e92ef4fb9d657563b933b7ffec"
   integrity sha512-PgTgs/BlvHxOu8QuEN7wi5A0OmXaBcHpmCSTehcs6Uuu9IkDIEo13Hy7n898RHfrQ49vKCoGeWZSaAK01nwVig==
 
 proskomma-core@^0.10.4:
+=======
+proskomma-core@^0.10.9:
+>>>>>>> print_pdf_mode
   version "0.10.9"
   resolved "https://registry.yarnpkg.com/proskomma-core/-/proskomma-core-0.10.9.tgz#9a63ef1604952108206c4c13ff6404a69d130640"
   integrity sha512-u185IIUOJpq1Ip3wLlisqZHDE+Ph6lvHwVfgCtFWqf50Uw2KQCR/wBA3NSio4VrrJjDimR22/f6pSEFwPtP7DA==
@@ -18649,10 +18653,10 @@ proskomma-json-tools@^0.7.1:
     cheerio "^1.0.0-rc.12"
     deep-equal "^2.2.2"
 
-proskomma-json-tools@^0.8.4, proskomma-json-tools@^0.8.8:
-  version "0.8.15"
-  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.8.15.tgz#8b95b603b533b115a3bbe4faffbb036cd54f35ed"
-  integrity sha512-Q7NDFi3GkoP0LAikUJm1wft5I2Ck6V/Kd9Fwje+fj9v5OjHYwKWMRjKb2x2IHtBpM5bZ4Vf39zegagx5AnN8cw==
+proskomma-json-tools@^0.8.16:
+  version "0.8.16"
+  resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.8.16.tgz#8b3ab08e47bc003382d79f139f030698d3f3f609"
+  integrity sha512-pAAhGLbE41/OxxdtKByO6y6b+Sobw3gokMG5hHjzImSZLQPohvPoZBLG7fIqOvfQxI/XFY8CrkiVpHDl2L/1FQ==
   dependencies:
     "@babel/core" "^7.23.2"
     "@babel/plugin-proposal-throw-expressions" "^7.22.5"

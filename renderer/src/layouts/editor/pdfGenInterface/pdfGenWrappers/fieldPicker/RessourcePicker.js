@@ -7,6 +7,7 @@ import ScriptureContentPicker from '@/components/ScriptureContentPicker/Scriptur
 export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
+	console.log(fieldInfo)
 	useEffect(() => {
 		if(selected != ''){
 			setJsonSpec((prev) => {

@@ -600,3 +600,31 @@ div.draggable {
   -ms-user-select: none;
   user-select: none;
 }
+
+/*
+Select scribe theme Start
+*/
+
+.selectScribeTheme {
+  min-width: 120px;
+  border-radius: 5px;
+  border-color: rgba(115, 115, 115, 1);
+  border-width: 1px;
+  background-color: #ffffff;
+  /* Default background color */
+}
+
+.selectScribeTheme:hover {
+  /* Hover styles for the select element */
+  background-color: rgba(255, 238, 229, 1);
+}
+
+.selectScribeTheme option {
+  background-color: #ffffff;
+  /* Default background color for options */
+}
+
+.selectScribeTheme option:hover {
+  background-color: rgba(255, 238, 229, 1) !important;
+  /* Hover background color for options */
+}
