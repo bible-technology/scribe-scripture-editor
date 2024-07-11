@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { PdfPreview } from './pdfGenInterface/PdfPreview';
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectContext} from '@/components/context/ProjectContext';
+import { ProjectContext } from '@/components/context/ProjectContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import {
 	TextOnlyTooltip,
@@ -20,7 +20,6 @@ import {
 import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplate';
 
 export default function InnerFramePopup() {
-
 	const {
 		states: { listResourcesForPdf },
 		actions: { setListResourcesForPdf },
@@ -36,7 +35,7 @@ export default function InnerFramePopup() {
 	//is the json is validate or not
 	const [isJsonValidate, setIsJsonValidate] = useState(false);
 	const [messagePrint, setMessagePrint] = useState('');
-	
+
 	//the actual kitchenFaucet
 	const pdfCallBacks = (json) => {
 		setMessagePrint((prev) => prev + '\n' + MessageToPeople(json));
@@ -48,11 +47,16 @@ export default function InnerFramePopup() {
 	const {
 		states: { projects },
 	} = useContext(AutographaContext);
-	const [selected, setSelected] = useState(changeMetaDataToWrapperSection(selectedProject,projects));
+	const [selected, setSelected] = useState(
+		changeMetaDataToWrapperSection(selectedProject, projects),
+	);
 
 	//advenceMode allow adding new Wrapper
 	const [advanceMode, setAdvenceMode] = useState(false);
-	const [infoProject, setInfoProject] = useState(findProjectInfo(selectedProject,projects))
+	const [infoProject, setInfoProject] = useState(
+		findProjectInfo(selectedProject, projects),
+	);
+
 	//the selected headerInfo
 	const [headerInfo, setHeaderInfo] = useState('{}');
 	//zoom of the preview
@@ -62,7 +66,6 @@ export default function InnerFramePopup() {
 	const handleOpenModalAddWrapper = (isOpen) => {
 		setOpenModalAddWrapper(isOpen);
 	};
-	console.log(infoProject)
 	const handleChangeHeaderInfo = (type, value) => {
 		let t = JSON.parse(headerInfo);
 		t[type] = value;
@@ -114,7 +117,6 @@ export default function InnerFramePopup() {
 
 		sortableList.addEventListener('dragover', initSortableList);
 		sortableList.addEventListener('dragenter', (e) => e.preventDefault());
-		console.log(selected)
 		return () => {
 			sortableList.removeEventListener('dragover', initSortableList);
 			items.forEach((item) => {
@@ -142,17 +144,18 @@ export default function InnerFramePopup() {
 					`${currentUser}`,
 					'projects',
 				);
-				setInfoProject(prev => {let p = {...prev}
-					p["path"] = path.join(
+				setInfoProject((prev) => {
+					let p = { ...prev };
+					p['path'] = path.join(
 						newpath,
 						packageInfo.name,
 						'users',
 						`${currentUser}`,
 						'projects',
-						`${p.name}_${p.id[0]}`
+						`${p.name}_${p.id[0]}`,
 					);
-					return p
-				})
+					return p;
+				});
 				const folderRessources = path.join(
 					newpath,
 					packageInfo.name,
@@ -172,11 +175,6 @@ export default function InnerFramePopup() {
 	}, []);
 
 	useEffect(() => {
-		console.log(	transformPrintDataToKitchenFoset({
-			order: orderSelection,
-			metaData: JSON.parse(headerInfo),
-			content: selected,
-		}))
 		if (
 			global.PdfGenStatic.validateConfig(
 				transformPrintDataToKitchenFoset({
@@ -194,7 +192,6 @@ export default function InnerFramePopup() {
 				header.fonts &&
 				header.pages
 			)
-			
 				setIsJsonValidate(true);
 		} else {
 			setIsJsonValidate(false);
@@ -207,8 +204,6 @@ export default function InnerFramePopup() {
 		const { dialog } = window.require('@electron/remote');
 		const chosenFolder = await dialog.showOpenDialog(options);
 		if (chosenFolder.filePaths.length > 0) {
-			
-
 			setHeaderInfo((prev) => {
 				let t = { ...JSON.parse(prev) };
 				t['outputPath'] = chosenFolder.filePaths[0] + '/test.pdf';
@@ -220,26 +215,26 @@ export default function InnerFramePopup() {
 		}
 	};
 
-	useEffect(() => {	
+	useEffect(() => {
 		const fs = window.require('fs');
 		const os = window.require('os');
 		const path = window.require('path');
 
-	// Get the temporary directory of the system
-	const tmpDir = os.tmpdir();
+		// Get the temporary directory of the system
+		const tmpDir = os.tmpdir();
 		fs.mkdtemp(`${tmpDir}${path.sep}`, (err, folder) => {
 			if (err) {
-					console.log(err);
+				console.log(err);
 			} else {
 				setHeaderInfo((prev) => {
 					let t = { ...JSON.parse(prev) };
-					t['workingDir'] = folder
+					t['workingDir'] = folder;
 					return JSON.stringify(t);
-
-				})
+				});
 			}
-	})},[])
-	
+		});
+	}, []);
+
 	return (
 		<div
 			style={{
@@ -496,7 +491,14 @@ export default function InnerFramePopup() {
 									  }
 							}
 							onClick={async () => {
-								if(isJsonValidate){
+								if (isJsonValidate) {
+									console.log('ici',
+										transformPrintDataToKitchenFoset({
+											order: orderSelection,
+											metaData: JSON.parse(headerInfo),
+											content: selected,
+										}),
+									);
 									let t = new global.PdfGenStatic(
 										transformPrintDataToKitchenFoset({
 											order: orderSelection,
@@ -505,18 +507,15 @@ export default function InnerFramePopup() {
 										}),
 										pdfCallBacks,
 									);
-	
+
 									const path = t.options.global.workingDir;
-									setMessagePrint(prev => prev + '\n' + 'working in '+path)
-									console.log(transformPrintDataToKitchenFoset({
-										order: orderSelection,
-										metaData: JSON.parse(headerInfo),
-										content: selected,
-									}))
-									await t.doPdf()
+									setMessagePrint(
+										(prev) =>
+											prev + '\n' + 'working in ' + path,
+									);
+
+									await t.doPdf();
 								}
-								
-								
 							}}>
 							print
 						</Button>
@@ -577,6 +576,7 @@ export default function InnerFramePopup() {
 }
 
 function transformPrintDataToKitchenFoset(jsonData) {
+	console.log(jsonData);
 	let kitchenFoset = [];
 	if (jsonData.content) {
 		for (let i = 0; i < jsonData.order.length; i++) {
@@ -587,28 +587,28 @@ function transformPrintDataToKitchenFoset(jsonData) {
 				if (elem.type === 'obsWrapper') {
 					elem.ranges = ['1-50'];
 				}
-
 			}
 			delete elem['content'];
 			elem.sections = [];
 			if (currentWrapper.content.order) {
 				for (let t = 0; t < currentWrapper.content.order.length; t++) {
-					let section = {...currentWrapper.content.content[
-						currentWrapper.content.order[t]
-					]}
-					let source = section.source
-					delete (section.source)
-					if(section.type ==='bookNote'){
-						section.notes = source
+					let section = {
+						...currentWrapper.content.content[
+							currentWrapper.content.order[t]
+						],
+					};
+					let source = section.source;
+					delete section.source;
+					if (section.type === 'bookNote') {
+						section.notes = source;
+					} else if (
+						section.type === 'bcvBible' ||
+						section.type === 'paraBible'
+					) {
+						section.content.scriptureSrc = source;
 					}
 
-					else if (section.type ==="bcvBible" || section.type === "paraBible"){
-						section.content.scriptureSrc = source
-					}
-					
-					elem.sections.push(
-						section
-					);
+					elem.sections.push(section);
 				}
 			}
 
@@ -632,30 +632,26 @@ function MessageToPeople(json) {
 			'Preparing section of type ' +
 			json.args[0] +
 			' from ' +
-			json.args[1].split('-')[0]
-			if(json.args[1].split('-')[1]){
-				message += 	' to ' +
-				json.args[1].split('-')[1];
-			}
-		
-	}else if (json.type === 'pdf'){
-		message += 'Writing pdf of ' + json.args[1]
-	}
-	 else {findProjectInfo
+			json.args[1].split('-')[0];
+		if (json.args[1].split('-')[1]) {
+			message += ' to ' + json.args[1].split('-')[1];
+		}
+	} else if (json.type === 'pdf') {
+		message += 'Writing pdf of ' + json.args[1];
+	} else {
+		findProjectInfo();
 		message += json.msg;
 	}
 	return message;
 }
 
-function findProjectInfo(meta,autoGrapha){
-	console.log(autoGrapha)
-	console.log(meta)
-	return autoGrapha.filter(a => a.name+"_"+a.id === meta)[0]
+export function findProjectInfo(meta, autoGrapha) {
+	return autoGrapha?.filter((a) => a.name + '_' + a.id === meta)[0];
 }
 
-function changeMetaDataToWrapperSection(meta,autoGrapha){
-	let t = findProjectInfo(meta,autoGrapha)
-	if(t.type === "Text Translation"){
+function changeMetaDataToWrapperSection(meta, autoGrapha) {
+	let t = findProjectInfo(meta, autoGrapha);
+	if (t.type === 'Text Translation') {
 		return {
 			0: {
 				type: 'bcvWrapper',
@@ -665,9 +661,8 @@ function changeMetaDataToWrapperSection(meta,autoGrapha){
 					order: [0],
 				},
 			},
-		}
-	}
-	else if(t.type === "OBS"){
+		};
+	} else if (t.type === 'OBS') {
 		return {
 			0: {
 				type: 'obsWrapper',
@@ -677,9 +672,8 @@ function changeMetaDataToWrapperSection(meta,autoGrapha){
 					order: [0],
 				},
 			},
-		}
+		};
 	}
-
 }
 
 function creatSection(folder, pickerJson) {

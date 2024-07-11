@@ -7,6 +7,8 @@ import { OBSWrapperSortableList } from './HeaderWrapper/OBSHeaderWrapper';
 import { BCVWrapperSortableList } from './HeaderWrapper/BCVHeaderWrapper';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { AutographaContext } from '@/components/context/AutographaContext';
+import { findProjectInfo } from '../../InnerFramePopup';
 export function WrapperTemplate({
 	setFinalPrint,
 	projectInfo,
@@ -17,10 +19,17 @@ export function WrapperTemplate({
 	changePrintData,
 	changePrintOrder,
 }) {
+	
 	const [orderSections, setOrderSelections] = useState([0]);
-	const [sections, setSections] = useState(firstElem(projectInfo));
-
+	const [sections, setSections] = useState(
+		firstElem(projectInfo),
+	);
+	console.log(sections);
 	//choice is the possible section by wrapper
+
+	useEffect(() => {
+		setSections(firstElem(projectInfo));
+	}, [projectInfo]);
 
 	const [LoopMode, setLoopMode] = useState(false);
 
@@ -38,7 +47,6 @@ export function WrapperTemplate({
 
 	//update final print Json
 	useEffect(() => {
-		console.log(JSON.parse(sections));
 		setFinalPrint((prev) => {
 			const t = { ...prev };
 			t[keyWrapper].content.content = JSON.parse(sections);
@@ -170,12 +178,10 @@ export function WrapperTemplate({
 							onClick={() => {
 								changePrintOrder((prev) => {
 									let t = [...prev];
-									console.log(keyWrapper);
 									t.splice(
 										t.indexOf(parseInt(keyWrapper)),
 										1,
 									);
-									console.log(t);
 									return t;
 								});
 
@@ -188,7 +194,6 @@ export function WrapperTemplate({
 									delete updatedSelected[
 										parseInt(keyWrapper)
 									];
-									console.log(updatedSelected);
 									return updatedSelected;
 								});
 							}}>
@@ -296,7 +301,7 @@ export function WrapperTemplate({
 												<Trash
 													color={'black'}
 													style={{
-														fill:'black',	
+														fill: 'black',
 														height: 35,
 														width: 35,
 													}}
@@ -363,7 +368,7 @@ export function WrapperTemplate({
 }
 
 function firstElem(projectInfo) {
-	console.log(projectInfo)
-	return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${projectInfo.path}","content": {} }}`;
+	return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${
+		projectInfo.path
+	}","content": {} }}`;
 }
-
