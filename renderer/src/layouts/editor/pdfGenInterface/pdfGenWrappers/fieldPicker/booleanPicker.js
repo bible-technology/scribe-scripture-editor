@@ -20,7 +20,7 @@ export function BooleanPicker({
 	}, [selected]);
 	return (
 		<div
-		style={open?{flexDirection:'row',display:'flex',justifyContent:'left'}:{display:'none'}}>
+		style={open?{flexDirection:'row',display:'flex',justifyContent:'left',marginTop:15}:{display:'none'}}>
 			<Checkbox
 				onChange={() => setSelected(prev => !prev)}
 				sx={{
@@ -37,7 +37,7 @@ export function BooleanPicker({
 
 				}}
 			/>
-			<div style={{ display: 'flex', alignSelf: 'center' }}>
+			<div style={{ display: 'flex', alignSelf: 'center',marginLeft:15 }}>
 				{fieldInfo.label[lang]}
 			</div>
 		</div>

@@ -9,7 +9,7 @@ export function selectOption(title, type, option, handleChange) {
 				paddingLeft: 22,
 				paddingRight: 22,
 				justifyContent: 'center',
-				paddingTop: 10,
+				marginBottom: 12,
 				alignItems: 'center',
 				justifyContent: 'space-between',
 			}}>
@@ -26,6 +26,7 @@ export function selectOption(title, type, option, handleChange) {
 				{title}
 			</div>
 			<select
+			className='selectScribeTheme'
 				style={{ borderRadius: 5 }}
 				id='payment'
 				name='payment'

@@ -14,7 +14,6 @@ export function FieldPicker({
 	listResourcesForPdf,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
-	console.log(fieldInfo, 'ici')
 
 	if(typeof(fieldInfo.typeLiteral) === typeof(true) || fieldInfo.typeLiteral){
 

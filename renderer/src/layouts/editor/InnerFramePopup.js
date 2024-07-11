@@ -1,5 +1,7 @@
-import { useState, useMemo, useEffect, useContext } from 'react';
-const fs = window.require('fs');
+import { useState, useEffect, useContext } from 'react';
+import localForage from 'localforage';
+import packageInfo from '../../../../package.json';
+import readLocalResources from '@/components/Resources/useReadLocalResources';
 
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Modal } from '@material-ui/core';
@@ -9,7 +11,8 @@ import { Button } from '@mui/material';
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { PdfPreview } from './pdfGenInterface/PdfPreview';
 import { v4 as uuidv4 } from 'uuid';
-
+import { ProjectContext} from '@/components/context/ProjectContext';
+import { AutographaContext } from '@/components/context/AutographaContext';
 import {
 	TextOnlyTooltip,
 	StyledSwitch,
@@ -17,6 +20,11 @@ import {
 import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplate';
 
 export default function InnerFramePopup() {
+
+	const {
+		states: { listResourcesForPdf },
+		actions: { setListResourcesForPdf },
+	} = useContext(ProjectContext);
 
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
 
@@ -28,25 +36,23 @@ export default function InnerFramePopup() {
 	//is the json is validate or not
 	const [isJsonValidate, setIsJsonValidate] = useState(false);
 	const [messagePrint, setMessagePrint] = useState('');
+	
 	//the actual kitchenFaucet
-
 	const pdfCallBacks = (json) => {
 		setMessagePrint((prev) => prev + '\n' + MessageToPeople(json));
 	};
-	const [selected, setSelected] = useState({
-		0: {
-			type: 'obsWrapper',
-			id: uuidv4(),
-			content: {
-				content: { 0: { type: 'obs', content: {} } },
-				order: [0],
-			},
-		},
-	});
+	const {
+		states: { selectedProject },
+	} = useContext(ProjectContext);
+
+	const {
+		states: { projects },
+	} = useContext(AutographaContext);
+	const [selected, setSelected] = useState(changeMetaDataToWrapperSection(selectedProject,projects));
 
 	//advenceMode allow adding new Wrapper
 	const [advanceMode, setAdvenceMode] = useState(false);
-
+	const [infoProject, setInfoProject] = useState(findProjectInfo(selectedProject,projects))
 	//the selected headerInfo
 	const [headerInfo, setHeaderInfo] = useState('{}');
 	//zoom of the preview
@@ -56,7 +62,7 @@ export default function InnerFramePopup() {
 	const handleOpenModalAddWrapper = (isOpen) => {
 		setOpenModalAddWrapper(isOpen);
 	};
-
+	console.log(infoProject)
 	const handleChangeHeaderInfo = (type, value) => {
 		let t = JSON.parse(headerInfo);
 		t[type] = value;
@@ -108,7 +114,7 @@ export default function InnerFramePopup() {
 
 		sortableList.addEventListener('dragover', initSortableList);
 		sortableList.addEventListener('dragenter', (e) => e.preventDefault());
-
+		console.log(selected)
 		return () => {
 			sortableList.removeEventListener('dragover', initSortableList);
 			items.forEach((item) => {
@@ -118,8 +124,59 @@ export default function InnerFramePopup() {
 			});
 		};
 	}, [update]);
+	useEffect(() => {
+		let pickerJson = Object.keys(listResourcesForPdf).reduce(
+			(a, v) => ({ ...a, [v]: {} }),
+			{},
+		);
+		localForage
+			.getItem('userProfile')
+			.then(async (user) => {
+				const path = require('path');
+				const newpath = localStorage.getItem('userPath');
+				const currentUser = user?.username;
+				const folderProject = path.join(
+					newpath,
+					packageInfo.name,
+					'users',
+					`${currentUser}`,
+					'projects',
+				);
+				setInfoProject(prev => {let p = {...prev}
+					p["path"] = path.join(
+						newpath,
+						packageInfo.name,
+						'users',
+						`${currentUser}`,
+						'projects',
+						`${p.name}_${p.id[0]}`
+					);
+					return p
+				})
+				const folderRessources = path.join(
+					newpath,
+					packageInfo.name,
+					'users',
+					`${currentUser}`,
+					'resources',
+				);
+				creatSection(folderProject, pickerJson);
+				creatSection(folderRessources, pickerJson);
+				return currentUser;
+			})
+			.then((currentUser) => {
+				setListResourcesForPdf(pickerJson);
+				return currentUser;
+			})
+			.then((currentUser) => readLocalResources(currentUser, () => {}));
+	}, []);
 
 	useEffect(() => {
+		console.log(	transformPrintDataToKitchenFoset({
+			order: orderSelection,
+			metaData: JSON.parse(headerInfo),
+			content: selected,
+		}))
 		if (
 			global.PdfGenStatic.validateConfig(
 				transformPrintDataToKitchenFoset({
@@ -130,7 +187,6 @@ export default function InnerFramePopup() {
 			).length === 0
 		) {
 			let header = JSON.parse(headerInfo);
-			console.log(header);
 			if (
 				header.workingDir &&
 				header.outputPath &&
@@ -171,12 +227,10 @@ export default function InnerFramePopup() {
 
 	// Get the temporary directory of the system
 	const tmpDir = os.tmpdir();
-		console.log('ici')
-	fs.mkdtemp(`${tmpDir}${path.sep}`, (err, folder) => {
+		fs.mkdtemp(`${tmpDir}${path.sep}`, (err, folder) => {
 			if (err) {
 					console.log(err);
 			} else {
-				console.log('ici')
 				setHeaderInfo((prev) => {
 					let t = { ...JSON.parse(prev) };
 					t['workingDir'] = folder
@@ -351,6 +405,7 @@ export default function InnerFramePopup() {
 									style={{ margin: 10 }}>
 									<WrapperTemplate
 										setFinalPrint={setSelected}
+										projectInfo={infoProject}
 										wrapperType={selected[k].type}
 										keyWrapper={k}
 										setUpdate={setUpdate}
@@ -441,40 +496,27 @@ export default function InnerFramePopup() {
 									  }
 							}
 							onClick={async () => {
-								console.log(
-									transformPrintDataToKitchenFoset({
+								if(isJsonValidate){
+									let t = new global.PdfGenStatic(
+										transformPrintDataToKitchenFoset({
+											order: orderSelection,
+											metaData: JSON.parse(headerInfo),
+											content: selected,
+										}),
+										pdfCallBacks,
+									);
+	
+									const path = t.options.global.workingDir;
+									setMessagePrint(prev => prev + '\n' + 'working in '+path)
+									console.log(transformPrintDataToKitchenFoset({
 										order: orderSelection,
 										metaData: JSON.parse(headerInfo),
 										content: selected,
-									}),
-								);
-								// console.log(transformPrintDataToKitchenFoset({
-								// 	order: orderSelection,
-								// 	metaData: JSON.parse(headerInfo),
-								// 	content: selected,
-								// }))
-								let t = new global.PdfGenStatic(
-									transformPrintDataToKitchenFoset({
-										order: orderSelection,
-										metaData: JSON.parse(headerInfo),
-										content: selected,
-									}),
-									pdfCallBacks,
-								);
-
-								const path = t.options.global.workingDir;
-								setMessagePrint(prev => prev + '\n' + 'working in '+path)
-								console.log(transformPrintDataToKitchenFoset({
-									order: orderSelection,
-									metaData: JSON.parse(headerInfo),
-									content: selected,
-								}))
-								// await t.doPdf().then((e) =>
-								// 	fs.rmdirSync(path, {
-								// 		recursive: true,
-								// 		force: true,
-								// 	}),
-								// );
+									}))
+									await t.doPdf()
+								}
+								
+								
 							}}>
 							print
 						</Button>
@@ -545,15 +587,27 @@ function transformPrintDataToKitchenFoset(jsonData) {
 				if (elem.type === 'obsWrapper') {
 					elem.ranges = ['1-50'];
 				}
+
 			}
 			delete elem['content'];
 			elem.sections = [];
 			if (currentWrapper.content.order) {
 				for (let t = 0; t < currentWrapper.content.order.length; t++) {
+					let section = {...currentWrapper.content.content[
+						currentWrapper.content.order[t]
+					]}
+					let source = section.source
+					delete (section.source)
+					if(section.type ==='bookNote'){
+						section.notes = source
+					}
+
+					else if (section.type ==="bcvBible" || section.type === "paraBible"){
+						section.content.scriptureSrc = source
+					}
+					
 					elem.sections.push(
-						currentWrapper.content.content[
-							currentWrapper.content.order[t]
-						],
+						section
 					);
 				}
 			}
@@ -565,7 +619,6 @@ function transformPrintDataToKitchenFoset(jsonData) {
 }
 
 function MessageToPeople(json) {
-	console.log(json);
 	let message = '';
 	for (let i = 0; i < json.level; i++) {
 		message += '\t';
@@ -588,29 +641,137 @@ function MessageToPeople(json) {
 	}else if (json.type === 'pdf'){
 		message += 'Writing pdf of ' + json.args[1]
 	}
-	 else {
+	 else {findProjectInfo
 		message += json.msg;
 	}
 	return message;
 }
 
-function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
-	const fs = require('fs');
-	const os = require('os');
+function findProjectInfo(meta,autoGrapha){
+	console.log(autoGrapha)
+	console.log(meta)
+	return autoGrapha.filter(a => a.name+"_"+a.id === meta)[0]
+}
+
+function changeMetaDataToWrapperSection(meta,autoGrapha){
+	let t = findProjectInfo(meta,autoGrapha)
+	if(t.type === "Text Translation"){
+		return {
+			0: {
+				type: 'bcvWrapper',
+				id: uuidv4(),
+				content: {
+					content: { 0: { type: 'null', content: {} } },
+					order: [0],
+				},
+			},
+		}
+	}
+	else if(t.type === "OBS"){
+		return {
+			0: {
+				type: 'obsWrapper',
+				id: uuidv4(),
+				content: {
+					content: { 0: { type: 'null', content: {} } },
+					order: [0],
+				},
+			},
+		}
+	}
+
+}
+
+function creatSection(folder, pickerJson) {
 	const path = require('path');
+	const newpath = localStorage.getItem('userPath');
+	const fs = window.require('fs');
 
-	return new Promise((resolve, reject) => {
-		const tempPath = path.join(os.tmpdir(), 'foobar-');
-		fs.mkdtemp(tempPath, (err, folder) => {
-			if (err) return reject(err);
+	const projects = fs.readdirSync(folder);
 
-			const file_name = path.join(folder, name);
+	let currentMetadataPath = '';
+	for (let project of projects) {
+		currentMetadataPath = path.join(
+			folder,
+			'/',
+			project,
+			'/',
+			'metadata.json',
+		);
+		if (fs.existsSync(currentMetadataPath)) {
+			let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
+			let jsonParse = JSON.parse(jsontest);
+			let projectS;
+			let jsonParseIngre;
 
-			fs.writeFile(file_name, data, encoding, (error_file) => {
-				if (error_file) return reject(error_file);
+			if (jsonParse.identification?.name.en) {
+				jsonParseIngre = jsonParse.ingredients;
+				projectS = '[' + jsonParse.identification.name.en + ']';
+			} else {
+				jsonParseIngre = jsonParse.meta.ingredients;
+				projectS = '[' + jsonParse.meta.full_name + ']';
+			}
 
-				resolve(file_name);
-			});
-		});
-	});
+			let fileName, tmpScope, tmpRangeScope;
+			if (
+				jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation'
+			) {
+				if (jsonParse.resourceMeta) {
+					pickerJson.book[jsonParse.resourceMeta?.full_name] = {
+						description: `${jsonParse.resourceMeta?.full_name}`,
+						language: `${jsonParse.resourceMeta?.language}`,
+						src: {
+							type: 'fs',
+							path: `${folder}/${project}`,
+						},
+						books: [],
+					};
+				} else if (jsonParse.identification) {
+					pickerJson.book[
+						jsonParse.identification.name[
+							jsonParse.languages[0].tag
+						]
+					] = {
+						description: `${
+							jsonParse.identification.name[
+								jsonParse.languages[0].tag
+							]
+						}`,
+						language: `${jsonParse.languages[0].tag}`,
+						src: {
+							type: 'fs',
+							path: `${folder}/${project}`,
+						},
+						books: [],
+					};
+				}
+			} else if (
+				jsonParse?.type?.flavorType?.flavor?.name === 'textStories'
+			) {
+				fileName = 'content';
+				pickerJson.OBS[`OBS ${jsonParse.resourceMeta?.full_name}`] = {
+					description: `OBS ${jsonParse.resourceMeta?.full_name}`,
+					language: jsonParse.meta.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${folder}/${project}/${fileName}`,
+					},
+					books: [],
+				};
+			} else if (
+				jsonParse?.meta?.repo?.flavor_type === 'parascriptural'
+			) {
+				fileName = 'content';
+				pickerJson.tNotes[`tNotes ${jsonParse.meta.repo.full_name}`] = {
+					description: `tNotes ${jsonParse.meta.repo.full_name}`,
+					language: jsonParse.meta.defaultLocale,
+					src: {
+						type: 'fs',
+						path: `${folder}/${project}`,
+					},
+					books: [],
+				};
+			}
+		}
+	}
 }

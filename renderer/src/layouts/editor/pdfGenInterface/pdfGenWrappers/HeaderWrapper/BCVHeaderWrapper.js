@@ -31,9 +31,8 @@ export function BCVWrapperSortableList({
 		initialVerse,
 	});
 	const {
-		states: { canonList },
+		states: { canonList},
 	} = useContext(ProjectContext);
-
 	//end get all book from current project
 	const [selectedBooks, setSelectedBooks] = useState([]);
 	const [openModalBook, setOpenModalBook] = useState(false);
