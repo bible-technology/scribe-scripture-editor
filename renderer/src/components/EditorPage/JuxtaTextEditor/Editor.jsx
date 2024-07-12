@@ -19,7 +19,7 @@ import { functionMapping } from './utils/insertFunctionMap';
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
 import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // eslint-disable-line
-// import { readUserSettings } from '@/core/projects/userSettings';
+import { readUserSettings } from '@/core/projects/userSettings';
 
 export default function Editor(props) {
   const {
@@ -39,6 +39,8 @@ export default function Editor(props) {
     setChapterNumber,
     setVerseNumber,
     triggerVerseInsert,
+    juxtaMode,
+    setJuxtaMode,
   } = props;
 
   const {
@@ -50,6 +52,9 @@ export default function Editor(props) {
   const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
   const [jsonFileContent, setJsonFileContent] = useState(null);
   const [loadingSentencesInProgress, setLoadingSentencesInProgress] = useState(true);
+
+  const [zoomLeftJuxtalign, setZoomLeftJuxtalign] = useState(24);
+  const [zoomRightJuxtalign, setZoomRightJuxtalign] = useState(24);
 
   const {
     states: { openSideBar, scrollLock },
@@ -69,8 +74,11 @@ export default function Editor(props) {
   const style = isSaving ? { cursor: 'progress' } : {};
 
   const [fileName, setFileName] = useState('');
-  const [sentences, setGlobalTotalSentences] = useState([]);
-  const [originText, setOriginText] = useState([]);
+  const [helpAldearyOpenedOnce, setHelpAldearyOpenedOnce] = useState(false);
+  const [sentences, setGlobalTotalSentences] = useState(
+    new Array(),
+  );
+  const [originText, setOriginText] = useState([])
   const [itemArrays, setItemArrays] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
 
@@ -108,6 +116,20 @@ export default function Editor(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerVerseInsert]);
+
+  useEffect(() => {
+    async function getUserSettings() {
+      console.log("function Called!")
+      if (!userSettingsJson) {
+        console.log("userSettingsJson updated!")
+        let tmpUsrSet = await readUserSettings();
+        setHelpAldearyOpenedOnce(true);
+        setUserSettingsJson(tmpUsrSet);
+      }
+    }
+    console.log("useEffect!")
+    getUserSettings();
+  }, [helpAldearyOpenedOnce]);
 
   useAutoSaveIndication(isSaving);
 
@@ -245,6 +267,7 @@ export default function Editor(props) {
     setVerseNumber,
     bookChange,
     setBookChange,
+    juxtaMode,
   };
 
   return (
@@ -272,6 +295,10 @@ export default function Editor(props) {
               userSettingsJson,
               loadingSentencesInProgress,
               setLoadingSentencesInProgress,
+              helpAldearyOpenedOnce,
+              zoomLeftJuxtalign,
+              zoomRightJuxtalign,
+              userSettingsJson,
               setFileName,
               setGlobalSentences,
               setOriginText,
@@ -282,6 +309,9 @@ export default function Editor(props) {
               setChapterNumber,
               setVerseNumber,
               setJsonFileContent,
+              setHelpAldearyOpenedOnce,
+              setZoomLeftJuxtalign,
+              setZoomRightJuxtalign,
               setUserSettingsJson,
               getItems,
             }}

@@ -10,6 +10,7 @@ bower_components
 out_functions/
 out_publish/
 /out
+/release
 
 # ignore db files
 Autogrpha-DB/
@@ -74,4 +75,3 @@ coverage
 
 # Optional REPL history
 .node_repl_history
-

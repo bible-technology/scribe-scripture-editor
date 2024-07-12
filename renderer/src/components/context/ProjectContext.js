@@ -87,6 +87,7 @@ const ProjectContextProvider = ({ children }) => {
       theme: 'light',
       userWorkspaceLocation: '',
       commonWorkspaceLocation: '',
+      juxtalignHelperOpened: false,
       resources: {
         door43: {
           translationNotes: [],

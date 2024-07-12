@@ -18399,7 +18399,7 @@ proskomma-json-tools@^0.7.1:
     cheerio "^1.0.0-rc.12"
     deep-equal "^2.2.2"
 
-proskomma-json-tools@^0.8.16, proskomma-json-tools@^0.8.8:
+proskomma-json-tools@^0.8.16:
   version "0.8.16"
   resolved "https://registry.yarnpkg.com/proskomma-json-tools/-/proskomma-json-tools-0.8.16.tgz#8b3ab08e47bc003382d79f139f030698d3f3f609"
   integrity sha512-pAAhGLbE41/OxxdtKByO6y6b+Sobw3gokMG5hHjzImSZLQPohvPoZBLG7fIqOvfQxI/XFY8CrkiVpHDl2L/1FQ==
