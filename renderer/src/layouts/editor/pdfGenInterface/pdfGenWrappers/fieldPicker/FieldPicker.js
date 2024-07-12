@@ -15,17 +15,25 @@ export function FieldPicker({
 }) {
 	let require = fieldInfo.nValues[0] > 0;
 
-	if(typeof(fieldInfo.typeLiteral) === typeof(true) || fieldInfo.typeLiteral){
-
+	if (typeof fieldInfo.typeLiteral === typeof true || fieldInfo.typeLiteral) {
 		setJsonSpec((prev) => {
-      const newState = JSON.parse(prev);
-      newState[fieldInfo.id] = fieldInfo.typeLiteral;
-      return JSON.stringify(newState);
-    });
-		return <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-    <div>{fieldInfo.label[lang]} :</div>
-    <div style={{ fontSize: 16 }}>{fieldInfo.typeLiteral}</div>
-  </div>	}
+			const newState = JSON.parse(prev);
+			newState[fieldInfo.id] = fieldInfo.typeLiteral;
+			return JSON.stringify(newState);
+		});
+		return (
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'center',
+				}}>
+				<div>{fieldInfo.label[lang]} :</div>
+				<div style={{ fontSize: 16 }}>{fieldInfo.typeLiteral}</div>
+			</div>
+		);
+	}
 	if (fieldInfo.typeEnum) {
 		if (1 === fieldInfo.nValues[1]) {
 			return (
@@ -85,16 +93,21 @@ export function FieldPicker({
 		fieldInfo.typeName === 'obsNotes' ||
 		fieldInfo.typeName === 'html'
 	) {
-		return (
-			<RessourcePicker
-				setJsonSpec={setJsonSpec}
-				fieldInfo={fieldInfo}
-				ressourceKey={fieldInfo.typeName}
-				require={require}
-				open={open}
-			/>
-		);
-	} else if (fieldInfo.typeName === 'integer') {
+		if (fieldInfo.id !== 'scriptureSrc') {
+			return (
+				<RessourcePicker
+					setJsonSpec={setJsonSpec}
+					fieldInfo={fieldInfo}
+					ressourceKey={fieldInfo.typeName}
+					require={require}
+					open={open}
+				/>
+			);
+		}
+	} else if (
+		fieldInfo.typeName === 'integer' ||
+		fieldInfo.typeName === 'number'
+	) {
 		return (
 			<IntPicker
 				setJsonSpec={setJsonSpec}

@@ -266,7 +266,6 @@ export function AccordionPicker({
 							
 							<ScriptureContentPicker
 								onSelect={(e) => {
-									console.log(e)
 									setTitle(e.localLabel)
 									setSelected((prev) => {let pr = JSON.parse(prev)
 										pr[idjson]['source'] = e.src.path
