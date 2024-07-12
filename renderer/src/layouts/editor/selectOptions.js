@@ -39,6 +39,9 @@ export function selectOption(title, type, option, handleChange) {
 
 				{Object.keys(option).map((o) => (
 					<option
+						selected={o === "allGentium" 
+											|| o === "EXECUTIVE"
+											|| o === "9on11" ? 'selected' : ''}
 						id={o}
 						value={o}
 						style={{
