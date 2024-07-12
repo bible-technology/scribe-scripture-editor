@@ -54,6 +54,7 @@ export default function InnerFramePopup() {
 	const [advanceMode, setAdvenceMode] = useState(false);
 	const [infoProject, setInfoProject] = useState(findProjectInfo(selectedProject,projects))
 	//the selected headerInfo
+	// const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
 	const [headerInfo, setHeaderInfo] = useState('{}');
 	//zoom of the preview
 
@@ -187,6 +188,7 @@ export default function InnerFramePopup() {
 			).length === 0
 		) {
 			let header = JSON.parse(headerInfo);
+			console.log('header ==',header);
 			if (
 				header.workingDir &&
 				header.outputPath &&

@@ -105,6 +105,15 @@ export function FieldPicker({
 			/>
 		);
 	} else {
+		// return (
+		// 	<InputPicker
+		// 		setJsonSpec={setJsonSpec}
+		// 		fieldInfo={fieldInfo}
+		// 		require={require}
+		// 		lang={lang}
+		// 		open={open}
+		// 	/>
+		// );
 		return <div>{fieldInfo.id} : picker not found</div>;
 	}
 }
