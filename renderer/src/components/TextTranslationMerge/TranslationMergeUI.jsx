@@ -10,12 +10,13 @@ import { readUsfmFile } from '@/core/projects/userSettings';
 import localforage from 'localforage';
 import { flushSync } from 'react-dom';
 import TranslationMergNavBar from './TranslationMergNavBar';
-import * as logger from '../../logger';
+// import * as logger from '../../logger';
 import LoadingScreen from '../Loading/LoadingScreen';
 import UsfmConflictEditor from './UsfmConflictEditor';
 import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
+/* eslint-disable import/no-unresolved , import/extensions */
 import { useGrammartoPerf } from '@/hooks2/useGrammartoPerf';
 
 const grammar = require('usfm-grammar');

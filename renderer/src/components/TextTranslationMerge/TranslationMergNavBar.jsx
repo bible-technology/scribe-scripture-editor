@@ -1,10 +1,10 @@
 // import { Cog8ToothIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 
 function TranslationMergNavBar({
   conflictedBooks, selectedBook, setSelectedBook, resolvedBooks, disableSelection, conflictedChapters, selectedChapter, setSelectedChapter,
 }) {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   return (
     <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden ">
       <div className="flex items-center justify-between bg-black py-1.5 px-2.5">

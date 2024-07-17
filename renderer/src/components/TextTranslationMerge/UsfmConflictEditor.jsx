@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowSmallDownIcon, ArrowSmallUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
+  ArrowSmallDownIcon, ArrowSmallUpIcon, ArrowPathRoundedSquareIcon,
 } from '@heroicons/react/20/solid';
 
+/* eslint-disable no-unused-vars */
 function UsfmConflictEditor({
   usfmJsons, currentProjectMeta, selectedChapter, setUsfmJsons, setChapterResolveDone, resolvedChapters, selectedBook, resolvedBooks, conflictedChapters,
 }) {
