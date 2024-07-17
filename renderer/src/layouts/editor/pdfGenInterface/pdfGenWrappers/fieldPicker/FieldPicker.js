@@ -21,6 +21,7 @@ export function FieldPicker({
 			newState[fieldInfo.id] = fieldInfo.typeLiteral;
 			return JSON.stringify(newState);
 		});
+
 		return (
 			<div
 				style={{
@@ -93,7 +94,7 @@ export function FieldPicker({
 		fieldInfo.typeName === 'obsNotes' ||
 		fieldInfo.typeName === 'html'
 	) {
-		if (fieldInfo.id !== 'scriptureSrc') {
+		if (!['scriptureSrc','obs'].includes(fieldInfo.id)) {
 			return (
 				<RessourcePicker
 					setJsonSpec={setJsonSpec}

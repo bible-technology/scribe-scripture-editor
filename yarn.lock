@@ -14125,10 +14125,10 @@ just-diff@^5.0.1:
   resolved "https://registry.yarnpkg.com/just-diff/-/just-diff-5.2.0.tgz#60dca55891cf24cd4a094e33504660692348a241"
   integrity sha512-6ufhP9SHjb7jibNFrNxyFZ6od3g+An6Ai9mhGRvcYe8UJlH0prseN64M+6ZBBUoKYHZsitDP42gAJ8+eVWr3lw==
 
-jxl-pdf@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.3.0.tgz#9e944ae2a4836671b96b65d80a7758a0e36fdddb"
-  integrity sha512-XHT3nFnQEj/bKjgINvYfJbVf/7g+TIrao1+mKkT4ok/mlwilYi0T3wXOZiUQQoGIWxgr67kvZW0Myypey+Eldg==
+jxl-pdf@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.3.1.tgz#95a59763a1f57434f8b39340e5467e490a4dc6e3"
+  integrity sha512-JgdLaDb+OnH5K2FunGVeqYdZKoHim4Ax9pMFfi54bw7DYVbayRi81P8YZ2nQtotMEuIutR26mFUuGqwpJCSgcg==
   dependencies:
     commander "^11.1.0"
     fontkit "^2.0.2"

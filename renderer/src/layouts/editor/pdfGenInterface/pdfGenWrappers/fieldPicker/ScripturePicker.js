@@ -1,25 +1,66 @@
 import { useState, useEffect } from 'react';
 import { FieldPicker } from './FieldPicker';
 import { Button } from '@mui/material';
-export function ScripturePicker({
-	fieldInfo,
-	setJsonSpec,
-	lang,
-	open = true,
-}) {
+export function ScripturePicker({ fieldInfo, setJsonSpec, lang, open = true }) {
 	const [scriptureJson, setScriptureJson] = useState('{}');
+	const [scriptureTable, setScriptureTable] = useState('[]');
 	const [numberOfScripture, setNumberOfScripture] = useState(
 		fieldInfo.nValues[0],
 	);
+	useEffect(() => {
+		setNumberOfScripture(fieldInfo.nValues[0]);
+	}, [fieldInfo]);
+	useEffect(() => {
+		setScriptureTable((prev) => {
+			let t = JSON.parse(prev);
+			if (numberOfScripture > t.length) {
+				for (let i = t.length; i < numberOfScripture; i++) {
+					t.push({});
+				}
+			} else if (numberOfScripture < t.length) {
+				for (let i = t.length; i > numberOfScripture; i--) {
+					if (t.length > 0) {
+						t.pop();
+					}
+				}
+			}
+			return JSON.stringify(t);
+		});
+	}, [numberOfScripture]);
 
 	useEffect(() => {
 		setJsonSpec((prev) => {
 			const newState = JSON.parse(prev);
-			newState[fieldInfo.id] = JSON.parse(scriptureJson);
+			newState[fieldInfo.id] = JSON.parse(scriptureTable);
 			return JSON.stringify(newState);
 		});
-	}, [scriptureJson]);
+	}, [scriptureTable]);
+	useEffect(() => {
+    setScriptureTable((prev) => {
+        // Parse the JSON state
+        let json = JSON.parse(scriptureJson);
 
+        // Create a new array to avoid direct mutation
+        let newTable = JSON.parse(prev);
+
+        // Iterate over the keys in the parsed JSON
+        Object.keys(json).forEach((k) => {
+            fieldInfo.typeSpec.forEach((field) => {
+                const id = field.id.replace('#', '');
+                for (let i = 0; i < numberOfScripture; i++) {
+                    if (k.includes(`${id}${i}`)) {
+                        if (newTable[i]) {
+                            newTable[i][id] = json[k];
+                        }
+                    }
+                }
+            });
+        });
+
+        // Return the new table array
+        return JSON.stringify(newTable);
+    });
+}, [scriptureJson, fieldInfo.typeSpec, numberOfScripture]);
 	useEffect(() => {
 		setScriptureJson((prev) => {
 			const newState = JSON.parse(prev);
@@ -89,7 +130,7 @@ export function ScripturePicker({
 						{fieldInfo.typeSpec.map((f) => {
 							return (
 								<FieldPicker
-									fieldInfo={changeIndexOfScripture(f, i + 1)}
+									fieldInfo={changeIndexOfScripture(f, i)}
 									setJsonSpec={setScriptureJson}
 									lang={lang}
 								/>
