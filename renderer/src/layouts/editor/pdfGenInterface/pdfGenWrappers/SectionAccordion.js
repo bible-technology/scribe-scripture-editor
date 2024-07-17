@@ -19,7 +19,7 @@ export function AccordionPicker({
 	advanceMode,
 	wrapperType,
 }) {
-
+	console.log()
 	const {
 		states: { listResourcesForPdf },
 		actions: { setListResourcesForPdf },
@@ -32,11 +32,9 @@ export function AccordionPicker({
 		setSearchText(e.target.value);
 	};
 	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(
-		Object.keys(listResourcesForPdf).reduce(
-			(a, v) => ({ ...a, [v]: {} }),
-			{},
-		),
+		{[convertionWrapperType(wrapperType)]:listResourcesForPdf[convertionWrapperType(wrapperType)]}
 	);
+	console.log()
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
 		setSearchText('');
@@ -64,7 +62,7 @@ export function AccordionPicker({
 			});
 			setLocalListResourcesForPdf(newListResources);
 		} else {
-			setLocalListResourcesForPdf(listResourcesForPdf);
+			setLocalListResourcesForPdf({[convertionWrapperType(wrapperType)]:listResourcesForPdf[convertionWrapperType(wrapperType)]});
 		}
 	}, [searchText, setSearchText, openModal, setOpenModal]);
 
@@ -73,7 +71,7 @@ export function AccordionPicker({
 	const [openModalSectionSelection, setOpenModalSectionSelection] =
 		useState(false);
 	const listChoiceSectionByWrapper =
-		require('./fieldPicker/WrapperSection.json')[wrapperType];
+		require('./fieldPicker/WrapperSection.json')[wrapperType]["advance"][advanceMode];
 	const jsonSpec = global.PdfGenStatic.handlerInfo();
 
 	const handleAccordionChange = () => {
@@ -90,6 +88,7 @@ export function AccordionPicker({
 				}
 				
 			}
+
 			return JSON.stringify(updatedSelected);
 		});
 	}, [jsonSpecEntry]);
@@ -267,7 +266,8 @@ export function AccordionPicker({
 							<ScriptureContentPicker
 								onSelect={(e) => {
 									setTitle(e.localLabel)
-									setSelected((prev) => {let pr = JSON.parse(prev)
+									setSelected((prev) => {
+										let pr = JSON.parse(prev)
 										pr[idjson]['source'] = e.src.path
 										return JSON.stringify(pr)
 									})
@@ -289,12 +289,23 @@ export function AccordionPicker({
 					setSelected((prev) => {
 						let t = { ...JSON.parse(prev) };
 						t[idjson]['type'] = c;
-
+						t[idjson]['content'] = {}
 						return JSON.stringify(t);
 					});
+					setJsonSpecEntry('{}')
 					setOpenModalSectionSelection(false);
 				}}
 			/>
 		</>
 	);
+}
+
+
+const  convertionWrapperType = (type) => {
+	if(type === 'obsWrapper'){
+		return "OBS"
+	}
+	if(type === 'bcvWrapper'){
+		return "book"
+	}
 }

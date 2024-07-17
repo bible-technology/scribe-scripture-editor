@@ -1,16 +1,42 @@
 {
-	"bcvWrapper": [
-		"bookNote",
-		"4ColumnSpread",
-		"2Column",
-		"bcvBible",
-		"biblePlusNotes",
-		"paraBible",
-		"markdown",
-		"jxlSpread",
-		"jxlSimple"
-	],
-	"obsWrapper": ["obs", "obsPlusNotes"],
-	"JxlWrapper": ["jxlSpread", "jxlSimple"],
-	"markdown": ["markdown"]
+	"bcvWrapper": {
+		"advance": {
+			"true": [
+				"bookNote",
+				"4ColumnSpread",
+				"2Column",
+				"bcvBible",
+				"biblePlusNotes",
+				"paraBible",
+				"markdown",
+				"jxlSpread",
+				"jxlSimple"
+			],
+			"false": [
+				"bookNote",
+				"bcvBible",
+				"biblePlusNotes",
+				"paraBible",
+				"jxlSimple"
+			]
+		}
+	},
+	"obsWrapper": {
+		"advance": {
+			"true": ["obs", "obsPlusNotes"],
+			"false": ["obs", "obsPlusNotes"]
+		}
+	},
+	"JxlWrapper": {
+		"advance": {
+			"true": ["jxlSpread", "jxlSimple"],
+			"false": ["jxlSpread", "jxlSimple"]
+		}
+	},
+	"markdown": {
+		"advance": {
+			"true": ["markdown"],
+			"false": ["markdown"]
+		}
+	}
 }

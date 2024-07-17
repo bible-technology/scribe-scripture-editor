@@ -11,22 +11,22 @@ import { Modal } from '@mui/material';
 import { SnackBar } from '@/components/SnackBar';
 import InnerFramePopup from '@/layouts/editor/InnerFramePopup';
 import CssBaseline from '@mui/material/CssBaseline';
-
+import { Button } from '@mui/material';
 export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const [openSnackBar, setOpenSnackBar] = useState(false);
 	const [snackText, setSnackText] = useState('');
 	const [error, setError] = useState('');
 	const [currentTab, setCurrentTab] = useState(0);
 
-	const removeSection = () => {
-		setOpenPdfPopup(false);
-	};
+	// const removeSection = () => {
+	// 	setOpenPdfPopup(false);
+	// };
 
 	return (
 		<>
 			<CssBaseline />
 			<Modal
-				onClose={removeSection}
+				// onClose={removeSection}
 				open={openPdfPopup}
 				style={{ marginTop: 10 }}>
 				<div
@@ -52,17 +52,25 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 							width: '100%',
 							backgroundColor: '#292A2D',
 						}}>
-						<div
-							style={{
-								textAlign: 'center',
-								width: '100%',
-								fontSize: 24,
-								padding: 12,
-								color: 'white',
-							}}
-							className='text-white font-bold text-sm'>
-							Export
+						<div style={{ display: 'flex', flexDirection: 'row' }}>
+							<div
+								style={{
+									textAlign: 'center',
+									width: '100%',
+									fontSize: 24,
+									padding: 12,
+									color: 'white',
+								}}
+								className='text-white font-bold text-sm'>
+								Export
+							</div>
+							<Button
+								style={tabStyleSelected}
+								onClick={() => setOpenPdfPopup(false)}>
+								<div style={fontStyle}>X</div>
+							</Button>
 						</div>
+
 						<div
 							style={{
 								display: 'flex',

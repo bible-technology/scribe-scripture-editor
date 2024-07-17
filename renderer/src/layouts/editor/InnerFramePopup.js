@@ -8,6 +8,7 @@ import { Modal } from '@material-ui/core';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { selectOption } from './selectOptions';
 import { Button } from '@mui/material';
+import { Input } from '@mui/material';
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { PdfPreview } from './pdfGenInterface/PdfPreview';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +27,6 @@ export default function InnerFramePopup() {
 	} = useContext(ProjectContext);
 
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
-
 	const jsonWithHeaderChoice = global.PdfGenStatic.pageInfo();
 	//use to know if we can drag or not
 	const [update, setUpdate] = useState(true);
@@ -60,6 +60,8 @@ export default function InnerFramePopup() {
 	//the selected headerInfo
 	// const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
 	const [headerInfo, setHeaderInfo] = useState('{}');
+	const [nameFile, setNameFile] = useState('');
+	const [folder, setFolder] = useState(null);
 	//zoom of the preview
 
 	const [openModalAddWrapper, setOpenModalAddWrapper] = useState(false);
@@ -196,27 +198,50 @@ export default function InnerFramePopup() {
 			)
 				setIsJsonValidate(true);
 		} else {
+			console.log(
+				global.PdfGenStatic.validateConfig(
+					transformPrintDataToKitchenFoset({
+						order: orderSelection,
+						metaData: JSON.parse(headerInfo),
+						content: selected,
+					}),
+				),
+			);
 			setIsJsonValidate(false);
 		}
 	}, [selected, headerInfo]);
 	const openFileDialogSettingData = async () => {
-		const options = {
-			properties: ['openDirectory'],
-		};
-		const { dialog } = window.require('@electron/remote');
-		const chosenFolder = await dialog.showOpenDialog(options);
-		if (chosenFolder.filePaths.length > 0) {
+		try {
+			const options = {
+				properties: ['openDirectory'],
+			};
+			const { dialog } = window.require('@electron/remote');
+			const chosenFolder = await dialog.showOpenDialog(options);
+			if (chosenFolder.canceled) {
+				// Handle dialog cancel case
+				console.log('Dialog was canceled');
+				return;
+			}
+			if (chosenFolder.filePaths.length > 0) {
+				setFolder(chosenFolder.filePaths[0]);
+			} else {
+				// Handle case where no folder was selected
+				console.log('No folder was selected');
+			}
+		} catch (error) {
+			console.error('Error opening file dialog:', error);
+		}
+	};
+	useEffect(() => {
+		if (folder && nameFile !== '') {
 			setHeaderInfo((prev) => {
 				let t = { ...JSON.parse(prev) };
-				t['outputPath'] = chosenFolder.filePaths[0] + '/test.pdf';
+				t['outputPath'] = folder + '/' + nameFile + '.pdf';
 				t['verbose'] = false;
 				return JSON.stringify(t);
 			});
-		} else {
-			close();
 		}
-	};
-
+	}, [nameFile, folder]);
 	useEffect(() => {
 		const fs = window.require('fs');
 		const os = window.require('os');
@@ -236,6 +261,15 @@ export default function InnerFramePopup() {
 			}
 		});
 	}, []);
+
+	const handleInputChange = (e) => {
+		const value = e.target.value;
+		const regex = /^[a-zA-Z_]*$/; // Regular expression to allow only letters and underscores
+
+		if (regex.test(value)) {
+			setNameFile(value); // Update state only if the input matches the regex
+		}
+	};
 
 	return (
 		<div
@@ -455,8 +489,9 @@ export default function InnerFramePopup() {
 					<div
 						style={{
 							display: 'flex',
-							justifyContent: 'center',
+							flexDirection: 'column',
 							padding: 15,
+							gap: 12,
 						}}>
 						<Button
 							style={{
@@ -465,13 +500,21 @@ export default function InnerFramePopup() {
 								borderStyle: 'solid',
 								borderColor: '#F50',
 								color: 'white',
+								margin: 'auto',
 								padding: 15,
 							}}
 							onClick={() => {
 								openFileDialogSettingData();
 							}}>
-							choose export file
+							Choose export folder
 						</Button>
+						<Input
+							onChange={(e) => {
+								handleInputChange(e);
+							}}
+							value={nameFile}
+							placeholder={'your file name here'}
+						/>
 						<Button
 							style={
 								isJsonValidate
@@ -479,6 +522,8 @@ export default function InnerFramePopup() {
 											borderRadius: 4,
 											backgroundColor: '#F50',
 											borderStyle: 'solid',
+											margin: 'auto',
+
 											borderColor: '#F50',
 											color: 'white',
 											padding: 15,
@@ -488,19 +533,14 @@ export default function InnerFramePopup() {
 											backgroundColor: 'grey',
 											borderStyle: 'solid',
 											borderColor: '#F50',
+											margin: 'auto',
+
 											color: 'white',
 											padding: 15,
 									  }
 							}
 							onClick={async () => {
 								if (isJsonValidate) {
-									console.log('ici',
-										transformPrintDataToKitchenFoset({
-											order: orderSelection,
-											metaData: JSON.parse(headerInfo),
-											content: selected,
-										}),
-									);
 									let t = new global.PdfGenStatic(
 										transformPrintDataToKitchenFoset({
 											order: orderSelection,
@@ -516,7 +556,14 @@ export default function InnerFramePopup() {
 											prev + '\n' + 'working in ' + path,
 									);
 
-									await t.doPdf();
+									try {
+										await t.doPdf(); // Ensure doPdf is awaited since it's async
+									} catch (pdfError) {
+										setMessagePrint(
+											'PDF generation failed: ' +
+												pdfError.message,
+										);
+									}
 								}
 							}}>
 							print
@@ -578,7 +625,6 @@ export default function InnerFramePopup() {
 }
 
 function transformPrintDataToKitchenFoset(jsonData) {
-	console.log(jsonData);
 	let kitchenFoset = [];
 	if (jsonData.content) {
 		for (let i = 0; i < jsonData.order.length; i++) {
@@ -608,6 +654,8 @@ function transformPrintDataToKitchenFoset(jsonData) {
 						section.type === 'paraBible'
 					) {
 						section.content.scriptureSrc = source;
+					} else if (section.type === 'obs') {
+						section.content.obs = source;
 					}
 
 					elem.sections.push(section);

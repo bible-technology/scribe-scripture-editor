@@ -24,7 +24,6 @@ export function WrapperTemplate({
 	const [sections, setSections] = useState(
 		firstElem(projectInfo),
 	);
-	console.log(sections);
 	//choice is the possible section by wrapper
 
 	useEffect(() => {
@@ -49,8 +48,20 @@ export function WrapperTemplate({
 	useEffect(() => {
 		setFinalPrint((prev) => {
 			const t = { ...prev };
-			t[keyWrapper].content.content = JSON.parse(sections);
-			return t;
+			if (!t[keyWrapper]) {
+				t[keyWrapper] = { content: {} };
+		}
+		if (!t[keyWrapper].content) {
+				t[keyWrapper].content = {};
+		}
+
+		// Clear the existing content
+		t[keyWrapper].content.content = {};
+
+		// Update with new sections
+		t[keyWrapper].content.content = JSON.parse(sections);
+		
+		return t;
 		});
 	}, [sections]);
 
