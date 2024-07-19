@@ -1,4 +1,4 @@
-import { useEffect, useState,useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { FieldPicker } from './fieldPicker/FieldPicker';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -19,22 +19,32 @@ export function AccordionPicker({
 	advanceMode,
 	wrapperType,
 }) {
-	console.log()
 	const {
 		states: { listResourcesForPdf },
 		actions: { setListResourcesForPdf },
 	} = useContext(ProjectContext);
-	const [title,setTitle]  = useState(projectInfo.name)
+	const jsonSpec = global.PdfGenStatic.handlerInfo();
+	const [title, setTitle] = useState(projectInfo.name);
 	const [searchText, setSearchText] = useState('');
 	const [openModal, setOpenModal] = useState(false);
+	const [testForRefresh, setTestForRefresh] = useState(null);
+
+	useEffect(() => {
+		setTestForRefresh(null);
+	}, [keySpecification]);
+	useEffect(() => {
+		if (!testForRefresh) {
+			setTestForRefresh(jsonSpec[keySpecification]);
+		}
+	}, [keySpecification, testForRefresh]);
 
 	const handleInputSearch = (e) => {
 		setSearchText(e.target.value);
 	};
-	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(
-		{[convertionWrapperType(wrapperType)]:listResourcesForPdf[convertionWrapperType(wrapperType)]}
-	);
-	console.log()
+	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState({
+		[convertionWrapperType(wrapperType)]:
+			listResourcesForPdf[convertionWrapperType(wrapperType)],
+	});
 	const handleOpenModal = (isOpen) => {
 		setOpenModal(isOpen);
 		setSearchText('');
@@ -62,7 +72,10 @@ export function AccordionPicker({
 			});
 			setLocalListResourcesForPdf(newListResources);
 		} else {
-			setLocalListResourcesForPdf({[convertionWrapperType(wrapperType)]:listResourcesForPdf[convertionWrapperType(wrapperType)]});
+			setLocalListResourcesForPdf({
+				[convertionWrapperType(wrapperType)]:
+					listResourcesForPdf[convertionWrapperType(wrapperType)],
+			});
 		}
 	}, [searchText, setSearchText, openModal, setOpenModal]);
 
@@ -71,8 +84,9 @@ export function AccordionPicker({
 	const [openModalSectionSelection, setOpenModalSectionSelection] =
 		useState(false);
 	const listChoiceSectionByWrapper =
-		require('./fieldPicker/WrapperSection.json')[wrapperType]["advance"][advanceMode];
-	const jsonSpec = global.PdfGenStatic.handlerInfo();
+		require('./fieldPicker/WrapperSection.json')[wrapperType]['advance'][
+			advanceMode
+		];
 
 	const handleAccordionChange = () => {
 		setOpen((prevOpen) => !prevOpen);
@@ -83,10 +97,9 @@ export function AccordionPicker({
 		setSelected((prevSelected) => {
 			const updatedSelected = { ...JSON.parse(prevSelected) };
 			if (updatedSelected[idjson]) {
-				if(updatedSelected[idjson].content){
-					updatedSelected[idjson].content  = JSON.parse(jsonSpecEntry);
+				if (updatedSelected[idjson].content) {
+					updatedSelected[idjson].content = JSON.parse(jsonSpecEntry);
 				}
-				
 			}
 
 			return JSON.stringify(updatedSelected);
@@ -123,65 +136,61 @@ export function AccordionPicker({
 					expandIcon={<ExpandMoreIcon />}
 					id='panel-header'
 					aria-controls='panel-content'>
-					 <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                alignSelf: 'center',
-                color: 'black',
-                fontSize: 18,
-                paddingLeft: 15,
-              }}
-            >
-              {title}
-            </div>
+					<div
+						style={{
+							width: '100%',
+							display: 'flex',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+						}}>
+						<div
+							style={{
+								alignSelf: 'center',
+								color: 'black',
+								fontSize: 18,
+								paddingLeft: 15,
+							}}>
+							{title}
+						</div>
 
-            <div>
-              {advanceMode && (
-                <>
-                  <Button
-                    style={{
-                      borderRadius: 4,
-                      backgroundColor: '#F50',
-                      borderStyle: 'solid',
-                      borderColor: '#F50',
-                      fontSize: 18,
-                      padding: 6,
-                      color: 'white',
-                      marginRight: 10,
-                    }}
+						<div>
+							{advanceMode && (
+								<>
+									<Button
+										style={{
+											borderRadius: 4,
+											backgroundColor: '#F50',
+											borderStyle: 'solid',
+											borderColor: '#F50',
+											fontSize: 18,
+											padding: 6,
+											color: 'white',
+											marginRight: 10,
+										}}
 										onClick={(e) => {
-                      e.stopPropagation(); // Prevent propagation to accordion
-                      setOpenModal(true);
-                    }}>
-                    Select
-                  </Button>
-                  {removeButton}
-                </>
-              )}
-            </div>
-          </div>
-					
+											e.stopPropagation(); // Prevent propagation to accordion
+											setOpenModal(true);
+										}}>
+										Select
+									</Button>
+									{removeButton}
+								</>
+							)}
+						</div>
+					</div>
 				</AccordionSummary>
 				<div
-					 style={{
+					style={{
 						borderWidth: 1,
 						borderStyle: 'solid',
 						borderColor: 'black',
 						width: '80%',
 						justifyContent: 'center', // Horizontal centering
-						alignItems: 'center',     // Vertical centering
+						alignItems: 'center', // Vertical centering
 						display: 'flex',
-						borderColor:'rgba(238, 238, 238, 1)',
-						margin: '0 auto',         // Center horizontally in its container
-						marginBottom:15,
-
+						borderColor: 'rgba(238, 238, 238, 1)',
+						margin: '0 auto', // Center horizontally in its container
+						marginBottom: 15,
 					}}
 				/>
 				<AccordionDetails style={{ width: '100%', display: 'false' }}>
@@ -213,23 +222,25 @@ export function AccordionPicker({
 							{keySpecification !== 'null'
 								? keySpecification
 								: 'select a print type'}
-							
+
 							<ExpandMoreIcon />
 						</Button>
 					</div>
 
 					{keySpecification !== 'null' ? (
 						<div style={{ width: 'auto' }}>
-							{jsonSpec[keySpecification]?.fields.map((f) => (
-								<FieldPicker
-									jsonSpec={jsonSpec}
-									setJsonSpec={setJsonSpecEntry}
-									jsonSpecEntry={jsonSpecEntry}
-									fieldInfo={f}
-									open={open}
-									lang={language}
-								/>
-							))}
+							{testForRefresh &&
+								testForRefresh.fields.map((f, id) => (
+									<FieldPicker
+										key={id}
+										jsonSpec={jsonSpec}
+										setJsonSpec={setJsonSpecEntry}
+										jsonSpecEntry={jsonSpecEntry}
+										fieldInfo={f}
+										open={open}
+										lang={language}
+									/>
+								))}
 						</div>
 					) : (
 						<></>
@@ -260,17 +271,16 @@ export function AccordionPicker({
 								onInput={handleInputSearch}
 							/>
 						</div>
-						
+
 						{localListResourcesForPdf ? (
-							
 							<ScriptureContentPicker
 								onSelect={(e) => {
-									setTitle(e.localLabel)
+									setTitle(e.localLabel);
 									setSelected((prev) => {
-										let pr = JSON.parse(prev)
-										pr[idjson]['source'] = e.src.path
-										return JSON.stringify(pr)
-									})
+										let pr = JSON.parse(prev);
+										pr[idjson]['source'] = e.src.path;
+										return JSON.stringify(pr);
+									});
 									handleOpenModal(false);
 								}}
 								source={localListResourcesForPdf}
@@ -289,10 +299,10 @@ export function AccordionPicker({
 					setSelected((prev) => {
 						let t = { ...JSON.parse(prev) };
 						t[idjson]['type'] = c;
-						t[idjson]['content'] = {}
+						t[idjson]['content'] = {};
 						return JSON.stringify(t);
 					});
-					setJsonSpecEntry('{}')
+					setJsonSpecEntry('{}');
 					setOpenModalSectionSelection(false);
 				}}
 			/>
@@ -300,12 +310,11 @@ export function AccordionPicker({
 	);
 }
 
-
-const  convertionWrapperType = (type) => {
-	if(type === 'obsWrapper'){
-		return "OBS"
+const convertionWrapperType = (type) => {
+	if (type === 'obsWrapper') {
+		return 'OBS';
 	}
-	if(type === 'bcvWrapper'){
-		return "book"
+	if (type === 'bcvWrapper') {
+		return 'book';
 	}
-}
+};

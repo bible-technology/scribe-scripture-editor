@@ -41,7 +41,6 @@ export function BCVWrapperSortableList({
 			const copyData = { ...prev };
 			copyData[keyWrapper]['ranges'] = [];
 			copyData[keyWrapper]['ranges'] = selectedBooks;
-			console.log(selectedBooks);
 			return copyData;
 		});
 	}, [selectedBooks.length]);

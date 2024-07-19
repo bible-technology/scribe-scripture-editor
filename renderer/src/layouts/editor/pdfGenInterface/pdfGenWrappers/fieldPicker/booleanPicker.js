@@ -9,7 +9,13 @@ export function BooleanPicker({
 	open = true,
 }) {
 	const [selected, setSelected] = useState(false);
-
+	useEffect(() => {
+		setJsonSpec((prev) => {
+			let j = JSON.parse(prev);
+			j[fieldInfo.id] = selected;
+			return JSON.stringify(j);
+		});
+	}, []);
 	
 	useEffect(() => {
 		setJsonSpec((prev) => {
