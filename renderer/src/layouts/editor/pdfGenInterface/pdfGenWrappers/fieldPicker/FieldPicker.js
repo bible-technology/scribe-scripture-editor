@@ -11,7 +11,6 @@ export function FieldPicker({
 	setJsonSpec,
 	lang,
 	open,
-	listResourcesForPdf,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
 

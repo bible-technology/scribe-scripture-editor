@@ -35,7 +35,6 @@ export default function InnerFramePopup() {
 	//is the json is validate or not
 	const [isJsonValidate, setIsJsonValidate] = useState(false);
 	const [messagePrint, setMessagePrint] = useState('');
-
 	//the actual kitchenFaucet
 	const pdfCallBacks = (json) => {
 		setMessagePrint((prev) => prev + '\n' + MessageToPeople(json));
@@ -63,7 +62,7 @@ export default function InnerFramePopup() {
 	const [nameFile, setNameFile] = useState('');
 	const [folder, setFolder] = useState(null);
 	//zoom of the preview
-
+	const [kitchenFaucet, setKitchenFaucet] = useState('{}');
 	const [openModalAddWrapper, setOpenModalAddWrapper] = useState(false);
 
 	const handleOpenModalAddWrapper = (isOpen) => {
@@ -155,7 +154,7 @@ export default function InnerFramePopup() {
 						'users',
 						`${currentUser}`,
 						'projects',
-						`${p.name}_${p.id[0]}`,
+						`${p.name}_${p.id[0]}/ingredients`,
 					);
 					return p;
 				});
@@ -178,15 +177,19 @@ export default function InnerFramePopup() {
 	}, []);
 
 	useEffect(() => {
-		if (
-			global.PdfGenStatic.validateConfig(
+		setKitchenFaucet(
+			JSON.stringify(
 				transformPrintDataToKitchenFoset({
 					order: orderSelection,
 					metaData: JSON.parse(headerInfo),
 					content: selected,
 				}),
-			).length === 0
-		) {
+			),
+		);
+	}, [selected, headerInfo, orderSelection]);
+
+	useEffect(() => {
+		if (global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet)).length === 0) {
 			let header = JSON.parse(headerInfo);
 			console.log('header ==',header);
 			if (
@@ -198,18 +201,9 @@ export default function InnerFramePopup() {
 			)
 				setIsJsonValidate(true);
 		} else {
-			console.log(
-				global.PdfGenStatic.validateConfig(
-					transformPrintDataToKitchenFoset({
-						order: orderSelection,
-						metaData: JSON.parse(headerInfo),
-						content: selected,
-					}),
-				),
-			);
 			setIsJsonValidate(false);
 		}
-	}, [selected, headerInfo]);
+	}, [kitchenFaucet, headerInfo]);
 	const openFileDialogSettingData = async () => {
 		try {
 			const options = {
@@ -542,11 +536,7 @@ export default function InnerFramePopup() {
 							onClick={async () => {
 								if (isJsonValidate) {
 									let t = new global.PdfGenStatic(
-										transformPrintDataToKitchenFoset({
-											order: orderSelection,
-											metaData: JSON.parse(headerInfo),
-											content: selected,
-										}),
+										JSON.parse(kitchenFaucet),
 										pdfCallBacks,
 									);
 
@@ -615,7 +605,6 @@ export default function InnerFramePopup() {
 					height: '100%',
 					whiteSpace: 'pre-wrap',
 					overflow: 'scroll',
-
 					padding: 12,
 				}}>
 				{messagePrint}
@@ -715,7 +704,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 	} else if (t.type === 'OBS') {
 		return {
 			0: {
-				type: 'obsWrapper',
+				type: 'bcvWrapper',
 				id: uuidv4(),
 				content: {
 					content: { 0: { type: 'null', content: {} } },
@@ -727,6 +716,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 }
 
 function creatSection(folder, pickerJson) {
+	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
 	const fs = window.require('fs');
@@ -766,7 +756,9 @@ function creatSection(folder, pickerJson) {
 						language: `${jsonParse.resourceMeta?.language}`,
 						src: {
 							type: 'fs',
-							path: `${folder}/${project}`,
+							path: folder.includes('projects')
+								? `${folder}/${project}/ingredients`
+								: `${folder}/${project}`,
 						},
 						books: [],
 					};
@@ -784,7 +776,9 @@ function creatSection(folder, pickerJson) {
 						language: `${jsonParse.languages[0].tag}`,
 						src: {
 							type: 'fs',
-							path: `${folder}/${project}`,
+							path: folder.includes('projects')
+								? `${folder}/${project}/ingredients`
+								: `${folder}/${project}`,
 						},
 						books: [],
 					};
@@ -798,7 +792,9 @@ function creatSection(folder, pickerJson) {
 					language: jsonParse.meta.defaultLocale,
 					src: {
 						type: 'fs',
-						path: `${folder}/${project}/${fileName}`,
+						path: folder.includes('projects')
+							? `${folder}/${project}/ingredients`
+							: `${folder}/${project}/${fileName}`,
 					},
 					books: [],
 				};
@@ -811,7 +807,9 @@ function creatSection(folder, pickerJson) {
 					language: jsonParse.meta.defaultLocale,
 					src: {
 						type: 'fs',
-						path: `${folder}/${project}`,
+						path: folder.includes('projects')
+							? `${folder}/${project}/ingredients`
+							: `${folder}/${project}`,
 					},
 					books: [],
 				};
