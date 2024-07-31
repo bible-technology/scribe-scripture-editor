@@ -95,14 +95,14 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 										currentTab === 0
 											? fontStyle
 											: {
-													...fontStyle,
-													color: 'black',
-											  }
+												...fontStyle,
+												color: 'black',
+											}
 									}>
 									PDF
 								</text>
 							</div>
-							<div
+							{/* <div
 								onClick={() => setCurrentTab(1)}
 								style={
 									currentTab === 1
@@ -120,8 +120,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 									}>
 									Korennumi
 								</text>
-							</div>
-							<div
+							</div> */}
+							{/* <div
 								onClick={() => setCurrentTab(2)}
 								style={
 									currentTab === 2
@@ -139,7 +139,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 									}>
 									Word
 								</text>
-							</div>
+							</div> */}
 						</div>
 					</div>
 
