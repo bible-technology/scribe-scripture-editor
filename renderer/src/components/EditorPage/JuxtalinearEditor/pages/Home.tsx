@@ -6,7 +6,10 @@ import {
   DropResult,
   DraggableLocation,
 } from '../components/Droppable';
-import { Box, Button, Grid, Stack } from '@mui/material';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import { IoCaretUp, IoCaretDown } from 'react-icons/io5';
 import { saveToFile } from '../../JuxtaTextEditor/hooks/saveToFile';
 

@@ -9,20 +9,19 @@ on:
 
 jobs:
     build:
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-latest
         env:
             CI: false
         strategy:
             matrix:
                 node-version: [18.20.3]
-                os: [ubuntu-latest]
 
         steps:
             - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js 18.20.3
               uses: actions/setup-node@v1
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 18.20.3
             - run: |
                   node --version
                   yarn --version
@@ -33,7 +32,7 @@ jobs:
               run: yarn install
 
             - name: set max memory allocation
-              run: export NODE_OPTIONS=–max_old_space_size=4096
+              run: export NODE_OPTIONS=-max_old_space_size=4096
 
             #             - name: Read version and commit sha
             #               run: |
@@ -58,97 +57,97 @@ jobs:
                   path: dist
 
     build-windows:
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-latest
         env:
             CI: false
         strategy:
             matrix:
                 node-version: [18.20.3]
-                os: [windows-latest]
+
         steps:
             - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js 18.20.3
               uses: actions/setup-node@v1
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 18.20.3
             - run: |
                   node --version
                   yarn --version
 
             - name: set @bitregistry translation-help
               run: yarn config set '@bit:registry' https://node.bit.dev
-
-            - name: yarn install
-              run: yarn install
 
             - name: set max memory allocation
-              run: set NODE_OPTIONS=–max_old_space_size=4096
+              run: export NODE_OPTIONS=-max_old_space_size=4096
 
-            #             - name: Read version and commit sha
-            #               run:
-            #                   echo "::set-env name=HASH::$(node -p -e "'${{ github.sha }}'.substring(0, 7)")"
-            #                   echo "::set-env name=APP_VERSION::$(node -p -e "require('./package.json').version")"
+            - name: install dependencies
+              run: yarn install
 
-            #             - name: Set x64 artifact name
-            #               run: echo "::set-env name=ARTIFACT_X64::$(echo "Autographa-win-x64-${{ env.APP_VERSION }}.exe")"
-
-            - name: packaging
-              id: packaging
+            - name: install wine
               run: |
-                  yarn dist
+                  sudo dpkg --add-architecture i386
+                  sudo apt update
+                  sudo apt install -y wine32 wine64
+
+            - name: build executable
+              run: yarn dist --win --x64
 
             - name: Cleanup artifacts
-              if: matrix.os != 'windows-latest'
               run: |
-                  mkdir artifacts
-                  mv "dist/(*.exe,*.deb,*.AppImage,*.dmg)" artifacts || true
-            - name: Cleanup artifacts Win
-              if: matrix.os == 'windows-latest'
-              run: |
-                  mkdir artifacts
+                  mkdir -p artifacts
                   mv dist/*.exe artifacts
-            - name: Upload artifacts ${{ env.ARTIFACT_X64 }}
+            - name: Upload artifacts
               uses: actions/upload-artifact@v1
               with:
-                  name: Scribe
-                  path: artifacts
+                name: Scribe
+                path: artifacts
 
     build-mac:
-        runs-on: ${{ matrix.os }}
+        runs-on: macos-latest
         env:
             CI: false
         strategy:
             matrix:
                 node-version: [18.20.3]
-                os: [macos-latest]
 
         steps:
             - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js 18.20.3
               uses: actions/setup-node@v1
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 18.20.3
             - run: |
                   node --version
                   yarn --version
             - name: set @bitregistry translation-help
               run: yarn config set '@bit:registry' https://node.bit.dev
+
+            - name: Install Homebrew
+              run: |
+                  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
+
+            - name: Install canvas dependencies
+              run: |
+                  brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
+                  brew reinstall jpeg
+                  echo 'export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"' >> $HOME/.zprofile
+                  echo 'export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"' >> $HOME/.zprofile
+                  echo 'export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"' >> $HOME/.zprofile
+                  echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
+                  /opt/homebrew/opt/python@3.12/bin/pip3 install setuptools
+                  /opt/homebrew/opt/python@3.12/bin/pip3 install distutils
+
+            - name: set max memory allocation
+              run: export NODE_OPTIONS=-max_old_space_size=4096
 
             - name: yarn install
               run: yarn install
 
             - name: install dmg-license
               run: yarn add dmg-license
-
-            - name: set max memory allocation
-              run: export NODE_OPTIONS=–max_old_space_size=4096
-
-            #             - name: Read version and commit sha
-            #               run: |
-            #                   echo "::set-env name=HASH::$(echo $GITHUB_SHA | cut -c1-7)"
-            #                   echo "::set-env name=APP_VERSION::$(node -p -e "require('./package.json').version")"
-            #             - name: Set artifact name
-            #               run: echo "::set-env name=ARTIFACT_NAME::$(echo "Autographa-mac-x64-$APP_VERSION.dmg")"
 
             - name: package
               id: package
