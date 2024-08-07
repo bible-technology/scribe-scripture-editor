@@ -68,12 +68,12 @@ export default function ResourcesSidebar({
           resourceType: 'translationWordList',
           Icon: ClipboardDocumentListIcon,
         },
-        {
-          id: 'tw',
-          title: t('label-resource-twlm'),
-          resourceType: 'translationWord',
-          Icon: Square3Stack3DIcon,
-        },
+        // {
+        //   id: 'tw',
+        //   title: t('label-resource-twlm'),
+        //   resourceType: 'translationWord',
+        //   Icon: Square3Stack3DIcon,
+        // },
         {
           id: 'tq',
           title: t('label-resource-tq'),
