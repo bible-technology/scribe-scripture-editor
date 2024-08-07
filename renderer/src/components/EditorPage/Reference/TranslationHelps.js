@@ -60,23 +60,23 @@ const TranslationHelps = ({
               fontSize={fontSize}
             />
           );
-        case 'twlm':
-          return (
-            <TranslationHelpsCard
-              title={t('label-resource-twlm')}
-              verse={verse}
-              chapter={chapter}
-              projectId={bookId || 'mat'}
-              branch={branch}
-              viewMode="markdown"
-              languageId={languageId}
-              resourceId="twl"
-              owner={owner}
-              server="https://git.door43.org"
-              font={font}
-              fontSize={fontSize}
-            />
-            );
+        // case 'twlm':
+          // return (
+            // <TranslationHelpsCard
+              // title={t('label-resource-twlm')}
+              // verse={verse}
+              // chapter={chapter}
+              // projectId={bookId || 'mat'}
+              // branch={branch}
+              // viewMode="markdown"
+              // languageId={languageId}
+              // resourceId="twl"
+              // owner={owner}
+              // server="https://git.door43.org"
+              // font={font}
+              // fontSize={fontSize}
+            /// >
+            // );
         case 'tq':
           return (
             <TranslationHelpsCard
@@ -96,23 +96,23 @@ const TranslationHelps = ({
               fontSize={fontSize}
             />
           );
-        case 'tw':
-          return (
-            <TranslationHelpsCard
-              title={t('label-resource-twlm')}
-              chapter={chapter}
-              branch={branch}
-              projectId="bible"
-              languageId={languageId}
-              resourceId="tw"
-              owner={owner}
-              filePath={offlineResource?.twSelected?.folder}
-              server="https://git.door43.org"
-              offlineResource={offlineResource}
-              font={font}
-              fontSize={fontSize}
-            />
-            );
+        // case 'tw':
+          // return (
+            // <TranslationHelpsCard
+              // title={t('label-resource-twlm')}
+              // chapter={chapter}
+              // branch={branch}
+              // projectId="bible"
+              // languageId={languageId}
+              // resourceId="tw"
+              // owner={owner}
+              // filePath={offlineResource?.twSelected?.folder}
+              // server="https://git.door43.org"
+              // offlineResource={offlineResource}
+              // font={font}
+              // fontSize={fontSize}
+            /// >
+            // );
         case 'ta':
           return (
             <TranslationHelpsCard
