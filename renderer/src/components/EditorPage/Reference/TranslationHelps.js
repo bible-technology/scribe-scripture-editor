@@ -43,40 +43,40 @@ const TranslationHelps = ({
               fontSize={fontSize}
             />
           );
-        case 'twl':
+        // case 'twl':
+          // return (
+            // <TranslationHelpsCard
+              // title={t('label-resource-twl')}
+              // verse={verse}
+              // chapter={chapter}
+              // projectId={bookId || 'mat'}
+              // branch="master"
+              // viewMode="list"
+              // languageId="en"
+              // resourceId="twl"
+              // owner="test_org"
+              // server="https://git.door43.org"
+              // font={font}
+              // fontSize={fontSize}
+            /// >
+          // );
+        case 'twlm':
           return (
             <TranslationHelpsCard
-              title={t('label-resource-twl')}
+              title={t('label-resource-twlm')}
               verse={verse}
               chapter={chapter}
               projectId={bookId || 'mat'}
-              branch="master"
-              viewMode="list"
-              languageId="en"
+              branch={branch}
+              viewMode="markdown"
+              languageId={languageId}
               resourceId="twl"
-              owner="test_org"
+              owner={owner}
               server="https://git.door43.org"
               font={font}
               fontSize={fontSize}
             />
           );
-        // case 'twlm':
-          // return (
-            // <TranslationHelpsCard
-              // title={t('label-resource-twlm')}
-              // verse={verse}
-              // chapter={chapter}
-              // projectId={bookId || 'mat'}
-              // branch={branch}
-              // viewMode="markdown"
-              // languageId={languageId}
-              // resourceId="twl"
-              // owner={owner}
-              // server="https://git.door43.org"
-              // font={font}
-              // fontSize={fontSize}
-            /// >
-            // );
         case 'tq':
           return (
             <TranslationHelpsCard
