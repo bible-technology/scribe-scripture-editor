@@ -15,6 +15,7 @@ import NewProject from './NewProject';
 import * as logger from '../../logger';
 import ProjectRow from './ProjectRow';
 import { ProjectContext } from '../context/ProjectContext';
+import ProjectMangement from '../ProjectManagement/ProjectManagement';
 
 export default function ProjectList() {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ export default function ProjectList() {
       FetchProjects,
     },
   } = useContext(AutographaContext);
-  const { states: { openExportPopUp }, actions: { setOpenExportPopUp } } = useContext(ProjectContext);
+  const { states: { openExportPopUp, openManageProject }, actions: { setOpenExportPopUp, setOpenManageProject } } = useContext(ProjectContext);
   const [currentProject, setCurrentProject] = useState();
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const handleExportPopUp = (project) => {
@@ -56,6 +57,14 @@ export default function ProjectList() {
     logger.debug('ProjectList.js', 'Closing edit project page and updating the values');
     setCallEditProject(false);
     await FetchProjects();
+  };
+  const manageProject = (project) => {
+    console.log(project);
+    setCurrentProject(project);
+    setOpenManageProject(true);
+  };
+  const closeManageProject = () => {
+    setOpenManageProject(false);
   };
   return (
     <>
@@ -89,7 +98,7 @@ export default function ProjectList() {
                           orderBy={orderBy}
                           onRequestSort={handleRequestSort}
                         />
-                        <ProjectRow projects={projects} filteredProjects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={handleExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} />
+                        <ProjectRow projects={projects} filteredProjects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={handleExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} manageProject={manageProject} />
                       </table>
                       {(!projects) && <div><LoadingScreen /></div>}
                     </div>
@@ -102,6 +111,8 @@ export default function ProjectList() {
         </ProjectsLayout>
       ) : <NewProject call="edit" project={currentProject} closeEdit={() => closeEditProject()} />}
       <ExportProjectPopUp open={openExportPopUp} closePopUp={closeExportPopUp} project={currentProject} />
+      {openManageProject
+      && <ProjectMangement open={openManageProject} closePopUp={closeManageProject} project={currentProject} />}
     </>
   );
 }
