@@ -4,11 +4,11 @@ const ToggleOptions = [
   { key: 'all', name: 'All' },
   { key: 'old', name: 'Old' },
   { key: 'new', name: 'New' },
-  { key: 'custom', name: 'Custom' },
+  { key: 'none', name: 'Deselect' },
 ];
 
 function BulkSelectionGroup({
-  selectedOption = ToggleOptions[3].key,
+  selectedOption = '',
   handleSelect,
 }) {
   return (
