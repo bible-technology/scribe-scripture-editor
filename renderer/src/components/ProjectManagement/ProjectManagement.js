@@ -10,10 +10,11 @@ import updateObsSB from '@/core/burrito/updateObsSB';
 import { SnackBar } from '@/components/SnackBar';
 // import useSystemNotification from '@/components/hooks/useSystemNotification';
 // import { LoadingSpinner } from '@/components/LoadingSpinner';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import * as logger from '../../logger';
 import burrito from '../../lib/BurritoTemplate.json';
-import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import ScopeManagement from './scope-management/ScopeManagement';
 
 export default function ProjectMangement(props) {
   const {
@@ -85,19 +86,18 @@ export default function ProjectMangement(props) {
           initialFocus={cancelButtonRef}
           static
           open={open}
-          onClose={close}
+          onClose={() => {}}
         >
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex items-center justify-center h-screen">
-            <div className="w-5/12 h-3/6 items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
-              <div className="relative h-full rounded shadow overflow-hidden bg-white">
+            <div className="w-[80vw] h-[80vh] max-w-[80vw] max-h-[80vh] items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
+              <div className="relative h-full rounded shadow overflow-hidden bg-white flex flex-col">
+
                 <div className="flex justify-between items-center bg-secondary">
-                  <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center">
-                    Project Mangement
-                    :
-                    {
-                    `${project?.name}`
-                    }
+                  <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center flex gap-2">
+                    <span>Project Management</span>
+                    <span>:</span>
+                    <span>{project?.name}</span>
                   </div>
                   <button
                     onClick={close}
@@ -110,9 +110,34 @@ export default function ProjectMangement(props) {
                     />
                   </button>
                 </div>
-                <div className="relative w-full h-5/6">
-                  <p>Project Management</p>
+
+                <div className=" w-full h-full flex-1 flex flex-col">
+
+                  <div className="flex-grow-[5]">
+                    <ScopeManagement />
+                  </div>
+
+                  <div className="h-[10%] flex justify-end items-center me-5">
+                    <button
+                      type="button"
+                      onClick={close}
+                      className="mr-5 bg-error w-28 h-8 border-color-error rounded
+                                  uppercase shadow text-white text-xs tracking-wide leading-4 font-light focus:outline-none"
+                    >
+                      {t('btn-cancel')}
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="edit-language"
+                      className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
+                      onClick={() => console.log('Apply scope change clicked')}
+                    >
+                      Apply
+                    </button>
+                  </div>
+
                 </div>
+
               </div>
             </div>
           </div>
