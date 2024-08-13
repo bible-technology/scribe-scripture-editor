@@ -5,6 +5,7 @@ import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
 import BulkSelectionGroup from './BulkSelectionGroup';
 import Button from '../Common/Button/Button';
+import File from '@/icons/file.svg';
 
 const initialBook = 'gen';
 const initialChapter = '1';
@@ -58,6 +59,11 @@ function ScopeManagement() {
     console.log('clicked book : ', book);
   };
 
+  const handleChangeBook = (bookId) => {
+    console.log({ bookId });
+    onChangeBook(bookId, bookId);
+  };
+
   const handleChapterRangeSelection = (e) => {
     e.preventDefault();
     let start = parseInt(e.target?.start?.value, 10) || null;
@@ -88,23 +94,38 @@ function ScopeManagement() {
       <div className="grid grid-cols-2 gap-5">
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] grid grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase">
           {bookList?.slice(0, 39)?.map((book) => (
-            <BookButton
-              onClick={(e) => handleSelectBook(e, book)}
-              key={book.key}
-            >
-              {book.name}
-            </BookButton>
+            <div key={book.key} className="flex justify-between gap-2">
+              <BookButton
+                onClick={(e) => handleSelectBook(e, book)}
+                className="flex justify-between gap-2 flex-1"
+              >
+                <span className="" title="Select Book">
+                  {book.name}
+                </span>
+              </BookButton>
+              <button type="button" className="pr-2" title="Modify Chapter Scope">
+                <File className="w-3 items-center cursor-pointer hover:text-primary" onClick={() => handleChangeBook(book.key)} />
+              </button>
+            </div>
           ))}
         </div>
 
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] grid grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase content-start">
           {bookList?.slice(39)?.map((book) => (
-            <BookButton
-              onClick={(e) => handleSelectBook(e, book)}
-              key={book.key}
-            >
-              {book.name}
-            </BookButton>
+            <div key={book.key} className="flex justify-between gap-2">
+              <BookButton
+                onClick={(e) => handleSelectBook(e, book)}
+                className="flex justify-between gap-2 flex-1"
+              >
+                <span className="" title="Select Book">
+                  {book.name}
+                </span>
+
+              </BookButton>
+              <button type="button" title="Modify Chapter Scope">
+                <File className="w-3 items-center cursor-pointer hover:text-primary" onClick={() => handleChangeBook(book.key)} />
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -146,7 +167,7 @@ function ScopeManagement() {
         </div>
 
         <Button type="submit">
-          Go
+          Select
         </Button>
       </form>
 
