@@ -26,6 +26,7 @@ const ToggleChapterOptions = [
 function ScopeManagement({ metadata }) {
   const [selectedOption, setSelectedOption] = useState('');
   const [currentScope, setCurrentScope] = useState({});
+  const [selectedChaptersSet, setSelectedChaptersSet] = useState(new Set([]));
 
   const {
     state: {
@@ -57,7 +58,12 @@ function ScopeManagement({ metadata }) {
   };
 
   const handleSelectBook = (e, book) => {
-    setCurrentScope((prev) => ({ ...prev, [book.key.toUpperCase()]: [] }));
+    const bookCode = book.key.toUpperCase();
+    setCurrentScope((prev) => {
+      // check and change the selectedChapters
+      setSelectedChaptersSet(new Set(prev[bookCode]) || new Set([]));
+      return ({ ...prev, [bookCode]: prev[bookCode] || [] });
+    });
     onChangeBook(book.key, book.key);
   };
 
@@ -85,10 +91,40 @@ function ScopeManagement({ metadata }) {
     setCurrentScope(newScopeObj);
   };
 
+  /**
+   * Fn to toggle chapter selection for the active book
+   */
+  const handleChapterSelection = (e, chapter) => {
+    const bukId = bookId.toUpperCase();
+    if (bukId in currentScope) {
+      setCurrentScope((prev) => {
+        const currentCh = new Set(prev[bukId] || new Set([]));
+        console.log(currentCh.size);
+        if (currentCh.has(chapter)) {
+          currentCh.delete(chapter);
+        } else {
+          currentCh.add(chapter);
+        }
+        setSelectedChaptersSet(currentCh);
+        return {
+          ...prev,
+          [bukId]: Array.from(currentCh),
+        };
+      });
+    } else {
+      console.error('Active book is not in scope ');
+    }
+  };
+
   // set current scope from meta
   useEffect(() => {
     if (metadata?.type?.flavorType?.currentScope) {
-      setCurrentScope(metadata?.type?.flavorType?.currentScope);
+      const scopeObj = metadata?.type?.flavorType?.currentScope;
+      // expect at least 1 scope - because creation and scope modification won't allow 0 scope
+      setSelectedChaptersSet(new Set(scopeObj[0]) || new Set([]));
+      const bookCode = Object.keys(scopeObj)[0].toUpperCase();
+      onChangeBook(bookCode, bookCode);
+      setCurrentScope(scopeObj);
     } else {
       console.error('unable to get the scope');
     }
@@ -185,15 +221,18 @@ function ScopeManagement({ metadata }) {
 
       <div className="grid grid-cols-1">
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] flex flex-wrap gap-2 p-4 text-xxs text-left  uppercase">
-          {chapterList?.map((ch) => (
-            <BookButton
-              onClick={(e) => handleSelectBook(e, ch)}
-              key={ch.key}
-              className="border min-w-8 text-center"
-            >
-              {ch.name}
-            </BookButton>
-          ))}
+          {chapterList?.map(({ key, name }) => {
+            const isInScope = selectedChaptersSet.has(key);
+            return (
+              <BookButton
+                onClick={(e) => handleChapterSelection(e, name)}
+                key={key}
+                className={`border min-w-8 text-center ${isInScope ? 'bg-primary text-white font-medium' : ''}`}
+              >
+                {name}
+              </BookButton>
+            );
+          })}
         </div>
       </div>
 
