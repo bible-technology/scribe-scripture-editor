@@ -57,7 +57,6 @@ function ScopeManagement({ metadata }) {
   };
 
   const handleSelectBook = (e, book) => {
-    console.log('clicked book : ', book);
     setCurrentScope((prev) => ({ ...prev, [book.key.toUpperCase()]: [] }));
     onChangeBook(book.key, book.key);
   };
@@ -80,6 +79,10 @@ function ScopeManagement({ metadata }) {
   const handleRemoveScope = (e, book) => {
     e.stopPropagation();
     console.log('clicked remove : ', book);
+    const bukId = book.key.toUpperCase();
+    const newScopeObj = { ...currentScope };
+    delete newScopeObj[bukId];
+    setCurrentScope(newScopeObj);
   };
 
   // set current scope from meta
