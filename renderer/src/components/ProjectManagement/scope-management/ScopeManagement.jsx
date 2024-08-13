@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBibleReference } from 'bible-reference-rcl';
 import ScopeHead from './ScopeHead';
 import TitleBar from './TitleBar';
@@ -23,23 +23,24 @@ const ToggleChapterOptions = [
   { key: 'none', name: 'Deselect' },
 ];
 
-function ScopeManagement() {
+function ScopeManagement({ metadata }) {
   const [selectedOption, setSelectedOption] = useState('');
+  const [currentScope, setCurrentScope] = useState({});
 
   const {
     state: {
-      chapter,
-      verse,
+      // chapter,
+      // verse,
       bookList,
       chapterList,
-      verseList,
+      // verseList,
       bookName,
       bookId,
     }, actions: {
       onChangeBook,
-      onChangeChapter,
-      onChangeVerse,
-      applyBooksFilter,
+      // onChangeChapter,
+      // onChangeVerse,
+      // applyBooksFilter,
     },
   } = useBibleReference({
     initialBook,
@@ -48,7 +49,7 @@ function ScopeManagement() {
   });
 
   console.log('BOOK ============>', {
-    bookList, chapterList, verseList, chapter, verse, bookName, bookId,
+    bookName, bookId, metadata, currentScope,
   });
 
   const handleChangeBookToggle = (event) => {
@@ -79,6 +80,14 @@ function ScopeManagement() {
     // e.target.end.value = '';
   };
 
+  useEffect(() => {
+    if (metadata?.type?.flavorType?.currentScope) {
+      setCurrentScope(metadata?.type?.flavorType?.currentScope);
+    } else {
+      console.error('unable to get the scope');
+    }
+  }, []);
+
   return (
     <div className="w-full h-full pt-5 px-5">
       <ScopeHead>Project Scope Management</ScopeHead>
@@ -95,42 +104,55 @@ function ScopeManagement() {
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase"
         >
-          {bookList?.slice(0, 39)?.map((book) => (
-            <div key={book.key} className="flex justify-between gap-1 items-center group/btn">
-              <BookButton
-                onClick={(e) => handleSelectBook(e, book)}
-                className="flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white"
-              >
-                <p className="text-ellipsis" title="Select Book">
-                  {book.name}
-                </p>
-              </BookButton>
-              <button type="button" className="w-3 " title="Modify Chapter Scope">
-                <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
-              </button>
-            </div>
-          ))}
+          {bookList?.slice(0, 39)?.map((book) => {
+            const isScope = book?.key?.toUpperCase() in currentScope;
+            return (
+              <div key={book.key} className="flex justify-between gap-1 items-center group/btn">
+                <BookButton
+                  onClick={(e) => handleSelectBook(e, book)}
+                  className={`flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white
+                  ${isScope ? 'bg-blue-500 text-white' : ''}}`}
+                >
+                  <p className="text-ellipsis" title="Select Book">
+                    {book.name}
+                  </p>
+                </BookButton>
+                {isScope && (
+                  <button type="button" title="Modify Chapter Scope">
+                    <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase content-start"
         >
-          {bookList?.slice(39)?.map((book) => (
-            <div key={book.key} className="flex justify-between gap-2 items-center group/btn">
-              <BookButton
-                onClick={(e) => handleSelectBook(e, book)}
-                className="flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white"
-              >
-                <span className="" title="Select Book">
-                  {book.name}
-                </span>
+          {bookList?.slice(39)?.map((book) => {
+            const isScope = book?.key?.toUpperCase() in currentScope;
+            return (
+              <div key={book.key} className="flex justify-between gap-2 items-center group/btn">
+                <BookButton
+                  onClick={(e) => handleSelectBook(e, book)}
+                  className={`flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white
+                    ${isScope ? 'bg-blue-500 text-white' : ''}`}
+                >
+                  <span className="" title="Select Book">
+                    {book.name}
+                  </span>
 
-              </BookButton>
-              <button type="button" title="Modify Chapter Scope">
-                <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
-              </button>
-            </div>
-          ))}
+                </BookButton>
+                {isScope && (
+                  <button type="button" title="Modify Chapter Scope">
+                    <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
+                  </button>
+                )}
+
+              </div>
+            );
+          })}
         </div>
       </div>
 

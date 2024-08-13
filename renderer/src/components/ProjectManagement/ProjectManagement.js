@@ -138,7 +138,7 @@ export default function ProjectMangement(props) {
                 <div className=" w-full h-full flex-1 flex flex-col overflow-y-scroll mb-5">
 
                   <div className="flex-grow-[5]">
-                    {loading ? <LoadingSpinner /> : <ScopeManagement />}
+                    {loading ? <LoadingSpinner /> : <ScopeManagement metadata={metadata} />}
                   </div>
 
                   <div className="h-[10%] flex justify-end items-center me-5">
