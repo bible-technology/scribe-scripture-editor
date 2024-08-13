@@ -1,6 +1,8 @@
 /* eslint-disable no-useless-escape */
 import React, {
   useRef, Fragment,
+  useEffect,
+  useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
@@ -15,6 +17,8 @@ import CloseIcon from '@/illustrations/close-button-black.svg';
 import * as logger from '../../logger';
 import burrito from '../../lib/BurritoTemplate.json';
 import ScopeManagement from './scope-management/ScopeManagement';
+import { readProjectScope } from './utils/readProjectScope';
+import { LoadingSpinner } from '../LoadingSpinner';
 
 export default function ProjectMangement(props) {
   const {
@@ -29,11 +33,13 @@ export default function ProjectMangement(props) {
   const [snackText, setSnackText] = React.useState('');
   const [notify, setNotify] = React.useState();
   const [openModal, setOpenModal] = React.useState(false);
-  const [metadata, setMetadata] = React.useState({});
   const [checkText, setCheckText] = React.useState(false);
   const [totalExported, setTotalExported] = React.useState(0);
   const [totalExports, setTotalExports] = React.useState(0);
   const [exportStart, setExportstart] = React.useState(false);
+
+  const [metadata, setMetadata] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   // const { pushNotification } = useSystemNotification();
 
@@ -67,6 +73,24 @@ export default function ProjectMangement(props) {
     }
     setOpenModal(false);
   };
+
+  // load Metadata of the project
+  const getProjectMetadata = useCallback(async () => {
+    try {
+      setLoading(true);
+      const projectFullName = `${project?.name}_${project?.id?.[0]}`;
+      const projectMeta = await readProjectScope(projectFullName);
+      setMetadata(projectMeta);
+    } catch (err) {
+      console.error('Read Meta : ', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [project]);
+
+  useEffect(() => {
+    getProjectMetadata();
+  }, [getProjectMetadata]);
 
   return (
     <>
@@ -111,10 +135,10 @@ export default function ProjectMangement(props) {
                   </button>
                 </div>
 
-                <div className=" w-full h-full flex-1 flex flex-col">
+                <div className=" w-full h-full flex-1 flex flex-col overflow-y-scroll mb-5">
 
                   <div className="flex-grow-[5]">
-                    <ScopeManagement />
+                    {loading ? <LoadingSpinner /> : <ScopeManagement />}
                   </div>
 
                   <div className="h-[10%] flex justify-end items-center me-5">
