@@ -5,7 +5,7 @@ import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
 import BulkSelectionGroup from './BulkSelectionGroup';
 import Button from '../Common/Button/Button';
-import File from '@/icons/file.svg';
+import BookItem from './BookItem';
 
 const initialBook = 'gen';
 const initialChapter = '1';
@@ -58,11 +58,8 @@ function ScopeManagement({ metadata }) {
 
   const handleSelectBook = (e, book) => {
     console.log('clicked book : ', book);
-  };
-
-  const handleChangeBook = (bookId) => {
-    console.log({ bookId });
-    onChangeBook(bookId, bookId);
+    setCurrentScope((prev) => ({ ...prev, [book.key.toUpperCase()]: [] }));
+    onChangeBook(book.key, book.key);
   };
 
   const handleChapterRangeSelection = (e) => {
@@ -80,6 +77,12 @@ function ScopeManagement({ metadata }) {
     // e.target.end.value = '';
   };
 
+  const handleRemoveScope = (e, book) => {
+    e.stopPropagation();
+    console.log('clicked remove : ', book);
+  };
+
+  // set current scope from meta
   useEffect(() => {
     if (metadata?.type?.flavorType?.currentScope) {
       setCurrentScope(metadata?.type?.flavorType?.currentScope);
@@ -107,22 +110,13 @@ function ScopeManagement({ metadata }) {
           {bookList?.slice(0, 39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
-              <div key={book.key} className="flex justify-between gap-1 items-center group/btn">
-                <BookButton
-                  onClick={(e) => handleSelectBook(e, book)}
-                  className={`flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white
-                  ${isScope ? 'bg-blue-500 text-white' : ''}}`}
-                >
-                  <p className="text-ellipsis" title="Select Book">
-                    {book.name}
-                  </p>
-                </BookButton>
-                {isScope && (
-                  <button type="button" title="Modify Chapter Scope">
-                    <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
-                  </button>
-                )}
-              </div>
+              <BookItem
+                key={book.key}
+                book={book}
+                handleRemoveScope={handleRemoveScope}
+                handleSelectBook={handleSelectBook}
+                isInScope={isScope}
+              />
             );
           })}
         </div>
@@ -133,24 +127,13 @@ function ScopeManagement({ metadata }) {
           {bookList?.slice(39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
-              <div key={book.key} className="flex justify-between gap-2 items-center group/btn">
-                <BookButton
-                  onClick={(e) => handleSelectBook(e, book)}
-                  className={`flex justify-between group-hover/btn:bg-primary group-hover/btn:font-medium group-hover/btn:text-white
-                    ${isScope ? 'bg-blue-500 text-white' : ''}`}
-                >
-                  <span className="" title="Select Book">
-                    {book.name}
-                  </span>
-
-                </BookButton>
-                {isScope && (
-                  <button type="button" title="Modify Chapter Scope">
-                    <File className="w-3 items-center cursor-pointer group-hover/btn:text-primary" onClick={() => handleChangeBook(book.key)} />
-                  </button>
-                )}
-
-              </div>
+              <BookItem
+                key={book.key}
+                book={book}
+                handleRemoveScope={handleRemoveScope}
+                handleSelectBook={handleSelectBook}
+                isInScope={isScope}
+              />
             );
           })}
         </div>
