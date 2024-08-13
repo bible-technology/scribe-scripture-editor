@@ -4,10 +4,23 @@ import ScopeHead from './ScopeHead';
 import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
 import BulkSelectionGroup from './BulkSelectionGroup';
+import Button from '../Common/Button/Button';
 
 const initialBook = 'gen';
 const initialChapter = '1';
 const initialVerse = '1';
+
+const ToggleBookOptions = [
+  { key: 'all', name: 'All' },
+  { key: 'old', name: 'Old' },
+  { key: 'new', name: 'New' },
+  { key: 'none', name: 'Deselect' },
+];
+
+const ToggleChapterOptions = [
+  { key: 'all', name: 'All' },
+  { key: 'none', name: 'Deselect' },
+];
 
 function ScopeManagement() {
   const [selectedOption, setSelectedOption] = useState('');
@@ -45,6 +58,21 @@ function ScopeManagement() {
     console.log('clicked book : ', book);
   };
 
+  const handleChapterRangeSelection = (e) => {
+    e.preventDefault();
+    let start = parseInt(e.target?.start?.value, 10) || null;
+    let end = parseInt(e.target?.end?.value, 10) || null;
+    // hanlde start greater and end smaller
+    if (start > end) {
+      const temp = start;
+      start = end;
+      end = temp;
+    }
+    console.log({ start, end });
+    // e.target.start.value = '';
+    // e.target.end.value = '';
+  };
+
   return (
     <div className="w-full h-full pt-5 px-5">
       <ScopeHead>Project Scope Management</ScopeHead>
@@ -53,6 +81,7 @@ function ScopeManagement() {
         <BulkSelectionGroup
           selectedOption={selectedOption}
           handleSelect={handleChangeBookToggle}
+          toggleOptions={ToggleBookOptions}
         />
       </TitleBar>
 
@@ -75,6 +104,61 @@ function ScopeManagement() {
               key={book.key}
             >
               {book.name}
+            </BookButton>
+          ))}
+        </div>
+      </div>
+
+      <TitleBar>
+        <p className="text-gray-900 text-center text-sm flex gap-2">
+          <span>Chapter Selection :</span>
+          <span className="font-medium">{bookName}</span>
+        </p>
+        <BulkSelectionGroup
+          selectedOption={selectedOption}
+          handleSelect={handleChangeBookToggle}
+          toggleOptions={ToggleChapterOptions}
+        />
+      </TitleBar>
+
+      <form className="w-full my-2 flex gap-3 h-6  text-xxs justify-end" onSubmit={handleChapterRangeSelection}>
+        <div className="flex gap-1 items-center ">
+          <label>Start :</label>
+          <input
+            type="number"
+            className="w-12 h-full  px-1 text-xs border-gray-400 outline-none rounded-[4px]"
+            name="start"
+            min={1}
+            required
+            max={149}
+          />
+        </div>
+        <div className="flex gap-1 items-center">
+          <label>End :</label>
+          <input
+            type="text"
+            className="w-12 h-full  px-1 text-xs border-gray-400 outline-none rounded-[4px]"
+            name="end"
+            min={1}
+            required
+            max={150}
+          />
+        </div>
+
+        <Button type="submit">
+          Go
+        </Button>
+      </form>
+
+      <div className="grid grid-cols-1">
+        <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] flex flex-wrap gap-2 p-4 text-xxs text-left  uppercase">
+          {chapterList?.map((ch) => (
+            <BookButton
+              onClick={(e) => handleSelectBook(e, ch)}
+              key={ch.key}
+              className="border min-w-8 text-center"
+            >
+              {ch.name}
             </BookButton>
           ))}
         </div>
