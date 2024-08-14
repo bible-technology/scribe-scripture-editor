@@ -77,7 +77,13 @@ function ScopeManagement({ metadata }) {
       start = end;
       end = temp;
     }
-    console.log({ start, end });
+    const numberArray = Array(end - start + 1).fill().map((_, idx) => start + idx);
+    const stringArray = numberArray.map(String);
+    setCurrentScope((prev) => {
+      // check and change the selectedChapters
+      setSelectedChaptersSet(new Set(stringArray));
+      return ({ ...prev, [bookId.toUpperCase()]: stringArray });
+    });
     // e.target.start.value = '';
     // e.target.end.value = '';
   };
@@ -99,7 +105,6 @@ function ScopeManagement({ metadata }) {
     if (bukId in currentScope) {
       setCurrentScope((prev) => {
         const currentCh = new Set(prev[bukId] || new Set([]));
-        console.log(currentCh.size);
         if (currentCh.has(chapter)) {
           currentCh.delete(chapter);
         } else {
@@ -199,18 +204,18 @@ function ScopeManagement({ metadata }) {
             name="start"
             min={1}
             required
-            max={149}
+            max={(chapterList && chapterList.length - 1) || 149}
           />
         </div>
         <div className="flex gap-1 items-center">
           <label>End :</label>
           <input
-            type="text"
+            type="number"
             className="w-12 h-full  px-1 text-xs border-gray-400 outline-none rounded-[4px]"
             name="end"
             min={1}
             required
-            max={150}
+            max={chapterList?.length || 150}
           />
         </div>
 
