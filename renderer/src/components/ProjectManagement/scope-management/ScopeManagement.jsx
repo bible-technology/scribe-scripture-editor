@@ -24,7 +24,8 @@ const ToggleChapterOptions = [
 ];
 
 function ScopeManagement({ metadata }) {
-  const [selectedOption, setSelectedOption] = useState('');
+  const [bookFilter, setBookFilter] = useState('');
+  const [chapterFilter, setChapterFilter] = useState('');
   const [currentScope, setCurrentScope] = useState({});
   const [selectedChaptersSet, setSelectedChaptersSet] = useState(new Set([]));
 
@@ -54,10 +55,44 @@ function ScopeManagement({ metadata }) {
   });
 
   const handleChangeBookToggle = (event) => {
-    setSelectedOption(event.target.value);
+    setBookFilter(event.target.value);
+    const bookObj = {};
+    if (event.target.value === 'all') {
+      bookList.forEach((book) => {
+        bookObj[book.key.toUpperCase()] = [];
+      });
+    } else if (event.target.value === 'old') {
+      bookList?.slice(0, 39)?.forEach((book) => {
+        bookObj[book.key.toUpperCase()] = [];
+      });
+    } else if (event.target.value === 'new') {
+      bookList?.slice(39)?.forEach((book) => {
+        bookObj[book.key.toUpperCase()] = [];
+      });
+    }
+    const bookCode = Object.keys(bookObj)[0];
+    onChangeBook(bookCode, bookCode);
+    setCurrentScope(bookObj);
+  };
+
+  const handleChangeChapterToggle = (event) => {
+    setChapterFilter(event.target.value);
+    let stringArray = [];
+    if (event.target.value === 'all') {
+      const numberArray = Array(chapterList.length).fill().map((_, idx) => 1 + idx);
+      stringArray = numberArray.map(String);
+    }
+    setCurrentScope((prev) => {
+      // check and change the selectedChapters
+      setSelectedChaptersSet(new Set(stringArray));
+      return ({ ...prev, [bookId.toUpperCase()]: stringArray });
+    });
   };
 
   const handleSelectBook = (e, book) => {
+    if (bookFilter) {
+      setBookFilter('');
+    }
     const bookCode = book.key.toUpperCase();
     setCurrentScope((prev) => {
       // check and change the selectedChapters
@@ -90,7 +125,9 @@ function ScopeManagement({ metadata }) {
 
   const handleRemoveScope = (e, book) => {
     e.stopPropagation();
-    console.log('clicked remove : ', book);
+    if (bookFilter) {
+      setBookFilter('');
+    }
     const bukId = book.key.toUpperCase();
     const newScopeObj = { ...currentScope };
     delete newScopeObj[bukId];
@@ -101,6 +138,9 @@ function ScopeManagement({ metadata }) {
    * Fn to toggle chapter selection for the active book
    */
   const handleChapterSelection = (e, chapter) => {
+    if (chapterFilter) {
+      setChapterFilter('');
+    }
     const bukId = bookId.toUpperCase();
     if (bukId in currentScope) {
       setCurrentScope((prev) => {
@@ -141,7 +181,7 @@ function ScopeManagement({ metadata }) {
       <TitleBar>
         <p className="text-gray-900 text-center text-sm">Book Selection</p>
         <BulkSelectionGroup
-          selectedOption={selectedOption}
+          selectedOption={bookFilter}
           handleSelect={handleChangeBookToggle}
           toggleOptions={ToggleBookOptions}
         />
@@ -189,8 +229,8 @@ function ScopeManagement({ metadata }) {
           <span className="font-medium">{bookName}</span>
         </p>
         <BulkSelectionGroup
-          selectedOption={selectedOption}
-          handleSelect={handleChangeBookToggle}
+          selectedOption={chapterFilter}
+          handleSelect={handleChangeChapterToggle}
           toggleOptions={ToggleChapterOptions}
         />
       </TitleBar>
