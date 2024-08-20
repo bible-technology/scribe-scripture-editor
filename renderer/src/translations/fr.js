@@ -262,6 +262,7 @@ export const Fr = {
     'label-overwrite': 'Écraser',
     'modal-title-abort-conflict-resolution': 'Abandonner la résolution des conflits',
     'msg-abort-conflict-resolution': 'Voulez-vous abandonner le processus de résolution des conflits. Si vous abandonnez, vous perdrez toute votre progression et devrez recommencer.',
+    'text-msg-abort-conflict-resolution': 'Voulez-vous abandonner le processus de résolution des conflits. Veuillez vous assurer d\'avoir atteint un point de contrôle pour continuer plus tard. Le point de contrôle est l’achèvement de chaque chapitre. Si vous abandonnez au milieu d\'un chapitre, vous perdrez toute votre progression dans le chapitre et devrez recommencer le chapitre.',
     'label-done': 'fait',
     'label-resolved': 'résolu',
     'label-resolve-conflict': 'résoudre un conflit',

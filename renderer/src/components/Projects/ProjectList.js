@@ -53,7 +53,7 @@ export default function ProjectList() {
   };
 
   const closeEditProject = async () => {
-    logger.debug('ProjectList.js', 'Closing edit project page and updating the values');
+    logger.debug('ProjectList.js', 'Closing edit project page and updating the valuesd');
     setCallEditProject(false);
     await FetchProjects();
   };

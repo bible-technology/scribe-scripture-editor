@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { SnackBar } from '@/components/SnackBar';
 import PropTypes from 'prop-types';
 import {
   ArchiveBoxIcon,
@@ -8,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import TranslationMergeUI from '@/components/TextTranslationMerge/TranslationMergeUI.jsx';
 import SideBar from './SideBar';
 import TopMenuBar from './TopMenuBar';
 import ImportProjectPopUp from './ImportProjectPopUp';
@@ -34,6 +36,23 @@ export default function ProjectsLayout(props) {
     data: undefined,
   });
 
+  const [snackBar, setOpenSnackBar] = useState(false);
+  const [snackText, setSnackText] = useState('');
+  const [notify, setNotify] = useState();
+
+  const triggerSnackBar = (status, message) => {
+    setNotify(status);
+    setSnackText(message);
+    setOpenSnackBar(true);
+  };
+
+  function closeMergeWindow() {
+    setConflictPopup({
+      open: false,
+      data: undefined,
+    });
+  }
+
   const { t } = useTranslation();
   function handleOpenImportPopUp() {
     setOpenImportPopUp(true);
@@ -47,15 +66,16 @@ export default function ProjectsLayout(props) {
   }
 
   return (
-    <div className="flex overflow-auto scrollbars-width absolute w-full h-full ">
+    <>
+      <div className="flex overflow-auto scrollbars-width absolute w-full h-full ">
 
-      <SideBar />
+        <SideBar />
 
-      <div className="w-full">
+        <div className="w-full">
 
-        <TopMenuBar />
+          <TopMenuBar />
 
-        {title && (
+          {title && (
           <header className="bg-white shadow">
             {!isTwoCol
               ? (
@@ -83,7 +103,9 @@ export default function ProjectsLayout(props) {
                       {conflictPopup.open
                         && (
                           <div className="fixed z-50 ">
-                            <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />
+                            {conflictPopup.data?.projectType === 'textTranslation'
+                            ? <TranslationMergeUI conflictData={conflictPopup} closeMergeWindow={closeMergeWindow} triggerSnackBar={triggerSnackBar} />
+                            : <ConflictResolverUI conflictData={conflictPopup} setConflictPopup={setConflictPopup} />}
                           </div>
                         )}
 
@@ -134,13 +156,20 @@ export default function ProjectsLayout(props) {
           </header>
         )}
 
-        <div className="max-h-[85%] overflow-y-auto  ">
-          {children}
+          <div className="max-h-[85%] overflow-y-auto  ">
+            {children}
+          </div>
+
         </div>
-
       </div>
-
-    </div>
+      <SnackBar
+        openSnackBar={snackBar}
+        snackText={snackText}
+        setOpenSnackBar={setOpenSnackBar}
+        setSnackText={setSnackText}
+        error={notify}
+      />
+    </>
 
   );
 }

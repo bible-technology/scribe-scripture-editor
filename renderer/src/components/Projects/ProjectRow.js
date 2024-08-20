@@ -205,6 +205,7 @@ const ProjectRow = ({
                               </button>
                             )}
                           </Menu.Item>
+
                           <Menu.Item>
                             {({ active }) => (
                               <button

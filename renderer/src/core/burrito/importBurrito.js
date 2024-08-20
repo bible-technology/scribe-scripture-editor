@@ -90,8 +90,9 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
     let sb = fs.readFileSync(path.join(filePath, 'metadata.json'));
     const metadata = JSON.parse(sb);
     // Fixing the issue of previous version of AG. The dateCreated was left empty and it will fail the validation.
+    const agId = Object.keys(metadata?.identification?.primary?.scribe);
+    result.id = agId;
     if (!metadata?.meta?.dateCreated) {
-      const agId = Object.keys(metadata?.identification?.primary?.scribe);
       metadata.meta.dateCreated = metadata?.identification?.primary?.scribe[agId[0]].timestamp;
       sb = JSON.stringify(metadata);
     }
@@ -103,6 +104,7 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       result.version = metadata.meta.version;
       result.burritoType = `${metadata.type?.flavorType?.name} / ${metadata.type?.flavorType?.flavor?.name}`;
       result.ingredients = Object.keys(metadata.ingredients).map((key) => key);
+      result.ingredientsObj = metadata.ingredients;
       result.primaryKey = metadata.identification.primary;
       result.publicDomain = metadata.copyright?.publicDomain;
       result.language = metadata.languages.map((lang) => lang.name.en);
