@@ -164,8 +164,8 @@ export default function InnerFramePopup() {
 					`${currentUser}`,
 					'resources',
 				);
-				creatSection(folderProject, pickerJson);
-				creatSection(folderRessources, pickerJson);
+				createSection(folderProject, pickerJson);
+				createSection(folderRessources, pickerJson);
 				return currentUser;
 			})
 			.then((currentUser) => {
@@ -713,7 +713,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 	}
 }
 
-function creatSection(folder, pickerJson) {
+function createSection(folder, pickerJson) {
 	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
@@ -723,18 +723,11 @@ function creatSection(folder, pickerJson) {
 
 	let currentMetadataPath = '';
 	for (let project of projects) {
-		currentMetadataPath = path.join(
-			folder,
-			'/',
-			project,
-			'/',
-			'metadata.json',
-		);
+		currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
 		if (fs.existsSync(currentMetadataPath)) {
 			let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
 			let jsonParse = JSON.parse(jsontest);
-			let projectS;
-			let jsonParseIngre;
+			let projectS, jsonParseIngre;
 
 			if (jsonParse.identification?.name.en) {
 				jsonParseIngre = jsonParse.ingredients;
@@ -744,10 +737,8 @@ function creatSection(folder, pickerJson) {
 				projectS = '[' + jsonParse.meta.full_name + ']';
 			}
 
-			let fileName, tmpScope, tmpRangeScope;
-			if (
-				jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation'
-			) {
+			let fileName;
+			if (jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation') {
 				if (jsonParse.resourceMeta) {
 					pickerJson.book[jsonParse.resourceMeta?.full_name] = {
 						description: `${jsonParse.resourceMeta?.full_name}`,
@@ -781,9 +772,7 @@ function creatSection(folder, pickerJson) {
 						books: [],
 					};
 				}
-			} else if (
-				jsonParse?.type?.flavorType?.flavor?.name === 'textStories'
-			) {
+			} else if (jsonParse?.type?.flavorType?.flavor?.name === 'textStories') {
 				fileName = 'content';
 				pickerJson.OBS[`OBS ${jsonParse.resourceMeta?.full_name}`] = {
 					description: `OBS ${jsonParse.resourceMeta?.full_name}`,
@@ -796,9 +785,7 @@ function creatSection(folder, pickerJson) {
 					},
 					books: [],
 				};
-			} else if (
-				jsonParse?.meta?.repo?.flavor_type === 'parascriptural'
-			) {
+			} else if (jsonParse?.meta?.repo?.flavor_type === 'parascriptural') {
 				fileName = 'content';
 				pickerJson.tNotes[`tNotes ${jsonParse.meta.repo.full_name}`] = {
 					description: `tNotes ${jsonParse.meta.repo.full_name}`,
