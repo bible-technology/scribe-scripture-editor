@@ -165,8 +165,8 @@ export default function InnerFramePopup() {
 					`${currentUser}`,
 					'resources',
 				);
-				creatSection(folderProject, pickerJson);
-				creatSection(folderRessources, pickerJson);
+				createSection(folderProject, pickerJson);
+				createSection(folderRessources, pickerJson);
 				return currentUser;
 			})
 			.then((currentUser) => {
@@ -179,7 +179,7 @@ export default function InnerFramePopup() {
 	useEffect(() => {
 		setKitchenFaucet(
 			JSON.stringify(
-				transformPrintDataToKitchenFoset({
+				transformPrintDataToKitchenFaucet({
 					order: orderSelection,
 					metaData: JSON.parse(headerInfo),
 					content: selected,
@@ -189,6 +189,8 @@ export default function InnerFramePopup() {
 	}, [selected, headerInfo, orderSelection]);
 
 	useEffect(() => {
+		console.log("test ==", global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet)))
+		console.log("kitchenFaucet ==", kitchenFaucet)
 		if (global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet)).length === 0) {
 			let header = JSON.parse(headerInfo);
 			console.log('header ==',header);
@@ -613,8 +615,9 @@ export default function InnerFramePopup() {
 	);
 }
 
-function transformPrintDataToKitchenFoset(jsonData) {
-	let kitchenFoset = [];
+function transformPrintDataToKitchenFaucet(jsonData) {
+	console.log("jsonData ==", jsonData)
+	let kitchenFaucet = [];
 	if (jsonData.content) {
 		for (let i = 0; i < jsonData.order.length; i++) {
 			let currentWrapper = jsonData.content[jsonData.order[i]];
@@ -651,10 +654,10 @@ function transformPrintDataToKitchenFoset(jsonData) {
 				}
 			}
 
-			kitchenFoset.push(elem);
+			kitchenFaucet.push(elem);
 		}
 	}
-	return { global: jsonData.metaData, sections: kitchenFoset };
+	return { global: jsonData.metaData, sections: kitchenFaucet };
 }
 
 function MessageToPeople(json) {
@@ -715,7 +718,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 	}
 }
 
-function creatSection(folder, pickerJson) {
+function createSection(folder, pickerJson) {
 	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
@@ -725,18 +728,11 @@ function creatSection(folder, pickerJson) {
 
 	let currentMetadataPath = '';
 	for (let project of projects) {
-		currentMetadataPath = path.join(
-			folder,
-			'/',
-			project,
-			'/',
-			'metadata.json',
-		);
+		currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
 		if (fs.existsSync(currentMetadataPath)) {
 			let jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
 			let jsonParse = JSON.parse(jsontest);
-			let projectS;
-			let jsonParseIngre;
+			let projectS, jsonParseIngre;
 
 			if (jsonParse.identification?.name.en) {
 				jsonParseIngre = jsonParse.ingredients;
@@ -746,10 +742,8 @@ function creatSection(folder, pickerJson) {
 				projectS = '[' + jsonParse.meta.full_name + ']';
 			}
 
-			let fileName, tmpScope, tmpRangeScope;
-			if (
-				jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation'
-			) {
+			let fileName;
+			if (jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation') {
 				if (jsonParse.resourceMeta) {
 					pickerJson.book[jsonParse.resourceMeta?.full_name] = {
 						description: `${jsonParse.resourceMeta?.full_name}`,
@@ -763,16 +757,8 @@ function creatSection(folder, pickerJson) {
 						books: [],
 					};
 				} else if (jsonParse.identification) {
-					pickerJson.book[
-						jsonParse.identification.name[
-							jsonParse.languages[0].tag
-						]
-					] = {
-						description: `${
-							jsonParse.identification.name[
-								jsonParse.languages[0].tag
-							]
-						}`,
+					pickerJson.book[jsonParse.identification.name[jsonParse.languages[0].tag]] = {
+						description: `${jsonParse.identification.name[jsonParse.languages[0].tag]}`,
 						language: `${jsonParse.languages[0].tag}`,
 						src: {
 							type: 'fs',
@@ -783,9 +769,7 @@ function creatSection(folder, pickerJson) {
 						books: [],
 					};
 				}
-			} else if (
-				jsonParse?.type?.flavorType?.flavor?.name === 'textStories'
-			) {
+			} else if (jsonParse?.type?.flavorType?.flavor?.name === 'textStories') {
 				fileName = 'content';
 				pickerJson.OBS[`OBS ${jsonParse.resourceMeta?.full_name}`] = {
 					description: `OBS ${jsonParse.resourceMeta?.full_name}`,
@@ -798,9 +782,7 @@ function creatSection(folder, pickerJson) {
 					},
 					books: [],
 				};
-			} else if (
-				jsonParse?.meta?.repo?.flavor_type === 'parascriptural'
-			) {
+			} else if (jsonParse?.meta?.repo?.flavor_type === 'parascriptural') {
 				fileName = 'content';
 				pickerJson.tNotes[`tNotes ${jsonParse.meta.repo.full_name}`] = {
 					description: `tNotes ${jsonParse.meta.repo.full_name}`,
@@ -812,6 +794,19 @@ function creatSection(folder, pickerJson) {
 							: `${folder}/${project}`,
 					},
 					books: [],
+				};
+			} else if (jsonParse?.type?.flavorType?.flavor?.name === 'x-juxtalinear') {
+				fileName = 'content';
+				pickerJson.jxl[Object.values(jsonParse.identification.name)[0]] = {
+					description: `${Object.values(jsonParse.identification.name)[0]}`,
+					language: jsonParse.languages[0] ? jsonParse.languages[0].name.en : "French",
+					src: {
+						type: 'fs',
+						path: folder.includes('projects')
+							? `${folder}/${project}/ingredients`
+							: `${folder}/${project}`,
+					},
+					books: jsonParse.type.flavorType.currentScope ? [Object.keys(jsonParse.type.flavorType.currentScope)] : [],
 				};
 			}
 		}

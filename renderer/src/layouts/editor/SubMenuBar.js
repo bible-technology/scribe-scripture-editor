@@ -15,7 +15,6 @@ import { isElectron } from '@/core/handleElectron';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
 import MenuDropdown from '../../components/MenuDropdown/MenuDropdown';
 import FramePdfPopup from '@/layouts/editor/FramePdfPopup.jsx';
-import FramedBouquetPickerPopup from '@/layouts/editor/FramedBouquetPickerPopup.jsx';
 import menuStyles from './MenuBar.module.css';
 import packageInfo from '../../../../package.json';
 import { newPath, sbStorageDownload } from '../../../../supabase';
@@ -388,16 +387,6 @@ export default function SubMenuBar() {
                 />
               </div>
             )}
-
-            {/* popup for print to PDF */}
-            {/* {openBouquetPicker && (
-              <div className="fixed z-50 ">
-                <FramedBouquetPickerPopup
-                  openBouquetPicker={openBouquetPicker}
-                  setOpenBouquetPicker={setOpenBouquetPicker}
-                />
-              </div>
-            )} */}
 
           </div>
         </div>

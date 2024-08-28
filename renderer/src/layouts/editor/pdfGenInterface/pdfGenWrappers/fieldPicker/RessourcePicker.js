@@ -7,6 +7,8 @@ import ScriptureContentPicker from '@/components/ScriptureContentPicker/Scriptur
 export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
+	
+
 	useEffect(() => {
 		if(selected != ''){
 			setJsonSpec((prev) => {
@@ -132,8 +134,8 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 									setInfoDiplay(e.description);
 									handleOpenModal(false);
 								}}
-								source={{ Ressources : localListResourcesForPdf[keyToRessource(ressourceKey)]?  
-									localListResourcesForPdf[keyToRessource(ressourceKey)]:{}}}
+								source={{ Ressources : localListResourcesForPdf[keyToRessource(ressourceKey)] ?
+									localListResourcesForPdf[keyToRessource(ressourceKey)] : {}}}
 							/>
 						) : (
 							<LoadingSpinner />
