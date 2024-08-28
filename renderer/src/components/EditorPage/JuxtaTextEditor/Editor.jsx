@@ -119,9 +119,7 @@ export default function Editor(props) {
 
   useEffect(() => {
     async function getUserSettings() {
-      console.log("function Called!")
       if (!userSettingsJson) {
-        console.log("userSettingsJson updated!")
         let tmpUsrSet = await readUserSettings();
         setHelpAldearyOpenedOnce(true);
         setUserSettingsJson(tmpUsrSet);

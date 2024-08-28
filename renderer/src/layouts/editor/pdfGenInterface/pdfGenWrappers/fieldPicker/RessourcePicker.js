@@ -4,7 +4,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { Button, Modal } from '@mui/material';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 
-export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true }) {
+export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourceName, open=true }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
 	
@@ -86,7 +86,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 			}:{display:'none'}}>
 			<div style={{ display: 'flex', flexDirection: 'row',alignItems: 'center',
 				justifyContent: 'space-between',width:"100%" }}>
-				<div>{ressourceKey} </div>
+				<div>{ressourceName} </div>
 				<Button
 					style={{
 						borderRadius: 4,
@@ -96,7 +96,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 						color: 'white',
 					}}
 					onClick={() => handleOpenModal(true)}>
-					{infoDisplay === ""? "Choose" : "Choose an other source"}
+					{infoDisplay === ""? "Choose" : "Choose another source"}
 				</Button>
 			</div>
 			<div>{infoDisplay}</div>
@@ -149,7 +149,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey,open=true
 
 
 function keyToRessource(elem){
-	if("translationText"=== elem){
+	if("translationText"=== elem || "lhs" === elem){
 		return "book"
 	}
 	if(elem==="html"){

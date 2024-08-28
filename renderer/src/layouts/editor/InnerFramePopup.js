@@ -189,9 +189,8 @@ export default function InnerFramePopup() {
 	}, [selected, headerInfo, orderSelection]);
 
 	useEffect(() => {
-		console.log("test ==", global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet)))
-		console.log("kitchenFaucet ==", kitchenFaucet)
-		if (global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet)).length === 0) {
+		let validationJson = global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet));
+		if (validationJson.length === 0) {
 			let header = JSON.parse(headerInfo);
 			console.log('header ==',header);
 			if (
@@ -205,7 +204,9 @@ export default function InnerFramePopup() {
 		} else {
 			setIsJsonValidate(false);
 		}
+		console.log(validationJson);
 	}, [kitchenFaucet, headerInfo]);
+
 	const openFileDialogSettingData = async () => {
 		try {
 			const options = {
@@ -228,6 +229,7 @@ export default function InnerFramePopup() {
 			console.error('Error opening file dialog:', error);
 		}
 	};
+
 	useEffect(() => {
 		if (folder && nameFile !== '') {
 			setHeaderInfo((prev) => {
@@ -238,6 +240,7 @@ export default function InnerFramePopup() {
 			});
 		}
 	}, [nameFile, folder]);
+
 	useEffect(() => {
 		const fs = window.require('fs');
 		const os = window.require('os');
@@ -692,6 +695,7 @@ export function findProjectInfo(meta, autoGrapha) {
 }
 
 function changeMetaDataToWrapperSection(meta, autoGrapha) {
+
 	let t = findProjectInfo(meta, autoGrapha);
 	if (t.type === 'Text Translation') {
 		return {
@@ -705,6 +709,17 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 			},
 		};
 	} else if (t.type === 'OBS') {
+		return {
+			0: {
+				type: 'bcvWrapper',
+				id: uuidv4(),
+				content: {
+					content: { 0: { type: 'null', content: {} } },
+					order: [0],
+				},
+			},
+		};
+	} else {
 		return {
 			0: {
 				type: 'bcvWrapper',
@@ -806,7 +821,7 @@ function createSection(folder, pickerJson) {
 							? `${folder}/${project}/ingredients`
 							: `${folder}/${project}`,
 					},
-					books: jsonParse.type.flavorType.currentScope ? [Object.keys(jsonParse.type.flavorType.currentScope)] : [],
+					books: jsonParse.type.flavorType.currentScope ? Object.keys(jsonParse.type.flavorType.currentScope) : [],
 				};
 			}
 		}

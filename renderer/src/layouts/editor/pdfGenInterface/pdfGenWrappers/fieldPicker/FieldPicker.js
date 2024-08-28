@@ -13,6 +13,7 @@ export function FieldPicker({
 	open,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
+	console.log("fieldInfo ==",fieldInfo);
 
 	if (typeof fieldInfo.typeLiteral === typeof true || fieldInfo.typeLiteral) {
 		setJsonSpec((prev) => {
@@ -87,6 +88,8 @@ export function FieldPicker({
 	} else if (
 		fieldInfo.typeName === 'translationText' ||
 		fieldInfo.typeName === 'tNotes' ||
+		fieldInfo.id === 'glossNotes' ||
+		fieldInfo.id === 'lhs' ||
 		fieldInfo.typeName === 'obs' ||
 		fieldInfo.typeName === 'juxta' ||
 		fieldInfo.typeName === 'md' ||
@@ -99,6 +102,7 @@ export function FieldPicker({
 					setJsonSpec={setJsonSpec}
 					fieldInfo={fieldInfo}
 					ressourceKey={fieldInfo.typeName}
+					ressourceName={fieldInfo.label.en}
 					require={require}
 					open={open}
 				/>

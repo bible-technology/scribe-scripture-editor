@@ -30,7 +30,12 @@
 }
 
 .container p {
+    display: flex;
+    flex-wrap: wrap;
     margin: 0.5rem;
+    max-width: 50%;
+    word-wrap: break-word;
+    overflow-x: auto;
 }
 
 .container .local-label {
@@ -39,7 +44,8 @@
 
 .tags-list {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
     gap: 5px;
+    overflow-x: auto;
+    max-width: 50%;
 }

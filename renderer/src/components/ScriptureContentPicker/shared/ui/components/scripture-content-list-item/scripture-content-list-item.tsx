@@ -76,9 +76,11 @@ export function ScriptureContentListItem({
         </p>
         <div className={'tags-list'}>
           {books.map((book) => (
-            <Tag color="#cbc3e3" key={book}>
-              {book}
-            </Tag>
+            <>{'\u0020'}
+              <Tag color="#cbc3e3" key={book}>
+                {book}
+              </Tag>
+            </>
           ))}
         </div>
         {path && <p>Local FS: {path}</p>}
