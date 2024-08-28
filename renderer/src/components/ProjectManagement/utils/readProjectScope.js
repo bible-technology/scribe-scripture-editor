@@ -2,6 +2,22 @@ import localForage from 'localforage';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 
+const getDirectories = (readdirSync, source) => readdirSync(source, { withFileTypes: true })
+  .filter((dirent) => dirent.isDirectory())
+  .map((dirent) => dirent.name);
+
+// This function returns the Object of books & chapters which has atleast 1 audio file in it.
+export const getScope = (project) => {
+  const path = require('path');
+  const scope = {};
+  const { readdirSync } = window.require('fs');
+  const list = getDirectories(readdirSync, project);
+  list.forEach((book) => {
+    const chapters = getDirectories(readdirSync, path.join(project, book));
+    scope[book] = chapters;
+  });
+  return scope;
+};
 export const readProjectScope = async (projectName) => {
   try {
     logger.debug('readProjectScope.js', `In read metadata - ${projectName}`);
@@ -17,8 +33,10 @@ export const readProjectScope = async (projectName) => {
       const metadataFile = await fs.readFileSync(filePath, 'utf-8');
       if (metadataFile) {
         logger.debug('metadataFile.js', `read metadata file successfully - ${projectName}`);
+        const project = path.join(file, projectName, 'audio', 'ingredients');
+        const backendScope = getScope(project);
         const json = await JSON.parse(metadataFile);
-        return json;
+        return { metadata: json, scope: backendScope };
       }
       throw new Error(`failed to read settings file - ${projectName}`);
     }

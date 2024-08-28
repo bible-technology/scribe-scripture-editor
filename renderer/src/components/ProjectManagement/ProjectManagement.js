@@ -3,22 +3,21 @@ import React, {
   useRef, Fragment,
   useEffect,
   useCallback,
+  useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
-import updateTranslationSB from '@/core/burrito/updateTranslationSB';
-import updateObsSB from '@/core/burrito/updateObsSB';
 import { SnackBar } from '@/components/SnackBar';
 // import useSystemNotification from '@/components/hooks/useSystemNotification';
 // import { LoadingSpinner } from '@/components/LoadingSpinner';
-import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+// import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import * as logger from '../../logger';
-import burrito from '../../lib/BurritoTemplate.json';
 import ScopeManagement from './scope-management/ScopeManagement';
 import { readProjectScope } from './utils/readProjectScope';
 import { LoadingSpinner } from '../LoadingSpinner';
+import { updateBurritoScope } from './utils/updateBurritoScope';
 
 export default function ProjectMangement(props) {
   const {
@@ -28,50 +27,19 @@ export default function ProjectMangement(props) {
   } = props;
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
-  const [valid, setValid] = React.useState(false);
-  const [snackBar, setOpenSnackBar] = React.useState(false);
-  const [snackText, setSnackText] = React.useState('');
-  const [notify, setNotify] = React.useState();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [checkText, setCheckText] = React.useState(false);
-  const [totalExported, setTotalExported] = React.useState(0);
-  const [totalExports, setTotalExports] = React.useState(0);
-  const [exportStart, setExportstart] = React.useState(false);
+  const [snackBar, setOpenSnackBar] = useState(false);
+  const [snackText, setSnackText] = useState('');
+  const [notify, setNotify] = useState();
+  const [currentScope, setCurrentScope] = useState({});
+  const [metadata, setMetadata] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [backendScope, setBackendScope] = useState({});
 
-  const [metadata, setMetadata] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-
-  // const { pushNotification } = useSystemNotification();
-
-  function resetExportProgress() {
-    logger.debug('ExportProjectPopUp.js', 'reset Export Progress');
-    if (!exportStart) {
-      setTotalExported(0);
-      setTotalExports(0);
-      setExportstart(false);
-    }
-  }
-
-  function close() {
-    if (!exportStart) {
-      logger.debug('ExportProjectPopUp.js', 'Closing the Dialog Box');
-      resetExportProgress(); // reset export
-      closePopUp(false);
-      setValid(false);
-      setMetadata({});
-      setCheckText(false);
-    }
-  }
-
-  const updateBurritoVersion = (username) => {
-    logger.debug('ExportProjectPopUp.js', 'Inside updateBurritoVersion');
-    setTotalExported(1); // 1 step of 2 finished
-    if (project?.type === 'Text Translation') {
-      updateTranslationSB(username, project, openModal);
-    } else if (project?.type === 'OBS') {
-      updateObsSB(username, project, openModal);
-    }
-    setOpenModal(false);
+  const close = () => {
+    logger.debug('ProjectMangement.js', 'Closing the Dialog Box');
+    setOpenSnackBar(true);
+    closePopUp(false);
+    setMetadata({});
   };
 
   // load Metadata of the project
@@ -80,13 +48,61 @@ export default function ProjectMangement(props) {
       setLoading(true);
       const projectFullName = `${project?.name}_${project?.id?.[0]}`;
       const projectMeta = await readProjectScope(projectFullName);
-      setMetadata(projectMeta);
+      setMetadata(projectMeta.metadata);
+      setBackendScope(projectMeta.scope);
     } catch (err) {
       console.error('Read Meta : ', err);
     } finally {
       setLoading(false);
     }
   }, [project]);
+  function compareNumbers(a, b) {
+    return a - b;
+  }
+  const handleProject = () => {
+    logger.debug('ProjectMangement.js', 'Inside updateBurrito');
+    let mergedScope = currentScope;
+    // Merge both existing and new scope, if any scope difference exists
+    if (Object.keys(backendScope).length > 0) {
+      Object.entries(backendScope).forEach((book) => {
+        // Checking whether the book in scope is available in currentscope
+        if (currentScope[book[0]]) {
+          // merging the chapters of existing and selected books
+          const scopeSet = backendScope[book[0]];
+          const currentSet = currentScope[book[0]];
+          const arr = [...scopeSet, ...currentSet];
+          const mergedArr = [...new Set(arr)];
+          mergedScope = { ...mergedScope, [book[0]]: mergedArr.sort(compareNumbers) };
+        } else {
+          mergedScope = { ...mergedScope, [book[0]]: Object.values(backendScope[book[0]]) };
+        }
+      });
+    }
+    metadata.type.flavorType.currentScope = mergedScope;
+    const projectFullName = `${project?.name}_${project?.id?.[0]}`;
+    updateBurritoScope(projectFullName, metadata).then(() => {
+      setNotify('success');
+      setSnackText('Scope updated successfully!');
+      close();
+    });
+  };
+
+  // const handleProject = () => {
+  //   metadata.type.flavorType.currentScope = currentScope;
+  //   const projectFullName = `${project?.name}_${project?.id?.[0]}`;
+  //   // updateBurritoScope checks whether user has removed anything (Book(s)/Chapter(s)) from the existing scope or not
+  //   updateBurritoScope(projectFullName, metadata, 'difference').then((value) => {
+  //     console.log('scope', value);
+  //     if (Object.keys(value).length > 0) {
+  //       // Has some change so merge is required
+  //       setScopeDiff(value);
+  //       // setOpenModal(true);
+  //     } else {
+  //       // nothing been removed by the user
+  //       updateBurrito();
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
     getProjectMetadata();
@@ -138,7 +154,7 @@ export default function ProjectMangement(props) {
                 <div className=" w-full h-full flex-1 flex flex-col overflow-y-scroll mb-5">
 
                   <div className="flex-grow-[5]">
-                    {loading ? <LoadingSpinner /> : <ScopeManagement metadata={metadata} />}
+                    {loading ? <LoadingSpinner /> : <ScopeManagement metadata={metadata} currentScope={currentScope} setCurrentScope={setCurrentScope} backendScope={backendScope} />}
                   </div>
 
                   <div className="h-[10%] flex justify-end items-center me-5">
@@ -154,7 +170,7 @@ export default function ProjectMangement(props) {
                       type="button"
                       aria-label="edit-language"
                       className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
-                      onClick={() => console.log('Apply scope change clicked')}
+                      onClick={() => handleProject()}
                     >
                       Apply
                     </button>
@@ -174,16 +190,16 @@ export default function ProjectMangement(props) {
         setSnackText={setSnackText}
         error={notify}
       />
-      <ConfirmationModal
+      {/* <ConfirmationModal
         openModal={openModal}
         title={t('modal-title-update-burrito')}
         setOpenModal={setOpenModal}
-        confirmMessage={t('dynamic-msg-update-burrito-version', { version1: metadata?.metadata?.meta?.version, version2: burrito?.meta?.version })}
+        confirmMessage={t('dynamic-msg-scope-difference', { scopediff: JSON.stringify(scopediff) })}
         buttonName={t('btn-update')}
         closeModal={
-          () => updateBurritoVersion(metadata.username, metadata.fs, metadata.path, metadata.folder)
+          () => updateBurrito()
         }
-      />
+      /> */}
     </>
   );
 }

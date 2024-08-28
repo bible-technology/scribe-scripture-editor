@@ -23,10 +23,11 @@ const ToggleChapterOptions = [
   { key: 'none', name: 'Deselect' },
 ];
 
-function ScopeManagement({ metadata }) {
+function ScopeManagement({
+ metadata, currentScope, setCurrentScope, backendScope,
+}) {
   const [bookFilter, setBookFilter] = useState('');
   const [chapterFilter, setChapterFilter] = useState('');
-  const [currentScope, setCurrentScope] = useState({});
   const [selectedChaptersSet, setSelectedChaptersSet] = useState(new Set([]));
 
   const {
@@ -51,7 +52,7 @@ function ScopeManagement({ metadata }) {
   });
 
   console.log('BOOK ============>', {
-    bookName, bookId, metadata, currentScope,
+    bookName, bookId, metadata, currentScope, backendScope,
   });
 
   const handleChangeBookToggle = (event) => {
@@ -191,7 +192,7 @@ function ScopeManagement({ metadata }) {
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase"
         >
-          {bookList?.slice(0, 39)?.map((book) => {
+          {backendScope && bookList?.slice(0, 39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
               <BookItem
@@ -200,6 +201,7 @@ function ScopeManagement({ metadata }) {
                 handleRemoveScope={handleRemoveScope}
                 handleSelectBook={handleSelectBook}
                 isInScope={isScope}
+                disable={book?.key?.toUpperCase() in backendScope}
               />
             );
           })}
@@ -208,7 +210,7 @@ function ScopeManagement({ metadata }) {
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase content-start"
         >
-          {bookList?.slice(39)?.map((book) => {
+          {backendScope && bookList?.slice(39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
               <BookItem
@@ -217,23 +219,26 @@ function ScopeManagement({ metadata }) {
                 handleRemoveScope={handleRemoveScope}
                 handleSelectBook={handleSelectBook}
                 isInScope={isScope}
+                disable={book?.key?.toUpperCase() in backendScope}
               />
             );
           })}
         </div>
       </div>
-
-      <TitleBar>
-        <p className="text-gray-900 text-center text-sm flex gap-2">
-          <span>Chapter Selection :</span>
-          <span className="font-medium">{bookName}</span>
-        </p>
-        <BulkSelectionGroup
-          selectedOption={chapterFilter}
-          handleSelect={handleChangeChapterToggle}
-          toggleOptions={ToggleChapterOptions}
-        />
-      </TitleBar>
+      {bookName
+        && (
+        <TitleBar>
+          <p className="text-gray-900 text-center text-sm flex gap-2">
+            <span>Chapter Selection :</span>
+            <span className="font-medium">{bookName}</span>
+          </p>
+          <BulkSelectionGroup
+            selectedOption={chapterFilter}
+            handleSelect={handleChangeChapterToggle}
+            toggleOptions={ToggleChapterOptions}
+          />
+        </TitleBar>
+      )}
 
       <form className="w-full my-2 flex gap-3 h-6  text-xxs justify-end" onSubmit={handleChapterRangeSelection}>
         <div className="flex gap-1 items-center ">
@@ -268,11 +273,13 @@ function ScopeManagement({ metadata }) {
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] flex flex-wrap gap-2 p-4 text-xxs text-left  uppercase">
           {chapterList?.map(({ key, name }) => {
             const isInScope = selectedChaptersSet.has(key);
+            const disable = backendScope[bookId.toUpperCase()]?.includes(key);
             return (
               <BookButton
                 onClick={(e) => handleChapterSelection(e, name)}
                 key={key}
-                className={`border min-w-8 text-center ${isInScope ? 'bg-primary text-white font-medium' : ''}`}
+                // eslint-disable-next-line no-nested-ternary
+                className={`border min-w-8 text-center ${disable ? 'bg-gray-400' : isInScope ? 'bg-primary text-white font-medium' : ''}`}
               >
                 {name}
               </BookButton>
