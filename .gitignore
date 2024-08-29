@@ -23,6 +23,8 @@ Autogrpha-DB/
 /app/**/*.map
 /.next
 .next
+.yalc
+yalc.lock
 
 # testing
 /coverage

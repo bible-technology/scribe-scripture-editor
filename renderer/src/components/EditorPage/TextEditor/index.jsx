@@ -1,127 +1,121 @@
 import React, {
-  useEffect, useState, useContext, Fragment,
+  useEffect, useState, useContext, useMemo,
 } from 'react';
-import { useProskomma, useImport, useCatalog } from 'proskomma-react-hooks';
-import { useDeepCompareEffect } from 'use-deep-compare';
-import { ScribexContext } from '@/components/context/ScribexContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
-import { ProjectContext } from '@/components/context/ProjectContext';
-import EditorSideBar from '@/modules/editorsidebar/EditorSideBar';
+import { debounce } from 'lodash';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useReadUsfmFile } from './hooks/useReadUsfmFile';
-import htmlMap from './hooks/htmlmap';
-import usePerf from './hooks/usePerf';
 import EditorMenuBar from './EditorMenuBar';
-import Editor from './Editor';
+import LexicalEditor from './LexicalEditor';
+import { updateCacheNSaveFile } from './updateAndSave';
+import EmptyScreen from './EmptyScreen';
+
+const defaultScrRef = {
+  bookCode: 'PSA',
+  chapterNum: 1,
+  verseNum: 1,
+};
 
 export default function TextEditor() {
-  const { state, actions } = useContext(ScribexContext);
-  const { verbose } = state;
-  const [selectedBook, setSelectedBook] = useState();
-  const [bookChange, setBookChange] = useState(false);
   const [chapterNumber, setChapterNumber] = useState(1);
   const [verseNumber, setVerseNumber] = useState(1);
-  const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
-  // const [newVerChapNumber, setInsertNumber] = useState('');
-  // const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
 
-  const { usfmData, bookAvailable } = useReadUsfmFile();
-
+  const [usjInput, setUsjInput] = useState();
+  const [scrRef, setScrRef] = useState(defaultScrRef);
+  const [navRef, setNavRef] = useState();
   const {
-    state: { bookId, selectedFont, editorFontSize },
+    state: {
+      bookId: defaultBookId, selectedFont, editorFontSize, projectScriptureDir,
+    },
     actions: {
       handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
     },
   } = useContext(ReferenceContext);
+  const [book, setBook] = useState(defaultBookId);
 
   const {
-    states: { openSideBar },
-    actions: { setOpenSideBar },
-  } = useContext(ProjectContext);
-
-  let selectedDocument;
-
-  const { proskomma, stateId, newStateId } = useProskomma({ verbose });
-  const { done } = useImport({
-    proskomma,
-    stateId,
-    newStateId,
-    documents: usfmData,
-  });
-
-  function closeSideBar(status) {
-    setOpenSideBar(status);
-  }
+    cachedData, loading, bookAvailable, booksInProject,
+  } = useReadUsfmFile(book);
 
   useEffect(() => {
-    setSelectedBook(bookId.toUpperCase());
-    setBookChange(true);
-  }, [bookId]);
+    if (cachedData.error) {
+      console.error('Error parsing USFM', cachedData.error);
+      return;
+    }
+    const { usj } = cachedData;
+    if (!usj && usj?.entries(usj).length === 0) { return; }
+    console.log(usj);
+    setUsjInput(usj);
+  }, [book, cachedData]);
 
   useEffect(() => {
+    setScrRef({
+      bookCode: book,
+      chapterNum: chapterNumber,
+      verseNum: verseNumber,
+    });
     onChangeChapter(chapterNumber, 1);
     onChangeVerse(verseNumber, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapterNumber, verseNumber]);
+  }, [chapterNumber, verseNumber, book]);
 
-  const { catalog } = useCatalog({ proskomma, stateId, verbose });
-  const { id: docSetId, documents } = (done && catalog.docSets[0]) || {};
-  if (done) {
-    selectedDocument = documents?.find(
-      (doc) => doc.bookCode === selectedBook,
-    );
-  }
-
-  const { bookCode, h: bookName } = selectedDocument || {};
-  const ready = (docSetId && bookCode) || false;
-  const isLoading = !done || !ready;
-  const { state: perfState, actions: perfActions } = usePerf({
-    proskomma,
-    ready,
-    docSetId,
-    bookCode,
-    verbose,
-    htmlMap,
-  });
-  const { htmlPerf } = perfState;
-
-  useDeepCompareEffect(() => {
-    if (htmlPerf && htmlPerf.mainSequenceId !== state.sequenceIds[0]) {
-      actions.setSequenceIds([htmlPerf?.mainSequenceId]);
+  useEffect(() => {
+    if (navRef) {
+      const { chapterNum, verseNum } = navRef;
+      setChapterNumber(chapterNum);
+      setVerseNumber(verseNum);
     }
-  }, [htmlPerf, state.sequenceIds, perfState]);
+  }, [navRef]);
+
+  const handleUsjChange = useMemo(
+    () => debounce(async (updatedUsj) => {
+      updateCacheNSaveFile(updatedUsj, book);
+      console.log('usj updated', updatedUsj);
+    }, 1000),
+    [book],
+  );
 
   const _props = {
-    ...state,
-    ...perfState,
-    ...actions,
-    ...perfActions,
-    editorFontSize,
     selectedFont,
     chapterNumber,
-    verseNumber,
-    isLoading,
-    bookName,
-    bookChange,
-    bookAvailable,
-    handleEditorFontSize,
-    setBookChange,
     setChapterNumber,
+    verseNumber,
     setVerseNumber,
+    book,
+    setBook,
     handleSelectedFont,
-    triggerVerseInsert,
-    setTriggerVerseInsert,
+    bookId: book,
+    loading,
+    editorFontSize,
+    handleEditorFontSize,
+    bookAvailable,
+    booksInProject,
+  };
+
+  const props = {
+    selectedFont,
+    fontSize: editorFontSize,
+    textDirection: projectScriptureDir?.toLowerCase(),
+    usjInput,
+    onUsjChange: handleUsjChange,
+    setNavRef,
+    scrRef,
+    setScrRef,
+    bookId: book,
+
   };
   return (
-    <>
-      <EditorSideBar
-        isOpen={openSideBar}
-        closeSideBar={closeSideBar}
-        graftProps={_props}
-      />
-      <div className="flex flex-col bg-white border-b-2 border-secondary h-editor rounded-md shadow scrollbar-width">
-        <EditorMenuBar {..._props} />
-        <Editor {..._props} />
-      </div>
-    </>
+    <div className="flex flex-col h-editor rounded-md shadow overflow-hidden">
+      <EditorMenuBar {..._props} />
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {!bookAvailable && <EmptyScreen />}
+          {bookAvailable && usjInput && <LexicalEditor {...props} />}
+        </>
+      )}
+    </div>
   );
 }
