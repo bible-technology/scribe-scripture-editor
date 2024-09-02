@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Disclosure, Transition } from '@headlessui/react';
@@ -14,7 +15,10 @@ export default function SelectBook({
   setSelectedBooks,
   scope,
   existingScope = [],
+  disableScope = {},
+  call = '',
 }) {
+  console.log('existingScope', disableScope, selectedBooks);
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
 
@@ -99,11 +103,13 @@ export default function SelectBook({
                         role="presentation"
                         key={book.name}
                         aria-label={`ot-${book.name}`}
-                        onClick={(e) => (
-                          multiSelectBook
+                        onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
+                          ? (multiSelectBook
                             ? selectMultipleBooks(e, book.key, book.name)
-                            : bookSelect(e, book.key, book.name))}
-                        className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}
+                            : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
+                            ? selectMultipleBooks(e, book.key, book.name)
+                            : bookSelect(e, book.key, book.name)))}
+                        className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
                       >
                         {book.name}
                       </div>
@@ -138,10 +144,13 @@ export default function SelectBook({
                       key={book.name}
                       role="presentation"
                       aria-label={`nt-${book.name}`}
-                      onClick={(e) => (multiSelectBook
-                        ? selectMultipleBooks(e, book.key, book.name)
-                        : bookSelect(e, book.key, book.name))}
-                      className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}
+                      onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
+                          ? (multiSelectBook
+                            ? selectMultipleBooks(e, book.key, book.name)
+                            : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
+                            ? selectMultipleBooks(e, book.key, book.name)
+                            : bookSelect(e, book.key, book.name)))}
+                      className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
                     >
                       {book.name}
                     </div>

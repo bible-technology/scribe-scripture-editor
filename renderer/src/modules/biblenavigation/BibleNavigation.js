@@ -19,9 +19,11 @@ import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVers
 //   ChatIcon,
 // } from '@heroicons/react/24/outline';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 
 export default function BibleNavigation(props) {
+  console.log('Navigation');
   const { showVerse } = props;
   const supportedBooks = null; // if empty array or null then all books available
 
@@ -58,7 +60,7 @@ export default function BibleNavigation(props) {
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [verselectActive, setVerseSelectActive] = useState(false);
-
+  const [existingScopes, setExistingScopes] = useState({});
   function closeBooks() {
     setOpenBook(false);
   }
@@ -78,6 +80,31 @@ export default function BibleNavigation(props) {
     setOpenVerse(true);
     if (multiSelectVerse) { setSelectedVerses([]); }
   }
+
+  const getProjectScope = () => {
+    console.log('getProjectScope - Bible Navigation');
+    localforage.getItem('currentProject').then(async (projectName) => {
+      const _projectname = await splitStringByLastOccurence(projectName, '_');
+      // const _projectname = projectName?.split('_');
+      localforage.getItem('projectmeta').then((value) => {
+        console.log(value);
+        Object?.entries(value).forEach(
+          ([, _value]) => {
+            console.log(_value);
+            Object?.entries(_value).forEach(
+              ([, resources]) => {
+                console.log(resources);
+                if (resources.identification.name.en === _projectname[0]) {
+                  console.log('resource', resources.type.flavorType.currentScope);
+                  setExistingScopes(resources.type.flavorType.currentScope);
+                }
+              },
+            );
+          },
+        );
+      });
+    });
+  };
 
   useEffect(() => {
     if (isElectron()) {
@@ -103,6 +130,12 @@ export default function BibleNavigation(props) {
   useEffect(() => {
     localforage.setItem('navigationHistory', [bookId, chapter]);
   }, [bookId, chapter]);
+
+  useEffect(() => {
+    if (Object.keys(existingScopes) < 1) {
+      getProjectScope();
+    }
+  }, []);
 
   useEffect(() => {
     if (openBook === false && openVerse === false) {
@@ -179,6 +212,9 @@ export default function BibleNavigation(props) {
                 // "scope" is added to disable the click on the book list. scope="Other" will only
                 // allow to click/select the book.
                 scope="Other"
+                existingScope={[]}
+                disableScope={existingScopes}
+                call="audio-project"
               >
                 <button
                   type="button"
@@ -232,6 +268,8 @@ export default function BibleNavigation(props) {
                 setSelectedVerses={setSelectedVerses}
                 verselectActive={verselectActive}
                 setVerseSelectActive={setVerseSelectActive}
+                scopedChapters={existingScopes[bookId.toUpperCase()]}
+                call="audio-project"
               >
                 <button
                   type="button"

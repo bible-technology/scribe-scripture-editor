@@ -2,6 +2,10 @@ import localForage from 'localforage';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 
+function isDirEmpty(dirname, fs) {
+  return fs.promises.readdir(dirname).then((files) => files.length > 0);
+}
+
 const getDirectories = (readdirSync, source) => readdirSync(source, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())
   .map((dirent) => dirent.name);
@@ -11,10 +15,20 @@ export const getScope = (project) => {
   const path = require('path');
   const scope = {};
   const { readdirSync } = window.require('fs');
+  const fs = window.require('fs');
   const list = getDirectories(readdirSync, project);
   list.forEach((book) => {
     const chapters = getDirectories(readdirSync, path.join(project, book));
-    scope[book] = chapters;
+    const chapterFilter = [];
+    chapters.forEach((chapter) => {
+      // Finding non empty directories/chapters
+      isDirEmpty(path.join(project, book, chapter), fs).then((value) => {
+        if (value === true) {
+          chapterFilter.push(chapter);
+        }
+      });
+    });
+    scope[book] = chapterFilter;
   });
   return scope;
 };

@@ -51,10 +51,6 @@ function ScopeManagement({
     initialVerse,
   });
 
-  console.log('BOOK ============>', {
-    bookName, bookId, metadata, currentScope, backendScope,
-  });
-
   const handleChangeBookToggle = (event) => {
     setBookFilter(event.target.value);
     const bookObj = {};
