@@ -66,7 +66,8 @@ const AudioEditor = ({ editor }) => {
                 const _books = [];
                 Object.entries(_data.type.flavorType.currentScope).forEach(
                   async ([key]) => {
-                    if (key === bookId.toUpperCase()) {
+                    // Checking whether the selected book and chapter is in the scope or not
+                    if (key === bookId.toUpperCase() && _data.type.flavorType.currentScope[key].includes(chapter)) {
                       _books.push(bookId.toUpperCase());
                       const fs = window.require('fs');
                       const path = require('path');
