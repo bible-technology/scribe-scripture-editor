@@ -6,6 +6,7 @@ import BookButton from '../Common/Button/BookButton';
 import BulkSelectionGroup from './BulkSelectionGroup';
 import Button from '../Common/Button/Button';
 import BookItem from './BookItem';
+import * as logger from '../../../logger';
 
 const initialBook = 'gen';
 const initialChapter = '1';
@@ -154,7 +155,7 @@ function ScopeManagement({
         };
       });
     } else {
-      console.error('Active book is not in scope ');
+      logger.error('ScopeManagement.js', 'Active book is not in scope');
     }
   };
 
@@ -168,7 +169,7 @@ function ScopeManagement({
       onChangeBook(bookCode, bookCode);
       setCurrentScope(scopeObj);
     } else {
-      console.error('unable to get the scope');
+      logger.error('ScopeManagement.js', 'Unable to read the scope from burrito');
     }
   }, []);
 

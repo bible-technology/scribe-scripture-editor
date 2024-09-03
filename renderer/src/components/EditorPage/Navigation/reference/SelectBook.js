@@ -18,7 +18,6 @@ export default function SelectBook({
   disableScope = {},
   call = '',
 }) {
-  console.log('existingScope', disableScope, selectedBooks);
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
 

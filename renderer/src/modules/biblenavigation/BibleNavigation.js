@@ -10,20 +10,11 @@ import {
 import * as localforage from 'localforage';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVerse';
-
-// import {
-//   LockOpenIcon,
-//   LockClosedIcon,
-//   BookmarkIcon,
-//   CogIcon,
-//   ChatIcon,
-// } from '@heroicons/react/24/outline';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 
 export default function BibleNavigation(props) {
-  console.log('Navigation');
   const { showVerse } = props;
   const supportedBooks = null; // if empty array or null then all books available
 
@@ -82,20 +73,14 @@ export default function BibleNavigation(props) {
   }
 
   const getProjectScope = () => {
-    console.log('getProjectScope - Bible Navigation');
     localforage.getItem('currentProject').then(async (projectName) => {
       const _projectname = await splitStringByLastOccurence(projectName, '_');
-      // const _projectname = projectName?.split('_');
       localforage.getItem('projectmeta').then((value) => {
-        console.log(value);
         Object?.entries(value).forEach(
           ([, _value]) => {
-            console.log(_value);
             Object?.entries(_value).forEach(
               ([, resources]) => {
-                console.log(resources);
                 if (resources.identification.name.en === _projectname[0]) {
-                  console.log('resource', resources.type.flavorType.currentScope);
                   setExistingScopes(resources.type.flavorType.currentScope);
                 }
               },
@@ -135,6 +120,7 @@ export default function BibleNavigation(props) {
     if (Object.keys(existingScopes) < 1) {
       getProjectScope();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

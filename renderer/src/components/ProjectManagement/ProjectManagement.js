@@ -9,9 +9,7 @@ import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import { SnackBar } from '@/components/SnackBar';
-// import useSystemNotification from '@/components/hooks/useSystemNotification';
 // import { LoadingSpinner } from '@/components/LoadingSpinner';
-// import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import * as logger from '../../logger';
 import ScopeManagement from './scope-management/ScopeManagement';
@@ -51,7 +49,7 @@ export default function ProjectMangement(props) {
       setMetadata(projectMeta.metadata);
       setBackendScope(projectMeta.scope);
     } catch (err) {
-      console.error('Read Meta : ', err);
+      logger.error('ProjectMangement.js', `Read Meta :  ${err}`);
     } finally {
       setLoading(false);
     }
@@ -86,23 +84,6 @@ export default function ProjectMangement(props) {
       close();
     });
   };
-
-  // const handleProject = () => {
-  //   metadata.type.flavorType.currentScope = currentScope;
-  //   const projectFullName = `${project?.name}_${project?.id?.[0]}`;
-  //   // updateBurritoScope checks whether user has removed anything (Book(s)/Chapter(s)) from the existing scope or not
-  //   updateBurritoScope(projectFullName, metadata, 'difference').then((value) => {
-  //     console.log('scope', value);
-  //     if (Object.keys(value).length > 0) {
-  //       // Has some change so merge is required
-  //       setScopeDiff(value);
-  //       // setOpenModal(true);
-  //     } else {
-  //       // nothing been removed by the user
-  //       updateBurrito();
-  //     }
-  //   });
-  // };
 
   useEffect(() => {
     getProjectMetadata();
@@ -190,16 +171,6 @@ export default function ProjectMangement(props) {
         setSnackText={setSnackText}
         error={notify}
       />
-      {/* <ConfirmationModal
-        openModal={openModal}
-        title={t('modal-title-update-burrito')}
-        setOpenModal={setOpenModal}
-        confirmMessage={t('dynamic-msg-scope-difference', { scopediff: JSON.stringify(scopediff) })}
-        buttonName={t('btn-update')}
-        closeModal={
-          () => updateBurrito()
-        }
-      /> */}
     </>
   );
 }

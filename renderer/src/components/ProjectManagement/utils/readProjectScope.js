@@ -46,7 +46,7 @@ export const readProjectScope = async (projectName) => {
     if (fs.existsSync(filePath)) {
       const metadataFile = await fs.readFileSync(filePath, 'utf-8');
       if (metadataFile) {
-        logger.debug('metadataFile.js', `read metadata file successfully - ${projectName}`);
+        logger.debug('readProjectScope.js', `read metadata file successfully - ${projectName}`);
         const project = path.join(file, projectName, 'audio', 'ingredients');
         const backendScope = getScope(project);
         const json = await JSON.parse(metadataFile);
@@ -56,7 +56,7 @@ export const readProjectScope = async (projectName) => {
     }
     throw new Error(`failed to read metadata file - ${projectName}`);
   } catch (err) {
-        logger.error('metadataFile.js', `read metadata file successfully - ${projectName}`);
+        logger.error('readProjectScope.js', `read metadata file successfully - ${projectName}`);
       throw new Error(err?.message || err);
   }
 };

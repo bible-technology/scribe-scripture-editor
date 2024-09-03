@@ -21,7 +21,6 @@ import * as logger from '../../logger';
 export default function Editor({
   children, callFrom, editor,
 }) {
-  console.log('Editor', callFrom, editor);
   const {
     states: {
       scrollLock,
@@ -63,36 +62,7 @@ export default function Editor({
     }
   };
 
-  const getProjectScope = () => {
-    console.log('getProjectScope');
-    localforage.getItem('currentProject').then(async (projectName) => {
-      const _projectname = await splitStringByLastOccurence(projectName, '_');
-      // const _projectname = projectName?.split('_');
-      localforage.getItem('projectmeta').then((value) => {
-        console.log(value);
-        Object?.entries(value).forEach(
-          ([, _value]) => {
-            console.log(_value);
-            Object?.entries(_value).forEach(
-              ([, resources]) => {
-                console.log(resources);
-                if (resources.identification.name.en === _projectname[0]) {
-                  console.log('resource', resources);
-                }
-              },
-            );
-          },
-        );
-      });
-    });
-  };
-
   useEffect(() => {
-    getProjectScope;
-  }, [chapter]);
-
-  useEffect(() => {
-    console.log(callFrom, editor);
       if (((bookmarksVerses?.find((x) => x.bookname === bookName && x.chapter === chapter)
             !== undefined))) {
         setBookMarks(true);

@@ -26,9 +26,7 @@ export default function ProjectList() {
   const filterList = ['name', 'language', 'type', 'date', 'view'];
   const {
     states: {
-      // starredProjects,
       projects,
-      // unstarredProjects,
       callEditProject,
     },
     action: {
@@ -59,7 +57,6 @@ export default function ProjectList() {
     await FetchProjects();
   };
   const manageProject = (project) => {
-    console.log(project);
     setCurrentProject(project);
     setOpenManageProject(true);
   };

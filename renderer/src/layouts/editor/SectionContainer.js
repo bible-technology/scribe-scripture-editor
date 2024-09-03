@@ -15,7 +15,6 @@ const MainPlayer = dynamic(
 );
 
 const SectionContainer = () => {
-  console.log('section');
   const [editor, setEditor] = useState();
 
   useEffect(() => {

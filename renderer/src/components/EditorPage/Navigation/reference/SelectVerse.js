@@ -27,7 +27,6 @@ export default function SelectVerse({
   scopedChapters,
   call = '',
 }) {
-  console.log('scopedChapters', scopedChapters);
   const [controlVerseSelect, setControlVerseSelect] = useState([]);
   const [openChapter, setOpenChapter] = useState(true);
   const [openVerse, setOpenVerse] = useState(false);
