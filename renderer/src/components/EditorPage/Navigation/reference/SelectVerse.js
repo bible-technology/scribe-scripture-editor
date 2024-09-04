@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Disclosure, Transition } from '@headlessui/react';
@@ -23,6 +24,8 @@ export default function SelectVerse({
   setVerseSelectActive,
   setChapterNumber,
   setVerseNumber,
+  scopedChapters,
+  call = '',
 }) {
   const [controlVerseSelect, setControlVerseSelect] = useState([]);
   const [openChapter, setOpenChapter] = useState(true);
@@ -115,8 +118,8 @@ export default function SelectVerse({
                   key={chapter.key}
                   role="presentation"
                   id={`chapter-${chapter.name}`}
-                  onClick={(e) => { onChapterSelect(e, chapter.key); }}
-                  className={styles.select}
+                  onClick={(e) => { call === 'audio-project' ? (scopedChapters.includes(chapter.name) ? onChapterSelect(e, chapter.key) : '') : onChapterSelect(e, chapter.key); }}
+                  className={call === 'audio-project' ? (scopedChapters.includes(chapter.name) ? styles.select : styles.disabled) : styles.select}
                 >
                   {chapter.name}
                 </div>
