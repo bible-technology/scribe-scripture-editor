@@ -260,7 +260,8 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                     </BookNumberTag>
                   </div>
                 </div>
-
+                {projectType === 'Audio'
+                  && <span className="text-error">NOTE: Choose the book and chapter from the SCOPE MANAGEMENT option on the project listing page.</span>}
                 {/* <div className="relative"> */}
                 <div>
                   {/* <CustomList

@@ -116,7 +116,7 @@ export default function ProjectMangement(props) {
 
                 <div className="flex justify-between items-center bg-secondary">
                   <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center flex gap-2">
-                    <span>Project Management</span>
+                    <span>Scope Management</span>
                     <span>:</span>
                     <span>{project?.name}</span>
                   </div>
