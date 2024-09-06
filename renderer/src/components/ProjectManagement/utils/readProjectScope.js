@@ -11,26 +11,32 @@ const getDirectories = (readdirSync, source) => readdirSync(source, { withFileTy
   .map((dirent) => dirent.name);
 
 // This function returns the Object of books & chapters which has atleast 1 audio file in it.
-export const getScope = (project) => {
+export const getScope = async (project) => {
   const path = require('path');
   const scope = {};
   const { readdirSync } = window.require('fs');
   const fs = window.require('fs');
   const list = getDirectories(readdirSync, project);
-  list.forEach((book) => {
+
+  list.forEach(async (book) => {
     const chapters = getDirectories(readdirSync, path.join(project, book));
     const chapterFilter = [];
-    chapters.forEach((chapter) => {
+    let flag = false;
+    await Promise.all(chapters.map(async (chapter) => {
+      // for (const chapter of chapters) {
       // Finding non empty directories/chapters
-      isDirEmpty(path.join(project, book, chapter), fs).then((value) => {
+      await isDirEmpty(path.join(project, book, chapter), fs).then((value) => {
         if (value === true) {
-          chapterFilter.push(chapter);
+          flag = true;
+          return chapterFilter.push(chapter);
         }
       });
-    });
-    scope[book] = chapterFilter;
+    }));
+    if (flag === true) {
+      scope[book] = chapterFilter;
+    }
   });
-  return scope;
+return scope;
 };
 export const readProjectScope = async (projectName) => {
   try {
@@ -48,7 +54,7 @@ export const readProjectScope = async (projectName) => {
       if (metadataFile) {
         logger.debug('readProjectScope.js', `read metadata file successfully - ${projectName}`);
         const project = path.join(file, projectName, 'audio', 'ingredients');
-        const backendScope = getScope(project);
+        const backendScope = await getScope(project);
         const json = await JSON.parse(metadataFile);
         return { metadata: json, scope: backendScope };
       }

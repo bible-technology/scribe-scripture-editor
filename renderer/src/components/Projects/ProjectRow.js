@@ -245,7 +245,7 @@ const ProjectRow = ({
                                     } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                   onClick={() => manageProject(project)}
                                 >
-                                  Manage Project
+                                  Scope Management
                                 </button>
                               )}
                             </Menu.Item>

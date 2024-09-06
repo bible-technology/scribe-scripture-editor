@@ -189,7 +189,7 @@ function ScopeManagement({
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase"
         >
-          {backendScope && bookList?.slice(0, 39)?.map((book) => {
+          {bookList?.slice(0, 39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
               <BookItem
@@ -198,7 +198,7 @@ function ScopeManagement({
                 handleRemoveScope={handleRemoveScope}
                 handleSelectBook={handleSelectBook}
                 isInScope={isScope}
-                disable={book?.key?.toUpperCase() in backendScope}
+                disable={backendScope && book?.key?.toUpperCase() in backendScope}
               />
             );
           })}
@@ -207,7 +207,7 @@ function ScopeManagement({
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9]
           grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 text-xxs text-left  uppercase content-start"
         >
-          {backendScope && bookList?.slice(39)?.map((book) => {
+          {bookList?.slice(39)?.map((book) => {
             const isScope = book?.key?.toUpperCase() in currentScope;
             return (
               <BookItem
@@ -216,7 +216,7 @@ function ScopeManagement({
                 handleRemoveScope={handleRemoveScope}
                 handleSelectBook={handleSelectBook}
                 isInScope={isScope}
-                disable={book?.key?.toUpperCase() in backendScope}
+                disable={backendScope && book?.key?.toUpperCase() in backendScope}
               />
             );
           })}
@@ -270,7 +270,7 @@ function ScopeManagement({
         <div className="border border-[#eeecec] shadow-sm rounded-lg bg-[#F9F9F9] flex flex-wrap gap-2 p-4 text-xxs text-left  uppercase">
           {chapterList?.map(({ key, name }) => {
             const isInScope = selectedChaptersSet.has(key);
-            const disable = backendScope[bookId.toUpperCase()]?.includes(key);
+            const disable = backendScope && backendScope[bookId.toUpperCase()]?.includes(key);
             return (
               <BookButton
                 onClick={(e) => handleChapterSelection(e, name)}
