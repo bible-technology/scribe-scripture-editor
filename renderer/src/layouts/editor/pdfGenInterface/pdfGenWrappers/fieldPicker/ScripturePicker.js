@@ -30,7 +30,7 @@ export function ScripturePicker({ fieldInfo, setJsonSpec, lang, open = true }) {
 
 	useEffect(() => {
 		setJsonSpec((prev) => {
-			const newState = JSON.parse(prev);
+			const newState = typeof prev == "object" ? prev : JSON.parse(prev);
 			newState[fieldInfo.id] = JSON.parse(scriptureTable);
 			return JSON.stringify(newState);
 		});
@@ -63,7 +63,7 @@ export function ScripturePicker({ fieldInfo, setJsonSpec, lang, open = true }) {
 }, [scriptureJson, fieldInfo.typeSpec, numberOfScripture]);
 	useEffect(() => {
 		setScriptureJson((prev) => {
-			const newState = JSON.parse(prev);
+			const newState = typeof prev == "object" ? prev : JSON.parse(prev);
 			fieldInfo.typeSpec.map((t) => {
 				delete newState[t.id.replace('#', numberOfScripture + 1)];
 			});
@@ -148,7 +148,7 @@ function changeIndexOfScripture(fieldInfo, index) {
 	const newId = splitTab[0] + index + splitTab[1];
 	const updatedLabel = {};
 	for (const lang in label) {
-		updatedLabel[lang] = label[lang].replace(/#/g, index); // Using a regular expression with the 'g' flag to replace all occurrences
+		updatedLabel[lang] = label[lang].replace(/#/g, index+1); // Using a regular expression with the 'g' flag to replace all occurrences
 	}
 	return { id: newId, label: updatedLabel, ...rest }; // Return a new object with modified id, label, and other properties
 }

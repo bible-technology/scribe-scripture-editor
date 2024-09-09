@@ -1,6 +1,14 @@
 import i18n from 'src/translations/i18n';
+import { useState } from 'react';
 
 export function selectOption(title, type, option, handleChange) {
+	const [selectedValue, setSelectedValue] = useState(Object.keys(option)[0] || '');
+
+	const handleSelectChange = (e) => {
+			setSelectedValue(e.target.value);
+			handleChange(type, e.target.value);
+	};
+
 	return (
 		<div
 			style={{
@@ -30,18 +38,15 @@ export function selectOption(title, type, option, handleChange) {
 				style={{ borderRadius: 5 }}
 				id='payment'
 				name='payment'
-				onChange={(e) => {
-					handleChange(type, e.target.value);
-				}}>
+				value={selectedValue}
+				onChange={handleSelectChange}>
 				<option value='' disabled selected hidden>
 					Please Choose...
 				</option>
 
 				{Object.keys(option).map((o) => (
 					<option
-						// selected={o === "allGentium" 
-						// 					|| o === "EXECUTIVE"
-						// 					|| o === "9on11" ? 'selected' : ''}
+						key={o}
 						id={o}
 						value={o}
 						style={{

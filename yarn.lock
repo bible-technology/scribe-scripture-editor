@@ -4592,9 +4592,9 @@
   integrity sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==
 
 "@types/node@^16.11.26":
-  version "16.18.106"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.106.tgz#62228200da6d98365d2de5601f7230cdf041f0e2"
-  integrity sha512-YTgQUcpdXRc7iiEMutkkXl9WUx5lGUCVYvnfRg9CV+IA4l9epctEhCTbaw4KgzXaKYv8emvFJkEM65+MkNUhsQ==
+  version "16.18.107"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.107.tgz#9185eaebaf7d002a67976d61ae8a9a808fc84829"
+  integrity sha512-VSha8UIBpCpETub8FZ1nXkODXm+k+YRwpuVQsF3zOuD6QyPQeuIdPRm6IBVa2E5en58CUFJfaw6GmYHP2q/vkQ==
 
 "@types/node@^20.8.2":
   version "20.16.1"
@@ -14292,10 +14292,10 @@ just-diff@^5.0.1:
   resolved "https://registry.yarnpkg.com/just-diff/-/just-diff-5.2.0.tgz#60dca55891cf24cd4a094e33504660692348a241"
   integrity sha512-6ufhP9SHjb7jibNFrNxyFZ6od3g+An6Ai9mhGRvcYe8UJlH0prseN64M+6ZBBUoKYHZsitDP42gAJ8+eVWr3lw==
 
-jxl-pdf@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.5.0.tgz#a31e1bfa2e57fb36074bfa31f9161369fb47df26"
-  integrity sha512-t01CdCLCDbyfhFQn/phiUDQFFoy28usngosh1xBDPJqJH9mEDM4OVN4iR5ylOMMRPVfiJtNKFMP52/oXx/hz2Q==
+jxl-pdf@0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.5.3.tgz#c69f515f369583474a5df1c680a88ee5679796f7"
+  integrity sha512-xlSptNpfcqPserggyLhNJ7Nxl35DaEC0Sc70prWUi4yXDUpWQJxwTqKNiOwJJKQDZLlAYAROUzAt43Th895S1Q==
   dependencies:
     commander "^11.1.0"
     fontkit "^2.0.2"

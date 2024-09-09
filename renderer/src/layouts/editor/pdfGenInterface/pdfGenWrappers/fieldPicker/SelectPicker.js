@@ -9,11 +9,11 @@ export function SelectPicker({
 	lang,
 	open = true,
 }) {
-	const [form, setForm] = React.useState('');
+	const [form, setForm] = React.useState(fieldInfo.suggestedDefault || '');
 
 	useEffect(() => {
 		setJsonSpec((prev) => {
-			const newState = JSON.parse(prev);
+			const newState = typeof prev == "object" ? prev : JSON.parse(prev);
 			newState[fieldInfo.id] = form;
 			return JSON.stringify(newState);
 		});
@@ -53,7 +53,7 @@ export function SelectPicker({
 				</select>
 			</div>
 			{require && form === '' && (
-				<div style={{ color: 'red', fontSize: '12px' }}>
+				<div style={{ color: 'red', fontSize: '12px', padding: '5px' }}>
 					This field is required
 				</div>
 			)}

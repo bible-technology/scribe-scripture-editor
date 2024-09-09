@@ -22,7 +22,6 @@ export function ScriptureContentSearchBar({
 	} = useContext(ProjectContext);
 	
 	setLanguage('fr');
-	console.log(language);
 
 	const [searchText, setSearchText] = useState('');
 	const [localListResourcesForPdf, setLocalListResourcesForPdf] = useState(

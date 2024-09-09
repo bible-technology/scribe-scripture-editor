@@ -64,7 +64,6 @@ export function WrapperTemplate({
 		return t;
 		});
 	}, [sections]);
-
 	//Sortable list logic
 	useEffect(() => {
 		const sortableList = document.querySelector(
@@ -165,6 +164,17 @@ export function WrapperTemplate({
 			) : (
 				<></>
 			)}
+			{wrapperType === 'jxlWrapper' ? (
+				<BCVWrapperSortableList
+					keyWrapper={keyWrapper}
+					advanceMode={advanceMode}
+					changePrintData={changePrintData}
+					setLoopMode={setLoopMode}
+					loopMode={LoopMode}
+				/>
+			) : (
+				<></>
+			)}
 			<div
 				style={
 					LoopMode
@@ -249,20 +259,9 @@ export function WrapperTemplate({
 													setOrderSelections(
 														(prev) => {
 															let t = [...prev];
-															t.splice(
-																t.indexOf(
-																	index,
-																),
-																1,
-															);
-															for (
-																let i = 0;
-																i < t.length;
-																i++
-															) {
-																if (
-																	t[i] > index
-																) {
+															t.splice(t.indexOf(index),1);
+															for (let i = 0;	i < t.length;	i++) {
+																if (t[i] > index) {
 																	t[i] -= 1;
 																}
 															}
@@ -278,29 +277,12 @@ export function WrapperTemplate({
 															};
 														const up = {};
 
-														Object.keys(
-															updatedSelected,
-														).forEach((key) => {
-															if (
-																parseInt(key) >
-																index
-															) {
-																let newIndex =
-																	parseInt(
-																		key,
-																	) - 1;
-																up[newIndex] =
-																	updatedSelected[
-																		key
-																	];
-															} else if (
-																parseInt(key) <
-																index
-															) {
-																up[key] =
-																	updatedSelected[
-																		key
-																	];
+														Object.keys(updatedSelected).forEach((key) => {
+															if (parseInt(key) > index) {
+																let newIndex = parseInt(key) - 1;
+																up[newIndex] = updatedSelected[key];
+															} else if (parseInt(key) < index) {
+																up[key] = updatedSelected[key];
 															}
 														});
 
@@ -379,6 +361,11 @@ export function WrapperTemplate({
 }
 
 function firstElem(projectInfo) {
+	if(projectInfo.type === "Juxtalinear") {
+		return `{"0": {"id":"${uuidv4()}", "type": "jxlSimple", "source":"${
+			projectInfo.path
+		}","content": {} }}`;
+	}
 	return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${
 		projectInfo.path
 	}","content": {} }}`;

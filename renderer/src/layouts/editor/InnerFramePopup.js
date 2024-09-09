@@ -27,6 +27,8 @@ export default function InnerFramePopup() {
 	} = useContext(ProjectContext);
 
 	const init = { bcvWrapper: ['bcvBible'], obsWrapper: ['obs'] };
+	const initNames = { bcvWrapper: 'Book/Chapter/Verse', obsWrapper: 'OBS' };
+
 	const jsonWithHeaderChoice = global.PdfGenStatic.pageInfo();
 	//use to know if we can drag or not
 	const [update, setUpdate] = useState(true);
@@ -57,8 +59,8 @@ export default function InnerFramePopup() {
 	);
 
 	//the selected headerInfo
-	// const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
-	const [headerInfo, setHeaderInfo] = useState('{}');
+	const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
+	// const [headerInfo, setHeaderInfo] = useState('{}');
 	const [nameFile, setNameFile] = useState('');
 	const [folder, setFolder] = useState(null);
 	//zoom of the preview
@@ -192,7 +194,7 @@ export default function InnerFramePopup() {
 		let validationJson = global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet));
 		if (validationJson.length === 0) {
 			let header = JSON.parse(headerInfo);
-			console.log('header ==',header);
+			// console.log('header ==',header);
 			if (
 				header.workingDir &&
 				header.outputPath &&
@@ -204,7 +206,7 @@ export default function InnerFramePopup() {
 		} else {
 			setIsJsonValidate(false);
 		}
-		console.log(validationJson);
+		// console.log(validationJson);
 	}, [kitchenFaucet, headerInfo]);
 
 	const openFileDialogSettingData = async () => {
@@ -283,7 +285,7 @@ export default function InnerFramePopup() {
 			}}>
 			<div
 				style={{
-					width: '50%',
+					width: '60%',
 					borderLeft: '2px solid gray',
 					overflowY: 'scroll',
 					padding: 20,
@@ -540,6 +542,7 @@ export default function InnerFramePopup() {
 							}
 							onClick={async () => {
 								if (isJsonValidate) {
+									setMessagePrint('');
 									let t = new global.PdfGenStatic(
 										JSON.parse(kitchenFaucet),
 										pdfCallBacks,
@@ -597,7 +600,7 @@ export default function InnerFramePopup() {
 										]);
 										handleOpenModalAddWrapper(false);
 									}}>
-									{c}
+									{initNames[c]}
 								</div>
 							))}
 						</div>
@@ -606,7 +609,7 @@ export default function InnerFramePopup() {
 			</div>
 			<div
 				style={{
-					width: '50%',
+					width: '40%',
 					height: '100%',
 					whiteSpace: 'pre-wrap',
 					overflow: 'scroll',
@@ -619,7 +622,7 @@ export default function InnerFramePopup() {
 }
 
 function transformPrintDataToKitchenFaucet(jsonData) {
-	console.log("jsonData ==", jsonData)
+	// console.log("jsonData ==", jsonData)
 	let kitchenFaucet = [];
 	if (jsonData.content) {
 		for (let i = 0; i < jsonData.order.length; i++) {
@@ -711,7 +714,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 	} else if (t.type === 'OBS') {
 		return {
 			0: {
-				type: 'bcvWrapper',
+				type: 'obsWrapper',
 				id: uuidv4(),
 				content: {
 					content: { 0: { type: 'null', content: {} } },
@@ -719,7 +722,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 				},
 			},
 		};
-	} else {
+	} else if (t.type === "Juxtalinear"){
 		return {
 			0: {
 				type: 'bcvWrapper',
@@ -734,7 +737,6 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 }
 
 function createSection(folder, pickerJson) {
-	console.log(folder);
 	const path = require('path');
 	const newpath = localStorage.getItem('userPath');
 	const fs = window.require('fs');

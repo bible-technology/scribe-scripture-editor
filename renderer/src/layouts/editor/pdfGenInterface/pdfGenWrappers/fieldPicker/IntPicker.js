@@ -10,17 +10,17 @@ export function IntPicker({
 	lang,
 	open = true,
 }) {
-	const [value, setValue] = useState('');
+	const [value, setValue] = useState(fieldInfo.suggestedDefault || '');
 	useEffect(() => {
 		if (fieldInfo.minValue) {
 			setJsonSpec((prev) => {
-				const newState = JSON.parse(prev);
+				const newState = typeof prev == "object" ? prev : JSON.parse(prev);
 				newState[fieldInfo.id] = parseInt(value);
 				return JSON.stringify(newState);
 			});
 		} else {
 			setJsonSpec((prev) => {
-				const newState = JSON.parse(prev);
+				const newState = typeof prev == "object" ? prev : JSON.parse(prev);
 				newState[fieldInfo.id] = value;
 				return JSON.stringify(newState);
 			});

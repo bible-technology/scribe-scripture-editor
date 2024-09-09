@@ -163,8 +163,8 @@ function getItemComponent(e) {
 			return ParaBibleItem;
 		case 'markdown':
 			return MarkdownItem;
-		case 'jxlSpread':
-			return JxlSpreadItem;
+		// case 'jxlSpread':
+		// 	return JxlSpreadItem;
 		case 'jxlSimple':
 			return JxlSimpleItem;
 		case 'obs':

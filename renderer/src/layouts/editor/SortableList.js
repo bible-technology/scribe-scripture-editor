@@ -159,7 +159,6 @@ export function SortableList({
 									className='pdfChoice'
 									onClick={() => {
 										setSelected((prev) => {
-											
 											let nb = Object.keys(prev).length
 											prev[nb] = {type:c,content:{}}
 											return prev

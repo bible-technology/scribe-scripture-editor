@@ -557,6 +557,7 @@ MODAL SECTION SELECTION BLOCK START
 }
 
 .styleCard:hover {
+  cursor: pointer;
   background-color: #EEEEEE;
 }
 

@@ -73,7 +73,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourc
 
 	return (
 		<div
-			style={open?{
+			style={open ? {
 				display: 'flex',
 				flexDirection: 'column',
 				paddingLeft: 22,
@@ -83,7 +83,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourc
 				alignItems: 'center',
 				justifyContent: 'space-between',
 				
-			}:{display:'none'}}>
+			} : {display:'none'}}>
 			<div style={{ display: 'flex', flexDirection: 'row',alignItems: 'center',
 				justifyContent: 'space-between',width:"100%" }}>
 				<div>{ressourceName} </div>
@@ -96,7 +96,7 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourc
 						color: 'white',
 					}}
 					onClick={() => handleOpenModal(true)}>
-					{infoDisplay === ""? "Choose" : "Choose another source"}
+					{infoDisplay === "" ? "Choose" : "Choose another source"}
 				</Button>
 			</div>
 			<div>{infoDisplay}</div>

@@ -8,10 +8,10 @@ export function BooleanPicker({
 	lang,
 	open = true,
 }) {
-	const [selected, setSelected] = useState(false);
+	const [selected, setSelected] = useState(fieldInfo.suggestedDefault || false);
 	useEffect(() => {
 		setJsonSpec((prev) => {
-			let j = JSON.parse(prev);
+			const j = typeof prev == "object" ? prev : JSON.parse(prev);
 			j[fieldInfo.id] = selected;
 			return JSON.stringify(j);
 		});
@@ -19,7 +19,7 @@ export function BooleanPicker({
 	
 	useEffect(() => {
 		setJsonSpec((prev) => {
-			let j = JSON.parse(prev);
+			const j = typeof prev == "object" ? prev : JSON.parse(prev);
 			j[fieldInfo.id] = selected;
 			return JSON.stringify(j);
 		});
@@ -28,6 +28,7 @@ export function BooleanPicker({
 		<div
 		style={open?{flexDirection:'row',display:'flex',justifyContent:'left',marginTop:15}:{display:'none'}}>
 			<Checkbox
+				checked={selected}
 				onChange={() => setSelected(prev => !prev)}
 				sx={{
 					color: 'rgba(115, 115, 115, 1)',

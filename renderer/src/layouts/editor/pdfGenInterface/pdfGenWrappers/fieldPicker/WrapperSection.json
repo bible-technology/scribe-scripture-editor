@@ -23,20 +23,36 @@
 	},
 	"obsWrapper": {
 		"advance": {
-			"true": ["obs", "obsPlusNotes"],
-			"false": ["obs", "obsPlusNotes"]
+			"true": [
+				"obs",
+				"obsPlusNotes"
+			],
+			"false": [
+				"obs",
+				"obsPlusNotes"
+			]
 		}
 	},
-	"JxlWrapper": {
+	"jxlWrapper": {
 		"advance": {
-			"true": ["jxlSpread", "jxlSimple"],
-			"false": ["jxlSpread", "jxlSimple"]
+			"true": [
+				"jxlSpread",
+				"jxlSimple"
+			],
+			"false": [
+				"jxlSpread",
+				"jxlSimple"
+			]
 		}
 	},
 	"markdown": {
 		"advance": {
-			"true": ["markdown"],
-			"false": ["markdown"]
+			"true": [
+				"markdown"
+			],
+			"false": [
+				"markdown"
+			]
 		}
 	}
 }
