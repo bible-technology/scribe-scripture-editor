@@ -41,7 +41,7 @@
     },
     "directories": {
       "buildResources": "resources",
-      "output": "release"
+      "output": "dist"
     },
     "files": [
       "main",
