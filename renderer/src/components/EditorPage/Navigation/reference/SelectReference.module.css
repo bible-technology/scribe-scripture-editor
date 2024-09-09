@@ -8,3 +8,7 @@
 .active {
 	@apply py-1 px-2 bg-primary text-white cursor-pointer rounded sm:w-10/12 lg:w-5/12;
 }
+
+.disabled {
+	@apply py-1 px-2 text-slate-400 rounded;
+}

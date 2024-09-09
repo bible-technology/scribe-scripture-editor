@@ -54,6 +54,7 @@ const ProjectContextProvider = ({ children }) => {
   const [sideBarTab, setSideBarTab] = useState('');
   const [openImportPopUp, setOpenImportPopUp] = useState(false);
   const [openExportPopUp, setOpenExportPopUp] = useState(false);
+  const [openManageProject, setOpenManageProject] = useState(false);
 
   const handleProjectFields = (prop) => (event) => {
     setNewProjectFields({ ...newProjectFields, [prop]: event.target.value });
@@ -541,6 +542,7 @@ const ProjectContextProvider = ({ children }) => {
       sideBarTab,
       openImportPopUp,
       openExportPopUp,
+      openManageProject,
       selectedProjectMeta,
       importedBookCodes,
     },
@@ -566,6 +568,7 @@ const ProjectContextProvider = ({ children }) => {
       setSideBarTab,
       setOpenImportPopUp,
       setOpenExportPopUp,
+      setOpenManageProject,
       setSelectedProjectMeta,
       setImportedBookCodes,
     },

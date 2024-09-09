@@ -17,7 +17,7 @@ import NewProjectIcon from '@/icons/new.svg';
 import { ProjectContext } from '../context/ProjectContext';
 
 const ProjectRow = ({
-  projects, order, orderBy, showArchived, openExportPopUp, handleClickStarred, setCurrentProject, filteredProjects,
+  projects, order, orderBy, showArchived, openExportPopUp, handleClickStarred, setCurrentProject, filteredProjects, manageProject,
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
@@ -233,6 +233,24 @@ const ProjectRow = ({
                               </button>
                             )}
                           </Menu.Item>
+                          {
+                            project.type === 'Audio'
+                            && (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  type="button"
+                                  aria-label="export-project"
+                                  className={`${active ? 'bg-primary text-white' : 'text-gray-900'
+                                    } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                  onClick={() => manageProject(project)}
+                                >
+                                  Scope Management
+                                </button>
+                              )}
+                            </Menu.Item>
+                            )
+                          }
                         </div>
                       </Menu.Items>
                     </Transition>

@@ -10,15 +10,8 @@ import {
 import * as localforage from 'localforage';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVerse';
-
-// import {
-//   LockOpenIcon,
-//   LockClosedIcon,
-//   BookmarkIcon,
-//   CogIcon,
-//   ChatIcon,
-// } from '@heroicons/react/24/outline';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { isElectron } from '../../core/handleElectron';
 
 export default function BibleNavigation(props) {
@@ -58,7 +51,7 @@ export default function BibleNavigation(props) {
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [verselectActive, setVerseSelectActive] = useState(false);
-
+  const [existingScopes, setExistingScopes] = useState({});
   function closeBooks() {
     setOpenBook(false);
   }
@@ -78,6 +71,25 @@ export default function BibleNavigation(props) {
     setOpenVerse(true);
     if (multiSelectVerse) { setSelectedVerses([]); }
   }
+
+  const getProjectScope = () => {
+    localforage.getItem('currentProject').then(async (projectName) => {
+      const _projectname = await splitStringByLastOccurence(projectName, '_');
+      localforage.getItem('projectmeta').then((value) => {
+        Object?.entries(value).forEach(
+          ([, _value]) => {
+            Object?.entries(_value).forEach(
+              ([, resources]) => {
+                if (resources.identification.name.en === _projectname[0]) {
+                  setExistingScopes(resources.type.flavorType.currentScope);
+                }
+              },
+            );
+          },
+        );
+      });
+    });
+  };
 
   useEffect(() => {
     if (isElectron()) {
@@ -103,6 +115,13 @@ export default function BibleNavigation(props) {
   useEffect(() => {
     localforage.setItem('navigationHistory', [bookId, chapter]);
   }, [bookId, chapter]);
+
+  useEffect(() => {
+    if (Object.keys(existingScopes) < 1) {
+      getProjectScope();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (openBook === false && openVerse === false) {
@@ -179,6 +198,9 @@ export default function BibleNavigation(props) {
                 // "scope" is added to disable the click on the book list. scope="Other" will only
                 // allow to click/select the book.
                 scope="Other"
+                existingScope={[]}
+                disableScope={existingScopes}
+                call="audio-project"
               >
                 <button
                   type="button"
@@ -232,6 +254,8 @@ export default function BibleNavigation(props) {
                 setSelectedVerses={setSelectedVerses}
                 verselectActive={verselectActive}
                 setVerseSelectActive={setVerseSelectActive}
+                scopedChapters={existingScopes[bookId.toUpperCase()]}
+                call="audio-project"
               >
                 <button
                   type="button"

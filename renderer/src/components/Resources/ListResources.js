@@ -58,7 +58,7 @@ export const ListResources = ({
   const [translationNote, setTranslationNote] = useState([]);
   const [juxtalinear, setJuxtalinear] = useState([]);
   const [translationQuestion, setTranslationQuestion] = useState([]);
-  const [translationWord, settranslationWord] = useState([]);
+  // const [translationWord, settranslationWord] = useState([]);
   const [translationAcademy, setTranslationAcademy] = useState([]);
   const [obsTranslationNote, setObsTranslationNote] = useState([]);
   const [obsTranslationQuestion, setObsTranslationQuestion] = useState([]);
@@ -103,9 +103,9 @@ export const ListResources = ({
         case 'tn':
           await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction);
           break;
-        case 'tw':
-          await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
-          break;
+        // case 'tw':
+        //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
+        //   break;
         case 'twlm':
           await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
           break;
@@ -138,7 +138,7 @@ export const ListResources = ({
         { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
         { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
-        { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
+        // { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
         { id: 'tq', title: t('label-resource-tq'), resource: translationQuestion },
         { id: 'ta', title: t('label-resource-ta'), resource: translationAcademy },
         { id: 'obs-tn', title: t('label-resource-obs-tn'), resource: obsTranslationNote },
