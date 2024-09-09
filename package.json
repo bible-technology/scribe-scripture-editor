@@ -43,6 +43,9 @@
       "buildResources": "resources",
       "output": "dist"
     },
+    "node": {
+      "maxConcurrentTasks": 4
+    },
     "files": [
       "main",
       "renderer/out",
