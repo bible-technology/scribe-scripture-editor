@@ -187,7 +187,11 @@ export default function Editor(props) {
         })
         .filter(({ chunk }) => chunk.length);
     }
-    return sentences[curIndex].chunks
+    let index = 0;
+    if (sentences[curIndex]) {
+      index = curIndex;
+    }
+    return sentences[index].chunks
       .map(({ source, gloss, checksum }, index) => {
         return {
           chunk: source
@@ -214,7 +218,7 @@ export default function Editor(props) {
       setCurIndex(curIndex);
       setGlobalTotalSentences(remakeSentences(resContent.sentences));
       setOriginText(resContent.sentences.map((sentence) => sentence.sourceString));
-      if (resContent.sentences.length) {
+      if (resContent.sentences.length && resContent.sentences.length > 0) {
         setItemArrays([getItems(resContent.sentences)]);
       }
     }

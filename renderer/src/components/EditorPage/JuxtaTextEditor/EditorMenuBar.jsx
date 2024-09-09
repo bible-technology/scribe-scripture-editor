@@ -47,7 +47,7 @@ export default function EditorMenuBar(props) {
           title="navigation lock/unlock"
           className="flex items-center mr-auto"
         >
-          {juxtaMode !== true ? (
+          {/* {juxtaMode !== true ? (
             <div
               role="button"
               tabIndex="-1"
@@ -75,7 +75,7 @@ export default function EditorMenuBar(props) {
                 onClick={() => setJuxtaMode(!juxtaMode)}
               />
             </div>
-          )}
+          )} */}
           <div>
             {scrollLock === true ? (
               <LockOpenIcon

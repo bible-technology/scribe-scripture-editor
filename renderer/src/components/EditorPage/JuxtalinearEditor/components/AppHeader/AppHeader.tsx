@@ -61,42 +61,44 @@ export const AppHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    if(sentences.length && sentences[curIndex]) {
+    if (sentences.length && sentences[curIndex]) {
       const [chap, vers] = sentences[curIndex].chunks[0].source[0].cv.split(":").map((digit: string) => parseInt(digit, 10));
-      setChapterNumber(chap);
-      setVerseNumber(vers);
+      setChapterNumber(chap > chapterList.length ? chapterList.length : chap);
+      setVerseNumber(vers > verseList.length ? verseList.length : vers);
     }
   }, [curIndex, setCurIndex]);
 
   useEffect(() => {
-    if(closeNavigation) {
+    if (closeNavigation) {
       setCurIndex(getSentenceFromCV());
     }
   }, [closeNavigation]);
 
   const getSentenceFromCV = () => {
-    if (
-      !sentences.length ||
-      !sentences[curIndex].chunks[0]?.source.length ||
-      sentences[curIndex].chunks[0]?.source[0] === null
-    ) {
-      return 0;
+    if (sentences[curIndex]) {
+      if (
+        !sentences.length ||
+        !sentences[curIndex].chunks[0]?.source.length ||
+        sentences[curIndex].chunks[0]?.source[0] === null
+      ) {
+        return 0;
+      }
     }
 
     let chap: number, vers: number;
     let doBreak: boolean;
-    for(let i = 0; i < sentences.length; i++) {
+    for (let i = 0; i < sentences.length; i++) {
       doBreak = false;
-      for(let chunk of sentences[i].chunks) {
-        for(let src of chunk.source) {
+      for (let chunk of sentences[i].chunks) {
+        for (let src of chunk.source) {
           [chap, vers] = src.cv.split(":").map((digit) => parseInt(digit));
-          if(chap < chapter && vers < verse) {
+          if (chap < chapter && vers < verse) {
             doBreak = true;
             break;
           }
-          if(chap == chapter && vers == verse) return i;
+          if (chap == chapter && vers == verse) return i;
         }
-        if(doBreak) break;
+        if (doBreak) break;
       }
     }
     return 0;
@@ -104,6 +106,7 @@ export const AppHeader: React.FC = () => {
 
   const firstSource = () => {
     if (
+      !sentences[curIndex] ||
       !sentences.length ||
       !sentences[curIndex].chunks[0]?.source.length ||
       sentences[curIndex].chunks[0]?.source[0] === null
@@ -115,6 +118,7 @@ export const AppHeader: React.FC = () => {
 
   const lastSource = () => {
     if (
+      !sentences[curIndex] ||
       !sentences.length ||
       !sentences[curIndex].chunks.slice(-1)[0]?.source.length ||
       sentences[curIndex].chunks.slice(-1)[0]?.source[0] === null
@@ -131,7 +135,7 @@ export const AppHeader: React.FC = () => {
   const startVerse = () => firstSource()?.cv.split(":")[1] ?? 0;
 
   const endVerse = () => lastSource()?.cv.split(":")[1] ?? 0;
-  
+
   const indexChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
