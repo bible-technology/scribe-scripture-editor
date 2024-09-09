@@ -3,12 +3,12 @@ import { FieldPicker } from './fieldPicker/FieldPicker';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ModalSectionSelection } from './modalSectionSelection';
 import { Button } from '@mui/base';
 import { Modal } from '@mui/material';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 export function AccordionPicker({
 	language,
 	setSelected,
@@ -133,7 +133,7 @@ export function AccordionPicker({
 						borderBottomWidth: 1,
 						borderBottom: 'none', // Remove bottom border
 					}}
-					expandIcon={<ExpandMoreIcon />}
+					expandIcon={<ChevronDownIcon className="h-5 w-5 text-gray-500" />}
 					id='panel-header'
 					aria-controls='panel-content'>
 					<div

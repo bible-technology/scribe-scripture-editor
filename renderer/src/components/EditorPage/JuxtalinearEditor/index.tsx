@@ -7,7 +7,7 @@ const JuxtalinearEditor: React.FC<any> = ({ juxtaMode }) => {
   return (
     <Layout>
       {/* {juxtaMode === true */}
-      (<Home />)
+      <Home />
       {/* // : (<JuxtAlignEditor />)} */}
     </Layout>
   );

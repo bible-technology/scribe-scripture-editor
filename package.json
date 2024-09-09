@@ -43,9 +43,6 @@
       "buildResources": "resources",
       "output": "dist"
     },
-    "node": {
-      "maxConcurrentTasks": 4
-    },
     "files": [
       "main",
       "renderer/out",
@@ -145,7 +142,6 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "4.0.0-alpha.57",
-    "@mui/icons-material": "^5.15.15",
     "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.15.15",
     "@mui/styles": "^5.15.18",
