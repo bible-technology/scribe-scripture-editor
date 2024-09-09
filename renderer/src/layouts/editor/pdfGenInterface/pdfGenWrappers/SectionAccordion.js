@@ -223,7 +223,7 @@ export function AccordionPicker({
 								? keySpecification
 								: 'select a print type'}
 
-							<ExpandMoreIcon />
+							<ChevronDownIcon className="h-5 w-5 text-gray-500"/>
 						</Button>
 					</div>
 
