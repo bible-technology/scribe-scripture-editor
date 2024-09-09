@@ -117,19 +117,17 @@ function EditorSync({ selectedProject }) {
               aria-label="add-panels"
               title={t('label-save-to-cloud')}
               type="div"
-            // className={`group ${menuStyles.btn} `}
+              role="button"
+              // onClick={() => setOpenPdfPopup(true)}
               className={`group ${menuStyles.btn}
             transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
               syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
             >
-              {/* <button type="button" onClick={() => openPopUpAndFetchSyncUsers()}> */}
-              <button type="button" onClick={() => setIsOpen(true)}>
-                <CloudUploadIcon
-                  fill="currentColor"
-                  className="h-6 w-6"
-                  aria-hidden="true"
-                />
-              </button>
+              <CloudUploadIcon
+                fill="currentColor"
+                className="h-6 w-6"
+                aria-hidden="true"
+              />
             </div>
           )}
         </>

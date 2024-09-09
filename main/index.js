@@ -7,11 +7,14 @@ config.config();
 
 // Packages
 const { BrowserWindow, app, ipcMain } = require('electron');
-const isDev = require('electron-is-dev');
+// const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
 const { autoUpdater } = require('electron-updater');
 
 let mainWindow;
+function isDev() {
+  return process.argv[2] == '--dev';
+}
 // Prepare the renderer once the app is ready
 function createWindow() {
  mainWindow = new BrowserWindow({
@@ -27,7 +30,7 @@ function createWindow() {
     },
   });
   require('@electron/remote/main').enable(mainWindow.webContents);
-  const url = isDev
+  const url = isDev()
     ? 'http://localhost:8000'
     : format({
         pathname: join(__dirname, '../renderer/out/index.html'),

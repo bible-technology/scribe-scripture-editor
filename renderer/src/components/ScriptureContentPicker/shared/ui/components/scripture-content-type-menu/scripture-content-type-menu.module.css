@@ -1,0 +1,16 @@
+.container {
+    min-width: 6rem;
+    border-right: 2px solid #0d948875;
+}
+
+.container li {
+    list-style: none;
+    padding: 1rem;
+    color: black;
+    cursor: pointer;
+}
+
+.container li:hover,
+.container li.selected {
+    background: #90e0ef;
+}

@@ -1,0 +1,21 @@
+<svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1567_23061)" id="TwoColumn">
+<rect x="32.5" y="14" width="28" height="44" stroke="black" stroke-width="4"/>
+<line x1="36" y1="20" x2="44" y2="20" stroke="black" stroke-width="4"/>
+<line x1="36" y1="27" x2="41" y2="27" stroke="black" stroke-width="4"/>
+<line x1="49" y1="20" x2="57" y2="20" stroke="black" stroke-width="4"/>
+<line x1="49" y1="27" x2="54" y2="27" stroke="black" stroke-width="4"/>
+<g clip-path="url(#clip1_1567_23061)">
+<path d="M40 52H56V54H40V52ZM40 56H50V58H40V56Z" fill="black"/>
+<path d="M38.6773 53.44V54H36.6023V53.44H37.3023V51.6025C37.3023 51.5558 37.3031 51.5092 37.3048 51.4625C37.3065 51.4142 37.309 51.3658 37.3123 51.3175L36.8973 51.6625C36.8606 51.6908 36.824 51.7083 36.7873 51.715C36.7523 51.72 36.719 51.72 36.6873 51.715C36.6556 51.7083 36.6273 51.6975 36.6023 51.6825C36.5773 51.6658 36.559 51.6492 36.5473 51.6325L36.3023 51.3075L37.4373 50.355H38.0773V53.44H38.6773Z" fill="black"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1567_23061">
+<rect x="30.5" y="12" width="32" height="48" rx="2" fill="white"/>
+</clipPath>
+<clipPath id="clip1_1567_23061">
+<rect width="24" height="13" fill="white" transform="translate(36 43)"/>
+</clipPath>
+</defs>
+</svg>

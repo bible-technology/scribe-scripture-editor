@@ -133,7 +133,7 @@ export function pasteTextAtCursorPosition({ cursorPosition, textToInsert }) {
 }
 
 export function insertVerseNumber({ caretPosition, numberToInsert }) {
-  console.log({ caretPosition, numberToInsert });
+  // console.log({ caretPosition, numberToInsert });
   if (numberToInsert && caretPosition) {
     const verseTag = `<span class="mark verse verse-${numberToInsert}" 
       id="ch1v${numberToInsert}" data-type="mark" data-subtype="verses" data-atts-number="${numberToInsert}" 
@@ -142,7 +142,7 @@ export function insertVerseNumber({ caretPosition, numberToInsert }) {
   }
 }
 export function insertChapterNumber({ caretPosition, numberToInsert }) {
-  console.log({ caretPosition, numberToInsert });
+  // console.log({ caretPosition, numberToInsert });
   if (numberToInsert && caretPosition) {
     const chapterTag = `<span class="mark chapter chapter-${numberToInsert}"
       id="ch-${numberToInsert}" data-type="mark" data-subtype="chapter"

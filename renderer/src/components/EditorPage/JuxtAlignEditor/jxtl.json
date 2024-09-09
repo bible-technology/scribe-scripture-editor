@@ -1,0 +1,1344 @@
+{
+    "checksum": "2cdc3a25184f3347992a00ac98b7aa95",
+    "bookCode": "MRK",
+    "sentences": [
+        {
+            "chunks": [
+                {
+                    "source": [
+                        {
+                            "content": "ἀρχὴ",
+                            "lemma": [
+                                "ἀρχή"
+                            ],
+                            "strong": [
+                                "G07460"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "NFS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "Commencement",
+                    "checksum": "b48752a83d953d013c811885b834f5e6"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "τοῦ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "GNS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "εὐαγγελίου",
+                            "lemma": [
+                                "εὐαγγέλιον"
+                            ],
+                            "strong": [
+                                "G20980"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GNS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "Ἰησοῦ",
+                            "lemma": [
+                                "Ἰησοῦς"
+                            ],
+                            "strong": [
+                                "G24240"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "Χριστοῦ",
+                            "lemma": [
+                                "χριστός"
+                            ],
+                            "strong": [
+                                "G55470"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "de-l' évangile de-Jésus Christ,",
+                    "checksum": "daf8e469de0f24996245a979d3ff277d"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "Υἱοῦ",
+                            "lemma": [
+                                "υἱός"
+                            ],
+                            "strong": [
+                                "G52070"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "Θεοῦ",
+                            "lemma": [
+                                "θεός"
+                            ],
+                            "strong": [
+                                "G23160"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:1",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "Fils de-Dieu.",
+                    "checksum": "9db9a1844134dcaeda7ba09c6081e72d"
+                }
+            ],
+            "sourceString": "ἀρχὴ τοῦ εὐαγγελίου Ἰησοῦ Χριστοῦ, Υἱοῦ Θεοῦ.",
+            "checksum": "3857e7520a3fbf499796442d58543d07"
+        },
+        {
+            "chunks": [
+                {
+                    "source": [
+                        {
+                            "content": "καθὼς",
+                            "lemma": [
+                                "καθώς"
+                            ],
+                            "strong": [
+                                "G25310"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "D",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "γέγραπται",
+                            "lemma": [
+                                "γράφω"
+                            ],
+                            "strong": [
+                                "G11250"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "IEP3",
+                                "",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "Ainsi il-a-été-écrit",
+                    "checksum": "d4b9127bfb5533bfb91982a8168aff5f"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ἐν",
+                            "lemma": [
+                                "ἐν"
+                            ],
+                            "strong": [
+                                "G17220"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "P",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "D",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "τῷ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "DMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "Ἠσαΐᾳ",
+                            "lemma": [
+                                "Ἠσαΐας"
+                            ],
+                            "strong": [
+                                "G22680"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "DMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "τῷ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "DMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 2,
+                            "index": 1
+                        },
+                        {
+                            "content": "προφήτῃ",
+                            "lemma": [
+                                "προφήτης"
+                            ],
+                            "strong": [
+                                "G43960"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "DMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "dans Ésaïe le prophète :",
+                    "checksum": "21ad0fe01d418e95349e0bc5c0db7189"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ἰδοὺ",
+                            "lemma": [
+                                "ὁράω"
+                            ],
+                            "strong": [
+                                "G37080"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "IDMAA2",
+                                "",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἀποστέλλω",
+                            "lemma": [
+                                "ἀποστέλλω"
+                            ],
+                            "strong": [
+                                "G06490"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "IPA1",
+                                "",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "« Voici, j'envoie",
+                    "checksum": "ba81c376bb6705961a8cf969493257b8"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "τὸν",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "AMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 3,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἄγγελόν",
+                            "lemma": [
+                                "ἄγγελος"
+                            ],
+                            "strong": [
+                                "G00320"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "AMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "μου",
+                            "lemma": [
+                                "ἐγώ"
+                            ],
+                            "strong": [
+                                "G14730"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RP",
+                                "",
+                                "",
+                                "1G",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "le messager de-moi",
+                    "checksum": "f2ff75cb1da5c13db076060ab4eaab09"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "πρὸ",
+                            "lemma": [
+                                "πρό"
+                            ],
+                            "strong": [
+                                "G42530"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "P",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "G",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "προσώπου",
+                            "lemma": [
+                                "πρόσωπον"
+                            ],
+                            "strong": [
+                                "G43830"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GNS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "σου",
+                            "lemma": [
+                                "σύ"
+                            ],
+                            "strong": [
+                                "G47710"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RP",
+                                "",
+                                "",
+                                "2G",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "devant le-visage de-toi",
+                    "checksum": "98c4cd0100a523357dfefea54879864c"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ὃς",
+                            "lemma": [
+                                "ὅς"
+                            ],
+                            "strong": [
+                                "G37390"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RR",
+                                "",
+                                "",
+                                "",
+                                "NMS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "κατασκευάσει",
+                            "lemma": [
+                                "κατασκευάζω"
+                            ],
+                            "strong": [
+                                "G26800"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "IFA3",
+                                "",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "qui disposera",
+                    "checksum": "4e0d1abd6264003d944b48a052976f7f"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "τὴν",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "AFS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 4,
+                            "index": 0
+                        },
+                        {
+                            "content": "ὁδόν",
+                            "lemma": [
+                                "ὁδός"
+                            ],
+                            "strong": [
+                                "G35980"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "AFS",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "σου",
+                            "lemma": [
+                                "σύ"
+                            ],
+                            "strong": [
+                                "G47710"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RP",
+                                "",
+                                "",
+                                "2G",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:2",
+                            "occurrence": 2,
+                            "index": 1
+                        }
+                    ],
+                    "gloss": "le chemin de-toi. ",
+                    "checksum": "634fba193aecae27e562e4f5e7ccdf3d"
+                }
+            ],
+            "sourceString": "καθὼς γέγραπται ἐν τῷ Ἠσαΐᾳ τῷ προφήτῃ: ἰδοὺ, ἀποστέλλω τὸν ἄγγελόν μου πρὸ προσώπου σου, ὃς κατασκευάσει τὴν ὁδόν σου. ",
+            "checksum": "beb22187e60a1c70fc16aed1b493293a"
+        },
+        {
+            "chunks": [
+                {
+                    "source": [
+                        {
+                            "content": "φωνὴ",
+                            "lemma": [
+                                "φωνή"
+                            ],
+                            "strong": [
+                                "G54560"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "NFS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "βοῶντος",
+                            "lemma": [
+                                "βοάω"
+                            ],
+                            "strong": [
+                                "G09940"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "PPA",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "Une-voix *de-quelqu'un*-criant",
+                    "checksum": "d7bba3ce7cb063b088a527127d4c64b0"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ἐν",
+                            "lemma": [
+                                "ἐν"
+                            ],
+                            "strong": [
+                                "G17220"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "P",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "D",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "τῇ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "DFS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἐρήμῳ",
+                            "lemma": [
+                                "ἔρημος"
+                            ],
+                            "strong": [
+                                "G20480"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "NS",
+                                "",
+                                "",
+                                "",
+                                "DFS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "dans le désert :",
+                    "checksum": "f4b94e7958a1d1ba0c48f2530b4972ce"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ἑτοιμάσατε",
+                            "lemma": [
+                                "ἑτοιμάζω"
+                            ],
+                            "strong": [
+                                "G20900"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "MAA2",
+                                "",
+                                "P",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "“Préparez",
+                    "checksum": "103befd8457500e77c97c398844820eb"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "τὴν",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "AFS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 2,
+                            "index": 0
+                        },
+                        {
+                            "content": "ὁδὸν",
+                            "lemma": [
+                                "ὁδός"
+                            ],
+                            "strong": [
+                                "G35980"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "AFS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "Κυρίου",
+                            "lemma": [
+                                "κύριος"
+                            ],
+                            "strong": [
+                                "G29620"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GMS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "le chemin de-Seigneur,",
+                    "checksum": "6e2998f06583efbe44878d9e775c16eb"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ποιεῖτε",
+                            "lemma": [
+                                "ποιέω"
+                            ],
+                            "strong": [
+                                "G41600"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "MPA2",
+                                "",
+                                "P",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "faites",
+                    "checksum": "7324ffb4bd6d3c6cfeb8788137e7ae52"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "τὰς",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "AFP",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 3,
+                            "index": 0
+                        },
+                        {
+                            "content": "τρίβους",
+                            "lemma": [
+                                "τρίβος"
+                            ],
+                            "strong": [
+                                "G51470"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "AFP",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "αὐτοῦ",
+                            "lemma": [
+                                "αὐτός"
+                            ],
+                            "strong": [
+                                "G08460"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RP",
+                                "",
+                                "",
+                                "3GMS",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "les sentiers de-lui",
+                    "checksum": "1d19441d8fe63d9fad191596aa72c039"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "εὐθείας",
+                            "lemma": [
+                                "εὐθύς"
+                            ],
+                            "strong": [
+                                "G21170"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "NS",
+                                "",
+                                "",
+                                "",
+                                "AFP",
+                                ""
+                            ],
+                            "cv": "1:3",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "droits\". »",
+                    "checksum": "aafa1a1b4df4977d5c020a7da70297b9"
+                }
+            ],
+            "sourceString": "φωνὴ βοῶντος ἐν τῇ ἐρήμῳ, ἑτοιμάσατε τὴν ὁδὸν Κυρίου, εὐθείας ποιεῖτε τὰς τρίβους αὐτοῦ. ",
+            "checksum": "f1662caa2e83cd47b19bd7139a91a1f5"
+        },
+        {
+            "chunks": [
+                {
+                    "source": [
+                        {
+                            "content": "Ἰωάννης",
+                            "lemma": [
+                                "Ἰωάννης"
+                            ],
+                            "strong": [
+                                "G24910"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "NMS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ὁ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "RD",
+                                "",
+                                "",
+                                "",
+                                "NMS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "βαπτίζων",
+                            "lemma": [
+                                "βαπτίζω"
+                            ],
+                            "strong": [
+                                "G09070"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "PPA",
+                                "NMS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἐγένετο",
+                            "lemma": [
+                                "γίνομαι"
+                            ],
+                            "strong": [
+                                "G10960"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "IAM3",
+                                "",
+                                "S",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "Jean le baptisant fut",
+                    "checksum": "a188b4e5d2b015913f88af18315bc935"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "ἐν",
+                            "lemma": [
+                                "ἐν"
+                            ],
+                            "strong": [
+                                "G17220"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "P",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "D",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "τῇ",
+                            "lemma": [
+                                "ὁ"
+                            ],
+                            "strong": [
+                                "G35880"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "EA",
+                                "",
+                                "",
+                                "",
+                                "DFS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 2,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἐρήμῳ",
+                            "lemma": [
+                                "ἔρημος"
+                            ],
+                            "strong": [
+                                "G20480"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "NS",
+                                "",
+                                "",
+                                "",
+                                "DFS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "dans le désert,",
+                    "checksum": "9ef78ccdeb5e81d003dfb397d9467479"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "καὶ",
+                            "lemma": [
+                                "καί"
+                            ],
+                            "strong": [
+                                "G25320"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "CC",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "κηρύσσων",
+                            "lemma": [
+                                "κηρύσσω"
+                            ],
+                            "strong": [
+                                "G27840"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "V",
+                                "PPA",
+                                "NMS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "et proclamant",
+                    "checksum": "14aca1a9d08c23d4cef9dd022d5c7578"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "βάπτισμα",
+                            "lemma": [
+                                "βάπτισμα"
+                            ],
+                            "strong": [
+                                "G09080"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "ANS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "μετανοίας",
+                            "lemma": [
+                                "μετάνοια"
+                            ],
+                            "strong": [
+                                "G33410"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GFS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "un-baptême de-repentance",
+                    "checksum": "0d1294314df2758d4f05fb8755bb9767"
+                },
+                {
+                    "source": [
+                        {
+                            "content": "εἰς",
+                            "lemma": [
+                                "εἰς"
+                            ],
+                            "strong": [
+                                "G15190"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "P",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "A",
+                                "",
+                                "",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἄφεσιν",
+                            "lemma": [
+                                "ἄφεσις"
+                            ],
+                            "strong": [
+                                "G08590"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "AFS",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        },
+                        {
+                            "content": "ἁμαρτιῶν",
+                            "lemma": [
+                                "ἁμαρτία"
+                            ],
+                            "strong": [
+                                "G02660"
+                            ],
+                            "morph": [
+                                "Gr",
+                                "N",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "GFP",
+                                ""
+                            ],
+                            "cv": "1:4",
+                            "occurrence": 1,
+                            "index": 0
+                        }
+                    ],
+                    "gloss": "pour un-pardon des-péchés.",
+                    "checksum": "d92a9eecc6fb6a4a568aec829ddb45c8"
+                }
+            ],
+            "sourceString": "ἐγένετο Ἰωάννης, ὁ βαπτίζων ἐν τῇ ἐρήμῳ, καὶ κηρύσσων βάπτισμα μετανοίας εἰς ἄφεσιν ἁμαρτιῶν. ",
+            "checksum": "ac95a20f2648533bc9c0859c51b34d68"
+        }
+    ]
+}

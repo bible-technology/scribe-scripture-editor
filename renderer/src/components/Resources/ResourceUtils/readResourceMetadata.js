@@ -15,7 +15,7 @@ export async function readResourceMetadata(projectsDir, resourcePath, setSubMenu
         const burrito = {};
         burrito.projectDir = ref;
         burrito.value = JSON.parse(data);
-      burrito.type = userOrCommon;
+        burrito.type = userOrCommon;
         parseData.push(burrito);
         await localforage.setItem('resources', parseData);
         setSubMenuItems(parseData);

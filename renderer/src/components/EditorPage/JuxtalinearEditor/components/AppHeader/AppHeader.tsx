@@ -69,8 +69,8 @@ export const AppHeader: React.FC = () => {
   useEffect(() => {
     if (sentences.length && sentences[curIndex]) {
       const [chap, vers] = sentences[curIndex].chunks[0].source[0].cv.split(":").map((digit: string) => parseInt(digit, 10));
-      setChapterNumber(chap);
-      setVerseNumber(vers);
+      setChapterNumber(chap > chapterList.length ? chapterList.length : chap);
+      setVerseNumber(vers > verseList.length ? verseList.length : vers);
     }
   }, [curIndex, setCurIndex]);
 
@@ -81,12 +81,14 @@ export const AppHeader: React.FC = () => {
   }, [closeNavigation]);
 
   const getSentenceFromCV = () => {
-    if (
-      !sentences.length ||
-      !sentences[curIndex].chunks[0]?.source.length ||
-      sentences[curIndex].chunks[0]?.source[0] === null
-    ) {
-      return 0;
+    if (sentences[curIndex]) {
+      if (
+        !sentences.length ||
+        !sentences[curIndex].chunks[0]?.source.length ||
+        sentences[curIndex].chunks[0]?.source[0] === null
+      ) {
+        return 0;
+      }
     }
 
     let chap: number, vers: number;
@@ -110,6 +112,7 @@ export const AppHeader: React.FC = () => {
 
   const firstSource = () => {
     if (
+      !sentences[curIndex] ||
       !sentences.length ||
       !sentences[curIndex].chunks[0]?.source.length ||
       sentences[curIndex].chunks[0]?.source[0] === null
@@ -121,6 +124,7 @@ export const AppHeader: React.FC = () => {
 
   const lastSource = () => {
     if (
+      !sentences[curIndex] ||
       !sentences.length ||
       !sentences[curIndex].chunks.slice(-1)[0]?.source.length ||
       sentences[curIndex].chunks.slice(-1)[0]?.source[0] === null

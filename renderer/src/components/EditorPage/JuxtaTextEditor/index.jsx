@@ -21,6 +21,7 @@ export default function JuxtaTextEditor() {
   const [chapterNumber, setChapterNumber] = useState(1);
   const [verseNumber, setVerseNumber] = useState(1);
   const [triggerVerseInsert, setTriggerVerseInsert] = useState(false);
+  const [juxtaMode, setJuxtaMode] = useState(true);
   // const [newVerChapNumber, setInsertNumber] = useState('');
   // const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
 
@@ -100,6 +101,8 @@ export default function JuxtaTextEditor() {
     handleSelectedFont,
     triggerVerseInsert,
     setTriggerVerseInsert,
+    juxtaMode,
+    setJuxtaMode,
   };
   return (
     <>

@@ -21,6 +21,8 @@ export const ProjectContext = React.createContext();
 
 const ProjectContextProvider = ({ children }) => {
   const [editorSave, setEditorSave] = useState('');
+  const [openPdfPopup, setOpenPdfPopup] = useState(false);
+  const [listResourcesForPdf, setListResourcesForPdf] = useState({ book: {}, jxl:{},md:{},html:{},OBS: {}, tNotes: {}, 'OBS-TN': {} });
   const [drawer, setDrawer] = useState(false);
   const [scrollLock, setScrollLock] = useState(false);
   const [sideTabTitle, setSideTabTitle] = useState('New');
@@ -68,7 +70,7 @@ const ProjectContextProvider = ({ children }) => {
     setLicenseList((advanceSettings.copyright).push({
       id: 'Other', title: 'Custom', licence: '', locked: false,
     }));
-    // setLanguages([advanceSettings.languages]);
+    setLanguages([advanceSettings.languages]);
     const json = {
       version: environment.AG_USER_SETTING_VERSION,
       history: {
@@ -86,6 +88,7 @@ const ProjectContextProvider = ({ children }) => {
       theme: 'light',
       userWorkspaceLocation: '',
       commonWorkspaceLocation: '',
+      juxtalignHelperOpened: false,
       resources: {
         door43: {
           translationNotes: [],
@@ -544,6 +547,8 @@ const ProjectContextProvider = ({ children }) => {
       openExportPopUp,
       openManageProject,
       selectedProjectMeta,
+      openPdfPopup,
+      listResourcesForPdf,
       importedBookCodes,
     },
     actions: {
@@ -570,6 +575,8 @@ const ProjectContextProvider = ({ children }) => {
       setOpenExportPopUp,
       setOpenManageProject,
       setSelectedProjectMeta,
+      setOpenPdfPopup,
+      setListResourcesForPdf,
       setImportedBookCodes,
     },
   };

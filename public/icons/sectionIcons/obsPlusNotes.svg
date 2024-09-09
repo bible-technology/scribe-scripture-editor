@@ -1,0 +1,20 @@
+<svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1567_23058)" id="ObsPlusNotes">
+<rect x="32.5" y="14" width="28" height="44" stroke="black" stroke-width="4"/>
+<path d="M55.5 19.5V26.5H48.5V19.5H55.5ZM55.5 18.5H48.5C47.95 18.5 47.5 18.95 47.5 19.5V26.5C47.5 27.05 47.95 27.5 48.5 27.5H55.5C56.05 27.5 56.5 27.05 56.5 26.5V19.5C56.5 18.95 56.05 18.5 55.5 18.5ZM53.07 22.93L51.57 24.865L50.5 23.57L49 25.5H55L53.07 22.93Z" fill="black"/>
+<line x1="36" y1="20" x2="44" y2="20" stroke="black" stroke-width="4"/>
+<line x1="36" y1="27" x2="41" y2="27" stroke="black" stroke-width="4"/>
+<g clip-path="url(#clip1_1567_23058)">
+<path d="M40 34H56V36H40V34ZM40 38H50V40H40V38Z" fill="black"/>
+<path d="M38.6773 35.44V36H36.6023V35.44H37.3023V33.6025C37.3023 33.5558 37.3031 33.5092 37.3048 33.4625C37.3065 33.4142 37.309 33.3658 37.3123 33.3175L36.8973 33.6625C36.8606 33.6908 36.824 33.7083 36.7873 33.715C36.7523 33.72 36.719 33.72 36.6873 33.715C36.6556 33.7083 36.6273 33.6975 36.6023 33.6825C36.5773 33.6658 36.559 33.6492 36.5473 33.6325L36.3023 33.3075L37.4373 32.355H38.0773V35.44H38.6773Z" fill="black"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1567_23058">
+<rect x="30.5" y="12" width="32" height="48" rx="2" fill="white"/>
+</clipPath>
+<clipPath id="clip1_1567_23058">
+<rect width="24" height="13" fill="white" transform="translate(36 25)"/>
+</clipPath>
+</defs>
+</svg>
