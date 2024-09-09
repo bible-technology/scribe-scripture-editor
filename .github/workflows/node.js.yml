@@ -139,8 +139,9 @@ jobs:
                   echo 'export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"' >> $HOME/.zprofile
                   echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"' >> $HOME/.zprofile
                   eval "$(/opt/homebrew/bin/brew shellenv)"
-                  /opt/homebrew/opt/python@3.12/bin/pip3 install setuptools
-                  /opt/homebrew/opt/python@3.12/bin/pip3 install distutils
+                  brew install setuptools
+                  brew install distutils
+                
 
             - name: set max memory allocation
               run: export NODE_OPTIONS=-max_old_space_size=4096
