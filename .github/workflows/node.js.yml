@@ -119,6 +119,8 @@ jobs:
             - run: |
                   node --version
                   yarn --version
+            - name: Increase file descriptor limit
+              run: ulimit -n 4096
             - name: set @bitregistry translation-help
               run: yarn config set '@bit:registry' https://node.bit.dev
 
