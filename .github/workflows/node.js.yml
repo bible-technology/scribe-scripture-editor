@@ -47,6 +47,7 @@ jobs:
               with:
                   name: Scribe
                   path: dist
+                  overwrite: true
 
     build-windows:
         runs-on: ubuntu-latest
@@ -93,6 +94,7 @@ jobs:
               with:
                 name: Scribe
                 path: artifacts
+                overwrite: true
 
     build-mac:
         runs-on: macos-latest
@@ -138,7 +140,7 @@ jobs:
               run: export NODE_OPTIONS=-max_old_space_size=4096
 
             - name: yarn install
-              run: yarn install
+              run: yarn install --verbose
 
             - name: install dmg-license
               run: yarn add dmg-license
@@ -156,3 +158,4 @@ jobs:
               with:
                   name: Scribe
                   path: dist
+                  overwrite: true
