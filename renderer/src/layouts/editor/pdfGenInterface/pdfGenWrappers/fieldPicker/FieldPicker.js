@@ -15,7 +15,7 @@ export function FieldPicker({
 	open,
 }) {
 	let require = fieldInfo.nValues[0] > 0;
-	console.log("reload of FieldPicker :", JSON.parse(jsonSpecEntry));
+	// console.log("reload of FieldPicker :", JSON.parse(jsonSpecEntry));
 
 	if (typeof fieldInfo.typeLiteral === typeof true || fieldInfo.typeLiteral) {
 		setJsonSpec((prev) => {
@@ -40,7 +40,7 @@ export function FieldPicker({
 	if (fieldInfo.typeEnum) {
 		// there only one resource to pick
 		if (1 === fieldInfo.nValues[1]) {
-			console.log(fieldInfo);
+			// console.log(fieldInfo);
 			return (
 				<SelectPicker
 					setJsonSpec={setJsonSpec}
