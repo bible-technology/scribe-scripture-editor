@@ -20,6 +20,7 @@ import {
 	StyledSwitch,
 } from './pdfGenInterface/pdfGenWrappers/fieldPicker/customMuiComponent';
 import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplate';
+import { generate } from "random-words";
 
 export default function InnerFramePopup() {
 	const {
@@ -57,7 +58,7 @@ export default function InnerFramePopup() {
 	const { t } = useTranslation();
 
 	//advenceMode allow adding new Wrapper
-	const [advanceMode, setAdvenceMode] = useState(false);
+	const [advanceMode, setAdvanceMode] = useState(false);
 	const [infoProject, setInfoProject] = useState(
 		findProjectInfo(selectedProject, projects),
 	);
@@ -65,7 +66,7 @@ export default function InnerFramePopup() {
 	//the selected headerInfo
 	const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
 	// const [headerInfo, setHeaderInfo] = useState('{}');
-	const [nameFile, setNameFile] = useState('');
+	const [nameFile, setNameFile] = useState("");
 	const [folder, setFolder] = useState(null);
 	//zoom of the preview
 	const [kitchenFaucet, setKitchenFaucet] = useState('{}');
@@ -196,22 +197,32 @@ export default function InnerFramePopup() {
 
 	useEffect(() => {
 		let validationJson = global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet));
+		console.log('call ! validationJson ==',validationJson);
 		if (validationJson.length === 0) {
 			let header = JSON.parse(headerInfo);
-			// console.log('header ==',header);
+			console.log('header ==',header);
 			if (
 				header.workingDir &&
-				header.outputPath &&
+				folder &&
 				header.sizes &&
 				header.fonts &&
 				header.pages
-			)
+			) {
+				if(!header.outputPath && folder) {
+					setHeaderInfo((prev) => {
+						let data = { ...JSON.parse(prev) };
+						data['outputPath'] = folder + '/' + generate({exactly: 5, wordsPerString:1}).join("-") + '.pdf';
+						data['verbose'] = false;
+						return JSON.stringify(data);
+					});
+				}
 				setIsJsonValidate(true);
+			}
 		} else {
 			setIsJsonValidate(false);
 		}
 		// console.log("kitchenFaucet==",kitchenFaucet);
-	}, [kitchenFaucet, headerInfo]);
+	}, [selected, headerInfo, orderSelection, folder, kitchenFaucet]);
 
 	const openFileDialogSettingData = async () => {
 		try {
@@ -227,6 +238,7 @@ export default function InnerFramePopup() {
 			}
 			if (chosenFolder.filePaths.length > 0) {
 				setFolder(chosenFolder.filePaths[0]);
+				setMessagePrint((prev) => prev + '\n' + 'folder selected : ' + chosenFolder.filePaths[0]);
 			} else {
 				// Handle case where no folder was selected
 				console.log('No folder was selected');
@@ -237,6 +249,24 @@ export default function InnerFramePopup() {
 	};
 
 	useEffect(() => {
+		if (folder && nameFile == '') {
+			setHeaderInfo((prev) => {
+				let data = { ...JSON.parse(prev) };
+				data['outputPath'] = folder + '/' +  generate({exactly: 5, wordsPerString:1}).join("-") + '.pdf';
+				data['verbose'] = false;
+				return JSON.stringify(data);
+			});
+		} else if (folder && nameFile !== '') {
+			setHeaderInfo((prev) => {
+				let data = { ...JSON.parse(prev) };
+				data['outputPath'] = folder + '/' + nameFile + '.pdf';
+				data['verbose'] = false;
+				return JSON.stringify(data);
+			});
+		}
+	}, [folder]);
+
+	useEffect(() => {
 		if (folder && nameFile !== '') {
 			setHeaderInfo((prev) => {
 				let data = { ...JSON.parse(prev) };
@@ -245,7 +275,7 @@ export default function InnerFramePopup() {
 				return JSON.stringify(data);
 			});
 		}
-	}, [nameFile, folder]);
+	}, [nameFile]);
 
 	useEffect(() => {
 		const fs = window.require('fs');
@@ -269,7 +299,7 @@ export default function InnerFramePopup() {
 
 	const handleInputChange = (e) => {
 		const value = e.target.value;
-		const regex = /^[a-zA-Z_]*$/; // Regular expression to allow only letters and underscores
+		const regex = /^[a-zA-Z_-]*$/; // Regular expression to allow only letters, underscores and dashes
 
 		if (regex.test(value)) {
 			setNameFile(value); // Update state only if the input matches the regex
@@ -414,7 +444,7 @@ export default function InnerFramePopup() {
 									}}>
 									<StyledSwitch
 										onChange={() =>
-											setAdvenceMode((prev) => !prev)
+											setAdvanceMode((prev) => !prev)
 										}
 									/>
 									<div
@@ -522,7 +552,7 @@ export default function InnerFramePopup() {
 								handleInputChange(e);
 							}}
 							value={nameFile}
-							placeholder={'your file name here'}
+							placeholder={'your file name here (no special characters allowed)'}
 						/>
 						<Button
 							style={
