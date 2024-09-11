@@ -39,7 +39,7 @@ export default function InnerFramePopup() {
 	const [messagePrint, setMessagePrint] = useState('');
 	//the actual kitchenFaucet
 	const pdfCallBacks = (json) => {
-		setMessagePrint((prev) => prev + '\n' + MessageToPeople(json));
+		setMessagePrint((prev) => prev + '\n' + messageToPeople(json));
 	};
 	const {
 		states: { selectedProject },
@@ -206,7 +206,7 @@ export default function InnerFramePopup() {
 		} else {
 			setIsJsonValidate(false);
 		}
-		// console.log(validationJson);
+		// console.log("kitchenFaucet==",kitchenFaucet);
 	}, [kitchenFaucet, headerInfo]);
 
 	const openFileDialogSettingData = async () => {
@@ -666,7 +666,7 @@ function transformPrintDataToKitchenFaucet(jsonData) {
 	return { global: jsonData.metaData, sections: kitchenFaucet };
 }
 
-function MessageToPeople(json) {
+function messageToPeople(json) {
 	let message = '';
 	for (let i = 0; i < json.level; i++) {
 		message += '\t';
