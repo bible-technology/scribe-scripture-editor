@@ -18,6 +18,7 @@ export function AccordionPicker({
 	removeButton,
 	advanceMode,
 	wrapperType,
+	doReset,
 }) {
 	const {
 		states: { listResourcesForPdf },
@@ -239,6 +240,7 @@ export function AccordionPicker({
 										fieldInfo={f}
 										open={open}
 										lang={language}
+										doReset={doReset}
 									/>
 								))}
 						</div>

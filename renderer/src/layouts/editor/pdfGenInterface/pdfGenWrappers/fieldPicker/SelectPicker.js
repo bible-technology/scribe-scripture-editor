@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import '../../../../../../../styles/globals.css';
 export function SelectPicker({
+	doReset,
 	fieldInfo,
 	require,
 	setJsonSpec,
@@ -23,6 +24,14 @@ export function SelectPicker({
 		setForm(event.target.value);
 	};
 
+	const resetField = () => {
+		setForm(fieldInfo.suggestedDefault || '');
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
+
 	return (
 		<div
 			style={
@@ -37,7 +46,7 @@ export function SelectPicker({
 					: { display: 'none' }
 			}>
 			<div style={{ marginRight: '16px' }}>{fieldInfo.label[lang]}</div>
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
+			<div style={{ display: 'flex', flexDirection: 'column', cursor: "pointer"}}>
 				<select
 					className='selectScribeTheme'
 					value={form}

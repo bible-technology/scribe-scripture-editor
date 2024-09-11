@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 
-export function InputPicker({ fieldInfo, setJsonSpec, require,lang,open=true }) {
-  const [input, setInput] = useState("");
+export function InputPicker({ doReset, fieldInfo, setJsonSpec, require,lang,open=true }) {
+  const [input, setInput] = useState(fieldInfo.suggestedDefault || "");
   useEffect(() => {
     console.log("call");
     setJsonSpec((prev) => {
@@ -18,6 +18,14 @@ export function InputPicker({ fieldInfo, setJsonSpec, require,lang,open=true }) 
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
+
+  const resetField = () => {
+		setInput(fieldInfo.suggestedDefault || "");
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
 
   return (
     <div style={open ? {} : { display: 'none' }}>

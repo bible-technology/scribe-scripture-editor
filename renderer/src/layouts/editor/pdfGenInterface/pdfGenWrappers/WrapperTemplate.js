@@ -10,6 +10,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { findProjectInfo } from '../../InnerFramePopup';
 export function WrapperTemplate({
+	doReset,
 	setFinalPrint,
 	projectInfo,
 	wrapperType,
@@ -242,6 +243,7 @@ export function WrapperTemplate({
 									display: 'flex',
 								}}>
 								<AccordionPicker
+									doReset={doReset}
 									language={i18n.language}
 									wrapperType={wrapperType}
 									projectInfo={projectInfo}

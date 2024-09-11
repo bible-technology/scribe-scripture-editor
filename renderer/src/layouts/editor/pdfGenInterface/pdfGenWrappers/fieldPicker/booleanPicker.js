@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { Checkbox } from '@mui/material';
 export function BooleanPicker({
+	doReset,
 	setJsonSpec,
 	fieldInfo,
 	require,
@@ -16,6 +17,14 @@ export function BooleanPicker({
 			return JSON.stringify(j);
 		});
 	}, []);
+
+	const resetField = () => {
+		setSelected(fieldInfo.suggestedDefault || false);
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
 	
 	useEffect(() => {
 		setJsonSpec((prev) => {

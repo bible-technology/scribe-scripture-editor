@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { FieldPicker } from './FieldPicker';
 import { Button } from '@mui/material';
-export function ScripturePicker({ fieldInfo, setJsonSpec, lang, open = true }) {
+export function ScripturePicker({ doReset, fieldInfo, setJsonSpec, lang, open = true }) {
 	const [scriptureJson, setScriptureJson] = useState('{}');
 	const [scriptureTable, setScriptureTable] = useState('[]');
-	const [numberOfScripture, setNumberOfScripture] = useState(
-		fieldInfo.nValues[0],
-	);
+	const [numberOfScripture, setNumberOfScripture] = useState(fieldInfo.nValues[0]);
 	useEffect(() => {
 		setNumberOfScripture(fieldInfo.nValues[0]);
 	}, [fieldInfo]);
@@ -27,6 +25,16 @@ export function ScripturePicker({ fieldInfo, setJsonSpec, lang, open = true }) {
 			return JSON.stringify(t);
 		});
 	}, [numberOfScripture]);
+
+	const resetField = () => {
+		setScriptureJson('{}');
+		setScriptureTable('[]');
+		setNumberOfScripture(fieldInfo.nValues[0]);
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
 
 	useEffect(() => {
 		setJsonSpec((prev) => {

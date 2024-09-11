@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import { NumericFormat } from 'react-number-format';
 
 export function IntPicker({
+	doReset,
 	fieldInfo,
 	setJsonSpec,
 	require,
@@ -31,6 +32,14 @@ export function IntPicker({
 		const newValue = event.target.value.trim(); // Trim any whitespace
 		setValue(newValue);
 	};
+
+	const resetField = () => {
+		setInput(fieldInfo.suggestedDefault || '');
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
 
 	const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
 		props,

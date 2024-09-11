@@ -8,6 +8,7 @@ import { RessourcePicker } from './RessourcePicker';
 import { IntPicker } from './IntPicker';
 export function FieldPicker({
 	fieldInfo,
+	doReset,
 	jsonSpec,
 	jsonSpecEntry,
 	setJsonSpec,
@@ -43,6 +44,7 @@ export function FieldPicker({
 			// console.log(fieldInfo);
 			return (
 				<SelectPicker
+					doReset={doReset}
 					setJsonSpec={setJsonSpec}
 					fieldInfo={fieldInfo}
 					require={require}
@@ -64,6 +66,7 @@ export function FieldPicker({
 	} else if (fieldInfo.typeName && fieldInfo.typeName === 'boolean') {
 		return (
 			<BooleanPicker
+				doReset={doReset}
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				require={require}
@@ -74,6 +77,7 @@ export function FieldPicker({
 	} else if (fieldInfo.typeName && fieldInfo.typeName === 'string') {
 		return (
 			<InputPicker
+				doReset={doReset}
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				require={require}
@@ -84,6 +88,7 @@ export function FieldPicker({
 	} else if (fieldInfo.id === 'scripture') {
 		return (
 			<ScripturePicker
+				doReset={doReset}
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				lang={lang}
@@ -102,6 +107,7 @@ export function FieldPicker({
 		if (!['scriptureSrc','obs'].includes(fieldInfo.id)) {
 			return (
 				<RessourcePicker
+					doReset={doReset}
 					setJsonSpec={setJsonSpec}
 					fieldInfo={fieldInfo}
 					ressourceKey={fieldInfo.typeName}
@@ -117,6 +123,7 @@ export function FieldPicker({
 	) {
 		return (
 			<IntPicker
+				doReset={doReset}
 				setJsonSpec={setJsonSpec}
 				fieldInfo={fieldInfo}
 				lang={lang}

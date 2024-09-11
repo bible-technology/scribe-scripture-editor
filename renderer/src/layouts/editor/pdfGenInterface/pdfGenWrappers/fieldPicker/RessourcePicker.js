@@ -4,7 +4,7 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { Button, Modal } from '@mui/material';
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker';
 
-export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourceName, open=true }) {
+export function RessourcePicker({ doReset, setJsonSpec, fieldInfo, ressourceKey, ressourceName, open=true }) {
 	const [selected, setSelected] = useState('');
 	const [infoDisplay, setInfoDiplay] = useState('');
 	
@@ -20,6 +20,15 @@ export function RessourcePicker({ setJsonSpec, fieldInfo, ressourceKey, ressourc
 		}
 		
 	}, [selected]);
+
+	const resetField = () => {
+		setSelected('');
+		setInfoDiplay('');
+	}
+
+	useEffect(() => {
+		resetField();
+	}, [doReset]);
 
 	const {
 		states: { listResourcesForPdf },

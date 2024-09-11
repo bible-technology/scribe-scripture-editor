@@ -14,6 +14,7 @@ import { PdfPreview } from './pdfGenInterface/PdfPreview';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
+import { useTranslation } from 'react-i18next';
 import {
 	TextOnlyTooltip,
 	StyledSwitch,
@@ -32,6 +33,7 @@ export default function InnerFramePopup() {
 	const jsonWithHeaderChoice = global.PdfGenStatic.pageInfo();
 	//use to know if we can drag or not
 	const [update, setUpdate] = useState(true);
+	const [doReset, setDoReset] = useState(true);
 	//the order Of The Selected choice
 	const [orderSelection, setOrderSelection] = useState([0]);
 	//is the json is validate or not
@@ -52,6 +54,8 @@ export default function InnerFramePopup() {
 		changeMetaDataToWrapperSection(selectedProject, projects),
 	);
 
+	const { t } = useTranslation();
+
 	//advenceMode allow adding new Wrapper
 	const [advanceMode, setAdvenceMode] = useState(false);
 	const [infoProject, setInfoProject] = useState(
@@ -71,9 +75,9 @@ export default function InnerFramePopup() {
 		setOpenModalAddWrapper(isOpen);
 	};
 	const handleChangeHeaderInfo = (type, value) => {
-		let t = JSON.parse(headerInfo);
-		t[type] = value;
-		setHeaderInfo(JSON.stringify(t));
+		let data = JSON.parse(headerInfo);
+		data[type] = value;
+		setHeaderInfo(JSON.stringify(data));
 	};
 
 	let sortableListClassName = 'sortable-TESTWRAPPER-list';
@@ -235,10 +239,10 @@ export default function InnerFramePopup() {
 	useEffect(() => {
 		if (folder && nameFile !== '') {
 			setHeaderInfo((prev) => {
-				let t = { ...JSON.parse(prev) };
-				t['outputPath'] = folder + '/' + nameFile + '.pdf';
-				t['verbose'] = false;
-				return JSON.stringify(t);
+				let data = { ...JSON.parse(prev) };
+				data['outputPath'] = folder + '/' + nameFile + '.pdf';
+				data['verbose'] = false;
+				return JSON.stringify(data);
 			});
 		}
 	}, [nameFile, folder]);
@@ -255,9 +259,9 @@ export default function InnerFramePopup() {
 				console.log(err);
 			} else {
 				setHeaderInfo((prev) => {
-					let t = { ...JSON.parse(prev) };
-					t['workingDir'] = folder;
-					return JSON.stringify(t);
+					let data = { ...JSON.parse(prev) };
+					data['workingDir'] = folder;
+					return JSON.stringify(data);
 				});
 			}
 		});
@@ -341,7 +345,7 @@ export default function InnerFramePopup() {
 							</div>
 							<div
 								style={{
-									backgroundColor: '#464646',
+									backgroundColor: '#F50',
 									borderRadius: 25,
 									justifyContent: 'center',
 									color: 'white',
@@ -353,9 +357,12 @@ export default function InnerFramePopup() {
 									paddingBottom: 5,
 									paddingLeft: 11,
 									paddingRight: 11,
+									cursor: 'pointer',
 								}}
-								onClick={() => {}}>
-								Reset parameters
+								onClick={() => {
+									setDoReset(!doReset);
+								}}>
+								{t('label-reset')}
 							</div>
 						</div>
 						<TextOnlyTooltip
@@ -436,6 +443,7 @@ export default function InnerFramePopup() {
 									key={k}
 									style={{ margin: 10 }}>
 									<WrapperTemplate
+										doReset={doReset}
 										setFinalPrint={setSelected}
 										projectInfo={infoProject}
 										wrapperType={selected[k].type}
@@ -543,25 +551,20 @@ export default function InnerFramePopup() {
 							onClick={async () => {
 								if (isJsonValidate) {
 									setMessagePrint('');
-									let t = new global.PdfGenStatic(
+									let pdfGen = new global.PdfGenStatic(
 										JSON.parse(kitchenFaucet),
 										pdfCallBacks,
 									);
 
-									const path = t.options.global.workingDir;
-									setMessagePrint(
-										(prev) =>
-											prev + '\n' + 'working in ' + path,
-									);
-
+									const path = pdfGen.options.global.workingDir;
+									setMessagePrint('Generating Pdf ...');
 									try {
-										await t.doPdf(); // Ensure doPdf is awaited since it's async
+										await pdfGen.doPdf();
 									} catch (pdfError) {
-										setMessagePrint(
-											'PDF generation failed: ' +
-												pdfError.message,
-										);
+										setMessagePrint((prev) => prev + '\n' + 'PDF generation failed: ' + pdfError.message);
+										return;
 									}
+									setMessagePrint((prev) => prev + '\n' + 'Successful pdf generation.');
 								}
 							}}>
 							print
@@ -590,9 +593,9 @@ export default function InnerFramePopup() {
 									onClick={() => {
 										let i = Math.max(orderSelection) + 1;
 										setSelected((prev) => {
-											let t = { ...prev };
-											t[i] = { type: c, content: {} };
-											return t;
+											let data = { ...prev };
+											data[i] = { type: c, content: {} };
+											return data;
 										});
 										setOrderSelection((prev) => [
 											...prev,
@@ -637,10 +640,10 @@ function transformPrintDataToKitchenFaucet(jsonData) {
 			delete elem['content'];
 			elem.sections = [];
 			if (currentWrapper.content.order) {
-				for (let t = 0; t < currentWrapper.content.order.length; t++) {
+				for (let j = 0; j < currentWrapper.content.order.length; j++) {
 					let section = {
 						...currentWrapper.content.content[
-							currentWrapper.content.order[t]
+							currentWrapper.content.order[j]
 						],
 					};
 					let source = section.source;
@@ -699,8 +702,8 @@ export function findProjectInfo(meta, autoGrapha) {
 
 function changeMetaDataToWrapperSection(meta, autoGrapha) {
 
-	let t = findProjectInfo(meta, autoGrapha);
-	if (t.type === 'Text Translation') {
+	let projInfo = findProjectInfo(meta, autoGrapha);
+	if (projInfo.type === 'Text Translation') {
 		return {
 			0: {
 				type: 'bcvWrapper',
@@ -711,7 +714,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 				},
 			},
 		};
-	} else if (t.type === 'OBS') {
+	} else if (projInfo.type === 'OBS') {
 		return {
 			0: {
 				type: 'obsWrapper',
@@ -722,7 +725,7 @@ function changeMetaDataToWrapperSection(meta, autoGrapha) {
 				},
 			},
 		};
-	} else if (t.type === "Juxtalinear"){
+	} else if (projInfo.type === "Juxtalinear"){
 		return {
 			0: {
 				type: 'bcvWrapper',
