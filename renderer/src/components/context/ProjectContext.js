@@ -57,6 +57,7 @@ const ProjectContextProvider = ({ children }) => {
   const [openImportPopUp, setOpenImportPopUp] = useState(false);
   const [openExportPopUp, setOpenExportPopUp] = useState(false);
   const [openManageProject, setOpenManageProject] = useState(false);
+  const [contextProjectType, setContextProjectType] = useState("");
 
   const handleProjectFields = (prop) => (event) => {
     setNewProjectFields({ ...newProjectFields, [prop]: event.target.value });
@@ -411,6 +412,7 @@ const ProjectContextProvider = ({ children }) => {
     logger.debug('ProjectContext.js', 'In createProject');
     await createProjectCommonUtils();
     // common props pass for all project type
+    setContextProjectType(projectType);
     const projectMetaObj = {
       newProjectFields,
       language,
@@ -437,6 +439,7 @@ const ProjectContextProvider = ({ children }) => {
   const createSupabaseProject = async (call, project, update, projectType) => {
     createProjectCommonUtils();
     // common props pass for all project type
+    setContextProjectType(projectType);
     const projectMetaObj = {
       newProjectFields,
       language,
@@ -550,6 +553,7 @@ const ProjectContextProvider = ({ children }) => {
       openPdfPopup,
       listResourcesForPdf,
       importedBookCodes,
+      contextProjectType,
     },
     actions: {
       setDrawer,
@@ -578,6 +582,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenPdfPopup,
       setListResourcesForPdf,
       setImportedBookCodes,
+      setContextProjectType,
     },
   };
 

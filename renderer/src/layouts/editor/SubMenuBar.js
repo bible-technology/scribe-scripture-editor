@@ -61,6 +61,7 @@ export default function SubMenuBar() {
       editorSave,
       selectedProject,
       openPdfPopup,
+      selectedProjectMeta,
     },
     actions: {
       setOpenSideBar,
@@ -299,23 +300,25 @@ export default function SubMenuBar() {
             {/* <div className={`group ${menuStyles.saved}`} title={`Network status : ${networkState.online ? 'Online' : 'Offline' }`}>
               <WifiIcon className={`w-6 h-6 ${networkState.online ? 'fill-green-500' : 'fill-red-500'}`} />
             </div> */}
+            {console.log("contextProjectType", selectedProjectMeta?.type?.flavorType?.flavor?.name)}
 
-
-            <div
-              aria-label="add-panels"
-              title={'Print to PDF'}
-              // title={t('TODO')}
-              type="div"
-              role="button"
-              className={`group ${menuStyles.btn} transition-all`}
-              onClick={() => setOpenPdfPopup(true)}
-            >
-              <PrinterIcon
-                aria-label="open-lock"
-                className="h-6 w-6 text-black cursor-pointer"
-                aria-hidden="true"
-              />
-            </div>
+            {selectedProjectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation' && (
+              <div
+                aria-label="add-panels"
+                title={'Print to PDF'}
+                // title={t('TODO')}
+                type="div"
+                role="button"
+                className={`group ${menuStyles.btn} transition-all`}
+                onClick={() => setOpenPdfPopup(true)}
+              >
+                <PrinterIcon
+                  aria-label="open-lock"
+                  className="h-6 w-6 text-black cursor-pointer"
+                  aria-hidden="true"
+                />
+              </div>
+            )}
 
             {/* <div
               aria-label="add-panels"
