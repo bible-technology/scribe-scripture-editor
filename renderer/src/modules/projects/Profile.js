@@ -24,6 +24,7 @@ const languages = [
   { title: 'Arabic', code: 'ar' },
   { title: 'Spanish', code: 'es' },
   { title: 'Bahasa Indonesia', code: 'id' },
+  { title: 'Kannada', code: 'kn' },
 ];
 
 function ProgressCircle({ isFilled, count, text }) {
