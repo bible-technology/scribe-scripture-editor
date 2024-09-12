@@ -1,0 +1,58 @@
+{
+	"bcvWrapper": {
+		"advance": {
+			"true": [
+				"bookNote",
+				"4ColumnSpread",
+				"2Column",
+				"bcvBible",
+				"biblePlusNotes",
+				"paraBible",
+				"markdown",
+				"jxlSpread",
+				"jxlSimple"
+			],
+			"false": [
+				"bookNote",
+				"bcvBible",
+				"biblePlusNotes",
+				"paraBible",
+				"jxlSimple"
+			]
+		}
+	},
+	"obsWrapper": {
+		"advance": {
+			"true": [
+				"obs",
+				"obsPlusNotes"
+			],
+			"false": [
+				"obs",
+				"obsPlusNotes"
+			]
+		}
+	},
+	"jxlWrapper": {
+		"advance": {
+			"true": [
+				"jxlSpread",
+				"jxlSimple"
+			],
+			"false": [
+				"jxlSpread",
+				"jxlSimple"
+			]
+		}
+	},
+	"markdown": {
+		"advance": {
+			"true": [
+				"markdown"
+			],
+			"false": [
+				"markdown"
+			]
+		}
+	}
+}

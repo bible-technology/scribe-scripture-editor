@@ -1,0 +1,51 @@
+.container {
+    padding: 1rem;
+    border-bottom: 2px solid #0d948875;
+    display: flex;
+}
+
+.picker {
+    cursor: pointer;
+    transition: background 0.1s ease-in-out;
+}
+
+.picker:hover {
+    background: #bae6fd;
+}
+
+.container .labels {
+    flex: 1;
+}
+
+.container .btn-group {
+    width: 48px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.btn-group svg {
+    cursor: pointer;
+}
+
+.container p {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0.5rem;
+    max-width: 50%;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+
+.container .local-label {
+    font-weight: bold;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    overflow-x: auto;
+    max-width: 50%;
+}

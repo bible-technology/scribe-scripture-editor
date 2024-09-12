@@ -20,12 +20,11 @@ export default function SelectBook({
 }) {
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
-
+  console.log()
   function toggleNT() {
     setOpenNT(true);
     setOpenOT(false);
   }
-
   function toggleOT() {
     setOpenOT(true);
     setOpenNT(false);
@@ -36,8 +35,10 @@ export default function SelectBook({
     setOpenOT(true);
   }
 
+
   function bookSelect(e, bookId) {
     e.preventDefault();
+    console.log("selected :", bookId);
     onChangeBook(bookId, selectedBooks[0]);
     if (multiSelectBook === false) { selectBook(); }
   }
@@ -143,13 +144,11 @@ export default function SelectBook({
                       key={book.name}
                       role="presentation"
                       aria-label={`nt-${book.name}`}
-                      onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
-                          ? (multiSelectBook
-                            ? selectMultipleBooks(e, book.key, book.name)
-                            : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
-                            ? selectMultipleBooks(e, book.key, book.name)
-                            : bookSelect(e, book.key, book.name)))}
-                      className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
+                      onClick={(e) => (
+                        multiSelectBook
+                        ? selectMultipleBooks(e, book.key, book.name)
+                        : bookSelect(e, book.key, book.name))}
+                      className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}
                     >
                       {book.name}
                     </div>
