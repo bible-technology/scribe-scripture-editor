@@ -281,4 +281,11 @@ export const Ne = {
     'tooltip-supported-resources': 'समर्थित स्रोतहरू TN, TW, TQ, TA हुन्',
     'label-upload-help-resources': 'मद्दत स्रोतहरू अपलोड गर्नुहोस्',
     'label-filter': 'फिल्टर',
+    'label-book-selection': 'पुस्तक चयन',
+    'label-chapter-selection': 'अध्याय चयन',
+    'label-select': 'चयन्',
+    'label-deselect': 'चयन रद्द करें',
+    'label-start': 'सुरु्',
+    'label-end': 'अन्त्य',
+    'label-apply': 'आवेदन दिनुहोस्',
 };

@@ -194,7 +194,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   const selectCanon = (val) => {
     const value = val;
     // console.log(val)
-    
+
     if (call === 'edit' && value.title === 'Other') {
       if (canonSpecification.title === 'Other') {
         value.currentScope = canonSpecification.currentScope;
@@ -263,7 +263,12 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                   </div>
                 </div>
                 {projectType === 'Audio'
-                  && <span className="text-error">NOTE: Choose the book and chapter from the SCOPE MANAGEMENT option on the project listing page.</span>}
+                  && (
+                  <span className="text-error">
+                    {'NOTE: '}
+                    {t('label-scope-note-audio')}
+                  </span>
+                )}
                 {/* <div className="relative"> */}
                 <div>
                   {/* <CustomList

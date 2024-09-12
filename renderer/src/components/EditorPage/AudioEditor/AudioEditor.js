@@ -210,7 +210,7 @@ const AudioEditor = ({ editor }) => {
   }, [bookId, chapter]);
   return (
     <Editor callFrom="textTranslation" editor={editor}>
-      {((isLoading || !audioContent) && displyScreen) && <EmptyScreen />}
+      {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="audio" />}
       {isLoading && !displyScreen && <LoadingScreen /> }
       {audioContent && isLoading === false
       && (

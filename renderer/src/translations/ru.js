@@ -281,4 +281,11 @@ export const Ru = {
     'tooltip-supported-resources': 'поддерживаемые ресурсы: TN, TW, TQ, TA',
     'label-upload-help-resources': 'Загрузить справочные ресурсы',
     'label-filter': 'фильтр',
+    'label-book-selection': 'Выбор книги',
+    'label-chapter-selection': 'Выбор главы',
+    'label-select': 'Выбирать',
+    'label-deselect': 'Отменить выбор',
+    'label-start': 'Начинать',
+    'label-end': 'Конец',
+    'label-apply': 'Применять',
 };

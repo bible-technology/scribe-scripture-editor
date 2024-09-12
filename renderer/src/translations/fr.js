@@ -281,4 +281,11 @@ export const Fr = {
     'tooltip-supported-resources': 'les ressources prises en charge sont TN, TW, TQ, TA',
     'label-upload-help-resources': 'Télécharger des ressources d\'aide',
     'label-filter': 'Filtre',
+    'label-book-selection': 'Sélection de livres',
+    'label-chapter-selection': 'Sélection de chapitre',
+    'label-select': 'Sélectionner',
+    'label-deselect': 'Désélectionner',
+    'label-start': 'Commencer',
+    'label-end': 'Fin',
+    'label-apply': 'Appliquer',
 };

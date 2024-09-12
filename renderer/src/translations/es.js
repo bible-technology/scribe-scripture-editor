@@ -280,4 +280,11 @@ export const Es = {
     'msg-helps-filepath': 'Ruta al Recurso de Ayuda con manifest.yaml válido',
     'tooltip-supported-resources': 'los recursos soportados son TN, TW, TQ, TA',
     'label-upload-help-resources': 'Cargar Recursos de Ayuda',
+    'label-book-selection': 'Selección de libros',
+    'label-chapter-selection': 'Selección de capítulos',
+    'label-select': 'Seleccionar',
+    'label-deselect': 'Deseleccionar',
+    'label-start': 'Comenzar',
+    'label-end': 'Fin',
+    'label-apply': 'Aplicar',
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useBibleReference } from 'bible-reference-rcl';
+import { useTranslation } from 'react-i18next';
 import ScopeHead from './ScopeHead';
 import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
@@ -12,21 +13,21 @@ const initialBook = 'gen';
 const initialChapter = '1';
 const initialVerse = '1';
 
-const ToggleBookOptions = [
-  { key: 'all', name: 'All' },
-  { key: 'old', name: 'Old' },
-  { key: 'new', name: 'New' },
-  { key: 'none', name: 'Deselect' },
-];
-
-const ToggleChapterOptions = [
-  { key: 'all', name: 'All' },
-  { key: 'none', name: 'Deselect' },
-];
-
 function ScopeManagement({
- metadata, currentScope, setCurrentScope, backendScope,
+  metadata, currentScope, setCurrentScope, backendScope,
 }) {
+  const { t } = useTranslation();
+  const ToggleBookOptions = [
+    { key: 'all', name: t('btn-all') },
+    { key: 'old', name: t('btn-ot') },
+    { key: 'new', name: t('btn-nt') },
+    { key: 'none', name: t('label-deselect') },
+  ];
+
+  const ToggleChapterOptions = [
+    { key: 'all', name: t('btn-all') },
+    { key: 'none', name: t('label-deselect') },
+  ];
   const [bookFilter, setBookFilter] = useState('');
   const [chapterFilter, setChapterFilter] = useState('');
   const [selectedChaptersSet, setSelectedChaptersSet] = useState(new Set([]));
@@ -177,7 +178,11 @@ function ScopeManagement({
     <div className="w-full h-full pt-5 px-5">
       <ScopeHead>Project Scope Management</ScopeHead>
       <TitleBar>
-        <p className="text-gray-900 text-center text-sm">Book Selection</p>
+        <p className="text-gray-900 text-center text-sm">
+          {t('label-book-selection')}
+          {' '}
+          :
+        </p>
         <BulkSelectionGroup
           selectedOption={bookFilter}
           handleSelect={handleChangeBookToggle}
@@ -226,7 +231,11 @@ function ScopeManagement({
         && (
         <TitleBar>
           <p className="text-gray-900 text-center text-sm flex gap-2">
-            <span>Chapter Selection :</span>
+            <span>
+              {t('label-chapter-selection')}
+              {' '}
+              :
+            </span>
             <span className="font-medium">{bookName}</span>
           </p>
           <BulkSelectionGroup
@@ -239,7 +248,11 @@ function ScopeManagement({
 
       <form className="w-full my-2 flex gap-3 h-6  text-xxs justify-end" onSubmit={handleChapterRangeSelection}>
         <div className="flex gap-1 items-center ">
-          <label>Start :</label>
+          <label>
+            {t('label-start')}
+            {' '}
+            :
+          </label>
           <input
             type="number"
             className="w-12 h-full  px-1 text-xs border-gray-400 outline-none rounded-[4px]"
@@ -250,7 +263,11 @@ function ScopeManagement({
           />
         </div>
         <div className="flex gap-1 items-center">
-          <label>End :</label>
+          <label>
+            {t('label-end')}
+            {' '}
+            :
+          </label>
           <input
             type="number"
             className="w-12 h-full  px-1 text-xs border-gray-400 outline-none rounded-[4px]"
@@ -262,7 +279,7 @@ function ScopeManagement({
         </div>
 
         <Button type="submit">
-          Select
+          {t('label-select')}
         </Button>
       </form>
 

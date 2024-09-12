@@ -280,4 +280,11 @@ export const Id = {
     'tooltip-supported-resources': 'Sumber Daya Pendukung Lainnya Adalah TN, TW, TQ, TA',
     'label-upload-help-resources': 'Unggah Sumber Daya Bantuan',
     'label-filter': 'Filter',
+    'label-book-selection': 'Pemilihan Buku',
+    'label-chapter-selection': 'Pemilihan Bab',
+    'label-select': 'Memilih',
+    'label-deselect': 'Batalkan pilihan',
+    'label-start': 'Awal',
+    'label-end': 'Akhir',
+    'label-apply': 'Menerapkan',
 };

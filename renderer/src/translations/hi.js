@@ -281,4 +281,11 @@ export const Hi = {
     'tooltip-supported-resources': 'समर्थित संसाधन TN, TW, TQ, TA हैं।',
     'label-upload-help-resources': 'सहायता संसाधन अपलोड करें',
     'label-filter': 'फ़िल्टर',
+    'label-book-selection': 'पुस्तक चयन',
+    'label-chapter-selection': 'अध्याय चयन',
+    'label-select': 'चयन्',
+    'label-deselect': 'चयन रद्द करें',
+    'label-start': 'सुरु्',
+    'label-end': 'अंत',
+    'label-apply': 'आवेदन करना',
 };
