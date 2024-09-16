@@ -287,4 +287,7 @@ export const Es = {
     'label-start': 'Comenzar',
     'label-end': 'Fin',
     'label-apply': 'Aplicar',
+    'label-scope-not-selected': 'Para comenzar, vaya a Gestión de alcance, seleccione el libro y los capítulos y haga clic en el botón Aplicar.',
+    'label-scope-note-audio': 'Seleccione el libro y el capítulo de la opción GESTIÓN DEL ALCANCE en la página de listado de proyectos',
+    'modal-title-scope-management': 'Gestión del alcance',
 };

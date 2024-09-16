@@ -151,8 +151,8 @@ export const Hi = {
     'tooltip-import-resource-info-circle': 'एक निर्देशिका/प्रोजेक्ट का चयन करें जिसमें एक स्क्रिप्चर बरिटो फ़ाइल है यानी मेटाडेटा.json फ़ाइल।',
     'tooltip-import-open-file-location': 'फ़ोल्डर का स्थान खोलें',
     'dynamic-msg-import-resource-snack': 'संसाधन अपलोड सफल रहा! कृपया संसाधन सूची देखें',
-    'dynamic-msg-unable-find-buritto-snack': 'बरिटो फ़ाइल को ढूंढने में असमर्थ (मेटाडेटा.json )',
-    'dynamic-msg-unable-invalid-buritto-snack': 'अमान्य बरिटो फ़ाइल (मेटाडेटा.json) ',
+    'dynamic-msg-unable-find-buritto-snack': 'बरिटो फ़ाइल को ढूंढने में असमर्थ (metadata.json )',
+    'dynamic-msg-unable-invalid-buritto-snack': 'अमान्य बरिटो फ़ाइल (metadata.json) ',
     'dynamic-msg-confirm-replace-resource': 'इसी नाम से एक मौजूदा प्रोजेक्ट मिला! "संग्रहीत टैब" या "प्रोजेक्ट टैब" जांचें। ओवरलैपिंग पुस्तकों में किसी भी मौजूदा सामग्री को अधिलेखित करने के लिए "बदलें" दबाएँ। प्रोजेक्ट को वर्तमान प्रोजेक्ट के साथ संयोजित करने के लिए "मर्ज" दबाएँ। परिवर्तनों से बचने के लिए "रद्द करें" दबाएँ।',
     'dynamic-msg-resource-added': 'संसाधन को सफलतापूर्वक जोड़ा गया है',
     'dynamic-msg-resource-unable-fetch-url': 'दिए गए यू आर एल(URL) से चयनित संसाधन लाने में असमर्थ',
@@ -288,4 +288,7 @@ export const Hi = {
     'label-start': 'सुरु्',
     'label-end': 'अंत',
     'label-apply': 'आवेदन करना',
+    'label-scope-not-selected': 'आरंभ करने के लिए, स्कोप प्रबंधन पर जाएं, पुस्तक और अध्यायों का चयन करें और लागू करें बटन पर क्लिक करें',
+    'label-scope-note-audio': 'प्रोजेक्ट लिस्टिंग पेज पर SCOPE MANAGEMENT विकल्प से पुस्तक और अध्याय चुनें',
+    'modal-title-scope-management': 'स्कोप प्रबंधन',
 };

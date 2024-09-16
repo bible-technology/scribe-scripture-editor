@@ -287,4 +287,7 @@ export const Id = {
     'label-start': 'Awal',
     'label-end': 'Akhir',
     'label-apply': 'Menerapkan',
+    'label-scope-not-selected': 'Untuk memulai, masuk ke Manajemen Lingkup pilih buku dan bab dan klik tombol Terapkan',
+    'label-scope-note-audio': 'Pilih buku dan bab dari opsi MANAJEMEN RUANG LINGKUP pada halaman daftar proyek',
+    'modal-title-scope-management': 'Manajemen Ruang Lingkup',
 };

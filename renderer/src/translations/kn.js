@@ -288,4 +288,7 @@ export const Kn = {
     'label-start': 'ಆರಂಭ',
     'label-end': 'ಅಂತ್ಯ',
     'label-apply': 'ಅನ್ವಯಿಸಿ',
+    'label-scope-not-selected': 'ಪ್ರಾರಂಭಿಸಲು, ಸ್ಕೋಪ್ ಮ್ಯಾನೇಜ್‌ಮೆಂಟ್‌ಗೆ ಹೋಗಿ ಪುಸ್ತಕ ಮತ್ತು ಅಧ್ಯಾಯಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ಅನ್ವಯಿಸು ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ',
+    'label-scope-note-audio': 'ಪ್ರಾಜೆಕ್ಟ್ ಪಟ್ಟಿಯ ಪುಟದಲ್ಲಿನ SCOPE MANAGEMENT ಆಯ್ಕೆಯಿಂದ ಪುಸ್ತಕ ಮತ್ತು ಅಧ್ಯಾಯವನ್ನು ಆರಿಸಿ',
+    'modal-title-scope-management': 'ವ್ಯಾಪ್ತಿ ನಿರ್ವಹಣೆ',
 };

@@ -288,4 +288,7 @@ export const Fr = {
     'label-start': 'Commencer',
     'label-end': 'Fin',
     'label-apply': 'Appliquer',
+    'label-scope-not-selected': 'Pour commencer, accédez à Gestion de la portée, sélectionnez le livre et les chapitres et cliquez sur le bouton Appliquer',
+    'label-scope-note-audio': 'Choisissez le livre et le chapitre à partir de l\'option GESTION DE LA PORTÉE sur la page de liste des projets',
+    'modal-title-scope-management': 'Gestion de la portée',
 };
