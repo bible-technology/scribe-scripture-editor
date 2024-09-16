@@ -28,7 +28,7 @@ export const Id = {
     'label-search': 'Cari',
     'label-project': 'Proyek',
     'label-flavour': 'Flavour',
-    'label-project-type': 'Tipe',
+    'label-project-type': 'Jenis Proyek',
     'label-project-name': 'Nama Proyek',
     'label-language': 'Nama Bahasa',
     'label-language-code': 'Kode Bahasa',

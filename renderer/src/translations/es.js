@@ -28,7 +28,7 @@ export const Es = {
     'label-search': 'Buscar',
     'label-project': 'Proyecto',
     'label-flavour': 'Sabor',
-    'label-project-type': 'Tipo',
+    'label-project-type': 'Tipo de proyecto',
     'label-project-name': 'Nombre del proyecto',
     'label-language': 'Nombre del idioma',
     'label-language-code': 'Código de idioma',

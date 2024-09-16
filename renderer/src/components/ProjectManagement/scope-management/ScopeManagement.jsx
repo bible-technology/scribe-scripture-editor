@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useBibleReference } from 'bible-reference-rcl';
 import { useTranslation } from 'react-i18next';
-import ScopeHead from './ScopeHead';
 import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
 import BulkSelectionGroup from './BulkSelectionGroup';
@@ -176,7 +175,6 @@ function ScopeManagement({
 
   return (
     <div className="w-full h-full pt-5 px-5">
-      <ScopeHead>Project Scope Management</ScopeHead>
       <TitleBar>
         <p className="text-gray-900 text-center text-sm">
           {t('label-book-selection')}

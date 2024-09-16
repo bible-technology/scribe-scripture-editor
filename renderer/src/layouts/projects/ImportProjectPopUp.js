@@ -343,7 +343,7 @@ export default function ImportProjectPopUp(props) {
                             value={sbData.language}
                             disabled
                           />
-                          <h4 className="text-sm font-base mb-2 text-primary tracking-wide leading-4 font-light">{t('label-project-type')}</h4>
+                          <h4 className="text-sm font-base mb-2 text-primary tracking-wide leading-4 font-light">{t('label-type')}</h4>
                           <input
                             className="w-full mb-4 bg-gray-200 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
                             type="text"

@@ -28,7 +28,7 @@ export const Fr = {
     'label-search': 'Recherche',
     'label-project': 'Projets',
     'label-flavor': 'Saveur',
-    'label-project-type': 'Taper',
+    'label-project-type': 'Type de projet',
     'label-project-name': 'nom du projet',
     'label-language': 'Langue',
     'label-language-code': 'Language Code',

@@ -28,7 +28,7 @@ export const Te = {
     'label-search': 'వెతకండి',
     'label-project': 'ప్రాజెక్ట్',
     'label-flavour': 'ఫ్లేవర్',
-    'label-project-type': 'రకం',
+    'label-project-type': 'ప్రాజెక్ట్ రకం',
     'label-project-name': 'ప్రాజెక్ట్ పేరు',
     'label-language': 'భాష పేరు',
     'label-language-code': 'భాష కోడ్',
