@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 export const ScribexContext = React.createContext();
 
 const ScribexContextProvider = ({
- children, editable = true, reference = false, font,
+  children, editable = true, reference = false, font,
 }) => {
   const initialState = {
     sequenceIds: [],
@@ -82,8 +82,8 @@ const ScribexContextProvider = ({
   );
 
   const setInsertType = useCallback((insertType) => {
-       setState((prev) => ({ ...prev, insertType }));
-}, []);
+    setState((prev) => ({ ...prev, insertType }));
+  }, []);
   const actions = {
     setFont,
     setSectionable,

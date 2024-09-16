@@ -185,10 +185,10 @@ function ConflictEditor({
             >
               <ConflictSection
                 text={
-                    content?.title
-                    || content?.text
-                    || content?.end
-                  }
+                  content?.title
+                  || content?.text
+                  || content?.end
+                }
                 index={index}
                 setSelectedFileContent={setSelectedFileContent}
                 selectedFileContent={selectedFileContent}
@@ -199,7 +199,7 @@ function ConflictEditor({
             </div>
 
           </div>
-     ))}
+        ))}
       </div>
     </div>
   );

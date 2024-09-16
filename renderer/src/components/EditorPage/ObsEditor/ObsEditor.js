@@ -20,10 +20,10 @@ const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
   const {
- state: {
- obsNavigation, loadData,
-}, actions: { setLoadData },
-} = useContext(ReferenceContext);
+    state: {
+      obsNavigation, loadData,
+    }, actions: { setLoadData },
+  } = useContext(ReferenceContext);
 
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');

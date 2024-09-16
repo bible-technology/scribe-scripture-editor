@@ -74,10 +74,10 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       if (localBranches.length > 0) {
         const userSettings = await readUserSettings();
         if (localBranches.includes(`${userSettings?.sync?.services?.door43[0]?.username}/scribe`)) {
-            currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
-            author.email = userSettings.sync.services.door43[0].token.user.email;
-            author.username = userSettings.sync.services.door43[0].username;
-          }
+          currentActiveBranch = `${userSettings.sync.services.door43[0].username}/scribe`;
+          author.email = userSettings.sync.services.door43[0].token.user.email;
+          author.username = userSettings.sync.services.door43[0].username;
+        }
       }
     } else {
       // init git

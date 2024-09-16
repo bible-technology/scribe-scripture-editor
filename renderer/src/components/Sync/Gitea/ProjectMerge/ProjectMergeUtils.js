@@ -53,16 +53,16 @@ export const deleteCreatedMergeBranch = async (selectedGiteaProject, actions, GI
   };
   const urlDeleteBranch = `${GITEA_BASE_API_URL}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/branches/${selectedGiteaProject.branch.name}-merge`;
   fetch(urlDeleteBranch, requestOptions)
-  .then((response) => response)
-  .then((result) => {
-    if (result.ok) {
-      actions.setStepCount((prevStepCount) => prevStepCount + 1);
-      logger.debug('ProjectMErgeUtils.js', 'Deleted Temp Branch Successfully');
-    } else {
-      throw new Error(result.statusText);
-    }
-  })
-  .catch((error) => logger.debug('ProjectMErgeUtils.js', 'Project Temporary branch deletion Error - ', error));
+    .then((response) => response)
+    .then((result) => {
+      if (result.ok) {
+        actions.setStepCount((prevStepCount) => prevStepCount + 1);
+        logger.debug('ProjectMErgeUtils.js', 'Deleted Temp Branch Successfully');
+      } else {
+        throw new Error(result.statusText);
+      }
+    })
+    .catch((error) => logger.debug('ProjectMErgeUtils.js', 'Project Temporary branch deletion Error - ', error));
 };
 
 export const backupLocalProject = async (selectedGiteaProject, actions) => {
@@ -99,9 +99,9 @@ export const undoMergeOrDeleteOldBackup = async (selectedGiteaProject, backupNam
   const backupFileList = await fs.readdirSync(projectBackupPath);
   const files = backupFileList.filter((filename) => fs.statSync(`${projectBackupPath}/${filename}`).isDirectory());
   const backupFileListSorted = files.sort((a, b) => {
-      const aStat = fs.statSync(`${projectBackupPath}/${a}`);
-      const bStat = fs.statSync(`${projectBackupPath}/${b}`);
-      return new Date(bStat.birthtime).getTime() - new Date(aStat.birthtime).getTime();
+    const aStat = fs.statSync(`${projectBackupPath}/${a}`);
+    const bStat = fs.statSync(`${projectBackupPath}/${b}`);
+    return new Date(bStat.birthtime).getTime() - new Date(aStat.birthtime).getTime();
   });
 
   if (undo) {

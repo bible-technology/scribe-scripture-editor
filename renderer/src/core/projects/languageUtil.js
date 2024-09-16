@@ -17,11 +17,11 @@ export const getScriptureDirection = async (projectName) => {
   let scriptureDirection;
   // Fetching the resource details from the LocalForage
   await localForage.getItem('resources')
-  .then((refs) => {
-    logger.debug('languageUtil.js', 'In getScriptureDirection:- fetching burrito data');
-    const projectDetails = refs.find((o) => o.projectDir === projectName);
-    languageCode = projectDetails?.value?.languages[0]?.tag;
-  });
+    .then((refs) => {
+      logger.debug('languageUtil.js', 'In getScriptureDirection:- fetching burrito data');
+      const projectDetails = refs.find((o) => o.projectDir === projectName);
+      languageCode = projectDetails?.value?.languages[0]?.tag;
+    });
   if (languageCode) {
     logger.debug('languageUtil.js', 'In getScriptureDirection:- fetching langauge code from burrito');
     scriptureDirection = getLanguageDirection(languageCode);
@@ -34,12 +34,12 @@ export const checkLangNameAndCodeExist = async (languages, lang, langcode, langK
   logger.debug('languageUtil.js', 'in check language and code exist');
   const check = { name: { status: false, message: '' }, code: { status: false, message: '' } };
   await languages.forEach((l) => {
-        if (l[langKey].toLowerCase() === lang.toLowerCase()) {
-          check.name = { status: true, message: 'Language Name is existing' };
-        } if (l[codeKey] === langcode.toLowerCase()) {
-          check.code = { status: true, message: 'Language Code is existing' };
-        }
-      });
+    if (l[langKey].toLowerCase() === lang.toLowerCase()) {
+      check.name = { status: true, message: 'Language Name is existing' };
+    } if (l[codeKey] === langcode.toLowerCase()) {
+      check.code = { status: true, message: 'Language Code is existing' };
+    }
+  });
   if (check) {
     return check;
   }

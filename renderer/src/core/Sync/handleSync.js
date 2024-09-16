@@ -3,7 +3,7 @@ export const isUSFM = (filename) => {
   if (extension[1]?.toLowerCase() === ('usfm' || 'sfm')) {
     return true;
   }
-    return false;
+  return false;
 };
 export const getId = (lines) => {
   let bookCode;

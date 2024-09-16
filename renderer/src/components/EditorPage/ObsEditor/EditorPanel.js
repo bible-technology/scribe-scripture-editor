@@ -13,7 +13,7 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
     actions: {
       setSelectedStory,
     },
-} = useContext(ReferenceContext);
+  } = useContext(ReferenceContext);
 
   const { states: { scrollLock } } = useContext(ProjectContext);
   const { t } = useTranslation();
@@ -77,75 +77,75 @@ const EditorPanel = ({ obsStory, storyUpdate }) => {
         <>
           {Object.prototype.hasOwnProperty.call(story, 'title')
           && (
-          <div
-            className="flex m-4 p-1 rounded-md min-h-0"
-            key={story.id}
-          >
-            <textarea
-              name={story.title}
-              onChange={handleChange}
-              onKeyDown={avoidEnter}
-              onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-              value={story.title}
-              data-id={story.id}
-              className="flex-grow text-justify ml-2 p-2 text-xl"
-              style={{
-                fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${editorFontSize}rem`,
-              }}
-            />
-          </div>
+            <div
+              className="flex m-4 p-1 rounded-md min-h-0"
+              key={story.id}
+            >
+              <textarea
+                name={story.title}
+                onChange={handleChange}
+                onKeyDown={avoidEnter}
+                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
+                value={story.title}
+                data-id={story.id}
+                className="flex-grow text-justify ml-2 p-2 text-xl"
+                style={{
+                  fontFamily: selectedFont || 'sans-serif',
+                  fontSize: `${editorFontSize}rem`,
+                }}
+              />
+            </div>
           )}
           {Object.prototype.hasOwnProperty.call(story, 'text')
           && (
-          <div
-            className="flex m-4 p-1 rounded-md"
-            key={story.id}
-          >
-            <span className="w-5 h-5 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center p-3 ">
-              {/* {index} */}
-              {index.toString().split('').map((num) => t(`n-${num}`))}
-            </span>
-            <textarea
-              name={story.text}
-              onChange={handleChange}
-              onKeyDown={avoidEnter}
-              onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-              value={story.text}
-              data-id={story.id}
-              className="flex-grow text-justify ml-2 p-2 text-sm"
-              onFocus={(e) => handleOnFocus(true, e)}
-              onBlur={(e) => handleOnFocus(false, e)}
-              onInput={(e) => handleAutoHeight(e)}
-              style={{
-                fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${editorFontSize}rem`,
-                lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
-              }}
-            />
-          </div>
+            <div
+              className="flex m-4 p-1 rounded-md"
+              key={story.id}
+            >
+              <span className="w-5 h-5 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center p-3 ">
+                {/* {index} */}
+                {index.toString().split('').map((num) => t(`n-${num}`))}
+              </span>
+              <textarea
+                name={story.text}
+                onChange={handleChange}
+                onKeyDown={avoidEnter}
+                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
+                value={story.text}
+                data-id={story.id}
+                className="flex-grow text-justify ml-2 p-2 text-sm"
+                onFocus={(e) => handleOnFocus(true, e)}
+                onBlur={(e) => handleOnFocus(false, e)}
+                onInput={(e) => handleAutoHeight(e)}
+                style={{
+                  fontFamily: selectedFont || 'sans-serif',
+                  fontSize: `${editorFontSize}rem`,
+                  lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
+                }}
+              />
+            </div>
           )}
           {Object.prototype.hasOwnProperty.call(story, 'end')
           && (
-          <div
-            className="flex m-4 p-1 rounded-md min-h-0"
-            key={story.id}
-          >
-            <textarea
-              name={story.end}
-              onChange={handleChange}
-              onKeyDown={avoidEnter}
-              onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-              value={story.end}
-              data-id={story.id}
-              className="flex-grow text-justify ml-2 p-2 text-sm"
-              style={{
-                fontFamily: selectedFont || 'sans-serif',
-                fontSize: `${editorFontSize}rem`,
-                lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
-              }}
-            />
-          </div>
+            <div
+              className="flex m-4 p-1 rounded-md min-h-0"
+              key={story.id}
+            >
+              <textarea
+                name={story.end}
+                onChange={handleChange}
+                onKeyDown={avoidEnter}
+                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
+                value={story.end}
+                data-id={story.id}
+                className="flex-grow text-justify ml-2 p-2 text-sm"
+                style={{
+                  fontFamily: selectedFont || 'sans-serif',
+                  fontSize: `${editorFontSize}rem`,
+                  lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
+                }}
+              />
+            </div>
           )}
         </>
       ))}

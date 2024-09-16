@@ -44,7 +44,7 @@ i18n
         translation: Id,
       },
     },
-});
+  });
 
 // i18n.changeLanguage('en');
 export default i18n;

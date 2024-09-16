@@ -20,13 +20,13 @@ export const getCurrentChapter = (currentNode) => {
     return currentChapter;
   }
 
-    let prevParaDiv = closestParaDiv.previousElementSibling;
-    while (prevParaDiv) {
-      if (prevParaDiv.firstElementChild?.firstElementChild?.classList.contains('chapter')) {
-        currentChapter = prevParaDiv.firstElementChild.firstElementChild.dataset.attsNumber;
-        break;
-      }
-      prevParaDiv = prevParaDiv.previousElementSibling;
+  let prevParaDiv = closestParaDiv.previousElementSibling;
+  while (prevParaDiv) {
+    if (prevParaDiv.firstElementChild?.firstElementChild?.classList.contains('chapter')) {
+      currentChapter = prevParaDiv.firstElementChild.firstElementChild.dataset.attsNumber;
+      break;
     }
-    return currentChapter;
+    prevParaDiv = prevParaDiv.previousElementSibling;
+  }
+  return currentChapter;
 };

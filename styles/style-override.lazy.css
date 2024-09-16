@@ -2,11 +2,13 @@
 br {
 	display: none;
 }
+
 br.usfm-editor-break {
 	display: block;
 }
+
 /* Don't display a break after a section header */
-.usfm-marker-s + br {
+.usfm-marker-s+br {
 	display: none;
 }
 
@@ -15,26 +17,31 @@ h1.usfm-marker-s {
 	margin: 0.5em 0;
 	font-size: 2em;
 }
+
 h2.usfm-marker-s {
 	text-align: center;
 	margin: 0.5em 0;
 	font-size: 1.5em;
 }
+
 h3.usfm-marker-s {
 	text-align: center;
 	margin: 0.5em 0;
 	font-size: 1.17em;
 }
+
 h4.usfm-marker-s {
 	text-align: center;
 	margin: 0.5em 0;
 	font-size: 1.12em;
 }
+
 h5.usfm-marker-s {
 	text-align: center;
 	margin: 0.5em 0;
 	font-size: 0.83em;
 }
+
 h6.usfm-marker-s {
 	text-align: center;
 	margin: 0.5em 0;
@@ -53,20 +60,24 @@ hr.usfm-editor-hr {
 .usfm-editor {
 	margin-top: 1em;
 	overflow-y: scroll;
-	-ms-overflow-style: none; /* No scrollbar- IE and Edge */
-	scrollbar-width: none; /* Firefox */
-} /* Override font, bg color, etc. */
+	-ms-overflow-style: none;
+	/* No scrollbar- IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
+}
+
+/* Override font, bg color, etc. */
 
 .usfm-editor::-webkit-scrollbar {
-	display: none; /* Chrome, Safari, Opera */
+	display: none;
+	/* Chrome, Safari, Opera */
 }
 
 .usfm-editor-chapter {
 	margin: 15px;
 }
 
-.usfm-marker-p {
-}
+.usfm-marker-p {}
 
 .usfm-editor-inline {
 	display: inline;
@@ -118,6 +129,7 @@ the last child. */
 	background-color: white;
 	display: none;
 }
+
 .usfm-marker-c.usfm-editor-front,
 .usfm-marker-v.usfm-editor-front {
 	display: none;
@@ -152,7 +164,8 @@ the last child. */
 
 .toolbar-button {
 	min-width: 3em;
-	font-size: 16px; /* Default for material-UI icons */
+	font-size: 16px;
+	/* Default for material-UI icons */
 }
 
 .toolbar-button-active {
@@ -187,9 +200,11 @@ the last child. */
 	display: flex;
 	flex-flow: column;
 }
+
 .scrollbars-width::-webkit-scrollbar {
 	width: 0.75rem;
 }
+
 .scrollbars-width::-webkit-scrollbar-thumb {
 	background: #6b6b6b;
 }

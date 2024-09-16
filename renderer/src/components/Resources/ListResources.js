@@ -97,35 +97,35 @@ export const ListResources = ({
       setLoading(true);
       logger.debug('ResourcesPopUp.js', `get available selected resources ${selectResource}`);
       switch (selectResource) {
-        case 'jxl':
-          await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'tn':
-          await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction);
-          break;
+      case 'jxl':
+        await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'tn':
+        await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction);
+        break;
         // case 'tw':
         //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
         //   break;
-        case 'twlm':
-          await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'tq':
-          await fetchTranslationResource('Translation Questions&subject=tsv Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-tn':
-          await fetchTranslationResource('OBS Translation Notes&subject=tsv obs Translation notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-tq':
-          await fetchTranslationResource('OBS Translation Questions&subject=tsv obs Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-twlm':
-          await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'ta':
-          await fetchTranslationResource('Translation Academy&subject=tsv Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
-          break;
-        default:
-          break;
+      case 'twlm':
+        await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'tq':
+        await fetchTranslationResource('Translation Questions&subject=tsv Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-tn':
+        await fetchTranslationResource('OBS Translation Notes&subject=tsv obs Translation notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-tq':
+        await fetchTranslationResource('OBS Translation Questions&subject=tsv obs Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-twlm':
+        await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'ta':
+        await fetchTranslationResource('Translation Academy&subject=tsv Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
+        break;
+      default:
+        break;
       }
       setLoading(false);
     })();
@@ -210,9 +210,9 @@ export const ListResources = ({
                         {resource?.value?.meta?.owner}
                       </span>
                       {resource?.value?.localUploadedHelp && (
-                      <span className="text-xxs text-gray-800 px-2 py-1 mx-1 bg-green-200 rounded-full">
-                        Uploaded
-                      </span>
+                        <span className="text-xxs text-gray-800 px-2 py-1 mx-1 bg-green-200 rounded-full">
+                          Uploaded
+                        </span>
                       )}
                     </div>
                   </td>
@@ -239,13 +239,13 @@ export const ListResources = ({
                     <div
                       className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
-                      e,
-                      resource?.value?.meta?.language,
-                      `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
-                      resource?.value?.meta?.owner,
-                      resource?.value?.meta?.subject,
-                      '',
-                      resource,
+                        e,
+                        resource?.value?.meta?.language,
+                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner,
+                        resource?.value?.meta?.subject,
+                        '',
+                        resource,
                       )}
                       role="button"
                       aria-label="version"
@@ -280,8 +280,8 @@ export const ListResources = ({
                       </div>
                       <div className="flex justify-center items-center gap-4">
                         {!resource?.value?.localUploadedHelp && (
-                        <CheckHelpsUpdatePopUp resource={resource} selectResource={selectResource} />
-                      )}
+                          <CheckHelpsUpdatePopUp resource={resource} selectResource={selectResource} />
+                        )}
                         <RemoveResource
                           resource={resource}
                           selectResource={selectResource}

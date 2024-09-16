@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+/* eslint-disable */
 import {
   TrashIcon,
   MicrophoneIcon,
@@ -53,7 +53,7 @@ const Player = ({
     if (sliding) {
       setVolume(value);
     } else if (action === 'inc' && !sliding) {
-    // if not sliding the value will be the step value
+      // if not sliding the value will be the step value
       setVolume((prev) => (prev > 0.9 ? prev : prev + value));
     } else if (action === 'dec' && !sliding) {
       setVolume((prev) => (prev < 0.1 ? prev : prev - value));
@@ -160,7 +160,7 @@ const Player = ({
         // setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
         handleVolumeChange('inc');
         break;
-        case 189: // --> - (left to +)
+      case 189: // --> - (left to +)
         handleVolumeChange('dec');
         // setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
         break;
@@ -168,7 +168,7 @@ const Player = ({
       default:
         break;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]); // ---> change to space for play and pause
 
   useEffect(() => {
@@ -221,7 +221,7 @@ const Player = ({
                   >
                     {s}
                   </Listbox.Option>
-            ))}
+                ))}
               </Listbox.Options>
             </Listbox>
           </div>
@@ -242,60 +242,60 @@ const Player = ({
           <div className="flex flex-row items-center justify-evenly border-r border-r-gray-800">
             <div className="flex flex-col items-center">
               {((trigger === 'record' || trigger === 'recResume') && (
-              <>
-                <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  {t('label-pause')}
-                </div>
-                <button
-                  type="button"
-                  title="P"
-                  className="p-2 bg-error rounded-md hover:bg-dark"
-                  onClick={() => { setTrigger('recPause'); setIsRunning(false); }}
-                >
-                  <PauseIcon
-                    fill="currentColor"
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </>
-          ))
-            || (trigger === 'recPause' && (
-              <>
-                <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  {t('label-continue')}
-                </div>
-                <button
-                  type="button"
-                  title="E"
-                  className="p-2 bg-dark rounded-md hover:bg-error"
-                  onClick={() => { setTrigger('recResume'); setIsRunning(true); }}
-                >
-                  <PlayIcon
-                    fill="currentColor"
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </>
-            )) || (
-              <>
-                <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
-                  {t('label-record')}
-                </div>
-                <button
-                  type="button"
-                  title="R"
-                  className="p-2 bg-dark rounded-md hover:bg-error"
-                  onClick={() => handleRecord()}
-                >
-                  <MicrophoneIcon
-                    className="w-5 h-5 text-white"
-                    aria-hidden="true"
-                  />
-                </button>
-              </>
-            )}
+                <>
+                  <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
+                    {t('label-pause')}
+                  </div>
+                  <button
+                    type="button"
+                    title="P"
+                    className="p-2 bg-error rounded-md hover:bg-dark"
+                    onClick={() => { setTrigger('recPause'); setIsRunning(false); }}
+                  >
+                    <PauseIcon
+                      fill="currentColor"
+                      className="w-5 h-5"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </>
+              ))
+                || (trigger === 'recPause' && (
+                  <>
+                    <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
+                      {t('label-continue')}
+                    </div>
+                    <button
+                      type="button"
+                      title="E"
+                      className="p-2 bg-dark rounded-md hover:bg-error"
+                      onClick={() => { setTrigger('recResume'); setIsRunning(true); }}
+                    >
+                      <PlayIcon
+                        fill="currentColor"
+                        className="w-5 h-5"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </>
+                )) || (
+                  <>
+                    <div className="text-xxs text-gray-300 uppercase tracking-wider mb-2">
+                      {t('label-record')}
+                    </div>
+                    <button
+                      type="button"
+                      title="R"
+                      className="p-2 bg-dark rounded-md hover:bg-error"
+                      onClick={() => handleRecord()}
+                    >
+                      <MicrophoneIcon
+                        className="w-5 h-5 text-white"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </>
+                )}
             </div>
 
             <div className="flex flex-col items-center">
@@ -432,19 +432,16 @@ const Player = ({
             <div className="flex gap-2">
               <button
                 type="button"
-                className={`${
-              take === 'take1'
-                ? 'border-2 border-yellow-400'
-                : ''
-            } w-6 h-6 flex items-center justify-center ${
-              url?.take1
-                ? url?.default === 'take1'
-                  ? 'bg-primary'
-                  : 'bg-success'
-                : 'bg-white'
-            } text-xs font-bold ${
-              url?.take1 ? 'text-white' : 'text-black'
-            } uppercase tracking-wider rounded-full`}
+                className={`${take === 'take1'
+                  ? 'border-2 border-yellow-400'
+                  : ''
+                  } w-6 h-6 flex items-center justify-center ${url?.take1
+                    ? url?.default === 'take1'
+                      ? 'bg-primary'
+                      : 'bg-success'
+                    : 'bg-white'
+                  } text-xs font-bold ${url?.take1 ? 'text-white' : 'text-black'
+                  } uppercase tracking-wider rounded-full`}
                 onClick={() => { changeTake('take1'); setTime(0); setPlayTime(0); }}
                 title="select : A"
                 onDoubleClick={() => changeDefault(1)}
@@ -453,19 +450,16 @@ const Player = ({
               </button>
               <button
                 type="button"
-                className={`${
-              take === 'take2'
-                ? 'border-2 border-yellow-400'
-                : ''
-            } w-6 h-6 flex items-center justify-center ${
-              url?.take2
-                ? url?.default === 'take2'
-                  ? 'bg-primary'
-                  : 'bg-success'
-                : 'bg-white'
-            } text-xs font-bold ${
-              url?.take2 ? 'text-white' : 'text-black'
-            } uppercase tracking-wider rounded-full`}
+                className={`${take === 'take2'
+                  ? 'border-2 border-yellow-400'
+                  : ''
+                  } w-6 h-6 flex items-center justify-center ${url?.take2
+                    ? url?.default === 'take2'
+                      ? 'bg-primary'
+                      : 'bg-success'
+                    : 'bg-white'
+                  } text-xs font-bold ${url?.take2 ? 'text-white' : 'text-black'
+                  } uppercase tracking-wider rounded-full`}
                 onClick={() => { changeTake('take2'); setTime(0); setPlayTime(0); }}
                 title="select : B"
                 onDoubleClick={() => changeDefault(2)}
@@ -474,19 +468,16 @@ const Player = ({
               </button>
               <button
                 type="button"
-                className={`${
-              take === 'take3'
-                ? 'border-2 border-yellow-400'
-                : ''
-            } w-6 h-6 flex items-center justify-center ${
-              url?.take3
-                ? url?.default === 'take3'
-                  ? 'bg-primary'
-                  : 'bg-success'
-                : 'bg-white'
-            } text-xs font-bold ${
-              url?.take3 ? 'text-white' : 'text-black'
-            } uppercase tracking-wider rounded-full`}
+                className={`${take === 'take3'
+                  ? 'border-2 border-yellow-400'
+                  : ''
+                  } w-6 h-6 flex items-center justify-center ${url?.take3
+                    ? url?.default === 'take3'
+                      ? 'bg-primary'
+                      : 'bg-success'
+                    : 'bg-white'
+                  } text-xs font-bold ${url?.take3 ? 'text-white' : 'text-black'
+                  } uppercase tracking-wider rounded-full`}
                 onClick={() => { changeTake('take3'); setTime(0); setPlayTime(0); }}
                 title="select : C"
                 onDoubleClick={() => changeDefault(3)}
@@ -517,14 +508,14 @@ const Player = ({
             barWidth="2"
             waveColor="#ffffff"
             btnColor="text-white"
-        // url={(location && Object.keys(url).length !== 0) && (take ? (url[take] ? url[take] : '') : url[url?.default])}
+            // url={(location && Object.keys(url).length !== 0) && (take ? (url[take] ? url[take] : '') : url[url?.default])}
             url={blobUrl || (location
-          && Object.keys(url).length !== 0
-          && (take
-            ? url[take]
-              ? path.join(location, url[take])
-              : ''
-            : path.join(location, url[url?.default])))}
+              && Object.keys(url).length !== 0
+              && (take
+                ? url[take]
+                  ? path.join(location, url[take])
+                  : ''
+                : path.join(location, url[url?.default])))}
             call={trigger}
             startRecording={startRecording}
             stopRecording={stopRecording}
@@ -543,18 +534,18 @@ const Player = ({
 };
 export default Player;
 Player.propTypes = {
-url: PropTypes.object,
-blobUrl: PropTypes.string,
-setBlobUrl: PropTypes.any,
-startRecording: PropTypes.any,
-stopRecording: PropTypes.any,
-pauseRecording: PropTypes.any,
-resumeRecording: PropTypes.any,
-take: PropTypes.string,
-setTake: PropTypes.any,
-changeDefault: PropTypes.func,
-setOpenModal: PropTypes.func,
-trigger: PropTypes.string,
-setTrigger: PropTypes.any,
-location: PropTypes.any,
+  url: PropTypes.object,
+  blobUrl: PropTypes.string,
+  setBlobUrl: PropTypes.any,
+  startRecording: PropTypes.any,
+  stopRecording: PropTypes.any,
+  pauseRecording: PropTypes.any,
+  resumeRecording: PropTypes.any,
+  take: PropTypes.string,
+  setTake: PropTypes.any,
+  changeDefault: PropTypes.func,
+  setOpenModal: PropTypes.func,
+  trigger: PropTypes.string,
+  setTrigger: PropTypes.any,
+  location: PropTypes.any,
 };

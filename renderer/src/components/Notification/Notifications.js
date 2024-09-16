@@ -1,6 +1,6 @@
 import { Fragment, useRef } from 'react';
 import {
-   Dialog, Transition,
+  Dialog, Transition,
 } from '@headlessui/react';
 
 import { useTranslation } from 'react-i18next';

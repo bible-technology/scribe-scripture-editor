@@ -89,12 +89,12 @@ const ProjectRow = ({
         </tr>
       )}
       {
-       projects?.length > 0 && filteredProjects?.length === 0 && (
-       <tr>
-         <td colSpan="7" className="space-y-7 px-6 py-28 whitespace-nowrap text-center">
-           <h2 className="font-medium text-gray-500 tracking-wide">No projects found. Try a different search term.</h2>
-         </td>
-       </tr>
+        projects?.length > 0 && filteredProjects?.length === 0 && (
+          <tr>
+            <td colSpan="7" className="space-y-7 px-6 py-28 whitespace-nowrap text-center">
+              <h2 className="font-medium text-gray-500 tracking-wide">No projects found. Try a different search term.</h2>
+            </td>
+          </tr>
         )
       }
       {
@@ -198,7 +198,7 @@ const ProjectRow = ({
                                 type="button"
                                 aria-label="edit-project"
                                 className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                 onClick={() => editProject(project, setCurrentProject, setCallEditProject)}
                               >
                                 {t('btn-edit')}
@@ -211,7 +211,7 @@ const ProjectRow = ({
                                 type="button"
                                 aria-label="export-project"
                                 className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                 onClick={() => openExportPopUp(project)}
                               >
                                 {t('btn-export')}
@@ -224,7 +224,7 @@ const ProjectRow = ({
                                 type="button"
                                 aria-label="archive-restore-project"
                                 className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                                 onClick={() => {
                                   archiveProject(project, project.name);
                                 }}
@@ -236,19 +236,19 @@ const ProjectRow = ({
                           {
                             project.type === 'Audio'
                             && (
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  type="button"
-                                  aria-label="export-project"
-                                  className={`${active ? 'bg-primary text-white' : 'text-gray-900'
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    type="button"
+                                    aria-label="export-project"
+                                    className={`${active ? 'bg-primary text-white' : 'text-gray-900'
                                     } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
-                                  onClick={() => manageProject(project)}
-                                >
-                                  Scope Management
-                                </button>
-                              )}
-                            </Menu.Item>
+                                    onClick={() => manageProject(project)}
+                                  >
+                                    Scope Management
+                                  </button>
+                                )}
+                              </Menu.Item>
                             )
                           }
                         </div>

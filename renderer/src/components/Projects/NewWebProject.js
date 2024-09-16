@@ -271,26 +271,26 @@ export default function NewWebProject({ call, project, closeEdit }) {
     setMetadata(project);
     // set dropdown to the project type
     switch (project.type.flavorType.flavor.name) {
-      case 'textTranslation':
-        setHeaderDropDown('Translation');
-        break;
+    case 'textTranslation':
+      setHeaderDropDown('Translation');
+      break;
 
-      case 'textStories':
-        setHeaderDropDown('OBS');
-        break;
+    case 'textStories':
+      setHeaderDropDown('OBS');
+      break;
 
-      case 'audioTranslation':
-        setHeaderDropDown('Audio');
-        break;
+    case 'audioTranslation':
+      setHeaderDropDown('Audio');
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
 
   useEffect(() => {
     setEditLanguage(projectLangData);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languages.length, projectLangData]);
 
   useEffect(() => {

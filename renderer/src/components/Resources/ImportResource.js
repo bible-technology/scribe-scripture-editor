@@ -81,7 +81,7 @@ export default function ImportResource({
         logger.debug('ImportResource.js', 'error in uploading resource to specified location');
         setNotify(err);
       });
-      setFolderPath('');
+    setFolderPath('');
   };
   const uploadRefBible = async () => {
     const fs = window.require('fs');
@@ -142,9 +142,9 @@ export default function ImportResource({
         {selectResource === 'local-helps' ? t('msg-helps-filepath') : t('label-burrito-resource-path')}
         <button
           title={
-          selectResource === 'local-helps'
-          ? t('tooltip-supported-resources')
-          : t('msg-select-dir-for-SB')
+            selectResource === 'local-helps'
+              ? t('tooltip-supported-resources')
+              : t('msg-select-dir-for-SB')
           }
           type="button"
           disabled

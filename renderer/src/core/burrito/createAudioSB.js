@@ -39,8 +39,8 @@ const createAudioSB = (
     json.identification.primary = {
       scribe: {
         [id]: {
-        revision: '1',
-        timestamp: moment().format(),
+          revision: '1',
+          timestamp: moment().format(),
         },
       },
     };

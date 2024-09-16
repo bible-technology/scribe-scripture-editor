@@ -9,7 +9,7 @@ import { environment } from '../../../../environment';
 import { createSyncProfile } from '../Scribe/SyncToGiteaUtils';
 
 const Gitea = ({
- setAuth, setRepo, logout, setLogout,
+  setAuth, setRepo, logout, setLogout,
 }) => {
   const [authentication, setAuthentication] = useState();
   const [repository, setRepository] = useState();

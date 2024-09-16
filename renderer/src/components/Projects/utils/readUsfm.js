@@ -75,7 +75,7 @@ export const readUsfm = (srcUsfm, bookCode) => {
               );
             })
             .forEach((s) => s?.filter((w) => !w.occurrences)
-                .forEach((w) => (w.occurrences = workspace.occurrences[w.lemma])));
+              .forEach((w) => (w.occurrences = workspace.occurrences[w.lemma])));
           workspace.verses = null;
           workspace.occurrences = {};
         },

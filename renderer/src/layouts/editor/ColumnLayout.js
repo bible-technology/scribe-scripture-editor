@@ -39,15 +39,15 @@ export default function ColumnSection(props) {
         && (
           <div className="bg-white rounded-md grid auto-rows-fr gap-2">
             {
-            [...Array(maxRows)].map((e, i) => (
-              <RowSection
-                key={e}
-                rowCount={i}
-                ishidden={showColOne[i]}
-                addRow={() => addRow('colone', i)}
-                removeRow={() => removeRow('colone', i)}
-              />
-            ))
+              [...Array(maxRows)].map((e, i) => (
+                <RowSection
+                  key={e}
+                  rowCount={i}
+                  ishidden={showColOne[i]}
+                  addRow={() => addRow('colone', i)}
+                  removeRow={() => removeRow('colone', i)}
+                />
+              ))
             }
           </div>
         )}
@@ -56,16 +56,16 @@ export default function ColumnSection(props) {
         && (
           <div className="bg-white rounded-md grid auto-rows-fr gap-2">
             {
-            [...Array(maxRows)].map((e, i) => (
-              <RowSection
-                key={e}
-                rowCount={i}
-                ishidden={showColTwo[i]}
-                addRow={() => addRow('coltwo', i)}
-                expandRow={() => expandRow('coltwo', i)}
-                removeRow={() => removeRow('coltwo', i)}
-              />
-            ))
+              [...Array(maxRows)].map((e, i) => (
+                <RowSection
+                  key={e}
+                  rowCount={i}
+                  ishidden={showColTwo[i]}
+                  addRow={() => addRow('coltwo', i)}
+                  expandRow={() => expandRow('coltwo', i)}
+                  removeRow={() => removeRow('coltwo', i)}
+                />
+              ))
             }
           </div>
         )}

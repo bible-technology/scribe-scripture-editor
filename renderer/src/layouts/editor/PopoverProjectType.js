@@ -55,7 +55,7 @@ export default function PopoverProjectType(props) {
                         </p>
 
                       </a>
-                  ))}
+                    ))}
                   </div>
 
                 </div>

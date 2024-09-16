@@ -19,7 +19,7 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 	const [currentTab, setCurrentTab] = useState(0);
 
 	// const removeSection = () => {
-	// 	setOpenPdfPopup(false);
+	//   setOpenPdfPopup(false);
 	// };
 
 	return (
@@ -103,43 +103,43 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
 								</text>
 							</div>
 							{/* <div
-								onClick={() => setCurrentTab(1)}
-								style={
-									currentTab === 1
-										? tabStyleSelected
-										: tabStyleNotSelected
-								}>
-								<text
-									style={
-										currentTab === 1
-											? fontStyle
-											: {
-													...fontStyle,
-													color: 'black',
-											  }
-									}>
-									Korennumi
-								</text>
-							</div> */}
+                onClick={() => setCurrentTab(1)}
+                style={
+                  currentTab === 1
+                    ? tabStyleSelected
+                    : tabStyleNotSelected
+                }>
+                <text
+                  style={
+                    currentTab === 1
+                      ? fontStyle
+                      : {
+                          ...fontStyle,
+                          color: 'black',
+                        }
+                  }>
+                  Korennumi
+                </text>
+              </div> */}
 							{/* <div
-								onClick={() => setCurrentTab(2)}
-								style={
-									currentTab === 2
-										? tabStyleSelected
-										: tabStyleNotSelected
-								}>
-								<text
-									style={
-										currentTab === 2
-											? fontStyle
-											: {
-													...fontStyle,
-													color: 'black',
-											  }
-									}>
-									Word
-								</text>
-							</div> */}
+                onClick={() => setCurrentTab(2)}
+                style={
+                  currentTab === 2
+                    ? tabStyleSelected
+                    : tabStyleNotSelected
+                }>
+                <text
+                  style={
+                    currentTab === 2
+                      ? fontStyle
+                      : {
+                          ...fontStyle,
+                          color: 'black',
+                        }
+                  }>
+                  Word
+                </text>
+              </div> */}
 						</div>
 					</div>
 
