@@ -1,4 +1,4 @@
-export const En = {
+export const Te = {
     'app-name': 'స్క్రైబ్ స్క్రిప్చర్',
     'new-project-page': 'క్రొత్త ప్రాజెక్ట్',
     'edit-project': 'ప్రాజెక్ట్‌ని సవరించండి',

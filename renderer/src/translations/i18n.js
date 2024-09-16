@@ -10,6 +10,8 @@ import { Fr } from './fr';
 import { Ne } from './ne';
 import { Es } from './es';
 import { Id } from './id';
+import { Kn } from './kn';
+import { Te } from './te';
 
 i18n
   .use(initReactI18next)
@@ -42,6 +44,12 @@ i18n
       },
       id: {
         translation: Id,
+      },
+      kn: {
+        translation: Kn,
+      },
+      te: {
+        translation: Te,
       },
     },
 });
