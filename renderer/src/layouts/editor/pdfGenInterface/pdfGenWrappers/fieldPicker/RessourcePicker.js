@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from 'react';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { Button, Modal } from '@mui/material';
 // eslint-disable-next-line
@@ -188,7 +187,7 @@ export function RessourcePicker({
                 }}
               />
             ) : (
-              <LoadingSpinner />
+              <div />
             )}
           </div>
         </div>

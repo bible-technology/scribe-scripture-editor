@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { v4 as uuidv4 } from 'uuid';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import i18n from '../../../../translations/i18n';
 import { AccordionPicker } from './SectionAccordion';
 import Trash from '../../../../../public/icons/trash.svg';
@@ -154,7 +153,7 @@ export function WrapperTemplate({
           loopMode={LoopMode}
         />
       ) : (
-        <LoadingSpinner />
+        <div />
       )}
       {wrapperType === 'obsWrapper' ? (
         <OBSWrapperSortableList
@@ -165,7 +164,7 @@ export function WrapperTemplate({
           loopMode={LoopMode}
         />
       ) : (
-        <LoadingSpinner />
+        <div />
       )}
       {wrapperType === 'jxlWrapper' ? (
         <BCVWrapperSortableList
@@ -176,7 +175,7 @@ export function WrapperTemplate({
           loopMode={LoopMode}
         />
       ) : (
-        <LoadingSpinner />
+        <div />
       )}
       <div
         style={
@@ -310,7 +309,7 @@ export function WrapperTemplate({
                         />
                       </Button>
                     ) : (
-                      <LoadingSpinner />
+                      <div />
                     )
                   }
                 />

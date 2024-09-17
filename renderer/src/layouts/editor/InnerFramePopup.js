@@ -10,7 +10,6 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { useTranslation } from 'react-i18next';
 import { generate } from 'random-words';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import {
   TextOnlyTooltip,
   StyledSwitch,
@@ -739,7 +738,7 @@ export default function InnerFramePopup() {
               </div>
             </div>
           ) : (
-            <LoadingSpinner />
+            <div />
           )}
 
           <div

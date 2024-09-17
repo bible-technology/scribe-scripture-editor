@@ -16,9 +16,9 @@ export function SelectOption(title, type, option, handleChange) {
         flexDirection: 'row',
         paddingLeft: 22,
         paddingRight: 22,
-        justifyContent: 'center',
         marginBottom: 12,
         alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
       <div

@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
 import { Modal } from '@material-ui/core';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import { useBibleReference } from 'bible-reference-rcl';
@@ -94,7 +93,7 @@ export function JXLHeaderWrapper({
             </TextOnlyTooltip>
           </div>
         ) : (
-          <LoadingSpinner />
+          <div />
         )}
         <div
           style={{

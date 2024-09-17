@@ -2,7 +2,6 @@ import { useEffect, useContext, useState } from 'react';
 
 import { Modal } from '@material-ui/core';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 // eslint-disable-next-line
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker.tsx';
 
@@ -105,7 +104,7 @@ export function ScriptureContentSearchBar({
               source={localListResourcesForPdf}
             />
           ) : (
-            <LoadingSpinner />
+            <div />
           )}
         </div>
       </div>

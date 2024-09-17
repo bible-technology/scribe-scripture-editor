@@ -8,7 +8,6 @@ import { ProjectContext } from '@/components/context/ProjectContext';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 // eslint-disable-next-line
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker.tsx';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ModalSectionSelection } from './modalSectionSelection';
 import { FieldPicker } from './fieldPicker/FieldPicker';
 
@@ -262,7 +261,7 @@ export function AccordionPicker({
                 ))}
             </div>
           ) : (
-            <LoadingSpinner />
+            <div />
           )}
         </AccordionDetails>
       </Accordion>
@@ -307,7 +306,7 @@ export function AccordionPicker({
                 source={localListResourcesForPdf}
               />
             ) : (
-              <LoadingSpinner />
+              <div />
             )}
           </div>
         </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { TextField } from '@mui/material';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import ImageIcon from '../../../../../../public/icons/basil/Solid/Files/Image.svg';
 import { LoopSwitch, TextOnlyTooltip } from '../fieldPicker/customMuiComponent';
 
@@ -151,7 +150,7 @@ export function OBSWrapperSortableList({
             </TextOnlyTooltip>
           </div>
         ) : (
-          <LoadingSpinner />
+          <div />
         )}
 
       </div>
