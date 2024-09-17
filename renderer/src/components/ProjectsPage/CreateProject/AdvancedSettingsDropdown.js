@@ -264,11 +264,11 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                 </div>
                 {projectType === 'Audio'
                   && (
-                  <span className="text-error">
-                    {'NOTE: '}
-                    {t('label-scope-note-audio')}
-                  </span>
-                )}
+                    <span className="text-error">
+                      {'NOTE: '}
+                      {t('label-scope-note-audio')}
+                    </span>
+                  )}
                 {/* <div className="relative"> */}
                 <div>
                   {/* <CustomList
