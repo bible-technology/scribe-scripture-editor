@@ -2,7 +2,7 @@
 import { t } from 'i18next';
 import React from 'react';
 
-export default function EmptyScreen() {
+export default function EmptyScreen({ call = '' }) {
   return (
     <div className="h-full w-full items-center justify-center flex">
       <div className="container mx-auto px-4">
@@ -43,7 +43,24 @@ export default function EmptyScreen() {
                 <g />
               </svg>
             </div>
-            <h2 className="mt-8 uppercase text-xl lg:text-5xl font-black">{t('label-no-content-available')}</h2>
+            {call === 'audio' ? (
+              <>
+                <h2 className="mt-8 text-xl lg:text-5xl font-black">
+                  {t('label-scope-not-selected')}
+                  {' '}
+                </h2>
+                <a
+                  href="https://scribe-editor-docs.netlify.app/scribe/Manage%20Project/Create%20a%20Project/p2-1-new%20project"
+                  target="_blank"
+                  className="mt-8 text-3xl text-blue-500 underline"
+                  rel="noreferrer"
+                >
+                  For More Info
+                </a>
+              </>
+
+              )
+              : <h2 className="mt-8 uppercase text-xl lg:text-5xl font-black">{t('label-no-content-available')}</h2>}
           </div>
         </section>
       </div>

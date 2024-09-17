@@ -366,7 +366,7 @@ export default function NewProject({ call, project, closeEdit }) {
         : (
           <div className="rounded-md border shadow-sm mt-4 ml-5 mr-5 mb-5">
             <div className="space-y-2 m-10">
-              <span className="text-xs font-base mb-2 text-primary leading-4 tracking-wide  font-light">Project Type</span>
+              <span className="text-xs font-base mb-2 text-primary leading-4 tracking-wide  font-light">{t('label-project-type')}</span>
               {BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 m-10 gap-5">

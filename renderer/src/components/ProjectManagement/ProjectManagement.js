@@ -116,7 +116,7 @@ export default function ProjectMangement(props) {
 
                 <div className="flex justify-between items-center bg-secondary">
                   <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center flex gap-2">
-                    <span>Scope Management</span>
+                    <span>{t('modal-title-scope-management')}</span>
                     <span>:</span>
                     <span>{project?.name}</span>
                   </div>
@@ -153,7 +153,7 @@ export default function ProjectMangement(props) {
                       className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
                       onClick={() => handleProject()}
                     >
-                      Apply
+                      {t('label-apply')}
                     </button>
                   </div>
 
