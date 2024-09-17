@@ -15,6 +15,6 @@ const Projects = () => (
       </AutographaContextProvider>
     </AuthenticationContextProvider>
   </>
-  );
+);
 
 export default Projects;

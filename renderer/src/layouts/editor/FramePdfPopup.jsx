@@ -45,6 +45,7 @@ const fontStyle = {
 export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackText, setSnackText] = useState('');
+  // eslint-disable-next-line
   const [error, setError] = useState('');
   const [currentTab, setCurrentTab] = useState(0);
 
@@ -58,7 +59,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
       <Modal
         // onClose={removeSection}
         open={openPdfPopup}
-        style={{ marginTop: 10 }}>
+        style={{ marginTop: 10 }}
+      >
         <div
           style={{
             flexDirection: 'column',
@@ -70,7 +72,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
             justifyContent: 'center',
             margin: 'auto',
             position: 'relative',
-          }}>
+          }}
+        >
           <div
             style={{
               display: 'flex',
@@ -81,7 +84,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
               flexDirection: 'column',
               width: '100%',
               backgroundColor: '#292A2D',
-            }}>
+            }}
+          >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <div
                 style={{
@@ -91,12 +95,14 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
                   padding: 12,
                   color: 'white',
                 }}
-                className='text-white font-bold text-sm'>
+                className="text-white font-bold text-sm"
+              >
                 Export
               </div>
               <Button
                 style={tabStyleSelected}
-                onClick={() => setOpenPdfPopup(false)}>
+                onClick={() => setOpenPdfPopup(false)}
+              >
                 <div style={fontStyle}>X</div>
               </Button>
             </div>
@@ -111,15 +117,17 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
                 alignItems: 'center',
                 paddingTop: 10,
                 paddingBottom: 10,
-              }}>
+              }}
+            >
               <div
                 onClick={() => setCurrentTab(0)}
-                size='tiny'
+                size="tiny"
                 style={
                   currentTab === 0
                     ? tabStyleSelected
                     : tabStyleNotSelected
-                }>
+                }
+              >
                 <text
                   style={
                     currentTab === 0
@@ -128,7 +136,8 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
                         ...fontStyle,
                         color: 'black',
                       }
-                  }>
+                  }
+                >
                   PDF
                 </text>
               </div>
@@ -177,11 +186,13 @@ export default function FramePdfPopup({ openPdfPopup, setOpenPdfPopup }) {
             style={{
               backgroundColor: '#FFFFFF',
               width: '100%',
-            }}>
-            <div className='h-[85vh] w-full bg-gray-50 items-center justify-between'>
+            }}
+          >
+            <div className="h-[85vh] w-full bg-gray-50 items-center justify-between">
               <div
                 style={{ backgroundColor: '#EEEEEE' }}
-                className='bg-gray-50 items-center justify-between w-full h-full'>
+                className="bg-gray-50 items-center justify-between w-full h-full"
+              >
                 {currentTab === 0 ? (
                   <InnerFramePopup />
                 ) : (

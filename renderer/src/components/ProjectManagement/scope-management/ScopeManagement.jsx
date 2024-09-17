@@ -227,22 +227,22 @@ function ScopeManagement({
       </div>
       {bookName
         && (
-        <TitleBar>
-          <p className="text-gray-900 text-center text-sm flex gap-2">
-            <span>
-              {t('label-chapter-selection')}
-              {' '}
-              :
-            </span>
-            <span className="font-medium">{bookName}</span>
-          </p>
-          <BulkSelectionGroup
-            selectedOption={chapterFilter}
-            handleSelect={handleChangeChapterToggle}
-            toggleOptions={ToggleChapterOptions}
-          />
-        </TitleBar>
-      )}
+          <TitleBar>
+            <p className="text-gray-900 text-center text-sm flex gap-2">
+              <span>
+                {t('label-chapter-selection')}
+                {' '}
+                :
+              </span>
+              <span className="font-medium">{bookName}</span>
+            </p>
+            <BulkSelectionGroup
+              selectedOption={chapterFilter}
+              handleSelect={handleChangeChapterToggle}
+              toggleOptions={ToggleChapterOptions}
+            />
+          </TitleBar>
+        )}
 
       <form className="w-full my-2 flex gap-3 h-6  text-xxs justify-end" onSubmit={handleChapterRangeSelection}>
         <div className="flex gap-1 items-center ">

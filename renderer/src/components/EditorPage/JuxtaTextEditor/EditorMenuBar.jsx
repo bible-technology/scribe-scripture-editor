@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { ProjectContext } from '@/components/context/ProjectContext';
 // import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import {
-  LockClosedIcon, BookmarkIcon, EllipsisHorizontalCircleIcon, BookOpenIcon, LockOpenIcon,
+  LockClosedIcon, LockOpenIcon,
 } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/JuxtaTextEditor/BibleNavigationX';
 import BibleNavigationX from './BibleNavigationX';
@@ -17,8 +17,6 @@ export default function EditorMenuBar(props) {
     setChapterNumber,
     verseNumber,
     setVerseNumber,
-    juxtaMode,
-    setJuxtaMode,
     // handleSelectedFont,
     // setTriggerVerseInsert,
   } = props;
