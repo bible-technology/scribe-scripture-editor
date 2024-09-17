@@ -4,7 +4,7 @@ import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 import { environment } from '../../../environment';
 import {
- newPath, sbStorageList, IsElectron, sbStorageDownload,
+  newPath, sbStorageList, IsElectron, sbStorageDownload,
 } from '../../../../supabase';
 // if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
 //   const supabaseStorage = require('../../../../supabase').supabaseStorage
@@ -53,50 +53,50 @@ const fetchProjectsMeta = async ({ currentUser }) => {
     });
   }
   if (!IsElectron) {
-  const path = `${newPath}/${currentUser}/projects`;
-  const { data: allProjects } = await sbStorageList(path);
-  const projectPromises = allProjects?.map(async (proj) => {
-    const projectName = proj.name;
-    const { data, error } = await sbStorageDownload(`${path}/${projectName}/metadata.json`);
+    const path = `${newPath}/${currentUser}/projects`;
+    const { data: allProjects } = await sbStorageList(path);
+    const projectPromises = allProjects?.map(async (proj) => {
+      const projectName = proj.name;
+      const { data, error } = await sbStorageDownload(`${path}/${projectName}/metadata.json`);
 
-    if (error) {
-       // eslint-disable-next-line no-console
-      console.error('fetchProjectsMeta.js', error);
-      return null;
-    }
-
-    const projectJson = JSON.parse(await data.text());
-
-    let setting;
-    const result = Object.keys(projectJson.ingredients).filter((key) => key.includes(environment.PROJECT_SETTING_FILE));
-    if (result[0]) {
-      const { data: settingData } = await sbStorageDownload(`${path}/${projectName}/${result[0]}`);
-      if (settingData) {
-        setting = JSON.parse(await settingData.text());
-      } else {
-         // eslint-disable-next-line no-console
-        console.error('ProjectList.js', 'Unable to find scribe-settings for the project');
+      if (error) {
+        // eslint-disable-next-line no-console
+        console.error('fetchProjectsMeta.js', error);
+        return null;
       }
-    }
 
-    if (setting) {
-      return { ...setting, ...projectJson };
-    }
-    return projectJson;
-  });
+      const projectJson = JSON.parse(await data.text());
 
-  // Wrap the entire code in a Promise and return it.
-  const projectMetaPromise = new Promise((resolve) => {
-    Promise.all(projectPromises).then((projectsArray) => {
-      const filteredProjects = projectsArray.filter((p) => p !== null);
-      localforage.setItem('projectmeta', { projects: filteredProjects }).then(() => {
-        resolve({ projects: filteredProjects });
+      let setting;
+      const result = Object.keys(projectJson.ingredients).filter((key) => key.includes(environment.PROJECT_SETTING_FILE));
+      if (result[0]) {
+        const { data: settingData } = await sbStorageDownload(`${path}/${projectName}/${result[0]}`);
+        if (settingData) {
+          setting = JSON.parse(await settingData.text());
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('ProjectList.js', 'Unable to find scribe-settings for the project');
+        }
+      }
+
+      if (setting) {
+        return { ...setting, ...projectJson };
+      }
+      return projectJson;
+    });
+
+    // Wrap the entire code in a Promise and return it.
+    const projectMetaPromise = new Promise((resolve) => {
+      Promise.all(projectPromises).then((projectsArray) => {
+        const filteredProjects = projectsArray.filter((p) => p !== null);
+        localforage.setItem('projectmeta', { projects: filteredProjects }).then(() => {
+          resolve({ projects: filteredProjects });
+        });
       });
     });
-  });
 
-  // Return the Promise that resolves with the projects' metadata.
-  return projectMetaPromise;
-}
+    // Return the Promise that resolves with the projects' metadata.
+    return projectMetaPromise;
+  }
 };
 export default fetchProjectsMeta;

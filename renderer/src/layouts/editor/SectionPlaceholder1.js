@@ -388,19 +388,19 @@ const SectionPlaceholder1 = ({ editor }) => {
                         fontSize={fontSize1}
                       />
                     )) || (
-                    <TranslationHelps
-                      selectedResource={referenceColumnOneData1.selectedResource}
-                      languageId={referenceColumnOneData1.languageId}
-                      owner={referenceColumnOneData1.owner}
-                      bookId={_bookId1}
-                      chapter={_chapter1}
-                      verse={_verse1}
-                      story={_obsNavigation1}
-                      offlineResource={referenceColumnOneData1.offlineResource}
-                      font={font1}
-                      fontSize={fontSize1}
-                    />
-                      )
+                      <TranslationHelps
+                        selectedResource={referenceColumnOneData1.selectedResource}
+                        languageId={referenceColumnOneData1.languageId}
+                        owner={referenceColumnOneData1.owner}
+                        bookId={_bookId1}
+                        chapter={_chapter1}
+                        verse={_verse1}
+                        story={_obsNavigation1}
+                        offlineResource={referenceColumnOneData1.offlineResource}
+                        font={font1}
+                        fontSize={fontSize1}
+                      />
+                    )
                     )
                   }
                 </EditorSection>
@@ -472,19 +472,19 @@ const SectionPlaceholder1 = ({ editor }) => {
                         fontSize={fontSize2}
                       />
                     )) || (
-                    <TranslationHelps
-                      selectedResource={referenceColumnOneData2.selectedResource}
-                      languageId={referenceColumnOneData2.languageId}
-                      owner={referenceColumnOneData2.owner}
-                      bookId={_bookId2}
-                      chapter={_chapter2}
-                      verse={_verse2}
-                      story={_obsNavigation2}
-                      offlineResource={referenceColumnOneData2.offlineResource}
-                      font={font2}
-                      fontSize={fontSize2}
-                    />
-                      )
+                      <TranslationHelps
+                        selectedResource={referenceColumnOneData2.selectedResource}
+                        languageId={referenceColumnOneData2.languageId}
+                        owner={referenceColumnOneData2.owner}
+                        bookId={_bookId2}
+                        chapter={_chapter2}
+                        verse={_verse2}
+                        story={_obsNavigation2}
+                        offlineResource={referenceColumnOneData2.offlineResource}
+                        font={font2}
+                        fontSize={fontSize2}
+                      />
+                    )
                     )
                   }
                 </EditorSection>

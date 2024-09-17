@@ -31,20 +31,20 @@ function useSync() {
     logger.debug('UseSync.js', 'calling fetchProjects event');
     localForage.getItem('userProfile').then((user) => {
       fetchProjectsMeta({ currentUser: user?.username })
-      .then(async (value) => {
-        for (let i = 0; i < value.projects.length; i++) {
-          projectList.push(value.projects[i].identification.name.en);
-          // find the lastSync data
-          // eslint-disable-next-line no-await-in-loop
-          const syncObj = await getOrPutLastSyncInAgSettings('get', value.projects[i]);
-          value.projects[i].lastSync = syncObj;
-          projectMetaData.push(value.projects[i]);
-        }
-    }).finally(() => {
-      logger.debug('UseSync.js', 'Updating project List');
-      setAgProjectsMeta(projectMetaData);
-      setAgProjects(projectList);
-    });
+        .then(async (value) => {
+          for (let i = 0; i < value.projects.length; i++) {
+            projectList.push(value.projects[i].identification.name.en);
+            // find the lastSync data
+            // eslint-disable-next-line no-await-in-loop
+            const syncObj = await getOrPutLastSyncInAgSettings('get', value.projects[i]);
+            value.projects[i].lastSync = syncObj;
+            projectMetaData.push(value.projects[i]);
+          }
+        }).finally(() => {
+          logger.debug('UseSync.js', 'Updating project List');
+          setAgProjectsMeta(projectMetaData);
+          setAgProjects(projectList);
+        });
     });
   };
 

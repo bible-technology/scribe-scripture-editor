@@ -88,20 +88,20 @@ export default function ExportProjectPopUp(props) {
   const updateCommon = (fs, path, folder, project) => {
     const fse = window.require('fs-extra');
     logger.debug('ExportProjectPopUp.js', 'Updated Scripture burrito');
-      let data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
-      const sb = JSON.parse(data);
-      // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
-      sb.idAuthorities.scribe.id = 'http://www.scribe.bible';
-      if (!sb.copyright?.shortStatements && sb.copyright?.licenses) {
-        delete sb.copyright.publicDomain;
-        data = JSON.stringify(sb);
-      }
-      const success = validate('metadata', path.join(folder, 'metadata.json'), data, sb.meta.version);
-      if (success) {
-        logger.debug('ExportProjectPopUp.js', 'Burrito validated successfully');
-        fse.copy(folder, path.join(folderPath, project.name))
-          .then(() => {
-            deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
+    let data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
+    const sb = JSON.parse(data);
+    // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
+    sb.idAuthorities.scribe.id = 'http://www.scribe.bible';
+    if (!sb.copyright?.shortStatements && sb.copyright?.licenses) {
+      delete sb.copyright.publicDomain;
+      data = JSON.stringify(sb);
+    }
+    const success = validate('metadata', path.join(folder, 'metadata.json'), data, sb.meta.version);
+    if (success) {
+      logger.debug('ExportProjectPopUp.js', 'Burrito validated successfully');
+      fse.copy(folder, path.join(folderPath, project.name))
+        .then(() => {
+          deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
             .then(async () => {
               // convert to zip if text translation and zip checked
               if ((project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && checkZip) {
@@ -123,16 +123,16 @@ export default function ExportProjectPopUp(props) {
               setOpenSnackBar(true);
               closePopUp(false);
             });
-          })
-          .catch((err) => {
-            resetExportProgress(); // reset export states
-            logger.error('ExportProjectPopUp.js', `Failed to export ${err}`);
-            setNotify('failure');
-            setSnackText(t('dynamic-msg-export-fail'));
-            setOpenSnackBar(true);
-            closePopUp(false);
-          });
-      }
+        })
+        .catch((err) => {
+          resetExportProgress(); // reset export states
+          logger.error('ExportProjectPopUp.js', `Failed to export ${err}`);
+          setNotify('failure');
+          setSnackText(t('dynamic-msg-export-fail'));
+          setOpenSnackBar(true);
+          closePopUp(false);
+        });
+    }
   };
 
   const updateBurritoVersion = (username, fs, path, folder) => {
@@ -140,14 +140,14 @@ export default function ExportProjectPopUp(props) {
     setTotalExported(1); // 1 step of 2 finished
     if (project?.type === 'Text Translation') {
       updateTranslationSB(username, project, openModal)
-      .then(() => {
-        updateCommon(fs, path, folder, project);
-      });
+        .then(() => {
+          updateCommon(fs, path, folder, project);
+        });
     } else if (project?.type === 'OBS') {
       updateObsSB(username, project, openModal)
-      .then(() => {
-        updateCommon(fs, path, folder, project);
-      });
+        .then(() => {
+          updateCommon(fs, path, folder, project);
+        });
     } else {
       updateCommon(fs, path, folder, project);
     }
@@ -232,7 +232,7 @@ export default function ExportProjectPopUp(props) {
                     {t('label-export-project')}
                     :
                     {
-                    `${project?.name}`
+                      `${project?.name}`
                     }
                   </div>
                   <button
@@ -278,52 +278,52 @@ export default function ExportProjectPopUp(props) {
                     </div>
                     { project?.type === 'Audio'
                     && (
-                    <div>
-                      <div className=" mb-3">
-                        <input
-                          type="radio"
-                          className="form-radio h-4 w-4 text-primary"
-                          value="Default"
-                          checked={audioExport === 'default'}
-                          onChange={() => setAudioExport('default')}
-                        />
-                        <span className=" ml-4 text-xs font-bold" title="Verse-wise export with only the default take of each verse kept as a Scripture Burrito">Verse-wise Default</span>
-                        <div className="flex flex-row justify-end mr-3">
-                          <input id="visible_1" className="visible" type="checkbox" checked={checkText} onClick={() => setCheckText(!checkText)} />
-                          <span className="ml-2 text-xs font-bold" title="You can have the text content along with the Audio">With Text (if available)</span>
+                      <div>
+                        <div className=" mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="Default"
+                            checked={audioExport === 'default'}
+                            onChange={() => setAudioExport('default')}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Verse-wise export with only the default take of each verse kept as a Scripture Burrito">Verse-wise Default</span>
+                          <div className="flex flex-row justify-end mr-3">
+                            <input id="visible_1" className="visible" type="checkbox" checked={checkText} onClick={() => setCheckText(!checkText)} />
+                            <span className="ml-2 text-xs font-bold" title="You can have the text content along with the Audio">With Text (if available)</span>
+                          </div>
+                        </div>
+                        <div className="mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="Chapter"
+                            checked={audioExport === 'chapter'}
+                            onChange={() => setAudioExport('chapter')}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Chapter Level export with only the default take of each verse">Chapter-wise</span>
+                        </div>
+                        <hr className="border-2" />
+                        <div className="mt-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="full"
+                            checked={audioExport === 'full'}
+                            onChange={() => setAudioExport('full')}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="All takes of every verse saved as a ZIP archive within Scripture Burrito">Full project</span>
                         </div>
                       </div>
-                      <div className="mb-3">
-                        <input
-                          type="radio"
-                          className="form-radio h-4 w-4 text-primary"
-                          value="Chapter"
-                          checked={audioExport === 'chapter'}
-                          onChange={() => setAudioExport('chapter')}
-                        />
-                        <span className=" ml-4 text-xs font-bold" title="Chapter Level export with only the default take of each verse">Chapter-wise</span>
-                      </div>
-                      <hr className="border-2" />
-                      <div className="mt-3">
-                        <input
-                          type="radio"
-                          className="form-radio h-4 w-4 text-primary"
-                          value="full"
-                          checked={audioExport === 'full'}
-                          onChange={() => setAudioExport('full')}
-                        />
-                        <span className=" ml-4 text-xs font-bold" title="All takes of every verse saved as a ZIP archive within Scripture Burrito">Full project</span>
-                      </div>
-                    </div>
                     )}
                     {(project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && (
 
-                    <div className="w-full py-3 flex">
-                      <div className="flex flex-row justify-end mr-3">
-                        <input id="visible_1" className="visible" type="checkbox" checked={checkZip} onClick={() => setCheckZip(!checkZip)} />
-                        <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                      <div className="w-full py-3 flex">
+                        <div className="flex flex-row justify-end mr-3">
+                          <input id="visible_1" className="visible" type="checkbox" checked={checkZip} onClick={() => setCheckZip(!checkZip)} />
+                          <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                        </div>
                       </div>
-                    </div>
 
                     )}
                     <div className="absolute bottom-0 right-0 left-0 bg-white">

@@ -118,33 +118,33 @@ export default function ReferenceContextProvider({ children }) {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
                     switch (resources.type.flavorType.flavor.name) {
-                      case 'x-juxtalinear':
-                        resProj = resources.project['x-juxtalinear'];
-                        setBookmarksVerses(resProj.bookMarks);
-                        setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
-                        setSelectedFont(resProj?.font);
-                        break;
-                      case 'textTranslation':
-                        setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
-                        setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
-                        setSelectedFont(resources.project?.textTranslation?.font);
-                        setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
-                        break;
-                      case 'textStories':
-                        setBookmarksVerses(resources.project?.textStories.bookMarks);
-                        setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
-                        setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
-                        setSelectedFont(resources.project?.textStories?.font);
-                        setEditorFontSize(resources.project?.textStories?.fontSize);
-                        break;
-                      case 'audioTranslation':
-                        setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
-                        setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
-                        setSelectedFont(resources.project?.audioTranslation?.font);
-                        setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
-                        break;
-                      default:
-                        break;
+                    case 'x-juxtalinear':
+                      resProj = resources.project['x-juxtalinear'];
+                      setBookmarksVerses(resProj.bookMarks);
+                      setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
+                      setSelectedFont(resProj?.font);
+                      break;
+                    case 'textTranslation':
+                      setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
+                      setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
+                      setSelectedFont(resources.project?.textTranslation?.font);
+                      setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
+                      break;
+                    case 'textStories':
+                      setBookmarksVerses(resources.project?.textStories.bookMarks);
+                      setProjectScriptureDir(resources.project?.textStories?.scriptDirection?.toUpperCase());
+                      setObsNavigation(resources.project?.textStories.navigation ? resources.project?.textStories.navigation : '1');
+                      setSelectedFont(resources.project?.textStories?.font);
+                      setEditorFontSize(resources.project?.textStories?.fontSize);
+                      break;
+                    case 'audioTranslation':
+                      setBookmarksVerses(resources.project?.audioTranslation.bookMarks);
+                      setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
+                      setSelectedFont(resources.project?.audioTranslation?.font);
+                      setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
+                      break;
+                    default:
+                      break;
                     }
                   }
                 },

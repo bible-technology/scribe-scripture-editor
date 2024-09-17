@@ -14,7 +14,7 @@ import {
 } from 'font-detect-rhl';
 
 export default function MenuDropdown({
- selectedFont, setSelectedFont, buttonStyle, showIcon = true,
+  selectedFont, setSelectedFont, buttonStyle, showIcon = true,
 }) {
   const detectedFonts = useDetectFonts({ fonts: fontsArray });
   const [query, setQuery] = useState('');
@@ -126,44 +126,44 @@ export default function MenuDropdown({
                                 aria-label={font.name}
                               >
                                 {({
-                                    selectedFont,
-                                    active,
-                                  }) => (
-                                    <div className="flex justify-between items-center">
-                                      <span
-                                        className={`${selectedFont
-                                          ? 'font-medium'
-                                          : 'font-normal'
-                                          } block truncate`}
-                                      >
-                                        ➤ &nbsp;
-                                        {font.name}
+                                  selectedFont,
+                                  active,
+                                }) => (
+                                  <div className="flex justify-between items-center">
+                                    <span
+                                      className={`${selectedFont
+                                        ? 'font-medium'
+                                        : 'font-normal'
+                                      } block truncate`}
+                                    >
+                                      ➤ &nbsp;
+                                      {font.name}
                                         &nbsp;
-                                      </span>
+                                    </span>
+                                    <span
+                                      className="truncate"
+                                      style={{ fontFamily: font.name }}
+                                    >
+                                      {font.name}
+                                    </span>
+                                    {selectedFont ? (
                                       <span
-                                        className="truncate"
-                                        style={{ fontFamily: font.name }}
-                                      >
-                                        {font.name}
-                                      </span>
-                                      {selectedFont ? (
-                                        <span
-                                          className={`${active
-                                            ? 'text-amber-600'
-                                            : 'text-amber-600'
-                                            }
+                                        className={`${active
+                                          ? 'text-amber-600'
+                                          : 'text-amber-600'
+                                        }
                                 absolute inset-y-0 left-0 flex items-center pl-3`}
-                                        >
-                                          <CheckIcon
-                                            className="w-5 h-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  )}
+                                      >
+                                        <CheckIcon
+                                          className="w-5 h-5"
+                                          aria-hidden="true"
+                                        />
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                )}
                               </Combobox.Option>
-                              )))}
+                            )))}
                         </Combobox.Options>
                       </Transition>
                     </div>

@@ -38,10 +38,10 @@ function ObsResourceCard({
         setItemIndex={setIndex}
       />
       <div style={{
-          fontFamily: font || 'sans-serif',
-          fontSize: `${fontSize}rem`,
-          lineHeight: (fontSize > 1.3) ? 1.5 : '',
-        }}
+        fontFamily: font || 'sans-serif',
+        fontSize: `${fontSize}rem`,
+        lineHeight: (fontSize > 1.3) ? 1.5 : '',
+      }}
       >
         <CardContent
           item={[]}

@@ -81,7 +81,7 @@ export default function Sync() {
         // for pull without conflict
         const checkoutFIles = await checkoutJsonFiles(pullData.fs, pullData.gitprojectDir, pullData.checkoutBranch);
         const pullStatus = checkoutFIles && await pullProject(pullData.fs, pullData.gitprojectDir, pullData.userBranch, auth.token.sha1, pullData.checkoutBranch);
-          pullStatus?.status && await updateSettingsFiles(
+        pullStatus?.status && await updateSettingsFiles(
           pullData.fs,
           pullData.sbDataObject,
           pullData.projectDir,
@@ -105,30 +105,30 @@ export default function Sync() {
               // throw new Error(`Remove Resource failed :  ${err}`);
               // clone = false;
             } else {
-                // call clone
-                const cloneStatus = await cloneAndSetProject(
-                  pullData.fs,
-                  pullData.gitprojectDir,
-                  pullData.repo,
-                  pullData.userBranch,
-                  pullData.auth,
-                  pullData.checkoutBranch,
-                );
+              // call clone
+              const cloneStatus = await cloneAndSetProject(
+                pullData.fs,
+                pullData.gitprojectDir,
+                pullData.repo,
+                pullData.userBranch,
+                pullData.auth,
+                pullData.checkoutBranch,
+              );
                 // continue settings file writing
-                cloneStatus && await updateSettingsFiles(
-                  pullData.fs,
-                  pullData.sbDataObject,
-                  pullData.projectDir,
-                  pullData.projectName,
-                  pullData.id,
-                  pullData.currentUser,
-                  pullData.updateBurrito,
-                  pullData.action,
-                );
-                logger.debug('Sync.js', 'Project Sync to scribe successfull, clone successfull');
-                await notifyStatus('success', 'Project Sync to scribe successfull');
-                await addNotification('Sync', 'Project Sync Successfull', 'success');
-              }
+              cloneStatus && await updateSettingsFiles(
+                pullData.fs,
+                pullData.sbDataObject,
+                pullData.projectDir,
+                pullData.projectName,
+                pullData.id,
+                pullData.currentUser,
+                pullData.updateBurrito,
+                pullData.action,
+              );
+              logger.debug('Sync.js', 'Project Sync to scribe successfull, clone successfull');
+              await notifyStatus('success', 'Project Sync to scribe successfull');
+              await addNotification('Sync', 'Project Sync Successfull', 'success');
+            }
           });
         } else {
           // call clone
@@ -157,7 +157,7 @@ export default function Sync() {
         }
       }
     } else {
-        logger.debug('Sync.js', 'error pullData not set from function');
+      logger.debug('Sync.js', 'error pullData not set from function');
     }
   };
 

@@ -1,6 +1,6 @@
 import {
-    readContent, createRepository, createContent, updateContent,
-  } from 'gitea-react-toolkit';
+  readContent, createRepository, createContent, updateContent,
+} from 'gitea-react-toolkit';
 import moment from 'moment';
 import * as localForage from 'localforage';
 import * as logger from '../../../logger';
@@ -9,50 +9,50 @@ import { environment } from '../../../../environment';
 
 // create repo for new project sync
 export const handleCreateRepo = async (repoName, auth, description) => {
-    const settings = {
-      name: repoName,
-      description: description || `${repoName}`,
-      private: false,
-    };
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve) => {
-      createRepository(
-        {
-          config: auth.config,
-          repo: settings?.name,
-          settings,
-        },
-      ).then((result) => {
-        logger.debug('Dropzone.js', 'call to create repo from Gitea');
-        resolve(result);
-      }).catch((err) => {
-        logger.debug('Dropzone.js', 'call to create repo from Gitea Error : ', err);
-        resolve(err);
-      });
-    });
+  const settings = {
+    name: repoName,
+    description: description || `${repoName}`,
+    private: false,
   };
+    // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    createRepository(
+      {
+        config: auth.config,
+        repo: settings?.name,
+        settings,
+      },
+    ).then((result) => {
+      logger.debug('Dropzone.js', 'call to create repo from Gitea');
+      resolve(result);
+    }).catch((err) => {
+      logger.debug('Dropzone.js', 'call to create repo from Gitea Error : ', err);
+      resolve(err);
+    });
+  });
+};
 
 // upload file to gitea
 export const createFiletoServer = async (fileContent, filePath, branch, repoName, auth) => {
-    try {
-      await createContent({
-        config: auth.config,
-        owner: auth.user.login,
-        // repo: repo.name,
-        repo: repoName,
-        branch: branch.replace(/ /g, '_'), // removing space to avoid error
-        filepath: filePath,
-        content: fileContent,
-        message: `commit ${filePath}`,
-        author: {
-          email: auth.user.email,
-          username: auth.user.username,
-        },
-      });
-    } catch (err) {
-      throw new Error(err?.message || err);
-    }
-  };
+  try {
+    await createContent({
+      config: auth.config,
+      owner: auth.user.login,
+      // repo: repo.name,
+      repo: repoName,
+      branch: branch.replace(/ /g, '_'), // removing space to avoid error
+      filepath: filePath,
+      content: fileContent,
+      message: `commit ${filePath}`,
+      author: {
+        email: auth.user.email,
+        username: auth.user.username,
+      },
+    });
+  } catch (err) {
+    throw new Error(err?.message || err);
+  }
+};
 
 // update file in gitea
 export const updateFiletoServer = async (fileContent, filePath, branch, repoName, auth) => {
@@ -65,26 +65,26 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repoName
         ref: branch.replace(/ /g, '_'),
         filepath: filePath,
       },
-      );
-      if (readResult === null) {
-        throw new Error('can not read repo');
-      } else {
-        await updateContent({
-          config: auth.config,
-          owner: auth.user.login,
-          repo: repoName.toLowerCase(),
-          branch: branch.replace(/ /g, '_'),
-          filepath: readResult.path,
-          content: fileContent,
-          message: `updated ${filePath}`,
-          author: {
-            email: auth.user.email,
-            username: auth.user.username,
-          },
-          sha: readResult.sha,
-          // eslint-disable-next-line no-unused-vars
-        });
-      }
+    );
+    if (readResult === null) {
+      throw new Error('can not read repo');
+    } else {
+      await updateContent({
+        config: auth.config,
+        owner: auth.user.login,
+        repo: repoName.toLowerCase(),
+        branch: branch.replace(/ /g, '_'),
+        filepath: readResult.path,
+        content: fileContent,
+        message: `updated ${filePath}`,
+        author: {
+          email: auth.user.email,
+          username: auth.user.username,
+        },
+        sha: readResult.sha,
+        // eslint-disable-next-line no-unused-vars
+      });
+    }
   } catch (err) {
     throw new Error(err?.message || err);
   }
@@ -103,25 +103,25 @@ export const createSyncProfile = async (auth) => {
         if (err) {
           logger.error('SyncToGiteaUtils.js', 'Failed to read the data from file');
         } else {
-        logger.debug('SyncToGiteaUtils.js', 'Successfully read the data from file');
-        const json = JSON.parse(data);
-        if (!json.sync && !json.sync?.services) {
+          logger.debug('SyncToGiteaUtils.js', 'Successfully read the data from file');
+          const json = JSON.parse(data);
+          if (!json.sync && !json.sync?.services) {
           // first time sync
-          json.sync = {
-            services: {
-              door43: [
-                {
-                  token: '',
-                  expired: false,
-                  default: false,
-                  username: auth?.user?.username,
-                  dateCreated: moment().format(),
-                  dateModified: null,
-                },
-              ],
-            },
-          };
-        } else if (!json.sync?.services?.door43?.some((element) => element.username === auth?.user?.username)) {
+            json.sync = {
+              services: {
+                door43: [
+                  {
+                    token: '',
+                    expired: false,
+                    default: false,
+                    username: auth?.user?.username,
+                    dateCreated: moment().format(),
+                    dateModified: null,
+                  },
+                ],
+              },
+            };
+          } else if (!json.sync?.services?.door43?.some((element) => element.username === auth?.user?.username)) {
             // user not in list create new entry
             json.sync?.services?.door43?.push(
               {
@@ -134,9 +134,9 @@ export const createSyncProfile = async (auth) => {
               },
             );
           }
-        // add token to file on login - used in editor sync
-        // eslint-disable-next-line array-callback-return
-        json.sync?.services?.door43?.filter((element) => {
+          // add token to file on login - used in editor sync
+          // eslint-disable-next-line array-callback-return
+          json.sync?.services?.door43?.filter((element) => {
             if (element.username === auth?.user?.username) {
               element.expired = false;
               element.dateModified = moment().format();
@@ -152,9 +152,9 @@ export const createSyncProfile = async (auth) => {
               };
             }
           });
-        logger.debug('GiteaFileBrowser.js', 'Upadting the settings in existing file');
-        await fs.writeFileSync(file, JSON.stringify(json));
-      }
+          logger.debug('GiteaFileBrowser.js', 'Upadting the settings in existing file');
+          await fs.writeFileSync(file, JSON.stringify(json));
+        }
       });
     }
   });
@@ -187,8 +187,8 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
           if (indx === 0) {
             lastSyncedObj = element;
           } else if (element.lastSynced > lastSyncedObj.lastSynced) {
-              lastSyncedObj = element;
-            }
+            lastSyncedObj = element;
+          }
         });
         return lastSyncedObj;
       }
@@ -217,19 +217,19 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
           );
         } else {
           // eslint-disable-next-line array-callback-return
-        settings.sync?.services?.door43?.forEach((element) => {
-          if (element?.username === syncUsername) {
-            element.lastSynced = moment().format();
-          } else {
-            settings.sync.services.door43.push(
-              {
-                username: syncUsername,
-                dateCreated: moment().format(),
-                lastSynced: moment().format(),
-              },
-            );
-          }
-        });
+          settings.sync?.services?.door43?.forEach((element) => {
+            if (element?.username === syncUsername) {
+              element.lastSynced = moment().format();
+            } else {
+              settings.sync.services.door43.push(
+                {
+                  username: syncUsername,
+                  dateCreated: moment().format(),
+                  lastSynced: moment().format(),
+                },
+              );
+            }
+          });
         }
 
         logger.debug('SyncToGiteaUtils.js', 'Upadting the scribe settings with sync data');

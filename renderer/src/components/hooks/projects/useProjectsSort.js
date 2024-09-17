@@ -156,64 +156,64 @@ function useProjectsSort() {
                       let proj;
                       let projJuxta;
                       switch (
-                      _project.type.flavorType.flavor
-                        .name
+                        _project.type.flavorType.flavor
+                          .name
                       ) {
-                        case 'x-juxtalinear':
-                          proj = _project.project;
-                          if (proj) {
-                            projJuxta = proj['x-juxtalinear'];
-                            lastSeen = projJuxta
-                              ?.lastSeen;
-                            description = projJuxta
-                              ?.description;
-                            isArchived = projJuxta
-                              ?.isArchived;
-                            starred = projJuxta?.starred;
-                          }
-                          flavorType = 'Juxtalinear';
-                          break;
-                        case 'textTranslation':
-                          lastSeen = _project.project
-                            ?.textTranslation
+                      case 'x-juxtalinear':
+                        proj = _project.project;
+                        if (proj) {
+                          projJuxta = proj['x-juxtalinear'];
+                          lastSeen = projJuxta
                             ?.lastSeen;
-                          description = _project.project
-                            ?.textTranslation
+                          description = projJuxta
                             ?.description;
-                          isArchived = _project.project
-                            ?.textTranslation
+                          isArchived = projJuxta
                             ?.isArchived;
-                            starred = _project.project?.textTranslation?.starred;
-                          flavorType = 'Text Translation';
-                          break;
-                        case 'textStories':
-                          lastSeen = _project.project
-                            ?.textStories
-                            ?.lastSeen;
-                          description = _project.project
-                            ?.textStories
-                            ?.description;
-                          isArchived = _project.project
-                            ?.textStories
-                            ?.isArchived;
-                            starred = _project.project?.textStories?.starred;
-                          flavorType = 'OBS';
-                          break;
-                        case 'audioTranslation':
-                          lastSeen = _project.project
-                            ?.audioTranslation
-                            ?.lastSeen;
-                          description = _project.project
-                            ?.audioTranslation
-                            ?.description;
-                          isArchived = _project.project
-                            ?.audioTranslation
-                            ?.isArchived;
-                            starred = _project.project?.audioTranslation?.starred;
-                          flavorType = 'Audio';
-                          break;
-                        default:
-                          break;
+                          starred = projJuxta?.starred;
+                        }
+                        flavorType = 'Juxtalinear';
+                        break;
+                      case 'textTranslation':
+                        lastSeen = _project.project
+                          ?.textTranslation
+                          ?.lastSeen;
+                        description = _project.project
+                          ?.textTranslation
+                          ?.description;
+                        isArchived = _project.project
+                          ?.textTranslation
+                          ?.isArchived;
+                        starred = _project.project?.textTranslation?.starred;
+                        flavorType = 'Text Translation';
+                        break;
+                      case 'textStories':
+                        lastSeen = _project.project
+                          ?.textStories
+                          ?.lastSeen;
+                        description = _project.project
+                          ?.textStories
+                          ?.description;
+                        isArchived = _project.project
+                          ?.textStories
+                          ?.isArchived;
+                        starred = _project.project?.textStories?.starred;
+                        flavorType = 'OBS';
+                        break;
+                      case 'audioTranslation':
+                        lastSeen = _project.project
+                          ?.audioTranslation
+                          ?.lastSeen;
+                        description = _project.project
+                          ?.audioTranslation
+                          ?.description;
+                        isArchived = _project.project
+                          ?.audioTranslation
+                          ?.isArchived;
+                        starred = _project.project?.audioTranslation?.starred;
+                        flavorType = 'Audio';
+                        break;
+                      default:
+                        break;
                       }
                       fetchAllProjects(
                         _project.identification.name

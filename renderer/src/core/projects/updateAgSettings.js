@@ -5,7 +5,7 @@ import * as logger from '../../logger';
 import { environment } from '../../../environment';
 import packageInfo from '../../../../package.json';
 import {
- newPath, sbStorageDownload, sbStorageUpload,
+  newPath, sbStorageDownload, sbStorageUpload,
 } from '../../../../supabase';
 // if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
 //   const supabaseStorage = require('../../../../supabase').supabaseStorage

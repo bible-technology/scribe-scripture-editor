@@ -32,18 +32,18 @@ export default function ResourcesSidebar({
   useEffect(() => {
     if (!selectResource) {
       switch (selectedProjectMeta.type.flavorType.flavor.name) {
-        case 'textTranslation':
-          setSelectResource('bible');
-          break;
-        case 'textStories':
-          setSelectResource('obs');
-          break;
-        case 'audioTranslation':
-          setSelectResource('audio');
-          break;
-        default:
-          setSelectResource('bible');
-          break;
+      case 'textTranslation':
+        setSelectResource('bible');
+        break;
+      case 'textStories':
+        setSelectResource('obs');
+        break;
+      case 'audioTranslation':
+        setSelectResource('audio');
+        break;
+      default:
+        setSelectResource('bible');
+        break;
       }
       setTitle('Bible');
     }

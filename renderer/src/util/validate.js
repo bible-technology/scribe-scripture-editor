@@ -11,24 +11,24 @@ export const validate = (schemaName, fn, data, version) => {
   // console.log(schemaName, fn, data, version);
   let schemaIndex;
   switch (version) {
-    case '0.3.0':
-      schemaIndex = schemaIndex030;
-      break;
-    case '0.3.1':
-      schemaIndex = schemaIndex031;
-      break;
-    case '1.0.0-rc1':
-      schemaIndex = schemaIndex100rc1;
-      break;
-    case '1.0.0-rc2':
-      schemaIndex = schemaIndex100rc2;
-      break;
-    case '1.0.0':
-      schemaIndex = schemaIndex100;
-      break;
-    default:
-      schemaIndex = schemaIndex100;
-      break;
+  case '0.3.0':
+    schemaIndex = schemaIndex030;
+    break;
+  case '0.3.1':
+    schemaIndex = schemaIndex031;
+    break;
+  case '1.0.0-rc1':
+    schemaIndex = schemaIndex100rc1;
+    break;
+  case '1.0.0-rc2':
+    schemaIndex = schemaIndex100rc2;
+    break;
+  case '1.0.0':
+    schemaIndex = schemaIndex100;
+    break;
+  default:
+    schemaIndex = schemaIndex100;
+    break;
   }
   const ajv = new Ajv({ schemas: schemaIndex.schemas });
   logger.debug('validate.js', 'In validate for validation the burrito');

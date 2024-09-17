@@ -63,12 +63,12 @@ export default function Editor({
   };
 
   useEffect(() => {
-      if (((bookmarksVerses?.find((x) => x.bookname === bookName && x.chapter === chapter)
+    if (((bookmarksVerses?.find((x) => x.bookname === bookName && x.chapter === chapter)
             !== undefined))) {
-        setBookMarks(true);
-      } else {
-        setBookMarks(false);
-      }
+      setBookMarks(true);
+    } else {
+      setBookMarks(false);
+    }
   }, [bookName, bookmarksVerses, chapter]);
 
   const updateBookMarksDB = (bookmarksVerses) => {
@@ -131,10 +131,10 @@ export default function Editor({
         }
       });
     } else {
-            temp.push({ bookname: bookName, chapter });
-            bookmarksVerses.push({ bookname: bookName, chapter });
-            setBookmarksVerses(temp);
-            setBookMarks(true);
+      temp.push({ bookname: bookName, chapter });
+      bookmarksVerses.push({ bookname: bookName, chapter });
+      setBookmarksVerses(temp);
+      setBookMarks(true);
     }
     updateBookMarksDB(bookmarksVerses);
   };
@@ -145,11 +145,11 @@ export default function Editor({
         {/* {(callFrom === 'textTranslation' && <BibleNavigation />) || (callFrom === 'obs' && <ObsNavigation value={value} onChange={onChange} />)} */}
         {(callFrom === 'textTranslation' && <BibleNavigation />) || (callFrom === 'obs'
           && (
-          <NavigationObs
-            onChangeNumber={(value) => setObsNavigation(value)}
-            number={obsNavigation}
-          />
-        ))}
+            <NavigationObs
+              onChangeNumber={(value) => setObsNavigation(value)}
+              number={obsNavigation}
+            />
+          ))}
         {/* <div className="text-center h-6 rounded-t text-gray-100  text-xs uppercase tracking-widest font-bold leading-3">
           <div className="text-center pt-1">
             Editor
@@ -194,25 +194,25 @@ export default function Editor({
             <div>
               <LockOpenIcon aria-label="open-lock" onClick={() => setScrollLock(!scrollLock)} className="h-5 w-5 text-white" aria-hidden="true" />
             </div>
-            )
-          : (
-            <div>
-              <LockClosedIcon aria-label="close-lock" onClick={(e) => handleUnlockScroll(e)} className="h-5 w-5 text-white" aria-hidden="true" />
-            </div>
-          )}
+          )
+            : (
+              <div>
+                <LockClosedIcon aria-label="close-lock" onClick={(e) => handleUnlockScroll(e)} className="h-5 w-5 text-white" aria-hidden="true" />
+              </div>
+            )}
           {callFrom === 'textTranslation'
             && (
-            <div
-              onClick={(event) => handleBookmarks(event)}
-              role="button"
-              tabIndex="0"
-              title={t('tooltip-editor-bookmark')}
-              aria-label="save-bookmark"
-              className="mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
-            >
-              <BookmarkIcon className={`${bookMarked ? 'fill-current' : ''}  h-5 w-5 text-white`} aria-hidden="true" />
+              <div
+                onClick={(event) => handleBookmarks(event)}
+                role="button"
+                tabIndex="0"
+                title={t('tooltip-editor-bookmark')}
+                aria-label="save-bookmark"
+                className="mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
+              >
+                <BookmarkIcon className={`${bookMarked ? 'fill-current' : ''}  h-5 w-5 text-white`} aria-hidden="true" />
 
-            </div>
+              </div>
             )}
 
         </div>

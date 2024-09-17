@@ -2,7 +2,7 @@ import * as localForage from 'localforage';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 import {
- addGitRemote, checkInitialize, checkoutJsonFiles, checkoutToBranch, commitChanges, createBranch, getRepoOwner, initProject, pullProject, pushTheChanges, pushToMain,
+  addGitRemote, checkInitialize, checkoutJsonFiles, checkoutToBranch, commitChanges, createBranch, getRepoOwner, initProject, pullProject, pushTheChanges, pushToMain,
 } from '../Isomorphic/utils';
 import { createRepo, getRepoByOwner } from '../Isomorphic/api';
 import { getOrPutLastSyncInAgSettings } from './SyncToGiteaUtils';
@@ -35,7 +35,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
 
       if (!checkInit || !checkForRepo?.id) {
         setSyncProgress((prev) => ({
-        ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 6,
+          ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 6,
         }));
         let projectInitialized;
         if (!checkInit) {
@@ -62,7 +62,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
         }
       } else {
         setSyncProgress((prev) => ({
-        ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 3,
+          ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 3,
         }));
         // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
         const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
@@ -122,7 +122,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
     } finally {
       setSyncProgress((prev) => ({
         ...prev, syncStarted: false, syncType: null, completedFiles: 0, totalFiles: 0,
-        }));
+      }));
     }
   });
 }

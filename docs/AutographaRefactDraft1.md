@@ -91,7 +91,7 @@ are moved from navbar to translation folder
 
     Sync
         Paratext
-    	Sign-in form splited from settings component to sync
+      Sign-in form splited from settings component to sync
         helpers functionalities eg: paratextAdapter moved from helper folder to sync
         Ahref component helps to handle external links
 

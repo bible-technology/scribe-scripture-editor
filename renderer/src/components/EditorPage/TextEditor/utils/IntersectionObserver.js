@@ -21,7 +21,7 @@ export const scrollReference = (() => {
 })();
 
 export const onIntersection = ({
- scroll, entries, setChapterNumber, scrollLock, setVerseNumber,
+  scroll, entries, setChapterNumber, scrollLock, setVerseNumber,
 }) => {
   if (scroll) {
     // eslint-disable-next-line no-restricted-syntax

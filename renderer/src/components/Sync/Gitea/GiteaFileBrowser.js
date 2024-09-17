@@ -16,8 +16,8 @@ import { environment } from '../../../../environment';
 const GiteaFileBrowser = ({ changeRepo }) => {
   const {
     states: {
- selectedGiteaProject, syncProgress, refreshGiteaListUI, selectedGiteaProjectBranch,
-},
+      selectedGiteaProject, syncProgress, refreshGiteaListUI, selectedGiteaProjectBranch,
+    },
     action: {
       setSelectedGiteaProject, setSelectedGiteaProjectBranch,
     },
@@ -89,8 +89,8 @@ const GiteaFileBrowser = ({ changeRepo }) => {
     // regex is for old sync
     // const regex = /.+\/\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]).1$/;
     let finalBranches = [];
-     // eslint-disable-next-line no-console
-      console.log('chedk  : ', fetchBranches.some((branch) => branch.name === 'scribe-main'));
+    // eslint-disable-next-line no-console
+    console.log('chedk  : ', fetchBranches.some((branch) => branch.name === 'scribe-main'));
     if (fetchBranches.some((branch) => branch.name === 'scribe-main')) {
       finalBranches.push({ name: 'scribe-main' });
     } else {
@@ -122,39 +122,39 @@ const GiteaFileBrowser = ({ changeRepo }) => {
           {refreshGiteaListUI.timeOut === true ? <LoadingSpinner /> : <div>{repoComponent}</div>}
         </div>
       </div>
-  ))
+    ))
     || (
-    <>
-      <div className="flex flex-row mx-5 my-3 border-b-1 border-primary">
-        <span className="font-semibold" onClick={cleanRepo} role="button" tabIndex={-1}>
-          {repo.owner.username}
-        </span>
-        {steps.map((label, index) => (
-          (steps.length - 1 === index)
-            ? (
-              <span key={label} className="font-semibold tracking-wide text-primary">
-                <ChevronRightIcon className="h-4 w-4 mx-2 inline-block fill-current text-gray-800" aria-hidden="true" />
-                {label.name}
-              </span>
-            ) : (
-              <span key={label} className="font-semibold" onClick={handleStep(index)} role="button" tabIndex={-1}>
-                <ChevronRightIcon className="h-4 w-4 mx-2 inline-block fill-current text-gray-800" aria-hidden="true" />
-                {label.name}
-              </span>
-            )
-        ))}
-      </div>
+      <>
+        <div className="flex flex-row mx-5 my-3 border-b-1 border-primary">
+          <span className="font-semibold" onClick={cleanRepo} role="button" tabIndex={-1}>
+            {repo.owner.username}
+          </span>
+          {steps.map((label, index) => (
+            (steps.length - 1 === index)
+              ? (
+                <span key={label} className="font-semibold tracking-wide text-primary">
+                  <ChevronRightIcon className="h-4 w-4 mx-2 inline-block fill-current text-gray-800" aria-hidden="true" />
+                  {label.name}
+                </span>
+              ) : (
+                <span key={label} className="font-semibold" onClick={handleStep(index)} role="button" tabIndex={-1}>
+                  <ChevronRightIcon className="h-4 w-4 mx-2 inline-block fill-current text-gray-800" aria-hidden="true" />
+                  {label.name}
+                </span>
+              )
+          ))}
+        </div>
 
-      {selectedGiteaProject?.mergeStatus && (
-        <ProjectMergePop
-          selectedGiteaProject={selectedGiteaProject}
-          setSelectedGiteaProject={setSelectedGiteaProject}
+        {selectedGiteaProject?.mergeStatus && (
+          <ProjectMergePop
+            selectedGiteaProject={selectedGiteaProject}
+            setSelectedGiteaProject={setSelectedGiteaProject}
 
-        />
-      )}
+          />
+        )}
 
-      {/* advanced and some of the functions are for future use - current sycn is project wise and future is file wise */}
-      {!advacnedOption
+        {/* advanced and some of the functions are for future use - current sycn is project wise and future is file wise */}
+        {!advacnedOption
         && (
           <div className="flex flex-row  border-2 border-red-600 items-center">
             <GridRow
@@ -166,19 +166,19 @@ const GiteaFileBrowser = ({ changeRepo }) => {
             />
             <div className="">
               {pullBranchNames.length > 0 && (
-              <CustomMultiComboBox
-                selectedList={[selectedGiteaProjectBranch]}
-                setSelectedList={setSelectedGiteaProjectBranch}
-                customData={pullBranchNames}
-                filterParams="name"
-                placeholder="Select Branch"
-                dropArrow
-              />
+                <CustomMultiComboBox
+                  selectedList={[selectedGiteaProjectBranch]}
+                  setSelectedList={setSelectedGiteaProjectBranch}
+                  customData={pullBranchNames}
+                  filterParams="name"
+                  placeholder="Select Branch"
+                  dropArrow
+                />
               )}
             </div>
           </div>
-      )}
-    </>
+        )}
+      </>
     )
   );
 };

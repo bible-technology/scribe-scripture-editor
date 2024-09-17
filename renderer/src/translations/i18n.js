@@ -52,7 +52,7 @@ i18n
         translation: Te,
       },
     },
-});
+  });
 
 // i18n.changeLanguage('en');
 export default i18n;

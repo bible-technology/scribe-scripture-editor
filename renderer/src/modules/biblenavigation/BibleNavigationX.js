@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
 import {
- Fragment, useContext, useEffect, useRef, useState,
+  Fragment, useContext, useEffect, useRef, useState,
 } from 'react';
 import { XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
 import * as localforage from 'localforage';
@@ -12,8 +12,8 @@ import { ReferenceContext } from '@/components/context/ReferenceContext';
 
 export default function BibleNavigationX(props) {
   const {
- showVerse, chapterNumber, setChapterNumber, verseNumber, setVerseNumber,
-} = props;
+    showVerse, chapterNumber, setChapterNumber, verseNumber, setVerseNumber,
+  } = props;
   const supportedBooks = null; // if empty array or null then all books available
 
   const {

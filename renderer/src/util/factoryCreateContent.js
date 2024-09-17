@@ -27,61 +27,61 @@ export const factoryCreateContent = async ({
 }) => {
   let promise;
   switch (projectTypeToUse) {
-    case 'Translation':
-      promise = await createVersificationUSFM(
-        username,
-        project,
-        versification,
-        books,
-        direction,
-        id,
-        importedFiles,
-        copyright,
-        currentBurrito,
-        call,
-        projectType,
-      );
-      break;
-    case 'Audio':
-      promise = await createAudioVersification(
-        username,
-        project,
-        versification,
-        id,
-        copyright,
-        currentBurrito,
-        call,
-      );
-      break;
-    case 'OBS':
-      promise = await createObsContent(
-        username,
-        project,
-        direction,
-        id,
-        currentBurrito,
-        importedFiles,
-        copyright,
-        call,
-      );
-      break;
-    case 'Juxta':
-      promise = await createJuxtaContent(
-        username,
-        project,
-        versification,
-        books,
-        direction,
-        id,
-        importedFiles,
-        copyright,
-        currentBurrito,
-        call,
-        projectType,
-      );
-      break;
-    default:
-      logger.error('factoryCreateContent.js', `projectType doesn't exist : ${projectType}`);
-    }
+  case 'Translation':
+    promise = await createVersificationUSFM(
+      username,
+      project,
+      versification,
+      books,
+      direction,
+      id,
+      importedFiles,
+      copyright,
+      currentBurrito,
+      call,
+      projectType,
+    );
+    break;
+  case 'Audio':
+    promise = await createAudioVersification(
+      username,
+      project,
+      versification,
+      id,
+      copyright,
+      currentBurrito,
+      call,
+    );
+    break;
+  case 'OBS':
+    promise = await createObsContent(
+      username,
+      project,
+      direction,
+      id,
+      currentBurrito,
+      importedFiles,
+      copyright,
+      call,
+    );
+    break;
+  case 'Juxta':
+    promise = await createJuxtaContent(
+      username,
+      project,
+      versification,
+      books,
+      direction,
+      id,
+      importedFiles,
+      copyright,
+      currentBurrito,
+      call,
+      projectType,
+    );
+    break;
+  default:
+    logger.error('factoryCreateContent.js', `projectType doesn't exist : ${projectType}`);
+  }
   return promise;
 };

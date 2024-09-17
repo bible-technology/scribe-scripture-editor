@@ -218,20 +218,20 @@ export const saveProjectsMeta = async (projectMetaObj) => {
               update: projectMetaObj.update,
             })
 
-            .then(async (burrito) => {
-              if (projectMetaObj.call === 'edit') {
-                burrito.ingredients = { ...projectMetaObj.project.ingredients, ...ingredient };
-                burrito?.sync && delete burrito.sync;
-              } else {
-                burrito.ingredients = ingredient;
-              }
-              logger.debug('saveProjectsMeta.js', 'Creating a burrito file.');
-              await fs.writeFileSync(path.join(
-                projectDir,
-                `${projectMetaObj.newProjectFields.projectName}_${id}`,
-                'metadata.json',
-              ), JSON.stringify(burrito));
-            });
+              .then(async (burrito) => {
+                if (projectMetaObj.call === 'edit') {
+                  burrito.ingredients = { ...projectMetaObj.project.ingredients, ...ingredient };
+                  burrito?.sync && delete burrito.sync;
+                } else {
+                  burrito.ingredients = ingredient;
+                }
+                logger.debug('saveProjectsMeta.js', 'Creating a burrito file.');
+                await fs.writeFileSync(path.join(
+                  projectDir,
+                  `${projectMetaObj.newProjectFields.projectName}_${id}`,
+                  'metadata.json',
+                ), JSON.stringify(burrito));
+              });
           });
         }
       }
@@ -343,7 +343,7 @@ export const saveSupabaseProjectsMeta = async (projectMetaObj) => {
         } else {
           burritoFile.ingredients = ingredient;
         }
-         await sbStorageUpload(`${newPath}/${currentUser}/projects/${projectMetaObj.newProjectFields.projectName}_${id}/metadata.json`, JSON.stringify(burritoFile));
+        await sbStorageUpload(`${newPath}/${currentUser}/projects/${projectMetaObj.newProjectFields.projectName}_${id}/metadata.json`, JSON.stringify(burritoFile));
       }).finally(() => {
         status.push({ type: 'success', value: (projectMetaObj.call === 'new' ? 'New project created' : 'Updated the changes') });
       });
@@ -503,7 +503,7 @@ export const saveSupabaseProjectsMeta = async (projectMetaObj) => {
               logger.debug('saveProjectsMeta.js', 'Creating a burrito file.');
               // eslint-disable-next-line no-unused-vars
               const { data } = sbStorageUpload(`${newPath}/${currentUser}/projects/${projectMetaObj.newProjectFields.projectName}_${id}/metadata.json`, JSON.stringify(burritoFile));
-});
+            });
           }
         });
       }).finally(() => {
@@ -514,20 +514,20 @@ export const saveSupabaseProjectsMeta = async (projectMetaObj) => {
   // Switch Project Creation
   if (projectNameExists === false || projectMetaObj.call === 'edit') {
     switch (projectMetaObj.projectType) {
-      case 'Translation':
-        await translationBurritoChecksAndCreation();
-        break;
+    case 'Translation':
+      await translationBurritoChecksAndCreation();
+      break;
 
-      case 'OBS':
-        await obsBurritoChecksAndCreation();
-        break;
+    case 'OBS':
+      await obsBurritoChecksAndCreation();
+      break;
 
-      case 'Audio':
-        await audioBurritoChecksAndCreation();
-        break;
+    case 'Audio':
+      await audioBurritoChecksAndCreation();
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   } else {
     status.push({ type: 'error', value: 'Project already exists' });

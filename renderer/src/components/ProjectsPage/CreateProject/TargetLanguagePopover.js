@@ -36,10 +36,10 @@ export default function TargetLanguagePopover({ projectType }) {
     },
   } = React.useContext(ProjectContext);
   const {
- action: {
- validateField, isLengthValidated, isTextValidated, isRequiered,
-},
-} = useValidator();
+    action: {
+      validateField, isLengthValidated, isTextValidated, isRequiered,
+    },
+  } = useValidator();
   const { t } = useTranslation();
   const openLanguageNav = (nav) => {
     logger.debug('TargetLanguagePopover.js', 'In openLanguageNav');
@@ -70,35 +70,35 @@ export default function TargetLanguagePopover({ projectType }) {
   const validateLanguageInputs = async (fieldName, value) => {
     let errorText = '';
     switch (fieldName) {
-      case 'language':
-        if (value.length > 0) {
-          const check = await validateField([isLengthValidated(value.trim(), { minLen: 2, maxLen: 40 })]);
-          if (!check[0].isValid) {
-            errorText = check[0].message;
-          }
-          setErrors((prev) => ({
-            ...prev,
-            language: errorText,
-          }));
+    case 'language':
+      if (value.length > 0) {
+        const check = await validateField([isLengthValidated(value.trim(), { minLen: 2, maxLen: 40 })]);
+        if (!check[0].isValid) {
+          errorText = check[0].message;
         }
-        break;
-      case 'code':
-        if (value.length > 0) {
-          const check = await validateField([isLengthValidated(value.trim(), { minLen: 2, maxLen: 35 }), isTextValidated(value.trim(), 'bcp47Language')]);
-          if (!check[0].isValid) {
-            errorText = check[0].message;
-          } else if (!check[1].isValid) {
-            errorText = check[1].message;
-          }
-          setErrors((prev) => ({
-            ...prev,
-            code: errorText,
-          }));
+        setErrors((prev) => ({
+          ...prev,
+          language: errorText,
+        }));
+      }
+      break;
+    case 'code':
+      if (value.length > 0) {
+        const check = await validateField([isLengthValidated(value.trim(), { minLen: 2, maxLen: 35 }), isTextValidated(value.trim(), 'bcp47Language')]);
+        if (!check[0].isValid) {
+          errorText = check[0].message;
+        } else if (!check[1].isValid) {
+          errorText = check[1].message;
         }
-        break;
+        setErrors((prev) => ({
+          ...prev,
+          code: errorText,
+        }));
+      }
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
 
@@ -108,7 +108,7 @@ export default function TargetLanguagePopover({ projectType }) {
     // basic validation for direct create click
     const langField = await isRequiered(lang, 'Language Name');
     const langcodeField = await isRequiered(langcode, 'Language Code');
-      if (!langField.isValid) {
+    if (!langField.isValid) {
       validate = false;
       setErrors((prev) => ({
         ...prev,
@@ -130,7 +130,7 @@ export default function TargetLanguagePopover({ projectType }) {
         const key = lang + langcode + moment().format();
         const id = uuidv5(key, environment.uuidToken);
         setLanguage({
-           id, ang: lang.trim(), ld: direction, lc: langcode.trim(),
+          id, ang: lang.trim(), ld: direction, lc: langcode.trim(),
         });
         closeModal();
       } else {
@@ -138,7 +138,7 @@ export default function TargetLanguagePopover({ projectType }) {
         setSnackText((result.name.status && result.name.message) || (result.code.status && result.code.message));
         setOpenSnackBar(true);
       }
-      }
+    }
   };
 
   const editLanguage = async () => {
@@ -147,7 +147,7 @@ export default function TargetLanguagePopover({ projectType }) {
     // basic validation for direct create click
     const langField = await isRequiered(lang, 'Language Name');
     const langcodeField = await isRequiered(langcode, 'Language Code');
-      if (!langField.isValid) {
+    if (!langField.isValid) {
       validate = false;
       setErrors((prev) => ({
         ...prev,
@@ -202,16 +202,16 @@ export default function TargetLanguagePopover({ projectType }) {
         {/* show edit only for custom languages */}
         {language && language?.custom
         && (
-        <button
-          type="button"
-          className="focus:outline-none bg-primary h-8 w-8 flex items-center justify-center rounded-full"
-          onClick={() => { openLanguageNav('edit'); openModal(); }}
-        >
-          <PencilSquareIcon
-            className="h-5 w-5 text-white"
-            aria-hidden="true"
-          />
-        </button>
+          <button
+            type="button"
+            className="focus:outline-none bg-primary h-8 w-8 flex items-center justify-center rounded-full"
+            onClick={() => { openLanguageNav('edit'); openModal(); }}
+          >
+            <PencilSquareIcon
+              className="h-5 w-5 text-white"
+              aria-hidden="true"
+            />
+          </button>
         )}
       </div>
 
@@ -332,16 +332,16 @@ export default function TargetLanguagePopover({ projectType }) {
                         {t('btn-cancel')}
                       </button>
                       {lock ? <div />
-                    : (
-                      <button
-                        type="button"
-                        aria-label="edit-language"
-                        className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
-                        onClick={() => (edit === true ? editLanguage() : addLanguage())}
-                      >
-                        {edit ? t('btn-save') : t('btn-create')}
-                      </button>
-                    )}
+                        : (
+                          <button
+                            type="button"
+                            aria-label="edit-language"
+                            className=" bg-success w-28 h-8 border-color-success rounded uppercase text-white text-xs shadow focus:outline-none"
+                            onClick={() => (edit === true ? editLanguage() : addLanguage())}
+                          >
+                            {edit ? t('btn-save') : t('btn-create')}
+                          </button>
+                        )}
                     </div>
 
                   </div>

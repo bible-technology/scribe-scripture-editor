@@ -2,7 +2,10 @@
 	{
 		"storyid": 1,
 		"sections": [
-			{ "id": 1, "title": "1. The Creation" },
+			{
+				"id": 1,
+				"title": "1. The Creation"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-01-01.jpg",
@@ -83,13 +86,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-01-16.jpg",
 				"text": "When the seventh day came, God had finished all the work that he had been doing. He blessed the seventh day and made it holy because on this day he stopped creating things. This is how God created the universe and everything in it."
 			},
-			{ "id": 18, "end": "A Bible story from: Genesis 1-2" }
+			{
+				"id": 18,
+				"end": "A Bible story from: Genesis 1-2"
+			}
 		]
 	},
 	{
 		"storyid": 2,
 		"sections": [
-			{ "id": 1, "title": "2. Sin Enters the World" },
+			{
+				"id": 1,
+				"title": "2. Sin Enters the World"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-02-01.jpg",
@@ -150,13 +159,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-02-12.jpg",
 				"text": "Then God said, “Now that the human beings have become like us by knowing good and evil, they must not be allowed to eat the fruit of the tree of life and live forever.” So God sent Adam and Eve away from the garden. God placed powerful angels at the entrance to the garden to keep anyone from eating the fruit of the tree of life."
 			},
-			{ "id": 14, "end": "A Bible story from: Genesis 3" }
+			{
+				"id": 14,
+				"end": "A Bible story from: Genesis 3"
+			}
 		]
 	},
 	{
 		"storyid": 3,
 		"sections": [
-			{ "id": 1, "title": "3. The Flood" },
+			{
+				"id": 1,
+				"title": "3. The Flood"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-03-01.jpg",
@@ -237,13 +252,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-03-16.jpg",
 				"text": "God then made the first rainbow as a sign of his promise. Every time the rainbow appeared in the sky, God would remember what he promised and so would his people."
 			},
-			{ "id": 18, "end": "A Bible story from: Genesis 6-8" }
+			{
+				"id": 18,
+				"end": "A Bible story from: Genesis 6-8"
+			}
 		]
 	},
 	{
 		"storyid": 4,
 		"sections": [
-			{ "id": 1, "title": "4. God’s Covenant with Abraham" },
+			{
+				"id": 1,
+				"title": "4. God’s Covenant with Abraham"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-04-01.jpg",
@@ -289,13 +310,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-04-09.jpg",
 				"text": "Then God made a covenant with Abram. Normally, a covenant is an agreement between two parties to do things for each other. But in this case, God made a promise to Abram while Abram was in a deep sleep, but he could still hear God. God said, “I will give you a son from your own body. I give the land of Canaan to your descendants.” But Abram still did not have a son."
 			},
-			{ "id": 11, "end": "A Bible story from: Genesis 11-15" }
+			{
+				"id": 11,
+				"end": "A Bible story from: Genesis 11-15"
+			}
 		]
 	},
 	{
 		"storyid": 5,
 		"sections": [
-			{ "id": 1, "title": "5. The Son of Promise" },
+			{
+				"id": 1,
+				"title": "5. The Son of Promise"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-05-01.jpg",
@@ -346,13 +373,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-05-10.jpg",
 				"text": "Then God said to Abraham, “Because you were willing to give me everything, even your only son, I promise to bless you. Your descendants will be more than the stars in the sky. Because you have obeyed me, I will bless all the families of the world through your family.”"
 			},
-			{ "id": 12, "end": "A Bible story from: Genesis 16-22" }
+			{
+				"id": 12,
+				"end": "A Bible story from: Genesis 16-22"
+			}
 		]
 	},
 	{
 		"storyid": 6,
 		"sections": [
-			{ "id": 1, "title": "6. God Provides for Isaac" },
+			{
+				"id": 1,
+				"title": "6. God Provides for Isaac"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-06-01.jpg",
@@ -388,13 +421,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-06-07.jpg",
 				"text": "When Rebekah’s babies were born, the older son came out red and hairy, and they named him Esau. Then the younger son came out holding on to Esau’s heel, and they named him Jacob. "
 			},
-			{ "id": 9, "end": "A Bible story from: Genesis 24:1-25:26" }
+			{
+				"id": 9,
+				"end": "A Bible story from: Genesis 24:1-25:26"
+			}
 		]
 	},
 	{
 		"storyid": 7,
 		"sections": [
-			{ "id": 1, "title": "7. God Blesses Jacob" },
+			{
+				"id": 1,
+				"title": "7. God Blesses Jacob"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-07-01.jpg",
@@ -445,13 +484,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-07-10.jpg",
 				"text": "But Esau no longer wanted to harm Jacob. Instead, he was very happy to see him again, so the brothers lived peacefully in Canaan. Then Isaac died, and Jacob and Esau buried him. The covenant promises God had made to Abraham now passed on from Isaac to Jacob."
 			},
-			{ "id": 12, "end": "A Bible story from: Genesis 25:27-35:29" }
+			{
+				"id": 12,
+				"end": "A Bible story from: Genesis 25:27-35:29"
+			}
 		]
 	},
 	{
 		"storyid": 8,
 		"sections": [
-			{ "id": 1, "title": "8. God Saves Joseph and His Family" },
+			{
+				"id": 1,
+				"title": "8. God Saves Joseph and His Family"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-08-01.jpg",
@@ -527,13 +572,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-08-15.jpg",
 				"text": "The covenant promises that God gave to Abraham were passed on to Isaac, then to Jacob, and then to Jacob’s 12 sons and their families. The descendants of the 12 sons became the 12 tribes of Israel."
 			},
-			{ "id": 17, "end": "A Bible story from: Genesis 37-50" }
+			{
+				"id": 17,
+				"end": "A Bible story from: Genesis 37-50"
+			}
 		]
 	},
 	{
 		"storyid": 9,
 		"sections": [
-			{ "id": 1, "title": "9. God Calls Moses" },
+			{
+				"id": 1,
+				"title": "9. God Calls Moses"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-09-01.jpg",
@@ -609,13 +660,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-09-15.jpg",
 				"text": "Moses was afraid and did not want to go to Pharaoh because he thought he could not speak well, so God sent Moses’ brother, Aaron, to help him."
 			},
-			{ "id": 17, "end": "A Bible story from: Exodus 1-4" }
+			{
+				"id": 17,
+				"end": "A Bible story from: Exodus 1-4"
+			}
 		]
 	},
 	{
 		"storyid": 10,
 		"sections": [
-			{ "id": 1, "title": "10. The Ten Plagues" },
+			{
+				"id": 1,
+				"title": "10. The Ten Plagues"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-10-01.jpg",
@@ -676,13 +733,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-10-12.jpg",
 				"text": "Even after these nine plagues, Pharaoh still refused to let the Israelites go free. Since Pharaoh would not listen, God planned to send one last plague. This would change Pharaoh’s mind."
 			},
-			{ "id": 14, "end": "A Bible story from: Exodus 5-10" }
+			{
+				"id": 14,
+				"end": "A Bible story from: Exodus 5-10"
+			}
 		]
 	},
 	{
 		"storyid": 11,
 		"sections": [
-			{ "id": 1, "title": "11. The Passover" },
+			{
+				"id": 1,
+				"title": "11. The Passover"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-11-01.jpg",
@@ -723,13 +786,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-11-08.jpg",
 				"text": "That same night, Pharaoh called for Moses and Aaron and said, “Take the Israelites and leave Egypt immediately!” The Egyptian people also urged the Israelites to leave right away."
 			},
-			{ "id": 10, "end": "A Bible story from: Exodus 11:1-12:32" }
+			{
+				"id": 10,
+				"end": "A Bible story from: Exodus 11:1-12:32"
+			}
 		]
 	},
 	{
 		"storyid": 12,
 		"sections": [
-			{ "id": 1, "title": "12. The Exodus" },
+			{
+				"id": 1,
+				"title": "12. The Exodus"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-12-01.jpg",
@@ -800,13 +869,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-12-14.jpg",
 				"text": "God commanded the Israelites to celebrate a festival every year in order to remember how God had defeated the Egyptians and freed them from being slaves. This festival was called the Passover. In it, they had to celebrate by killing a healthy lamb, roasting it, and eating it with bread made without yeast."
 			},
-			{ "id": 16, "end": "A Bible story from: Exodus 12:33-15:21" }
+			{
+				"id": 16,
+				"end": "A Bible story from: Exodus 12:33-15:21"
+			}
 		]
 	},
 	{
 		"storyid": 13,
 		"sections": [
-			{ "id": 1, "title": "13. God’s Covenant with Israel" },
+			{
+				"id": 1,
+				"title": "13. God’s Covenant with Israel"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-13-01.jpg",
@@ -882,13 +957,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-13-15.jpg",
 				"text": "Moses made new stone tablets for the Ten Commandments to replace the ones that he had broken. Then he climbed the mountain again and prayed that God would forgive the people. God listened to Moses and forgave them. Moses came back down the mountain with the Ten Commandments on the new tablets. Then God led the Israelites away from Mount Sinai toward the Promised Land."
 			},
-			{ "id": 17, "end": "A Bible story from: Exodus 19-34" }
+			{
+				"id": 17,
+				"end": "A Bible story from: Exodus 19-34"
+			}
 		]
 	},
 	{
 		"storyid": 14,
 		"sections": [
-			{ "id": 1, "title": "14. Wandering in the Wilderness" },
+			{
+				"id": 1,
+				"title": "14. Wandering in the Wilderness"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-14-01.jpg",
@@ -973,7 +1054,10 @@
 	{
 		"storyid": 15,
 		"sections": [
-			{ "id": 1, "title": "15. The Promised Land" },
+			{
+				"id": 1,
+				"title": "15. The Promised Land"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-15-01.jpg",
@@ -1039,13 +1123,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-15-13.jpg",
 				"text": "When Joshua was an old man, he called all the people of Israel together. Then Joshua reminded the people that they had promised to obey the covenant that God had made with the Israelites at Mount Sinai. The people promised to be faithful to God and obey his laws."
 			},
-			{ "id": 15, "end": "A Bible story from: Joshua 1-24" }
+			{
+				"id": 15,
+				"end": "A Bible story from: Joshua 1-24"
+			}
 		]
 	},
 	{
 		"storyid": 16,
 		"sections": [
-			{ "id": 1, "title": "16. The Deliverers" },
+			{
+				"id": 1,
+				"title": "16. The Deliverers"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-16-01.jpg",
@@ -1145,7 +1235,10 @@
 	{
 		"storyid": 17,
 		"sections": [
-			{ "id": 1, "title": "17. God’s Covenant with David" },
+			{
+				"id": 1,
+				"title": "17. God’s Covenant with David"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-17-01.jpg",
@@ -1225,7 +1318,10 @@
 	{
 		"storyid": 18,
 		"sections": [
-			{ "id": 1, "title": "18. The Divided Kingdom" },
+			{
+				"id": 1,
+				"title": "18. The Divided Kingdom"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-18-01.jpg",
@@ -1291,13 +1387,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-18-13.jpg",
 				"text": "The kings of Judah were descendants of David. Some of these kings were good men who ruled justly and worshiped God. But most of Judah’s kings were evil. They ruled badly, and they worshiped idols. Some of these kings even sacrificed their children to false gods. Most of the people of Judah also rebelled against God and worshiped other gods."
 			},
-			{ "id": 15, "end": "A Bible story from: 1 Kings 1-6; 11-12" }
+			{
+				"id": 15,
+				"end": "A Bible story from: 1 Kings 1-6; 11-12"
+			}
 		]
 	},
 	{
 		"storyid": 19,
 		"sections": [
-			{ "id": 1, "title": "19. The Prophets" },
+			{
+				"id": 1,
+				"title": "19. The Prophets"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-19-01.jpg",
@@ -1397,7 +1499,10 @@
 	{
 		"storyid": 20,
 		"sections": [
-			{ "id": 1, "title": "20. The Exile and Return" },
+			{
+				"id": 1,
+				"title": "20. The Exile and Return"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-20-01.jpg",
@@ -1472,7 +1577,10 @@
 	{
 		"storyid": 21,
 		"sections": [
-			{ "id": 1, "title": "21. God Promises the Messiah" },
+			{
+				"id": 1,
+				"title": "21. God Promises the Messiah"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-21-01.jpg",
@@ -1557,7 +1665,10 @@
 	{
 		"storyid": 22,
 		"sections": [
-			{ "id": 1, "title": "22. The Birth of John" },
+			{
+				"id": 1,
+				"title": "22. The Birth of John"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-22-01.jpg",
@@ -1593,13 +1704,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-22-07.jpg",
 				"text": "After this, Elizabeth gave birth to her baby boy. Zechariah and Elizabeth named the baby John, as the angel had commanded. Then God made Zechariah able to speak again. Zechariah said, “Praise God, because he has remembered to help his people! You, my son, will be the prophet of the Most High God. You will tell the people how they can receive forgiveness for their sins!”"
 			},
-			{ "id": 9, "end": "A Bible story from: Luke 1" }
+			{
+				"id": 9,
+				"end": "A Bible story from: Luke 1"
+			}
 		]
 	},
 	{
 		"storyid": 23,
 		"sections": [
-			{ "id": 1, "title": "23. The Birth of Jesus" },
+			{
+				"id": 1,
+				"title": "23. The Birth of Jesus"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-23-01.jpg",
@@ -1650,13 +1767,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-23-10.jpg",
 				"text": "When these men saw Jesus with his mother, they bowed down and worshiped him. They gave Jesus expensive gifts. Then they returned home."
 			},
-			{ "id": 12, "end": "A Bible story from: Matthew 1-2; Luke 2" }
+			{
+				"id": 12,
+				"end": "A Bible story from: Matthew 1-2; Luke 2"
+			}
 		]
 	},
 	{
 		"storyid": 24,
 		"sections": [
-			{ "id": 1, "title": "24. John Baptizes Jesus" },
+			{
+				"id": 1,
+				"title": "24. John Baptizes Jesus"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-24-01.jpg",
@@ -1711,7 +1834,10 @@
 	{
 		"storyid": 25,
 		"sections": [
-			{ "id": 1, "title": "25. Satan Tempts Jesus" },
+			{
+				"id": 1,
+				"title": "25. Satan Tempts Jesus"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-25-01.jpg",
@@ -1761,7 +1887,10 @@
 	{
 		"storyid": 26,
 		"sections": [
-			{ "id": 1, "title": "26. Jesus Starts His Ministry" },
+			{
+				"id": 1,
+				"title": "26. Jesus Starts His Ministry"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-26-01.jpg",
@@ -1821,7 +1950,10 @@
 	{
 		"storyid": 27,
 		"sections": [
-			{ "id": 1, "title": "27. The Story of the Good Samaritan" },
+			{
+				"id": 1,
+				"title": "27. The Story of the Good Samaritan"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-27-01.jpg",
@@ -1877,13 +2009,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-27-11.jpg",
 				"text": "Then Jesus asked the law expert, “What do you think? Which one of the three men was a neighbor to the man who was robbed and beaten?” He replied, “The one who was merciful to him.” Jesus told him, “You go and do the same.”"
 			},
-			{ "id": 13, "end": "A Bible story from: Luke 10:25-37" }
+			{
+				"id": 13,
+				"end": "A Bible story from: Luke 10:25-37"
+			}
 		]
 	},
 	{
 		"storyid": 28,
 		"sections": [
-			{ "id": 1, "title": "28. The Rich Young Ruler" },
+			{
+				"id": 1,
+				"title": "28. The Rich Young Ruler"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-28-01.jpg",
@@ -1943,7 +2081,10 @@
 	{
 		"storyid": 29,
 		"sections": [
-			{ "id": 1, "title": "29. The Story of the Unmerciful Servant" },
+			{
+				"id": 1,
+				"title": "29. The Story of the Unmerciful Servant"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-29-01.jpg",
@@ -1989,13 +2130,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-29-09.jpg",
 				"text": "Then Jesus said, “This is what my heavenly Father will do to every one of you if you do not forgive your brother from your heart.”"
 			},
-			{ "id": 11, "end": "A Bible story from: Matthew 18:21-35" }
+			{
+				"id": 11,
+				"end": "A Bible story from: Matthew 18:21-35"
+			}
 		]
 	},
 	{
 		"storyid": 30,
 		"sections": [
-			{ "id": 1, "title": "30. Jesus Feeds Thousands of People" },
+			{
+				"id": 1,
+				"title": "30. Jesus Feeds Thousands of People"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-30-01.jpg",
@@ -2050,7 +2197,10 @@
 	{
 		"storyid": 31,
 		"sections": [
-			{ "id": 1, "title": "31. Jesus Walks on Water" },
+			{
+				"id": 1,
+				"title": "31. Jesus Walks on Water"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-31-01.jpg",
@@ -2193,7 +2343,10 @@
 	{
 		"storyid": 33,
 		"sections": [
-			{ "id": 1, "title": "33. The Story of the Farmer" },
+			{
+				"id": 1,
+				"title": "33. The Story of the Farmer"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-33-01.jpg",
@@ -2248,7 +2401,10 @@
 	{
 		"storyid": 34,
 		"sections": [
-			{ "id": 1, "title": "34. Jesus Teaches Other Stories" },
+			{
+				"id": 1,
+				"title": "34. Jesus Teaches Other Stories"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-34-01.jpg",
@@ -2308,7 +2464,10 @@
 	{
 		"storyid": 35,
 		"sections": [
-			{ "id": 1, "title": "35. The Story of the Compassionate Father" },
+			{
+				"id": 1,
+				"title": "35. The Story of the Compassionate Father"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-35-01.jpg",
@@ -2374,13 +2533,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-35-13.jpg",
 				"text": "“The father answered, ‘My son, you are always with me, and everything I have is yours. But it is right for us to celebrate because your brother was dead, but now is alive. He was lost, but now we have found him!’”"
 			},
-			{ "id": 15, "end": "A Bible story from: Luke 15" }
+			{
+				"id": 15,
+				"end": "A Bible story from: Luke 15"
+			}
 		]
 	},
 	{
 		"storyid": 36,
 		"sections": [
-			{ "id": 1, "title": "36. The Transfiguration" },
+			{
+				"id": 1,
+				"title": "36. The Transfiguration"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-36-01.jpg",
@@ -2425,7 +2590,10 @@
 	{
 		"storyid": 37,
 		"sections": [
-			{ "id": 1, "title": "37. Jesus Raises Lazarus from the Dead" },
+			{
+				"id": 1,
+				"title": "37. Jesus Raises Lazarus from the Dead"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-37-01.jpg",
@@ -2481,13 +2649,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-37-11.jpg",
 				"text": "But the religious leaders of the Jews envied Jesus, so they gathered together to plan how they could kill Jesus and Lazarus."
 			},
-			{ "id": 13, "end": "A Bible story from: John 11:1-46" }
+			{
+				"id": 13,
+				"end": "A Bible story from: John 11:1-46"
+			}
 		]
 	},
 	{
 		"storyid": 38,
 		"sections": [
-			{ "id": 1, "title": "38. Jesus Is Betrayed" },
+			{
+				"id": 1,
+				"title": "38. Jesus Is Betrayed"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-38-01.jpg",
@@ -2572,7 +2746,10 @@
 	{
 		"storyid": 39,
 		"sections": [
-			{ "id": 1, "title": "39. Jesus Is Put on Trial" },
+			{
+				"id": 1,
+				"title": "39. Jesus Is Put on Trial"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-39-01.jpg",
@@ -2642,7 +2819,10 @@
 	{
 		"storyid": 40,
 		"sections": [
-			{ "id": 1, "title": "40. Jesus Is Crucified" },
+			{
+				"id": 1,
+				"title": "40. Jesus Is Crucified"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-40-01.jpg",
@@ -2697,7 +2877,10 @@
 	{
 		"storyid": 41,
 		"sections": [
-			{ "id": 1, "title": "41. God Raises Jesus from the Dead" },
+			{
+				"id": 1,
+				"title": "41. God Raises Jesus from the Dead"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-41-01.jpg",
@@ -2747,7 +2930,10 @@
 	{
 		"storyid": 42,
 		"sections": [
-			{ "id": 1, "title": "42. Jesus Returns to Heaven" },
+			{
+				"id": 1,
+				"title": "42. Jesus Returns to Heaven"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-42-01.jpg",
@@ -2812,7 +2998,10 @@
 	{
 		"storyid": 43,
 		"sections": [
-			{ "id": 1, "title": "43. The Church Begins" },
+			{
+				"id": 1,
+				"title": "43. The Church Begins"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-43-01.jpg",
@@ -2878,13 +3067,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-43-13.jpg",
 				"text": "The believers continually listened as the apostles taught them. They often met together and ate together, and they often prayed with each other. They praised God together and they shared everything they had with each other. Everyone in the city thought well of them. Every day, more people became believers."
 			},
-			{ "id": 15, "end": "A Bible story from: Acts 1:12-14; 2" }
+			{
+				"id": 15,
+				"end": "A Bible story from: Acts 1:12-14; 2"
+			}
 		]
 	},
 	{
 		"storyid": 44,
 		"sections": [
-			{ "id": 1, "title": "44. Peter and John Heal a Beggar" },
+			{
+				"id": 1,
+				"title": "44. Peter and John Heal a Beggar"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-44-01.jpg",
@@ -2930,13 +3125,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-44-09.jpg",
 				"text": "The leaders were shocked that Peter and John spoke so boldly. They saw that these men were ordinary men who were uneducated. But then they remembered that these men had been with Jesus. So they said to them, “We will punish you very much if you give any more messages to the people about this man Jesus.” After saying many things like this, they let Peter and John go."
 			},
-			{ "id": 11, "end": "A Bible story from: Acts 3-4:22" }
+			{
+				"id": 11,
+				"end": "A Bible story from: Acts 3-4:22"
+			}
 		]
 	},
 	{
 		"storyid": 45,
 		"sections": [
-			{ "id": 1, "title": "45. Stephen and Philip" },
+			{
+				"id": 1,
+				"title": "45. Stephen and Philip"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-45-01.jpg",
@@ -3002,13 +3203,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-45-13.jpg",
 				"text": "The Ethiopian continued traveling toward his home. He was happy that he now knew Jesus."
 			},
-			{ "id": 15, "end": "A Bible story from: Acts 6-8" }
+			{
+				"id": 15,
+				"end": "A Bible story from: Acts 6-8"
+			}
 		]
 	},
 	{
 		"storyid": 46,
 		"sections": [
-			{ "id": 1, "title": "46. Saul Becomes a Follower of Jesus" },
+			{
+				"id": 1,
+				"title": "46. Saul Becomes a Follower of Jesus"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-46-01.jpg",
@@ -3068,7 +3275,10 @@
 	{
 		"storyid": 47,
 		"sections": [
-			{ "id": 1, "title": "47. Paul and Silas in Philippi" },
+			{
+				"id": 1,
+				"title": "47. Paul and Silas in Philippi"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-47-01.jpg",
@@ -3139,13 +3349,19 @@
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-47-14.jpg",
 				"text": "Paul and other leaders of the believers traveled to many cities. They preached and taught people the good news about Jesus. They also wrote many letters to encourage and teach the believers in the churches. Some of these letters became books of the Bible."
 			},
-			{ "id": 16, "end": "A Bible story from: Acts 16:11-40" }
+			{
+				"id": 16,
+				"end": "A Bible story from: Acts 16:11-40"
+			}
 		]
 	},
 	{
 		"storyid": 48,
 		"sections": [
-			{ "id": 1, "title": "48. Jesus Is the Promised Messiah" },
+			{
+				"id": 1,
+				"title": "48. Jesus Is the Promised Messiah"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-48-01.jpg",
@@ -3225,7 +3441,10 @@
 	{
 		"storyid": 49,
 		"sections": [
-			{ "id": 1, "title": "49. God’s New Covenant" },
+			{
+				"id": 1,
+				"title": "49. God’s New Covenant"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-49-01.jpg",
@@ -3325,7 +3544,10 @@
 	{
 		"storyid": 50,
 		"sections": [
-			{ "id": 1, "title": "50. Jesus Returns" },
+			{
+				"id": 1,
+				"title": "50. Jesus Returns"
+			},
 			{
 				"id": 2,
 				"url": "https://cdn.door43.org/obs/jpg/360px/obs-en-50-01.jpg",

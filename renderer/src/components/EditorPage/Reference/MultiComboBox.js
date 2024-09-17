@@ -81,14 +81,14 @@ function MultiComboBox({
                   <Combobox.Option
                     key={`${taData.folder}_${index + 0}}`}
                     className={({ active }) => `relative cursor-default w-4/5 lg:w-96 select-none py-1.5 px-4 ${active ? 'text-primary bg-gray-200' : 'text-gray-900'
-                      }`}
+                    }`}
                     value={taData}
                   >
                     {({ selected, active }) => (
                       <>
                         <span
                           className={`block truncate whitespace-normal text-left text-sm ml-2 ${selected ? 'font-medium' : 'font-normal'
-                            }`}
+                          }`}
                           // onMouseEnter={() => setHover(index)}
                           // onMouseLeave={() => unsetHover()}
                           title={taData.subTitle}
@@ -99,7 +99,7 @@ function MultiComboBox({
                         {selected ? (
                           <span
                             className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-teal-600'
-                              }`}
+                            }`}
                           >
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
                           </span>

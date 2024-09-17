@@ -68,20 +68,20 @@ export default function EditorSection({
   const removeSection = () => {
     setRemovingSection(row);
     switch (row) {
-      case '1':
-        setOpenResource1(true);
-        break;
-      case '2':
-        setOpenResource2(true);
-        break;
-      case '3':
-        setOpenResource3(true);
-        break;
-      case '4':
-        setOpenResource4(true);
-        break;
-      default:
-        break;
+    case '1':
+      setOpenResource1(true);
+      break;
+    case '2':
+      setOpenResource2(true);
+      break;
+    case '3':
+      setOpenResource3(true);
+      break;
+    case '4':
+      setOpenResource4(true);
+      break;
+    default:
+      break;
     }
     if (sectionNum > 0) {
       setSectionNum(sectionNum - 1);
@@ -151,20 +151,20 @@ export default function EditorSection({
     }
     setAddingSection(row);
     switch (row) {
-      case '1':
-        setOpenResource2(false);
-        break;
-      case '2':
-        setOpenResource1(false);
-        break;
-      case '3':
-        setOpenResource4(false);
-        break;
-      case '4':
-        setOpenResource3(false);
-        break;
-      default:
-        break;
+    case '1':
+      setOpenResource2(false);
+      break;
+    case '2':
+      setOpenResource1(false);
+      break;
+    case '3':
+      setOpenResource4(false);
+      break;
+    case '4':
+      setOpenResource3(false);
+      break;
+    default:
+      break;
     }
   };
 
@@ -220,20 +220,20 @@ export default function EditorSection({
                       <TaNavigation
                         languageId={languageId}
                         referenceResources={
-                        referenceResources
-                      }
+                          referenceResources
+                        }
                       />
-                  ) : (
-                    <TwNavigation
-                      languageId={languageId}
-                      referenceResources={
-                        referenceResources
-                      }
-                      setReferenceResources={
-                        setReferenceResources
-                      }
-                    />
-                  )}
+                    ) : (
+                      <TwNavigation
+                        languageId={languageId}
+                        referenceResources={
+                          referenceResources
+                        }
+                        setReferenceResources={
+                          setReferenceResources
+                        }
+                      />
+                    )}
 
                     <div
                       className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate"
@@ -242,32 +242,32 @@ export default function EditorSection({
                       {title}
                     </div>
                   </div>
-              ) : (
-                <>
-                  {scrollLock && title ? (
-                    <>
-                      {CustomNavigation}
-                      <div
-                        title={title}
-                        className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
-                      >
-                        {title}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex">
-                      <div className="py-2 uppercase tracking-wider text-xs font-semibold">
+                ) : (
+                  <>
+                    {scrollLock && title ? (
+                      <>
+                        {CustomNavigation}
                         <div
                           title={title}
-                          className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                          className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
                         >
                           {title}
                         </div>
+                      </>
+                    ) : (
+                      <div className="flex">
+                        <div className="py-2 uppercase tracking-wider text-xs font-semibold">
+                          <div
+                            title={title}
+                            className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                          >
+                            {title}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                )}
               <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible  pl-2 items-center">
 
                 <button
@@ -351,9 +351,9 @@ export default function EditorSection({
               fontFamily: 'sans-serif',
               fontSize: `${fontSize}rem`,
               direction: `${projectScriptureDir?.toUpperCase() === 'RTL'
-                  ? 'rtl'
-                  : 'ltr'
-                }`,
+                ? 'rtl'
+                : 'ltr'
+              }`,
             }}
             className="prose-sm p-1 text-xl h-full overflow-auto scrollbars-width"
           >

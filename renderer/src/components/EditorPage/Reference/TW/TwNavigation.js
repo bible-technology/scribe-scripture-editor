@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-    useState, useEffect,
+  useState, useEffect,
 } from 'react';
 import localForage from 'localforage';
 import { SnackBar } from '@/components/SnackBar';
@@ -49,46 +49,46 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
               }
             });
             if (tempOptions.length === optionsCount) {
-                  setoptions(tempOptions);
-                  setselectedOption(tempOptions[0]);
-              }
-            });
+              setoptions(tempOptions);
+              setselectedOption(tempOptions[0]);
+            }
+          });
         }
       });
     } else {
       // online
       fetch(`${environment.GITEA_API_ENDPOINT}/catalog/search?metadataType=rc&subject=Translation%20Words&lang=${languageId}&owner=${owner}`)
-      .then((res) => res.json())
-      .then((meta) => {
+        .then((res) => res.json())
+        .then((meta) => {
         // console.log('meta : ', { meta });
-        fetch(meta?.data[0]?.contents_url)
-        .then((response) => response.json())
-        .then((contents) => {
-          setOnlineMeta(meta);
-          const bibleDirUlr = contents.filter((content) => content?.name === 'bible' && content?.type === 'dir');
-          // console.log({ bibleDirUlr });
-          if (bibleDirUlr?.length > 0) {
-            const tempOptions = [];
-            fetch(bibleDirUlr[0]?.url)
-            .then((resp) => resp.json())
-            .then((twFolders) => {
-              if (twFolders?.length > 0) {
-                let folderCount = 0;
-                twFolders.forEach((folder) => {
-                  if (folder?.type === 'dir') {
-                    folderCount += 1;
-                    tempOptions.push(folder?.name);
-                  }
-                });
-                if (folderCount === tempOptions?.length) {
-                  setoptions(tempOptions);
-                  setselectedOption(tempOptions[0]);
-                }
+          fetch(meta?.data[0]?.contents_url)
+            .then((response) => response.json())
+            .then((contents) => {
+              setOnlineMeta(meta);
+              const bibleDirUlr = contents.filter((content) => content?.name === 'bible' && content?.type === 'dir');
+              // console.log({ bibleDirUlr });
+              if (bibleDirUlr?.length > 0) {
+                const tempOptions = [];
+                fetch(bibleDirUlr[0]?.url)
+                  .then((resp) => resp.json())
+                  .then((twFolders) => {
+                    if (twFolders?.length > 0) {
+                      let folderCount = 0;
+                      twFolders.forEach((folder) => {
+                        if (folder?.type === 'dir') {
+                          folderCount += 1;
+                          tempOptions.push(folder?.name);
+                        }
+                      });
+                      if (folderCount === tempOptions?.length) {
+                        setoptions(tempOptions);
+                        setselectedOption(tempOptions[0]);
+                      }
+                    }
+                  });
               }
             });
-          }
         });
-      });
     }
   }, [owner, languageId]);
 
@@ -97,7 +97,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
       const taArrayOffline = [];
       const { offlineResource } = referenceResources;
       localForage.getItem('userProfile').then(async (user) => {
-          const fs = window.require('fs');
+        const fs = window.require('fs');
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const currentUser = user?.username;
@@ -117,7 +117,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
                     title: content.replace('.md', ''),
                     subTitle: '',
                   },
-                  );
+                );
               }
             });
             if (taArrayOffline.length === contentsCount) {
@@ -126,26 +126,26 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
             }
           });
         }
-        });
+      });
     } else {
       // online data fetch
       const fetchData = async () => {
         await fetch(`${environment.GITEA_API_ENDPOINT}/repos/${owner}/${languageId}_tw/contents/bible/${selectedOption}?ref=${onlineMeta?.data[0]?.release?.tag_name}`)
-        .then((response) => response.json())
-        .then((twData) => {
-          twData && twData?.forEach((data) => {
-            data.folder = data?.path.replace('bible/', '');
-            data.title = data?.name.replace('.md', '');
-            data.subTitle = '';
+          .then((response) => response.json())
+          .then((twData) => {
+            twData && twData?.forEach((data) => {
+              data.folder = data?.path.replace('bible/', '');
+              data.title = data?.name.replace('.md', '');
+              data.subTitle = '';
+            });
+            setTwList(twData);
+            setSelected(twData[0]);
+          }).catch((err) => {
+            logger.debug('TwNavigation.js', 'reading offline helps ', err);
+            setOpenSnackBar(true);
+            setError('failure');
+            setSnackText('Can not load content');
           });
-          setTwList(twData);
-          setSelected(twData[0]);
-        }).catch((err) => {
-          logger.debug('TwNavigation.js', 'reading offline helps ', err);
-          setOpenSnackBar(true);
-          setError('failure');
-          setSnackText('Can not load content');
-        });
       };
 
       const getData = async () => {
@@ -177,7 +177,7 @@ export default function TwNavigation({ languageId, referenceResources, setRefere
               selectedOption={selectedOption}
               setselectedOption={setselectedOption}
             />
-            )}
+          )}
         </div>
       </div>
 

@@ -55,16 +55,16 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
 
         // copy contents from source to target
         await fse.copy(sourcePath, path.join(resourcePath, resourceName))
-        .then(async () => {
-          logger.debug('uploadLocalHelpsResources.js', 'resource copy from src to trg successfull');
-          // write metadata into the target dir
-          await fs.writeFileSync(path.join(resourcePath, resourceName, 'metadata.json'), JSON.stringify(metaData));
-          logger.debug('uploadLocalHelpsResources.js', 'write metadata is successfull and done uploading');
-          raiseSnackbarErroOrWarning({
-            type: 'success',
-            message: 'Resource uploaded successfully',
+          .then(async () => {
+            logger.debug('uploadLocalHelpsResources.js', 'resource copy from src to trg successfull');
+            // write metadata into the target dir
+            await fs.writeFileSync(path.join(resourcePath, resourceName, 'metadata.json'), JSON.stringify(metaData));
+            logger.debug('uploadLocalHelpsResources.js', 'write metadata is successfull and done uploading');
+            raiseSnackbarErroOrWarning({
+              type: 'success',
+              message: 'Resource uploaded successfully',
+            });
           });
-        });
       } else {
         // existing resource with same name
         logger.debug('uploadLocalHelpsResources.js', 'resource already exist');
