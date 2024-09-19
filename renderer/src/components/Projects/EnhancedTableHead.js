@@ -50,7 +50,7 @@ function EnhancedTableHead(props) {
       <tr>
         <th
           scope="col"
-            // colSpan="2"
+          // colSpan="2"
           className="px-4 py-3 text-left text-xs font-medium text-gray-400"
         >
           <StarIcon className="h-5 w-5" aria-hidden="true" />
@@ -159,13 +159,13 @@ function EnhancedTableHead(props) {
                   <span hidden>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>
-                  ) : null}
+                ) : null}
 
               </TableSortLabel>
 
             </div>
           </TableCell>
-          ))}
+        ))}
 
         <th
           scope="col"

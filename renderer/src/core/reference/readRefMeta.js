@@ -25,18 +25,18 @@ export const readRefMeta = async ({
       }
     });
   }
-    try {
-      const { data: files, error } = await sbStorageList(`${projectsDir}`);
-      if (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching files:', error);
-        return [];
-      }
-      const directoryNames = files.map((file) => file.name);
-      return directoryNames;
-    } catch (error) {
+  try {
+    const { data: files, error } = await sbStorageList(`${projectsDir}`);
+    if (error) {
       // eslint-disable-next-line no-console
-      console.error('Error reading reference metadata:', error);
+      console.error('Error fetching files:', error);
       return [];
     }
+    const directoryNames = files.map((file) => file.name);
+    return directoryNames;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error reading reference metadata:', error);
+    return [];
+  }
 };

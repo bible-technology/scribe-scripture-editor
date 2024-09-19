@@ -95,28 +95,28 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
       } else {
         // nothing selected default will be bible || obs
         switch (selectResource) {
-          case 'bible':
-            url += '&subject=Bible';
-            break;
-          case 'obs':
-            url += `&subject=${subjectTypeArray.obs[0].name}`;
-            break;
-          default:
-            break;
+        case 'bible':
+          url += '&subject=Bible';
+          break;
+        case 'obs':
+          url += `&subject=${subjectTypeArray.obs[0].name}`;
+          break;
+        default:
+          break;
         }
       }
     } else {
       // initial load
       switch (selectResource) {
-        case 'bible':
-          url = `${baseUrl}&lang=en&subject=${subjectTypeArray.bible[0].name}`;
-          // setSelectedTypeFilter([subjectTypeArray.bible[0]]);
-          break;
-        case 'obs':
-          url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
-          break;
-        default:
-          break;
+      case 'bible':
+        url = `${baseUrl}&lang=en&subject=${subjectTypeArray.bible[0].name}`;
+        // setSelectedTypeFilter([subjectTypeArray.bible[0]]);
+        break;
+      case 'obs':
+        url = `${baseUrl}&subject=${subjectTypeArray.obs[0].name}&lang=en`;
+        break;
+      default:
+        break;
       }
     }
     // pre-release items

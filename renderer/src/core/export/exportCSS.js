@@ -9,11 +9,11 @@ p {
 }
 
 .newspaper ul li ol li:before {
-    font-size: 62%	/* Adjusts verse number size. */
+    font-size: 62%  /* Adjusts verse number size. */
 }
 
  .chapter {
-    font-size: 180%;	/* Adjusts chapter number size. */
+    font-size: 180%;  /* Adjusts chapter number size. */
     }
 
 p {
@@ -30,7 +30,7 @@ body {
     -webkit-column-count: 1;
     -moz-column-count: 1;
     column-count: 1;
-}	/* Note: margin-right was previously set in additional .newspaper{} at the end of CSS.  It is now commented out as FF was increasing this recursively +2px to each page on print. */
+}  /* Note: margin-right was previously set in additional .newspaper{} at the end of CSS.  It is now commented out as FF was increasing this recursively +2px to each page on print. */
 
 .chapter {
     display: inline-block;
@@ -52,7 +52,7 @@ body {
 
 .newspaper ul li {
     list-style: none;
-  //float: left;	/* Chapter #'s out of place in FF on print if included. */
+  //float: left;  /* Chapter #'s out of place in FF on print if included. */
     display: block;
     width: 100%;
     margin-right: 0px;
@@ -68,7 +68,7 @@ body {
 
 .newspaper ul li ol li {
     display: table;
-    //float: left;	/* Chapter #'s out of place in FF on print if included */
+    //float: left;  /* Chapter #'s out of place in FF on print if included */
     width: 100%;
 /*********************************************************/
 /* Keeps numbers with verse at page-break on print.      */
@@ -114,7 +114,7 @@ body {
     margin-bottom: 8px;
     line-height: 20px;
     width: 80%
-}	/* Note: display is set in additional .firstLi{} at the end of CSS */
+}  /* Note: display is set in additional .firstLi{} at the end of CSS */
 
 /* Note: Did not review @media...{} settings. */
 
@@ -184,11 +184,11 @@ p {
 }
 
 .newspaper ul li ol li:before {
-    font-size: 62% 		/* Adjusts verse number size. */
+    font-size: 62%     /* Adjusts verse number size. */
 }
 
  .chapter {
-    font-size: 180%;	/* Adjusts chapter number size. */
+    font-size: 180%;  /* Adjusts chapter number size. */
     }
 
 p {
@@ -205,11 +205,11 @@ body {
     -webkit-column-count: 2;
     -moz-column-count: 2;
     column-count: 2;
-}	/* Note: margin-right was previously set in additional .newspaper{} at the end of CSS.  It is now commented out as FF was increasing this recursively +2px to each page on print. */
+}  /* Note: margin-right was previously set in additional .newspaper{} at the end of CSS.  It is now commented out as FF was increasing this recursively +2px to each page on print. */
 
 .chapter {
     display: inline-block;
-    margin-left: -6px;	/* Changed to match 1-col alignment with verse numbers on print. */
+    margin-left: -6px;  /* Changed to match 1-col alignment with verse numbers on print. */
     float: left;
     text-align: right;
     margin-right: 5px;
@@ -227,7 +227,7 @@ body {
 
 .newspaper ul li {
     list-style: none;
-//            float: left;		/* Remove for FF on print */
+//            float: left;    /* Remove for FF on print */
     display: block;
     width: 100%;
     margin-right: 0px;
@@ -243,10 +243,10 @@ body {
 
 .newspaper ul li ol li {
     display: table;
-//            float: left;		/* Remove for FF on print */
+//            float: left;    /* Remove for FF on print */
     width: 100%;
 /************************************************************************/
-/* Keeps numbers with verse at page/column-break on print.				*/
+/* Keeps numbers with verse at page/column-break on print.        */
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
     break-inside: avoid;
@@ -289,7 +289,7 @@ body {
     margin-bottom: 8px;
     line-height: 20px;
     width: 80%
-}	/* Note: display is set in additional .firstLi{} at the end of CSS */
+}  /* Note: display is set in additional .firstLi{} at the end of CSS */
 
 /* Note: Did not review @media...{} settings. */
 
@@ -359,15 +359,15 @@ export const css_1_col_rtl = `<style>
         font-size: 100%;
     }
 
-    /* Changed to the same approach as used in RTL.			*/
-    /*     .newspaper ul li ol li span {		*/
+    /* Changed to the same approach as used in RTL.      */
+    /*     .newspaper ul li ol li span {    */
     .newspaper ul li ol li:before {
-        font-size: 62%		/* Adjusts verse number size. */
+        font-size: 62%    /* Adjusts verse number size. */
     }
 
     .chapter {
-    //            font-size: 35px;	/* Reverted back to original % approach. */
-        font-size: 180%;	/* Adjusts chapter number size. */
+    //            font-size: 35px;  /* Reverted back to original % approach. */
+        font-size: 180%;  /* Adjusts chapter number size. */
     }
 
     p {
@@ -396,7 +396,7 @@ export const css_1_col_rtl = `<style>
 
     .list {
         margin: 0 auto;
-        padding-top: 0px;	/* Changed padding-top from 5px to 0px on RTL like on LTR. */
+        padding-top: 0px;  /* Changed padding-top from 5px to 0px on RTL like on LTR. */
     }
 
     .newspaper ul {
@@ -406,10 +406,10 @@ export const css_1_col_rtl = `<style>
 
     .newspaper ul li {
         list-style: none;
-    //            float: right;			/* Remove for FF on print */
+    //            float: right;      /* Remove for FF on print */
         display: block;
         width: 100%;
-        margin-left: 0px;	/* Changed right to left to mirror LTR, though may not really matter at 0px */
+        margin-left: 0px;  /* Changed right to left to mirror LTR, though may not really matter at 0px */
     }
 
     .newspaper ul li ol {
@@ -422,7 +422,7 @@ export const css_1_col_rtl = `<style>
 
     .newspaper ul li ol li {
         display: table;
-    //            float: right;	/* Remove for FF on print */
+    //            float: right;  /* Remove for FF on print */
         width: 100%;
     /*********************************************************/
     /* Keeps numbers with verse at page-break on print.      */
@@ -438,17 +438,17 @@ export const css_1_col_rtl = `<style>
         font-weight: bold;
         content: counter(item, decimal) "  ";
         counter-increment: item;
-    //            margin-top: 3px;			/* Remove to mirror LTR.*/
-    //            font-size:14px : 14px;	/* Remove to mirror LTR.*/
-        margin-left: 8px;			/* Add to mirror LTR.	*/
-        padding-right: 10px;		/* Add to mirror LTR.	*/
-        text-align: left;			/* Add to mirror LTR.	*/
+    //            margin-top: 3px;      /* Remove to mirror LTR.*/
+    //            font-size:14px : 14px;  /* Remove to mirror LTR.*/
+        margin-left: 8px;      /* Add to mirror LTR.  */
+        padding-right: 10px;    /* Add to mirror LTR.  */
+        text-align: left;      /* Add to mirror LTR.  */
     }
 
     .newspaper ul li ol li p {
         width: 90%;
         margin: 0 0 10px 0;
-        padding: 0 0 0 29px;	/* Changed to mirror LTR.	*/
+        padding: 0 0 0 29px;  /* Changed to mirror LTR.  */
         float: right;
         box-sizing: border-box;
         text-align: right;
@@ -471,9 +471,9 @@ export const css_1_col_rtl = `<style>
     /*      ul li span.chapter { float: right; display: inline-block !important; min-height: 11px; width: 6%;} */
 
     .firstLi {
-    margin-bottom: 8px;	/* Added to mirror LTR.		*/
-    //		float: right;		/* Remove for FF on print.	*/
-    display: table; 	/* Added.					*/
+    margin-bottom: 8px;  /* Added to mirror LTR.    */
+    //    float: right;    /* Remove for FF on print.  */
+    display: table;   /* Added.          */
     text-align: right;
     margin-right: 0px;
     width: 60%
@@ -493,15 +493,15 @@ export const css_2_col_rtl = `<style>
         font-size: 100%;
     }
 
-    /* Changed to the same approach as used in RTL.			*/
-    /*     .newspaper ul li ol li span {		*/
+    /* Changed to the same approach as used in RTL.      */
+    /*     .newspaper ul li ol li span {    */
     .newspaper ul li ol li:before {
-        font-size: 62%		/* Adjusts verse number size. */
+        font-size: 62%    /* Adjusts verse number size. */
     }
 
     .chapter {
-    //            font-size: 35px;	/* Reverted back to original % approach. */
-        font-size: 180%;	/* Adjusts chapter number size. */
+    //            font-size: 35px;  /* Reverted back to original % approach. */
+        font-size: 180%;  /* Adjusts chapter number size. */
     }
 
     p {
@@ -530,7 +530,7 @@ export const css_2_col_rtl = `<style>
 
     .list {
         margin: 0 auto;
-        padding-top: 0px;	/* Changed padding-top from 5px to 0px on RTL like on LTR. */
+        padding-top: 0px;  /* Changed padding-top from 5px to 0px on RTL like on LTR. */
     }
 
     .newspaper ul {
@@ -540,10 +540,10 @@ export const css_2_col_rtl = `<style>
 
     .newspaper ul li {
         list-style: none;
-    //            float: right;		/* Remove for FF on print */
+    //            float: right;    /* Remove for FF on print */
         display: block;
         width: 100%;
-        margin-left: 0px;	/* Changed right to left and 16px to 0px to mirror LTR. */
+        margin-left: 0px;  /* Changed right to left and 16px to 0px to mirror LTR. */
     }
 
     .newspaper ul li ol {
@@ -556,7 +556,7 @@ export const css_2_col_rtl = `<style>
 
     .newspaper ul li ol li {
         display: table;
-    //            float: right;	/* Remove for FF on print */
+    //            float: right;  /* Remove for FF on print */
         width: 100%;
     /***********************************************************/
     /* Keeps numbers with verse at page/column-break on print. */
@@ -572,17 +572,17 @@ export const css_2_col_rtl = `<style>
         font-weight: bold;
         content: counter(item, decimal) "  ";
         counter-increment: item;
-    //            margin-top: 3px;			/* Remove to mirror LTR.*/
-    //            font-size:14px : 14px;	/* Remove to mirror LTR.*/
-        margin-left: 8px;			/* Add to mirror LTR.	*/
-        padding-right: 10px;		/* Add to mirror LTR.	*/
-        text-align: left;			/* Add to mirror LTR.	*/
+    //            margin-top: 3px;      /* Remove to mirror LTR.*/
+    //            font-size:14px : 14px;  /* Remove to mirror LTR.*/
+        margin-left: 8px;      /* Add to mirror LTR.  */
+        padding-right: 10px;    /* Add to mirror LTR.  */
+        text-align: left;      /* Add to mirror LTR.  */
     }
 
     .newspaper ul li ol li p {
     width: 90%;
     margin: 0 0 10px 0;
-    padding: 0 0 0 29px;	/* Changed to mirror LTR.	*/
+    padding: 0 0 0 29px;  /* Changed to mirror LTR.  */
     float: right;
     box-sizing: border-box;
     text-align: right;
@@ -602,14 +602,14 @@ export const css_2_col_rtl = `<style>
     }
 
     /* Comment this out to match the LTR design. */
-    /*        ul li span.chapter { float: right; display: inline-block !important; min-height: 11px; width: 6%;}	*/
+    /*        ul li span.chapter { float: right; display: inline-block !important; min-height: 11px; width: 6%;}  */
 
     .firstLi {
-    margin-bottom: 8px;	/* Added to mirror LTR.		*/
-    //		    float: right;		/* Remove for FF on print.	*/
-    display: table; 		/* Added.					*/
+    margin-bottom: 8px;  /* Added to mirror LTR.    */
+    //        float: right;    /* Remove for FF on print.  */
+    display: table;     /* Added.          */
     text-align: right;
-    margin-right: 0px;	/* Changed 23px to 0px */
+    margin-right: 0px;  /* Changed 23px to 0px */
     width: 60%
     }
     .prespace {

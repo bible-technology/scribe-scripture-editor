@@ -179,16 +179,16 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   const loadLicence = () => {
     logger.debug('AdvancedSettingsDropdown.js', 'In loadLicence for loading the selected licence');
     switch (project.type.flavorType.flavor.name) {
-      case 'textTranslation':
-        setALicense(project.project?.textTranslation?.copyright, false);
-        break;
+    case 'textTranslation':
+      setALicense(project.project?.textTranslation?.copyright, false);
+      break;
 
-      case 'textStories':
-        setALicense(project.project?.textStories?.copyright, false);
-        break;
+    case 'textStories':
+      setALicense(project.project?.textStories?.copyright, false);
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
   const selectCanon = (val) => {
@@ -264,11 +264,11 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                 </div>
                 {projectType === 'Audio'
                   && (
-                  <span className="text-error">
-                    {'NOTE: '}
-                    {t('label-scope-note-audio')}
-                  </span>
-                )}
+                    <span className="text-error">
+                      {'NOTE: '}
+                      {t('label-scope-note-audio')}
+                    </span>
+                  )}
                 {/* <div className="relative"> */}
                 <div>
                   {/* <CustomList

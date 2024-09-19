@@ -35,10 +35,10 @@ const SelectFile = ({ openChapter, onChapterSelect }) => (
             >
               {i + 1}
             </div>
-        ))}
+          ))}
         </Disclosure.Panel>
       </Transition>
-  )}
+    )}
   </Disclosure>
 );
 

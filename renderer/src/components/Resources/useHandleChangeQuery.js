@@ -41,6 +41,6 @@ const handleChangeQuery = (query, resourceData, selectResource, setFilteredResou
       setfilteredBibleObsAudio(resourceArray);
     }
   }
-  };
+};
 
-  export default handleChangeQuery;
+export default handleChangeQuery;

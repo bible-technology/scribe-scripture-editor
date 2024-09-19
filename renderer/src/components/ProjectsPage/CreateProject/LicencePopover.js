@@ -172,9 +172,9 @@ export default function LicencePopover({ call }) {
                     preview={preview}
                     onEdit={callback}
                     inputFilters={[
-                    [/<br>/gi, '\n'],
-                    [/(<u>|<\/u>)/gi, '__'],
-                  ]}
+                      [/<br>/gi, '\n'],
+                      [/(<u>|<\/u>)/gi, '__'],
+                    ]}
                     outputFilters={[[/\n/gi, '<br>']]}
                   />
 

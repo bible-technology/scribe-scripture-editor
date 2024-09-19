@@ -173,29 +173,29 @@ const AudioWaveForm = (props) => {
 
   useEffect(() => {
     switch (call) {
-      case 'play':
-        handlePlay();
-        break;
-      case 'pause':
-        handlePause();
-        break;
-      case 'rewind':
-        handleRewind();
-        break;
-      case 'record':
-        handleStart();
-        break;
-      case 'recPause':
-        pauseRecording();
-        break;
-      case 'recResume':
-        resumeRecording();
-        break;
-      case 'recStop':
-        handleStop();
-        break;
-      default:
-        break;
+    case 'play':
+      handlePlay();
+      break;
+    case 'pause':
+      handlePause();
+      break;
+    case 'rewind':
+      handleRewind();
+      break;
+    case 'record':
+      handleStart();
+      break;
+    case 'recPause':
+      pauseRecording();
+      break;
+    case 'recResume':
+      resumeRecording();
+      break;
+    case 'recStop':
+      handleStop();
+      break;
+    default:
+      break;
     }
   }, [call]);
   return (
@@ -212,26 +212,26 @@ const AudioWaveForm = (props) => {
             </div>
             {show
             && (
-            <button type="button" onClick={handlePlayPause}>
-              {!playing
-              ? (
-                <PlayIcon
-                  // fill="currentColor"
-                  className={`w-7 h-7 ${btnColor}`}
-                  aria-hidden="true"
-                />
-              )
-              : (
-                <PauseIcon
-                  // fill="currentColor"
-                  className="w-7 h-7 text-error"
-                  aria-hidden="true"
-                />
-              )}
-            </button>
+              <button type="button" onClick={handlePlayPause}>
+                {!playing
+                  ? (
+                    <PlayIcon
+                      // fill="currentColor"
+                      className={`w-7 h-7 ${btnColor}`}
+                      aria-hidden="true"
+                    />
+                  )
+                  : (
+                    <PauseIcon
+                      // fill="currentColor"
+                      className="w-7 h-7 text-error"
+                      aria-hidden="true"
+                    />
+                  )}
+              </button>
             )}
           </>
-      )}
+        )}
     </div>
   );
 };

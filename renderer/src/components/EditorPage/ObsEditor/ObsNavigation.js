@@ -41,19 +41,19 @@ const ObsNavigation = (props) => {
               {navItems.map((item) => (
                 <button
                   className={`${
-                      item === value ? 'bg-blue-700' : ''
-                    } p-1 rounded-md hover:bg-blue-500`}
+                    item === value ? 'bg-blue-700' : ''
+                  } p-1 rounded-md hover:bg-blue-500`}
                   type="button"
                   key={item}
                   value={value}
                   onClick={() => {
-                      onChange(item);
-                      handleClose();
-                    }}
+                    onChange(item);
+                    handleClose();
+                  }}
                 >
                   {item}
                 </button>
-                ))}
+              ))}
             </div>
           </div>
         </div>

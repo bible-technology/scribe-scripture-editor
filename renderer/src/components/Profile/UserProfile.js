@@ -26,10 +26,10 @@ const UserProfile = () => {
     // if(!process.env.NEXT_PUBLIC_IS_ELECTRON){
     const { error } = await supabaseSignout();
     localforage.removeItem('userProfile');
-       // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     error ? console.log({ error }) : router.push('/login');
   };
-// }
+  // }
 
   // get username from custom hook
   const { username } = useGetUserName();

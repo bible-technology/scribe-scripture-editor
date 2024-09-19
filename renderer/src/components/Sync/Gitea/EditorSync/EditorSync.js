@@ -49,23 +49,23 @@ function EditorSync({ selectedProject }) {
   }
 
   const callFunction = async () => {
-      setIsOpen(false);
-      try {
-        if (selectedUsername?.username) {
-          logger.debug('EditorSync.js', 'Call handleEditorSync Function');
-          const status = await handleEditorSync(currentProjectMeta, selectedUsername, notifyStatus, addNotification, setPullPopup, setSyncProgress);
-          setSyncProgress((prev) => ({ ...prev, uploadDone: status }));
-          await notifyStatus('success', 'Sync SuccessFull');
-          await addNotification('Sync', 'Project Sync Successfull', 'success');
-          setLoadData(true);
-        } else {
-          throw new Error('Please select a valid account to sync..');
-        }
-      } catch (err) {
-        logger.debug('EditorSync.js', `Error Sync : ${err}`);
-        await notifyStatus('failure', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection');
-        await addNotification('Sync', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection', 'failure');
+    setIsOpen(false);
+    try {
+      if (selectedUsername?.username) {
+        logger.debug('EditorSync.js', 'Call handleEditorSync Function');
+        const status = await handleEditorSync(currentProjectMeta, selectedUsername, notifyStatus, addNotification, setPullPopup, setSyncProgress);
+        setSyncProgress((prev) => ({ ...prev, uploadDone: status }));
+        await notifyStatus('success', 'Sync SuccessFull');
+        await addNotification('Sync', 'Project Sync Successfull', 'success');
+        setLoadData(true);
+      } else {
+        throw new Error('Please select a valid account to sync..');
       }
+    } catch (err) {
+      logger.debug('EditorSync.js', `Error Sync : ${err}`);
+      await notifyStatus('failure', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection');
+      await addNotification('Sync', (window?.navigator?.onLine) ? (err?.message || err) : 'Check your internet connection', 'failure');
+    }
   };
 
   useEffect(() => {
@@ -79,59 +79,59 @@ function EditorSync({ selectedProject }) {
   useEffect(() => {
     if (isOpen) {
       (async () => {
-      if (!selectedUsername && selectedProject) {
-        logger.debug('EditorSync.js', 'In useEffect - get meta, SyncUsersList , lastSyncUser/{}');
-        await getProjectMeta(selectedProject);
-        const syncUsers = await getGiteaUsersList();
-        setUsersList(syncUsers);
-        if (currentProjectMeta) {
-          const syncObj = await getOrPutLastSyncInAgSettings('get', currentProjectMeta);
-          if (syncObj && syncUsers) {
-            const currentUserObj = syncUsers?.filter((element) => element.username === syncObj?.username);
-            setselectedUsername(currentUserObj[0]);
-          } else {
-            setselectedUsername(null);
+        if (!selectedUsername && selectedProject) {
+          logger.debug('EditorSync.js', 'In useEffect - get meta, SyncUsersList , lastSyncUser/{}');
+          await getProjectMeta(selectedProject);
+          const syncUsers = await getGiteaUsersList();
+          setUsersList(syncUsers);
+          if (currentProjectMeta) {
+            const syncObj = await getOrPutLastSyncInAgSettings('get', currentProjectMeta);
+            if (syncObj && syncUsers) {
+              const currentUserObj = syncUsers?.filter((element) => element.username === syncObj?.username);
+              setselectedUsername(currentUserObj[0]);
+            } else {
+              setselectedUsername(null);
+            }
           }
         }
-      }
-    })();
-  }
+      })();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   return (
     <>
       {syncProgress.syncStarted ? <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} />
-      : (
+        : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>
-          {syncProgress?.uploadDone ? (
-            <CloudCheckIcon
-              fill="green"
-              className="h-9 w-9 mx-1"
-              aria-hidden="true"
-            />
-          )
-          : (
-            <div
-              aria-label="add-panels"
-              title={t('label-save-to-cloud')}
-              type="div"
-              role="button"
-              // onClick={() => setOpenPdfPopup(true)}
-              className={`group ${menuStyles.btn}
-            transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
-              syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
-            >
-              <CloudUploadIcon
-                fill="currentColor"
-                className="h-6 w-6"
+          <>
+            {syncProgress?.uploadDone ? (
+              <CloudCheckIcon
+                fill="green"
+                className="h-9 w-9 mx-1"
                 aria-hidden="true"
               />
-            </div>
-          )}
-        </>
-      )}
+            )
+              : (
+                <div
+                  aria-label="add-panels"
+                  title={t('label-save-to-cloud')}
+                  type="div"
+                  role="button"
+                  // onClick={() => setOpenPdfPopup(true)}
+                  className={`group ${menuStyles.btn}
+            transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
+                  syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
+                >
+                  <CloudUploadIcon
+                    fill="currentColor"
+                    className="h-6 w-6"
+                    aria-hidden="true"
+                  />
+                </div>
+              )}
+          </>
+        )}
 
       <PopUpModal
         isOpen={isOpen}
@@ -142,10 +142,10 @@ function EditorSync({ selectedProject }) {
           <div className="flex flex-row justify-between mt-2 mb-4 items-center">
             { usersList?.length !== 0
             && (
-            <p className="text-sm pt-1 text-gray-900">
-              Select door43 username
-            </p>
-          )}
+              <p className="text-sm pt-1 text-gray-900">
+                Select door43 username
+              </p>
+            )}
             <div className="">
               <a className="bg-secondary text-white inline-block rounded-t py-2 px-4 text-sm uppercase" href="#a">
                 <Door43Logo className="inline mr-2 w-4" fill="#9bc300" />
@@ -167,81 +167,81 @@ function EditorSync({ selectedProject }) {
                   Projects
                 </p>
               </div>
-                ) : (
-                  <>
-                    { usersList?.length !== 0
+            ) : (
+              <>
+                { usersList?.length !== 0
                     && (
-                    <Listbox value={selectedUsername} onChange={setselectedUsername}>
-                      <div className="relative mt-1 ">
-                        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                          <span className="block truncate">{selectedUsername?.username ? selectedUsername?.username : 'choose..'}</span>
-                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronUpDownIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </span>
-                        </Listbox.Button>
-                        <Transition
-                          as={React.Fragment}
-                          leave="transition ease-in duration-100"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                        >
-                          <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {usersList?.map((user, userIdx) => (
-                              <Listbox.Option
-                            // eslint-disable-next-line react/no-array-index-key
-                                key={userIdx}
-                                className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                            active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`}
-                                value={user}
-                              >
-                                {({ selected }) => (
-                                  <>
-                                    <span
-                                      className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}
-                                    >
-                                      {user.username}
-                                    </span>
-                                    {selected ? (
-                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                      <Listbox value={selectedUsername} onChange={setselectedUsername}>
+                        <div className="relative mt-1 ">
+                          <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                            <span className="block truncate">{selectedUsername?.username ? selectedUsername?.username : 'choose..'}</span>
+                            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                              <ChevronUpDownIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          </Listbox.Button>
+                          <Transition
+                            as={React.Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {usersList?.map((user, userIdx) => (
+                                <Listbox.Option
+                                  // eslint-disable-next-line react/no-array-index-key
+                                  key={userIdx}
+                                  className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                    active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`}
+                                  value={user}
+                                >
+                                  {({ selected }) => (
+                                    <>
+                                      <span
+                                        className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}
+                                      >
+                                        {user.username}
                                       </span>
-                            ) : null}
-                                  </>
-                        )}
-                              </Listbox.Option>
-                    ))}
-                          </Listbox.Options>
-                        </Transition>
-                      </div>
-                    </Listbox>
-                )}
-
-                    { usersList?.length !== 0
-                    ? (
-                      <div className="mt-3">
-                        <p className="px-2 text-sm">
-                          Unable to find username? Please login
-                          {' '}
-                          <b className="text-primary underline">
-                            <Link href="/sync">sync</Link>
-                          </b>
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="mt-3">
-                        <p className="px-2 text-sm">
-                          Sorry, No account found for you..
-                          <p>
-                            please login to start syncing project
-                          </p>
-                        </p>
-                      </div>
+                                      {selected ? (
+                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                        </span>
+                                      ) : null}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
+                      </Listbox>
                     )}
-                  </>
-                )}
+
+                { usersList?.length !== 0
+                  ? (
+                    <div className="mt-3">
+                      <p className="px-2 text-sm">
+                        Unable to find username? Please login
+                        {' '}
+                        <b className="text-primary underline">
+                          <Link href="/sync">sync</Link>
+                        </b>
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <p className="px-2 text-sm">
+                        Sorry, No account found for you..
+                        <p>
+                          please login to start syncing project
+                        </p>
+                      </p>
+                    </div>
+                  )}
+              </>
+            )}
           </div>
           {/* ------------------------------------ */}
           <div className="mt-4 ">

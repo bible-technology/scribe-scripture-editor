@@ -65,13 +65,13 @@ export const checkDuplicate = async (metadata, currentUser, resource) => {
   } else if (projectName && resource === 'projects') {
     // if not get id but project name - to avoid duplicate import
     await checkImportDuplicate(folderList, projectName, metadata, projectDir, fs)
-    .then((upstreamValue) => {
-      if (upstreamValue.incomingKey && Object.keys(upstreamValue.upstreamObj).includes(upstreamValue.incomingKey)
+      .then((upstreamValue) => {
+        if (upstreamValue.incomingKey && Object.keys(upstreamValue.upstreamObj).includes(upstreamValue.incomingKey)
       && (Object.keys(upstreamValue.upstreamObj[upstreamValue.incomingKey][0])).includes(upstreamValue.incomingId)) {
-        logger.debug('importBurrito.js', 'Project already exists.');
-        existingProject = true;
-      }
-    });
+          logger.debug('importBurrito.js', 'Project already exists.');
+          existingProject = true;
+        }
+      });
   }
   if (existingProject === true) {
     logger.debug('importBurrito.js', 'Project already exists.');
@@ -179,7 +179,7 @@ const checkTheProjectIsAudioChapterLevel = async (metadata) => {
     const pathArr = path.split('/');
     const fileName = pathArr[pathArr.length - 1];
     return chapterPathRegex.test(fileName);
-});
+  });
   return chapterLevel;
 };
 
@@ -262,13 +262,13 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         // if Id is undefined - trying to get id, if project already exist
         const folderList = await fs.readdirSync(projectDir);
         await checkImportDuplicate(folderList, projectName, metadata, projectDir, fs)
-        .then((upstreamValue) => {
+          .then((upstreamValue) => {
           // The ID of the existing project, using it for over wriitting it.
-          if (upstreamValue.primaryId) {
-            id = upstreamValue.primaryId;
-            foundId = true;
-          }
-        });
+            if (upstreamValue.primaryId) {
+              id = upstreamValue.primaryId;
+              foundId = true;
+            }
+          });
       }
 
       if (!id || foundId === true) {
@@ -288,8 +288,8 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         }
         metadata.identification.primary.scribe = {
           [id]: {
-          revision: '0',
-          timestamp: moment().format(),
+            revision: '0',
+            timestamp: moment().format(),
           },
         };
       }
@@ -316,24 +316,24 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       // audioDir = projectPath + audio for audio || projectPath for other
       // copy from source (filePath) to target (audioDir) and update meta
       await fse.copy(filePath, audioDir)
-      .then(() => {
+        .then(() => {
         // check rename add default
-        Object.entries(metadata.ingredients).forEach(([key, value]) => {
-          logger.debug('importBurrito.js', 'Fetching keys from ingredients.');
-          const content = fs.readFileSync(path.join(audioDir, key), 'utf8');
-          const checksum = md5(content);
-          if (checksum !== value.checksum.md5) {
-            logger.debug('importBurrito.js', 'Updating the checksum.');
-          }
-          const stats = fs.statSync(path.join(filePath, key));
-          if (stats.size !== value.size) {
-            logger.debug('importBurrito.js', 'Updating the size.');
-          }
-          metadata.ingredients[key].checksum.md5 = checksum;
-          metadata.ingredients[key].size = stats.size;
-        });
-      })
-      .catch((err) => logger.error('importBurrito.js', `${err}`));
+          Object.entries(metadata.ingredients).forEach(([key, value]) => {
+            logger.debug('importBurrito.js', 'Fetching keys from ingredients.');
+            const content = fs.readFileSync(path.join(audioDir, key), 'utf8');
+            const checksum = md5(content);
+            if (checksum !== value.checksum.md5) {
+              logger.debug('importBurrito.js', 'Updating the checksum.');
+            }
+            const stats = fs.statSync(path.join(filePath, key));
+            if (stats.size !== value.size) {
+              logger.debug('importBurrito.js', 'Updating the size.');
+            }
+            metadata.ingredients[key].checksum.md5 = checksum;
+            metadata.ingredients[key].size = stats.size;
+          });
+        })
+        .catch((err) => logger.error('importBurrito.js', `${err}`));
       metadata.meta.generator.softwareName = 'Scribe';
       metadata.meta.generator.userName = currentUser;
       if (!fs.existsSync(path.join(filePath, dirName, environment.PROJECT_SETTING_FILE))) {

@@ -325,7 +325,7 @@ export async function pullProject(fs, dir, remoteBranch, token, localBranch) {
       status.data = {
         type: 'conflict',
         data: e?.data?.filepaths,
-    };
+      };
       return status;
     });
     logger.debug('utils.js', 'Pulled the project');

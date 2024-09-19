@@ -16,49 +16,49 @@ const FlexSpacedDiv = styled.div`
 `;
 
 const TranslationhelpsNav = ({
-    items,
-    classes,
-    itemIndex,
-    setItemIndex,
-  }) => {
-      const onPrevItem = () => {
-        const newIndex = itemIndex - 1;
-        if (newIndex < 0) {
-          setItemIndex(items.length - 1);
-        } else {
-          setItemIndex(newIndex);
-        }
-      };
+  items,
+  classes,
+  itemIndex,
+  setItemIndex,
+}) => {
+  const onPrevItem = () => {
+    const newIndex = itemIndex - 1;
+    if (newIndex < 0) {
+      setItemIndex(items.length - 1);
+    } else {
+      setItemIndex(newIndex);
+    }
+  };
 
-      const onNextItem = () => {
-        const newIndex = itemIndex + 1;
-        if (newIndex > items.length - 1) {
-          setItemIndex(0);
-        } else {
-          setItemIndex(newIndex);
-        }
-      };
+  const onNextItem = () => {
+    const newIndex = itemIndex + 1;
+    if (newIndex > items.length - 1) {
+      setItemIndex(0);
+    } else {
+      setItemIndex(newIndex);
+    }
+  };
 
   return (
     <>
       {items && (
-      <FlexSpacedDiv>
-        <ChevronLeftIcon
-          className={classes.chevronIcon}
-          onClick={onPrevItem}
-        />
-        <FlexDiv>
-          {`${itemIndex + 1} of ${items.length}`}
-        </FlexDiv>
-        <ChevronRightIcon
-          className={classes.chevronIcon}
-          onClick={onNextItem}
-        />
-      </FlexSpacedDiv>
-        )}
+        <FlexSpacedDiv>
+          <ChevronLeftIcon
+            className={classes.chevronIcon}
+            onClick={onPrevItem}
+          />
+          <FlexDiv>
+            {`${itemIndex + 1} of ${items.length}`}
+          </FlexDiv>
+          <ChevronRightIcon
+            className={classes.chevronIcon}
+            onClick={onNextItem}
+          />
+        </FlexSpacedDiv>
+      )}
     </>
-    );
-  };
+  );
+};
 
 export default TranslationhelpsNav;
 

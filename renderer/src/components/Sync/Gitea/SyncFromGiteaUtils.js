@@ -7,8 +7,8 @@ import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 import {
   checkGitStatus,
- checkoutJsonFiles,
- checkoutToBranch, cloneTheProject, createBranch, createGitIgnore, getRepoOwner, pullProject, setUserConfig,
+  checkoutJsonFiles,
+  checkoutToBranch, cloneTheProject, createBranch, createGitIgnore, getRepoOwner, pullProject, setUserConfig,
 } from '../Isomorphic/utils';
 import { createRemoteBranch } from '../Isomorphic/api';
 
@@ -146,8 +146,8 @@ export const updateSettingsFiles = async (fs, sbDataObject1, projectDir, project
     }
     //   burrito update
     if (updateBurrito) {
-        logger.debug('importBurrito.js', 'Updating the burrito version');
-        sbDataObject = await updateVersion(sbDataObject);
+      logger.debug('importBurrito.js', 'Updating the burrito version');
+      sbDataObject = await updateVersion(sbDataObject);
     }
     await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, 'metadata.json'), JSON.stringify(sbDataObject));
     logger.debug('importBurrito.js', 'Creating the metadata.json Burrito file.');
@@ -204,32 +204,32 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
     // getting unique project ID
     if (sbDataObject?.identification?.primary?.scribe !== undefined) {
       Object.entries(sbDataObject.identification?.primary?.scribe).forEach(([key]) => {
-      logger.debug('SyncFromGiteaUtils.js', 'Fetching the key from burrito.');
-      id = key;
+        logger.debug('SyncFromGiteaUtils.js', 'Fetching the key from burrito.');
+        id = key;
       });
     } else if (sbDataObject?.identification?.upstream?.scribe !== undefined) {
       Object.entries(sbDataObject.identification.primary).forEach(([key]) => {
-      logger.debug('SyncFromGiteaUtils.js', 'Swapping data between primary and upstream');
-      const identity = sbDataObject.identification.primary[key];
-      sbDataObject.identification.upstream[key] = [identity];
-      delete sbDataObject.identification.primary[key];
-      delete sbDataObject.idAuthorities;
+        logger.debug('SyncFromGiteaUtils.js', 'Swapping data between primary and upstream');
+        const identity = sbDataObject.identification.primary[key];
+        sbDataObject.identification.upstream[key] = [identity];
+        delete sbDataObject.identification.primary[key];
+        delete sbDataObject.idAuthorities;
       });
       sbDataObject.idAuthorities = {
-      scribe: {
+        scribe: {
           id: 'http://www.scribe.bible',
           name: {
-          en: 'Scribe application',
+            en: 'Scribe application',
           },
-      },
+        },
       };
       const list = sbDataObject.identification?.upstream?.scribe;
       logger.debug('SyncFromGiteaUtils.js', 'Fetching the latest key from list.');
       // eslint-disable-next-line max-len
       const latest = list.reduce((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? a : b));
       Object.entries(latest).forEach(([key]) => {
-      logger.debug('SyncFromGiteaUtils.js', 'Fetching the latest key from burrito.');
-      id = key;
+        logger.debug('SyncFromGiteaUtils.js', 'Fetching the latest key from burrito.');
+        id = key;
       });
       if (list.length > 1) {
         (sbDataObject.identification.upstream.scribe).forEach((e, i) => {
@@ -245,13 +245,13 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       // if Id is undefined - trying to get id, if project already exist
       const folderList = await fs.readdirSync(projectDir);
       await checkImportDuplicate(folderList, projectName, sbDataObject, projectDir, fs)
-      .then((upstreamValue) => {
+        .then((upstreamValue) => {
         // The ID of the existing project, using it for over wriitting it.
-        if (upstreamValue.primaryId) {
-          id = upstreamValue.primaryId;
-          foundId = true;
-        }
-      });
+          if (upstreamValue.primaryId) {
+            id = upstreamValue.primaryId;
+            foundId = true;
+          }
+        });
     }
 
     // generating unique key if not exist or get
@@ -272,8 +272,8 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
       }
       sbDataObject.identification.primary.scribe = {
         [id]: {
-        revision: '0',
-        timestamp: moment().format(),
+          revision: '0',
+          timestamp: moment().format(),
         },
       };
     }
@@ -351,15 +351,15 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
         }));
         return false;
       }
-        action.setSyncProgress((prev) => ({
-          ...prev,
-          completedFiles: prev.completedFiles + 1,
-        }));
-        const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
-        const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
-        if (!pullStatus?.status) {
-          // show warning again to overwrite
-          const conflictHtmlText = `<div class="flex flex-col justify-center">
+      action.setSyncProgress((prev) => ({
+        ...prev,
+        completedFiles: prev.completedFiles + 1,
+      }));
+      const checkoutFIles = await checkoutJsonFiles(fs, gitprojectDir, checkoutBranch);
+      const pullStatus = checkoutFIles && await pullProject(fs, gitprojectDir, userBranch, auth.token.sha1, checkoutBranch);
+      if (!pullStatus?.status) {
+        // show warning again to overwrite
+        const conflictHtmlText = `<div class="flex flex-col justify-center">
                 <div class="">
                   You have conflict in <span class="text-red-600">${pullStatus?.data?.data ? pullStatus?.data?.data : 'some files'}.</span>
                   Connect your administrator to resolve this conflcit.
@@ -371,15 +371,15 @@ export const importServerProject = async (updateBurrito, repo, sbData, auth, use
                   which will overwrite all unsynced changes with the data of Door43.
                 </div>
                 </div>`;
-              setPullPopup({
-                title: 'Conflict',
-                status: true,
-                confirmMessage: conflictHtmlText,
-                buttonName: 'over-write',
-                // type: 'overwrite',
-              });
-        }
-        fetchedRepo = pullStatus?.status;
+        setPullPopup({
+          title: 'Conflict',
+          status: true,
+          confirmMessage: conflictHtmlText,
+          buttonName: 'over-write',
+          // type: 'overwrite',
+        });
+      }
+      fetchedRepo = pullStatus?.status;
     } else {
       const checkoutStatus = await cloneAndSetProject(fs, gitprojectDir, repo, userBranch, auth, checkoutBranch);
       fetchedRepo = checkoutStatus;

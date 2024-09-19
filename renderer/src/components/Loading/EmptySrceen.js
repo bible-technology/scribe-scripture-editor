@@ -59,7 +59,7 @@ export default function EmptyScreen({ call = '' }) {
                 </a>
               </>
 
-              )
+            )
               : <h2 className="mt-8 uppercase text-xl lg:text-5xl font-black">{t('label-no-content-available')}</h2>}
           </div>
         </section>

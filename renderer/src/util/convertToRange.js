@@ -1,6 +1,6 @@
 export const convertToRange = (array) => {
   const ranges = []; let rangeStart; let
-  rangeEnd;
+    rangeEnd;
   for (let i = 0; i < array.length; i += 1) {
     rangeStart = array[i];
     rangeEnd = rangeStart;

@@ -33,18 +33,18 @@ const initialTab = { tabIndex: 4 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'search':
-      return { tabIndex: 0 };
-    case 'xref':
-      return { tabIndex: 1 };
-    case 'footnotes':
-      return { tabIndex: 2 };
-    case 'comments':
-      return { tabIndex: 3 };
-    case 'bookmarks':
-      return { tabIndex: 4 };
-    default:
-      throw new Error();
+  case 'search':
+    return { tabIndex: 0 };
+  case 'xref':
+    return { tabIndex: 1 };
+  case 'footnotes':
+    return { tabIndex: 2 };
+  case 'comments':
+    return { tabIndex: 3 };
+  case 'bookmarks':
+    return { tabIndex: 4 };
+  default:
+    throw new Error();
   }
 }
 

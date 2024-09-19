@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import PropTypes from 'prop-types';
 
 export default function PopUpModal({
- isOpen, closeFunc, head, children,
+  isOpen, closeFunc, head, children,
 }) {
   return (
     <Transition appear show={isOpen} as={Fragment}>

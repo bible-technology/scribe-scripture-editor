@@ -37,9 +37,9 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
   const callFunction = async () => {
     let updateBurrito = null;
     if (model.buttonName === t('btn-update')) {
-        updateBurrito = true;
+      updateBurrito = true;
     } else {
-        updateBurrito = false;
+      updateBurrito = false;
     }
     // backing up project
     const backupProjectName = await backupLocalProject(selectedGiteaProject, { setBackupName, setStepCount });
@@ -56,7 +56,7 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
         selectedGiteaProject.localUsername,
         ignoreFilesPaths,
         t,
-        );
+      );
       setStepCount((prevStepCount) => prevStepCount + 1);
       setMergeDone(true);
     }
@@ -66,11 +66,11 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
 
   const checkBurritoVersion = async () => {
     if (burrito?.meta?.version !== selectedGiteaProject?.metaDataSB?.meta?.version) {
-          setModel({
-          openModel: true,
-          title: t('modal-title-update-burrito'),
-          confirmMessage: t('dynamic-msg-update-burrito-version', { version1: selectedGiteaProject?.metaDataSB?.meta?.version, version2: burrito?.meta?.version }),
-          buttonName: t('btn-update'),
+      setModel({
+        openModel: true,
+        title: t('modal-title-update-burrito'),
+        confirmMessage: t('dynamic-msg-update-burrito-version', { version1: selectedGiteaProject?.metaDataSB?.meta?.version, version2: burrito?.meta?.version }),
+        buttonName: t('btn-update'),
       });
     } else {
       await callFunction();
@@ -99,9 +99,9 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
         await addNotification('Sync', `Merge failed : ${err?.message || err}`, 'failure');
         setMergeDone(false);
       } finally {
-          await deleteCreatedMergeBranch(selectedGiteaProject, { setModel, setStepCount }, environment.GITEA_API_ENDPOINT);
-          setOpenSnackBar(true);
-          setStepCount(0);
+        await deleteCreatedMergeBranch(selectedGiteaProject, { setModel, setStepCount }, environment.GITEA_API_ENDPOINT);
+        setOpenSnackBar(true);
+        setStepCount(0);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -176,41 +176,41 @@ export default function ProjectMergePop({ selectedGiteaProject, setSelectedGitea
         <div className="mt-4 px-4 py-3 flex justify-between">
           <div className="">
             {(mergeDone || mergeError || mergeConflict) && (
-            <button
-              aria-label="merge-ok"
-              type="button"
-              className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
-              onClick={modalClose}
-            >
-              {t('btn-ok')}
-            </button>
-                      )}
+              <button
+                aria-label="merge-ok"
+                type="button"
+                className={`w-20 h-10 ${!((mergeDone || mergeError || mergeConflict)) ? 'bg-gray-500' : 'bg-success'} leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase`}
+                onClick={modalClose}
+              >
+                {t('btn-ok')}
+              </button>
+            )}
             {(!mergeDone && !mergeConflict && counter > 0) && (
-            <div className="ml-1">
-              <LoadingSpinner />
-            </div>
-                      )}
+              <div className="ml-1">
+                <LoadingSpinner />
+              </div>
+            )}
           </div>
 
           {(mergeDone && counter > 0) && (
-          <>
-            <div className="">
-              <button
-                aria-label="merge-undo"
-                type="button"
-                className="w-20 h-10  bg-red-700 leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                onClick={handleClickUndo}
-              >
-                Undo
-              </button>
-            </div>
-            <div className="text-2xl font-medium box-border items-center justify-center">
-              <div className="animate-ping">
-                {counter}
+            <>
+              <div className="">
+                <button
+                  aria-label="merge-undo"
+                  type="button"
+                  className="w-20 h-10  bg-red-700 leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
+                  onClick={handleClickUndo}
+                >
+                  Undo
+                </button>
               </div>
-            </div>
-          </>
-                      )}
+              <div className="text-2xl font-medium box-border items-center justify-center">
+                <div className="animate-ping">
+                  {counter}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
       </PopUpModal>

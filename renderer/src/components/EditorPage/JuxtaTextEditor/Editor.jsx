@@ -2,7 +2,6 @@
 /* eslint-disable arrow-body-style */
 import React, { useContext, useEffect, useState } from 'react';
 import md5 from 'md5';
-
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
@@ -12,14 +11,13 @@ import EmptyScreen from '@/components/Loading/EmptySrceen';
 import SentenceContextProvider from '@/components/context/SentenceContext';
 import { useReadJuxtaFile } from '@/components/EditorPage/JuxtaTextEditor/hooks/useReadJuxtaFile';
 import { normalizeString } from '@/components/Projects/utils/updateJsonJuxta';
+import { readUserSettings } from '@/core/projects/userSettings';
 import { functionMapping } from './utils/insertFunctionMap';
-
 // import RecursiveBlock from './RecursiveBlock';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import { useAutoSaveIndication } from '@/hooks2/useAutoSaveIndication';
 import { onIntersection } from './utils/IntersectionObserver';
 import JuxtalinearEditor from '@/components/EditorPage/JuxtalinearEditor'; // eslint-disable-line
-import { readUserSettings } from '@/core/projects/userSettings';
 
 export default function Editor(props) {
   const {
@@ -75,10 +73,8 @@ export default function Editor(props) {
 
   const [fileName, setFileName] = useState('');
   const [helpAldearyOpenedOnce, setHelpAldearyOpenedOnce] = useState(false);
-  const [sentences, setGlobalTotalSentences] = useState(
-    new Array(),
-  );
-  const [originText, setOriginText] = useState([])
+  const [sentences, setGlobalTotalSentences] = useState([]);
+  const [originText, setOriginText] = useState([]);
   const [itemArrays, setItemArrays] = useState([]);
   const [curIndex, setCurIndex] = useState(0);
 
@@ -120,7 +116,7 @@ export default function Editor(props) {
   useEffect(() => {
     async function getUserSettings() {
       if (!userSettingsJson) {
-        let tmpUsrSet = await readUserSettings();
+        const tmpUsrSet = await readUserSettings();
         setHelpAldearyOpenedOnce(true);
         setUserSettingsJson(tmpUsrSet);
       }
@@ -293,7 +289,6 @@ export default function Editor(props) {
               itemArrays,
               curIndex,
               jsonFileContent,
-              userSettingsJson,
               loadingSentencesInProgress,
               setLoadingSentencesInProgress,
               helpAldearyOpenedOnce,

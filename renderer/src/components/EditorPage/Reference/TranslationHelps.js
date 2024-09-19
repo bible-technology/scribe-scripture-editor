@@ -7,25 +7,25 @@ import ObsTnCard from './OBS/ObsTn';
 import ObsTwlCard from './OBS/ObsTwlCard';
 
 const TranslationHelps = ({
- selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font, fontSize,
+  selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font, fontSize,
 }) => {
   const {
     state: {
-        branch,
-        taNavigationPath,
+      branch,
+      taNavigationPath,
     },
   } = useContext(ReferenceContext);
   const { t } = useTranslation();
 
   const translationQuestionsPath = `${(chapter < 10) ? (`0${ chapter}`)
-  : chapter}/${(verse < 10) ? (`0${ verse}`) : verse}.md`;
+    : chapter}/${(verse < 10) ? (`0${ verse}`) : verse}.md`;
 
   const filePathTa = `${taNavigationPath?.path}/01.md`;
 
   return (
     <>
       {(() => {
-      switch (selectedResource) {
+        switch (selectedResource) {
         case 'tn':
           return (
             <TranslationHelpsCard
@@ -45,20 +45,20 @@ const TranslationHelps = ({
           );
         // case 'twl':
           // return (
-            // <TranslationHelpsCard
-              // title={t('label-resource-twl')}
-              // verse={verse}
-              // chapter={chapter}
-              // projectId={bookId || 'mat'}
-              // branch="master"
-              // viewMode="list"
-              // languageId="en"
-              // resourceId="twl"
-              // owner="test_org"
-              // server="https://git.door43.org"
-              // font={font}
-              // fontSize={fontSize}
-            /// >
+          // <TranslationHelpsCard
+          // title={t('label-resource-twl')}
+          // verse={verse}
+          // chapter={chapter}
+          // projectId={bookId || 'mat'}
+          // branch="master"
+          // viewMode="list"
+          // languageId="en"
+          // resourceId="twl"
+          // owner="test_org"
+          // server="https://git.door43.org"
+          // font={font}
+          // fontSize={fontSize}
+          /// >
           // );
         case 'twlm':
           return (
@@ -98,21 +98,21 @@ const TranslationHelps = ({
           );
         // case 'tw':
           // return (
-            // <TranslationHelpsCard
-              // title={t('label-resource-twlm')}
-              // chapter={chapter}
-              // branch={branch}
-              // projectId="bible"
-              // languageId={languageId}
-              // resourceId="tw"
-              // owner={owner}
-              // filePath={offlineResource?.twSelected?.folder}
-              // server="https://git.door43.org"
-              // offlineResource={offlineResource}
-              // font={font}
-              // fontSize={fontSize}
-            /// >
-            // );
+          // <TranslationHelpsCard
+          // title={t('label-resource-twlm')}
+          // chapter={chapter}
+          // branch={branch}
+          // projectId="bible"
+          // languageId={languageId}
+          // resourceId="tw"
+          // owner={owner}
+          // filePath={offlineResource?.twSelected?.folder}
+          // server="https://git.door43.org"
+          // offlineResource={offlineResource}
+          // font={font}
+          // fontSize={fontSize}
+          /// >
+          // );
         case 'ta':
           return (
             <TranslationHelpsCard
@@ -130,7 +130,7 @@ const TranslationHelps = ({
               font={font}
               fontSize={fontSize}
             />
-            );
+          );
         case 'bible':
           return (
             <TranslationHelpsCard
@@ -191,7 +191,7 @@ const TranslationHelps = ({
               fontSize={fontSize}
             />
           );
-          case 'obs-twlm':
+        case 'obs-twlm':
           return (
             <ObsTwlCard
               title={t('label-resource-obs-twl')}
@@ -210,8 +210,8 @@ const TranslationHelps = ({
           );
         default:
           return null;
-      }
-    })()}
+        }
+      })()}
       {/* <div>
         <TranslationHelpsCard
           title="Translation Words List"
@@ -252,7 +252,7 @@ const TranslationHelps = ({
         />
       </div> */}
     </>
-      );
+  );
 };
 
 export default TranslationHelps;

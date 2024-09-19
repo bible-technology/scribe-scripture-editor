@@ -7,16 +7,16 @@ const config: PlaywrightTestConfig = {
 	globalTimeout: 60 * 60 * 1000,
 	// Run all tests in parallel.
 	fullyParallel: false,
-	retries: 3,	
+	retries: 3,
 	use: {
 		// trace: 'on-first-retry', // record traces on first retry of each test
-		 
+
 		// Run browser in headless mode.
 		// headless: false,
-	  },
+	},
 	expect: {
 		timeout: 60 * 1000,
-	},  
+	},
 };
 
 export default config;

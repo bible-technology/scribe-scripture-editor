@@ -20,7 +20,6 @@ export default function SelectBook({
 }) {
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
-  console.log()
   function toggleNT() {
     setOpenNT(true);
     setOpenOT(false);
@@ -35,10 +34,8 @@ export default function SelectBook({
     setOpenOT(true);
   }
 
-
   function bookSelect(e, bookId) {
     e.preventDefault();
-    console.log("selected :", bookId);
     onChangeBook(bookId, selectedBooks[0]);
     if (multiSelectBook === false) { selectBook(); }
   }
@@ -52,7 +49,7 @@ export default function SelectBook({
       const _selectedBooks = [...selectedBooks];
       const selectedIndex = _selectedBooks.indexOf(bookID.toUpperCase());
       if (!(scope === 'Other' && existingScope?.length > 0 && existingScope.includes(bookID.toUpperCase()))) {
-      _selectedBooks.splice(selectedIndex, 1);
+        _selectedBooks.splice(selectedIndex, 1);
       }
       setSelectedBooks(_selectedBooks);
     }
@@ -107,8 +104,8 @@ export default function SelectBook({
                           ? (multiSelectBook
                             ? selectMultipleBooks(e, book.key, book.name)
                             : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
-                            ? selectMultipleBooks(e, book.key, book.name)
-                            : bookSelect(e, book.key, book.name)))}
+                          ? selectMultipleBooks(e, book.key, book.name)
+                          : bookSelect(e, book.key, book.name)))}
                         className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
                       >
                         {book.name}
@@ -146,8 +143,8 @@ export default function SelectBook({
                       aria-label={`nt-${book.name}`}
                       onClick={(e) => (
                         multiSelectBook
-                        ? selectMultipleBooks(e, book.key, book.name)
-                        : bookSelect(e, book.key, book.name))}
+                          ? selectMultipleBooks(e, book.key, book.name)
+                          : bookSelect(e, book.key, book.name))}
                       className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}
                     >
                       {book.name}

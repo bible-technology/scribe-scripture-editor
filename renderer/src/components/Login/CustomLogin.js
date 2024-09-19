@@ -6,7 +6,7 @@ import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import 'tailwindcss/tailwind.css';
 
 const CustomLogin = ({
- ui, error, login, userlist, validation, buttonname,
+  ui, error, login, userlist, validation, buttonname,
 }) => {
   const [values, setValue] = React.useState({});
   const handleChange = (prop) => (event) => {
@@ -37,14 +37,14 @@ const CustomLogin = ({
             onChange={handleChange(values)}
             getOptionSelected={(option, value) => option.username === value.username}
             onInputChange={(event, newInputValue) => {
-                    setValue({ ...values, username: newInputValue });
-                  }}
+              setValue({ ...values, username: newInputValue });
+            }}
             renderInput={(params) => (
               <TextField className="outline-none" {...params} label={v.label} error={error.username} />
-                  )}
+            )}
           />
         </div>
-        ))}
+      ))}
       {ui?.textfield?.count?.map((c) => (
         <div key={c.name}>
           <div key={c.label}>
@@ -75,13 +75,13 @@ const CustomLogin = ({
           </div>
           <Typography color="error">{validation?.[c.name]}</Typography>
         </div>
-        ))}
+      ))}
       <div className="text-xs mb-8 max-w-md appearance-none py-2 px-3">
         {ui?.viewForgot && (
-        <a className="text-xs text-error float-right" href="/signup">
-          Forgot Password?
-        </a>
-          )}
+          <a className="text-xs text-error float-right" href="/signup">
+            Forgot Password?
+          </a>
+        )}
       </div>
       <input
         data-testid="login-button"

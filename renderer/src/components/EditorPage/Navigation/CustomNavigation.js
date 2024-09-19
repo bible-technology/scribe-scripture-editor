@@ -37,7 +37,7 @@ export default function CustomNavigation({
     initialBook,
     initialChapter,
     initialVerse,
-});
+  });
   const [openBook, setOpenBook] = useState(false);
   const [openVerse, setOpenVerse] = useState(false);
   const cancelButtonRef = useRef(null);
@@ -80,27 +80,27 @@ export default function CustomNavigation({
     if (multiSelectVerse) { setSelectedVerses([]); }
   }
 
-//   useEffect(() => {
-//     if (isElectron()) {
-//       localforage.getItem('refBibleBurrito')
-//         .then((refs) => {
-//           refs.forEach((ref) => {
-//             if (languageId !== null) {
-//             if (ref.languages[0].tag === languageId) {
-//               const supportedBooks = [];
-//               Object.entries((ref.type.flavorType.currentScope)).forEach(
-//                   ([key]) => {
-//                     supportedBooks.push(key.toLowerCase());
-//                   },
-//                   );
-//                   applyBooksFilter(supportedBooks);
-//                 }
-//               }
-//           });
-//       });
-//   }
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [languageId]);
+  //   useEffect(() => {
+  //     if (isElectron()) {
+  //       localforage.getItem('refBibleBurrito')
+  //         .then((refs) => {
+  //           refs.forEach((ref) => {
+  //             if (languageId !== null) {
+  //             if (ref.languages[0].tag === languageId) {
+  //               const supportedBooks = [];
+  //               Object.entries((ref.type.flavorType.currentScope)).forEach(
+  //                   ([key]) => {
+  //                     supportedBooks.push(key.toLowerCase());
+  //                   },
+  //                   );
+  //                   applyBooksFilter(supportedBooks);
+  //                 }
+  //               }
+  //           });
+  //       });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   }, [languageId]);
 
   return (
     <>

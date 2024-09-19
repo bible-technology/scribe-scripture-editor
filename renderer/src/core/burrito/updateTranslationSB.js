@@ -33,65 +33,65 @@ export const updateVersion = (metadata) => {
 
 const updateTranslationSB = async (username, project, updateBurrito) => new Promise((resolve) => {
   logger.debug('updateTranslationSB.js', 'In updateTranslationSB for updating the burrito.');
-    const newpath = localStorage.getItem('userPath');
-    const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.name}_${project.id[0]}`);
-    const fs = window.require('fs');
-    const sb = fs.readFileSync(path.join(folder, 'metadata.json'));
-    let metadata = JSON.parse(sb);
-    // eslint-disable-next-line no-unused-vars
-    let updated = false;
-    metadata.meta.generator.softwareVersion = packageInfo.version;
-    if (!metadata.meta.dateCreated) {
-      metadata.meta.dateCreated = moment().format();
+  const newpath = localStorage.getItem('userPath');
+  const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.name}_${project.id[0]}`);
+  const fs = window.require('fs');
+  const sb = fs.readFileSync(path.join(folder, 'metadata.json'));
+  let metadata = JSON.parse(sb);
+  // eslint-disable-next-line no-unused-vars
+  let updated = false;
+  metadata.meta.generator.softwareVersion = packageInfo.version;
+  if (!metadata.meta.dateCreated) {
+    metadata.meta.dateCreated = moment().format();
+  }
+  logger.debug('updateTranslationSB.js', 'Updating the details of ingredients.');
+  // eslint-disable-next-line no-unused-vars
+  Object.entries(metadata.ingredients).forEach(([key, value]) => {
+    const usfm = fs.readFileSync(path.join(folder, key), 'utf8');
+    const checksum = md5(usfm);
+    const stats = fs.statSync(path.join(folder, key));
+    if (metadata.ingredients[key].checksum.md5 === checksum) {
+      updated = true;
     }
-    logger.debug('updateTranslationSB.js', 'Updating the details of ingredients.');
-    // eslint-disable-next-line no-unused-vars
-    Object.entries(metadata.ingredients).forEach(([key, value]) => {
-      const usfm = fs.readFileSync(path.join(folder, key), 'utf8');
-      const checksum = md5(usfm);
-      const stats = fs.statSync(path.join(folder, key));
-      if (metadata.ingredients[key].checksum.md5 === checksum) {
-        updated = true;
-      }
-      metadata.ingredients[key].checksum.md5 = checksum;
-      metadata.ingredients[key].size = stats.size;
-    });
-    if (updated === true) {
-      Object.entries(metadata.identification?.primary?.scribe).forEach(([key]) => {
-        logger.debug('importBurrito.js', 'Fetching the key from burrito.');
-        const rev = metadata.identification.primary.scribe[key].revision;
-        metadata.identification.primary.scribe[key].revision = (parseInt(rev, 10) + 1).toString();
-      });
-    }
-    if (metadata.copyright.fullStatementPlain) {
-      const newLicence1 = (metadata.copyright.fullStatementPlain.en).replace(/\\n/gm, '\n');
-      const newLicence = newLicence1?.replace(/\\r/gm, '\r');
-      const licence = newLicence?.replace(/'/gm, '"');
-      fs.writeFileSync(path.join(folder, 'ingredients', 'license.md'), licence);
-      const copyrightStats = fs.statSync(path.join(folder, 'ingredients', 'license.md'));
-      metadata.copyright.licenses = [{ ingredient: 'license.md' }];
-      metadata.ingredients[path.join('ingredients', 'license.md')] = {
-        checksum: {
-          md5: md5(metadata.copyright.fullStatementPlain.en),
-        },
-        mimeType: 'text/md',
-        size: copyrightStats.size,
-        role: 'x-licence',
-      };
-      delete metadata.copyright.fullStatementPlain;
-      delete metadata.copyright.publicDomain;
-    }
-    if (updateBurrito) {
-      logger.debug('updateTranslationSB.js', 'Updating the burrito version');
-      metadata = updateVersion(metadata);
-    }
-    try {
-      logger.debug('updateTranslationSB.js', 'Updating the metadata.json (burrito) file.');
-      fs.writeFileSync(path.join(folder, 'metadata.json'), JSON.stringify(metadata));
-      resolve(true);
-    } catch {
-      logger.error('updateTranslationSB.js', 'Failed to update the metadata.json (burrito) file.');
-      resolve(false);
-    }
+    metadata.ingredients[key].checksum.md5 = checksum;
+    metadata.ingredients[key].size = stats.size;
   });
+  if (updated === true) {
+    Object.entries(metadata.identification?.primary?.scribe).forEach(([key]) => {
+      logger.debug('importBurrito.js', 'Fetching the key from burrito.');
+      const rev = metadata.identification.primary.scribe[key].revision;
+      metadata.identification.primary.scribe[key].revision = (parseInt(rev, 10) + 1).toString();
+    });
+  }
+  if (metadata.copyright.fullStatementPlain) {
+    const newLicence1 = (metadata.copyright.fullStatementPlain.en).replace(/\\n/gm, '\n');
+    const newLicence = newLicence1?.replace(/\\r/gm, '\r');
+    const licence = newLicence?.replace(/'/gm, '"');
+    fs.writeFileSync(path.join(folder, 'ingredients', 'license.md'), licence);
+    const copyrightStats = fs.statSync(path.join(folder, 'ingredients', 'license.md'));
+    metadata.copyright.licenses = [{ ingredient: 'license.md' }];
+    metadata.ingredients[path.join('ingredients', 'license.md')] = {
+      checksum: {
+        md5: md5(metadata.copyright.fullStatementPlain.en),
+      },
+      mimeType: 'text/md',
+      size: copyrightStats.size,
+      role: 'x-licence',
+    };
+    delete metadata.copyright.fullStatementPlain;
+    delete metadata.copyright.publicDomain;
+  }
+  if (updateBurrito) {
+    logger.debug('updateTranslationSB.js', 'Updating the burrito version');
+    metadata = updateVersion(metadata);
+  }
+  try {
+    logger.debug('updateTranslationSB.js', 'Updating the metadata.json (burrito) file.');
+    fs.writeFileSync(path.join(folder, 'metadata.json'), JSON.stringify(metadata));
+    resolve(true);
+  } catch {
+    logger.error('updateTranslationSB.js', 'Failed to update the metadata.json (burrito) file.');
+    resolve(false);
+  }
+});
 export default updateTranslationSB;

@@ -28,118 +28,118 @@ export async function readCustomResources({ resourceId, translationData }) {
         const agSettingsJson = JSON.parse(data);
         // const owner = [];
         switch (resourceId) {
-          case 'tn':
-            (agSettingsJson?.resources.door43.translationNotes)?.forEach(async (url) => {
-              const language = url.url?.split('/');
-              let resourceExists = false;
-              translationData.forEach((val) => {
-                // console.log(val.name, url.url?.split('/')[3]);
-                if (val.name === url.name) {
-                  if (val.language === (language[language.length - 1]?.split('_')[0])) {
-                    resourceExists = true;
-                  }
+        case 'tn':
+          (agSettingsJson?.resources.door43.translationNotes)?.forEach(async (url) => {
+            const language = url.url?.split('/');
+            let resourceExists = false;
+            translationData.forEach((val) => {
+              // console.log(val.name, url.url?.split('/')[3]);
+              if (val.name === url.name) {
+                if (val.language === (language[language.length - 1]?.split('_')[0])) {
+                  resourceExists = true;
                 }
-              });
-              if (resourceExists === false && url) {
-                translationData.push({
-                  name: url.name,
-                  language: (language[language.length - 1]?.split('_')[0]),
-                  owner: url.url?.split('/')[3],
-                });
               }
             });
-            break;
-          case 'tq':
+            if (resourceExists === false && url) {
+              translationData.push({
+                name: url.name,
+                language: (language[language.length - 1]?.split('_')[0]),
+                owner: url.url?.split('/')[3],
+              });
+            }
+          });
+          break;
+        case 'tq':
 
-            (agSettingsJson?.resources.door43.translationQuestions)?.forEach(async (url) => {
-              const language = url.url?.split('/');
-              let resourceExists = false;
-              translationData.forEach((val) => {
-                if (val.name === url.name) {
-                  if (val.language === (language[language.length - 1]?.split('_')[0])) {
-                    resourceExists = true;
-                  }
+          (agSettingsJson?.resources.door43.translationQuestions)?.forEach(async (url) => {
+            const language = url.url?.split('/');
+            let resourceExists = false;
+            translationData.forEach((val) => {
+              if (val.name === url.name) {
+                if (val.language === (language[language.length - 1]?.split('_')[0])) {
+                  resourceExists = true;
                 }
-              });
-              if (resourceExists === false && url) {
-                translationData.push({
-                  name: url.name,
-                  language: (language[language.length - 1]?.split('_')[0]),
-                  owner: url.url?.split('/')[3],
-                });
               }
             });
-            break;
-          case 'twlm':
-            (agSettingsJson?.resources.door43.translationWords)?.forEach(async (url) => {
-              const language = url.url?.split('/');
-              let resourceExists = false;
-              translationData.forEach((val) => {
-                if (val.name === url.name) {
-                  if (val.language === (language[language.length - 1]?.split('_')[0])) {
-                    resourceExists = true;
-                  }
-                }
+            if (resourceExists === false && url) {
+              translationData.push({
+                name: url.name,
+                language: (language[language.length - 1]?.split('_')[0]),
+                owner: url.url?.split('/')[3],
               });
-              if (resourceExists === false && url) {
-                translationData.push({
-                  name: url.name,
-                  language: (language[language.length - 1]?.split('_')[0]),
-                  owner: url.url?.split('/')[3],
-                });
-              }
-            });
-            break;
-          case 'ta':
-            if (!(agSettingsJson?.resources.door43.translationAcademys)) {
-              agSettingsJson.resources.door43.translationAcademys = [];
             }
-            (agSettingsJson?.resources.door43.translationAcademys)?.forEach(async (url) => {
-              const language = url.url?.split('/');
-              let resourceExists = false;
-              translationData.forEach((val) => {
-                // console.log(val.name, url.url?.split('/')[3]);
-                if (val.name === url.name) {
-                  if (val.language === (language[language.length - 1]?.split('_')[0])) {
-                    resourceExists = true;
-                  }
+          });
+          break;
+        case 'twlm':
+          (agSettingsJson?.resources.door43.translationWords)?.forEach(async (url) => {
+            const language = url.url?.split('/');
+            let resourceExists = false;
+            translationData.forEach((val) => {
+              if (val.name === url.name) {
+                if (val.language === (language[language.length - 1]?.split('_')[0])) {
+                  resourceExists = true;
                 }
-              });
-              if (resourceExists === false && url) {
-                translationData.push({
-                  name: url.name,
-                  language: (language[language.length - 1]?.split('_')[0]),
-                  owner: url.url?.split('/')[3],
-                });
               }
             });
-            break;
-          case 'obs-tn':
-            if (!(agSettingsJson?.resources.door43.obsTranslationNotes)) {
-              agSettingsJson.resources.door43.obsTranslationNotes = [];
+            if (resourceExists === false && url) {
+              translationData.push({
+                name: url.name,
+                language: (language[language.length - 1]?.split('_')[0]),
+                owner: url.url?.split('/')[3],
+              });
             }
-            (agSettingsJson?.resources.door43.obsTranslationNotes)?.forEach(async (url) => {
-              const language = url.url?.split('/');
-              let resourceExists = false;
-              translationData.forEach((val) => {
-                // console.log(val.name, url.url?.split('/')[3]);
-                if (val.name === url.name) {
-                  if (val.language === (language[language.length - 1]?.split('_')[0])) {
-                    resourceExists = true;
-                  }
+          });
+          break;
+        case 'ta':
+          if (!(agSettingsJson?.resources.door43.translationAcademys)) {
+            agSettingsJson.resources.door43.translationAcademys = [];
+          }
+          (agSettingsJson?.resources.door43.translationAcademys)?.forEach(async (url) => {
+            const language = url.url?.split('/');
+            let resourceExists = false;
+            translationData.forEach((val) => {
+              // console.log(val.name, url.url?.split('/')[3]);
+              if (val.name === url.name) {
+                if (val.language === (language[language.length - 1]?.split('_')[0])) {
+                  resourceExists = true;
                 }
-              });
-              if (resourceExists === false && url) {
-                translationData.push({
-                  name: url.name,
-                  language: (language[language.length - 1]?.split('_')[0]),
-                  owner: url.url?.split('/')[3],
-                });
               }
             });
-            break;
-          default:
-            return null;
+            if (resourceExists === false && url) {
+              translationData.push({
+                name: url.name,
+                language: (language[language.length - 1]?.split('_')[0]),
+                owner: url.url?.split('/')[3],
+              });
+            }
+          });
+          break;
+        case 'obs-tn':
+          if (!(agSettingsJson?.resources.door43.obsTranslationNotes)) {
+            agSettingsJson.resources.door43.obsTranslationNotes = [];
+          }
+          (agSettingsJson?.resources.door43.obsTranslationNotes)?.forEach(async (url) => {
+            const language = url.url?.split('/');
+            let resourceExists = false;
+            translationData.forEach((val) => {
+              // console.log(val.name, url.url?.split('/')[3]);
+              if (val.name === url.name) {
+                if (val.language === (language[language.length - 1]?.split('_')[0])) {
+                  resourceExists = true;
+                }
+              }
+            });
+            if (resourceExists === false && url) {
+              translationData.push({
+                name: url.name,
+                language: (language[language.length - 1]?.split('_')[0]),
+                owner: url.url?.split('/')[3],
+              });
+            }
+          });
+          break;
+        default:
+          return null;
         }
         resolve(translationData);
       });

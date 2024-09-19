@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import {
- Box, CircularProgress, Typography,
+  Box, CircularProgress, Typography,
 } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -29,23 +29,23 @@ function CircularProgressWithLabel({ value, circleSize }) {
         />
         <Box
           sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <Typography
             variant="body2"
             color="text.secondary"
           >
             {`${Math.round(
-          value,
-        )}%`}
+              value,
+            )}%`}
           </Typography>
         </Box>
       </Box>

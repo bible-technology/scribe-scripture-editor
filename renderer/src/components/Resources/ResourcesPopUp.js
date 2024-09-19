@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, {
- useRef, useState, useContext, Fragment,
+  useRef, useState, useContext, Fragment,
 } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import ResourcesSidebar from '@/components/Resources/ResourcesSideBar';
