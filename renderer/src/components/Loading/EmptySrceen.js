@@ -50,7 +50,7 @@ export default function EmptyScreen({ call = '' }) {
                   {' '}
                 </h2>
                 <a
-                  href="https://scribe-editor-docs.netlify.app/scribe/Manage%20Project/Create%20a%20Project/p2-1-new%20project"
+                  href="https://scribe-editor-docs.netlify.app/scribe/Manage%20Project/Projects/p3-7-scope%20management"
                   target="_blank"
                   className="mt-8 text-3xl text-blue-500 underline"
                   rel="noreferrer"
