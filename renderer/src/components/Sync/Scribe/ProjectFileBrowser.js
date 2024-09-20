@@ -1,5 +1,5 @@
 import {
- useContext, useEffect,
+  useContext, useEffect,
 } from 'react';
 import GridRow from '../GridRow';
 import { SyncContext } from '../../context/SyncContext';
@@ -7,8 +7,8 @@ import { SyncContext } from '../../context/SyncContext';
 export default function ProjectFileBrowser() {
   const {
     states: {
-    agProjects, agProjectsMeta, selectedAgProject, syncProgress,
-  },
+      agProjects, agProjectsMeta, selectedAgProject, syncProgress,
+    },
     action: {
       fetchProjects, setSelectedAgProject,
     },
@@ -58,5 +58,5 @@ export default function ProjectFileBrowser() {
         </div>
       )
     ))
-);
+  );
 }

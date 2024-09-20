@@ -21,11 +21,11 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     }));
     const readMetaData = await readContent(
       {
-      config: auth.config,
-      owner: repo.owner.username,
-      repo: repo.name,
-      ref: branch,
-      filepath: 'metadata.json',
+        config: auth.config,
+        owner: repo.owner.username,
+        repo: repo.name,
+        ref: branch,
+        filepath: 'metadata.json',
       },
     );
     const fetchMetaData = await fetch(readMetaData.download_url);
@@ -79,10 +79,10 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
     await addNotification('Sync', `${err?.message || err} unable to find Burrito File`, 'failure');
   } finally {
     setSyncProgress({
-        syncStarted: false,
-        syncType: null,
-        totalFiles: 0,
-        completedFiles: 0,
+      syncStarted: false,
+      syncType: null,
+      totalFiles: 0,
+      completedFiles: 0,
     });
   }
 }

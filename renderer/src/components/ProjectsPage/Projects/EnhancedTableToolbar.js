@@ -13,7 +13,7 @@ const EnhancedTableToolbar = ({ title }) => (
       {title}
     </Box>
   </Typography>
-  );
+);
 
 EnhancedTableToolbar.propTypes = {
   title: PropTypes.string.isRequired,

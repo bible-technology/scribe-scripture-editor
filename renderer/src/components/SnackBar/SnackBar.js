@@ -1,5 +1,5 @@
 import React, {
- Fragment, useEffect, useState,
+  Fragment, useEffect, useState,
 } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Popover, Transition } from '@headlessui/react';
@@ -30,14 +30,14 @@ const SnackBar = ({
 
     const intervalId = setInterval(() => {
       setTimeLeft(timeLeft - 1);
-        if (timeLeft <= 1) {
-            closeSnackBar();
-        }
+      if (timeLeft <= 1) {
+        closeSnackBar();
+      }
     }, 1000);
 
     return () => clearInterval(intervalId);
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [timeLeft]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
 
   useEffect(() => {
     if (openSnackBar) {

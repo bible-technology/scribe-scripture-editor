@@ -134,7 +134,7 @@ export const useReadReferenceUsfmFile = ({
       }
     }
     readLocalFile();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, refName, scrollLock]);
   return { usfmData, bookAvailable };
 };

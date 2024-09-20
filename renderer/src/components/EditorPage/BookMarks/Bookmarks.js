@@ -38,15 +38,15 @@ export default function Bookmarks() {
     setIsLoading(true);
     timeout(2000).then(async () => {
       bookList.forEach(async (book) => {
-          if (bookname === book.name) {
-            if (bookName !== book.key) {
-                onChangeBook(book.key);
-            }
-            if (chapter !== chapterNum) {
-              onChangeChapter(chapterNum);
-            }
-            onChangeVerse('1');
+        if (bookname === book.name) {
+          if (bookName !== book.key) {
+            onChangeBook(book.key);
           }
+          if (chapter !== chapterNum) {
+            onChangeChapter(chapterNum);
+          }
+          onChangeVerse('1');
+        }
       });
     }).finally(() => setIsLoading(false));
   };

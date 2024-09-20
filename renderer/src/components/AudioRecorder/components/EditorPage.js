@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const EditorPage = ({
- content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont,
+  content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont,
 }) => {
   const path = require('path');
   const [waveUpdate, setWaveUpdate] = useState(false);
@@ -14,8 +14,8 @@ const EditorPage = ({
     // if (selectedverse === value) {
     //   setSelectedVerse(0);
     // } else {
-      // setSelectedVerse(value);
-      onChangeVerse(value.toString(), verse);
+    // setSelectedVerse(value);
+    onChangeVerse(value.toString(), verse);
   };
   // To update the wave after deleting the default take (Re-render this component)
   useEffect(() => {
@@ -29,34 +29,34 @@ const EditorPage = ({
       {content?.map((mainChunk) => (
         mainChunk.verseNumber
           && (
-          <div
-            role="button"
-            aria-label="select verse"
-            tabIndex={0}
-            key={mainChunk.verseNumber}
-            className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
+            <div
+              role="button"
+              aria-label="select verse"
+              tabIndex={0}
+              key={mainChunk.verseNumber}
+              className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
             border border-gray-200 rounded-lg
             hover:bg-light cursor-pointe`}
-            onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
-          >
-            <div
-              className="flex w-full group-hover:text-white"
+              onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
             >
-              <div className="flex items-center justify-center bg-primary w-10 h-8 mr-2 rounded-full text-sm text-white">
-                {mainChunk.verseNumber}
-              </div>
-              <p
-                className="m-0 w-full text-sm text-gray-500"
-                style={{
-                  fontFamily: selectedFont || 'sans-serif',
-                  fontSize: `${fontSize}rem`,
-                  lineHeight: (fontSize > 1.3) ? 1.5 : '',
-                }}
+              <div
+                className="flex w-full group-hover:text-white"
               >
-                {mainChunk.verseText || ''}
-              </p>
+                <div className="flex items-center justify-center bg-primary w-10 h-8 mr-2 rounded-full text-sm text-white">
+                  {mainChunk.verseNumber}
+                </div>
+                <p
+                  className="m-0 w-full text-sm text-gray-500"
+                  style={{
+                    fontFamily: selectedFont || 'sans-serif',
+                    fontSize: `${fontSize}rem`,
+                    lineHeight: (fontSize > 1.3) ? 1.5 : '',
+                  }}
+                >
+                  {mainChunk.verseText || ''}
+                </p>
 
-              {/* <button
+                {/* <button
               type="button"
               className="flex items-center justify-center bg-dark hover:bg-primary w-24 h-8 ml-2 px-3 rounded-full text-white"
             >
@@ -73,20 +73,20 @@ const EditorPage = ({
                 aria-hidden="true"
               />
             </button> */}
-            </div>
+              </div>
 
-            <div className="mt-2">
-              <AudioWaveform
-                height={24}
-                waveColor="#333333"
-                // url={mainChunk[mainChunk.default]} for development
-                url={location && (mainChunk[mainChunk.default] ? path.join(location, mainChunk[mainChunk.default]) : '')}
-                show={false}
-                interaction={false}
-                setAudioPlayBack={() => {}}
-              />
-            </div>
-            {/* <div className="bg-white mt-5 border border-gray-200 rounded-lg relative">
+              <div className="mt-2">
+                <AudioWaveform
+                  height={24}
+                  waveColor="#333333"
+                  // url={mainChunk[mainChunk.default]} for development
+                  url={location && (mainChunk[mainChunk.default] ? path.join(location, mainChunk[mainChunk.default]) : '')}
+                  show={false}
+                  interaction={false}
+                  setAudioPlayBack={() => {}}
+                />
+              </div>
+              {/* <div className="bg-white mt-5 border border-gray-200 rounded-lg relative">
             <span
               className="p-1 px-2 h-6 align-baseline bg-primary text-white inline-block
                             text-xxs uppercase tracking-wider rounded-br-lg absolute top-0 left-0"
@@ -98,7 +98,7 @@ const EditorPage = ({
               {mainChunk.text}
             </textarea>
           </div> */}
-            {/* <div className="flex mt-2">
+              {/* <div className="flex mt-2">
             <button
               type="button"
               className="flex p-1 px-2 items-center justify-center bg-error  rounded-lg text-xxs font-bold text-white uppercase tracking-wider"
@@ -120,7 +120,7 @@ const EditorPage = ({
               Accept
             </button>
           </div> */}
-          </div>
+            </div>
           )
       ))}
       <div className="grid grid-cols-1 lg:grid-cols-2">

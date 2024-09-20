@@ -287,32 +287,32 @@ const SectionPlaceholder2 = ({ editor }) => {
     <>
       {((openResource1 === true && openResource2 === true)
         ? (layout >= 1 && layout <= 2) : (layout > 1 && layout <= 2)) && (
-          <>
-            {(openResource3 === false || openResource4 === false) && (
-              <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} overflow-x-auto`}>
-                <EditorSection
-                  row="3"
-                  hideAddition={hideAddition}
-                  sectionNum={sectionNum}
-                  setSectionNum={setSectionNum}
-                  title={referenceColumnTwoData1.refName}
-                  selectedResource={referenceColumnTwoData1.selectedResource}
-                  languageId={referenceColumnTwoData1.languageId}
-                  referenceResources={referenceColumnTwoData1}
-                  setReferenceResources={setReferenceColumnTwoData1}
-                  setLoadResource={setLoadResource3}
-                  loadResource={loadResource3}
-                  openResource={openResource3}
-                  setOpenResource3={setOpenResource3}
-                  setOpenResource4={setOpenResource4}
-                  CustomNavigation={(referenceColumnTwoData1.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation1 : CustomNavigation1}
-                  setRemovingSection={setRemovingSection}
-                  setAddingSection={setAddingSection}
-                  font={font3}
-                  setFont={setFont3}
-                >
-                  {
-                    (loadResource3 === true)
+        <>
+          {(openResource3 === false || openResource4 === false) && (
+            <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} overflow-x-auto`}>
+              <EditorSection
+                row="3"
+                hideAddition={hideAddition}
+                sectionNum={sectionNum}
+                setSectionNum={setSectionNum}
+                title={referenceColumnTwoData1.refName}
+                selectedResource={referenceColumnTwoData1.selectedResource}
+                languageId={referenceColumnTwoData1.languageId}
+                referenceResources={referenceColumnTwoData1}
+                setReferenceResources={setReferenceColumnTwoData1}
+                setLoadResource={setLoadResource3}
+                loadResource={loadResource3}
+                openResource={openResource3}
+                setOpenResource3={setOpenResource3}
+                setOpenResource4={setOpenResource4}
+                CustomNavigation={(referenceColumnTwoData1.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation1 : CustomNavigation1}
+                setRemovingSection={setRemovingSection}
+                setAddingSection={setAddingSection}
+                font={font3}
+                setFont={setFont3}
+              >
+                {
+                  (loadResource3 === true)
                     && ((referenceColumnTwoData1.selectedResource === 'bible' && (
                       <>
                         {referenceColumnTwoData1?.languageId
@@ -347,43 +347,43 @@ const SectionPlaceholder2 = ({ editor }) => {
                         verse={_verse1}
                       />
                     )) || (
-                    <TranslationHelps
-                      selectedResource={referenceColumnTwoData1.selectedResource}
-                      languageId={referenceColumnTwoData1.languageId}
-                      owner={referenceColumnTwoData1.owner}
-                      bookId={_bookId1}
-                      chapter={_chapter1}
-                      verse={_verse1}
-                      story={_obsNavigation1}
-                      offlineResource={referenceColumnTwoData1.offlineResource}
-                    />
-                      )
+                      <TranslationHelps
+                        selectedResource={referenceColumnTwoData1.selectedResource}
+                        languageId={referenceColumnTwoData1.languageId}
+                        owner={referenceColumnTwoData1.owner}
+                        bookId={_bookId1}
+                        chapter={_chapter1}
+                        verse={_verse1}
+                        story={_obsNavigation1}
+                        offlineResource={referenceColumnTwoData1.offlineResource}
+                      />
                     )
-                  }
-                </EditorSection>
-                <EditorSection
-                  row="4"
-                  hideAddition={hideAddition}
-                  sectionNum={sectionNum}
-                  setSectionNum={setSectionNum}
-                  title={referenceColumnTwoData2.refName}
-                  selectedResource={referenceColumnTwoData2.selectedResource}
-                  languageId={referenceColumnTwoData2.languageId}
-                  referenceResources={referenceColumnTwoData2}
-                  setReferenceResources={setReferenceColumnTwoData2}
-                  setLoadResource={setLoadResource4}
-                  loadResource={loadResource4}
-                  openResource={openResource4}
-                  setOpenResource3={setOpenResource3}
-                  setOpenResource4={setOpenResource4}
-                  CustomNavigation={(referenceColumnTwoData2.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation2 : CustomNavigation2}
-                  setRemovingSection={setRemovingSection}
-                  setAddingSection={setAddingSection}
-                  font={font4}
-                  setFont={setFont4}
-                >
-                  {
-                    (loadResource4 === true)
+                    )
+                }
+              </EditorSection>
+              <EditorSection
+                row="4"
+                hideAddition={hideAddition}
+                sectionNum={sectionNum}
+                setSectionNum={setSectionNum}
+                title={referenceColumnTwoData2.refName}
+                selectedResource={referenceColumnTwoData2.selectedResource}
+                languageId={referenceColumnTwoData2.languageId}
+                referenceResources={referenceColumnTwoData2}
+                setReferenceResources={setReferenceColumnTwoData2}
+                setLoadResource={setLoadResource4}
+                loadResource={loadResource4}
+                openResource={openResource4}
+                setOpenResource3={setOpenResource3}
+                setOpenResource4={setOpenResource4}
+                CustomNavigation={(referenceColumnTwoData2.selectedResource).lastIndexOf('obs', 0) === 0 ? ObsNavigation2 : CustomNavigation2}
+                setRemovingSection={setRemovingSection}
+                setAddingSection={setAddingSection}
+                font={font4}
+                setFont={setFont4}
+              >
+                {
+                  (loadResource4 === true)
                     && ((referenceColumnTwoData2.selectedResource === 'bible' && (
                       <>
                         {referenceColumnTwoData2?.languageId
@@ -418,24 +418,24 @@ const SectionPlaceholder2 = ({ editor }) => {
                         verse={_verse1}
                       />
                     )) || (
-                    <TranslationHelps
-                      selectedResource={referenceColumnTwoData2.selectedResource}
-                      languageId={referenceColumnTwoData2.languageId}
-                      owner={referenceColumnTwoData2.owner}
-                      bookId={_bookId2}
-                      chapter={_chapter2}
-                      verse={_verse2}
-                      story={_obsNavigation2}
-                      offlineResource={referenceColumnTwoData2.offlineResource}
-                    />
-                      )
+                      <TranslationHelps
+                        selectedResource={referenceColumnTwoData2.selectedResource}
+                        languageId={referenceColumnTwoData2.languageId}
+                        owner={referenceColumnTwoData2.owner}
+                        bookId={_bookId2}
+                        chapter={_chapter2}
+                        verse={_verse2}
+                        story={_obsNavigation2}
+                        offlineResource={referenceColumnTwoData2.offlineResource}
+                      />
                     )
-                  }
-                </EditorSection>
-              </div>
-            )}
-          </>
-        )}
+                    )
+                }
+              </EditorSection>
+            </div>
+          )}
+        </>
+      )}
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}

@@ -120,7 +120,7 @@ export default function Comments() {
                     {list.commentText}
                   </p>
                 </>
-                ))}
+              ))}
 
               {isEditCommentOpen ? <EditComment /> : (
                 <button
@@ -130,13 +130,13 @@ export default function Comments() {
                 >
                   <ChatBubbleLeftRightIcon className="w-4 h-4" />
                 </button>
-                )}
+              )}
 
             </div>
 
           </>
 
-          ))}
+        ))}
 
       </div>
     </>

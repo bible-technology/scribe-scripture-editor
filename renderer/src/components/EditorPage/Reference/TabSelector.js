@@ -15,12 +15,12 @@ function TabSelector({ currentTab, setCurrentTab, tabData }) {
             <Tab
               key={data.id}
               className={({ selected }) => classNames(
-                  'w-full rounded-lg py-1 text-sm font-medium leading-5',
-                  'ring-white/60 ring-offset-2 ring-offset-gray-400 focus:outline-none focus:ring-2',
-                  selected
-                    ? 'bg-primary/80 text-white shadow'
-                    : 'text-[#4b5563] hover:bg-[#4b5563]/40 hover:text-white',
-                )}
+                'w-full rounded-lg py-1 text-sm font-medium leading-5',
+                'ring-white/60 ring-offset-2 ring-offset-gray-400 focus:outline-none focus:ring-2',
+                selected
+                  ? 'bg-primary/80 text-white shadow'
+                  : 'text-[#4b5563] hover:bg-[#4b5563]/40 hover:text-white',
+              )}
             >
               {data.title}
             </Tab>

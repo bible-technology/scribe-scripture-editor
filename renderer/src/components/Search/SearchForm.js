@@ -27,12 +27,12 @@ function SearchForm({
     if (lowercasedValue === '') {
       return content;
     }
-      const filteredData = content.filter(
-        (item) => Object.keys(item).some((key) => (excludeColumns.includes(key)
-          ? false
-          : item[key].toString().toLowerCase().includes(lowercasedValue))),
-      );
-      return filteredData;
+    const filteredData = content.filter(
+      (item) => Object.keys(item).some((key) => (excludeColumns.includes(key)
+        ? false
+        : item[key].toString().toLowerCase().includes(lowercasedValue))),
+    );
+    return filteredData;
   }, [excludeColumns]);
 
   // handle change event of search input

@@ -37,7 +37,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
           const mergePayload = JSON.stringify({
             Do: 'merge',
             delete_branch_after_merge: false,
-            });
+          });
           requestOptions.body = mergePayload;
           const urlMerge = `${environment.GITEA_API_ENDPOINT}/repos/${selectedGiteaProject?.repo?.owner?.username}/${selectedGiteaProject?.repo?.name}/pulls/${result.number}/merge`;
           const mergeResult = await fetch(urlMerge, requestOptions);
@@ -68,7 +68,7 @@ export async function tryMergeProjects(selectedGiteaProject, ignoreFilesPaths, a
       }
     }
   } catch (err) {
-      logger.debug('MergeActions.js', `failed Merge Action ${err}`);
-      throw new Error(err?.message || err);
+    logger.debug('MergeActions.js', `failed Merge Action ${err}`);
+    throw new Error(err?.message || err);
   }
 }

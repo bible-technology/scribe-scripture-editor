@@ -16,17 +16,17 @@ export default function useValidator() {
     const { name, value } = event.target;
 
     switch (name) {
-      case 'name':
-        errors.namefield = value.length < 5 ? 'Full Name must be 5 characters long!' : '';
-        break;
-      case 'email':
-        errors.email = validEmailRegex.test(value) ? '' : 'Email is not valid!';
-        break;
-      case 'password':
-        errors.password = value.length < 8 ? 'Password must be 8 characters long!' : '';
-        break;
-      default:
-        break;
+    case 'name':
+      errors.namefield = value.length < 5 ? 'Full Name must be 5 characters long!' : '';
+      break;
+    case 'email':
+      errors.email = validEmailRegex.test(value) ? '' : 'Email is not valid!';
+      break;
+    case 'password':
+      errors.password = value.length < 8 ? 'Password must be 8 characters long!' : '';
+      break;
+    default:
+      break;
     }
     setErrors(errors);
   };

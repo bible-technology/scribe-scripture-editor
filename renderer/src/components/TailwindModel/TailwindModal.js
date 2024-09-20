@@ -8,7 +8,7 @@ export default function TailwindModal({
   title,
   message,
   actionButtons,
- }) {
+}) {
   function closeModal() {
     setIsOpen(false);
   }

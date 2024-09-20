@@ -134,11 +134,11 @@ const UsfmEditor = () => {
   // reference tabs navigation
 
   const handleVersChange = useCallback((val) => {
-      if (val && scrollLock === false) {
-        // onChangeChapter(val.chapter.toString());
-        onChangeVerse(val.verseStart.toString(), verse);
-      }
-    }, [onChangeChapter, onChangeVerse]);
+    if (val && scrollLock === false) {
+      // onChangeChapter(val.chapter.toString());
+      onChangeVerse(val.verseStart.toString(), verse);
+    }
+  }, [onChangeChapter, onChangeVerse]);
 
   // const onIdentificationChange = useCallback(
   //   (id) => {
@@ -218,25 +218,25 @@ const UsfmEditor = () => {
                             username,
                           }).then((data) => {
                             if (data) {
-                                timeout(2000).then(() => {
-                                  localforage.getItem('navigationHistory').then((book) => {
-                                    if (book) {
-                                      onChangeBook(book[0]);
-                                    }
-                                    return book;
-                                    }).then((book) => {
-                                      onChangeChapter(book[1]);
-                                      if (book[0].toUpperCase() !== bookId.toUpperCase()) {
-                                        setDisplayScreen(true);
-                                      } else {
-                                        flag = true;
-                                        handleInputChange(data);
-                                      }
-                                    });
-                                }).finally(() => {
-                                  setIsLoading(false);
-                                  setDisplayScreen(false);
+                              timeout(2000).then(() => {
+                                localforage.getItem('navigationHistory').then((book) => {
+                                  if (book) {
+                                    onChangeBook(book[0]);
+                                  }
+                                  return book;
+                                }).then((book) => {
+                                  onChangeChapter(book[1]);
+                                  if (book[0].toUpperCase() !== bookId.toUpperCase()) {
+                                    setDisplayScreen(true);
+                                  } else {
+                                    flag = true;
+                                    handleInputChange(data);
+                                  }
                                 });
+                              }).finally(() => {
+                                setIsLoading(false);
+                                setDisplayScreen(false);
+                              });
                             }
                           });
                         }
@@ -261,84 +261,84 @@ const UsfmEditor = () => {
 
   // useEffect(() => {
   //   if (!isElectron()) {
-      // fetchFromParse({
-      //   username, projectName, scope: _bookId.toUpperCase(),
-      // }).then((data) => {
-      //   if (data) {
-      //     localforage.setItem('editorData', data).then(
-      //       () => localforage.getItem('editorData'),
-      //     ).then(() => {
-      //       handleInputChange(data);
-      //     }).catch((err) => {
-      //       // we got an error
-      //       throw err;
-      //     });
-      //   }
-      // });
-    // } else {
-    //   setDisplayScreen(false);
-    //   timeout(1000).then(() => {
-    //       localforage.getItem('navigationHistory').then((book) => {
-    //         if (book) {
-    //         onChangeBook(book[0]);
-    //         onChangeChapter(book[1]);
-    //         console.log(book[0],
-    //           book[1]);
-    //         }
-    //       });
-    //   }).then(() => {
-    //   localforage.getItem('userProfile').then((value) => {
-    //     const username = value?.username;
-    //     localforage.getItem('currentProject').then((projectName) => {
-    //     readRefMeta({
-    //       projectname: projectName,
-    //       username,
-    //     }).then((refs) => {
-    //       refs.forEach((ref) => {
-    //         readRefBurrito({
-    //           projectname: projectName,
-    //           filename: ref,
-    //           username,
-    //         }).then((data) => {
-    //           if (data) {
-    //             const _data = JSON.parse(data);
-    //             Object.entries(_data.ingredients).forEach(
-    //               ([key, _ingredients]) => {
-    //                 if (_ingredients.scope) {
-    //                   const _bookID = Object.entries(_ingredients.scope)[0][0];
-    //                   if (_bookID === bookId.toUpperCase()) {
-    //                     readFile({
-    //                       projectname: projectName,
-    //                       filename: key,
-    //                       username,
-    //                     }).then((data) => {
-    //                       console.log('>>>>>>', data);
-    //                       if (data) {
-    //                         handleInputChange(data);
-    //                         setDisplayScreen(false);
-    //                       } else {
-    //                         setDisplayScreen(true);
-    //                       }
-    //                     });
-    //                   }
-    //                 }
-    //               },
-    //             );
-    //           }
-    //         });
-    //       });
-    //     });
-    //     });
-    //   });
-    // });
-    // }
+  // fetchFromParse({
+  //   username, projectName, scope: _bookId.toUpperCase(),
+  // }).then((data) => {
+  //   if (data) {
+  //     localforage.setItem('editorData', data).then(
+  //       () => localforage.getItem('editorData'),
+  //     ).then(() => {
+  //       handleInputChange(data);
+  //     }).catch((err) => {
+  //       // we got an error
+  //       throw err;
+  //     });
+  //   }
+  // });
+  // } else {
+  //   setDisplayScreen(false);
+  //   timeout(1000).then(() => {
+  //       localforage.getItem('navigationHistory').then((book) => {
+  //         if (book) {
+  //         onChangeBook(book[0]);
+  //         onChangeChapter(book[1]);
+  //         console.log(book[0],
+  //           book[1]);
+  //         }
+  //       });
+  //   }).then(() => {
+  //   localforage.getItem('userProfile').then((value) => {
+  //     const username = value?.username;
+  //     localforage.getItem('currentProject').then((projectName) => {
+  //     readRefMeta({
+  //       projectname: projectName,
+  //       username,
+  //     }).then((refs) => {
+  //       refs.forEach((ref) => {
+  //         readRefBurrito({
+  //           projectname: projectName,
+  //           filename: ref,
+  //           username,
+  //         }).then((data) => {
+  //           if (data) {
+  //             const _data = JSON.parse(data);
+  //             Object.entries(_data.ingredients).forEach(
+  //               ([key, _ingredients]) => {
+  //                 if (_ingredients.scope) {
+  //                   const _bookID = Object.entries(_ingredients.scope)[0][0];
+  //                   if (_bookID === bookId.toUpperCase()) {
+  //                     readFile({
+  //                       projectname: projectName,
+  //                       filename: key,
+  //                       username,
+  //                     }).then((data) => {
+  //                       console.log('>>>>>>', data);
+  //                       if (data) {
+  //                         handleInputChange(data);
+  //                         setDisplayScreen(false);
+  //                       } else {
+  //                         setDisplayScreen(true);
+  //                       }
+  //                     });
+  //                   }
+  //                 }
+  //               },
+  //             );
+  //           }
+  //         });
+  //       });
+  //     });
+  //     });
+  //   });
+  // });
+  // }
   // }, []);
 
   const autoSaveIndication = () => {
     setEditorSave(<SaveIndicator />);
     setTimeout(() => {
       setEditorSave(t('label-saved'));
-  }, 1000);
+    }, 1000);
   };
 
   const handleEditorChange = (usfm) => {
@@ -372,20 +372,20 @@ const UsfmEditor = () => {
                           const arrayOfLines = usfm.split('\n');
                           const splitLine = arrayOfLines[0].split(/ +/);
                           if (splitLine[0] === '\\id') {
-                              const id = splitLine[1];
-                              if (id.toUpperCase() === bookId.toUpperCase()) {
-                                setTimeout(() => {
-                                    writeToFile({
-                                      username,
-                                      projectname: projectName,
-                                      filename: key,
-                                      data: usfm,
-                                    });
-                                    setUsfmData(usfm);
-                                    autoSaveIndication();
-                                }, 2000);
-                              }
+                            const id = splitLine[1];
+                            if (id.toUpperCase() === bookId.toUpperCase()) {
+                              setTimeout(() => {
+                                writeToFile({
+                                  username,
+                                  projectname: projectName,
+                                  filename: key,
+                                  data: usfm,
+                                });
+                                setUsfmData(usfm);
+                                autoSaveIndication();
+                              }, 2000);
                             }
+                          }
                         }
                       }
                       // console.log(key, value),
@@ -426,16 +426,16 @@ const UsfmEditor = () => {
         {((isLoading || !usfmInput) && displyScreen) && <EmptyScreen />}
         {isLoading && !displyScreen && <LoadingScreen /> }
         {usfmInput && !displyScreen && !isLoading && (
-        <CustomEditor
-          ref={myEditorRef}
-          usfmString={usfmInput}
-          key={usfmInput}
-          onChange={handleEditorChange}
-          onVerseChange={handleVersChange}
-          readOnly={readOnly}
-          goToVerse={goToChapter()}
-        />
-          )}
+          <CustomEditor
+            ref={myEditorRef}
+            usfmString={usfmInput}
+            key={usfmInput}
+            onChange={handleEditorChange}
+            onVerseChange={handleVersChange}
+            readOnly={readOnly}
+            goToVerse={goToChapter()}
+          />
+        )}
       </>
     </Editor>
   );

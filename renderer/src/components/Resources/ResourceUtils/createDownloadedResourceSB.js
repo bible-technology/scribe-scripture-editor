@@ -46,16 +46,16 @@ export const createDownloadedResourceSB = async (username, resourceMeta, project
     // console.log('unique id : ', id);
     let json = {};
     switch (selectResource) {
-      case 'bible':
-        // json = { ...Textburrito };
-        json = Textburrito;
-        break;
-      case 'obs':
-        // json = { ...OBSburrito };
-        json = OBSburrito;
-        break;
-      default:
-        throw new Error(' can not process : Invalid Type od Resource requested');
+    case 'bible':
+      // json = { ...Textburrito };
+      json = Textburrito;
+      break;
+    case 'obs':
+      // json = { ...OBSburrito };
+      json = OBSburrito;
+      break;
+    default:
+      throw new Error(' can not process : Invalid Type od Resource requested');
       // break;
     }
     return new Promise((resolve) => {
@@ -380,24 +380,24 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
 
                         // ingredients add to burrito
                         switch (selectResource) {
-                          case 'bible':
-                            if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
-                              resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
-                            } else {
-                              resourceBurritoFile = await generateResourceIngredientsTextTransaltion(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile);
-                            }
-                            customLicenseContent = customLicense;
-                            break;
-                          case 'obs':
-                            if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
-                              resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
-                            } else {
-                              resourceBurritoFile = await generateResourceIngredientsOBS(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, keys);
-                            }
-                            customLicenseContent = OBSLicense;
-                            break;
-                          default:
-                            throw new Error('Cannot process : Invalid Type of requested Resource');
+                        case 'bible':
+                          if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
+                            resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
+                          } else {
+                            resourceBurritoFile = await generateResourceIngredientsTextTransaltion(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile);
+                          }
+                          customLicenseContent = customLicense;
+                          break;
+                        case 'obs':
+                          if (currentResourceMeta.format && currentResourceMeta.format === 'scripture burrito') {
+                            resourceBurritoFile.ingredients = currentResourceMeta.ingredients;
+                          } else {
+                            resourceBurritoFile = await generateResourceIngredientsOBS(currentResourceMeta, path, folder, currentResourceProject, resourceBurritoFile, keys);
+                          }
+                          customLicenseContent = OBSLicense;
+                          break;
+                        default:
+                          throw new Error('Cannot process : Invalid Type of requested Resource');
                         }
                         logger.debug('passed ingredients creations ---------->');
 
@@ -493,7 +493,7 @@ export const handleDownloadResources = async (resourceData, selectResource, acti
 };
 
 export const handleDownloadWebResources = async (resourceData, selectResource, action, update = false) => {
-     // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console
   console.log({
     resourceData,
     selectResource,
@@ -585,27 +585,27 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
 
               // ingredients add to burrito
               switch (selectResource) {
-                case 'bible':
-                  resourceBurritoFile = await generateResourceIngredientsTextTransaltion(
-                    currentResourceMeta,
-                    // supabaseStorage(),
-                    folder,
-                    currentResourceProject,
-                    resourceBurritoFile,
-                  );
-                  customLicenseContent = customLicense;
-                  break;
-                case 'obs':
-                  resourceBurritoFile = await generateWebResourceIngredientsOBS(
-                    currentResourceMeta,
-                    currentResourceProject,
-                    resourceBurritoFile,
-                    Object.keys(zip.files),
-                  );
-                  customLicenseContent = OBSLicense;
-                  break;
-                default:
-                  throw new Error('Cannot process: Invalid type of resource requested');
+              case 'bible':
+                resourceBurritoFile = await generateResourceIngredientsTextTransaltion(
+                  currentResourceMeta,
+                  // supabaseStorage(),
+                  folder,
+                  currentResourceProject,
+                  resourceBurritoFile,
+                );
+                customLicenseContent = customLicense;
+                break;
+              case 'obs':
+                resourceBurritoFile = await generateWebResourceIngredientsOBS(
+                  currentResourceMeta,
+                  currentResourceProject,
+                  resourceBurritoFile,
+                  Object.keys(zip.files),
+                );
+                customLicenseContent = OBSLicense;
+                break;
+              default:
+                throw new Error('Cannot process: Invalid type of resource requested');
               }
 
               if (!licenseFileFound) {
@@ -657,7 +657,7 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
                 await sbStorageUpdate({ path: `${folder}/${currentResourceProject.name}`, payload: `${folder}/${currentProjectName}`, options: { cacheControl: '3600', upsert: true } });
                 await sbStorageRemove(`${folder}/${currentProjectName}.zip`);
               } else {
-                   // eslint-disable-next-line no-console
+                // eslint-disable-next-line no-console
                 console.log('error in storage.list ---------->', error);
               }
             }
@@ -675,7 +675,7 @@ export const handleDownloadWebResources = async (resourceData, selectResource, a
         resourceExistCount = 0;
       }
     } catch (err) {
-         // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       console.log('Catching error in download resource', err);
       reject(err);
     }

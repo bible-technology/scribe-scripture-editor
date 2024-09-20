@@ -78,9 +78,9 @@ function ObsTwlCard({
     async function fetchData() {
       const flavor = selectedProjectMeta?.type?.flavorType?.flavor?.name;
       await getObsTn(owner, `${languageId}_${resourceId}`, `content/${chapter.toString().padStart(2, 0)}`, chapter, languageId, scrollLock, flavor)
-      .then((data) => {
-        setItems(data);
-      });
+        .then((data) => {
+          setItems(data);
+        });
     }
 
     setItems([]);

@@ -34,12 +34,12 @@ async function downloadImageAndSaveSupabase(url) {
     document.body.appendChild(img);
     const { error } = await sbStorageUpload(`${packageInfo.name}/common/${environment.OBS_IMAGE_DIR}`, blob);
     if (error) {
-         // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       console.log('error uploading images to supabase', { error });
       throw error;
     }
   } catch (error) {
-     // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console
     console.error('Error fetching image:', error);
   }
 }

@@ -8,33 +8,33 @@ import { isElectron } from '../handleElectron';
 //     const newPath = require('../../../../supabase').newPath
 //   }
 export const readFile = async ({
-    username,
-    projectname,
-    filename,
+  username,
+  projectname,
+  filename,
 }) => {
-    if (isElectron()) {
-        const fs = window.require('fs');
-        const path = require('path');
-        const newpath = localStorage.getItem('userPath');
-        const projectsPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectname, filename);
-        return new Promise((resolve) => {
-            if (fs.existsSync(projectsPath)) {
-                const fileContent = fs.readFileSync(
-                        path.join(projectsPath),
-                        'utf8',
-                    );
-                resolve(fileContent);
-            }
-        });
-    }
-    const projectsPath = `${newPath}/${username}/projects/${projectname}/${filename}`;
-    return new Promise(async (resolve) => {
-        const { data: fileContent, error } = await sbStorageDownload(projectsPath);
-        if (error) {
-             // eslint-disable-next-line no-console
-            console.error('readWebFile function error', error);
-        }
-        const parsedData = readBlobAsync(fileContent);
-        resolve(parsedData);
+  if (isElectron()) {
+    const fs = window.require('fs');
+    const path = require('path');
+    const newpath = localStorage.getItem('userPath');
+    const projectsPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectname, filename);
+    return new Promise((resolve) => {
+      if (fs.existsSync(projectsPath)) {
+        const fileContent = fs.readFileSync(
+          path.join(projectsPath),
+          'utf8',
+        );
+        resolve(fileContent);
+      }
     });
+  }
+  const projectsPath = `${newPath}/${username}/projects/${projectname}/${filename}`;
+  return new Promise(async (resolve) => {
+    const { data: fileContent, error } = await sbStorageDownload(projectsPath);
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('readWebFile function error', error);
+    }
+    const parsedData = readBlobAsync(fileContent);
+    resolve(parsedData);
+  });
 };

@@ -34,10 +34,10 @@ function GridRow({
         >
           {lastSync && lastSync !== null
             ? moment
-                .utc(lastSync.lastSynced)
-                .local()
-                .startOf('seconds')
-                .fromNow()
+              .utc(lastSync.lastSynced)
+              .local()
+              .startOf('seconds')
+              .fromNow()
             : '-'}
         </span>
       </div>

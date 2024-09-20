@@ -2,27 +2,27 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
-    Box, Paper, Step, StepContent, StepLabel, Stepper, Typography,
+  Box, Paper, Step, StepContent, StepLabel, Stepper, Typography,
 } from '@material-ui/core';
 
 export function VerticalLinearStepper({ stepCount, steps, successMsg }) {
-    const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(0);
 
-    React.useEffect(() => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }, [stepCount]);
+  React.useEffect(() => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  }, [stepCount]);
 
-    const handleReset = () => {
-        setActiveStep(0);
-      };
+  const handleReset = () => {
+    setActiveStep(0);
+  };
 
-    // const handleNext = () => {
-    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // };
+  // const handleNext = () => {
+  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  // };
 
-    React.useEffect(() => {
-        handleReset();
-    }, []);
+  React.useEffect(() => {
+    handleReset();
+  }, []);
 
   return (
     <Box sx={{ maxWidth: 400 }}>
@@ -65,9 +65,9 @@ export function VerticalLinearStepper({ stepCount, steps, successMsg }) {
 }
 
 VerticalLinearStepper.propTypes = {
-    steps: PropTypes.array.isRequired,
-    stepCount: PropTypes.number,
-    successMsg: PropTypes.string,
+  steps: PropTypes.array.isRequired,
+  stepCount: PropTypes.number,
+  successMsg: PropTypes.string,
 };
 
 // export default function VerticalStepperProgress() {

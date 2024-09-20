@@ -18,8 +18,8 @@ const path = require('path');
 const ResourceResetAfterCheckSameOnRefResourceAgSettings = async (setResetResourceOnDeleteOffline, resource) => {
   logger.debug('RemoveResource.js', 'Search for multiple pane open same resource before download');
   const refsHistory = [];
-    localForage.getItem('currentProject').then(async (projectName) => {
-      const _projectname = await splitStringByLastOccurence(projectName, '_');
+  localForage.getItem('currentProject').then(async (projectName) => {
+    const _projectname = await splitStringByLastOccurence(projectName, '_');
     // const _projectname = projectName?.split('_');
     localForage.getItem('projectmeta').then((value) => {
       Object.entries(value).forEach(
@@ -53,40 +53,40 @@ const ResourceResetAfterCheckSameOnRefResourceAgSettings = async (setResetResour
         );
         if (resourcePane.length > 0) {
           // read Scribe-settings
-        if (resourcePane.includes('01')) {
-          logger.debug('RemoveResource.js', 'Referesh pane 01 contains current  deleted resource');
-          setResetResourceOnDeleteOffline((prev) => ({
-            ...prev,
-            referenceColumnOneData1Reset: true,
+          if (resourcePane.includes('01')) {
+            logger.debug('RemoveResource.js', 'Referesh pane 01 contains current  deleted resource');
+            setResetResourceOnDeleteOffline((prev) => ({
+              ...prev,
+              referenceColumnOneData1Reset: true,
+            }
+            ));
           }
-          ));
-        }
-        if (resourcePane.includes('02')) {
-          logger.debug('RemoveResource.js', 'Referesh pane 02 contains current deleted resource');
-          setResetResourceOnDeleteOffline((prev) => ({
-            ...prev,
-            referenceColumnOneData2Reset: true,
+          if (resourcePane.includes('02')) {
+            logger.debug('RemoveResource.js', 'Referesh pane 02 contains current deleted resource');
+            setResetResourceOnDeleteOffline((prev) => ({
+              ...prev,
+              referenceColumnOneData2Reset: true,
+            }
+            ));
           }
-          ));
-        }
-        if (resourcePane.includes('11')) {
-          logger.debug('RemoveResource.js', 'Referesh pane 11 contains current deleted resource');
-          setResetResourceOnDeleteOffline((prev) => ({
-            ...prev,
-            referenceColumnTwoData1Reset: true,
+          if (resourcePane.includes('11')) {
+            logger.debug('RemoveResource.js', 'Referesh pane 11 contains current deleted resource');
+            setResetResourceOnDeleteOffline((prev) => ({
+              ...prev,
+              referenceColumnTwoData1Reset: true,
+            }
+            ));
           }
-          ));
-        }
-        if (resourcePane.includes('12')) {
-          logger.debug('RemoveResource.js', 'Referesh pane 12 contains current deleted resource');
-          setResetResourceOnDeleteOffline((prev) => ({
-            ...prev,
-            referenceColumnTwoData2Reset: true,
+          if (resourcePane.includes('12')) {
+            logger.debug('RemoveResource.js', 'Referesh pane 12 contains current deleted resource');
+            setResetResourceOnDeleteOffline((prev) => ({
+              ...prev,
+              referenceColumnTwoData2Reset: true,
+            }
+            ));
           }
-          ));
         }
       }
-        }
     });
   });
 };
@@ -94,109 +94,109 @@ const ResourceResetAfterCheckSameOnRefResourceAgSettings = async (setResetResour
 function RemoveResource({
   resource, selectResource, setRenderApp,
 }) {
-    logger.warn('removeResource.js', 'inside remove resource');
-    const { t } = useTranslation();
-    const [snackBar, setOpenSnackBar] = React.useState(false);
-    const [snackText, setSnackText] = React.useState('');
-    // eslint-disable-next-line no-unused-vars
-    const [notify, setNotify] = React.useState();
-    const [openModal, setOpenModal] = React.useState(false);
+  logger.warn('removeResource.js', 'inside remove resource');
+  const { t } = useTranslation();
+  const [snackBar, setOpenSnackBar] = React.useState(false);
+  const [snackText, setSnackText] = React.useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [notify, setNotify] = React.useState();
+  const [openModal, setOpenModal] = React.useState(false);
 
-    // React.useEffect(() => {
-    // }, []);
+  // React.useEffect(() => {
+  // }, []);
 
-    const {
-      // state: {
-      //   resetResourceOnDeleteOffline,
-      // },
-      actions: {
-        setResetResourceOnDeleteOffline,
-      },
-    } = useContext(ReferenceContext);
+  const {
+    // state: {
+    //   resetResourceOnDeleteOffline,
+    // },
+    actions: {
+      setResetResourceOnDeleteOffline,
+    },
+  } = useContext(ReferenceContext);
 
-    const handleRemoveResourceResources = async () => {
-        logger.warn('removeResource.js', 'inside removing resource call');
-        localForage.getItem('userProfile').then(async (user) => {
-            logger.debug('DownloadResourcePopUp.js', 'In resource download user fetch - ', user?.username);
-            const fs = window.require('fs');
-            const newpath = localStorage.getItem('userPath');
-            const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
-            let resourceName = null;
-            switch (selectResource) {
-              case 'obs':
-              case 'bible':
-              case 'audio':
-                  resourceName = resource?.projectDir;
-                  break;
-              case 'tn':
-              case 'tw':
-              case 'ta':
-              case 'tq':
-              case 'obs-tn':
-              case 'obs-tq':
-                  resourceName = resource?.projectDir;
-                  break;
-              default:
-                  break;
-            }
-            await fs.rmdir(path.join(folder, resourceName), { recursive: true }, async (err) => {
-              if (err) {
-                setOpenSnackBar(true);
-                setNotify('failure');
-                setSnackText('Remove Resource Failed');
-                // throw new Error(`Remove Resource failed :  ${err}`);
-              }
-              // console.log('resource remove success');
-              // read Scribe-settings of the project
-              await ResourceResetAfterCheckSameOnRefResourceAgSettings(setResetResourceOnDeleteOffline, resource);
-              // handleRowSelect(null, null, null, null, '');
-              setRenderApp(true);
-              setOpenSnackBar(true);
-              setNotify('success');
-              setSnackText('Removed Resource Successfully');
-            });
-        });
-    };
+  const handleRemoveResourceResources = async () => {
+    logger.warn('removeResource.js', 'inside removing resource call');
+    localForage.getItem('userProfile').then(async (user) => {
+      logger.debug('DownloadResourcePopUp.js', 'In resource download user fetch - ', user?.username);
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
+      let resourceName = null;
+      switch (selectResource) {
+      case 'obs':
+      case 'bible':
+      case 'audio':
+        resourceName = resource?.projectDir;
+        break;
+      case 'tn':
+      case 'tw':
+      case 'ta':
+      case 'tq':
+      case 'obs-tn':
+      case 'obs-tq':
+        resourceName = resource?.projectDir;
+        break;
+      default:
+        break;
+      }
+      await fs.rmdir(path.join(folder, resourceName), { recursive: true }, async (err) => {
+        if (err) {
+          setOpenSnackBar(true);
+          setNotify('failure');
+          setSnackText('Remove Resource Failed');
+          // throw new Error(`Remove Resource failed :  ${err}`);
+        }
+        // console.log('resource remove success');
+        // read Scribe-settings of the project
+        await ResourceResetAfterCheckSameOnRefResourceAgSettings(setResetResourceOnDeleteOffline, resource);
+        // handleRowSelect(null, null, null, null, '');
+        setRenderApp(true);
+        setOpenSnackBar(true);
+        setNotify('success');
+        setSnackText('Removed Resource Successfully');
+      });
+    });
+  };
 
-    return (
-      <>
-        <div
-          className="text-xs cursor-pointer focus:outline-none hover:"
-          role="button"
-          tabIndex={0}
-          title={t('modal-title-remove-resource')}
-          onClick={() => setOpenModal(true)}
-        >
-          <TrashIcon
-            className="w-4 h-4"
-          />
-        </div>
-
-        <SnackBar
-          openSnackBar={snackBar}
-          snackText={snackText}
-          setOpenSnackBar={setOpenSnackBar}
-          setSnackText={setSnackText}
-          error={notify}
+  return (
+    <>
+      <div
+        className="text-xs cursor-pointer focus:outline-none hover:"
+        role="button"
+        tabIndex={0}
+        title={t('modal-title-remove-resource')}
+        onClick={() => setOpenModal(true)}
+      >
+        <TrashIcon
+          className="w-4 h-4"
         />
+      </div>
 
-        <ConfirmationModal
-          openModal={openModal}
-          title={t('modal-title-remove-resource')}
-          setOpenModal={setOpenModal}
-          confirmMessage={t('msg-remove-resource')}
-          buttonName={t('btn-remove')}
-          closeModal={() => handleRemoveResourceResources()}
-        />
+      <SnackBar
+        openSnackBar={snackBar}
+        snackText={snackText}
+        setOpenSnackBar={setOpenSnackBar}
+        setSnackText={setSnackText}
+        error={notify}
+      />
 
-      </>
-    );
+      <ConfirmationModal
+        openModal={openModal}
+        title={t('modal-title-remove-resource')}
+        setOpenModal={setOpenModal}
+        confirmMessage={t('msg-remove-resource')}
+        buttonName={t('btn-remove')}
+        closeModal={() => handleRemoveResourceResources()}
+      />
+
+    </>
+  );
 }
 
 RemoveResource.propTypes = {
-    resource: PropTypes.object,
-    selectResource: PropTypes.string,
-    setRenderApp: PropTypes.func,
-  };
+  resource: PropTypes.object,
+  selectResource: PropTypes.string,
+  setRenderApp: PropTypes.func,
+};
 
 export default RemoveResource;

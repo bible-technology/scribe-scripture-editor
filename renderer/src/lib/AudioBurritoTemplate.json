@@ -10,7 +10,9 @@
 		},
 		"defaultLocale": "en",
 		"dateCreated": "",
-		"comments": [""]
+		"comments": [
+			""
+		]
 	},
 	"idAuthorities": {
 		"scribe": {
@@ -45,7 +47,10 @@
 			"name": "scripture",
 			"flavor": {
 				"name": "audioTranslation",
-				"performance": ["singleVoice", "drama"],
+				"performance": [
+					"singleVoice",
+					"drama"
+				],
 				"formats": {
 					"format1": {
 						"compression": "mp3",
@@ -60,7 +65,9 @@
 		}
 	},
 	"confidential": false,
-	"agencies": [{}],
+	"agencies": [
+		{}
+	],
 	"targetAreas": [
 		{
 			"code": "",

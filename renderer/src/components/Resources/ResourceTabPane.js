@@ -53,65 +53,65 @@ export default function ResourceTabPane({
           )}
           >
             {selectResource === 'bible'
-            ? t('label-resource-bible')
-            : selectResource === 'OBS' ? 'OBS'
-            : selectResource === 'local-helps'
-            ? (
-              <div className="flex gap-2">
-                <PlusIcon
-                  className="w-4 h-4"
-                  aria-hidden="true"
-                />
-                {t('label-collection')}
-              </div>
-            )
-            : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
+              ? t('label-resource-bible')
+              : selectResource === 'OBS' ? 'OBS'
+                : selectResource === 'local-helps'
+                  ? (
+                    <div className="flex gap-2">
+                      <PlusIcon
+                        className="w-4 h-4"
+                        aria-hidden="true"
+                      />
+                      {t('label-collection')}
+                    </div>
+                  )
+                  : selectResource === 'audio' ? t('label-audio-bible') : selectResource}
 
           </Tab>
 
           {(selectResource !== 'audio' && selectResource !== 'local-helps')
           && (
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <button
-                className={classNames(
-                  'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
-                  'ring-offset-2 ring-offset-white focus:outline-nonez-50 ',
-                  selected
-                    ? 'bg-primary text-white'
-                    : 'text-black bg-gray-200',
-                )}
-                type="button"
-                onClick={() => { openResourceDialogBox(); setResourceIconClick(!resourceIconClick); }}
-              >
-                <PlusIcon
-                  className="w-4 h-4"
-                  aria-hidden="true"
-                />
-                {t('label-resource')}
-              </button>
-            )}
-          </Tab>
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <button
+                  className={classNames(
+                    'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
+                    'ring-offset-2 ring-offset-white focus:outline-nonez-50 ',
+                    selected
+                      ? 'bg-primary text-white'
+                      : 'text-black bg-gray-200',
+                  )}
+                  type="button"
+                  onClick={() => { openResourceDialogBox(); setResourceIconClick(!resourceIconClick); }}
+                >
+                  <PlusIcon
+                    className="w-4 h-4"
+                    aria-hidden="true"
+                  />
+                  {t('label-resource')}
+                </button>
+              )}
+            </Tab>
           )}
 
           {selectResource !== 'local-helps' && (
-          <Tab
-            className={({ selected }) => classNames(
-              'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
-              'ring-offset-2 ring-offset-white focus:outline-none z-50',
-              selected
-                ? 'bg-primary text-white'
-                : 'text-black bg-gray-200',
-            )}
-            type="button"
-            onClick={() => { setOpenImportResourcePopUp(true); setResourceIconClick(!resourceIconClick); }}
-          >
-            <PlusIcon
-              className="w-4 h-4"
-              aria-hidden="true"
-            />
-            {t('label-collection')}
-          </Tab>
+            <Tab
+              className={({ selected }) => classNames(
+                'w-32 rounded-t-lg flex items-center justify-center gap-2 font-bold py-2 text-xs leading-5 text-white uppercase',
+                'ring-offset-2 ring-offset-white focus:outline-none z-50',
+                selected
+                  ? 'bg-primary text-white'
+                  : 'text-black bg-gray-200',
+              )}
+              type="button"
+              onClick={() => { setOpenImportResourcePopUp(true); setResourceIconClick(!resourceIconClick); }}
+            >
+              <PlusIcon
+                className="w-4 h-4"
+                aria-hidden="true"
+              />
+              {t('label-collection')}
+            </Tab>
           )}
         </Tab.List>
 
@@ -134,14 +134,14 @@ export default function ResourceTabPane({
 
           {selectResource !== 'audio' && selectResource !== 'local-helps'
             && (
-            <Tab.Panel className="p-4 bg-white">
-              <DownloadResourcePopUp
-                selectResource={selectResource}
-                isOpenDonwloadPopUp={isOpenDonwloadPopUp}
-                setIsOpenDonwloadPopUp={setIsOpenDonwloadPopUp}
-              />
-            </Tab.Panel>
-          )}
+              <Tab.Panel className="p-4 bg-white">
+                <DownloadResourcePopUp
+                  selectResource={selectResource}
+                  isOpenDonwloadPopUp={isOpenDonwloadPopUp}
+                  setIsOpenDonwloadPopUp={setIsOpenDonwloadPopUp}
+                />
+              </Tab.Panel>
+            )}
           <Tab.Panel className="p-4 bg-white">
             <ImportResource
               open={openImportResourcePopUp}

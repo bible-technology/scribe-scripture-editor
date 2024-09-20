@@ -19,8 +19,8 @@ const ResourceOption = ({
   };
   useEffect(() => {
     if (!selectResource) {
-        setSelectResource('bible');
-        setTitle('Bible');
+      setSelectResource('bible');
+      setTitle('Bible');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

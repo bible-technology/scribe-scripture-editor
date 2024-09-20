@@ -18,7 +18,7 @@ export const updateBurritoScope = async (projectName, metadata) => {
     }
     throw new Error(`failed to read metadata file - ${projectName}`);
   } catch (err) {
-        logger.error('updateBurritoScope.js', `read metadata file successfully - ${projectName}`);
-      throw new Error(err?.message || err);
+    logger.error('updateBurritoScope.js', `read metadata file successfully - ${projectName}`);
+    throw new Error(err?.message || err);
   }
 };

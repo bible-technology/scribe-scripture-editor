@@ -1564,10 +1564,15 @@
   dependencies:
     eslint-visitor-keys "^3.3.0"
 
-"@eslint-community/regexpp@^4.4.0", "@eslint-community/regexpp@^4.6.1":
+"@eslint-community/regexpp@^4.4.0":
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.11.0.tgz#b0ffd0312b4a3fd2d6f77237e7248a5ad3a680ae"
   integrity sha512-G/M/tIiMrTAxEWRfLfQJMmGNX28IxBg4PBz8XqQhqUHLFI6TL2htpIB1iQCj144V5ee/JaKyT9/WZ0MGZWfA7A==
+
+"@eslint-community/regexpp@^4.6.1":
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.11.1.tgz#a547badfc719eb3e5f4b556325e542fbe9d7a18f"
+  integrity sha512-m4DVN9ZqskZoLU5GlWZadwDnYo3vAEydiUayB9widCl9ffWx2IvPnp6n3on5rJmziJSw9Bv+Z3ChDVdMwXCY8Q==
 
 "@eslint/eslintrc@^2.1.4":
   version "2.1.4"
@@ -14297,10 +14302,10 @@ just-diff@^5.0.1:
   resolved "https://registry.yarnpkg.com/just-diff/-/just-diff-5.2.0.tgz#60dca55891cf24cd4a094e33504660692348a241"
   integrity sha512-6ufhP9SHjb7jibNFrNxyFZ6od3g+An6Ai9mhGRvcYe8UJlH0prseN64M+6ZBBUoKYHZsitDP42gAJ8+eVWr3lw==
 
-jxl-pdf@0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.6.1.tgz#3b088e4426114c2df168d9f06a6c0b0fbb837ec2"
-  integrity sha512-IGL5u/4T9PU1FY0IltrpxCErFowvz1H9azEhPTXu6NCFK32ECuyPDcNUQgcPbORNWY/NSfFVuCr78nrUq02sSA==
+jxl-pdf@0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/jxl-pdf/-/jxl-pdf-0.6.3.tgz#db3ee4026b9c2041e20982b50abb2df4f16b4c85"
+  integrity sha512-D170/yDidlbP/d/IAnZi2XsDHQb74c1QgtWQGZ9mbtINvjBnQyVEnxOr5olhRjZ6UYnBMOrY1SDpFWW7gTQOOg==
   dependencies:
     commander "^11.1.0"
     fontkit "^2.0.2"

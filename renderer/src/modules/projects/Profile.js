@@ -136,8 +136,8 @@ export default function UserProfile() {
   async function checkValidationResp(response, field, resultObj) {
     if (response && response.length > 0) {
       for (let x = 0; x < response.length; x++) {
-          resultObj[field] = response[x].message;
-          if (response[x].message !== '') { return; }
+        resultObj[field] = response[x].message;
+        if (response[x].message !== '') { return; }
       }
     } else {
       resultObj[field] = '';
@@ -230,7 +230,7 @@ export default function UserProfile() {
                     autoComplete="given-name"
                     defaultValue={values?.firstname}
                     onChange={(e) => {
-                        setValues({ ...values, firstname: e.target.value });
+                      setValues({ ...values, firstname: e.target.value });
                     }}
                     className="w-44 block rounded shadow-sm sm:text-sm focus:ring-gray-500 focus:border-primary border-gray-200 h-10 font-light"
                   />

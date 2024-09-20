@@ -7,12 +7,12 @@ function getNetworkConnection() {
     || navigator.webkitConnection
     || null
   );
-  }
-  function getNetworkConnectionInfo() {
-    const connection = getNetworkConnection();
+}
+function getNetworkConnectionInfo() {
+  const connection = getNetworkConnection();
   if (!connection) {
-      return {};
-    }
+    return {};
+  }
   return {
     rtt: connection.rtt,
     type: connection.type,
@@ -40,27 +40,27 @@ function useNetwork() {
       }));
     };
     const handleOffline = () => {
-          setNetwork((prevState) => ({
-            ...prevState,
-            online: false,
-            since: new Date().toString(),
-          }));
-        };
+      setNetwork((prevState) => ({
+        ...prevState,
+        online: false,
+        since: new Date().toString(),
+      }));
+    };
     const handleConnectionChange = () => {
-          setNetwork((prevState) => ({
-            ...prevState,
-            ...getNetworkConnectionInfo(),
-          }));
-        };
+      setNetwork((prevState) => ({
+        ...prevState,
+        ...getNetworkConnectionInfo(),
+      }));
+    };
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     const connection = getNetworkConnection();
     connection?.addEventListener('change', handleConnectionChange);
     return () => {
-          window.removeEventListener('online', handleOnline);
-          window.removeEventListener('offline', handleOffline);
-          connection?.removeEventListener('change', handleConnectionChange);
-        };
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      connection?.removeEventListener('change', handleConnectionChange);
+    };
   }, []);
   return network;
 }

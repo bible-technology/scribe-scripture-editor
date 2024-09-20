@@ -218,8 +218,8 @@ export const createWebVersificationUSFM = async (
   const uploadFileToSupabase = async (filePath, fileContent) => {
     // eslint-disable-next-line no-unused-vars
     const { data: file, error } = await sbStorageUpload(filePath, new Blob([fileContent], { type: 'text/plain' }), {
-        upsert: true,
-      });
+      upsert: true,
+    });
 
     if (error) {
       throw error;

@@ -62,35 +62,35 @@ function TargetLanguageTag(props) {
 function BibleHeaderTagDropDown(headerDropDown, handleDropDown, call) {
   return (
     call === 'new'
-    ? (
-      <PopoverProjectType
-        items={solutions}
-        handleDropDown={handleDropDown}
-      >
+      ? (
+        <PopoverProjectType
+          items={solutions}
+          handleDropDown={handleDropDown}
+        >
+          <button
+            type="button"
+            aria-label="open-popover"
+            className="flex justify-center items-center px-3 py-2 text-white
+          font-bold text-xs rounded-full leading-3 tracking-wider uppercase bg-primary"
+          >
+            {/* <div className="">{headerDropDown}</div> */}
+            <div className="">{headerDropDown === 'Translation' ? `Bible ${headerDropDown}` : headerDropDown}</div>
+            <ChevronDownIcon
+              className="w-5 h-5 ml-2"
+              aria-hidden="true"
+            />
+          </button>
+        </PopoverProjectType>
+      )
+      : (
         <button
           type="button"
-          aria-label="open-popover"
-          className="flex justify-center items-center px-3 py-2 text-white
+          className="flex justify-center items-center px-3 py-2 text-white ml-5
           font-bold text-xs rounded-full leading-3 tracking-wider uppercase bg-primary"
         >
-          {/* <div className="">{headerDropDown}</div> */}
           <div className="">{headerDropDown === 'Translation' ? `Bible ${headerDropDown}` : headerDropDown}</div>
-          <ChevronDownIcon
-            className="w-5 h-5 ml-2"
-            aria-hidden="true"
-          />
         </button>
-      </PopoverProjectType>
-    )
-    : (
-      <button
-        type="button"
-        className="flex justify-center items-center px-3 py-2 text-white ml-5
-          font-bold text-xs rounded-full leading-3 tracking-wider uppercase bg-primary"
-      >
-        <div className="">{headerDropDown === 'Translation' ? `Bible ${headerDropDown}` : headerDropDown}</div>
-      </button>
-    )
+      )
 
   );
 }
@@ -314,24 +314,24 @@ export default function NewProject({ call, project, closeEdit }) {
     setMetadata(project);
     // set dropdown to the project type
     switch (project.type.flavorType.flavor.name) {
-      case 'textTranslation':
-        setHeaderDropDown('Translation');
-        break;
+    case 'textTranslation':
+      setHeaderDropDown('Translation');
+      break;
 
-      case 'textStories':
-        setHeaderDropDown('OBS');
-        break;
+    case 'textStories':
+      setHeaderDropDown('OBS');
+      break;
 
-      case 'audioTranslation':
-        setHeaderDropDown('Audio');
-        break;
+    case 'audioTranslation':
+      setHeaderDropDown('Audio');
+      break;
 
-      case 'x-juxtalinear':
-        setHeaderDropDown('Juxta');
-        break;
+    case 'x-juxtalinear':
+      setHeaderDropDown('Juxta');
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
   useEffect(() => {
@@ -362,7 +362,7 @@ export default function NewProject({ call, project, closeEdit }) {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
           </div>
-          )
+        )
         : (
           <div className="rounded-md border shadow-sm mt-4 ml-5 mr-5 mb-5">
             <div className="space-y-2 m-10">
@@ -508,7 +508,7 @@ export default function NewProject({ call, project, closeEdit }) {
               </div>
             </div>
           </div>
-      )}
+        )}
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}
@@ -540,8 +540,8 @@ export default function NewProject({ call, project, closeEdit }) {
         setOpenModal={setOpenModalJuxtaWrongSetOfBooks}
         confirmMessage={
           (!importedBookCodes || importedBookCodes.length === 0)
-          ? 'No resource imported.'
-          : 'Your imported resources must correspond to your canon specifications'
+            ? 'No resource imported.'
+            : 'Your imported resources must correspond to your canon specifications'
         }
         buttonName={t('btn-ok')}
         closeModal={() => {}}

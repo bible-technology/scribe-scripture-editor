@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Menu, Transition,
+  Menu, Transition,
 } from '@headlessui/react';
 import styles from '@/layouts/editor/SubMenuBar.module.css';
 
 const MenuBar = ({
-    header,
-    MenuItems,
-    style,
+  header,
+  MenuItems,
+  style,
 }) => (
   <Menu as="div" className="relative inline-block text-left">
     <div>
@@ -30,25 +30,25 @@ const MenuBar = ({
           <div key={item.itemname} aria-label={header !== 'File' ? 'section-header' : ''} className="flex px-1 py-1">
             <Menu.Item>
               {({ active }) => (
-                  item.renderElement ? (
-                    <>
-                      <span
-                        className={`${active ? 'bg-black text-primary' : 'text-gray-900'
-                        } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                      >
-                        {item.icon && (
+                item.renderElement ? (
+                  <>
+                    <span
+                      className={`${active ? 'bg-black text-primary' : 'text-gray-900'
+                      } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                    >
+                      {item.icon && (
                         <span
                           className="w-5 h-5 mr-2"
                           aria-hidden="true"
                         >
                           {item.icon}
                         </span>
-                        )}
-                      </span>
-                      <span>
-                        {item.renderElement}
-                      </span>
-                    </>
+                      )}
+                    </span>
+                    <span>
+                      {item.renderElement}
+                    </span>
+                  </>
                 ) : (
                   <span>
                     <span>
@@ -60,12 +60,12 @@ const MenuBar = ({
                         } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                       >
                         {item.icon && (
-                        <span
-                          className="w-5 h-5 mr-2"
-                          aria-hidden="true"
-                        >
-                          {item.icon}
-                        </span>
+                          <span
+                            className="w-5 h-5 mr-2"
+                            aria-hidden="true"
+                          >
+                            {item.icon}
+                          </span>
                         )}
                         <span>
                           {item.itemname}
@@ -74,10 +74,10 @@ const MenuBar = ({
                     </span>
                   </span>
                 )
-            )}
+              )}
             </Menu.Item>
           </div>
-          ))}
+        ))}
 
         {/* <Menu.Item>
             {({ active }) => (
@@ -163,11 +163,11 @@ const MenuBar = ({
       </Menu.Items>
     </Transition>
   </Menu>
-    );
+);
 export default MenuBar;
 
 MenuBar.propTypes = {
-    header: PropTypes.string,
-    MenuItems: PropTypes.array,
-    style: PropTypes.object,
+  header: PropTypes.string,
+  MenuItems: PropTypes.array,
+  style: PropTypes.object,
 };

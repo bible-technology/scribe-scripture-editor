@@ -5,7 +5,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { classNames } from '../../util/classNames';
 
 export default function CustomList({
- selected, setSelected, options, show, width,
+  selected, setSelected, options, show, width,
 }) {
   const dropdownWidth = width ?? 40;
   return (

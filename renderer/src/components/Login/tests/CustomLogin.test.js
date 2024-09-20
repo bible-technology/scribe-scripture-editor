@@ -14,9 +14,9 @@ const offline = {
   viewForgot: false,
 };
 describe('Login component tests', () => {
-	test('Should render CustomLogin component without error', () => {
-		render(<CustomLogin />);
-	});
+  test('Should render CustomLogin component without error', () => {
+    render(<CustomLogin />);
+  });
   test('Should have text box', async () => {
     const { getByTestId } = render(<CustomLogin ui={online}/>);
     const textbox = getByTestId('text-box');

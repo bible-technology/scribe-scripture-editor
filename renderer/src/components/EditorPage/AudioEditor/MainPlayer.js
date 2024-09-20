@@ -2,7 +2,7 @@
 import Player from '@/components/AudioRecorder/components/Player';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import {
- useContext, useEffect, useState, useCallback,
+  useContext, useEffect, useState, useCallback,
 } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
@@ -34,7 +34,7 @@ const MainPlayer = () => {
     title: '',
     confirmMessage: '',
     buttonName: '',
-    });
+  });
 
   const modelClose = () => {
     setModel({
@@ -108,55 +108,55 @@ const MainPlayer = () => {
     if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
       while (i < 4) {
       // Looking for the existed default file so that we can easily rename both the files
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {
+        if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {
         // Checking whether the user is trying to default the same default file, else rename both.
-        if (i !== value) {
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`));
-          fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.mp3`));
+          if (i !== value) {
+            fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`));
+            fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.mp3`));
+          }
         }
+        i += 1;
       }
-      i += 1;
-    }
-    // Finally loading the data back
-    loadChapter();
+      // Finally loading the data back
+      loadChapter();
     }
   };
   const saveAudio = (blob) => {
     getDetails()
-    .then(({
-      projectsDir, path,
-    }) => {
-      const fs = window.require('fs');
-      const result = take.replace(/take/g, '');
-      // Fetching the mp3 files
-      const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter));
-      // Checking whether any takes are available for the selected verse
-      const name = folderName.filter((w) => w.match(`^${chapter}_${verse}_`));
-      let filePath;
-      if (name.length > 0) {
+      .then(({
+        projectsDir, path,
+      }) => {
+        const fs = window.require('fs');
+        const result = take.replace(/take/g, '');
+        // Fetching the mp3 files
+        const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter));
+        // Checking whether any takes are available for the selected verse
+        const name = folderName.filter((w) => w.match(`^${chapter}_${verse}_`));
+        let filePath;
+        if (name.length > 0) {
         // While Re-recording replacing the file with same name
-        if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`))) {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
-        } else {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}.mp3`);
-        }
-      } else {
-        filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
-      }
-
-      fs.mkdirSync(path.dirname(filePath), { recursive: true });
-      const fileReader = new FileReader();
-      // eslint-disable-next-line func-names
-      fileReader.onload = function () {
-        // eslint-disable-next-line react/no-this-in-sfc
-        fs.writeFile(filePath, Buffer.from(new Uint8Array(this.result)), (err) => {
-          if (!err) {
-            loadChapter();
+          if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`))) {
+            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+          } else {
+            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}.mp3`);
           }
-        });
-      };
-      fileReader.readAsArrayBuffer(blob);
-    });
+        } else {
+          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+        }
+
+        fs.mkdirSync(path.dirname(filePath), { recursive: true });
+        const fileReader = new FileReader();
+        // eslint-disable-next-line func-names
+        fileReader.onload = function () {
+        // eslint-disable-next-line react/no-this-in-sfc
+          fs.writeFile(filePath, Buffer.from(new Uint8Array(this.result)), (err) => {
+            if (!err) {
+              loadChapter();
+            }
+          });
+        };
+        fileReader.readAsArrayBuffer(blob);
+      });
   };
   const playRecordingFeedback = useCallback(
     async (blobUrl, blob) => {
@@ -171,9 +171,9 @@ const MainPlayer = () => {
     pauseRecording,
     resumeRecording,
   } = useReactMediaRecorder({
-      audio: true,
-      onStop: playRecordingFeedback,
-      blobPropertyBag: { type: 'audio/mp3' },
+    audio: true,
+    onStop: playRecordingFeedback,
+    blobPropertyBag: { type: 'audio/mp3' },
   });
   const handleFunction = () => {
     // We have used trigger to identify whether the call is from DeleteAudio or Re-record
