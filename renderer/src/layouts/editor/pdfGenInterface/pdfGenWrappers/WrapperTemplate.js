@@ -7,15 +7,26 @@ import Trash from '../../../../../public/icons/trash.svg';
 import { OBSWrapperSortableList } from './HeaderWrapper/OBSHeaderWrapper';
 import { BCVWrapperSortableList } from './HeaderWrapper/BCVHeaderWrapper';
 
-function firstElem(projectInfo) {
-  if (projectInfo.type === 'Juxtalinear') {
-    return `{"0": {"id":"${uuidv4()}", "type": "jxlSimple", "source":"${
-      projectInfo.path
-    }","content": {} }}`;
+const fixPath = (source) => {
+  const isWindows = process.platform === 'win32';
+  if (isWindows) {
+    // Convert to Windows style paths
+    return source.replace(/\//g, '\\');
   }
-  return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${
-    projectInfo.path
-  }","content": {} }}`;
+  // Convert to Unix style paths
+  return source.replace(/\\/g, '/');
+};
+
+function firstElem(projectInfo) {
+  const obj = {
+    0: {
+      id: uuidv4(),
+      type: projectInfo.type === 'Juxtalinear' ? 'jxlSimple' : 'null',
+      source: projectInfo.path === undefined ? 'null' : fixPath(projectInfo.path),
+      content: {},
+    },
+  };
+  return JSON.stringify(obj);
 }
 
 export function WrapperTemplate({
@@ -253,7 +264,8 @@ export function WrapperTemplate({
         </div>
 
         <ul className={sortableListClassName}>
-          {sections && Object.keys(JSON.parse(sections)).map((k, index) => (
+          {/* eslint-disable-next-line */}
+          {console.log("sections\n",JSON.parse(sections)[0].source) || Object.keys(JSON.parse(sections)).map((k, index) => (
             <li
               id={index}
               className={itemClassName}
