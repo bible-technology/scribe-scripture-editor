@@ -31,8 +31,8 @@ export default async function readLocalResources(username, setSubMenuItems) {
     const userProfile = await localforage.getItem('userProfile');
     const email = userProfile.user.email;
     const parseData = [];
-    const projectsDir = path.join(`${newPath}`, `${email}`, `resources`);
-    const userResourceMetaPath = path(`${newPath}`, `${email}`, `resources`);
+    const projectsDir = `${newPath}/${email}/resources`;
+    const userResourceMetaPath = `${newPath}/${email}/resources`;
     createDirectory({ path: userResourceMetaPath });
     readResourceMetadata(projectsDir, userResourceMetaPath, setSubMenuItems, parseData);
   }

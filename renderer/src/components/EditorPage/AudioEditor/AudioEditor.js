@@ -91,7 +91,7 @@ const AudioEditor = ({ editor }) => {
                         // Since this project doesn't have text data, we will create a JSON using the versification scheme
                           await readFile({
                             projectname: projectName,
-                            filename: 'audio/ingredients/versification.json',
+                            filename: path.join('audio', 'ingredients', 'versification.json'),
                             username,
                           }).then((value) => {
                             if (value) {

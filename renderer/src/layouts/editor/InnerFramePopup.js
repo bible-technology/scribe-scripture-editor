@@ -365,7 +365,7 @@ export default function InnerFramePopup() {
             `${currentUser}`,
             'projects',
             `${p.name}_${p.id[0]}`,
-            'ingredients'
+            'ingredients',
           );
           return p;
         });

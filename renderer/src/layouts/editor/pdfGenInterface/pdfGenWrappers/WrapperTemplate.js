@@ -42,6 +42,25 @@ export function WrapperTemplate({
   );
   // choice is the possible section by wrapper
 
+  const getSectionType = (key) => {
+    let ret;
+    if (sections) {
+      try {
+        const parseSection = JSON.parse(sections);
+        if (parseSection[key]) {
+          ret = parseSection[key].type;
+        } else {
+          ret = 'null';
+        }
+      } catch {
+        ret = 'null';
+      }
+    } else {
+      ret = 'null';
+    }
+    return ret;
+  };
+
   useEffect(() => {
     setSections(firstElem(projectInfo));
   }, [projectInfo]);
@@ -75,7 +94,10 @@ export function WrapperTemplate({
       t[keyWrapper].content.content = {};
 
       // Update with new sections
-      t[keyWrapper].content.content = JSON.parse(sections);
+      try {
+        t[keyWrapper].content.content = JSON.parse(sections);
+      // eslint-disable-next-line
+      } catch {}
 
       return t;
     });
@@ -130,7 +152,7 @@ export function WrapperTemplate({
         });
       });
     };
-  }, [Object.keys(JSON.parse(sections)).length]);
+  }, [sections]);
 
   return (
     <div
@@ -231,7 +253,7 @@ export function WrapperTemplate({
         </div>
 
         <ul className={sortableListClassName}>
-          {Object.keys(JSON.parse(sections)).map((k, index) => (
+          {sections && Object.keys(JSON.parse(sections)).map((k, index) => (
             <li
               id={index}
               className={itemClassName}
@@ -256,9 +278,7 @@ export function WrapperTemplate({
                   advanceMode={advanceMode}
                   setSelected={setSections}
                   setOrderSelections={setOrderSelections}
-                  keySpecification={
-                    JSON.parse(sections)[k].type
-                  }
+                  keySpecification={getSectionType(k)}
                   idjson={k}
                   removeButton={
                     advanceMode ? (

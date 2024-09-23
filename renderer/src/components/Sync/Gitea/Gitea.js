@@ -13,7 +13,7 @@ const Gitea = ({
 }) => {
   const [authentication, setAuthentication] = useState();
   const [repository, setRepository] = useState();
-  const [localDefaultOwner, setLocalDefaultOwner] = useState("");
+  const [localDefaultOwner, setLocalDefaultOwner] = useState('');
 
   useEffect(() => {
     setAuth(authentication);
@@ -22,18 +22,17 @@ const Gitea = ({
     (async () => {
       if (authentication !== undefined) {
         await createSyncProfile(authentication);
-        if(repository !== undefined) {
+        if (repository !== undefined) {
           setLocalDefaultOwner(repository.owner.login);
         }
       }
     })();
-    
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authentication, repository]);
 
   const getAuth = async () => {
     const authentication = await localforage.getItem('authentication');
-    setLocalDefaultOwner(authentication !== undefined ? authentication.user.login : "");
+    setLocalDefaultOwner(authentication !== undefined ? authentication.user.login : '');
     return authentication;
   };
 
