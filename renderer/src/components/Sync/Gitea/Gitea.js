@@ -13,21 +13,27 @@ const Gitea = ({
 }) => {
   const [authentication, setAuthentication] = useState();
   const [repository, setRepository] = useState();
+  const [localDefaultOwner, setLocalDefaultOwner] = useState("");
 
   useEffect(() => {
     setAuth(authentication);
     setRepo(repository);
-    // on auth change update sycn on user profile
+    // on auth change update sync on user profile
     (async () => {
       if (authentication !== undefined) {
         await createSyncProfile(authentication);
+        if(repository !== undefined) {
+          setLocalDefaultOwner(repository.owner.login);
+        }
       }
     })();
+    
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authentication, repository]);
 
   const getAuth = async () => {
     const authentication = await localforage.getItem('authentication');
+    setLocalDefaultOwner(authentication !== undefined ? authentication.user.login : "");
     return authentication;
   };
 
@@ -60,7 +66,7 @@ const Gitea = ({
       <RepositoryContextProvider
         repository={repository}
         onRepository={setRepository}
-        defaultOwner={authentication && authentication.user.name}
+        defaultOwner={localDefaultOwner}
         defaultQuery=""
         branch=""
       >
