@@ -97,7 +97,7 @@ function createSection(folder, pickerJson) {
   let currentMetadataPath = '';
   // eslint-disable-next-line
   for (const project of projects) {
-    currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
+    currentMetadataPath = path.join(folder, project, 'metadata.json');
     if (fs.existsSync(currentMetadataPath)) {
       const jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
       const jsonParse = JSON.parse(jsontest);
@@ -120,8 +120,8 @@ function createSection(folder, pickerJson) {
             src: {
               type: 'fs',
               path: folder.includes('projects')
-                ? `${folder}/${project}/ingredients`
-                : `${folder}/${project}`,
+                ? path.join(`${folder}`, `${project}`, 'ingredients')
+                : path.join(`${folder}`, `${project}`),
             },
             books: [],
           };
@@ -132,8 +132,8 @@ function createSection(folder, pickerJson) {
             src: {
               type: 'fs',
               path: folder.includes('projects')
-                ? `${folder}/${project}/ingredients`
-                : `${folder}/${project}`,
+                ? path.join(`${folder}`, `${project}`, 'ingredients')
+                : path.join(`${folder}`, `${project}`),
             },
             books: [],
           };
@@ -146,8 +146,8 @@ function createSection(folder, pickerJson) {
           src: {
             type: 'fs',
             path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}/${fileName}`,
+              ? path.join(`${folder}`, `${project}`, 'ingredients')
+              : path.join(`${folder}`, `${project}`, `${fileName}`),
           },
           books: [],
         };
@@ -159,8 +159,8 @@ function createSection(folder, pickerJson) {
           src: {
             type: 'fs',
             path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}`,
+              ? path.join(`${folder}`, `${project}`, 'ingredients')
+              : path.join(`${folder}`, `${project}`),
           },
           books: [],
         };
@@ -172,8 +172,8 @@ function createSection(folder, pickerJson) {
           src: {
             type: 'fs',
             path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}`,
+              ? path.join(`${folder}`, `${project}`, 'ingredients')
+              : path.join(`${folder}`, `${project}`),
           },
           books: jsonParse.type.flavorType.currentScope ? Object.keys(jsonParse.type.flavorType.currentScope) : [],
         };
@@ -364,7 +364,8 @@ export default function InnerFramePopup() {
             'users',
             `${currentUser}`,
             'projects',
-            `${p.name}_${p.id[0]}/ingredients`,
+            `${p.name}_${p.id[0]}`,
+            'ingredients'
           );
           return p;
         });
@@ -410,9 +411,10 @@ export default function InnerFramePopup() {
         && header.pages
       ) {
         if (!header.outputPath && folder) {
+          const path = window.require('path');
           setHeaderInfo((prev) => {
             const data = { ...JSON.parse(prev) };
-            data.outputPath = `${folder }/${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`;
+            data.outputPath = path.join(`${folder }`, `${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`);
             data.verbose = false;
             return JSON.stringify(data);
           });
@@ -452,17 +454,18 @@ export default function InnerFramePopup() {
   };
 
   useEffect(() => {
+    const path = window.require('path');
     if (folder && nameFile === '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`;
+        data.outputPath = path.join(`${folder }`, `${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
     } else if (folder && nameFile !== '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ nameFile }.pdf`;
+        data.outputPath = path.join(`${folder }`, `${ nameFile }.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
@@ -471,9 +474,10 @@ export default function InnerFramePopup() {
 
   useEffect(() => {
     if (folder && nameFile !== '') {
+      const path = window.require('path');
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ nameFile }.pdf`;
+        data.outputPath = path.join(`${folder }`, `${ nameFile }.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
