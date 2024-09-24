@@ -23,6 +23,16 @@ export function findProjectInfo(meta, autoGrapha) {
   return autoGrapha?.filter((a) => `${a.name }_${ a.id}` === meta)[0];
 }
 
+const fixPath = (source) => {
+  const isWindows = process.platform === 'win32';
+  if (isWindows) {
+    // Convert to Windows style paths
+    return source.replace(/\//g, '\\');
+  }
+  // Convert to Unix style paths
+  return source.replace(/\\/g, '/');
+};
+
 function changeMetaDataToWrapperSection(meta, autoGrapha) {
   const projInfo = findProjectInfo(meta, autoGrapha);
   if (projInfo.type === 'Text Translation') {
@@ -91,13 +101,14 @@ function messageToPeople(json) {
 function createSection(folder, pickerJson) {
   const path = require('path');
   const fs = window.require('fs');
+  const fixedPath = fixPath(folder);
 
-  const projects = fs.readdirSync(folder);
+  const projects = fs.readdirSync(fixedPath);
 
   let currentMetadataPath = '';
   // eslint-disable-next-line
   for (const project of projects) {
-    currentMetadataPath = path.join(folder, project, 'metadata.json');
+    currentMetadataPath = path.join(fixedPath, project, 'metadata.json');
     if (fs.existsSync(currentMetadataPath)) {
       const jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
       const jsonParse = JSON.parse(jsontest);
@@ -119,9 +130,9 @@ function createSection(folder, pickerJson) {
             language: `${jsonParse.resourceMeta?.language}`,
             src: {
               type: 'fs',
-              path: folder.includes('projects')
-                ? path.join(`${folder}`, `${project}`, 'ingredients')
-                : path.join(`${folder}`, `${project}`),
+              path: fixedPath.includes('projects')
+                ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+                : path.join(`${fixedPath}`, `${project}`),
             },
             books: [],
           };
@@ -131,9 +142,9 @@ function createSection(folder, pickerJson) {
             language: `${jsonParse.languages[0].tag}`,
             src: {
               type: 'fs',
-              path: folder.includes('projects')
-                ? path.join(`${folder}`, `${project}`, 'ingredients')
-                : path.join(`${folder}`, `${project}`),
+              path: fixedPath.includes('projects')
+                ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+                : path.join(`${fixedPath}`, `${project}`),
             },
             books: [],
           };
@@ -145,9 +156,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.meta.defaultLocale,
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? path.join(`${folder}`, `${project}`, 'ingredients')
-              : path.join(`${folder}`, `${project}`, `${fileName}`),
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`, `${fileName}`),
           },
           books: [],
         };
@@ -158,9 +169,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.meta.defaultLocale,
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? path.join(`${folder}`, `${project}`, 'ingredients')
-              : path.join(`${folder}`, `${project}`),
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`),
           },
           books: [],
         };
@@ -171,9 +182,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.languages[0] ? jsonParse.languages[0].name.en : 'French',
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? path.join(`${folder}`, `${project}`, 'ingredients')
-              : path.join(`${folder}`, `${project}`),
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`),
           },
           books: jsonParse.type.flavorType.currentScope ? Object.keys(jsonParse.type.flavorType.currentScope) : [],
         };
