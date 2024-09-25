@@ -787,7 +787,7 @@ export default function InnerFramePopup() {
             >
               Choose an export folder
             </Button>
-            <div>{folder ? `Folder selected : ${folder}` : "Please choose an export folder"}</div>
+            <div>{folder ? `Folder selected : ${folder}` : 'Please choose an export folder'}</div>
             <Input
               onChange={(e) => {
                 handleInputChange(e);
@@ -818,7 +818,7 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
-                if (jsonValidation.length == 0) {
+                if (jsonValidation.length === 0) {
                   setMessagePrint('');
                   const pdfGen = new global.PdfGenStatic(
                     JSON.parse(kitchenFaucet),
@@ -834,19 +834,18 @@ export default function InnerFramePopup() {
                   }
                   setMessagePrint((prev) => `${prev }\nSuccessful pdf generation.`);
                 } else {
-                  let cleanerMessage = jsonValidation.map(
-                    txt => {
-                      console.log(txt);
-                      console.log("txt.includes('outputPath')", txt.includes('outputPath'));
-                      if(txt.includes('outputPath')) {
-                        return "Please choose an export folder";
-                      } else if(txt.includes('Unknown section type')) {
-                        return "Please choose at least one 'Print type'";
-                      } else if(txt.includes('requires ranges')) {
-                        return "Canon specification : please choose at least one book";
+                  const cleanerMessage = jsonValidation.map(
+                    (txt) => {
+                      let theText = txt;
+                      if (txt.includes('outputPath')) {
+                        theText = 'Please choose an export folder';
+                      } else if (txt.includes('Unknown section type')) {
+                        theText = 'Please choose at least one "Print type"';
+                      } else if (txt.includes('requires ranges')) {
+                        theText = 'Canon specification : please choose at least one book';
                       }
-                      return txt;
-                    }
+                      return theText;
+                    },
                   ).join('\n');
                   setMessagePrint(`# Error\n${cleanerMessage}`);
                 }

@@ -228,38 +228,40 @@ export function WrapperTemplate({
           }}
         >
           <div style={{ display: 'flex' }}>
-            {advanceMode && (<Button
-              style={{
-                borderStyle: 'solid',
-                color: 'white',
-              }}
-              onClick={() => {
-                changePrintOrder((prev) => {
-                  const t = [...prev];
-                  t.splice(
-                    t.indexOf(parseInt(keyWrapper, 10)),
-                    1,
-                  );
-                  return t;
-                });
+            {advanceMode && (
+              <Button
+                style={{
+                  borderStyle: 'solid',
+                  color: 'white',
+                }}
+                onClick={() => {
+                  changePrintOrder((prev) => {
+                    const t = [...prev];
+                    t.splice(
+                      t.indexOf(parseInt(keyWrapper, 10)),
+                      1,
+                    );
+                    return t;
+                  });
 
-                changePrintData((prev) => {
-                  const updatedSelected = JSON.parse(
-                    JSON.stringify(prev),
-                  );
-                  // Remove the last key in the map as it's not required
-                  delete updatedSelected[
-                    parseInt(keyWrapper, 10)
-                  ];
-                  return updatedSelected;
-                });
-              }}
-            >
-              <Trash
-                color="black"
-                style={{ height: 35, width: 35 }}
-              />
-            </Button>)}
+                  changePrintData((prev) => {
+                    const updatedSelected = JSON.parse(
+                      JSON.stringify(prev),
+                    );
+                    // Remove the last key in the map as it's not required
+                    delete updatedSelected[
+                      parseInt(keyWrapper, 10)
+                    ];
+                    return updatedSelected;
+                  });
+                }}
+              >
+                <Trash
+                  color="black"
+                  style={{ height: 35, width: 35 }}
+                />
+              </Button>
+            )}
           </div>
         </div>
 

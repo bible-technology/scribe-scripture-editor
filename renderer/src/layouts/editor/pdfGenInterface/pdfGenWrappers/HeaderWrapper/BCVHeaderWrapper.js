@@ -18,7 +18,7 @@ export function BCVWrapperSortableList({
   loopMode,
 }) {
   // Start get all book from current project
-  const initialBook = 'mat';
+  // const initialBook = 'mat';
   const initialChapter = '1';
   const initialVerse = '1';
 

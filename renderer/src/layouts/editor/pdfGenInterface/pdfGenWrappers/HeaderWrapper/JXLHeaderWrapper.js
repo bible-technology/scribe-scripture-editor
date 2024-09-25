@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { Modal } from '@material-ui/core';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import { useBibleReference } from 'bible-reference-rcl';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -16,7 +17,7 @@ export function JXLHeaderWrapper({
   loopMode,
 }) {
   // Start get all book from current project
-  const initialBook = 'mat';
+  // const initialBook = 'mat';
   const initialChapter = '1';
   const initialVerse = '1';
 
@@ -105,7 +106,7 @@ export function JXLHeaderWrapper({
             margin: 'auto',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center', // Added alignment to center vertically
+            alignItems: 'center',
             fontSize: 24,
             color: 'black',
           }}
