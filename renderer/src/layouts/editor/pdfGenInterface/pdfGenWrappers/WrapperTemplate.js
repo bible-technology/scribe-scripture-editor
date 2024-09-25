@@ -265,7 +265,7 @@ export function WrapperTemplate({
 
         <ul className={sortableListClassName}>
           {/* eslint-disable-next-line */}
-          {console.log("sections\n",JSON.parse(sections)[0].source) || Object.keys(JSON.parse(sections)).map((k, index) => (
+          {Object.keys(JSON.parse(sections)).map((k, index) => (
             <li
               id={index}
               className={itemClassName}

@@ -32,7 +32,7 @@ const Gitea = ({
 
   const getAuth = async () => {
     const authentication = await localforage.getItem('authentication');
-    setLocalDefaultOwner(authentication !== undefined ? authentication.user.login : '');
+    setLocalDefaultOwner(authentication ? authentication.user.login : '');
     return authentication;
   };
 

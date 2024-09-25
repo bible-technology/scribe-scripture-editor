@@ -18,6 +18,7 @@ import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplat
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { SelectOption } from './SelectOptions';
 import packageInfo from '../../../../package.json';
+import * as logger from '../../logger';
 
 export function findProjectInfo(meta, autoGrapha) {
   return autoGrapha?.filter((a) => `${a.name }_${ a.id}` === meta)[0];
@@ -81,11 +82,7 @@ function messageToPeople(json) {
   } else if (json.type === 'section') {
     message += `Starting to prepare ${ json.args[0]}`;
   } else if (json.type === 'wrappedSection') {
-    message
-      += `Preparing section of type ${
-        json.args[0]
-      } from ${
-        json.args[1].split('-')[0]}`;
+    message += `Preparing section of type ${json.args[0]} from ${json.args[1].split('-')[0]}`;
     if (json.args[1].split('-')[1]) {
       message += ` to ${ json.args[1].split('-')[1]}`;
     }
@@ -103,12 +100,20 @@ function createSection(folder, pickerJson) {
   const fs = window.require('fs');
   const fixedPath = fixPath(folder);
 
-  const projects = fs.readdirSync(fixedPath);
+  let projects;
+  try {
+    if (!fs.existsSync(fixedPath)) {
+      fs.mkdirSync(fixedPath);
+    }
+    projects = fs.readdirSync(fixedPath);
+  } catch (err) {
+    logger.error('InnerFramePopup.js', `Error reading project dir: ${err}`);
+  }
 
   let currentMetadataPath = '';
   // eslint-disable-next-line
   for (const project of projects) {
-    currentMetadataPath = path.join(fixedPath, project, 'metadata.json');
+    currentMetadataPath = fixPath(path.join(fixedPath, project, 'metadata.json'));
     if (fs.existsSync(currentMetadataPath)) {
       const jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
       const jsonParse = JSON.parse(jsontest);
