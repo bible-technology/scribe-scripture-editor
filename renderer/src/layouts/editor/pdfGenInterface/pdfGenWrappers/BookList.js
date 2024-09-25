@@ -3,7 +3,7 @@ import React from 'react';
 export const BookList = ({ books }) => (
   <div
     style={{
-      paddingBottom: '12px', borderRadius: 999, display: 'inline-flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8,
+      paddingBottom: '12px', borderRadius: 999, display: 'inline-flex', flexDirection: 'row', justifyContent: 'left', alignItems: 'center', gap: 8, flexWrap: 'wrap',
     }}
   >
     {books.map((book, index) => (

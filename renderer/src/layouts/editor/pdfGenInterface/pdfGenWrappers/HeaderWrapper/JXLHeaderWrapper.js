@@ -8,6 +8,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Layout from '../../../../../../public/icons/basil/Solid/Interface/Layout.svg';
 import { TextOnlyTooltip, LoopSwitch } from '../fieldPicker/customMuiComponent';
+import { BookList } from '../BookList';
 
 export function JXLHeaderWrapper({
   keyWrapper,
@@ -219,6 +220,8 @@ export function JXLHeaderWrapper({
           {t('label-custom')}
         </div>
       </div>
+      <BookList books={selectedBooks ?? []} />
+      <br />
 
       <Modal
         open={openModalBook}
