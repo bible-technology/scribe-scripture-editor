@@ -228,7 +228,7 @@ export function WrapperTemplate({
           }}
         >
           <div style={{ display: 'flex' }}>
-            <Button
+            {advanceMode && (<Button
               style={{
                 borderStyle: 'solid',
                 color: 'white',
@@ -259,7 +259,7 @@ export function WrapperTemplate({
                 color="black"
                 style={{ height: 35, width: 35 }}
               />
-            </Button>
+            </Button>)}
           </div>
         </div>
 

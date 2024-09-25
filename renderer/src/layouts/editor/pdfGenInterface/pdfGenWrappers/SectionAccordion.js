@@ -20,6 +20,20 @@ const convertionWrapperType = (type) => {
   }
 };
 
+const hashPrintTypes = {
+  'bcvBible': 'Bible by verse',
+  'bookNote': 'Book Note',
+  '4ColumnSpread': 'Four resources on facing pages',
+  '2Column': 'Two resources in two columns',
+  'biblePlusNotes': 'Notes focus (by verse)',
+  'paraBible': 'Formatted Bible',
+  'markdown': 'Simple formatting',
+    // 'jxlSpread': 'Juxtalinear on facing pages',
+  'jxlSimple': 'Juxtalinear',
+  'obs': 'Obs',
+  'obsPlusNotes': 'Obs with Notes',
+}
+
 export function AccordionPicker({
   language,
   setSelected,
@@ -236,7 +250,7 @@ export function AccordionPicker({
               }}
             >
               {keySpecification !== 'null'
-                ? keySpecification
+                ? hashPrintTypes[keySpecification]
                 : 'select a print type'}
 
               <ChevronDownIcon className="h-5 w-5 text-gray-500" />

@@ -127,8 +127,8 @@ export function OBSWrapperSortableList({
                       fontWeight: 400,
                     }}
                   >
-                    Ressources in the loop will be added to
-                    the export, form
+                    Projects in the loop are added one by one to the document,
+                    for each book selected above.
                   </div>
                 </div>
               )}

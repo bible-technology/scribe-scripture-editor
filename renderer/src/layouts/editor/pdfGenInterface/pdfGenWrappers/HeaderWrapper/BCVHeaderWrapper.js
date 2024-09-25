@@ -1,12 +1,14 @@
 import { useEffect, useState, useContext } from 'react';
 import { Modal } from '@material-ui/core';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import { useBibleReference } from 'bible-reference-rcl';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Layout from '../../../../../../public/icons/basil/Solid/Interface/Layout.svg';
 import { TextOnlyTooltip, LoopSwitch } from '../fieldPicker/customMuiComponent';
+import { BookList } from '../BookList';
 
 export function BCVWrapperSortableList({
   keyWrapper,
@@ -21,11 +23,16 @@ export function BCVWrapperSortableList({
   const initialVerse = '1';
 
   const { t } = useTranslation();
+  const {
+    state: {
+      bookId,
+    },
+  } = useContext(ReferenceContext);
 
   const {
     state: { bookList },
   } = useBibleReference({
-    initialBook,
+    initialBook: bookId,
     initialChapter,
     initialVerse,
   });
@@ -33,7 +40,7 @@ export function BCVWrapperSortableList({
     states: { canonList },
   } = useContext(ProjectContext);
   // end get all book from current project
-  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [selectedBooks, setSelectedBooks] = useState(bookId ? [bookId.toUpperCase()] : []);
   const [openModalBook, setOpenModalBook] = useState(false);
 
   useEffect(() => {
@@ -47,7 +54,7 @@ export function BCVWrapperSortableList({
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
+      <div style={{ display: 'flex', justifyContent: 'left' }}>
         {advanceMode ? (
           <div>
             <TextOnlyTooltip
@@ -70,8 +77,8 @@ export function BCVWrapperSortableList({
                       fontWeight: 400,
                     }}
                   >
-                    Ressources in the loop will be added to
-                    the export, form
+                    Projects in the loop are added one by one to the document,
+                    for each book selected above.
                   </div>
                 </div>
               )}
@@ -99,13 +106,13 @@ export function BCVWrapperSortableList({
           style={{
             margin: 'auto',
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'left',
             alignItems: 'center', // Added alignment to center vertically
-            fontSize: 24,
+            fontSize: 20,
             color: 'black',
           }}
         >
-          <div style={{ width: 25, height: 25, marginRight: 8 }}>
+          <div style={{ width: 18, height: 18, marginRight: 8 }}>
             <Layout />
           </div>
           Translation
@@ -212,7 +219,10 @@ export function BCVWrapperSortableList({
         >
           {t('label-custom')}
         </div>
+        <br />
       </div>
+      <BookList books={selectedBooks ?? []} />
+      <br />
 
       <Modal
         open={openModalBook}

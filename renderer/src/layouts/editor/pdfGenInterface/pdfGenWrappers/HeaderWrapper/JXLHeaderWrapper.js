@@ -21,11 +21,16 @@ export function JXLHeaderWrapper({
   const initialVerse = '1';
 
   const { t } = useTranslation();
+  const {
+    state: {
+      bookId,
+    },
+  } = useContext(ReferenceContext);
 
   const {
     state: { bookList },
   } = useBibleReference({
-    initialBook,
+    initialBook: bookId,
     initialChapter,
     initialVerse,
   });
@@ -33,7 +38,7 @@ export function JXLHeaderWrapper({
     states: { canonList },
   } = useContext(ProjectContext);
   // end get all book from current project
-  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [selectedBooks, setSelectedBooks] = useState(bookId ? [bookId.toUpperCase()] : []);
   const [openModalBook, setOpenModalBook] = useState(false);
 
   useEffect(() => {
@@ -70,8 +75,8 @@ export function JXLHeaderWrapper({
                       fontWeight: 400,
                     }}
                   >
-                    Ressources in the loop will be added to
-                    the export, form
+                    Projects in the loop are added one by one to the document,
+                    for each book selected above.
                   </div>
                 </div>
               )}

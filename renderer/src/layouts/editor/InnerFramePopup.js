@@ -259,7 +259,8 @@ export default function InnerFramePopup() {
   // the order Of The Selected choice
   const [orderSelection, setOrderSelection] = useState([0]);
   // is the json is validate or not
-  const [isJsonValidate, setIsJsonValidate] = useState(false);
+  const [isJsonValidate, setIsJsonValidate] = useState(true);
+  const [jsonValidation, setJsonValidation] = useState({});
   const [messagePrint, setMessagePrint] = useState('');
   // the actual kitchenFaucet
   const pdfCallBacks = (json) => {
@@ -285,7 +286,7 @@ export default function InnerFramePopup() {
   );
 
   // the selected headerInfo
-  const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
+  const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE", "verbose":"false"}');
   // const [headerInfo, setHeaderInfo] = useState('{}');
   const [nameFile, setNameFile] = useState('');
   const [folder, setFolder] = useState(null);
@@ -417,6 +418,7 @@ export default function InnerFramePopup() {
 
   useEffect(() => {
     const validationJson = global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet));
+    setJsonValidation(validationJson);
     if (validationJson.length === 0) {
       const header = JSON.parse(headerInfo);
       if (
@@ -438,7 +440,7 @@ export default function InnerFramePopup() {
         setIsJsonValidate(true);
       }
     } else {
-      setIsJsonValidate(false);
+      setIsJsonValidate(true);
     }
   }, [selected, headerInfo, orderSelection, folder, kitchenFaucet]);
 
@@ -457,7 +459,6 @@ export default function InnerFramePopup() {
       }
       if (chosenFolder.filePaths.length > 0) {
         setFolder(chosenFolder.filePaths[0]);
-        setMessagePrint((prev) => `${prev }\nfolder selected : ${ chosenFolder.filePaths[0]}`);
       } else {
         // Handle case where no folder was selected
         // eslint-disable-next-line
@@ -559,19 +560,19 @@ export default function InnerFramePopup() {
           }}
         >
           {SelectOption(
-            'fonts',
-            'fonts',
-            jsonWithHeaderChoice.fonts,
-            handleChangeHeaderInfo,
-          )}
-          {SelectOption(
-            'Pages',
+            'Paper size',
             'pages',
             jsonWithHeaderChoice.pages,
             handleChangeHeaderInfo,
           )}
           {SelectOption(
-            'Sizes',
+            'Font',
+            'fonts',
+            jsonWithHeaderChoice.fonts,
+            handleChangeHeaderInfo,
+          )}
+          {SelectOption(
+            'Font size',
             'sizes',
             jsonWithHeaderChoice.sizes,
             handleChangeHeaderInfo,
@@ -637,7 +638,7 @@ export default function InnerFramePopup() {
                       fontWeight: 600,
                     }}
                   >
-                    Advanced
+                    Advanced mode
                   </div>
                   <div
                     style={{
@@ -646,7 +647,7 @@ export default function InnerFramePopup() {
                       fontWeight: 400,
                     }}
                   >
-                    mode Merge projects into a single
+                    Merge projects into a single
                     export, access more print types, and use
                     loop mode.
                   </div>
@@ -750,6 +751,7 @@ export default function InnerFramePopup() {
                   alignItems: 'center',
                   backgroundColor: '#F50',
                   color: 'white',
+                  cursor: 'pointer',
                 }}
                 onClick={() => handleOpenModalAddWrapper(true)}
               >
@@ -783,8 +785,9 @@ export default function InnerFramePopup() {
                 openFileDialogSettingData();
               }}
             >
-              Choose export folder
+              Choose an export folder
             </Button>
+            <div>{folder ? `Folder selected : ${folder}` : "Please choose an export folder"}</div>
             <Input
               onChange={(e) => {
                 handleInputChange(e);
@@ -815,7 +818,7 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
-                if (isJsonValidate) {
+                if (jsonValidation.length == 0) {
                   setMessagePrint('');
                   const pdfGen = new global.PdfGenStatic(
                     JSON.parse(kitchenFaucet),
@@ -830,6 +833,22 @@ export default function InnerFramePopup() {
                     return;
                   }
                   setMessagePrint((prev) => `${prev }\nSuccessful pdf generation.`);
+                } else {
+                  let cleanerMessage = jsonValidation.map(
+                    txt => {
+                      console.log(txt);
+                      console.log("txt.includes('outputPath')", txt.includes('outputPath'));
+                      if(txt.includes('outputPath')) {
+                        return "Please choose an export folder";
+                      } else if(txt.includes('Unknown section type')) {
+                        return "Please choose at least one 'Print type'";
+                      } else if(txt.includes('requires ranges')) {
+                        return "Canon specification : please choose at least one book";
+                      }
+                      return txt;
+                    }
+                  ).join('\n');
+                  setMessagePrint(`# Error\n${cleanerMessage}`);
                 }
               }}
             >
