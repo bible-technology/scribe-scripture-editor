@@ -701,7 +701,7 @@ export default function InnerFramePopup() {
             </TextOnlyTooltip>
           </div>
           <ul className="sortable-TESTWRAPPER-list">
-            {Object.keys(selected).map((k) => (
+            {Object.keys(selected).map((k,i,arraySel) => (
               <li
                 id={k}
                 className="sortable-test1-item"
@@ -719,6 +719,7 @@ export default function InnerFramePopup() {
                   advanceMode={advanceMode}
                   changePrintData={setSelected}
                   changePrintOrder={setOrderSelection}
+                  showTrashButton={arraySel.length > 1}
                 />
               </li>
             ))}

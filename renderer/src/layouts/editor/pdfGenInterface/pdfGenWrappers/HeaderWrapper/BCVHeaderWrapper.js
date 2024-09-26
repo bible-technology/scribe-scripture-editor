@@ -68,7 +68,7 @@ export function BCVWrapperSortableList({
                       fontWeight: 600,
                     }}
                   >
-                    For each book selected above
+                    Loop mode
                   </div>
                   <div
                     style={{

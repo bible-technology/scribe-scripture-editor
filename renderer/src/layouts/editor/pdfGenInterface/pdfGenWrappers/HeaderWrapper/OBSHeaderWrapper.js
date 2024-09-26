@@ -104,7 +104,7 @@ export function OBSWrapperSortableList({
         />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
+      <div style={{ display: 'flex', justifyContent: 'left' }}>
         {advanceMode ? (
           <div>
             <TextOnlyTooltip
@@ -118,7 +118,7 @@ export function OBSWrapperSortableList({
                       fontWeight: 600,
                     }}
                   >
-                    For each Obs selected above
+                    Loop mode
                   </div>
                   <div
                     style={{
@@ -152,7 +152,6 @@ export function OBSWrapperSortableList({
         ) : (
           <div />
         )}
-
       </div>
     </div>
   );

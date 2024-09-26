@@ -39,6 +39,7 @@ export function WrapperTemplate({
   advanceMode,
   changePrintData,
   changePrintOrder,
+  showTrashButton,
 }) {
   const [orderSections, setOrderSelections] = useState([0]);
   const updateElemOrder = (items) => {
@@ -63,6 +64,7 @@ export function WrapperTemplate({
         } else {
           ret = 'null';
         }
+        console.log(Object.keys(parseSection));
       } catch {
         ret = 'null';
       }
@@ -73,10 +75,11 @@ export function WrapperTemplate({
   };
 
   useEffect(() => {
-    setSections(firstElem(projectInfo));
+    const fePI = firstElem(projectInfo);
+    setSections(fePI);
   }, [projectInfo]);
 
-  const [LoopMode, setLoopMode] = useState(false);
+  const [loopMode, setLoopMode] = useState(false);
 
   const sortableListClassName = `sortable-${keyWrapper}-list`;
   const itemClassName = `sortable-${keyWrapper}-item`;
@@ -183,7 +186,7 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
@@ -194,7 +197,7 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
@@ -205,14 +208,14 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
       )}
       <div
         style={
-          LoopMode
+          loopMode
             ? {
               backgroundColor: '#FFEEE5',
             }
@@ -228,7 +231,7 @@ export function WrapperTemplate({
           }}
         >
           <div style={{ display: 'flex' }}>
-            {advanceMode && (
+            {advanceMode && showTrashButton && (
               <Button
                 style={{
                   borderStyle: 'solid',
@@ -295,7 +298,7 @@ export function WrapperTemplate({
                   keySpecification={getSectionType(k)}
                   idjson={k}
                   removeButton={
-                    advanceMode ? (
+                    advanceMode && Object.keys(JSON.parse(sections)).length > 1 ? (
                       <Button
                         onClick={() => {
                           setOrderSelections(
@@ -363,7 +366,7 @@ export function WrapperTemplate({
             justifyContent: 'space-between',
           }}
         >
-          {advanceMode && LoopMode ? (
+          {advanceMode && loopMode ? (
             <Button
               style={{
                 borderRadius: 4,
