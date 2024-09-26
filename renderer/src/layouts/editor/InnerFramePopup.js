@@ -701,7 +701,7 @@ export default function InnerFramePopup() {
             </TextOnlyTooltip>
           </div>
           <ul className="sortable-TESTWRAPPER-list">
-            {Object.keys(selected).map((k,i,arraySel) => (
+            {Object.keys(selected).map((k, i, arraySel) => (
               <li
                 id={k}
                 className="sortable-test1-item"
