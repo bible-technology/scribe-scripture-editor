@@ -64,7 +64,6 @@ export function WrapperTemplate({
         } else {
           ret = 'null';
         }
-        console.log(Object.keys(parseSection));
       } catch {
         ret = 'null';
       }
