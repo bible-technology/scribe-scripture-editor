@@ -128,7 +128,7 @@ export function OBSWrapperSortableList({
                     }}
                   >
                     Projects in the loop are added one by one to the document,
-                    for each book selected above.
+                    for each story selected above.
                   </div>
                 </div>
               )}

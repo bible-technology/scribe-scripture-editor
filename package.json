@@ -28,7 +28,7 @@
     "pack-app": "yarn build && electron-builder --dir",
     "dist": "yarn build && electron-builder -p never",
     "deploy": "yarn build && electron-builder -p always",
-    "makewin": "electron-builder --windows"
+    "makewin": "yarn build && electron-builder --windows"
   },
   "eslintIgnore": [
     "*.test.js"

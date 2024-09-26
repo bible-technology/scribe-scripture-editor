@@ -78,7 +78,7 @@ export function JXLHeaderWrapper({
                     }}
                   >
                     Projects in the loop are added one by one to the document,
-                    for each book selected above.
+                    for each book selected below.
                   </div>
                 </div>
               )}
