@@ -7,6 +7,9 @@ config.config();
 
 // Packages
 const { BrowserWindow, app, ipcMain } = require('electron');
+const pie = require('puppeteer-in-electron');
+pie.initialize(app);
+const puppeteer = require('puppeteer-core');
 // const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
 const { autoUpdater } = require('electron-updater');
@@ -42,6 +45,15 @@ function createWindow() {
   autoUpdater.checkForUpdatesAndNotify();
 }
 
+async function instanciateBrowserPuppeteer() {
+  const browser = await pie.connect(app, puppeteer);
+  return browser;
+}
+
+ipcMain.handle('instanciate-brower-puppeteer', (event) => {
+  return instanciateBrowserPuppeteer();
+});
+
 // prevent multiple app window opening
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -71,6 +83,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', async () => {
   if (mainWindow === null) {
+    await pie.initialize(app);
     createWindow();
   }
 });

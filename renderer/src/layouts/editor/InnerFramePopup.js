@@ -825,9 +825,9 @@ export default function InnerFramePopup() {
                     JSON.parse(kitchenFaucet),
                     pdfCallBacks,
                   );
-
                   setMessagePrint('Generating Pdf ...');
                   try {
+                    const browser = await ipcRenderer.invoke('instanciate-brower-puppeteer');
                     await pdfGen.doPdf();
                   } catch (pdfError) {
                     setMessagePrint((prev) => `${prev }\nPDF generation failed: ${ pdfError.message}`);
