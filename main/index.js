@@ -21,19 +21,17 @@ function isDev() {
 
 async function setPermissions(chromePath) {
   try {
-    fs.chmodSync(chromePath, '755');  // Set the permissions to be executable
-    console.log(`Permissions set for: ${chromePath}`);
+    fs.chmodSync(chromePath, '755');
   } catch (err) {
     console.error(`Failed to set permissions for ${chromePath}: `, err);
   }
 }
 
 function getChromeCacheDir() {
-  // Use Electron's app.getPath to get the userData directory (persistent)
   const dataDir = app.getPath('appData');
 
-  // Define a custom subfolder for your app data
   const chromeDataDir = path.join(dataDir, 'chrome-cache');
+  const chromeDataDirFilePath = path.join(chromeDataDir, 'executablePath');
 
   // Create the folder if it doesn't exist
   try {
@@ -41,61 +39,42 @@ function getChromeCacheDir() {
   } catch (err) {
     // If the directory doesn't exist, create it
     fs.mkdirSync(chromeDataDir, { recursive: true });
+    fs.appendFileSync(chromeDataDirFilePath, '', 'utf8');
     console.log(`Created persistent Chrome data directory at: ${chromeDataDir}`);
   }
 
   return chromeDataDir;
 }
 
-function getChromeExecutablePath(platform, chromeDir, platformDir) {
-  let executableName = '';
-  if (platform === 'linux') {
-    executableName = 'chrome-linux64/chrome';
-  } else if (platform === 'darwin') {
-    executableName = 'chrome-mac/Chromium.app/Contents/MacOS/Chromium';
-  } else if (platform === 'win64') {
-    executableName = 'chrome-win64/chrome.exe';
-  }
-
-  return path.join(chromeDir, platformDir, executableName);
-}
-
 async function verifyAndInstallChrome(version) {
-  const platform = process.platform === 'win32' ? 'win64' : process.platform;
-  
   // Get the persistent directory
   const cacheDir = getChromeCacheDir();
-  const chromeDir = path.join(cacheDir, 'chrome');
-  const platformDir = `${platform}-${version}`;
-
-  const chromeExecutablePath = getChromeExecutablePath(platform, chromeDir, platformDir);
-
+  const cacheDirFilePath = path.join(cacheDir, 'executablePath');
 
   // Check if the browser is already installed
-  try {
-    fs.accessSync(chromeExecutablePath);
-    console.log(`Chrome version ${version} is already installed.`);
-    browserPath = chromeExecutablePath;
-  } catch (err) {
-    console.log(`Chrome version ${version} is not installed. Installing now...`);
-    await install({
-      cacheDir,
-      browser: 'chrome',
-      buildId: version,
-      platform,
-    }).then((res) => {
-      const installedChromePath = getChromeExecutablePath(platform, chromeDir, platformDir);
-      if (fs.existsSync(installedChromePath)) {
-        browserPath = installedChromePath;
-        console.log(`Chrome version ${version} has been installed to ${browserPath}.`);
-      }
-      let bet = res.path;
-      console.log("## browserPath ==",bet);
-      setPermissions(browserPath);
-    }).catch((err) => {
-      throw new Error(`Failed to install Chrome version ${version}`);
-    });
+  
+  // fs.accessSync(cacheDirFilePath);
+  const data = fs.readFileSync(cacheDirFilePath, 'utf8');
+  if(data.trim() !== '') {
+    console.log(`Chrome version ${version} is already installed at '${data}'`);
+    browserPath = data;
+    return browserPath;
   }
+  console.log(`Chrome version ${version} is not installed. Installing now...`);
+  await install({
+    cacheDir,
+    browser: 'chrome',
+    buildId: version,
+  }).then((res) => {
+    if (fs.existsSync(res.executablePath)) {
+      browserPath = res.executablePath;
+      fs.appendFileSync(cacheDirFilePath, res.executablePath, 'utf8');
+      console.log(`Chrome version ${version} has been installed to ${browserPath}.`);
+    }
+    setPermissions(browserPath);
+  }).catch((err) => {
+    throw new Error(`Failed to install Chrome version ${version} : ${err}`);
+  });
 }
 
 // Prepare the renderer once the app is ready
@@ -133,20 +112,11 @@ async function createWindow() {
   autoUpdater.checkForUpdatesAndNotify();
 }
 
-// async function instanciateBrowserPuppeteer() {
-//   console.log("instanciateBrowserPuppeteer call");
-//   const browser = await pie.connect(app, puppeteer);
-//   console.log("browser OK", browser.version());
-//   // return browser;
-// }
-
 ipcMain.handle('get-browser-path', async (event) => {
-  if(!browserPath) {
-    verifyAndInstallChrome('121.0.6167.85').catch(err => {
-      console.error(`Failed to verify or install Chrome: ${err.message}`);
-    });
-  }
-  return await browserPath;
+  await verifyAndInstallChrome('121.0.6167.85').catch(err => {
+    console.error(`Failed to verify or install Chrome: ${err.message}`);
+  });
+  return browserPath;
 });
 
 // prevent multiple app window opening
