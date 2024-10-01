@@ -188,7 +188,7 @@ export const cloneAndSetProject = async (fs, gitprojectDir, repo, userBranch, au
 export const importServerProject = async (updateBurrito, repo, sbData, auth, userBranch, action, currentUser, duplicate, setPullPopup, setPullData, t = undefined) => {
   try {
     logger.debug('SyncFromGiteaUtils.js', 'Inside Import Project core');
-    const fs = window.require('fs');
+    const fs = window.require('graceful-fs');
     const newpath = localStorage.getItem('userPath');
     const sbDataObject = { ...sbData };
     const projectDir = path.join(newpath, packageInfo.name, 'users', currentUser, 'projects');

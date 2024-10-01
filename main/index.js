@@ -1,7 +1,7 @@
 // Native
 require('@electron/remote/main').initialize();
 const path = require('path');
-const fs = require('fs').promises;
+const fs = require('graceful-fs').promises;
 const { format } = require('url');
 const { install } = require('@puppeteer/browsers');
 const config = require("dotenv");

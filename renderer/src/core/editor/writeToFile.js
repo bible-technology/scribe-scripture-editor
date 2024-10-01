@@ -12,7 +12,7 @@ const writeToFile = async ({
   data,
 }) => {
   if (isElectron()) {
-    const fs = window.require('fs');
+    const fs = window.require('graceful-fs');
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
     const projectsPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectname, filename);

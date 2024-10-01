@@ -14,8 +14,8 @@ const getDirectories = (readdirSync, source) => readdirSync(source, { withFileTy
 export const getScope = async (project) => {
   const path = require('path');
   const scope = {};
-  const { readdirSync } = window.require('fs');
-  const fs = window.require('fs');
+  const { readdirSync } = window.require('graceful-fs');
+  const fs = window.require('graceful-fs');
   const list = getDirectories(readdirSync, project);
 
   list.forEach(async (book) => {
@@ -43,7 +43,7 @@ export const readProjectScope = async (projectName) => {
     logger.debug('readProjectScope.js', `In read metadata - ${projectName}`);
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
-    const fs = window.require('fs');
+    const fs = window.require('graceful-fs');
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
 

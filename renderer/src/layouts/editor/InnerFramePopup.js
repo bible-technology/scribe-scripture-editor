@@ -97,7 +97,7 @@ function messageToPeople(json) {
 
 function createSection(folder, pickerJson) {
   const path = require('path');
-  const fs = window.require('fs');
+  const fs = window.require('graceful-fs');
   const fixedPath = fixPath(folder);
 
   let projects;
@@ -502,7 +502,7 @@ export default function InnerFramePopup() {
   }, [nameFile]);
 
   useEffect(() => {
-    const fs = window.require('fs');
+    const fs = window.require('graceful-fs');
     const os = window.require('os');
     const path = window.require('path');
 

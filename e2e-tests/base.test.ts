@@ -14,7 +14,7 @@ import {
   createUser, projectPageExpect
 } from './common';
 
-const fs = require('fs');
+const fs = require('graceful-fs');
 const path = require('path');
 const { _electron: electron } = require('@playwright/test');
 

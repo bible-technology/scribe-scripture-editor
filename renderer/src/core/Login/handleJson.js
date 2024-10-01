@@ -16,7 +16,7 @@ const uniqueUser = (users, username) => users.some((user) => user.username === u
  */
 export const loadUsers = async () => {
   const newpath = localStorage.getItem('userPath');
-  const fs = window.require('fs');
+  const fs = window.require('graceful-fs');
   const path = require('path');
   const file = path.join(newpath, packageInfo.name, 'users', 'users.json');
   if (fs.existsSync(file)) {

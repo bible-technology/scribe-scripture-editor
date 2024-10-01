@@ -53,7 +53,7 @@ function ConflictResolverUI({ conflictData, setConflictPopup }) {
 
   const abortConflictResolution = async (conflictData) => {
     logger.debug('conflictResolverUI.jsx', 'in abort conflict');
-    const fs = window.require('fs');
+    const fs = window.require('graceful-fs');
     modelClose();
     setConflictPopup({
       open: false,

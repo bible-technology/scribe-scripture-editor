@@ -15,7 +15,7 @@ import {
 export const updateAgSettings = async (username, projectName, data, font, fontSize = 1) => {
   logger.debug('updateAgSettings.js', 'In updateAgSettings');
   const newpath = localStorage.getItem('userPath');
-  const fs = window.require('fs');
+  const fs = window.require('graceful-fs');
   const path = require('path');
   const result = Object.keys(data.ingredients).filter((key) => key.includes(environment.PROJECT_SETTING_FILE));
   const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, result[0]);

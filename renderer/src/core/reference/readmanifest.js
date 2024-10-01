@@ -5,7 +5,7 @@ import { environment } from '../../../environment';
 const path = require('path');
 
 export async function readCustomResources({ resourceId }) {
-  const fs = window.require('fs');
+  const fs = window.require('graceful-fs');
   const newpath = localStorage.getItem('userPath');
   let currentUser;
   await localforage.getItem('userProfile').then((value) => {

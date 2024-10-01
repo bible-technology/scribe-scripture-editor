@@ -76,6 +76,9 @@ jobs:
             - name: install dependencies
               run: yarn install
 
+            - name: increase max file opened
+              run: ulimit -n 1048576
+
             - name: install wine
               run: |
                   sudo dpkg --add-architecture i386

@@ -22,7 +22,7 @@ const SectionContainer = () => {
       const username = value?.username;
       localforage.getItem('currentProject').then((projectName) => {
         const path = require('path');
-        const fs = window.require('fs');
+        const fs = window.require('graceful-fs');
         const newpath = localStorage.getItem('userPath');
         const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
         const data = fs.readFileSync(metaPath, 'utf-8');
