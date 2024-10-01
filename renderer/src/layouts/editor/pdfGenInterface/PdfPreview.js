@@ -12,7 +12,7 @@
 // //This component is te pdf preview view, it is mostly a place holder for now
 // export function PdfPreview() {
 //   const path = require('path');
-//   const fs = window.require('graceful-fs');
+//   const fs = window.require('fs');
 //   const [zoom, setZoom] = useState(1);
 //   const [numPages, setNumPages] = useState();
 //   const [pageNumber, setPageNumber] = useState(1);

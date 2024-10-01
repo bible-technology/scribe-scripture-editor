@@ -11,7 +11,7 @@ import { createDirectory, newPath } from '../../../../supabase';
 export default async function readLocalResources(username, setSubMenuItems) {
   if (isElectron()) {
     const parseData = [];
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
     const projectsDir = path.join(newpath, packageInfo.name, 'users', username, 'resources');// Read user resources

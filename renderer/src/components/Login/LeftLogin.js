@@ -97,7 +97,7 @@ const LeftLogin = () => {
       // router.push('/main');
       // The below code is commented for UI dev purpose.
       if (handleValidation(values)) {
-        const fs = window.require('graceful-fs');
+        const fs = window.require('fs');
         logger.debug(
           'LeftLogin.js',
           'Triggers handleLogin to check whether the user is existing or not',

@@ -75,7 +75,7 @@ export default function TranslationHelpsCard({
         setOfflineItems('');
         localForage.getItem('userProfile').then(async (user) => {
           logger.debug('TranslationHelpsCard.js', `reading offline helps ${offlineResource.data?.projectDir}`);
-          const fs = window.require('graceful-fs');
+          const fs = window.require('fs');
           const path = require('path');
           const newpath = localStorage.getItem('userPath');
           const currentUser = user?.username;

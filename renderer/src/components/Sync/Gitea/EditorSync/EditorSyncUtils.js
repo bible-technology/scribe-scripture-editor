@@ -7,7 +7,7 @@ import { uploadToGitea } from '../../Scribe/SyncToGitea';
 export async function getGiteaUsersList() {
   let usersList = [];
   const userData = await localForage.getItem('userProfile');
-  const fs = window.require('graceful-fs');
+  const fs = window.require('fs');
   const path = require('path');
   const newpath = localStorage.getItem('userPath');
   const file = path.join(newpath, packageInfo.name, 'users', userData?.username, environment.USER_SETTING_FILE);

@@ -162,7 +162,7 @@ export default function ExportProjectPopUp(props) {
   };
 
   const exportBible = async () => {
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     if (folderPath && fs.existsSync(folderPath)) {
       setValid(false);
       logger.debug('ExportProjectPopUp.js', 'Inside exportBible');

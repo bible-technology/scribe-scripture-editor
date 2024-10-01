@@ -18,7 +18,7 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
       setLoading(true);
       await localForage.getItem('userProfile').then(async (user) => {
         logger.debug('DownloadCreateSBforHelps.js', 'In helps-resource download user fetch - ', user?.username);
-        const fs = window.require('graceful-fs');
+        const fs = window.require('fs');
         const path = require('path');
         const newpath = localStorage.getItem('userPath');
         const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');

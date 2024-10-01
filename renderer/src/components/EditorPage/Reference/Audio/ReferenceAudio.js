@@ -69,7 +69,7 @@ const ReferenceAudio = ({
       setIsLoading(true);
       setDisplayScreen(false);
       setBookData();
-      const fs = window.require('graceful-fs');
+      const fs = window.require('fs');
       const path = require('path');
       const newpath = localStorage.getItem('userPath');
       // Fetching the reference list

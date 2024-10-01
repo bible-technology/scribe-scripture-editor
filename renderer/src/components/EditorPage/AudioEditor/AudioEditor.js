@@ -69,7 +69,7 @@ const AudioEditor = ({ editor }) => {
                     // Checking whether the selected book and chapter is in the scope or not
                       if (key === bookId.toUpperCase() && _data.type.flavorType.currentScope[key].includes(chapter)) {
                         _books.push(bookId.toUpperCase());
-                        const fs = window.require('graceful-fs');
+                        const fs = window.require('fs');
                         const path = require('path');
                         let bookContent = [];
                         const exists = fs.existsSync(path.join(projectsDir, 'text-1', 'ingredients', `${bookId.toUpperCase()}.usfm`));

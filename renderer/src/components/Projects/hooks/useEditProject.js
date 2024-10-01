@@ -26,7 +26,7 @@ const useEditProject = () => {
       const userProfile = await localforage.getItem('userProfile');
 
       if (isElectron()) {
-        const fs = window.require('graceful-fs');
+        const fs = window.require('fs');
         const newpath = localStorage.getItem('userPath');
         folder = path.join(newpath, packageInfo.name, 'users', userProfile.username, 'projects', `${project.name}_${project.id[0]}`);
         data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');

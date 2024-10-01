@@ -92,7 +92,7 @@ export const updateFiletoServer = async (fileContent, filePath, branch, repoName
 
 // sync profile updation
 export const createSyncProfile = async (auth) => {
-  const fs = window.require('graceful-fs');
+  const fs = window.require('fs');
   const path = require('path');
   await localForage.getItem('userProfile').then(async (user) => {
     const currentUser = user?.username;
@@ -165,7 +165,7 @@ export const getOrPutLastSyncInAgSettings = async (method, projectMeta, syncUser
   if (method === 'get' || method === 'put') {
     let currentUser = await localForage.getItem('userProfile');
     currentUser = currentUser?.username;
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
     const id = Object.keys(projectMeta?.identification?.primary?.scribe);

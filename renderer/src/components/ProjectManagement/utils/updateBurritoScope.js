@@ -7,7 +7,7 @@ export const updateBurritoScope = async (projectName, metadata) => {
     logger.debug('updateBurritoScope.js', `In update metadata - ${projectName}`);
     const currentUser = await localForage.getItem('userProfile');
     const newpath = localStorage.getItem('userPath');
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     const path = require('path');
     const file = path.join(newpath, packageInfo.name, 'users', currentUser.username, 'projects');
     // Finally updating the scope in the metadata

@@ -97,7 +97,7 @@ function messageToPeople(json) {
 
 function createSection(folder, pickerJson) {
   const path = require('path');
-  const fs = window.require('graceful-fs');
+  const fs = window.require('fs');
   const fixedPath = fixPath(folder);
 
   let projects;
@@ -502,7 +502,7 @@ export default function InnerFramePopup() {
   }, [nameFile]);
 
   useEffect(() => {
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     const os = window.require('os');
     const path = window.require('path');
 
@@ -819,7 +819,7 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
-                const executablePath = await global.ipcRenderer.invoke('get-browser-path');
+                let executablePath = await global.ipcRenderer.invoke('get-browser-path');
                 let browser;
                 if (jsonValidation.length === 0) {
                   try {
@@ -827,14 +827,11 @@ export default function InnerFramePopup() {
                       headless: 'new',
                       args: [
                         '--disable-web-security',
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
                       ],
-                      ignoreDefaultArgs: ['--disable-extensions'],
                       executablePath,
                     });
                   } catch (err) {
-                    console.log('Puppeteer falling back to no-sandbox');
+                    logger.error('InnerFramePopup.js', 'Puppeteer falling back to no-sandbox');
                     browser = await global.puppeteer.launch({
                       headless: 'new',
                       args: [
@@ -842,21 +839,12 @@ export default function InnerFramePopup() {
                         '--no-sandbox',
                         '--disable-setuid-sandbox',
                       ],
-                      ignoreDefaultArgs: ['--disable-extensions'],
                       executablePath,
                     });
                   }
                   setMessagePrint('');
                   setMessagePrint('Generating Pdf ...');
                   try {
-                    // setMessagePrint((prev) => `${prev }\nInstanciating browser ... `);
-                    // let browser = await global.puppeteer.connect({
-                    //   // browserURL: 'http://localhost:8000',
-                    //   browserWSEndpoint: wsEndpoint,
-                    //   // defaultViewport: null
-                    // });
-                    console.log('browser ok! : browser.version()', await browser.version());
-                    // const browser = await ipcRenderer.invoke('instanciate-browserpie');
                     setMessagePrint((prev) => `${prev}\nInstanciating pdfGen`);
                     const pdfGen = new global.PdfGenStatic(
                       { ...JSON.parse(kitchenFaucet), browser },

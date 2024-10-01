@@ -1,7 +1,7 @@
 // Native
 require('@electron/remote/main').initialize();
 const path = require('path');
-const fs = require('graceful-fs').promises;
+const fs = require('fs');
 const { format } = require('url');
 const { install } = require('@puppeteer/browsers');
 const config = require("dotenv");
@@ -21,14 +21,14 @@ function isDev() {
 
 async function setPermissions(chromePath) {
   try {
-    await fs.chmod(chromePath, '755');  // Set the permissions to be executable
+    fs.chmodSync(chromePath, '755');  // Set the permissions to be executable
     console.log(`Permissions set for: ${chromePath}`);
   } catch (err) {
     console.error(`Failed to set permissions for ${chromePath}: `, err);
   }
 }
 
-async function getChromeCacheDir() {
+function getChromeCacheDir() {
   // Use Electron's app.getPath to get the userData directory (persistent)
   const dataDir = app.getPath('appData');
 
@@ -37,28 +37,45 @@ async function getChromeCacheDir() {
 
   // Create the folder if it doesn't exist
   try {
-    await fs.access(chromeDataDir);
+    fs.accessSync(chromeDataDir);
   } catch (err) {
     // If the directory doesn't exist, create it
-    await fs.mkdir(chromeDataDir, { recursive: true });
+    fs.mkdirSync(chromeDataDir, { recursive: true });
     console.log(`Created persistent Chrome data directory at: ${chromeDataDir}`);
   }
 
   return chromeDataDir;
 }
 
+function getChromeExecutablePath(platform, chromeDir, platformDir) {
+  let executableName = '';
+  if (platform === 'linux') {
+    executableName = 'chrome-linux64/chrome';
+  } else if (platform === 'darwin') {
+    executableName = 'chrome-mac/Chromium.app/Contents/MacOS/Chromium';
+  } else if (platform === 'win64') {
+    executableName = 'chrome-win64/chrome.exe';
+  }
+
+  return path.join(chromeDir, platformDir, executableName);
+}
+
 async function verifyAndInstallChrome(version) {
   const platform = process.platform === 'win32' ? 'win64' : process.platform;
   
   // Get the persistent directory
-  const cacheDir = await getChromeCacheDir();
-  const bPath = path.join(cacheDir, `chrome/${platform}-${version}`);
+  const cacheDir = getChromeCacheDir();
+  const chromeDir = path.join(cacheDir, 'chrome');
+  const platformDir = `${platform}-${version}`;
+
+  const chromeExecutablePath = getChromeExecutablePath(platform, chromeDir, platformDir);
+
 
   // Check if the browser is already installed
   try {
-    await fs.access(bPath);
+    fs.accessSync(chromeExecutablePath);
     console.log(`Chrome version ${version} is already installed.`);
-    browserPath = bPath;
+    browserPath = chromeExecutablePath;
   } catch (err) {
     console.log(`Chrome version ${version} is not installed. Installing now...`);
     await install({
@@ -67,10 +84,17 @@ async function verifyAndInstallChrome(version) {
       buildId: version,
       platform,
     }).then((res) => {
-      browserPath = res.path;
+      const installedChromePath = getChromeExecutablePath(platform, chromeDir, platformDir);
+      if (fs.existsSync(installedChromePath)) {
+        browserPath = installedChromePath;
+        console.log(`Chrome version ${version} has been installed to ${browserPath}.`);
+      }
+      let bet = res.path;
+      console.log("## browserPath ==",bet);
       setPermissions(browserPath);
+    }).catch((err) => {
+      throw new Error(`Failed to install Chrome version ${version}`);
     });
-    console.log(`Chrome version ${version} has been installed.`);
   }
 }
 

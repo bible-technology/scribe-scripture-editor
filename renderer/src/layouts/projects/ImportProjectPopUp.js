@@ -109,7 +109,7 @@ export default function ImportProjectPopUp(props) {
 
   const removeExtractedZipDir = async() => {
     const path = require('path');
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     // delete the extracted zip file after successfull / failed import
     if(importingIsZip && folderPath) {
       setImportingIsZip(false)
@@ -138,7 +138,7 @@ export default function ImportProjectPopUp(props) {
     setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
     logger.debug('ImportProjectPopUp.js', 'Inside callImport');
     const path = require('path');
-    const fs = window.require('graceful-fs');
+    const fs = window.require('fs');
     await localforage.getItem('userProfile').then(async (value) => {
       const status = await importBurrito(folderPath, value.username, updateBurriot, languages);
       // delete the extracted zip file after successfull / failed import
