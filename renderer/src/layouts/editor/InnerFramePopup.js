@@ -819,7 +819,7 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
-                let executablePath = await global.ipcRenderer.invoke('get-browser-path');
+                const executablePath = await global.ipcRenderer.invoke('get-browser-path');
                 let browser;
                 if (jsonValidation.length === 0) {
                   try {
