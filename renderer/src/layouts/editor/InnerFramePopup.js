@@ -21,7 +21,7 @@ import packageInfo from '../../../../package.json';
 import * as logger from '../../logger';
 
 export function findProjectInfo(meta, autoGrapha) {
-  return autoGrapha?.filter((a) => `${a.name }_${ a.id}` === meta)[0];
+  return autoGrapha?.filter((a) => `${a.name}_${a.id}` === meta)[0];
 }
 
 const fixPath = (source) => {
@@ -78,16 +78,16 @@ function messageToPeople(json) {
     message += '\t';
   }
   if (json.type === 'step') {
-    message += `Starting step ${ json.args[0]}`;
+    message += `Starting step ${json.args[0]}`;
   } else if (json.type === 'section') {
-    message += `Starting to prepare ${ json.args[0]}`;
+    message += `Starting to prepare ${json.args[0]}`;
   } else if (json.type === 'wrappedSection') {
     message += `Preparing section of type ${json.args[0]} from ${json.args[1].split('-')[0]}`;
     if (json.args[1].split('-')[1]) {
-      message += ` to ${ json.args[1].split('-')[1]}`;
+      message += ` to ${json.args[1].split('-')[1]}`;
     }
   } else if (json.type === 'pdf') {
-    message += `Writing pdf of ${ json.args[1]}`;
+    message += `Writing pdf of ${json.args[1]}`;
   } else {
     findProjectInfo();
     message += json.msg;
@@ -264,7 +264,7 @@ export default function InnerFramePopup() {
   const [messagePrint, setMessagePrint] = useState('');
   // the actual kitchenFaucet
   const pdfCallBacks = (json) => {
-    setMessagePrint((prev) => `${prev }\n${ messageToPeople(json)}`);
+    setMessagePrint((prev) => `${prev}\n${messageToPeople(json)}`);
   };
   const {
     states: { selectedProject },
@@ -401,7 +401,7 @@ export default function InnerFramePopup() {
         setListResourcesForPdf(pickerJson);
         return currentUser;
       })
-      .then((currentUser) => readLocalResources(currentUser, () => {}));
+      .then((currentUser) => readLocalResources(currentUser, () => { }));
   }, []);
 
   useEffect(() => {
@@ -432,7 +432,7 @@ export default function InnerFramePopup() {
           const path = window.require('path');
           setHeaderInfo((prev) => {
             const data = { ...JSON.parse(prev) };
-            data.outputPath = path.join(`${folder }`, `${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`);
+            data.outputPath = path.join(`${folder}`, `${generate({ exactly: 5, wordsPerString: 1 }).join('-')}.pdf`);
             data.verbose = false;
             return JSON.stringify(data);
           });
@@ -475,14 +475,14 @@ export default function InnerFramePopup() {
     if (folder && nameFile === '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = path.join(`${folder }`, `${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`);
+        data.outputPath = path.join(`${folder}`, `${generate({ exactly: 5, wordsPerString: 1 }).join('-')}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
     } else if (folder && nameFile !== '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = path.join(`${folder }`, `${ nameFile }.pdf`);
+        data.outputPath = path.join(`${folder}`, `${nameFile}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
@@ -494,7 +494,7 @@ export default function InnerFramePopup() {
       const path = window.require('path');
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = path.join(`${folder }`, `${ nameFile }.pdf`);
+        data.outputPath = path.join(`${folder}`, `${nameFile}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
@@ -819,21 +819,55 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
+                const executablePath = await global.ipcRenderer.invoke('get-browser-path');
+                let browser;
                 if (jsonValidation.length === 0) {
+                  try {
+                    browser = await global.puppeteer.launch({
+                      headless: 'new',
+                      args: [
+                        '--disable-web-security',
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                      ],
+                      ignoreDefaultArgs: ['--disable-extensions'],
+                      executablePath,
+                    });
+                  } catch (err) {
+                    console.log('Puppeteer falling back to no-sandbox');
+                    browser = await global.puppeteer.launch({
+                      headless: 'new',
+                      args: [
+                        '--disable-web-security',
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                      ],
+                      ignoreDefaultArgs: ['--disable-extensions'],
+                      executablePath,
+                    });
+                  }
                   setMessagePrint('');
-                  const pdfGen = new global.PdfGenStatic(
-                    JSON.parse(kitchenFaucet),
-                    pdfCallBacks,
-                  );
                   setMessagePrint('Generating Pdf ...');
                   try {
-                    const browser = await ipcRenderer.invoke('instanciate-brower-puppeteer');
+                    // setMessagePrint((prev) => `${prev }\nInstanciating browser ... `);
+                    // let browser = await global.puppeteer.connect({
+                    //   // browserURL: 'http://localhost:8000',
+                    //   browserWSEndpoint: wsEndpoint,
+                    //   // defaultViewport: null
+                    // });
+                    console.log('browser ok! : browser.version()', await browser.version());
+                    // const browser = await ipcRenderer.invoke('instanciate-browserpie');
+                    setMessagePrint((prev) => `${prev}\nInstanciating pdfGen`);
+                    const pdfGen = new global.PdfGenStatic(
+                      { ...JSON.parse(kitchenFaucet), browser },
+                      pdfCallBacks,
+                    );
                     await pdfGen.doPdf();
                   } catch (pdfError) {
-                    setMessagePrint((prev) => `${prev }\nPDF generation failed: ${ pdfError.message}`);
+                    setMessagePrint((prev) => `${prev}\nPDF generation failed: ${pdfError.message}`);
                     return;
                   }
-                  setMessagePrint((prev) => `${prev }\nSuccessful pdf generation.`);
+                  setMessagePrint((prev) => `${prev}\nSuccessful pdf generation.`);
                 } else {
                   const cleanerMessage = jsonValidation.map(
                     (txt) => {

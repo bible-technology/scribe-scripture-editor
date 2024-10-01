@@ -1,25 +1,81 @@
 // Native
 require('@electron/remote/main').initialize();
-const { join } = require('path');
+const path = require('path');
+const fs = require('fs').promises;
 const { format } = require('url');
+const { install } = require('@puppeteer/browsers');
 const config = require("dotenv");
 config.config();
 
 // Packages
 const { BrowserWindow, app, ipcMain } = require('electron');
-const pie = require('puppeteer-in-electron');
-pie.initialize(app);
-const puppeteer = require('puppeteer-core');
 // const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
 const { autoUpdater } = require('electron-updater');
 
 let mainWindow;
+let browserPath;
 function isDev() {
   return process.argv[2] == '--dev';
 }
+
+async function setPermissions(chromePath) {
+  try {
+    await fs.chmod(chromePath, '755');  // Set the permissions to be executable
+    console.log(`Permissions set for: ${chromePath}`);
+  } catch (err) {
+    console.error(`Failed to set permissions for ${chromePath}: `, err);
+  }
+}
+
+async function getChromeCacheDir() {
+  // Use Electron's app.getPath to get the userData directory (persistent)
+  const dataDir = app.getPath('appData');
+
+  // Define a custom subfolder for your app data
+  const chromeDataDir = path.join(dataDir, 'chrome-cache');
+
+  // Create the folder if it doesn't exist
+  try {
+    await fs.access(chromeDataDir);
+  } catch (err) {
+    // If the directory doesn't exist, create it
+    await fs.mkdir(chromeDataDir, { recursive: true });
+    console.log(`Created persistent Chrome data directory at: ${chromeDataDir}`);
+  }
+
+  return chromeDataDir;
+}
+
+async function verifyAndInstallChrome(version) {
+  const platform = process.platform === 'win32' ? 'win64' : process.platform;
+  
+  // Get the persistent directory
+  const cacheDir = await getChromeCacheDir();
+  const bPath = path.join(cacheDir, `chrome/${platform}-${version}`);
+
+  // Check if the browser is already installed
+  try {
+    await fs.access(bPath);
+    console.log(`Chrome version ${version} is already installed.`);
+    browserPath = bPath;
+  } catch (err) {
+    console.log(`Chrome version ${version} is not installed. Installing now...`);
+    await install({
+      cacheDir,
+      browser: 'chrome',
+      buildId: version,
+      platform,
+    }).then((res) => {
+      browserPath = res.path;
+      setPermissions(browserPath);
+    });
+    console.log(`Chrome version ${version} has been installed.`);
+  }
+}
+
 // Prepare the renderer once the app is ready
-function createWindow() {
+async function createWindow() {
  mainWindow = new BrowserWindow({
     width: 900,
     height: 600,
@@ -29,29 +85,44 @@ function createWindow() {
       webSecurity: false,
       enableRemoteModule: true,
       contextIsolation: false,
-      preload: join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
   require('@electron/remote/main').enable(mainWindow.webContents);
   const url = isDev()
     ? 'http://localhost:8000'
     : format({
-        pathname: join(__dirname, '../renderer/out/index.html'),
+        pathname: path.join(__dirname, '../renderer/out/index.html'),
         protocol: 'file:',
         slashes: true,
       });
+
+  // useful line of code to debug puppet with the console in the app
+  // app.commandLine.appendSwitch('remote-debugging-port', '8000');
+
+  verifyAndInstallChrome('121.0.6167.85')
+  .catch(err => {
+    console.error(`Failed to verify or install Chrome: ${err.message}`);
+  });
 
   mainWindow.loadURL(url);
   autoUpdater.checkForUpdatesAndNotify();
 }
 
-async function instanciateBrowserPuppeteer() {
-  const browser = await pie.connect(app, puppeteer);
-  return browser;
-}
+// async function instanciateBrowserPuppeteer() {
+//   console.log("instanciateBrowserPuppeteer call");
+//   const browser = await pie.connect(app, puppeteer);
+//   console.log("browser OK", browser.version());
+//   // return browser;
+// }
 
-ipcMain.handle('instanciate-brower-puppeteer', (event) => {
-  return instanciateBrowserPuppeteer();
+ipcMain.handle('get-browser-path', async (event) => {
+  if(!browserPath) {
+    verifyAndInstallChrome('121.0.6167.85').catch(err => {
+      console.error(`Failed to verify or install Chrome: ${err.message}`);
+    });
+  }
+  return await browserPath;
 });
 
 // prevent multiple app window opening
