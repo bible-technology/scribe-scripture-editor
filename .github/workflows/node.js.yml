@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
     push:
-        branches: [development, dcn/fix_windows_fs_bug]
+        branches: [development]
 
 jobs:
     build:
