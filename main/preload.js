@@ -2,6 +2,7 @@ const { ipcRenderer } = require('electron');
 const log = require('electron-log');
 const fontList = require('font-list');
 const { PdfGen } = require('jxl-pdf');
+const puppeteer = require('puppeteer-core');
 
 const _fonts = [];
 const fetchFonts = async () => {
@@ -17,12 +18,10 @@ const fetchFonts = async () => {
 };
 fetchFonts();
 
-// Since we disabled nodeIntegration we can reintroduce
-// needed node functionality here
 process.once('loaded', () => {
-
   global.ipcRenderer = ipcRenderer;
+  global.puppeteer = puppeteer;
   global.log = log;
-  global.PdfGenStatic = PdfGen
+  global.PdfGenStatic = PdfGen;
   global.fonts = _fonts;
 });

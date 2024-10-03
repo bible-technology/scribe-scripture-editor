@@ -18,10 +18,21 @@ import { WrapperTemplate } from './pdfGenInterface/pdfGenWrappers/WrapperTemplat
 import ExpandMore from '../../../../public/icons/expand_more.svg';
 import { SelectOption } from './SelectOptions';
 import packageInfo from '../../../../package.json';
+import * as logger from '../../logger';
 
 export function findProjectInfo(meta, autoGrapha) {
-  return autoGrapha?.filter((a) => `${a.name }_${ a.id}` === meta)[0];
+  return autoGrapha?.filter((a) => `${a.name}_${a.id}` === meta)[0];
 }
+
+const fixPath = (source) => {
+  const isWindows = process.platform === 'win32';
+  if (isWindows) {
+    // Convert to Windows style paths
+    return source.replace(/\//g, '\\');
+  }
+  // Convert to Unix style paths
+  return source.replace(/\\/g, '/');
+};
 
 function changeMetaDataToWrapperSection(meta, autoGrapha) {
   const projInfo = findProjectInfo(meta, autoGrapha);
@@ -67,20 +78,16 @@ function messageToPeople(json) {
     message += '\t';
   }
   if (json.type === 'step') {
-    message += `Starting step ${ json.args[0]}`;
+    message += `Starting step ${json.args[0]}`;
   } else if (json.type === 'section') {
-    message += `Starting to prepare ${ json.args[0]}`;
+    message += `Starting to prepare ${json.args[0]}`;
   } else if (json.type === 'wrappedSection') {
-    message
-      += `Preparing section of type ${
-        json.args[0]
-      } from ${
-        json.args[1].split('-')[0]}`;
+    message += `Preparing section of type ${json.args[0]} from ${json.args[1].split('-')[0]}`;
     if (json.args[1].split('-')[1]) {
-      message += ` to ${ json.args[1].split('-')[1]}`;
+      message += ` to ${json.args[1].split('-')[1]}`;
     }
   } else if (json.type === 'pdf') {
-    message += `Writing pdf of ${ json.args[1]}`;
+    message += `Writing pdf of ${json.args[1]}`;
   } else {
     findProjectInfo();
     message += json.msg;
@@ -91,13 +98,22 @@ function messageToPeople(json) {
 function createSection(folder, pickerJson) {
   const path = require('path');
   const fs = window.require('fs');
+  const fixedPath = fixPath(folder);
 
-  const projects = fs.readdirSync(folder);
+  let projects;
+  try {
+    if (!fs.existsSync(fixedPath)) {
+      fs.mkdirSync(fixedPath);
+    }
+    projects = fs.readdirSync(fixedPath);
+  } catch (err) {
+    logger.error('InnerFramePopup.js', `Error reading project dir: ${err}`);
+  }
 
   let currentMetadataPath = '';
   // eslint-disable-next-line
   for (const project of projects) {
-    currentMetadataPath = path.join(folder, '/', project, '/', 'metadata.json');
+    currentMetadataPath = fixPath(path.join(fixedPath, project, 'metadata.json'));
     if (fs.existsSync(currentMetadataPath)) {
       const jsontest = fs.readFileSync(currentMetadataPath, 'utf-8');
       const jsonParse = JSON.parse(jsontest);
@@ -119,9 +135,9 @@ function createSection(folder, pickerJson) {
             language: `${jsonParse.resourceMeta?.language}`,
             src: {
               type: 'fs',
-              path: folder.includes('projects')
-                ? `${folder}/${project}/ingredients`
-                : `${folder}/${project}`,
+              path: fixedPath.includes('projects')
+                ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+                : path.join(`${fixedPath}`, `${project}`),
             },
             books: [],
           };
@@ -131,9 +147,9 @@ function createSection(folder, pickerJson) {
             language: `${jsonParse.languages[0].tag}`,
             src: {
               type: 'fs',
-              path: folder.includes('projects')
-                ? `${folder}/${project}/ingredients`
-                : `${folder}/${project}`,
+              path: fixedPath.includes('projects')
+                ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+                : path.join(`${fixedPath}`, `${project}`),
             },
             books: [],
           };
@@ -145,9 +161,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.meta.defaultLocale,
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}/${fileName}`,
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`, `${fileName}`),
           },
           books: [],
         };
@@ -158,9 +174,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.meta.defaultLocale,
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}`,
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`),
           },
           books: [],
         };
@@ -171,9 +187,9 @@ function createSection(folder, pickerJson) {
           language: jsonParse.languages[0] ? jsonParse.languages[0].name.en : 'French',
           src: {
             type: 'fs',
-            path: folder.includes('projects')
-              ? `${folder}/${project}/ingredients`
-              : `${folder}/${project}`,
+            path: fixedPath.includes('projects')
+              ? path.join(`${fixedPath}`, `${project}`, 'ingredients')
+              : path.join(`${fixedPath}`, `${project}`),
           },
           books: jsonParse.type.flavorType.currentScope ? Object.keys(jsonParse.type.flavorType.currentScope) : [],
         };
@@ -243,11 +259,12 @@ export default function InnerFramePopup() {
   // the order Of The Selected choice
   const [orderSelection, setOrderSelection] = useState([0]);
   // is the json is validate or not
-  const [isJsonValidate, setIsJsonValidate] = useState(false);
+  const [isJsonValidate, setIsJsonValidate] = useState(true);
+  const [jsonValidation, setJsonValidation] = useState({});
   const [messagePrint, setMessagePrint] = useState('');
   // the actual kitchenFaucet
   const pdfCallBacks = (json) => {
-    setMessagePrint((prev) => `${prev }\n${ messageToPeople(json)}`);
+    setMessagePrint((prev) => `${prev}\n${messageToPeople(json)}`);
   };
   const {
     states: { selectedProject },
@@ -269,7 +286,7 @@ export default function InnerFramePopup() {
   );
 
   // the selected headerInfo
-  const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE"}');
+  const [headerInfo, setHeaderInfo] = useState('{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE", "verbose":"false"}');
   // const [headerInfo, setHeaderInfo] = useState('{}');
   const [nameFile, setNameFile] = useState('');
   const [folder, setFolder] = useState(null);
@@ -364,7 +381,8 @@ export default function InnerFramePopup() {
             'users',
             `${currentUser}`,
             'projects',
-            `${p.name}_${p.id[0]}/ingredients`,
+            `${p.name}_${p.id[0]}`,
+            'ingredients',
           );
           return p;
         });
@@ -383,7 +401,7 @@ export default function InnerFramePopup() {
         setListResourcesForPdf(pickerJson);
         return currentUser;
       })
-      .then((currentUser) => readLocalResources(currentUser, () => {}));
+      .then((currentUser) => readLocalResources(currentUser, () => { }));
   }, []);
 
   useEffect(() => {
@@ -400,6 +418,7 @@ export default function InnerFramePopup() {
 
   useEffect(() => {
     const validationJson = global.PdfGenStatic.validateConfig(JSON.parse(kitchenFaucet));
+    setJsonValidation(validationJson);
     if (validationJson.length === 0) {
       const header = JSON.parse(headerInfo);
       if (
@@ -410,9 +429,10 @@ export default function InnerFramePopup() {
         && header.pages
       ) {
         if (!header.outputPath && folder) {
+          const path = window.require('path');
           setHeaderInfo((prev) => {
             const data = { ...JSON.parse(prev) };
-            data.outputPath = `${folder }/${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`;
+            data.outputPath = path.join(`${folder}`, `${generate({ exactly: 5, wordsPerString: 1 }).join('-')}.pdf`);
             data.verbose = false;
             return JSON.stringify(data);
           });
@@ -420,7 +440,7 @@ export default function InnerFramePopup() {
         setIsJsonValidate(true);
       }
     } else {
-      setIsJsonValidate(false);
+      setIsJsonValidate(true);
     }
   }, [selected, headerInfo, orderSelection, folder, kitchenFaucet]);
 
@@ -439,7 +459,6 @@ export default function InnerFramePopup() {
       }
       if (chosenFolder.filePaths.length > 0) {
         setFolder(chosenFolder.filePaths[0]);
-        setMessagePrint((prev) => `${prev }\nfolder selected : ${ chosenFolder.filePaths[0]}`);
       } else {
         // Handle case where no folder was selected
         // eslint-disable-next-line
@@ -452,17 +471,18 @@ export default function InnerFramePopup() {
   };
 
   useEffect(() => {
+    const path = window.require('path');
     if (folder && nameFile === '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ generate({ exactly: 5, wordsPerString: 1 }).join('-') }.pdf`;
+        data.outputPath = path.join(`${folder}`, `${generate({ exactly: 5, wordsPerString: 1 }).join('-')}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
     } else if (folder && nameFile !== '') {
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ nameFile }.pdf`;
+        data.outputPath = path.join(`${folder}`, `${nameFile}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
@@ -471,9 +491,10 @@ export default function InnerFramePopup() {
 
   useEffect(() => {
     if (folder && nameFile !== '') {
+      const path = window.require('path');
       setHeaderInfo((prev) => {
         const data = { ...JSON.parse(prev) };
-        data.outputPath = `${folder }/${ nameFile }.pdf`;
+        data.outputPath = path.join(`${folder}`, `${nameFile}.pdf`);
         data.verbose = false;
         return JSON.stringify(data);
       });
@@ -539,19 +560,19 @@ export default function InnerFramePopup() {
           }}
         >
           {SelectOption(
-            'fonts',
-            'fonts',
-            jsonWithHeaderChoice.fonts,
-            handleChangeHeaderInfo,
-          )}
-          {SelectOption(
-            'Pages',
+            'Paper size',
             'pages',
             jsonWithHeaderChoice.pages,
             handleChangeHeaderInfo,
           )}
           {SelectOption(
-            'Sizes',
+            'Font',
+            'fonts',
+            jsonWithHeaderChoice.fonts,
+            handleChangeHeaderInfo,
+          )}
+          {SelectOption(
+            'Font size',
             'sizes',
             jsonWithHeaderChoice.sizes,
             handleChangeHeaderInfo,
@@ -617,7 +638,7 @@ export default function InnerFramePopup() {
                       fontWeight: 600,
                     }}
                   >
-                    Advanced
+                    Advanced mode
                   </div>
                   <div
                     style={{
@@ -626,7 +647,7 @@ export default function InnerFramePopup() {
                       fontWeight: 400,
                     }}
                   >
-                    mode Merge projects into a single
+                    Merge projects into a single
                     export, access more print types, and use
                     loop mode.
                   </div>
@@ -680,7 +701,7 @@ export default function InnerFramePopup() {
             </TextOnlyTooltip>
           </div>
           <ul className="sortable-TESTWRAPPER-list">
-            {Object.keys(selected).map((k) => (
+            {Object.keys(selected).map((k, i, arraySel) => (
               <li
                 id={k}
                 className="sortable-test1-item"
@@ -698,6 +719,7 @@ export default function InnerFramePopup() {
                   advanceMode={advanceMode}
                   changePrintData={setSelected}
                   changePrintOrder={setOrderSelection}
+                  showTrashButton={arraySel.length > 1}
                 />
               </li>
             ))}
@@ -730,6 +752,7 @@ export default function InnerFramePopup() {
                   alignItems: 'center',
                   backgroundColor: '#F50',
                   color: 'white',
+                  cursor: 'pointer',
                 }}
                 onClick={() => handleOpenModalAddWrapper(true)}
               >
@@ -763,8 +786,9 @@ export default function InnerFramePopup() {
                 openFileDialogSettingData();
               }}
             >
-              Choose export folder
+              Choose an export folder
             </Button>
+            <div>{folder ? `Folder selected : ${folder}` : 'Please choose an export folder'}</div>
             <Input
               onChange={(e) => {
                 handleInputChange(e);
@@ -795,21 +819,58 @@ export default function InnerFramePopup() {
                   }
               }
               onClick={async () => {
-                if (isJsonValidate) {
+                const executablePath = await global.ipcRenderer.invoke('get-browser-path');
+                let browser;
+                if (jsonValidation.length === 0) {
+                  try {
+                    browser = await global.puppeteer.launch({
+                      headless: 'new',
+                      args: [
+                        '--disable-web-security',
+                      ],
+                      executablePath,
+                    });
+                  } catch (err) {
+                    logger.error('InnerFramePopup.js', 'Puppeteer falling back to no-sandbox');
+                    browser = await global.puppeteer.launch({
+                      headless: 'new',
+                      args: [
+                        '--disable-web-security',
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                      ],
+                      executablePath,
+                    });
+                  }
                   setMessagePrint('');
-                  const pdfGen = new global.PdfGenStatic(
-                    JSON.parse(kitchenFaucet),
-                    pdfCallBacks,
-                  );
-
                   setMessagePrint('Generating Pdf ...');
                   try {
+                    setMessagePrint((prev) => `${prev}\nInstanciating pdfGen`);
+                    const pdfGen = new global.PdfGenStatic(
+                      { ...JSON.parse(kitchenFaucet), browser },
+                      pdfCallBacks,
+                    );
                     await pdfGen.doPdf();
                   } catch (pdfError) {
-                    setMessagePrint((prev) => `${prev }\nPDF generation failed: ${ pdfError.message}`);
+                    setMessagePrint((prev) => `${prev}\nPDF generation failed: ${pdfError.message}`);
                     return;
                   }
-                  setMessagePrint((prev) => `${prev }\nSuccessful pdf generation.`);
+                  setMessagePrint((prev) => `${prev}\nSuccessful pdf generation.`);
+                } else {
+                  const cleanerMessage = jsonValidation.map(
+                    (txt) => {
+                      let theText = txt;
+                      if (txt.includes('outputPath')) {
+                        theText = 'Please choose an export folder';
+                      } else if (txt.includes('Unknown section type')) {
+                        theText = 'Please choose at least one "Print type"';
+                      } else if (txt.includes('requires ranges')) {
+                        theText = 'Canon specification : please choose at least one book';
+                      }
+                      return theText;
+                    },
+                  ).join('\n');
+                  setMessagePrint(`# Error\n${cleanerMessage}`);
                 }
               }}
             >
