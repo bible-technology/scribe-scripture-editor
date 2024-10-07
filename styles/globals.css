@@ -378,6 +378,7 @@ p.paragraph:has(.chapter) {
   border-radius: 6px;
   border-style: solid;
   border-width: 1px;
+  cursor: pointer;
 }
 
 .pdfChoice:hover {
@@ -609,12 +610,18 @@ Select scribe theme Start
 */
 
 .selectScribeTheme {
+  width: 200px;
   min-width: 120px;
   border-radius: 5px;
   border-color: rgba(115, 115, 115, 1);
   border-width: 1px;
   background-color: #ffffff;
-  /* Default background color */
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .selectScribeTheme:hover {

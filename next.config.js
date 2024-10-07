@@ -1,6 +1,7 @@
 // const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const colors = require('tailwindcss/colors');
+const TerserPlugin = require("terser-webpack-plugin");
 
 const nextConfig = {
   webpack: (config, { isServer }) => {
@@ -9,6 +10,7 @@ const nextConfig = {
       config.resolve.fallback.fs = false;
       config.resolve.alias.canvas = false;
     }
+
     config.module.rules.push({
       test: /\.md$/,
       use: 'raw-loader',

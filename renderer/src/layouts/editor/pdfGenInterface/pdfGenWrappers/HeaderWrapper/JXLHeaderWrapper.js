@@ -1,12 +1,14 @@
 import { useEffect, useState, useContext } from 'react';
 import { Modal } from '@material-ui/core';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import { useBibleReference } from 'bible-reference-rcl';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Layout from '../../../../../../public/icons/basil/Solid/Interface/Layout.svg';
 import { TextOnlyTooltip, LoopSwitch } from '../fieldPicker/customMuiComponent';
+import { BookList } from '../BookList';
 
 export function JXLHeaderWrapper({
   keyWrapper,
@@ -16,16 +18,21 @@ export function JXLHeaderWrapper({
   loopMode,
 }) {
   // Start get all book from current project
-  const initialBook = 'mat';
+  // const initialBook = 'mat';
   const initialChapter = '1';
   const initialVerse = '1';
 
   const { t } = useTranslation();
+  const {
+    state: {
+      bookId,
+    },
+  } = useContext(ReferenceContext);
 
   const {
     state: { bookList },
   } = useBibleReference({
-    initialBook,
+    initialBook: bookId,
     initialChapter,
     initialVerse,
   });
@@ -33,7 +40,7 @@ export function JXLHeaderWrapper({
     states: { canonList },
   } = useContext(ProjectContext);
   // end get all book from current project
-  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [selectedBooks, setSelectedBooks] = useState(bookId ? [bookId.toUpperCase()] : []);
   const [openModalBook, setOpenModalBook] = useState(false);
 
   useEffect(() => {
@@ -61,7 +68,7 @@ export function JXLHeaderWrapper({
                       fontWeight: 600,
                     }}
                   >
-                    For each book selected above
+                    Loop mode
                   </div>
                   <div
                     style={{
@@ -70,8 +77,8 @@ export function JXLHeaderWrapper({
                       fontWeight: 400,
                     }}
                   >
-                    Ressources in the loop will be added to
-                    the export, form
+                    Projects in the loop are added one by one to the document,
+                    for each book selected below.
                   </div>
                 </div>
               )}
@@ -100,7 +107,7 @@ export function JXLHeaderWrapper({
             margin: 'auto',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center', // Added alignment to center vertically
+            alignItems: 'center',
             fontSize: 24,
             color: 'black',
           }}
@@ -213,6 +220,8 @@ export function JXLHeaderWrapper({
           {t('label-custom')}
         </div>
       </div>
+      <BookList books={selectedBooks ?? []} />
+      <br />
 
       <Modal
         open={openModalBook}

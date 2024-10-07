@@ -104,7 +104,7 @@ export function OBSWrapperSortableList({
         />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'end' }}>
+      <div style={{ display: 'flex', justifyContent: 'left' }}>
         {advanceMode ? (
           <div>
             <TextOnlyTooltip
@@ -118,7 +118,7 @@ export function OBSWrapperSortableList({
                       fontWeight: 600,
                     }}
                   >
-                    For each Obs selected above
+                    Loop mode
                   </div>
                   <div
                     style={{
@@ -127,8 +127,8 @@ export function OBSWrapperSortableList({
                       fontWeight: 400,
                     }}
                   >
-                    Ressources in the loop will be added to
-                    the export, form
+                    Projects in the loop are added one by one to the document,
+                    for each story selected above.
                   </div>
                 </div>
               )}
@@ -152,7 +152,6 @@ export function OBSWrapperSortableList({
         ) : (
           <div />
         )}
-
       </div>
     </div>
   );

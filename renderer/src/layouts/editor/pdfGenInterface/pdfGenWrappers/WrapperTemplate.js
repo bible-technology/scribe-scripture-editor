@@ -7,15 +7,26 @@ import Trash from '../../../../../public/icons/trash.svg';
 import { OBSWrapperSortableList } from './HeaderWrapper/OBSHeaderWrapper';
 import { BCVWrapperSortableList } from './HeaderWrapper/BCVHeaderWrapper';
 
-function firstElem(projectInfo) {
-  if (projectInfo.type === 'Juxtalinear') {
-    return `{"0": {"id":"${uuidv4()}", "type": "jxlSimple", "source":"${
-      projectInfo.path
-    }","content": {} }}`;
+const fixPath = (source) => {
+  const isWindows = process.platform === 'win32';
+  if (isWindows) {
+    // Convert to Windows style paths
+    return source.replace(/\//g, '\\');
   }
-  return `{"0": {"id":"${uuidv4()}", "type": "null", "source":"${
-    projectInfo.path
-  }","content": {} }}`;
+  // Convert to Unix style paths
+  return source.replace(/\\/g, '/');
+};
+
+function firstElem(projectInfo) {
+  const obj = {
+    0: {
+      id: uuidv4(),
+      type: projectInfo.type === 'Juxtalinear' ? 'jxlSimple' : 'null',
+      source: projectInfo.path === undefined ? 'null' : fixPath(projectInfo.path),
+      content: {},
+    },
+  };
+  return JSON.stringify(obj);
 }
 
 export function WrapperTemplate({
@@ -28,6 +39,7 @@ export function WrapperTemplate({
   advanceMode,
   changePrintData,
   changePrintOrder,
+  showTrashButton,
 }) {
   const [orderSections, setOrderSelections] = useState([0]);
   const updateElemOrder = (items) => {
@@ -42,11 +54,31 @@ export function WrapperTemplate({
   );
   // choice is the possible section by wrapper
 
+  const getSectionType = (key) => {
+    let ret;
+    if (sections) {
+      try {
+        const parseSection = JSON.parse(sections);
+        if (parseSection[key]) {
+          ret = parseSection[key].type;
+        } else {
+          ret = 'null';
+        }
+      } catch {
+        ret = 'null';
+      }
+    } else {
+      ret = 'null';
+    }
+    return ret;
+  };
+
   useEffect(() => {
-    setSections(firstElem(projectInfo));
+    const fePI = firstElem(projectInfo);
+    setSections(fePI);
   }, [projectInfo]);
 
-  const [LoopMode, setLoopMode] = useState(false);
+  const [loopMode, setLoopMode] = useState(false);
 
   const sortableListClassName = `sortable-${keyWrapper}-list`;
   const itemClassName = `sortable-${keyWrapper}-item`;
@@ -75,7 +107,10 @@ export function WrapperTemplate({
       t[keyWrapper].content.content = {};
 
       // Update with new sections
-      t[keyWrapper].content.content = JSON.parse(sections);
+      try {
+        t[keyWrapper].content.content = JSON.parse(sections);
+      // eslint-disable-next-line
+      } catch {}
 
       return t;
     });
@@ -130,7 +165,7 @@ export function WrapperTemplate({
         });
       });
     };
-  }, [Object.keys(JSON.parse(sections)).length]);
+  }, [sections]);
 
   return (
     <div
@@ -150,7 +185,7 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
@@ -161,7 +196,7 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
@@ -172,14 +207,14 @@ export function WrapperTemplate({
           advanceMode={advanceMode}
           changePrintData={changePrintData}
           setLoopMode={setLoopMode}
-          loopMode={LoopMode}
+          loopMode={loopMode}
         />
       ) : (
         <div />
       )}
       <div
         style={
-          LoopMode
+          loopMode
             ? {
               backgroundColor: '#FFEEE5',
             }
@@ -195,42 +230,45 @@ export function WrapperTemplate({
           }}
         >
           <div style={{ display: 'flex' }}>
-            <Button
-              style={{
-                borderStyle: 'solid',
-                color: 'white',
-              }}
-              onClick={() => {
-                changePrintOrder((prev) => {
-                  const t = [...prev];
-                  t.splice(
-                    t.indexOf(parseInt(keyWrapper, 10)),
-                    1,
-                  );
-                  return t;
-                });
+            {advanceMode && showTrashButton && (
+              <Button
+                style={{
+                  borderStyle: 'solid',
+                  color: 'white',
+                }}
+                onClick={() => {
+                  changePrintOrder((prev) => {
+                    const t = [...prev];
+                    t.splice(
+                      t.indexOf(parseInt(keyWrapper, 10)),
+                      1,
+                    );
+                    return t;
+                  });
 
-                changePrintData((prev) => {
-                  const updatedSelected = JSON.parse(
-                    JSON.stringify(prev),
-                  );
-                  // Remove the last key in the map as it's not required
-                  delete updatedSelected[
-                    parseInt(keyWrapper, 10)
-                  ];
-                  return updatedSelected;
-                });
-              }}
-            >
-              <Trash
-                color="black"
-                style={{ height: 35, width: 35 }}
-              />
-            </Button>
+                  changePrintData((prev) => {
+                    const updatedSelected = JSON.parse(
+                      JSON.stringify(prev),
+                    );
+                    // Remove the last key in the map as it's not required
+                    delete updatedSelected[
+                      parseInt(keyWrapper, 10)
+                    ];
+                    return updatedSelected;
+                  });
+                }}
+              >
+                <Trash
+                  color="black"
+                  style={{ height: 35, width: 35 }}
+                />
+              </Button>
+            )}
           </div>
         </div>
 
         <ul className={sortableListClassName}>
+          {/* eslint-disable-next-line */}
           {Object.keys(JSON.parse(sections)).map((k, index) => (
             <li
               id={index}
@@ -256,12 +294,10 @@ export function WrapperTemplate({
                   advanceMode={advanceMode}
                   setSelected={setSections}
                   setOrderSelections={setOrderSelections}
-                  keySpecification={
-                    JSON.parse(sections)[k].type
-                  }
+                  keySpecification={getSectionType(k)}
                   idjson={k}
                   removeButton={
-                    advanceMode ? (
+                    advanceMode && Object.keys(JSON.parse(sections)).length > 1 ? (
                       <Button
                         onClick={() => {
                           setOrderSelections(
@@ -329,7 +365,7 @@ export function WrapperTemplate({
             justifyContent: 'space-between',
           }}
         >
-          {advanceMode && LoopMode ? (
+          {advanceMode && loopMode ? (
             <Button
               style={{
                 borderRadius: 4,

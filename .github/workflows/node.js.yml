@@ -12,6 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         env:
             CI: false
+            NODE_OPTIONS: --max-old-space-size=4096
         strategy:
             matrix:
                 node-version: [18.20.3]
@@ -31,9 +32,6 @@ jobs:
             - name: yarn install
               run: yarn install
 
-            - name: set max memory allocation
-              run: export NODE_OPTIONS=-max_old_space_size=4096
-
             - name: package
               id: package
               run: |
@@ -41,18 +39,19 @@ jobs:
 
             - name: Cleanup artifacts
               run: |
-                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
+                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg|*.exe)"
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe
-                path: Scribe-${{ github.run_id }}-${{ github.sha }}
+                name: Scribe-${{ github.run_id }}-${{ github.sha }}
+                path: dist
                 overwrite: true
 
     build-windows:
         runs-on: ubuntu-latest
         env:
             CI: false
+            NODE_OPTIONS: --max-old-space-size=4096
         strategy:
             matrix:
                 node-version: [18.20.3]
@@ -69,9 +68,6 @@ jobs:
 
             - name: set @bitregistry translation-help
               run: yarn config set '@bit:registry' https://node.bit.dev
-
-            - name: set max memory allocation
-              run: export NODE_OPTIONS=-max_old_space_size=4096
 
             - name: install dependencies
               run: yarn install
@@ -92,70 +88,67 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe-${{ github.run_id }}-${{ github.sha }}
+                name: Scribe
                 path: artifacts
                 overwrite: true
     # Commented the below code for getting the binaries build for windows and Ubuntu
-    # build-mac:
-    #     runs-on: macos-latest
-    #     env:
-    #         CI: false
-    #     strategy:
-    #         matrix:
-    #             node-version: [18.20.3]
+    build-mac:
+        runs-on: macos-latest
+        env:
+            CI: false
+            NODE_OPTIONS: --max-old-space-size=4096
+        strategy:
+            matrix:
+                node-version: [18.20.3]
 
-    #     steps:
-    #         - uses: actions/checkout@v2
-    #         - name: Use Node.js 18.20.3
-    #           uses: actions/setup-node@v1
-    #           with:
-    #               node-version: 18.20.3
-    #         - run: |
-    #               node --version
-    #               yarn --version
-    #         - name: Increase file descriptor limit
-    #           run: sudo sysctl -w kern.maxfiles=10485760 && sudo sysctl -w kern.maxfilesperproc=1048576
-    #         - name: set @bitregistry translation-help
-    #           run: yarn config set '@bit:registry' https://node.bit.dev
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js 18.20.3
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 18.20.3
+            - run: |
+                  node --version
+                  yarn --version
+            - name: Increase file descriptor limit
+              run: sudo sysctl -w kern.maxfiles=10485760 && sudo sysctl -w kern.maxfilesperproc=1048576
+            - name: set @bitregistry translation-help
+              run: yarn config set '@bit:registry' https://node.bit.dev
 
-    #         - name: Install Homebrew
-    #           run: |
-    #               /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    #               echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
-    #               eval "$(/opt/homebrew/bin/brew shellenv)"
+            - name: Install Homebrew
+              run: |
+                  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
 
-    #         - name: Install canvas dependencies
-    #           run: |
-    #               brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
-    #               brew reinstall jpeg
-    #               echo 'export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"' >> $HOME/.zprofile
-    #               echo 'export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"' >> $HOME/.zprofile
-    #               echo 'export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"' >> $HOME/.zprofile
-    #               echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"' >> $HOME/.zprofile
-    #               eval "$(/opt/homebrew/bin/brew shellenv)"
-    #               brew install python-setuptools
-                
+            - name: Install canvas dependencies
+              run: |
+                  brew install pkg-config cairo pango libpng jpeg giflib librsvg python@3.12
+                  brew reinstall jpeg
+                  echo 'export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"' >> $HOME/.zprofile
+                  echo 'export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"' >> $HOME/.zprofile
+                  echo 'export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"' >> $HOME/.zprofile
+                  echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"' >> $HOME/.zprofile
+                  eval "$(/opt/homebrew/bin/brew shellenv)"
+                  brew install python-setuptools
 
-    #         - name: set max memory allocation
-    #           run: export NODE_OPTIONS=-max_old_space_size=4096
+            - name: yarn install
+              run: yarn install
 
-    #         - name: yarn install
-    #           run: yarn install --verbose
+            - name: install dmg-license
+              run: yarn add dmg-license
 
-    #         - name: install dmg-license
-    #           run: yarn add dmg-license
+            - name: package
+              id: package
+              run: |
+                  yarn dist
 
-    #         - name: package
-    #           id: package
-    #           run: |
-    #               yarn dist
-
-    #         - name: Cleanup artifacts
-    #           run: |
-    #               npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
-    #         - name: Upload artifacts
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #             name: Scribe-${{ github.run_id }}-${{ github.sha }}
-    #             path: dist
-    #             overwrite: true
+            - name: Cleanup artifacts
+              run: |
+                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg|*.exe)"
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: Scribe-Mac-${{ github.run_id }}-${{ github.sha }}
+                path: dist
+                overwrite: true
