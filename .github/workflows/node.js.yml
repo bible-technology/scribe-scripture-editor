@@ -39,12 +39,12 @@ jobs:
 
             - name: Cleanup artifacts
               run: |
-                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
+                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg|*.exe)"
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe
-                path: Scribe-${{ github.run_id }}-${{ github.sha }}
+                name: Scribe-${{ github.run_id }}-${{ github.sha }}
+                path: dist
                 overwrite: true
 
     build-windows:
@@ -88,7 +88,7 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe-${{ github.run_id }}-${{ github.sha }}
+                name: Scribe
                 path: artifacts
                 overwrite: true
     # Commented the below code for getting the binaries build for windows and Ubuntu
@@ -145,10 +145,10 @@ jobs:
 
             - name: Cleanup artifacts
               run: |
-                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg)"
+                  npx rimraf "dist/!(*.deb|*.AppImage|*.dmg|*.exe)"
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe-${{ github.run_id }}-${{ github.sha }}
+                name: Scribe-Mac-${{ github.run_id }}-${{ github.sha }}
                 path: dist
                 overwrite: true
