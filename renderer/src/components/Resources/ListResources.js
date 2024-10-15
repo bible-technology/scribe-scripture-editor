@@ -20,6 +20,7 @@ export const ListResources = ({
   loading,
   setLoading,
   filteredResources,
+  filteredReposResourcelinks,
   downloading,
   selectResource,
   handleRowSelect,
@@ -33,8 +34,10 @@ export const ListResources = ({
   subMenuItems,
   setSubMenuItems,
   setCurrentFullResources,
+  setFilteredReposResourcelinks,
   setFilteredResources,
   setfilteredBibleObsAudio,
+  endPoint,
 }) => {
   const {
     states: {
@@ -56,6 +59,7 @@ export const ListResources = ({
   const { t } = useTranslation();
   const [translationWordList, settranslationWordList] = useState([]);
   const [translationNote, setTranslationNote] = useState([]);
+  const [translationImageResources, setTranslationImageResources] = useState([]);
   const [juxtalinear, setJuxtalinear] = useState([]);
   const [translationQuestion, setTranslationQuestion] = useState([]);
   // const [translationWord, settranslationWord] = useState([]);
@@ -69,14 +73,14 @@ export const ListResources = ({
       try {
         logger.debug('ResourcesPopUp.js', 'Helps Download started');
         setCurrentDownloading(reference);
-        await DownloadCreateSBforHelps(reference?.responseData, setDownloading, false, offlineResource);
+        await DownloadCreateSBforHelps(reference?.responseData, setDownloading, false, offlineResource, endPoint, filteredReposResourcelinks);
         setCurrentDownloading(null);
         setOpenSnackBar(true);
         setError('success');
         setRenderApp(true);
         setSnackText('Resource Download Finished');
       } catch (err) {
-        logger.debug('ResourcesPopUp.js', 'Error Downlaod ', err);
+        logger.debug('ResourcesPopUp.js', 'Error Download ', err);
         setOpenSnackBar(true);
         setError('failure');
         setSnackText(err?.message);
@@ -101,7 +105,11 @@ export const ListResources = ({
         await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
         break;
       case 'tn':
-        await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction);
+      case 'x-bcvnotes':
+        await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction, endPoint);
+        break;
+      case 'tir':
+        await fetchTranslationResource('TSV Translation Image Resources', setTranslationImageResources, selectResource, selectedPreProd, snackBarAction, endPoint, setFilteredReposResourcelinks);
         break;
         // case 'tw':
         //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
@@ -130,13 +138,15 @@ export const ListResources = ({
       setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectResource, selectedPreProd]);
+  }, [selectResource, selectedPreProd, endPoint]);
 
   useEffect(() => {
     const getCurrentOnlineOfflineHelpsResources = (selectResource) => {
       const resources = [
         { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
+        { id: 'x-bcvnotes', title: t('label-resource-tn'), resource: translationNote },
+        { id: 'tir', title: t('label-resource-tir'), resource: translationImageResources },
         { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
         // { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
         { id: 'tq', title: t('label-resource-tq'), resource: translationQuestion },
@@ -145,7 +155,10 @@ export const ListResources = ({
         { id: 'obs-tq', title: t('label-resource-obs-tq'), resource: obsTranslationQuestion },
         { id: 'obs-twlm', title: t('label-resource-obs-twl'), resource: obsTranslationWordList }];
       const reference = resources.find((r) => r.id === selectResource);
-      const offlineResource = subMenuItems ? subMenuItems?.filter((item) => item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) : [];
+      // filter for a resource OR an x-bcvnotes burrito
+      // const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' || item?.value?.type?.flavorType?.flavor?.name === 'x-resourcelinks') || (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource)) : [];
+      const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' && selectResource === 'tn') || (item?.value?.type?.flavorType?.flavor?.name === 'x-imagedict' && selectResource === 'tir')) : [];
+
       return { reference, offlineResource };
     };
     const data = getCurrentOnlineOfflineHelpsResources(selectResource);
@@ -188,26 +201,27 @@ export const ListResources = ({
               )}
               {/* offline resources body */}
               {filteredResources?.offlineResource?.length > 0 && filteredResources?.offlineResource?.map((resource) => (
-                <tr className={`${resource?.value?.meta?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white`} id={resource?.projectDir} key={resource.value.meta.id + resource.value.meta.language}>
+                <tr className={`${resource?.value?.meta?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white focus:outline-none`} id={resource?.projectDir} key={resource.value.meta.id + resource.value.meta.language}>
                   <td colSpan={2} className="p-2">
                     <div
                       className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
                         e,
-                        resource?.value?.meta?.language,
-                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
-                        resource?.value?.meta?.owner,
-                        resource?.value?.meta?.subject,
-                        '',
+                        resource?.value?.meta?.language ?? resource?.value?.languages[0].name.en,
+                        resource.projectDir ?? `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner ?? '',
+                        resource?.value?.type?.flavorType?.name ?? resource?.value?.meta?.subject,
+                        resource?.type ?? '',
                         resource,
                       )}
                       role="button"
                       tabIndex="0"
                       aria-label="upload"
                     >
-                      {resource?.value?.meta?.language_title ?? resource?.value?.meta?.name }
+                      {resource?.value?.meta?.language_title ?? resource?.value?.meta?.name ?? resource?.value.identification.name.en}
+                      {/* {resource?.value.identification.name.en } */}
                       <span className="text-xxs lowercase text-gray-800 px-2 py-1 mx-1 bg-gray-200 rounded-full">
-                        {resource?.value?.meta?.owner}
+                        {resource?.value?.meta?.owner ?? resource?.identification?.abbreviation?.en ?? resource?.projectDir}
                       </span>
                       {resource?.value?.localUploadedHelp && (
                         <span className="text-xxs text-gray-800 px-2 py-1 mx-1 bg-green-200 rounded-full">
@@ -221,18 +235,18 @@ export const ListResources = ({
                       // className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
                         e,
-                        resource?.value?.meta?.language,
-                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
-                        resource?.value?.meta?.owner,
-                        resource?.value?.meta?.subject,
-                        '',
+                        resource?.value?.meta?.language ?? resource?.value?.languages[0].name.en,
+                        resource.projectDir ?? `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner ?? '',
+                        resource?.value?.type?.flavorType?.name ?? resource?.value?.meta?.subject,
+                        resource?.type ?? '',
                         resource,
                       )}
                       role="button"
                       aria-label="language"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta?.language}
+                      {resource?.value?.meta?.language ?? resource?.value?.languages[0].tag}
                     </div>
                   </td>
                   <td className="p-2 text-gray-600">
@@ -240,18 +254,18 @@ export const ListResources = ({
                       className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
                         e,
-                        resource?.value?.meta?.language,
-                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
-                        resource?.value?.meta?.owner,
-                        resource?.value?.meta?.subject,
-                        '',
+                        resource?.value?.meta?.language ?? resource?.value?.languages[0].name.en,
+                        resource.projectDir ?? `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner ?? '',
+                        resource?.value?.type?.flavorType?.name ?? resource?.value?.meta?.subject,
+                        resource?.type ?? '',
                         resource,
                       )}
                       role="button"
                       aria-label="version"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource.value.meta.released).split('T')[0]}`}
+                      {resource?.value?.meta && !resource?.value?.localUploadedHelp && `${(resource?.value?.meta?.dateCreated ?? resource.value.meta.released).split('T')[0]}`}
                     </div>
                   </td>
                   <td className="p-2 text-gray-600">
@@ -259,18 +273,18 @@ export const ListResources = ({
                       className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
                         e,
-                        resource?.value?.meta?.language,
-                        `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
-                        resource?.value?.meta?.owner,
-                        resource?.value?.meta?.subject,
-                        '',
+                        resource?.value?.meta?.language ?? resource?.value?.languages[0].name.en,
+                        resource.projectDir ?? `${resource?.value?.meta?.subject} ${resource?.value?.meta?.language_title}`,
+                        resource?.value?.meta?.owner ?? '',
+                        resource?.value?.type?.flavorType?.name ?? resource?.value?.meta?.subject,
+                        resource?.type ?? '',
                         resource,
                       )}
                       role="button"
                       aria-label="tag"
                       tabIndex="0"
                     >
-                      {resource?.value?.meta?.release.tag_name}
+                      {resource?.value?.meta?.release?.tag_name ?? resource?.value?.meta?.version}
                     </div>
                   </td>
                   <td className="p-2">
@@ -301,11 +315,16 @@ export const ListResources = ({
 
               {/* online resources section  */}
               {filteredResources?.onlineResource?.resource?.length > 0 && filteredResources?.onlineResource?.resource?.map((notes) => (
-                <tr className={`${notes?.responseData?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white group`} id={notes.name} key={notes.name + notes.owner}>
+                <tr
+                  className={`${notes?.responseData?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white group focus:outline-none`}
+                  id={notes.name}
+                  key={notes.name + notes.owner}
+                  onClick={(e) => (selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource))}
+                  role="button"
+                >
                   <td colSpan={2} className="p-2">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '')}
                       role="button"
                       tabIndex="0"
                     >
@@ -318,7 +337,7 @@ export const ListResources = ({
                   <td className="p-2 uppercase">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '')}
+                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
@@ -328,31 +347,38 @@ export const ListResources = ({
                   <td className="p-2">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '')}
+                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
-                      {notes?.responseData && `${(notes.responseData.released).split('T')[0]}`}
+                      {notes?.responseData && notes.responseData.released ? `${(notes.responseData.released).split('T')[0]}` : `${(notes.responseData.pushed_at).split('T')[0]}`}
                     </div>
                   </td>
                   <td className="p-2">
                     <div
                       className="focus:outline-none"
-                      onClick={(e) => handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '')}
+                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
-                      {notes?.responseData?.release.tag_name}
+                      {notes?.responseData?.release?.tag_name ?? notes?.responseData?.id}
                     </div>
                   </td>
-                  <td className="p-2">
+                  {/* eslint-disable-next-line */}
+                  <td
+                    className="p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource);
+                    }}
+                  >
                     {(filteredResources?.onlineResource?.id !== 'twlm' && filteredResources?.onlineResource?.id !== 'obs-twlm') && (
                       <div
                         className="cursor-pointer focus:outline-none flex justify-center items-center"
                         role="button"
                         tabIndex={0}
                         title={t('tooltip-download')}
-                        onClick={(e) => handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
+
                       >
                         {downloading && currentDownloading?.responseData?.id === notes?.responseData?.id ? (
                           <div className="w-5 h-5 text-primary group-hover:text-white">

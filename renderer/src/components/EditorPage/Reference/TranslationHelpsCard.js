@@ -44,18 +44,29 @@ export default function TranslationHelpsCard({
   const [currentChapterVerse, setCurrentChapterVerse] = useState({ verse, chapter });
 
   // eslint-disable-next-line prefer-const
-  let { items, markdown, isLoading } = useContent({
-    verse: currentChapterVerse.verse,
-    chapter: currentChapterVerse.chapter,
-    projectId,
-    branch,
-    languageId,
-    resourceId,
-    filePath,
-    owner,
-    server,
-    readyToFetch: true,
-  });
+  let items = [];
+  let markdown = '';
+  let isLoading;
+  try {
+    const tmpRes = useContent({
+      verse: currentChapterVerse.verse,
+      chapter: currentChapterVerse.chapter,
+      projectId,
+      branch,
+      languageId,
+      resourceId,
+      filePath,
+      owner,
+      // server:"https://api.github.com",
+      server,
+      readyToFetch: true,
+    });
+    items = tmpRes.items;
+    markdown = tmpRes.markdown;
+    isLoading = tmpRes.isLoading;
+  } catch (e) {
+    logger.debug('TranslationHelpsCard.js', 'Error setting up in useContent');
+  }
 
   useEffect(() => {
     if (currentTnTab === 1) {
@@ -73,6 +84,7 @@ export default function TranslationHelpsCard({
       try {
         setOfflineMarkdown('');
         setOfflineItems('');
+        let isBurrito = false;
         localForage.getItem('userProfile').then(async (user) => {
           logger.debug('TranslationHelpsCard.js', `reading offline helps ${offlineResource.data?.projectDir}`);
           const fs = window.require('fs');
@@ -80,19 +92,39 @@ export default function TranslationHelpsCard({
           const newpath = localStorage.getItem('userPath');
           const currentUser = user?.username;
           const folder = path.join(newpath, packageInfo.name, 'users', `${currentUser}`, 'resources');
-          const projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
+          let projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
+          if (!offlineResource?.data?.value?.meta?.name) {
+            isBurrito = true;
+            projectName = offlineResource?.data?.projectDir;
+          }
+          // projectName = `${offlineResource?.data?.value?.meta?.name}_${offlineResource?.data?.value?.meta?.owner}_${offlineResource?.data?.value?.meta?.release?.tag_name}`;
           // switch resources
           switch (resourceId) {
           case 'tn':
+          case 'x-bcvnotes':
+            // console.log("yep", folder, 'and projectName ==', projectName);
             if (fs.existsSync(path.join(folder, projectName))) {
               // eslint-disable-next-line array-callback-return
-              const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
-                if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
-                  return item;
-                }
-              });
+              let currentFile;
+              if (isBurrito) {
+                const asArray = Object.entries(offlineResource?.data?.value?.ingredients);
+                currentFile = asArray.filter(([key, value]) => {
+                  if (key.toLocaleLowerCase().indexOf(projectId.toLowerCase()) !== -1) {
+                    return value;
+                  }
+                  return [];
+                })[0];
+              } else {
+                currentFile = offlineResource?.data?.value?.projects.filter((item) => {
+                  if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
+                    return item;
+                  }
+                  return null;
+                });
+              }
               if (currentFile?.length > 0) {
-                const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
+                // const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
+                const filecontent = await fs.readFileSync(path.join(folder, projectName, isBurrito ? currentFile[0] : currentFile[0].path), 'utf8');
                 // convert tsv to json
                 const headerArr = filecontent.split('\n')[0].split('\t');
                 let noteName;
@@ -111,21 +143,21 @@ export default function TranslationHelpsCard({
                 }
 
                 const json = filecontent.split('\n')
-                  .map((file) => {
+                  .map((line) => {
                     if (bvcType) {
-                      const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                      const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = line.split('\t');
                       return {
                         Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote,
                       };
                     }
                     const Book = projectId;
-                    const [ref, ID] = file.split('\t');
+                    const [ref, ID] = line.split('\t');
                     const Chapter = ref.split(':')[0];
                     const Verse = ref.split(':')[1];
                     return {
-                      Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
+                      Book, Chapter, Verse, ID, [noteName]: line.split('\t')[indexOfNote],
                     };
-                  }).filter((data) => data.Chapter === currentChapterVerse.chapter && data.Verse === currentChapterVerse.verse);
+                  }).filter((data) => data.Chapter === `${currentChapterVerse.chapter }` && data.Verse === `${currentChapterVerse.verse }`);
                 setOfflineItemsDisable(false);
                 setOfflineItems(json);
               }
@@ -247,7 +279,7 @@ export default function TranslationHelpsCard({
   items = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
   markdown = offlineResource?.offline ? offlineMarkdown : markdown;
 
-  if (resourceId === 'tn' && items) {
+  if ((resourceId === 'tn' || resourceId === 'x-bcvnotes') && items) {
     if (items[0]?.Note) {
       items[0].Note = (items[0].Note).replace(/(<br>|\\n)/gm, '\n');
     }
@@ -258,7 +290,7 @@ export default function TranslationHelpsCard({
 
   return (
     <>
-      {resourceId === 'tn' && (<TabSelector currentTab={currentTnTab} setCurrentTab={setCurrentTnTab} tabData={tnTabHeads} />)}
+      {(resourceId === 'tn' || resourceId === 'x-bcvnotes') && (<TabSelector currentTab={currentTnTab} setCurrentTab={setCurrentTnTab} tabData={tnTabHeads} />)}
       {(markdown || items) ? (
         <ReferenceCard
           resourceId={resourceId}

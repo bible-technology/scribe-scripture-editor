@@ -3,6 +3,7 @@
 import {
   DocumentTextIcon,
   PhotoIcon,
+  CameraIcon,
   Square3Stack3DIcon,
   MicrophoneIcon,
   BookOpenIcon,
@@ -61,6 +62,12 @@ export default function ResourcesSidebar({
           title: t('label-resource-tn'),
           resourceType: 'translationNote',
           Icon: DocumentTextIcon,
+        },
+        {
+          id: 'tir',
+          title: t('label-resource-tir'),
+          resourceType: 'translationImageResource',
+          Icon: CameraIcon,
         },
         {
           id: 'twlm',
