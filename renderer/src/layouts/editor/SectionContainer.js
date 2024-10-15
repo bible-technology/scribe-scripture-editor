@@ -28,6 +28,20 @@ const SectionContainer = () => {
         const data = fs.readFileSync(metaPath, 'utf-8');
         const metadata = JSON.parse(data);
         setEditor(metadata.type.flavorType.flavor.name);
+
+        if (metadata.type.flavorType.flavor.name === 'textTranslation') {
+          // Check for project_cache folder and create if it doesn't exist
+          const projectCachePath = path.join(newpath, packageInfo.name, 'users', username, 'project_cache', projectName);
+          if (!fs.existsSync(projectCachePath)) {
+            fs.mkdirSync(projectCachePath, { recursive: true });
+          }
+
+          // Check for fileCacheMap.json and create if it doesn't exist
+          const fileCacheMapPath = path.join(projectCachePath, 'fileCacheMap.json');
+          if (!fs.existsSync(fileCacheMapPath)) {
+            fs.writeFileSync(fileCacheMapPath, JSON.stringify({}), 'utf-8');
+          }
+        }
       });
     });
   }, [editor]);
