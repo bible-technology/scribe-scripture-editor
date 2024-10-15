@@ -18,14 +18,15 @@ import {
   BookmarkIcon,
 } from '@heroicons/react/24/outline';
 
+import { NoteEditor } from '@biblionexus-foundation/scribe-editor';
 import PinIcon from '@/icons/basil/Outline/Status/Pin.svg';
 import CrossReferenceIcon from '@/icons/crossreference.svg';
 import FootNotesIcon from '@/icons/footnotes.svg';
 
 import Search from './Search';
-import CrossReferences from './CrossReferences';
+// import CrossReferences from './CrossReferences';
 // import FootNotes from './FootNotes';
-import GraftEditor from './GraftEditor';
+// import GraftEditor from './GraftEditor';
 import Comments from './Comments';
 import Bookmarks from '../../components/EditorPage/BookMarks/Bookmarks';
 
@@ -54,7 +55,7 @@ export default function EditorSideBar(props) {
   const {
     isOpen,
     closeSideBar,
-    graftProps,
+    notesProps,
   } = props;
 
   const {
@@ -192,10 +193,18 @@ export default function EditorSideBar(props) {
               <div className="bg-gray-100 pb-20 h-full">
                 {state.tabIndex === 0
                   && <Search />}
-                {state.tabIndex === 1
-                  && <CrossReferences {...graftProps} />}
-                {state.tabIndex === 2
-                  && <GraftEditor {...graftProps} />}
+                {/* {state.tabIndex === 1
+                  && <NoteEditor {...notesProps} />} */}
+                {state.tabIndex === 2 && (
+                  <NoteEditor
+                    usj={notesProps.usj}
+                    onChange={notesProps.onChange}
+                    viewOptions={notesProps.viewOptions}
+                    nodeOptions={notesProps.nodeOptions}
+                    scrollId={notesProps.text}
+                  />
+                )}
+                {/* && <GraftEditor {...notesProps} />} */}
                 {state.tabIndex === 3
                   && <Comments />}
                 {state.tabIndex === 4
