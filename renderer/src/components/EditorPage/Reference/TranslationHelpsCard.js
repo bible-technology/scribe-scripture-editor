@@ -232,7 +232,7 @@ export default function TranslationHelpsCard({
                       setOfflineItemsDisable(true);
                       setOfflineMarkdown(filecontent);
                     } else {
-                      setOfflineMarkdown({ error: true, data: 'No Content Avaialble' });
+                      setOfflineMarkdown({ error: true, data: 'No Content Available' });
                     }
                   }
                 });
