@@ -110,7 +110,7 @@ export default function TranslationHelpsImageCard({
             </div>
           ))}
         {imagePaths.length === 0
-          && 'No resources image for this verse'}
+          && 'No resources image for this Chapter/Verse'}
       </div>
 
       {zoomedImage && (
