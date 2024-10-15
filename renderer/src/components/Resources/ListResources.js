@@ -319,7 +319,7 @@ export const ListResources = ({
                   className={`${notes?.responseData?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white group focus:outline-none`}
                   id={notes.name}
                   key={notes.name + notes.owner}
-                  onClick={(e) => (selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource))}
+                  onClick={(e) => (selectResource === 'tir' || selectResource === 'tn' ? handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource) : handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, ''))}
                   role="button"
                 >
                   <td colSpan={2} className="p-2">
