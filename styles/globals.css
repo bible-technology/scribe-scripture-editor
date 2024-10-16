@@ -869,13 +869,13 @@ Select scribe theme Start
 	transform: scale(1.05);
 }
 
-.gallery-video {
+/* .gallery-video {
 	width: 300px;
 	height: auto;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	outline: none;
-}
+} */
 
 .zoomed-image-container {
 	position: fixed;
@@ -921,6 +921,20 @@ Select scribe theme Start
 	z-index: 1001;
 }
 
+.gallery-video {
+	width: 300px;
+	height: auto;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.video-wrapper.big-picture .gallery-video {
+	width: 800px;
+	/* Bigger size for Big Picture mode */
+	height: auto;
+	transition: width 0.3s ease-in-out;
+	/* Smooth transition */
+}
 
 /**
   END IMAGE DISPLAY SECTION
