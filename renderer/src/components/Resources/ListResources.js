@@ -157,7 +157,7 @@ export const ListResources = ({
       const reference = resources.find((r) => r.id === selectResource);
       // filter for a resource OR an x-bcvnotes burrito
       // const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' || item?.value?.type?.flavorType?.flavor?.name === 'x-resourcelinks') || (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource)) : [];
-      const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' && selectResource === 'tn') || (item?.value?.type?.flavorType?.flavor?.name === 'x-imagedict' && selectResource === 'tir')) : [];
+      const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' && selectResource === 'tn') || ((item?.value?.type?.flavorType?.flavor?.name === 'x-imagedict' || item?.value?.type?.flavorType?.flavor?.name === 'x-videolinks') && selectResource === 'tir')) : [];
 
       return { reference, offlineResource };
     };

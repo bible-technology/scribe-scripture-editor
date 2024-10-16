@@ -46,14 +46,16 @@ const TranslationHelps = ({
         const userProfile = await localforage.getItem('userProfile');
         const resourceDirPath = path.join(newpath, packageInfo.name, 'users', userProfile?.username, 'resources');
         const pathToIngredients = path.resolve(resourceDirPath, offlineResource.data.projectDir, 'ingredients');
-        setImagesPath(pathToIngredients);
         if (pathToIngredients) {
           const pathRelationFile = path.resolve(pathToIngredients, 'relation.txt');
           if (fs.existsSync(pathRelationFile)) {
+            setImagesPath(pathToIngredients);
             const relationFileContent = fs.readFileSync(pathRelationFile, 'utf8');
-            const fileName = findFileByPartialName(fs, path.resolve(resourceDirPath), relationFileContent);
+            const fileName = findFileByPartialName(fs, path.resolve(resourceDirPath), relationFileContent.trim());
             setResourceLinkPath(path.resolve(resourceDirPath, fileName, 'ingredients'));
           } else {
+            setImagesPath('');
+            setResourceLinkPath(pathToIngredients);
             debug('TranslationHelps.js', `pathRelationFile : ${pathRelationFile} - Not found!`);
           }
         }
@@ -63,7 +65,7 @@ const TranslationHelps = ({
     }
 
     getLinkedFolderPath();
-  }, [imagesPath]);
+  }, [selectedResource, offlineResource]);
 
   return (
     <>
