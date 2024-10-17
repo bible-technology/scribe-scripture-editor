@@ -27,6 +27,8 @@ export default function TextEditor() {
   const {
     state: {
       bookId: defaultBookId, selectedFont, editorFontSize, projectScriptureDir,
+      chapter,
+      verse,
     },
     actions: {
       handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
@@ -71,7 +73,7 @@ export default function TextEditor() {
   const handleUsjChange = useMemo(
     () => debounce(async (updatedUsj) => {
       updateCacheNSaveFile(updatedUsj, book);
-      console.log('usj updated', updatedUsj);
+      // console.log('usj updated', updatedUsj);
     }, 1000),
     [book],
   );
