@@ -49,7 +49,6 @@ export default function TranslationHelpsImageCard({
     const fs = window.require('fs');
     const path = require('path');
     const filePath = path.join(folderPath, `${projectId}.tsv`);
-    let metadataJson = JSON.parse(fs.readFileSync(path.join(linkedFolderPath, '..', 'metadata.json')));
     const reference = `${chapter}:${verse}`;
     const finalImagePaths = [];
 
@@ -64,6 +63,7 @@ export default function TranslationHelpsImageCard({
     // Split the content into lines
     const lines = fileContent.trim().split('\n');
     
+    let metadataJson;
     let columns;
     let realPath;
     let dashedName;
@@ -83,6 +83,8 @@ export default function TranslationHelpsImageCard({
         }
       }
     } else {
+      metadataJson = JSON.parse(fs.readFileSync(path.join(linkedFolderPath, '..', 'metadata.json')));
+
       // Loop through each line, starting from 1 to skip the header
       for (let i = 1; i < lines.length; i++) {
         columns = lines[i].split('\t');
