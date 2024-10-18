@@ -38,7 +38,7 @@ export default function SelectBook({
   function bookSelect(e, bookId) {
     e.preventDefault();
     onChangeBook(bookId, selectedBooks[0]);
-    setBook(bookId);
+    setBook && setBook(bookId);
     if (multiSelectBook === false) { selectBook(); }
   }
 

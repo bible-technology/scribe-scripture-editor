@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { debug } from '../../../logger';
 import TranslationHelpsCard from './TranslationHelpsCard';
-import TranslationHelpsImageCard from './TranslationHelpsImageCard';
+import TranslationHelpsMultimediaCard from './TranslationHelpsMultimediaCard';
 import ObsTnCard from './OBS/ObsTn';
 import ObsTwlCard from './OBS/ObsTwlCard';
 import packageInfo from '../../../../../package.json';
@@ -50,7 +50,6 @@ const TranslationHelps = ({
           const pathRelationFile = path.resolve(pathToIngredients, 'relation.txt');
           
           if (fs.existsSync(pathRelationFile)) {
-            console.log("HERE WHAT NOPE")
             setImagesPath(pathToIngredients);
             const relationFileContent = fs.readFileSync(pathRelationFile, 'utf8');
             const fileName = findFileByPartialName(fs, path.resolve(resourceDirPath), relationFileContent.trim());
@@ -93,7 +92,7 @@ const TranslationHelps = ({
           );
         case 'tir':
           return (
-            <TranslationHelpsImageCard
+            <TranslationHelpsMultimediaCard
               title={t('label-resource-tir')}
               verse={verse}
               chapter={chapter}
