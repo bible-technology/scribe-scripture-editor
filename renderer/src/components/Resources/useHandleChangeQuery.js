@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 const handleChangeQuery = (query, resourceData, selectResource, setFilteredResources, subMenuItems, setfilteredBibleObsAudio) => {
   const filtered = { offlineResource: [], onlineResource: { ...resourceData?.reference } || {} };
-  if (['tn', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq', 'twlm', 'obs-twlm'].includes(selectResource?.toLowerCase())) {
+  if (['tn', 'tir', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq', 'twlm', 'obs-twlm'].includes(selectResource?.toLowerCase())) {
     if (query?.length > 0) {
       filtered.offlineResource = resourceData?.offlineResource?.filter((data) => {
         const meta = data?.value?.meta;
