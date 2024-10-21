@@ -54,7 +54,7 @@ export const fetchTranslationResource = async (urlpath, setResource, selectResou
       if (selectResource === 'tn') {
         filteredRepos = fetchedJson.filter((repo) => repo.topics.includes('burrito' && 'bcvnotes'));
       } else if (selectResource === 'tir') {
-        filteredRepos = fetchedJson.filter((repo) => repo.topics.includes('burrito' && 'imagedict') || repo.topics.includes('burrito' && 'videolinks') );
+        filteredRepos = fetchedJson.filter((repo) => repo.topics.includes('burrito' && 'imagedict') || repo.topics.includes('burrito' && 'videolinks'));
         filteredReposResourcelinks = fetchedJson.filter((repo) => repo.topics.includes('burrito' && 'resourcelinks'));
       }
 

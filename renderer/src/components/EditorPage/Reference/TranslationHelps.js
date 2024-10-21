@@ -48,7 +48,6 @@ const TranslationHelps = ({
         const pathToIngredients = path.resolve(resourceDirPath, offlineResource.data.projectDir, 'ingredients');
         if (pathToIngredients) {
           const pathRelationFile = path.resolve(pathToIngredients, 'relation.txt');
-          
           if (fs.existsSync(pathRelationFile)) {
             setImagesPath(pathToIngredients);
             const relationFileContent = fs.readFileSync(pathRelationFile, 'utf8');

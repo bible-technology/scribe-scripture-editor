@@ -116,7 +116,8 @@ export default function TranslationHelpsCard({
                 //   }
                 //   return [];
                 // })[0];
-                for (let [key, value] of asArray) {
+                // eslint-disable-next-line
+                for (const [key, value] of asArray) {
                   if (key.toLocaleLowerCase().indexOf(projectId.toLowerCase()) !== -1) {
                     currentFile = key;
                     break;
