@@ -116,16 +116,12 @@ export default function TranslationHelpsCard({
                 //   }
                 //   return [];
                 // })[0];
-                console.log("projectId.toLowerCase() ==", projectId.toLowerCase());
                 for (let [key, value] of asArray) {
                   if (key.toLocaleLowerCase().indexOf(projectId.toLowerCase()) !== -1) {
-                    console.log("key == ", key)
-                    console.log("value == ", value)
                     currentFile = key;
                     break;
                   }
                 }
-                console.log("currentFile IN IF", currentFile)
               } else {
                 currentFile = offlineResource?.data?.value?.projects.filter((item) => {
                   if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
@@ -134,11 +130,9 @@ export default function TranslationHelpsCard({
                   return null;
                 });
               }
-              console.log("currentFile OUT IF", currentFile)
               if (currentFile?.length > 0) {
                 // const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
                 const filecontent = await fs.readFileSync(path.join(folder, projectName, isBurrito ? currentFile : currentFile[0].path), 'utf8');
-                console.log("currentFile[0]", currentFile[0])
                 // convert tsv to json
                 const headerArr = filecontent.split('\n')[0].split('\t');
                 let noteName;
