@@ -106,11 +106,10 @@ export default function TranslationHelpsMultimediaCard({
           if (localizedNameTmp && localizedNameTmp.short) {
             localizedNameTmp = localizedNameTmp.short[i18n.language] ?? localizedNameTmp.short.en ?? '';
             tabName = localizedNameTmp.split('.');
-            finalImagePaths.push([tabName[0], realPath]);
           } else {
             tabName = dashedNameSplited.split('.');
-            finalImagePaths.push([tabName[0], realPath]);
           }
+          finalImagePaths.push([tabName[0], realPath]);
         }
       }
     }
