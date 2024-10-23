@@ -85,6 +85,7 @@ export default function TranslationHelpsMultimediaCard({
     } else {
       metadataJson = JSON.parse(fs.readFileSync(path.join(linkedFolderPath, '..', 'metadata.json')));
 
+      let tabName
       // Loop through each line, starting from 1 to skip the header
       for (let i = 1; i < lines.length; i++) {
         columns = lines[i].split('\t');
@@ -93,7 +94,7 @@ export default function TranslationHelpsMultimediaCard({
         if (columns[0] === reference) {
           // Add the last column (image path) to the list
           dashedName = columns[columns.length - 1].split('images/')[1];
-          dashedNameSplited = dashedName.split('/')[1];
+          dashedNameSplited = dashedName.split('/').at(-1);
           localizedNameTmp = metadataJson.localizedNames[dashedNameSplited];
           realPath = convertToFileUrl(path.join(linkedFolderPath, `${dashedName}.jpg`));
           if(dashedName.split('.').at(-1) !== 'jpg') {
@@ -101,12 +102,14 @@ export default function TranslationHelpsMultimediaCard({
           } else {
             realPath = convertToFileUrl(path.join(linkedFolderPath, dashedName));
           }
-          // if(dashedName.substring(3) == 'jpg')
-          if (localizedNameTmp) {
+          // tabName i shere to remove any eventual '.jpg' extensions in the name
+          if (localizedNameTmp && localizedNameTmp.short) {
             localizedNameTmp = localizedNameTmp.short[i18n.language] ?? localizedNameTmp.short.en ?? '';
-            finalImagePaths.push([localizedNameTmp, realPath]);
+            tabName = localizedNameTmp.split('.');
+            finalImagePaths.push([tabName[0], realPath]);
           } else {
-            finalImagePaths.push([dashedNameSplited, realPath]);
+            tabName = dashedNameSplited.split('.');
+            finalImagePaths.push([tabName[0], realPath]);
           }
         }
       }
