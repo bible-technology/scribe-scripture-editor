@@ -41,7 +41,7 @@ export default function EditorMenuBar(props) {
   };
 
   return (
-    <div className="h-[33px] flex flex-col bg-secondary rounded-t-md sticky top-0 z-10">
+    <div className="h-[33px] flex flex-col bg-secondary rounded-t-md sticky top-0">
       <div className="flex min-h-[33px] items-center justify-between gap-2">
         <BibleNavigationX
           chapterNumber={chapterNumber}

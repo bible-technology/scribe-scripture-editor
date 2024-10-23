@@ -1197,10 +1197,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@biblionexus-foundation/scribe-editor@0.1.2-scribe-v1":
-  version "0.1.2-scribe-v1"
-  resolved "https://registry.yarnpkg.com/@biblionexus-foundation/scribe-editor/-/scribe-editor-0.1.2-scribe-v1.tgz#1368b95b1ba71d7a5257868bdf4735f33ea525b7"
-  integrity sha512-8cAqbdz+VdBima+q7Yr22b537nddICiBn+mI4/ctuke+FlCobHEweQgigNAaTOBF9h1dzOF0H+sHiBvETUceow==
+"@biblionexus-foundation/scribe-editor@0.1.3-scribe-v1":
+  version "0.1.3-scribe-v1"
+  resolved "https://registry.yarnpkg.com/@biblionexus-foundation/scribe-editor/-/scribe-editor-0.1.3-scribe-v1.tgz#4fd88dca2aa01af578a52830a6fa0c6950b1413d"
+  integrity sha512-n9Fm6kEtIE7bzW3KCksyc0fjK8dsFLeJbBTy2O4QPdFWGS+4G++NTXiRr+zhZc/WD+XhbZSw/0g5nvQ1hfLy9Q==
   dependencies:
     "@biblionexus-foundation/scripture-utilities" "^0.0.4"
     "@lexical/mark" "^0.17.1"
@@ -20882,10 +20882,10 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-sj-usfm-grammar@^3.0.0, sj-usfm-grammar@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/sj-usfm-grammar/-/sj-usfm-grammar-3.0.3.tgz#3e62d05a386bdca2946b54fb910635fb1685b6d7"
-  integrity sha512-5c915LAa09Y5XYI3F+iLxRdVym+/YS+6zS7nerKzgm88l3koUEC+DLkwO7MTTRjInurU6gT8L0S/094wZ/Uphg==
+sj-usfm-grammar@^3.0.0, sj-usfm-grammar@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/sj-usfm-grammar/-/sj-usfm-grammar-3.0.4.tgz#aceda791291a858befd248430d947ccb15c4fbf7"
+  integrity sha512-HjEDlRt9kJslnjmZ7tGMSQQG8Rvs3n4qfZKPOIABkorx4vpP+rKMSteyEhmv4pXFFPLw37/kZPtTBX1Ui+jPRw==
   dependencies:
     sj-usfm-grammar "^3.0.0"
 
