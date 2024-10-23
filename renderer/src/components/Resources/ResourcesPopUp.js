@@ -120,28 +120,6 @@ export default function ResourcesPopUp(
               <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
                 {selectResource !== 'local-helps' && (
                   <div className="flex items-center justify-between space-x-3 mb-4">
-                    {/* <div className="flex items-center">
-                      <label className="mr-2">
-                        <input
-                          type="radio"
-                          name="repo-source"
-                          value="gitea"
-                          checked={searchSource === 'gitea'}
-                          onChange={(e) => setSearchSource(e.target.value)}
-                        />
-                        {t('gitea')}
-                      </label>
-                      <label className="ml-2">
-                        <input
-                          type="radio"
-                          name="repo-source"
-                          value="github"
-                          checked={searchSource === 'github'}
-                          onChange={(e) => setSearchSource(e.target.value)}
-                        />
-                        {t('github')}
-                      </label>
-                    </div> */}
                     {(selectResource === 'tn' || selectResource === 'tir') && (
                       <div className="flex ml-4 bg-gray-200 p-1 rounded-md">
                         <button
@@ -160,7 +138,6 @@ export default function ResourcesPopUp(
                         </button>
                       </div>
                     )}
-                    {/* Existing SearchBar and selector in the same flex container */}
                     <SearchBar
                       currentFullResources={currentFullResources}
                       selectResource={selectResource}
