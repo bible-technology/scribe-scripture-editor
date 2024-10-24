@@ -19,6 +19,39 @@ function isDev() {
   return process.argv[2] == '--dev';
 }
 
+const CACHE_DIR = path.join(app.getPath('userData'), 'video-cache');
+
+if (!fs.existsSync(CACHE_DIR)) {
+  fs.mkdirSync(CACHE_DIR);
+}
+
+// Handle requests to check if a video is cached
+ipcMain.handle('is-video-cached', (event, videoUrl) => {
+  const videoFileName = path.basename(videoUrl);
+  const localVideoPath = path.join(CACHE_DIR, videoFileName);
+  return fs.existsSync(localVideoPath) ? localVideoPath : null;
+});
+
+// Handle requests to download and cache the video
+ipcMain.handle('download-and-cache-video', async (event, videoUrl) => {
+  const videoFileName = path.basename(videoUrl);
+  const localVideoPath = path.join(CACHE_DIR, videoFileName);
+
+  const net = require('electron').net;
+  const request = net.request(videoUrl);
+
+  return new Promise((resolve, reject) => {
+    const fileStream = fs.createWriteStream(localVideoPath);
+    request.on('response', (response) => {
+      response.pipe(fileStream);
+      fileStream.on('finish', () => resolve(localVideoPath));
+    });
+
+    request.on('error', reject);
+    request.end();
+  });
+});
+
 async function setPermissions(chromePath) {
   try {
     fs.chmodSync(chromePath, '755');

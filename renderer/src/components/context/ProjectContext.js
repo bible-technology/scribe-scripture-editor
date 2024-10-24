@@ -7,7 +7,7 @@ import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import { saveProjectsMeta, saveSupabaseProjectsMeta } from '../../core/projects/saveProjetcsMeta';
 import { environment } from '../../../environment';
-import staicLangJson from '../../lib/lang/langNames.json';
+import staticLangJson from '../../lib/lang/langNames.json';
 import packageInfo from '../../../../package.json';
 
 import {
@@ -28,7 +28,7 @@ const ProjectContextProvider = ({ children }) => {
   const [drawer, setDrawer] = useState(false);
   const [scrollLock, setScrollLock] = useState(false);
   const [sideTabTitle, setSideTabTitle] = useState('New');
-  const [languages, setLanguages] = useState(staicLangJson);
+  const [languages, setLanguages] = useState(staticLangJson);
   const [language, setLanguage] = useState({});
   const [customLanguages, setCustomLanguages] = useState([]);
 
@@ -150,7 +150,7 @@ const ProjectContextProvider = ({ children }) => {
       });
     }
   };
-  const concatLanguages = async (json, staicLangJson) => {
+  const concatLanguages = async (json, staticLangJson) => {
     logger.debug('ProjectContext.js', 'In concat languages');
     const userlanguages = [];
     json.history?.languages?.forEach((userLang) => {
@@ -163,9 +163,9 @@ const ProjectContextProvider = ({ children }) => {
       userlanguages.push(obj);
     });
     const concatedLang = userlanguages.length > 0
-      ? (staicLangJson)
+      ? (staticLangJson)
         .concat(userlanguages)
-      : staicLangJson;
+      : staticLangJson;
     return { concatedLang, userlanguages };
   };
 
@@ -211,7 +211,7 @@ const ProjectContextProvider = ({ children }) => {
               .concat(json.history?.textTranslation.canonSpecification)
             : advanceSettings.canonSpecification);
           // concat static and custom languages
-          const langFilter = await concatLanguages(json, staicLangJson);
+          const langFilter = await concatLanguages(json, staticLangJson);
           const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang.trim() !== '');
           setLanguages([...filteredLang]);
           setCustomLanguages(langFilter.userlanguages);
@@ -262,7 +262,7 @@ const ProjectContextProvider = ({ children }) => {
           .concat(json.history?.textTranslation.canonSpecification)
         : advanceSettings.canonSpecification);
       // concat static and custom languages
-      const langFilter = await concatLanguages(json, staicLangJson);
+      const langFilter = await concatLanguages(json, staticLangJson);
       const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang.trim() !== '');
       setLanguages([...filteredLang]);
       setCustomLanguages(langFilter.userlanguages);
