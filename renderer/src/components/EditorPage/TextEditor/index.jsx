@@ -27,8 +27,8 @@ export default function TextEditor() {
   const {
     state: {
       bookId: defaultBookId, selectedFont, editorFontSize, projectScriptureDir,
-      chapter,
-      verse,
+      // chapter,
+      // verse,
     },
     actions: {
       handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
