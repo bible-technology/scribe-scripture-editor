@@ -33,6 +33,7 @@ export default function TranslationHelpsMultimediaCard({
   projectId,
   folderPath,
   linkedFolderPath,
+  metadata,
 }) {
   const [imagePaths, setImagePaths] = useState([]);
 
@@ -63,14 +64,12 @@ export default function TranslationHelpsMultimediaCard({
     // Split the content into lines
     const lines = fileContent.trim().split('\n');
     
-    let metadataJson;
     let columns;
     let realPath;
     let dashedName;
     let dashedNameSplited;
     let localizedNameTmp;
     if (linkedFolderPath === '') {
-      metadataJson = JSON.parse(fs.readFileSync(path.join(folderPath, '..', 'metadata.json')));
       // Loop through each line, starting from 1 to skip the header
       for (let i = 1; i < lines.length; i++) {
         columns = lines[i].split('\t');
@@ -78,13 +77,11 @@ export default function TranslationHelpsMultimediaCard({
         if (columns[0] === reference) {
           // Add the last column (image path) to the list
           dashedName = columns[columns.length - 1].split('/').at(-1).split('.')[0];
-          localizedNameTmp = metadataJson.localizedNames[dashedName]?.short[i18n.language] ?? '';
+          localizedNameTmp = metadata.localizedNames[dashedName]?.short[i18n.language] ?? '';
           finalImagePaths.push([localizedNameTmp, columns[columns.length - 1]]);
         }
       }
     } else {
-      metadataJson = JSON.parse(fs.readFileSync(path.join(linkedFolderPath, '..', 'metadata.json')));
-
       let tabName
       // Loop through each line, starting from 1 to skip the header
       for (let i = 1; i < lines.length; i++) {
@@ -95,7 +92,7 @@ export default function TranslationHelpsMultimediaCard({
           // Add the last column (image path) to the list
           dashedName = columns[columns.length - 1].split('images/')[1];
           dashedNameSplited = dashedName.split('/').at(-1);
-          localizedNameTmp = metadataJson.localizedNames[dashedNameSplited];
+          localizedNameTmp = metadata.localizedNames[dashedNameSplited];
           realPath = convertToFileUrl(path.join(linkedFolderPath, `${dashedName}.jpg`));
           if(dashedName.split('.').at(-1) !== 'jpg') {
             realPath = convertToFileUrl(path.join(linkedFolderPath, `${dashedName}.jpg`));
