@@ -73,11 +73,11 @@ export default function ChecksContent({ content, updateContent }) {
 									</Disclosure.Button>
 									<Disclosure.Panel className='px-4 pt-4 pb-2 text-sm text-gray-700'>
 										<ul className='space-y-2'>
-											{groupedData[key].map((item, index) => (
+											{groupedData[key].map((item, index) => {
 												<li key={index} className='border p-2 rounded bg-white shadow-sm'>
 													{item.args.cv}
 												</li>
-											))}
+											})}
 										</ul>
 									</Disclosure.Panel>
 								</>
