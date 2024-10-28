@@ -102,6 +102,14 @@ function RemoveResource({
   const [notify, setNotify] = React.useState();
   const [openModal, setOpenModal] = React.useState(false);
 
+  /**
+   * Function to search a directory for a file containing a specific name part.
+   * @param {string} directoryPath - The path of the directory to search in.
+   * @param {string} partialName - The partial name to search for in the file names.
+   * @returns {string|null} - The full name of the matched file, or null if not found.
+   */
+  const findFileByPartialName = (fsInstance, directoryPath, partialName) => fsInstance.readdirSync(directoryPath).find((file) => file.includes(partialName)) || null;
+
   // React.useEffect(() => {
   // }, []);
 
@@ -122,6 +130,9 @@ function RemoveResource({
       const newpath = localStorage.getItem('userPath');
       const folder = path.join(newpath, packageInfo.name, 'users', `${user?.username}`, 'resources');
       let resourceName = null;
+      let linkedResourceName = null;
+      let pathRelationFile = null;
+      let relationFileContent = null;
       switch (selectResource) {
       case 'obs':
       case 'bible':
@@ -136,14 +147,27 @@ function RemoveResource({
       case 'obs-tq':
         resourceName = resource?.projectDir;
         break;
+      case 'tir':
+        resourceName = resource?.projectDir;
+        pathRelationFile = path.join(folder, resourceName, 'ingredients', 'relation.txt');
+        if (fs.existsSync(pathRelationFile)) {
+          relationFileContent = await fs.readFileSync(pathRelationFile, 'utf8');
+          linkedResourceName = findFileByPartialName(fs, folder, relationFileContent.replace('\n', '').trim());
+        }
+        break;
       default:
         break;
       }
       await fs.rmdir(path.join(folder, resourceName), { recursive: true }, async (err) => {
-        if (err) {
+        let linkedResErr;
+        if (!err && linkedResourceName) {
+          linkedResErr = await fs.rmdir(path.join(folder, linkedResourceName), { recursive: true }, (err) => err);
+        }
+        if (err || linkedResErr) {
           setOpenSnackBar(true);
           setNotify('failure');
           setSnackText('Remove Resource Failed');
+          return;
           // throw new Error(`Remove Resource failed :  ${err}`);
         }
         // console.log('resource remove success');

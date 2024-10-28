@@ -3,30 +3,30 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Inter';
-  src: url('../renderer/src/assets/fonts/Inter/Inter-Medium.ttf'),
-    url('../renderer/src/assets/fonts/Inter/Inter-Regular.ttf'),
-    url('../renderer/src/assets/fonts/Inter/Inter-SemiBold.ttf'),
-    url('../renderer/src/assets/fonts/Inter/Inter-Thin.ttf'),
-    url('../renderer/src/assets/fonts/Inter/Inter-Light.ttf'),
-    url('../renderer/src/assets/fonts/Inter/Inter-ExtraLight.ttf');
-  font-weight: 100 500;
+	font-family: 'Inter';
+	src: url('../renderer/src/assets/fonts/Inter/Inter-Medium.ttf'),
+		url('../renderer/src/assets/fonts/Inter/Inter-Regular.ttf'),
+		url('../renderer/src/assets/fonts/Inter/Inter-SemiBold.ttf'),
+		url('../renderer/src/assets/fonts/Inter/Inter-Thin.ttf'),
+		url('../renderer/src/assets/fonts/Inter/Inter-Light.ttf'),
+		url('../renderer/src/assets/fonts/Inter/Inter-ExtraLight.ttf');
+	font-weight: 100 500;
 }
 
 /* Chrome, Safari and Opera */
 .no-scrollbars::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .no-scrollbars {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
+	-ms-overflow-style: none;
+	/* IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
 }
 
 #content {
-  @apply rounded-sm overflow-hidden;
+	@apply rounded-sm overflow-hidden;
 }
 
 /* .section {
@@ -40,16 +40,16 @@
 .perf .title .section,
 .perf .heading .section,
 .sectionBody .paragraph {
-  @apply mx-3;
+	@apply mx-3;
 }
 
 .perf .title .section,
 .perf .heading .section {
-  @apply flex items-center;
+	@apply flex items-center;
 }
 
 .editor {
-  @apply my-2;
+	@apply my-2;
 }
 
 /* .sectionHeading> .expand {
@@ -58,7 +58,7 @@
 
 /* .title .mt, */
 .heading .ms {
-  @apply uppercase text-lg tracking-wider text-primary;
+	@apply uppercase text-lg tracking-wider text-primary;
 }
 
 /* .title .mt {
@@ -69,43 +69,43 @@
   @apply hidden;
 } */
 .editor *[contenteditable='true']:focus {
-  @apply bg-primary-50 outline-none rounded-sm;
+	@apply bg-primary-50 outline-none rounded-sm;
 }
 
 .mark.chapter {
-  @apply border-b mb-2 pb-1 uppercase tracking-wider font-semibold break-before-column block before:content-['Chapter_:_'];
+	@apply border-b mb-2 pb-1 uppercase tracking-wider font-semibold break-before-column block before:content-['Chapter_:_'];
 }
 
 p.paragraph:has(.chapter) {
-  @apply mt-2;
+	@apply mt-2;
 }
 
 .mark.verse {
-  @apply text-xs mr-1 text-primary font-semibold;
+	@apply text-xs mr-1 text-primary font-semibold;
 }
 
 .major-title,
 .major-secondary-heading {
-  @apply text-primary;
+	@apply text-primary;
 }
 
 .graft {
-  @apply text-primary text-sm align-super;
+	@apply text-primary text-sm align-super;
 }
 
 .editor .perf .footnote:before {
-  @apply cursor-pointer font-semibold;
-  content: ' ‡';
+	@apply cursor-pointer font-semibold;
+	content: ' ‡';
 }
 
 .editor .perf .xref:before {
-  @apply cursor-pointer font-semibold;
-  content: ' x';
+	@apply cursor-pointer font-semibold;
+	content: ' x';
 }
 
 .perf .xq,
 .perf .fq {
-  @apply text-primary text-sm;
+	@apply text-primary text-sm;
 }
 
 .ref-editor ::selection {
@@ -126,8 +126,8 @@ p.paragraph:has(.chapter) {
 
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 /* html {
@@ -271,118 +271,118 @@ p.paragraph:has(.chapter) {
   margin: 0.1em;
 } */
 .button {
-	@apply flex h-8 cursor-pointer  items-center justify-center rounded-lg p-2 text-xs font-bold  outline-none  xl:px-4;
+	@apply flex h-8 cursor-pointer items-center justify-center rounded-lg p-2 text-xs font-bold outline-none xl:px-4;
 }
 
 .pdfViewer {
-  overflow-y: scroll;
-  flex: 1;
-  padding: 10px;
-  background-color: rgba(252, 252, 252, 0.85);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.4458) rgb(252, 252, 252);
-  border-radius: 0px 7px 7px 0px;
+	overflow-y: scroll;
+	flex: 1;
+	padding: 10px;
+	background-color: rgba(252, 252, 252, 0.85);
+	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0, 0, 0, 0.4458) rgb(252, 252, 252);
+	border-radius: 0px 7px 7px 0px;
 }
 
 .pdfViewer::-webkit-scrollbar {
-  width: 14px;
+	width: 14px;
 }
 
 .pdfViewer::-webkit-scrollbar-track {
-  background: #f0f0f0;
+	background: #f0f0f0;
 }
 
 .pdfViewer::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.4458);
-  border-radius: 7px 7px 7px 7px;
+	background-color: rgba(0, 0, 0, 0.4458);
+	border-radius: 7px 7px 7px 7px;
 }
 
 .pageContainer {
-  margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: min-content;
+	margin-bottom: 20px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	max-width: min-content;
 }
 
 .selectPDFprintRender:focus {
-  box-shadow: none;
+	box-shadow: none;
 
 }
 
 .selectPDFprintRender {
-  padding-left: 32px;
-  justify-content: space-between;
-  background-color: #363739;
-  border: 1px;
-  display: flex;
-  border-radius: 4px;
-  color: white;
+	padding-left: 32px;
+	justify-content: space-between;
+	background-color: #363739;
+	border: 1px;
+	display: flex;
+	border-radius: 4px;
+	color: white;
 }
 
 
 
 
 .sortable-list {
-  padding: 25px;
-  border-radius: 7px;
-  padding: 30px 25px 20px;
+	padding: 25px;
+	border-radius: 7px;
+	padding: 30px 25px 20px;
 }
 
 .sortable-list .item {
-  list-style: none;
-  display: flex;
-  cursor: move;
+	list-style: none;
+	display: flex;
+	cursor: move;
 
-  align-items: center;
-  border-radius: 5px;
-  padding: 10px 13px;
-  /* box-shadow: 0 2px 4px rgba(0,0,0,0.06); */
-  justify-content: space-between;
+	align-items: center;
+	border-radius: 5px;
+	padding: 10px 13px;
+	/* box-shadow: 0 2px 4px rgba(0,0,0,0.06); */
+	justify-content: space-between;
 }
 
 .item .details {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .item .details img {
-  height: 43px;
-  width: 43px;
-  pointer-events: none;
-  margin-right: 12px;
-  object-fit: cover;
-  border-radius: 50%;
+	height: 43px;
+	width: 43px;
+	pointer-events: none;
+	margin-right: 12px;
+	object-fit: cover;
+	border-radius: 50%;
 }
 
 .item .details span {
-  font-size: 1.13rem;
+	font-size: 1.13rem;
 }
 
 .item i {
-  color: #474747;
-  font-size: 1.13rem;
+	color: #474747;
+	font-size: 1.13rem;
 }
 
 .item.dragging {
-  opacity: 0.6;
+	opacity: 0.6;
 }
 
 .item.dragging :where(.details, i) {
-  opacity: 0;
+	opacity: 0;
 }
 
 .pdfChoice {
-  font-size: medium;
-  margin: 12px;
-  padding: 6px;
-  border-radius: 6px;
-  border-style: solid;
-  border-width: 1px;
-  cursor: pointer;
+	font-size: medium;
+	margin: 12px;
+	padding: 6px;
+	border-radius: 6px;
+	border-style: solid;
+	border-width: 1px;
+	cursor: pointer;
 }
 
 .pdfChoice:hover {
-  background-color: #a2dfea;
+	background-color: #a2dfea;
 }
 
 /**
@@ -390,146 +390,146 @@ p.paragraph:has(.chapter) {
 */
 
 .bouquet-picker {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .container {
-  width: 100%;
-  height: 100%;
-  display: flex;
+	width: 100%;
+	height: 100%;
+	display: flex;
 }
 
 .containerContentType {
-  min-width: 6rem;
-  border-right: 2px solid #0d948875;
+	min-width: 6rem;
+	border-right: 2px solid #0d948875;
 }
 
 .containerContentType li {
-  list-style: none;
-  padding: 1rem;
-  color: black;
-  cursor: pointer;
+	list-style: none;
+	padding: 1rem;
+	color: black;
+	cursor: pointer;
 }
 
 .containerContentType li:hover,
 .containerContentType li.selected {
-  background: #90e0ef;
+	background: #90e0ef;
 }
 
 .list-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 .btn-wrap {
-  width: 100%;
-  height: 72px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.2rem 2rem;
+	width: 100%;
+	height: 72px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.2rem 2rem;
 }
 
 .btn-wrap svg {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .containerTag {
-  padding: 0.25rem;
-  margin: 0.1rem;
-  font-size: 0.85rem;
-  font-weight: bold;
-  display: inline;
+	padding: 0.25rem;
+	margin: 0.1rem;
+	font-size: 0.85rem;
+	font-weight: bold;
+	display: inline;
 }
 
 .picker-container {
-  width: 100%;
-  height: 86%;
-  background: 'white';
+	width: 100%;
+	height: 86%;
+	background: 'white';
 }
 
 .picker-config-container {
-  width: 600px;
-  height: 400px;
+	width: 600px;
+	height: 400px;
 }
 
 .form_content_wrap {
-  display: flex;
+	display: flex;
 }
 
 .form_content_inputs>div {
-  display: flex;
-  margin: 0.5rem 0.5rem;
+	display: flex;
+	margin: 0.5rem 0.5rem;
 }
 
 .form_content_inputs>div>div:nth-child(1) {
-  width: 100px;
+	width: 100px;
 }
 
 .form_content_inputs>div>div:nth-child(2) {
-  width: 400px;
+	width: 400px;
 }
 
 .form_content_inputs>div>div:nth-child(2)>* {
-  width: 100%;
-  padding: 0.5rem;
+	width: 100%;
+	padding: 0.5rem;
 
 }
 
 .form_content_btn-wrap {
-  display: flex;
-  align-items: flex-end;
-  margin: 0.5rem;
+	display: flex;
+	align-items: flex-end;
+	margin: 0.5rem;
 }
 
 .form_content_btn-wrap button {
-  padding: 0.5rem 1rem;
+	padding: 0.5rem 1rem;
 }
 
 
 /* searchbar */
 
 .searchContainer {
-  padding: 1%;
+	padding: 1%;
 }
 
 .searchInput {
-  width: 100%;
-  padding: 12px 24px;
+	width: 100%;
+	padding: 12px 24px;
 
-  background-color: transparent;
-  transition: transform 250ms ease-in-out;
-  font-size: 14px;
-  line-height: 18px;
+	background-color: transparent;
+	transition: transform 250ms ease-in-out;
+	font-size: 14px;
+	line-height: 18px;
 
-  color: #363739;
-  background-color: transparent;
+	color: #363739;
+	background-color: transparent;
 
-  background-repeat: no-repeat;
-  background-size: 18px 18px;
-  background-position: 95% center;
-  border-radius: 50px;
-  border: 1px solid #363739;
-  transition: all 250ms ease-in-out;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
+	background-repeat: no-repeat;
+	background-size: 18px 18px;
+	background-position: 95% center;
+	border-radius: 50px;
+	border: 1px solid #363739;
+	transition: all 250ms ease-in-out;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
 }
 
 .searchInput::placeholder {
-  color: color(#363739 a(0.8));
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+	color: color(#363739 a(0.8));
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
 }
 
 .searchInput:hover,
 .searchInput:focus {
-  padding: 12px 0;
-  outline: 0;
-  border: 1px solid transparent;
-  border-bottom: 1px solid #363739;
-  border-radius: 0;
-  background-position: 100% center;
+	padding: 12px 0;
+	outline: 0;
+	border: 1px solid transparent;
+	border-bottom: 1px solid #363739;
+	border-radius: 0;
+	background-position: 100% center;
 }
 
 /**
@@ -541,309 +541,410 @@ p.paragraph:has(.chapter) {
 MODAL SECTION SELECTION BLOCK START
 */
 .styleText {
-  text-align: center;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 16px;
 }
 
 .styleCard {
-  background-color: #F9F9F9;
-  display: flex;
-  padding: 8px;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+	background-color: #F9F9F9;
+	display: flex;
+	padding: 8px;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
 }
 
 .styleCard:hover {
-  cursor: pointer;
-  background-color: #EEEEEE;
+	cursor: pointer;
+	background-color: #EEEEEE;
 }
 
 .styleIcon {
-  width: 72px;
-  height: 72px;
-  margin: 12px 9.5px 12px 30.5px;
-  justify-content: flex-end;
-  display: flex;
+	width: 72px;
+	height: 72px;
+	margin: 12px 9.5px 12px 30.5px;
+	justify-content: flex-end;
+	display: flex;
 }
 
 /*
 MODAL SECTION SELECTION BLOCK END
 */
 #sundesmosToolbar {
-  background-color: #E5E7EB;
-  border-color: white;
+	background-color: #E5E7EB;
+	border-color: white;
 
 
-.prevent-select {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+	.prevent-select {
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
 
-/*
+	/*
 Select scribe theme Start
 */
 
-.selectScribeTheme {
-  width: 200px;
-  min-width: 120px;
-  border-radius: 5px;
-  border-color: rgba(115, 115, 115, 1);
-  border-width: 1px;
-  background-color: #ffffff;
+	.selectScribeTheme {
+		width: 200px;
+		min-width: 120px;
+		border-radius: 5px;
+		border-color: rgba(115, 115, 115, 1);
+		border-width: 1px;
+		background-color: #ffffff;
+	}
+
+	.centered-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.selectScribeTheme:hover {
+		/* Hover styles for the select element */
+		background-color: rgba(255, 238, 229, 1);
+	}
+
+	.selectScribeTheme option {
+		background-color: #ffffff;
+		/* Default background color for options */
+	}
+
+	.selectScribeTheme option:hover {
+		background-color: rgba(255, 238, 229, 1) !important;
+		/* Hover background color for options */
+	}
+
+	.App {
+		text-align: center;
+
+	}
+
+	:root {
+		--primary: rgba(255, 127, 92, 0.8);
+		--pimaryFade: rgba(255, 127, 92, 0.44);
+		--hover: #e2f2ff;
+	}
+
+	.App-logo {
+		height: 40vmin;
+		pointer-events: none;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.App-logo {
+			animation: App-logo-spin infinite 20s linear;
+		}
+	}
+
+	.App-header {
+		background-color: #282c34;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		font-size: calc(10px + 2vmin);
+		color: white;
+	}
+
+	.diva {
+		width: 40%;
+		overflow: hidden;
+		z-index: 0;
+	}
+
+	.divb {
+		overflow: hidden;
+		width: 60%;
+	}
+
+	@keyframes App-logo-spin {
+		from {
+			transform: rotate(0deg);
+		}
+
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+
+	.sentences {
+		background-color: #f5f5f5;
+		border-radius: 4px;
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		font-size: var(--zoomLeft);
+		font-family: "CharisSIL";
+	}
+
+	.wrapperButtonAlign {
+		border-radius: 16px;
+		border: 2px solid #000;
+		background: #F5F5F5;
+		width: fit-content;
+	}
+
+	.wrapperButtonAlign:hover {
+		background: var(--hover);
+	}
+
+	.layoutButtonAlign {
+		display: inline-flex;
+		padding: 6px 12px;
+		align-items: center;
+		gap: 7px;
+	}
+
+	.staticText {
+		font-family: "CharisSIL";
+		font-size: 2em;
+		font-weight: 500;
+	}
+
+	.sentences[data-isSelected="true"] {
+		border-radius: 4px;
+		width: "fit-content";
+		z-index: 1;
+	}
+
+	.sentencesWrapper[data-hasBeenDone="true"] {
+		background-color: #b9f3bd;
+	}
+
+	.sentencesWrapper[data-isSelected="true"] {
+		background-color: var(--primary)
+	}
+
+	.sentencesWrapper[data-isSelected="false"]:hover {
+		background-color: #e2f2ff
+	}
+
+	.sentencesWrapper {
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 4px;
+		padding-bottom: 4px;
+		border-radius: 4px;
+		width: fit-content;
+
+
+	}
+
+	.Word {
+		border-radius: 4px;
+		padding: 5px;
+		/* Added 'px' unit */
+		margin: 0px;
+		/* Added 'px' unit */
+		font-family: "CharisSIL";
+
+	}
+
+	.notUsedWord {
+		font-family: "CharisSIL";
+		padding-top: 5px;
+		/* Added 'px' unit */
+		padding-right: 5px;
+
+	}
+
+	.notUsedWord::selection {
+		background: rgba(255, 255, 0, 0);
+	}
+
+	.Word::selection {
+		background: rgba(255, 255, 0, 0);
+	}
+
+	.Word[data-selected="false"]:hover {
+		background-color: var(--pimaryFade)
+	}
+
+	.Word[data-selected="false"][data-notCLicable="true"]:hover {
+		background-color: rgba(176, 176, 176, 0.5);
+	}
+
+	.Word[data-ctrl="true"]:hover {
+		background-color: var(--primary)
+	}
+
+	.Word[data-notCLicable="true"][data-notSelectedBuHover="true"] {
+		background-color: #e2f2ff
+	}
+
+	.Word[data-selected="true"] {
+		background-color: var(--primary)
+	}
+
+
+	.Word[data-notCLicable="true"] {
+		background-color: rgba(176, 176, 176, 0.5);
+
+	}
+
+	.Button {
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 4px;
+		padding-bottom: 4px;
+		border-radius: 4px;
+		width: fit-content;
+		border-width: 1;
+		border-style: solid;
+		font-size: 2em;
+	}
+
+	.Button:hover {
+		border-color: #50a0e181;
+	}
+
+	.image {
+		transition: opacity 0.3s ease-in-out;
+		/* Use opacity for smoother transitions */
+		opacity: 1;
+		/* Initially visible */
+	}
+
+	.imageWrapper {
+		width: 1290px;
+		transition: width 0.3s ease-in-out;
+		/* Adjust transition properties */
+		overflow: hidden;
+		/* Ensure the overflow is hidden */
+	}
+
+	.imageWrapper[data-isClosed='false'] {
+		width: 0;
+		overflow: hidden;
+		/* Hide the overflow when closed */
+	}
+
+	.image[data-isClosed='false'] {
+		opacity: 0;
+		/* Hide the image when closed */
+	}
+
+	.image2 {
+		align-self: "flex-end";
+		margin-top: 16;
+		margin-right: 16;
+	}
+
 }
 
-.centered-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+/**
+  START IMAGE DISPLAY SECTION
+*/
+/* Style for scrollable image gallery */
+.image-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 20px;
 }
 
-.selectScribeTheme:hover {
-  /* Hover styles for the select element */
-  background-color: rgba(255, 238, 229, 1);
+.image-name {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 10px;
 }
 
-.selectScribeTheme option {
-  background-color: #ffffff;
-  /* Default background color for options */
+.gallery-image {
+	width: 300px;
+	height: auto;
+	object-fit: cover;
+	cursor: pointer;
+	transition: transform 0.2s;
 }
 
-.selectScribeTheme option:hover {
-  background-color: rgba(255, 238, 229, 1) !important;
-  /* Hover background color for options */
+.gallery-image:hover {
+	transform: scale(1.05);
 }
 
-.App {
-  text-align: center;
+/* .gallery-video {
+	width: 300px;
+	height: auto;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	outline: none;
+} */
 
+.zoomed-image-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.8);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
 }
 
-:root {
-  --primary: rgba(255, 127, 92, 0.8);
-  --pimaryFade: rgba(255, 127, 92, 0.44);
-  --hover: #e2f2ff;
+.zoomed-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.zoomed-image {
+	max-width: 90%;
+	max-height: 90%;
+	object-fit: contain;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.zoomed-video {
+	max-width: 90%;
+	max-height: 90%;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+	outline: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.close-zoom {
+	position: absolute;
+	top: 10px;
+	right: 20px;
+	font-size: 24px;
+	color: white;
+	cursor: pointer;
+	z-index: 1001;
 }
 
-.diva {
-  width: 40%;
-  overflow: hidden;
-  z-index: 0;
+.gallery-video {
+	width: 300px;
+	height: auto;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.divb {
-  overflow: hidden;
-  width: 60%;
+.video-wrapper.big-picture .gallery-video {
+	width: 800px;
+	/* Bigger size for Big Picture mode */
+	height: auto;
+	transition: width 0.3s ease-in-out;
+	/* Smooth transition */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+/**
+  END IMAGE DISPLAY SECTION
+*/
 
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-.sentences {
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  font-size: var(--zoomLeft);
-  font-family: "CharisSIL";
-}
-
-.wrapperButtonAlign {
-  border-radius: 16px;
-  border: 2px solid #000;
-  background: #F5F5F5;
-  width: fit-content;
-}
-
-.wrapperButtonAlign:hover {
-  background: var(--hover);
-}
-
-.layoutButtonAlign {
-  display: inline-flex;
-  padding: 6px 12px;
-  align-items: center;
-  gap: 7px;
-}
-
-.staticText {
-  font-family: "CharisSIL";
-  font-size: 2em;
-  font-weight: 500;
-}
-
-.sentences[data-isSelected="true"] {
-  border-radius: 4px;
-  width: "fit-content";
-  z-index: 1;
-}
-
-.sentencesWrapper[data-hasBeenDone="true"] {
-  background-color: #b9f3bd;
-}
-
-.sentencesWrapper[data-isSelected="true"] {
-  background-color: var(--primary)
-}
-
-.sentencesWrapper[data-isSelected="false"]:hover {
-  background-color: #e2f2ff
-}
-
-.sentencesWrapper {
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  border-radius: 4px;
-  width: fit-content;
-
-
-}
-
-.Word {
-  border-radius: 4px;
-  padding: 5px;
-  /* Added 'px' unit */
-  margin: 0px;
-  /* Added 'px' unit */
-  font-family: "CharisSIL";
-
-}
-
-.notUsedWord {
-  font-family: "CharisSIL";
-  padding-top: 5px;
-  /* Added 'px' unit */
-  padding-right: 5px;
-
-}
-
-.notUsedWord::selection {
-  background: rgba(255, 255, 0, 0);
-}
-
-.Word::selection {
-  background: rgba(255, 255, 0, 0);
-}
-
-.Word[data-selected="false"]:hover {
-  background-color: var(--pimaryFade)
-}
-
-.Word[data-selected="false"][data-notCLicable="true"]:hover {
-  background-color: rgba(176, 176, 176, 0.5);
-}
-
-.Word[data-ctrl="true"]:hover {
-  background-color: var(--primary)
-}
-
-.Word[data-notCLicable="true"][data-notSelectedBuHover="true"] {
-  background-color: #e2f2ff
-}
-
-.Word[data-selected="true"] {
-  background-color: var(--primary)
-}
-
-
-.Word[data-notCLicable="true"] {
-  background-color: rgba(176, 176, 176, 0.5);
-
-}
-
-.Button {
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  border-radius: 4px;
-  width: fit-content;
-  border-width: 1;
-  border-style: solid;
-  font-size: 2em;
-}
-
-.Button:hover {
-  border-color: #50a0e181;
-}
-
-.image {
-  transition: opacity 0.3s ease-in-out;
-  /* Use opacity for smoother transitions */
-  opacity: 1;
-  /* Initially visible */
-}
-
-.imageWrapper {
-  width: 1290px;
-  transition: width 0.3s ease-in-out;
-  /* Adjust transition properties */
-  overflow: hidden;
-  /* Ensure the overflow is hidden */
-}
-
-.imageWrapper[data-isClosed='false'] {
-  width: 0;
-  overflow: hidden;
-  /* Hide the overflow when closed */
-}
-
-.image[data-isClosed='false'] {
-  opacity: 0;
-  /* Hide the image when closed */
-}
-
-.image2 {
-  align-self: "flex-end";
-  margin-top: 16;
-  margin-right: 16;
-}
-
-
-}
 .editor-input {
 	text-align: start;
 }
 
-.editor-input > p {
+.editor-input>p {
 	direction: inherit;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -855,18 +956,23 @@ Select scribe theme Start
 .leadingFloat {
 	float: start;
 }
+
 .clearFloat {
 	clear: both;
 }
+
 .align_start {
 	text-align: start;
 }
+
 .align_center {
 	text-align: center;
 }
+
 .align_end {
 	text-align: end;
 }
+
 @font-face {
 	font-family: 'Charis SIL';
 	src: local('Charis SIL'), local('Charis SIL Bold'),
@@ -874,22 +980,26 @@ Select scribe theme Start
 		url('file:///C:/Windows/Fonts/CharisSIL-B.ttf');
 	font-weight: normal;
 }
+
 @font-face {
 	font-family: 'Charis SIL';
 	src: local('Charis SIL Bold');
 	font-weight: bold;
 }
+
 @font-face {
 	font-family: 'Charis SIL';
 	src: local('Charis SIL Italic');
 	font-style: italic;
 }
+
 @font-face {
 	font-family: 'Charis SIL';
 	src: local('Charis SIL Bold Italic');
 	font-weight: bold;
 	font-style: italic;
 }
+
 .formatted-font .usfm {
 	font-family: 'Charis SIL';
 	font-size: 12pt;
@@ -900,6 +1010,7 @@ Select scribe theme Start
 .usfm_id {
 	display: none;
 }
+
 .formatted-font .usfm_id {
 	font-size: 100%;
 }
@@ -907,14 +1018,17 @@ Select scribe theme Start
 /* ChapterNode, ImmutableChapterNode */
 
 .formatted-font .usfm_c {
-	@apply text-primary  block break-before-column font-medium uppercase tracking-wider before:content-['Chapter_:_'];
+	@apply text-primary block break-before-column font-medium uppercase tracking-wider before:content-['Chapter_:_'];
 }
+
 .text-spacing[dir='ltr'] .usfm_c {
 	@apply pl-4 text-left;
 }
+
 .text-spacing[dir='rtl'] .usfm_c {
 	@apply pr-4 text-right;
 }
+
 .formatted-font .usfm_ca {
 	color: #007306;
 	font-size: 133%;
@@ -926,6 +1040,7 @@ Select scribe theme Start
 	color: #003380;
 	font-size: 150%;
 }
+
 .text-spacing .usfm_cp {
 	margin-bottom: 4pt;
 	margin-top: 8pt;
@@ -936,9 +1051,11 @@ Select scribe theme Start
 .formatted-font .usfm_v {
 	@apply align-top text-xs uppercase tracking-wider text-primary;
 }
+
 .text-spacing[dir='ltr'] .usfm_v {
 	@apply text-left;
 }
+
 .text-spacing[dir='rtl'] .usfm_v {
 	@apply text-right;
 }
@@ -988,12 +1105,15 @@ Select scribe theme Start
 .usfm_toc1 {
 	@apply hidden;
 }
+
 .formatted-font .usfm_toc1 {
 	@apply font-bold italic text-green-900;
 }
+
 .text-spacing[dir='ltr'] .usfm_toc1 {
 	@apply ml-2 text-left;
 }
+
 .text-spacing[dir='rtl'] .usfm_toc1 {
 	@apply mr-2 text-right;
 }
@@ -1001,12 +1121,15 @@ Select scribe theme Start
 .usfm_toc2 {
 	@apply hidden;
 }
+
 .formatted-font .usfm_toc2 {
 	@apply italic text-green-900;
 }
+
 .text-spacing[dir='ltr'] .usfm_toc2 {
 	@apply ml-2 text-left;
 }
+
 .text-spacing[dir='rtl'] .usfm_toc2 {
 	@apply mr-2 text-right;
 }
@@ -1014,12 +1137,15 @@ Select scribe theme Start
 .usfm_toc3 {
 	@apply hidden;
 }
+
 .formatted-font .usfm_toc3 {
 	@apply font-bold italic text-red-500;
 }
+
 .text-spacing[dir='ltr'] .usfm_toc3 {
 	@apply ml-2 text-left;
 }
+
 .text-spacing[dir='rtl'] .usfm_toc3 {
 	@apply mr-2 text-right;
 }
@@ -1061,6 +1187,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_imt {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1071,6 +1198,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_imt1 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1081,6 +1209,7 @@ Select scribe theme Start
 	font-size: 108%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_imt2 {
 	text-align: center;
 	margin-bottom: 3pt;
@@ -1091,6 +1220,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_imt3 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1101,6 +1231,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_imt4 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1111,6 +1242,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 166%;
 }
+
 .text-spacing .usfm_imte {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1121,6 +1253,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 166%;
 }
+
 .text-spacing .usfm_imte1 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1131,6 +1264,7 @@ Select scribe theme Start
 	font-size: 133%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_imte2 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1140,6 +1274,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_is {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1150,6 +1285,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_is1 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1160,6 +1296,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_is2 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1170,6 +1307,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_iot {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1179,9 +1317,11 @@ Select scribe theme Start
 .formatted-font .usfm_io {
 	font-size: 100%;
 }
+
 .text-spacing[dir='ltr'] .usfm_io {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_io {
 	margin-right: 10vw;
 }
@@ -1189,9 +1329,11 @@ Select scribe theme Start
 .formatted-font .usfm_io1 {
 	font-size: 100%;
 }
+
 .text-spacing[dir='ltr'] .usfm_io1 {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_io1 {
 	margin-right: 10vw;
 }
@@ -1199,9 +1341,11 @@ Select scribe theme Start
 .formatted-font .usfm_io2 {
 	font-size: 100%;
 }
+
 .text-spacing[dir='ltr'] .usfm_io2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_io2 {
 	margin-right: 15vw;
 }
@@ -1209,9 +1353,11 @@ Select scribe theme Start
 .formatted-font .usfm_io3 {
 	font-size: 100%;
 }
+
 .text-spacing[dir='ltr'] .usfm_io3 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_io3 {
 	margin-right: 20vw;
 }
@@ -1219,9 +1365,11 @@ Select scribe theme Start
 .formatted-font .usfm_io4 {
 	font-size: 100%;
 }
+
 .text-spacing[dir='ltr'] .usfm_io4 {
 	margin-left: 25vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_io4 {
 	margin-right: 25vw;
 }
@@ -1233,6 +1381,7 @@ Select scribe theme Start
 .formatted-font .usfm_ip {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ip {
 	text-indent: 2.5vw;
 }
@@ -1244,6 +1393,7 @@ Select scribe theme Start
 .formatted-font .usfm_ipi {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ipi {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -1253,6 +1403,7 @@ Select scribe theme Start
 .formatted-font .usfm_imi {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_imi {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1261,12 +1412,15 @@ Select scribe theme Start
 .formatted-font .usfm_ili {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ili {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ili {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ili {
 	margin-right: 10vw;
 }
@@ -1274,12 +1428,15 @@ Select scribe theme Start
 .formatted-font .usfm_ili1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ili1 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ili1 {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ili1 {
 	margin-right: 10vw;
 }
@@ -1287,12 +1444,15 @@ Select scribe theme Start
 .formatted-font .usfm_ili2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ili2 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ili2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ili2 {
 	margin-right: 15vw;
 }
@@ -1301,6 +1461,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_ipq {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -1311,6 +1472,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_imq {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1319,10 +1481,12 @@ Select scribe theme Start
 .usfm_ipr {
 	text-align: end;
 }
+
 .formatted-font .usfm_ipr {
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_ipr {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1336,12 +1500,15 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_iq {
 	text-indent: -15vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_iq {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_iq {
 	margin-right: 20vw;
 }
@@ -1350,12 +1517,15 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_iq1 {
 	text-indent: -15vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_iq1 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_iq1 {
 	margin-right: 20vw;
 }
@@ -1364,12 +1534,15 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_iq2 {
 	text-indent: -10vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_iq2 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_iq2 {
 	margin-right: 20vw;
 }
@@ -1378,12 +1551,15 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_iq3 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_iq3 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_iq3 {
 	margin-right: 20vw;
 }
@@ -1391,6 +1567,7 @@ Select scribe theme Start
 .formatted-font .usfm_iex {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_iex {
 	text-indent: 2.5vw;
 	margin-bottom: 4pt;
@@ -1410,6 +1587,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 150%;
 }
+
 .text-spacing .usfm_cl {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1419,6 +1597,7 @@ Select scribe theme Start
 .formatted-font .usfm_cd {
 	font-size: 91%;
 }
+
 .text-spacing .usfm_cd {
 	margin-bottom: 4pt;
 	margin-top: 8pt;
@@ -1427,6 +1606,7 @@ Select scribe theme Start
 .formatted-font .usfm_p {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_p {
 	text-indent: 2.5vw;
 }
@@ -1438,6 +1618,7 @@ Select scribe theme Start
 .formatted-font .usfm_po {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_po {
 	text-indent: 2.5vw;
 	margin-bottom: 4pt;
@@ -1447,6 +1628,7 @@ Select scribe theme Start
 .usfm_pr {
 	text-align: end;
 }
+
 .formatted-font .usfm_pr {
 	font-size: 100%;
 }
@@ -1454,6 +1636,7 @@ Select scribe theme Start
 .usfm_cls {
 	text-align: end;
 }
+
 .formatted-font .usfm_cls {
 	font-size: 100%;
 }
@@ -1461,6 +1644,7 @@ Select scribe theme Start
 .formatted-font .usfm_pmo {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pmo {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1469,6 +1653,7 @@ Select scribe theme Start
 .formatted-font .usfm_pm {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pm {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -1478,6 +1663,7 @@ Select scribe theme Start
 .formatted-font .usfm_pmc {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pmc {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1486,9 +1672,11 @@ Select scribe theme Start
 .usfm_pmr {
 	text-align: end;
 }
+
 .formatted-font .usfm_pmr {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pmr {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1497,6 +1685,7 @@ Select scribe theme Start
 .formatted-font .usfm_pi {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pi {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -1506,6 +1695,7 @@ Select scribe theme Start
 .formatted-font .usfm_pi1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pi1 {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -1515,13 +1705,16 @@ Select scribe theme Start
 .formatted-font .usfm_pi2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pi2 {
 	text-indent: 2.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_pi2 {
 	margin-left: 10vw;
 	margin-right: 5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_pi2 {
 	margin-left: 5vw;
 	margin-right: 10vw;
@@ -1530,13 +1723,16 @@ Select scribe theme Start
 .formatted-font .usfm_pi3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pi3 {
 	text-indent: 2.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_pi3 {
 	margin-left: 15vw;
 	margin-right: 5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_pi3 {
 	margin-left: 5vw;
 	margin-right: 15vw;
@@ -1545,6 +1741,7 @@ Select scribe theme Start
 .formatted-font .usfm_pc {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_pc {
 	text-align: center;
 }
@@ -1552,6 +1749,7 @@ Select scribe theme Start
 .formatted-font .usfm_mi {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_mi {
 	margin-left: 5vw;
 	margin-right: 5vw;
@@ -1564,12 +1762,15 @@ Select scribe theme Start
 .formatted-font .usfm_q {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_q {
 	text-indent: -10vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_q {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_q {
 	margin-right: 15vw;
 }
@@ -1577,12 +1778,15 @@ Select scribe theme Start
 .formatted-font .usfm_q1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_q1 {
 	text-indent: -10vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_q1 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_q1 {
 	margin-right: 15vw;
 }
@@ -1590,12 +1794,15 @@ Select scribe theme Start
 .formatted-font .usfm_q2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_q2 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_q2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_q2 {
 	margin-right: 15vw;
 }
@@ -1603,12 +1810,15 @@ Select scribe theme Start
 .formatted-font .usfm_q3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_q3 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_q3 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_q3 {
 	margin-right: 15vw;
 }
@@ -1616,12 +1826,15 @@ Select scribe theme Start
 .formatted-font .usfm_q4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_q4 {
 	text-indent: -2.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_q4 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_q4 {
 	margin-right: 15vw;
 }
@@ -1629,6 +1842,7 @@ Select scribe theme Start
 .formatted-font .usfm_qc {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_qc {
 	text-align: center;
 }
@@ -1636,6 +1850,7 @@ Select scribe theme Start
 .usfm_qr {
 	text-align: end;
 }
+
 .formatted-font .usfm_qr {
 	font-size: 100%;
 }
@@ -1648,12 +1863,15 @@ Select scribe theme Start
 .formatted-font .usfm_qm {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_qm {
 	text-indent: -15vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_qm {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_qm {
 	margin-right: 20vw;
 }
@@ -1661,12 +1879,15 @@ Select scribe theme Start
 .formatted-font .usfm_qm1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_qm1 {
 	text-indent: -15vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_qm1 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_qm1 {
 	margin-right: 20vw;
 }
@@ -1674,12 +1895,15 @@ Select scribe theme Start
 .formatted-font .usfm_qm2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_qm2 {
 	text-indent: -10vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_qm2 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_qm2 {
 	margin-right: 20vw;
 }
@@ -1687,12 +1911,15 @@ Select scribe theme Start
 .formatted-font .usfm_qm3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_qm3 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_qm3 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_qm3 {
 	margin-right: 20vw;
 }
@@ -1701,9 +1928,11 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing[dir='ltr'] .usfm_qd {
 	margin-left: 5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_qd {
 	margin-right: 5vw;
 }
@@ -1716,6 +1945,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 166%;
 }
+
 .text-spacing .usfm_mt {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1725,6 +1955,7 @@ Select scribe theme Start
 .formatted-font .usfm_mt1 {
 	@apply text-2xl font-bold;
 }
+
 .text-spacing .usfm_mt1 {
 	@apply my-2 text-center;
 }
@@ -1733,6 +1964,7 @@ Select scribe theme Start
 	font-size: 133%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_mt2 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1742,6 +1974,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 133%;
 }
+
 .text-spacing .usfm_mt3 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1751,6 +1984,7 @@ Select scribe theme Start
 .formatted-font .usfm_mt4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_mt4 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1761,6 +1995,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 166%;
 }
+
 .text-spacing .usfm_mte {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1771,6 +2006,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 166%;
 }
+
 .text-spacing .usfm_mte1 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1781,6 +2017,7 @@ Select scribe theme Start
 	font-size: 133%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_mte2 {
 	text-align: center;
 	margin-bottom: 2pt;
@@ -1790,6 +2027,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_ms {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1799,6 +2037,7 @@ Select scribe theme Start
 .formatted-font .usfm_ms1 {
 	@apply text-lg;
 }
+
 .text-spacing .usfm_ms1 {
 	@apply m-2 text-center;
 }
@@ -1807,6 +2046,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_ms2 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1817,6 +2057,7 @@ Select scribe theme Start
 	font-size: 116%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_ms3 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1827,6 +2068,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_mr {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1836,6 +2078,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_s {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1846,6 +2089,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_s1 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1856,6 +2100,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_s2 {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1866,6 +2111,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_s3 {
 	margin-bottom: 3pt;
 	margin-top: 6pt;
@@ -1875,6 +2121,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_s4 {
 	margin-bottom: 3pt;
 	margin-top: 6pt;
@@ -1884,6 +2131,7 @@ Select scribe theme Start
 	font-weight: bold;
 	font-size: 100%;
 }
+
 .text-spacing .usfm_sr {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1893,6 +2141,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_r {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1902,6 +2151,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_sp {
 	margin-bottom: 4pt;
 	margin-top: 8pt;
@@ -1911,6 +2161,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_d {
 	text-align: center;
 	margin-bottom: 4pt;
@@ -1945,6 +2196,7 @@ Select scribe theme Start
 .formatted-font .usfm_lh {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lh {
 	text-indent: 2.5vw;
 }
@@ -1952,12 +2204,15 @@ Select scribe theme Start
 .formatted-font .usfm_li {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_li {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_li {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_li {
 	margin-right: 10vw;
 }
@@ -1965,12 +2220,15 @@ Select scribe theme Start
 .formatted-font .usfm_li1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_li1 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_li1 {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_li1 {
 	margin-right: 10vw;
 }
@@ -1978,12 +2236,15 @@ Select scribe theme Start
 .formatted-font .usfm_li2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_li2 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_li2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_li2 {
 	margin-right: 15vw;
 }
@@ -1991,12 +2252,15 @@ Select scribe theme Start
 .formatted-font .usfm_li3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_li3 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_li3 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_li3 {
 	margin-right: 20vw;
 }
@@ -2004,12 +2268,15 @@ Select scribe theme Start
 .formatted-font .usfm_li4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_li4 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_li4 {
 	margin-left: 25vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_li4 {
 	margin-right: 25vw;
 }
@@ -2021,13 +2288,16 @@ Select scribe theme Start
 .formatted-font .usfm_lim {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lim {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_lim {
 	margin-left: 15vw;
 	margin-right: 5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_lim {
 	margin-left: 5vw;
 	margin-right: 15vw;
@@ -2036,13 +2306,16 @@ Select scribe theme Start
 .formatted-font .usfm_lim1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lim1 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_lim1 {
 	margin-left: 15vw;
 	margin-right: 5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_lim1 {
 	margin-left: 5vw;
 	margin-right: 15vw;
@@ -2051,12 +2324,15 @@ Select scribe theme Start
 .formatted-font .usfm_lim2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lim2 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_lim2 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_lim2 {
 	margin-right: 20vw;
 }
@@ -2064,12 +2340,15 @@ Select scribe theme Start
 .formatted-font .usfm_lim3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lim3 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_lim3 {
 	margin-left: 25vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_lim3 {
 	margin-right: 25vw;
 }
@@ -2077,12 +2356,15 @@ Select scribe theme Start
 .formatted-font .usfm_lim4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_lim4 {
 	text-indent: -7.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_lim4 {
 	margin-left: 30vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_lim4 {
 	margin-right: 30vw;
 }
@@ -2090,6 +2372,7 @@ Select scribe theme Start
 .usfm_lit {
 	text-align: end;
 }
+
 .formatted-font .usfm_lit {
 	font-weight: bold;
 	font-size: 100%;
@@ -2098,12 +2381,15 @@ Select scribe theme Start
 .formatted-font .usfm_ph {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ph {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ph {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ph {
 	margin-right: 10vw;
 }
@@ -2111,12 +2397,15 @@ Select scribe theme Start
 .formatted-font .usfm_ph1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ph1 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ph1 {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ph1 {
 	margin-right: 10vw;
 }
@@ -2124,12 +2413,15 @@ Select scribe theme Start
 .formatted-font .usfm_ph2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ph2 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ph2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ph2 {
 	margin-right: 15vw;
 }
@@ -2137,12 +2429,15 @@ Select scribe theme Start
 .formatted-font .usfm_ph3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ph3 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_ph3 {
 	margin-left: 20vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_ph3 {
 	margin-right: 20vw;
 }
@@ -2469,6 +2764,7 @@ Select scribe theme Start
 	color: #e87217;
 	font-size: 116%;
 }
+
 .text-spacing .usfm_periph {
 	margin-bottom: 4pt;
 	margin-top: 16pt;
@@ -2477,6 +2773,7 @@ Select scribe theme Start
 .formatted-font .usfm_p1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_p1 {
 	text-indent: 2.5vw;
 }
@@ -2484,12 +2781,15 @@ Select scribe theme Start
 .formatted-font .usfm_p2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_p2 {
 	text-indent: 2.5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_p2 {
 	margin-left: 2.5vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_p2 {
 	margin-right: 2.5vw;
 }
@@ -2577,12 +2877,15 @@ Select scribe theme Start
 .formatted-font .usfm_tr {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tr {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_tr {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_tr {
 	margin-right: 10vw;
 }
@@ -2636,6 +2939,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thc1 {
 	text-align: center;
 }
@@ -2644,6 +2948,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thc2 {
 	text-align: center;
 }
@@ -2652,6 +2957,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thc3 {
 	text-align: center;
 }
@@ -2660,6 +2966,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thc4 {
 	text-align: center;
 }
@@ -2668,6 +2975,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thc5 {
 	text-align: center;
 }
@@ -2675,6 +2983,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcc1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcc1 {
 	text-align: center;
 }
@@ -2682,6 +2991,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcc2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcc2 {
 	text-align: center;
 }
@@ -2689,6 +2999,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcc3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcc3 {
 	text-align: center;
 }
@@ -2696,6 +3007,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcc4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcc4 {
 	text-align: center;
 }
@@ -2703,6 +3015,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcc5 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcc5 {
 	text-align: center;
 }
@@ -2711,6 +3024,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thr1 {
 	text-align: end;
 }
@@ -2719,6 +3033,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thr2 {
 	text-align: end;
 }
@@ -2727,6 +3042,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thr3 {
 	text-align: end;
 }
@@ -2735,6 +3051,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thr4 {
 	text-align: end;
 }
@@ -2743,6 +3060,7 @@ Select scribe theme Start
 	font-size: 100%;
 	font-style: italic;
 }
+
 .text-spacing .usfm_thr5 {
 	text-align: end;
 }
@@ -2750,6 +3068,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcr1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcr1 {
 	text-align: end;
 }
@@ -2757,6 +3076,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcr2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcr2 {
 	text-align: end;
 }
@@ -2764,6 +3084,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcr3 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcr3 {
 	text-align: end;
 }
@@ -2771,6 +3092,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcr4 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcr4 {
 	text-align: end;
 }
@@ -2778,6 +3100,7 @@ Select scribe theme Start
 .formatted-font .usfm_tcr5 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tcr5 {
 	text-align: end;
 }
@@ -2787,12 +3110,15 @@ Select scribe theme Start
 .formatted-font .usfm_tr1 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tr1 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_tr1 {
 	margin-left: 10vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_tr1 {
 	margin-right: 10vw;
 }
@@ -2800,12 +3126,15 @@ Select scribe theme Start
 .formatted-font .usfm_tr2 {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_tr2 {
 	text-indent: -5vw;
 }
+
 .text-spacing[dir='ltr'] .usfm_tr2 {
 	margin-left: 15vw;
 }
+
 .text-spacing[dir='rtl'] .usfm_tr2 {
 	margin-right: 15vw;
 }
@@ -2813,6 +3142,7 @@ Select scribe theme Start
 .formatted-font .usfm_ps {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_ps {
 	text-indent: 2.5vw;
 }
@@ -2820,6 +3150,7 @@ Select scribe theme Start
 .formatted-font .usfm_psi {
 	font-size: 100%;
 }
+
 .text-spacing .usfm_psi {
 	text-indent: 2.5vw;
 	margin-left: 5vw;
@@ -2906,6 +3237,7 @@ body {
 .marker {
 	unicode-bidi: isolate;
 }
+
 .formatted-font .marker {
 	color: rgba(140, 140, 140, 1);
 	font-size: 0.7em;
@@ -2935,7 +3267,7 @@ body {
 
 /* NoteNode, ImmutableNoteCallerNode */
 
-.immutable-note-caller > button,
+.immutable-note-caller>button,
 /* Styles for Preview (and Ruby) views */
 .caller_preview,
 .previewcallee {
@@ -2946,7 +3278,7 @@ body {
 	font-size: 0.66em;
 }
 
-.immutable-note-caller > button {
+.immutable-note-caller>button {
 	cursor: pointer;
 	text-decoration: none;
 	border: 0;
@@ -3040,17 +3372,21 @@ rt {
 .annot_comment_todo {
 	border-bottom: 1px dashed #888888;
 }
+
 .annot_comment_todo {
 	border-bottom: 1px dashed #888888;
 }
+
 span.unread img {
 	background-color: #ffff99;
 	position: relative;
-	bottom: -1px; /* negative of border-width to align baseline */
+	bottom: -1px;
+	/* negative of border-width to align baseline */
 	border-width: 1px;
 	border-style: solid;
 	border-color: #808080;
 }
+
 span.read img {
 	background-color: transparent;
 	position: relative;
@@ -3070,15 +3406,19 @@ span.read img {
 .annot_greencursor {
 	background-color: rgba(152, 235, 157, 1);
 }
+
 .annot_goldcursor {
 	background-color: rgba(255, 255, 163, 1);
 }
+
 .annot_bluecursor {
 	background-color: rgba(204, 224, 255, 1);
 }
+
 .annot_greycursor {
 	background-color: rgba(222, 222, 222, 1);
 }
+
 .annot_violetcursor {
 	background-color: rgba(233, 212, 255, 1);
 }
@@ -3107,6 +3447,7 @@ span.read img {
 	border-bottom-color: rgba(252, 252, 252, 1);
 	text-decoration: inherit;
 }
+
 .guessed_term {
 	background-color: rgba(255, 191, 143, 1);
 	text-indent: 0;
@@ -3117,6 +3458,7 @@ span.read img {
 	border-bottom-color: rgba(252, 252, 252, 1);
 	text-decoration: inherit;
 }
+
 .found_term.unselected_term {
 	background-color: rgba(222, 222, 222, 0.6);
 	text-indent: 0;
@@ -3127,6 +3469,7 @@ span.read img {
 	border-bottom-color: rgba(252, 252, 252, 1);
 	text-decoration: inherit;
 }
+
 .guessed_term.unselected_term {
 	background-color: rgba(255, 191, 143, 0.3);
 	text-indent: 0;
@@ -3137,6 +3480,7 @@ span.read img {
 	border-bottom-color: rgba(252, 252, 252, 1);
 	text-decoration: inherit;
 }
+
 .selected_term {
 	border-style: none none solid none;
 	text-indent: 0;
@@ -3147,12 +3491,15 @@ span.read img {
 	border-bottom-color: rgba(252, 252, 252, 1);
 	text-decoration: inherit;
 }
+
 .annot_reference_link {
 	border-bottom: 1px solid #93c4ff;
 }
+
 .annot_invalid_reference {
 	border-bottom: 1px solid #ff8080;
 }
+
 .annot_checkError {
 	border-top: 1px solid #ff0000;
 	border-bottom: 1px solid #ff0000;

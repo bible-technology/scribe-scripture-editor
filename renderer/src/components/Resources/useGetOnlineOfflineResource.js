@@ -3,6 +3,7 @@ export default function getCurrentOnlineOfflineHelpsResources(selectResource) {
   const resources = [
     { id: 'jxl', title: 'Juxtalinear', resource: juxtalinear },
     { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
+    { id: 'tir', title: t('label-resource-tir'), resource: translationImageResources },
     { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
     // { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
     { id: 'tq', title: t('label-resource-tq'), resource: translationQuestion },

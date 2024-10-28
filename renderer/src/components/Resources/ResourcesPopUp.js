@@ -36,6 +36,7 @@ export default function ResourcesPopUp(
   const [downloading, setDownloading] = useState(false);
   const [currentDownloading, setCurrentDownloading] = useState(null);
   const [filteredResources, setFilteredResources] = useState({});
+  const [filteredReposResourcelinks, setFilteredReposResourcelinks] = useState({});
   const [filteredBibleObsAudio, setfilteredBibleObsAudio] = useState([]);
   const [currentFullResources, setCurrentFullResources] = useState([]);
   const [selectedPreProd, setSelectedPreProd] = useState(false);
@@ -55,6 +56,9 @@ export default function ResourcesPopUp(
       setOpenImportResourcePopUp,
     },
   } = useContext(ReferenceContext);
+
+  // New state to store the selected source
+  const [searchSource, setSearchSource] = useState('gitea');
 
   const handleRowSelect = (e, row, name, owner, flavorname, userOrCommon, offline = false) => {
     const offlineResource = offline
@@ -102,29 +106,49 @@ export default function ResourcesPopUp(
           <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
             <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
               <h1 className="text-white font-bold text-sm">{t('label-resource')}</h1>
-              <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
+              <div aria-label="resources-search" className="pt-1.5 pb-[6.5px] bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               <button
                 type="button"
                 className="bg-primary absolute h-full rounded-tr-lg right-0 text-white"
                 onClick={removeSection}
               >
                 <XMarkIcon className="mx-3 h-5 w-5" />
-
               </button>
             </div>
             <div className="flex border bg-white">
               <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} />
               <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
                 {selectResource !== 'local-helps' && (
-                  <SearchBar
-                    currentFullResources={currentFullResources}
-                    selectResource={selectResource}
-                    setFilteredResources={setFilteredResources}
-                    subMenuItems={subMenuItems}
-                    setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-                    selectedPreProd={selectedPreProd}
-                    setSelectedPreProd={setSelectedPreProd}
-                  />
+                  <div className="flex items-center justify-between space-x-3 mb-4">
+                    {(selectResource === 'tn' || selectResource === 'tir') && (
+                      <div className="flex ml-4 bg-gray-200 p-1 rounded-md">
+                        <button
+                          type="button"
+                          className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'gitea' ? 'bg-primary text-white' : 'bg-transparent'}`}
+                          onClick={() => setSearchSource('gitea')}
+                        >
+                          {t('Door43')}
+                        </button>
+                        <button
+                          type="button"
+                          className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'github' ? 'bg-primary text-white' : 'bg-transparent'}`}
+                          onClick={() => setSearchSource('github')}
+                        >
+                          {t('GitHub')}
+                        </button>
+                      </div>
+                    )}
+                    <SearchBar
+                      currentFullResources={currentFullResources}
+                      selectResource={selectResource}
+                      setFilteredResources={setFilteredResources}
+                      subMenuItems={subMenuItems}
+                      setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                      selectedPreProd={selectedPreProd}
+                      setSelectedPreProd={setSelectedPreProd}
+                      // searchSource={searchSource} {/* Pass the selected source */}
+                    />
+                  </div>
                 )}
 
                 {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible' || selectResource === 'local-helps')
@@ -152,6 +176,7 @@ export default function ResourcesPopUp(
                       selectResource={selectResource}
                       loading={loading}
                       filteredResources={filteredResources}
+                      filteredReposResourcelinks={filteredReposResourcelinks}
                       downloading={downloading}
                       removeSection={removeSection}
                       handleRowSelect={handleRowSelect}
@@ -165,8 +190,10 @@ export default function ResourcesPopUp(
                       subMenuItems={subMenuItems}
                       setCurrentFullResources={setCurrentFullResources}
                       setFilteredResources={setFilteredResources}
+                      setFilteredReposResourcelinks={setFilteredReposResourcelinks}
                       setLoading={setLoading}
                       setSubMenuItems={setSubMenuItems}
+                      endPoint={searchSource}
                     />
                   )}
               </div>

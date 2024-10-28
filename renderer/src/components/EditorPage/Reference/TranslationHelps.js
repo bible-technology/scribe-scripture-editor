@@ -1,10 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import * as localforage from 'localforage';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { debug } from '../../../logger';
 import TranslationHelpsCard from './TranslationHelpsCard';
+import TranslationHelpsMultimediaCard from './TranslationHelpsMultimediaCard';
 import ObsTnCard from './OBS/ObsTn';
 import ObsTwlCard from './OBS/ObsTwlCard';
+import packageInfo from '../../../../../package.json';
 
 const TranslationHelps = ({
   selectedResource, languageId, refName, bookId, chapter, verse, owner, story, offlineResource, font, fontSize,
@@ -17,16 +21,58 @@ const TranslationHelps = ({
   } = useContext(ReferenceContext);
   const { t } = useTranslation();
 
+  /**
+   * Function to search a directory for a file containing a specific name part.
+   * @param {string} directoryPath - The path of the directory to search in.
+   * @param {string} partialName - The partial name to search for in the file names.
+   * @returns {string|null} - The full name of the matched file, or null if not found.
+   */
+  const findFileByPartialName = (fsInstance, directoryPath, partialName) => fsInstance.readdirSync(directoryPath).find((file) => file.includes(partialName)) || null;
+
   const translationQuestionsPath = `${(chapter < 10) ? (`0${ chapter}`)
     : chapter}/${(verse < 10) ? (`0${ verse}`) : verse}.md`;
 
   const filePathTa = `${taNavigationPath?.path}/01.md`;
+
+  const [resourceLinkPath, setResourceLinkPath] = useState('');
+  const [imagesPath, setImagesPath] = useState('');
+
+  useEffect(() => {
+    async function getLinkedFolderPath() {
+      const fs = window.require('fs');
+      const path = window.require('path');
+      try {
+        const newpath = localStorage.getItem('userPath');
+        const userProfile = await localforage.getItem('userProfile');
+        const resourceDirPath = path.join(newpath, packageInfo.name, 'users', userProfile?.username, 'resources');
+        const pathToIngredients = path.resolve(resourceDirPath, offlineResource.data.projectDir, 'ingredients');
+        if (pathToIngredients) {
+          const pathRelationFile = path.resolve(pathToIngredients, 'relation.txt');
+          if (fs.existsSync(pathRelationFile)) {
+            setImagesPath(pathToIngredients);
+            const relationFileContent = fs.readFileSync(pathRelationFile, 'utf8');
+            const fileName = findFileByPartialName(fs, path.resolve(resourceDirPath), relationFileContent.trim());
+            setResourceLinkPath(path.resolve(resourceDirPath, fileName, 'ingredients'));
+          } else {
+            setImagesPath('');
+            setResourceLinkPath(pathToIngredients);
+            debug('TranslationHelps.js', `pathRelationFile : ${pathRelationFile} - Not found!`);
+          }
+        }
+      } catch (e) {
+        debug('TranslationHelps.js', `Error : ${e}`);
+      }
+    }
+
+    getLinkedFolderPath();
+  }, [selectedResource, offlineResource]);
 
   return (
     <>
       {(() => {
         switch (selectedResource) {
         case 'tn':
+        case 'x-bcvnotes':
           return (
             <TranslationHelpsCard
               title={t('label-resource-tn')}
@@ -41,6 +87,25 @@ const TranslationHelps = ({
               offlineResource={offlineResource}
               font={font}
               fontSize={fontSize}
+            />
+          );
+        case 'tir':
+          return (
+            <TranslationHelpsMultimediaCard
+              title={t('label-resource-tir')}
+              verse={verse}
+              chapter={chapter}
+              projectId={bookId.toUpperCase() || 'mat'.toUpperCase()}
+              branch={branch}
+              languageId={languageId}
+              resourceId="tir"
+              owner={owner}
+              server="https://git.door43.org"
+              offlineResource={offlineResource}
+              font={font}
+              fontSize={fontSize}
+              folderPath={resourceLinkPath}
+              linkedFolderPath={imagesPath}
             />
           );
         // case 'twl':
