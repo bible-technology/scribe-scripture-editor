@@ -863,6 +863,7 @@ Select scribe theme Start
 	object-fit: cover;
 	cursor: pointer;
 	transition: transform 0.2s;
+	border-radius: 10px;
 }
 
 .gallery-image:hover {
@@ -901,6 +902,7 @@ Select scribe theme Start
 	max-width: 90%;
 	max-height: 90%;
 	object-fit: contain;
+	border-radius: 10px;
 }
 
 .zoomed-video {
