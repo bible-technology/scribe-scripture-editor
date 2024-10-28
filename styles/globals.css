@@ -862,6 +862,7 @@ Select scribe theme Start
 	height: auto;
 	object-fit: cover;
 	cursor: pointer;
+	border-radius: 10px;
 	transition: transform 0.2s;
 }
 
@@ -901,6 +902,7 @@ Select scribe theme Start
 	max-width: 90%;
 	max-height: 90%;
 	object-fit: contain;
+	border-radius: 10px;
 }
 
 .zoomed-video {
