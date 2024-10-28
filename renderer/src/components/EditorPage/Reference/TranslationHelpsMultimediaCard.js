@@ -140,13 +140,13 @@ export default function TranslationHelpsMultimediaCard({
               <div className="image-name">{imagePath[0]}</div>
               {/* Check if the path is a video (e.g., ends with .mp4) */}
               {imagePath[1].match(/\.(mp4|webm|ogg)$/i) ? (
-                // <video
-                //   key={index}
-                //   src={imagePath[1]}
-                //   controls
-                //   className="gallery-video"
-                // />
-                <VideoPlayer key={index} videoUrl={imagePath[1]} />
+                <video
+                  key={index}
+                  src={imagePath[1]}
+                  controls
+                  className="gallery-video"
+                />
+                // <VideoPlayer key={index} videoUrl={imagePath[1]} />
               ) : (
                 <img
                   key={index}
