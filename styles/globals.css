@@ -862,21 +862,13 @@ Select scribe theme Start
 	height: auto;
 	object-fit: cover;
 	cursor: pointer;
-	transition: transform 0.2s;
 	border-radius: 10px;
+	transition: transform 0.2s;
 }
 
 .gallery-image:hover {
 	transform: scale(1.05);
 }
-
-/* .gallery-video {
-	width: 300px;
-	height: auto;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	outline: none;
-} */
 
 .zoomed-image-container {
 	position: fixed;

@@ -36,6 +36,7 @@ const TranslationHelps = ({
 
   const [resourceLinkPath, setResourceLinkPath] = useState('');
   const [imagesPath, setImagesPath] = useState('');
+  const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
     async function getLinkedFolderPath() {
@@ -45,18 +46,23 @@ const TranslationHelps = ({
         const newpath = localStorage.getItem('userPath');
         const userProfile = await localforage.getItem('userProfile');
         const resourceDirPath = path.join(newpath, packageInfo.name, 'users', userProfile?.username, 'resources');
-        const pathToIngredients = path.resolve(resourceDirPath, offlineResource.data.projectDir, 'ingredients');
+        const pathToIngredients = path.join(resourceDirPath, offlineResource.data.projectDir, 'ingredients');
+        const metadataPath = path.join(resourceDirPath, offlineResource.data.projectDir, 'metadata.json');
         if (pathToIngredients) {
-          const pathRelationFile = path.resolve(pathToIngredients, 'relation.txt');
+          const pathRelationFile = path.join(pathToIngredients, 'relation.txt');
           if (fs.existsSync(pathRelationFile)) {
             setImagesPath(pathToIngredients);
             const relationFileContent = fs.readFileSync(pathRelationFile, 'utf8');
-            const fileName = findFileByPartialName(fs, path.resolve(resourceDirPath), relationFileContent.trim());
-            setResourceLinkPath(path.resolve(resourceDirPath, fileName, 'ingredients'));
+            const fileName = findFileByPartialName(fs, path.join(resourceDirPath), relationFileContent.trim());
+            setResourceLinkPath(path.join(resourceDirPath, fileName, 'ingredients'));
           } else {
             setImagesPath('');
             setResourceLinkPath(pathToIngredients);
             debug('TranslationHelps.js', `pathRelationFile : ${pathRelationFile} - Not found!`);
+          }
+          if (fs.existsSync(metadataPath)) {
+            const metadataContent = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+            setMetadata(metadataContent);
           }
         }
       } catch (e) {
@@ -90,24 +96,28 @@ const TranslationHelps = ({
             />
           );
         case 'tir':
-          return (
-            <TranslationHelpsMultimediaCard
-              title={t('label-resource-tir')}
-              verse={verse}
-              chapter={chapter}
-              projectId={bookId.toUpperCase() || 'mat'.toUpperCase()}
-              branch={branch}
-              languageId={languageId}
-              resourceId="tir"
-              owner={owner}
-              server="https://git.door43.org"
-              offlineResource={offlineResource}
-              font={font}
-              fontSize={fontSize}
-              folderPath={resourceLinkPath}
-              linkedFolderPath={imagesPath}
-            />
-          );
+          if (resourceLinkPath !== '' && metadata !== null) {
+            return (
+              <TranslationHelpsMultimediaCard
+                title={t('label-resource-tir')}
+                verse={verse}
+                chapter={chapter}
+                projectId={bookId.toUpperCase() || 'mat'.toUpperCase()}
+                branch={branch}
+                languageId={languageId}
+                resourceId="tir"
+                owner={owner}
+                server="https://git.door43.org"
+                offlineResource={offlineResource}
+                font={font}
+                fontSize={fontSize}
+                folderPath={resourceLinkPath}
+                linkedFolderPath={imagesPath}
+                metadata={metadata}
+              />
+            );
+          }
+          break;
         // case 'twl':
           // return (
           // <TranslationHelpsCard
