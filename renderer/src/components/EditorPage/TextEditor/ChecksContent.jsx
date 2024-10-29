@@ -4,6 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { SnackBar } from '@/components/SnackBar';
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon, ArrowPathIcon } from '@heroicons/react/20/solid';
+import LoadingScreen from '@/components/Loading/LoadingScreen';
 // import { useReadUsfmFile } from './hooks/useReadUsfmFile';
 
 export default function ChecksContent({ content, updateContent }) {
@@ -17,7 +18,6 @@ export default function ChecksContent({ content, updateContent }) {
 	const isArray = Array.isArray(content);
 
 	useEffect(() => {
-		console.log("isArray", isArray)
 		if (isArray) {
 			let tmpGroupedData = {};
 			let currentName = "";
@@ -32,10 +32,6 @@ export default function ChecksContent({ content, updateContent }) {
 			setGroupedData(tmpGroupedData);
 		}
 	}, [content]);
-
-	useEffect(() => {
-		console.log("groupedData ==", groupedData);
-	}, [groupedData]);
 
 	const handleRefreshClick = () => {
 		setIsRefreshing(true);
@@ -60,7 +56,8 @@ export default function ChecksContent({ content, updateContent }) {
 				</button>
 			</div>
 			<div className='bg-gray-50 p-6 rounded-lg max-h-[75vh] overflow-y-auto'>
-				{Object.keys(groupedData).length > 0 ? (
+				{(isRefreshing || (groupedData && Object.keys(groupedData) < 1)) && <LoadingScreen />}
+				{!isRefreshing && groupedData && Object.keys(groupedData).length > 0 ? (
 					Object.keys(groupedData).map((key) => (
 						<Disclosure key={key}>
 							{({ open }) => (
@@ -73,18 +70,18 @@ export default function ChecksContent({ content, updateContent }) {
 									</Disclosure.Button>
 									<Disclosure.Panel className='px-4 pt-4 pb-2 text-sm text-gray-700'>
 										<ul className='space-y-2'>
-											{groupedData[key].map((item, index) => {
-												<li key={index} className='border p-2 rounded bg-white shadow-sm'>
+											{groupedData[key].map((item, index) => (
+												<li key={index + item.args.cv} className='border p-2 rounded bg-white shadow-sm'>
 													{item.args.cv}
-												</li>
-											})}
+												</li>)
+											)}
 										</ul>
 									</Disclosure.Panel>
 								</>
 							)}
 						</Disclosure>
 					))
-				) : (
+				) : !isRefreshing && (
 					<p className='text-center text-gray-500'>No content available.</p>
 				)}
 			</div>

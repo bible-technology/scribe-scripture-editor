@@ -200,7 +200,7 @@ export default function EditorSection({
   const checks = async () => {
     const fse = window.require('fs-extra');
     const path = window.require('path');
-    const spec = fse.readJsonSync('/home/daniel/Documents/Projects/temp/scribe-scripture-editor/renderer/src/components/EditorPage/TextEditor/utils/ks.json');
+    const spec = fse.readJsonSync(path.join('renderer/src/components/EditorPage/TextEditor/utils/ks.json'));
     // const checker = window.require('/home/daniel/Documents/Projects/temp/scribe-scripture-editor/renderer/src/components/EditorPage/TextEditor/utils/doChecks/index.js');
 
     // const usfmContent = { usfm: "\\id MRK" };
@@ -221,7 +221,6 @@ export default function EditorSection({
     const [currentBook] = _books.filter((bookObj) => bookObj.bookId === bookId?.toUpperCase());
     const projectCachePath = path.join(newpath, packageInfo.name, 'users', userName, 'project_cache', projectName);
     if (currentBook) {
-      console.log('currentBook ===',currentBook);
       const fileData = await readFile({ projectname: projectName, filename: currentBook.fileName, username: userName });
       const book = {
         selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
@@ -239,18 +238,10 @@ export default function EditorSection({
       const perfResultDocument = pk.gqlQuerySync('{documents {perf} }').data.documents[0];
       const perf = JSON.parse(perfResultDocument.perf);
       if (perf) {
-        const perfContent = perf;
-  
-        let ret = checker({ content: { perf: perfContent }, spec, contentType: "perf" });
+        let ret = checker({ content: { perf }, spec, contentType: "perf" });
         setContentChecks(ret);
-        console.log('ret',ret);
       }
     }
-
-    // }
-
-
-    // console.log("usfmText ==",);
   }
 
   useEffect(() => {

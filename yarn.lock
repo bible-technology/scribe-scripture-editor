@@ -17933,10 +17933,10 @@ pend@~1.2.0:
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
   integrity sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==
 
-perf-checks@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/perf-checks/-/perf-checks-0.0.2.tgz#a22c5e4cfb635ac49f48c334dce9fb1c52852fa4"
-  integrity sha512-k8R1gTKEsTM9nbNfjAA0yN2ACrvxvzwXOwY/jIzFes5h9eZF9aM4T7WOBvaX12ae2SWOo/yJ9wwT4Hw6uh2G7Q==
+perf-checks@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/perf-checks/-/perf-checks-0.1.0.tgz#6a8e1a268f36e23106396c29b50dcd45ace5278b"
+  integrity sha512-gB+krJ+Fqb2AjYEzR2vY/Hb1ZzOEmZK7gMgnLmq3LWaYk+IfIyVauV/nsMIWRXsGOK/Y0w8FV/S2lC46z0lkqw==
   dependencies:
     deep-copy-all "^1.3.4"
     fs-extra "^11.2.0"
