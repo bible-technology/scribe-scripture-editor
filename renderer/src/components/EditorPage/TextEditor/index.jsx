@@ -30,6 +30,8 @@ export default function TextEditor() {
   const {
     state: {
       bookId: defaultBookId, selectedFont, editorFontSize, projectScriptureDir,
+      // chapter,
+      // verse,
     },
     actions: {
       handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
@@ -48,7 +50,7 @@ export default function TextEditor() {
     }
     const { usj } = cachedData;
     if (!usj && usj?.entries(usj).length === 0) { return; }
-    console.log(usj);
+    // console.log(usj);
     setUsjInput(usj);
   }, [book, cachedData]);
 
@@ -74,7 +76,7 @@ export default function TextEditor() {
   const handleUsjChange = useMemo(
     () => debounce(async (updatedUsj) => {
       updateCacheNSaveFile(updatedUsj, book);
-      console.log('usj updated', updatedUsj);
+      // console.log('usj updated', updatedUsj);
     }, 1000),
     [book],
   );
