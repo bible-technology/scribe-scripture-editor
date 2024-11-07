@@ -3,13 +3,15 @@ import React, {
 } from 'react';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { debounce } from 'lodash';
-
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { useAutoSnackbar } from '@/components/SnackBar';
+import { useTranslation } from 'react-i18next';
 import { useReadUsfmFile } from './hooks/useReadUsfmFile';
 import EditorMenuBar from './EditorMenuBar';
 import LexicalEditor from './LexicalEditor';
 import { updateCacheNSaveFile } from './updateAndSave';
 import EmptyScreen from './EmptyScreen';
+import ErrorScreen from './ErrorScreen';
 
 const defaultScrRef = {
   bookCode: 'PSA',
@@ -24,16 +26,23 @@ export default function TextEditor() {
   const [usjInput, setUsjInput] = useState();
   const [scrRef, setScrRef] = useState(defaultScrRef);
   const [navRef, setNavRef] = useState();
+  const [parseError, setParseError] = useState(false);
   const {
     state: {
-      bookId: defaultBookId, selectedFont, editorFontSize, projectScriptureDir,
-      // chapter,
-      // verse,
+      bookId: defaultBookId,
+      selectedFont,
+      editorFontSize,
+      projectScriptureDir,
     },
     actions: {
-      handleSelectedFont, onChangeChapter, onChangeVerse, handleEditorFontSize,
+      handleSelectedFont,
+      onChangeChapter,
+      onChangeVerse,
+      handleEditorFontSize,
     },
   } = useContext(ReferenceContext);
+  const { showSnackbar } = useAutoSnackbar();
+  const { t } = useTranslation();
   const [book, setBook] = useState(defaultBookId);
 
   const {
@@ -41,15 +50,37 @@ export default function TextEditor() {
   } = useReadUsfmFile(book);
 
   useEffect(() => {
-    if (cachedData.error) {
-      console.error('Error parsing USFM', cachedData.error);
+    if (loading) {
+      showSnackbar(`Preparing ${book.toUpperCase()} file`, 'update');
+    }
+    const { usj, error } = cachedData;
+    if (!loading) {
+      if (error) {
+        console.error('Error parsing USFM:', error);
+        setParseError(true);
+        showSnackbar(
+          t('dynamic-msg-load-ref-bible-snack-fail', {
+            refName: book.toUpperCase(),
+          }),
+          'failure',
+        );
+        setUsjInput(null);
+        return;
+      }
+    }
+    if (!usj || Object.entries(usj).length === 0) {
+      setParseError(false);
+      setUsjInput(null);
       return;
     }
-    const { usj } = cachedData;
-    if (!usj && usj?.entries(usj).length === 0) { return; }
-    // console.log(usj);
+    setParseError(false);
     setUsjInput(usj);
-  }, [book, cachedData]);
+    !loading
+      && showSnackbar(
+        t('dynamic-msg-load-ref-bible-snack', { refName: book.toUpperCase() }),
+        'success',
+      );
+  }, [cachedData, loading]);
 
   useEffect(() => {
     setScrRef({
@@ -93,6 +124,7 @@ export default function TextEditor() {
     handleEditorFontSize,
     bookAvailable,
     booksInProject,
+    parseError,
   };
 
   const props = {
@@ -105,7 +137,6 @@ export default function TextEditor() {
     scrRef,
     setScrRef,
     bookId: book,
-
   };
   return (
     <div className="flex flex-col h-editor rounded-md shadow overflow-hidden">
@@ -114,8 +145,11 @@ export default function TextEditor() {
         <LoadingSpinner />
       ) : (
         <>
-          {!bookAvailable && <EmptyScreen />}
-          {bookAvailable && usjInput && <LexicalEditor {...props} />}
+          {parseError && <ErrorScreen />}
+          {!parseError && !bookAvailable && <EmptyScreen />}
+          {!parseError && bookAvailable && usjInput && (
+            <LexicalEditor {...props} />
+          )}
         </>
       )}
     </div>

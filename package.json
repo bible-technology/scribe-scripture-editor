@@ -225,7 +225,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
-    "sj-usfm-grammar": "^3.0.4",
+    "sj-usfm-grammar": "3.0.8",
     "styled-components": "^5.3.6",
     "tc-ui-toolkit": "5.3.3",
     "terser-webpack-plugin": "^5.3.10",

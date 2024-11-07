@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { convertUsfmToUsj } from './conversionUtils';
@@ -84,32 +85,40 @@ export async function handleCache(filePath, usfmContent, projectCachePath, fileC
   const oldHash = fileCacheMap[filePath];
 
   async function processAndCacheUSJ() {
-    const { usj, error } = await convertUsfmToUsj(usfmContent);
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error parsing USFM', error);
-      return { error };
+    try {
+      const { usj, error } = await convertUsfmToUsj(usfmContent);
+      if (error) {
+        console.error('Error parsing USFM:', error);
+        return { error, usj: null }; // Return consistent error object
+      }
+      writeCache(newHash, usj, projectCachePath);
+      updateCacheMapToFile(fileCacheMapPath, filePath, newHash);
+      return { usj, error: null }; // Always include error field
+    } catch (err) {
+      console.error('Error in processAndCacheUSJ:', err);
+      return { error: err.message, usj: null };
     }
-    writeCache(newHash, usj, projectCachePath);
-    updateCacheMapToFile(fileCacheMapPath, filePath, newHash);
-    return { usj };
   }
 
-  if (!oldHash) {
-    // eslint-disable-next-line no-console
-    console.log('No existing hash found. Creating new cache entry.');
+  try {
+    if (!oldHash) {
+      console.log('No existing hash found. Creating new cache entry.');
+      return processAndCacheUSJ();
+    }
+
+    if (isCacheValid(oldHash, projectCachePath) && oldHash === newHash) {
+      console.log('Cache hit');
+      const cachedUsj = await readCache(oldHash, projectCachePath);
+      return { usj: cachedUsj, error: null };
+    }
+
+    console.log('Cache miss or content changed');
+    deleteOldCacheFile(oldHash, projectCachePath);
     return processAndCacheUSJ();
+  } catch (err) {
+    console.error('Error in handleCache:', err);
+    return { error: err.message, usj: null };
   }
-
-  if (isCacheValid(oldHash, projectCachePath) && oldHash === newHash) {
-    // eslint-disable-next-line no-console
-    console.log('Cache hit');
-    return { usj: await readCache(oldHash, projectCachePath) };
-  }
-  // eslint-disable-next-line no-console
-  console.log('Cache miss or content changed');
-  deleteOldCacheFile(oldHash, projectCachePath);
-  return processAndCacheUSJ();
 }
 
 export async function updateCache(filePath, usj, usfm, fileCacheMapPath, projectCachePath) {

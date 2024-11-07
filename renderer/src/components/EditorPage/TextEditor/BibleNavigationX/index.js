@@ -11,7 +11,7 @@ import SelectChapter from './SelectChapter';
 
 export default function BibleNavigationX(props) {
   const {
-    chapterNumber, setChapterNumber, setBook, loading, bookAvailable, booksInProject,
+    chapterNumber, setChapterNumber, setBook, loading, bookAvailable, booksInProject, parseError,
   } = props;
 
   const {
@@ -59,6 +59,13 @@ export default function BibleNavigationX(props) {
     }
     setReference();
   }, [bookId, chapter]);
+
+  useEffect(() => {
+    if (parseError) {
+      setOpenBook(false);
+      setOpenChapter(false);
+    }
+  }, [parseError]);
 
   useEffect(() => {
     if (openBook === false && openChapter === false) {

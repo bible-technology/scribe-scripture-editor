@@ -8,6 +8,7 @@ import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { readUsfm } from '@/components/Projects/utils/readUsfm';
+import { validateUsfm } from '@/components/EditorPage/TextEditor/conversionUtils';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
@@ -44,8 +45,8 @@ export default function ImportPopUp(props) {
   } = useContext(ProjectContext);
 
   const compareArrays = (a, b) => a.length === b.length
-                                  && a.every((element) => b.indexOf(element) !== -1)
-                                  && b.every((element) => a.indexOf(element) !== -1);
+    && a.every((element) => b.indexOf(element) !== -1)
+    && b.every((element) => a.indexOf(element) !== -1);
 
   function close() {
     logger.debug('ImportPopUp.js', 'Closing the Import UI');
@@ -114,19 +115,17 @@ export default function ImportPopUp(props) {
     const fs = window.require('fs');
     const files = [];
     const bookCodeList = [];
-    folderPath.forEach((filePath) => {
+    folderPath.forEach(async (filePath) => {
       switch (projectType) {
       case 'Translation': {
         const usfm = fs.readFileSync(filePath, 'utf8');
-        const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
-        const isJsonValid = myUsfmParser.validate();
-        if (isJsonValid) {
+        const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
+        if (isValid) {
           // If importing a USFM file then ask user for replace of USFM with the new content or not
           replaceConformation(true);
           logger.debug('ImportPopUp.js', 'Valid USFM file.');
-          const jsonOutput = myUsfmParser.toJSON();
-          files.push({ id: jsonOutput.book.bookCode, content: usfm });
-          bookCodeList.push(jsonOutput.book.bookCode);
+          files.push({ id: bookCode, content: validUSFM });
+          bookCodeList.push(bookCode);
         } else {
           logger.warn('ImportPopUp.js', 'Invalid USFM file.');
           setNotify('failure');
@@ -186,7 +185,7 @@ export default function ImportPopUp(props) {
 
         const fileExt = filename.split('.').pop()?.toLowerCase();
         if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
-              || fileExt === undefined) {
+            || fileExt === undefined) {
           const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
           // if the USFM is valid
@@ -238,7 +237,7 @@ export default function ImportPopUp(props) {
       title: t('label-other'),
     };
     if (bookCodeList.length === advanceSettings.canonSpecification[2].length
-        && compareArrays(advanceSettings.currentScope, bookCodeList)) {
+      && compareArrays(advanceSettings.currentScope, bookCodeList)) {
       newCanonSpecification.title = advanceSettings.canonSpecification[2].title;
       newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
     } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length

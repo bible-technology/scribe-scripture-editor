@@ -34,6 +34,19 @@ export async function convertUsjToUsfm(usj) {
   return usfm;
 }
 
+export async function validateUsfm(usfm) {
+  if (!usfmParserInstance) {
+    usfmParserInstance = await initializeParser();
+  }
+  try {
+    const { isValid, validUSFM, bookCode } = usfmParserInstance.validate(usfm);
+    // console.log('USFM validation, isValid:', isValid, 'validUSFM:', validUSFM, bookCode);
+    return { isValid, validUSFM, bookCode };
+  } catch (e) {
+    return { isValid: false, error: e };
+  }
+}
+
 initializeParser()
   .then(() => {
     // eslint-disable-next-line no-console

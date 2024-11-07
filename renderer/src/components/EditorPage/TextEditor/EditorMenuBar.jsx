@@ -22,6 +22,7 @@ export default function EditorMenuBar(props) {
     loading,
     bookAvailable,
     booksInProject,
+    parseError,
   } = props;
 
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ export default function EditorMenuBar(props) {
           loading={loading}
           bookAvailable={bookAvailable}
           booksInProject={booksInProject}
+          parseError={parseError}
         />
         <div
           aria-label="editor-pane"
