@@ -66,8 +66,8 @@ const AudioEditor = ({ editor }) => {
                   const _books = [];
                   Object.entries(_data.type.flavorType.currentScope).forEach(
                     async ([key]) => {
-                    // Checking whether the selected book and chapter is in the scope or not
-                      if (key === bookId.toUpperCase() && _data.type.flavorType.currentScope[key].includes(chapter)) {
+                      // Checking whether the selected book and chapter is in the scope or not
+                      if (key === bookId.toUpperCase() && _data.type.flavorType.currentScope[key].includes(chapter.toString())) {
                         _books.push(bookId.toUpperCase());
                         const fs = window.require('fs');
                         const path = require('path');
@@ -130,8 +130,8 @@ const AudioEditor = ({ editor }) => {
                           const arr = folder.match(re);
                           if (arr) {
                             const filePath = path.join(projectsDir, 'audio', 'ingredients', arr[0]);
-                            if (!fs.existsSync(path.join(filePath, chapter))) {
-                              fs.mkdirSync(path.join(filePath, chapter));
+                            if (!fs.existsSync(path.join(filePath, chapter.toString()))) {
+                              fs.mkdirSync(path.join(filePath, chapter.toString()));
                             }
                             const folderName = fs.readdirSync(filePath);
                             folderName.forEach((chapterNum) => {
@@ -178,7 +178,7 @@ const AudioEditor = ({ editor }) => {
                           if (arr || exists) {
                             Object.entries(bookContent).forEach(
                               ([key]) => {
-                                if (bookContent[key].chapterNumber === chapter) {
+                                if (bookContent[key].chapterNumber === chapter.toString()) {
                                 // Storing the content in the ReferenceContext for the MainPlayer component
                                   setAudioContent(bookContent[key].contents);
                                 }
