@@ -57,7 +57,7 @@ const createAudioSB = (
       json.copyright.licenses[0].ingredient = 'license.md';
     }
     selectedScope.forEach((scope) => {
-      json.type.flavorType.currentScope[scope] = [];
+      json.type.flavorType.currentScope[scope] = json.type.flavorType.currentScope[scope] || [];
       localizedNames[scope] = json.localizedNames[scope];
     });
     json.localizedNames = localizedNames;

@@ -179,7 +179,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       ), JSON.stringify(burritoFile));
 
       // then maybe make a SB usfm
-      if (type === 'audio') {
+      if (type === 'Audio') {
         // Adding text USFM to audio project
         if ((projectMetaObj.importedFiles).length !== 0) {
           const newScope = [];
@@ -229,6 +229,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
                 await fs.writeFileSync(path.join(
                   projectDir,
                   `${projectMetaObj.newProjectFields.projectName}_${id}`,
+                  'text-1',
                   'metadata.json',
                 ), JSON.stringify(burrito));
               });
