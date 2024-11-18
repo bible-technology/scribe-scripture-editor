@@ -118,8 +118,8 @@ export default function SelectVerse({
                   key={chapter.key}
                   role="presentation"
                   id={`chapter-${chapter.name}`}
-                  onClick={(e) => { call === 'audio-project' ? (scopedChapters.includes(chapter.name) ? onChapterSelect(e, chapter.key) : '') : onChapterSelect(e, chapter.key); }}
-                  className={call === 'audio-project' ? (scopedChapters.includes(chapter.name) ? styles.select : styles.disabled) : styles.select}
+                  onClick={(e) => { call === 'audio-project' ? (scopedChapters && scopedChapters?.includes(chapter.name) ? onChapterSelect(e, chapter.key) : '') : onChapterSelect(e, chapter.key); }}
+                  className={call === 'audio-project' ? (scopedChapters && scopedChapters?.includes(chapter.name) ? styles.select : styles.disabled) : styles.select}
                 >
                   {chapter.name}
                 </div>
