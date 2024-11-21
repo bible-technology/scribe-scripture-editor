@@ -61,7 +61,9 @@ CircularProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function CircularWithValueLabel({ currentValue, totalValue, circleSize = '2.2rem' }) {
+export default function CircularWithValueLabel({
+  currentValue, totalValue, circleSize = '2.2rem', width = '11%',
+}) {
   const [progress, setProgress] = React.useState(0);
   React.useEffect(() => {
     // console.log(currentValue, totalValue);
@@ -75,7 +77,7 @@ export default function CircularWithValueLabel({ currentValue, totalValue, circl
     //     <LinearProgressWithLabel value={progress} />
     //     </Box>
     // </div>
-    <Box sx={{ width: '11%' }}>
+    <Box sx={{ width }}>
       <CircularProgressWithLabel value={progress} circleSize={circleSize} />
     </Box>
   );

@@ -101,7 +101,15 @@ function EditorSync({ selectedProject }) {
 
   return (
     <>
-      {syncProgress.syncStarted ? <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} />
+      {syncProgress.syncStarted ? (
+        <div
+          type="div"
+          role="button"
+          className={`group ${menuStyles.btn} transition-all duration-0ms opacity-100`}
+        >
+          <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} width="2rem" />
+        </div>
+      )
         : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
           <>
