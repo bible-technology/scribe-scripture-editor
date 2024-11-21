@@ -58,6 +58,9 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
               const checkoutStatus = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
               checkoutStatus && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
             }
+          } else {
+            logger.debug('SyncToGitea.js', `Error in repo creation ${created?.message}`);
+            throw new Error(`Error in repo creation ${created?.message}`);
           }
         }
       } else {

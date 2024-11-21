@@ -123,11 +123,13 @@ function EditorSync({ selectedProject }) {
             transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
                   syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
                 >
-                  <CloudUploadIcon
-                    fill="currentColor"
-                    className="h-6 w-6"
-                    aria-hidden="true"
-                  />
+                  <button type="button" onClick={() => setIsOpen(true)}>
+                    <CloudUploadIcon
+                      fill="currentColor"
+                      className="h-6 w-6"
+                      aria-hidden="true"
+                    />
+                  </button>
                 </div>
               )}
           </>
