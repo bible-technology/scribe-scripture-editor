@@ -107,7 +107,7 @@ function EditorSync({ selectedProject }) {
           role="button"
           className={`group ${menuStyles.btn} transition-all duration-0ms opacity-100`}
         >
-          <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} width="2rem" />
+          <ProgressCircle currentValue={syncProgress.completedFiles} totalValue={syncProgress.totalFiles} circleSize="1.5rem" width="1.5rem" />
         </div>
       )
         : (
