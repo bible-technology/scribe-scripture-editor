@@ -140,8 +140,8 @@ const LeftLogin = () => {
     event.preventDefault();
     const newValue = values;
     newValue.username = newValue.username.trim();
-    if (newValue.username.length < 3 || newValue.username.length > 15) {
-      displayError('The input has to be between 3 and 15 characters long');
+    if (newValue.username.length < 2 || newValue.username.length > 30) {
+      displayError('The input has to be between 2 and 30 characters long');
     } else if (users.length > 0 && users.find((item) => (item.username.toLowerCase() === newValue.username.toLowerCase()))) {
       displayError('User exists, Check archived and active tab by click on view more.');
     } else {
