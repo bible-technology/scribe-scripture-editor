@@ -203,6 +203,7 @@ export const Id = {
   'msg-min-three-letter': 'Ketik minimal 3 huruf untuk mencari',
   'label-prj-on-my-computer': 'proyek di komputer saya',
   'label-save-to-cloud': 'Simpan di Cloud',
+  'label-saved-to-cloud': 'Disimpan ke cloud',
   'label-last-synced': 'sinkronasi terakhir',
   'label-prj-on-cloud': 'Proyek di Cloud',
   'label-save-to-computer': 'Simpan di komputer',

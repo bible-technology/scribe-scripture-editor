@@ -203,6 +203,7 @@ export const Kn = {
   'msg-min-three-letter': 'ಹುಡುಕಲು ಕನಿಷ್ಠ 3 ಅಕ್ಷರಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ',
   'label-prj-on-my-computer': 'ನನ್ನ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಯೋಜನೆ',
   'label-save-to-cloud': 'ಕ್ಲೌಡ್‌ಗೆ ಉಳಿಸಿ',
+  'label-saved-to-cloud': 'ಕ್ಲೌಡ್‌ಗೆ ಉಳಿಸಲಾಗಿದೆ',
   'label-last-synced': 'ಕೊನೆಯದಾಗಿ ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ',
   'label-prj-on-cloud': 'ಕ್ಲೌಡ್‌ನಲ್ಲಿ ಯೋಜನೆಗಳು',
   'label-save-to-computer': 'ಕಂಪ್ಯೂಟರ್‌ಗೆ ಉಳಿಸಿ',

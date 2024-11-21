@@ -207,6 +207,7 @@ export const En = {
   'msg-min-three-letter': 'Type minimum 3 letters for search',
   'label-prj-on-my-computer': 'Project on my computer',
   'label-save-to-cloud': 'Save to cloud',
+  'label-saved-to-cloud': 'Saved to cloud',
   'label-last-synced': 'Last synced',
   'label-prj-on-cloud': 'Projects on cloud',
   'label-save-to-computer': 'Save to computer',

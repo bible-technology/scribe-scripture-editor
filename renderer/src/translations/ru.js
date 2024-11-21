@@ -203,6 +203,7 @@ export const Ru = {
   'msg-min-three-letter': 'Введите минимум 3 символа для поиска',
   'label-prj-on-my-computer': 'Проект на моем компьютере',
   'label-save-to-cloud': 'Сохранить в облако',
+  'label-saved-to-cloud': 'Сохранено в облаке',
   'label-last-synced': 'Последняя синхронизация',
   'label-prj-on-cloud': 'Проекты в облаке',
   'label-save-to-computer': 'Сохранить на компьютер',

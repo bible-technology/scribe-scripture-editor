@@ -203,6 +203,7 @@ export const Hi = {
   'msg-min-three-letter': 'न्यूनतम 3 अक्षर टाइप करने के लिए खोजें',
   'label-prj-on-my-computer': '',
   'label-save-to-cloud': 'क्लाउड में सहेजें',
+  'label-saved-to-cloud': 'क्लाउड में सहेजा गया',
   'label-last-synced': 'अंतिम बार समन्वयित किया गया',
   'label-prj-on-cloud': 'क्लाउड पर प्रोजेक्ट',
   'label-save-to-computer': 'कंप्यूटर में सहेजें',

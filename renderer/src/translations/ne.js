@@ -203,6 +203,7 @@ export const Ne = {
   'msg-min-three-letter': 'खोजको लागि न्यूनतम 3 अक्षरहरू टाइप गर्नुहोस्',
   'label-prj-on-my-computer': 'मेरो कम्प्युटरमा परियोजना',
   'label-save-to-cloud': 'क्लाउडमा बचत गर्नुहोस्',
+  'label-saved-to-cloud': 'क्लाउडमा सुरक्षित गरियो',
   'label-last-synced': 'पछिल्लो पटक सिंक गरियो',
   'label-prj-on-cloud': 'क्लाउडमा परियोजनाहरू',
   'label-save-to-computer': 'कम्प्युटरमा बचत गर्नुहोस्',

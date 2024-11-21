@@ -203,6 +203,7 @@ export const Fr = {
   'msg-min-three-letter': 'Tapez au minimum 3 caractères pour rechercher',
   'label-prj-on-my-computer': 'Projeter sur mon ordinateur',
   'label-save-to-cloud': 'Enregistrer dans le cloud',
+  'label-saved-to-cloud': 'Enregistré dans le cloud',
   'label-last-synced': 'Dernière synchronisation',
   'label-prj-on-cloud': 'Projets sur le cloud',
   'label-save-to-computer': 'Enregistrer sur l\'ordinateur',

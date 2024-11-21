@@ -106,11 +106,22 @@ function EditorSync({ selectedProject }) {
         // eslint-disable-next-line react/jsx-no-useless-fragment
           <>
             {syncProgress?.uploadDone ? (
-              <CloudCheckIcon
-                fill="green"
-                className="h-9 w-9 mx-1"
-                aria-hidden="true"
-              />
+              <div
+                aria-label="add-panels"
+                title={t('label-saved-to-cloud')}
+                type="div"
+                role="button"
+                className={`group ${menuStyles.btn}
+            transition-all duration-[${syncProgress?.uploadDone ? '0ms' : '2000ms' }]${
+                syncProgress?.uploadDone ? 'opacity-0' : 'opacity-100'}`}
+              >
+                <CloudCheckIcon
+                  fill="green"
+                  className="h-6 w-6"
+                  aria-hidden="true"
+                />
+              </div>
+
             )
               : (
                 <div

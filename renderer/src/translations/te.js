@@ -203,6 +203,7 @@ export const Te = {
   'msg-min-three-letter': 'అన్వేషించుట కోసం కనీసం 3 అక్షరాలను టైప్ చేయండి',
   'label-prj-on-my-computer': 'నా కంప్యూటర్‌లో ప్రాజెక్ట్',
   'label-save-to-cloud': 'క్లౌడ్‌లో సేవ్ చేయండి',
+  'label-saved-to-cloud': 'క్లౌడ్‌లో సేవ్ చేయబడింది',
   'label-last-synced': 'చివరిగా సమకాలీకరించబడింది',
   'label-prj-on-cloud': 'క్లౌడ్‌లో ప్రాజెక్ట్‌లు',
   'label-save-to-computer': 'కంప్యూటర్‌లో సేవ్ చేయండి',

@@ -203,6 +203,7 @@ export const Ar = {
   'msg-min-three-letter': 'اكتب 3 أحرف كحد أدنى للبحث',
   'label-prj-on-my-computer': 'مشروع على حاسوبي',
   'label-save-to-cloud': 'حفظ إلى السحابة',
+  'label-saved-to-cloud': 'تم الحفظ في السحابة',
   'label-last-synced': 'آخر مزامنة',
   'label-prj-on-cloud': 'المشاريع على السحابة',
   'label-save-to-computer': 'حفظ على الكمبيوتر',

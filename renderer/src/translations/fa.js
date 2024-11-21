@@ -203,6 +203,7 @@ export const Fa = {
   'msg-min-three-letter': 'حداقل ۳ حرف برای جستجو تایپ کنید',
   'label-prj-on-my-computer': 'پروژه در این رایانه',
   'label-save-to-cloud': 'ذخیره در فضای ابری',
+  'label-saved-to-cloud': 'در ابر ذخیره شد',
   'label-last-synced': 'آخرین همگام سازی',
   'label-prj-on-cloud': 'پروژه ها در فضای ابری',
   'label-save-to-computer': 'ذخیره سازی در رایانه',
