@@ -526,11 +526,12 @@ export default function NewProject({ call, project, closeEdit }) {
       />
       <ConfirmationModal
         openModal={replaceWarning}
-        title="Do Not Replace Existing Content"
+        title="Confirm Overwriting content"
         setOpenModal={setReplaceWarning}
-        confirmMessage="This action will replace if the existing contents, Press OK to Avoid or CANCEL to continue edit with replace"
-        buttonName={t('btn-ok')}
+        confirmMessage="This will overwrite existing content in your project. Do you want to proceed?"
+        buttonName={t('btn-cancel')}
         closeModal={closeEdit}
+        cancelButtonName={t('label-overwrite')}
       />
       <ConfirmationModal
         openModal={openModalJuxtaWrongSetOfBooks}
