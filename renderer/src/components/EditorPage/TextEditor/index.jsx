@@ -56,6 +56,7 @@ export default function TextEditor() {
     const { usj, error } = cachedData;
     if (!loading) {
       if (error) {
+        // eslint-disable-next-line no-console
         console.error('Error parsing USFM:', error);
         setParseError(true);
         showSnackbar(

@@ -4,13 +4,6 @@ import { environment } from '../../../environment';
 import { loadUsers } from '../Login/handleJson';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
-import {
-  newPath, sbStorageList, sbStorageDownload, sbStorageUpload,
-} from '../../../../supabase';
-// if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-//   const supabaseStorage = require('../../../../supabase').supabaseStorage
-//   const newPath = require('../../../../supabase').newPath
-// }
 
 export const getorPutAppLangage = async (method, currentUser, appLang) => {
   if (isElectron()) {
@@ -40,27 +33,6 @@ export const getorPutAppLangage = async (method, currentUser, appLang) => {
     } catch (err) {
       logger.error('handleProfile.js', 'Failed to read the data from file');
       throw new Error(err?.message || err);
-    }
-  }
-  let file;
-  if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-    if (currentUser) {
-      file = `${newPath}/${currentUser}/${environment.USER_SETTING_FILE}`;
-      const { data: settingsFile, error } = await sbStorageList(file);
-      if (settingsFile) {
-        const { data } = await sbStorageDownload(file);
-        const settings = JSON.parse(await data.text());
-        if (method.toLowerCase() === 'get') {
-          return settings.appLanguage;
-        } if (method.toLowerCase() === 'put') {
-          // save lang code
-          settings.appLanguage = appLang.code;
-          await sbStorageUpload(file, JSON.stringify(settings));
-        }
-      }
-      if (error) {
-        throw new Error(error?.message || error);
-      }
     }
   }
 };

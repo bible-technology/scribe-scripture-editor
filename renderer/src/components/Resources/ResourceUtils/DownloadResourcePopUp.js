@@ -17,7 +17,7 @@ import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { isElectron } from '@/core/handleElectron';
 import CustomMultiComboBox from './CustomMultiComboBox';
 import langJson from '../../../lib/lang/langNames.json';
-import { handleDownloadResources, handleDownloadWebResources } from './createDownloadedResourceSB';
+import { handleDownloadResources } from './createDownloadedResourceSB';
 import * as logger from '../../../logger';
 import { environment } from '../../../../environment';
 
@@ -235,7 +235,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
         // console.log('resource download started ---', selectedResourceCount);
         setDownloadStarted(true);
         const action = { setDownloadCount };
-        isElectron() ? await handleDownloadResources(resourceData, selectResource, action) : await handleDownloadWebResources(resourceData, selectResource, action)
+        await handleDownloadResources(resourceData, selectResource, action)
           .then(async (resolveResp) => {
             if (selectedResourceCount === resolveResp?.existing) {
               setOpenSnackBar(true);

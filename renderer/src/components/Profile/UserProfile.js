@@ -10,26 +10,13 @@ import {
 import { classNames } from '@/util/classNames';
 import { AuthenticationContext } from '@/components/Login/AuthenticationContextProvider';
 import { useGetUserName } from '@/components/hooks/useGetUserName';
-import { useRouter } from 'next/navigation';
 import { isElectron } from '@/core/handleElectron';
-import * as localforage from 'localforage';
-import { supabaseSignout } from '../../../../supabase';
 
 const UserProfile = () => {
   const { action: { logout } } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const profile = [t('label-your-profile')];
   const userPic = true;
-  const router = useRouter();
-
-  const signOut = async () => {
-    // if(!process.env.NEXT_PUBLIC_IS_ELECTRON){
-    const { error } = await supabaseSignout();
-    localforage.removeItem('userProfile');
-    // eslint-disable-next-line no-console
-    error ? console.log({ error }) : router.push('/login');
-  };
-  // }
 
   // get username from custom hook
   const { username } = useGetUserName();
@@ -121,7 +108,7 @@ const UserProfile = () => {
                         href="/"
                         id="signout"
                         aria-label="signout"
-                        onClick={() => (isElectron() ? logout() : signOut())}
+                        onClick={() => (logout())}
                         role="button"
                         tabIndex={0}
                         className={classNames(

@@ -10,14 +10,12 @@ import CustomNofications from '@/components/Notification/CustomNofications';
 import localforage from 'localforage';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
 // import useNetwork from '@/components/hooks/useNetowrk';
-import { isElectron } from '@/core/handleElectron';
 // import Font from '@/icons/font.svg';
 import FramePdfPopup from '@/layouts/editor/FramePdfPopup.jsx';
 import { PrinterIcon, FolderIcon } from '@heroicons/react/24/outline';
 import ColumnsIcon from '@/icons/basil/Outline/Interface/Columns.svg';
 import menuStyles from './MenuBar.module.css';
 import packageInfo from '../../../../package.json';
-import { newPath, sbStorageDownload } from '../../../../supabase';
 
 const activate = () => {
   // console.log('rename');
@@ -112,36 +110,19 @@ export default function SubMenuBar() {
   // This below code is for identifying the type of resource to remove Bookmarks from OBS
   const [resourceType, setResourceType] = useState();
 
-  async function supabaseResourceType() {
-    const projectName = await localforage.getItem('currentProject');
-    const userProfile = await localforage.getItem('userProfile');
-    const email = userProfile.user.email;
-    const { data, error } = await sbStorageDownload(`${newPath}/${email}/projects/${projectName}/metadata.json`);
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('SubMenuBar.js', error);
-    }
-    const metadata = JSON.parse(await data.text());
-    setResourceType(metadata.type.flavorType.flavor.name);
-  }
-
   useEffect(() => {
-    if (isElectron()) {
-      localforage.getItem('userProfile').then((value) => {
-        const username = value?.username;
-        localforage.getItem('currentProject').then((projectName) => {
-          const path = require('path');
-          const fs = window.require('fs');
-          const newpath = localStorage.getItem('userPath');
-          const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
-          const data = fs.readFileSync(metaPath, 'utf-8');
-          const metadata = JSON.parse(data);
-          setResourceType(metadata.type.flavorType.flavor.name);
-        });
+    localforage.getItem('userProfile').then((value) => {
+      const username = value?.username;
+      localforage.getItem('currentProject').then((projectName) => {
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
+        const data = fs.readFileSync(metaPath, 'utf-8');
+        const metadata = JSON.parse(data);
+        setResourceType(metadata.type.flavorType.flavor.name);
       });
-    } else {
-      supabaseResourceType();
-    }
+    });
   });
 
   // All Panel together

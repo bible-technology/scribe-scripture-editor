@@ -1,8 +1,4 @@
 import { isElectron } from '@/core/handleElectron';
-import { sbStorageList } from '../../../../supabase';
-// if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-//   const supabaseStorage = require('../../../../../supabase').supabaseStorage
-// }
 
 export const readRefMeta = async ({
   projectsDir,
@@ -24,19 +20,5 @@ export const readRefMeta = async ({
         });
       }
     });
-  }
-  try {
-    const { data: files, error } = await sbStorageList(`${projectsDir}`);
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching files:', error);
-      return [];
-    }
-    const directoryNames = files.map((file) => file.name);
-    return directoryNames;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error reading reference metadata:', error);
-    return [];
   }
 };

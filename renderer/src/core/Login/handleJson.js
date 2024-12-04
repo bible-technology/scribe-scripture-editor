@@ -1,9 +1,6 @@
 import * as localForage from 'localforage';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
-import {
-  createDirectory, sbStorageDownload, sbStorageUpload, supabaseStorage,
-} from '../../../../supabase';
 
 const path = require('path');
 
@@ -110,77 +107,5 @@ export const handleJson = async (values, fs) => {
     logger.error('handleJson.js', 'Failed to create and write to the file');
     error.fetchFile = true;
     return error;
-  }
-};
-
-export const handleJsonWeb = async (values) => {
-  // const supabaseStorage = require('../../../../supabase').supabaseStorage
-  // const createDirectory = require('../../../../supabase').createDirectory
-  const newpath = `${packageInfo.name}/users`;
-  error = { userExist: false, fetchFile: false };
-
-  if (await supabaseStorage().list().then((result) => result.error)) {
-    // eslint-disable-next-line no-console
-    console.error('handleJson.js', 'Failed to access the storage');
-    error.fetchFile = true;
-    return error;
-  }
-
-  if (await sbStorageDownload(`${newpath}/users.json`).then((result) => result.error)) {
-    const array = [];
-    array.push(values);
-    try {
-      await sbStorageUpload(`${newpath}/users.json`, JSON.stringify(array), {
-        cacheControl: '3600',
-        upsert: true,
-      });
-
-      // Add new user to localForage:
-      localForage.setItem('users', array, (err) => {
-        if (err) {
-          // eslint-disable-next-line no-console
-          console.error('handleJson.js', 'Failed to Create a file and add user to LocalForage');
-        }
-      });
-      return error;
-    } catch (err) {
-      error.fetchFile = true;
-      return error;
-    }
-  } else {
-    const { data, error } = await sbStorageDownload(`${newpath}/users.json`);
-    if (error) {
-      error.fetchFile = true;
-      return error;
-    }
-
-    const json = JSON.parse(await data.text());
-    if (uniqueUser(json, values.email)) {
-      error.userExist = true;
-      return error;
-    }
-    json.push(values);
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const { data: newUser } = await sbStorageUpload(`${newpath}/users.json`, JSON.stringify(json), {
-        cacheControl: '3600',
-        upsert: true,
-      });
-
-      await createDirectory({ path: `${newpath}/${values.email}/projects` });
-
-      // Add new user to localForage:
-      localForage.setItem('users', json, (errLoc) => {
-        if (errLoc) {
-          // eslint-disable-next-line no-console
-          console.error('handleJson.js', 'Failed to add new user to existing list');
-        }
-      });
-      return error;
-    } catch (errCatch) {
-      // eslint-disable-next-line no-console
-      console.error('handleJson.js', 'Failed to add new user to the file');
-      return error;
-    }
   }
 };

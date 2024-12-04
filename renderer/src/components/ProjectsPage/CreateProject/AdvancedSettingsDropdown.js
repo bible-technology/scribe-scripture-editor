@@ -1,10 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import localforage from 'localforage';
 import { useTranslation } from 'react-i18next';
-import { isElectron } from '@/core/handleElectron';
 import CustomList from '@/components/Projects/CustomList';
 import { OT, NT } from '../../../lib/CanonSpecification';
 import { ProjectContext } from '../../context/ProjectContext';
@@ -12,7 +10,6 @@ import CustomCanonSpecification from './CustomCanonSpecification';
 import LicencePopover from './LicencePopover';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
-import { newPath, sbStorageDownload } from '../../../../../supabase';
 
 function BookNumberTag(props) {
   const { children } = props;
@@ -89,92 +86,49 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   };
   // selectNew variable is used to track whether its a new selection or loading from the list
   const setALicense = (licenceTitle, selectNew) => {
-    if (isElectron()) {
-      let title = licenceTitle;
-      let myLicence = {};
-      const fs = window.require('fs');
-      if ((title === 'Custom' || !title) && !selectNew) {
-        myLicence.title = 'Custom';
-        myLicence.locked = false;
-        myLicence.id = 'Other';
-        // To support the Projects of 0.3.0 version of burrito
-        if (project.copyright?.fullStatementPlain) {
-          myLicence.licence = project.copyright?.fullStatementPlain?.en;
-        } else if (project.copyright?.shortStatements) {
-          myLicence.licence = project.copyright?.shortStatements[0]?.statement;
-        } else {
-          const path = require('path');
-          const newpath = localStorage.getItem('userPath');
-          const id = Object.keys(project.identification.primary.scribe);
-          localforage.getItem('userProfile').then((value) => {
-            logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
-            const folder = path.join(newpath, packageInfo.name, 'users', value?.username, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
-            if (fs.existsSync(folder)) {
-              fs.readFile(folder, 'utf8', (err, data) => {
-                myLicence.licence = data;
-              });
-            } else {
-              const licensefile = require('../../../lib/license/Custom.md');
-              // console.log(myLicence, licensefile.default);
-              myLicence.licence = licensefile.default;
-            }
-          });
-        }
+    let title = licenceTitle;
+    let myLicence = {};
+    const fs = window.require('fs');
+    if ((title === 'Custom' || !title) && !selectNew) {
+      myLicence.title = 'Custom';
+      myLicence.locked = false;
+      myLicence.id = 'Other';
+      // To support the Projects of 0.3.0 version of burrito
+      if (project.copyright?.fullStatementPlain) {
+        myLicence.licence = project.copyright?.fullStatementPlain?.en;
+      } else if (project.copyright?.shortStatements) {
+        myLicence.licence = project.copyright?.shortStatements[0]?.statement;
       } else {
-        // license names are being updated by a prefix 'CC' so to avoid error with previous versions
-        // checking whether the prefix is available or not
-        if (!title.match(/CC/g) && title !== 'Custom') {
-          const str = `CC ${title}`;
-          title = str.replace(/_/gm, '-');
-        }
-        myLicence = licenceList.find((item) => item.title === title);
-        // eslint-disable-next-line import/no-dynamic-require
-        const licensefile = require(`../../../lib/license/${title}.md`);
-        myLicence.licence = licensefile.default;
-      }
-      setCopyRight(myLicence);
-    } else {
-      let title = licenceTitle;
-      let myLicence = {};
-      if ((title === 'Custom' || !title) && !selectNew) {
-        myLicence.title = 'Custom';
-        myLicence.locked = false;
-        myLicence.id = 'Other';
-        // To support the Projects of 0.3.0 version of burrito
-        if (project.copyright?.fullStatementPlain) {
-          myLicence.licence = project.copyright?.fullStatementPlain?.en;
-        } else if (project.copyright?.shortStatements) {
-          myLicence.licence = project.copyright?.shortStatements[0]?.statement;
-        } else {
-          const path = require('path');
-          const id = Object.keys(project.identification.primary.scribe);
-          localforage.getItem('userProfile').then(async (value) => {
-            logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
-            const folder = path.join(newPath, value?.user?.email, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
-            const { data } = await sbStorageDownload(folder);
-            if (data) {
+        const path = require('path');
+        const newpath = localStorage.getItem('userPath');
+        const id = Object.keys(project.identification.primary.scribe);
+        localforage.getItem('userProfile').then((value) => {
+          logger.debug('AdvancedSettingsDropdown.js', 'Fetching the current username');
+          const folder = path.join(newpath, packageInfo.name, 'users', value?.username, 'projects', `${project.identification.name.en}_${id[0]}`, 'ingredients', 'license.md');
+          if (fs.existsSync(folder)) {
+            fs.readFile(folder, 'utf8', (err, data) => {
               myLicence.licence = data;
-            } else {
-              const licensefile = require('../../../lib/license/Custom.md');
-              // console.log(myLicence, licensefile.default);
-              myLicence.licence = licensefile.default;
-            }
-          });
-        }
-      } else {
-        // license names are being updated by a prefix 'CC' so to avoid error with previous versions
-        // checking whether the prefix is available or not
-        if (!title.match(/CC/g) && title !== 'Custom') {
-          const str = `CC ${title}`;
-          title = str.replace(/_/gm, '-');
-        }
-        myLicence = licenceList.find((item) => item.title === title);
-        // eslint-disable-next-line import/no-dynamic-require
-        const licensefile = require(`../../../lib/license/${title}.md`);
-        myLicence.licence = licensefile.default;
+            });
+          } else {
+            const licensefile = require('../../../lib/license/Custom.md');
+            // console.log(myLicence, licensefile.default);
+            myLicence.licence = licensefile.default;
+          }
+        });
       }
-      setCopyRight(myLicence);
+    } else {
+      // license names are being updated by a prefix 'CC' so to avoid error with previous versions
+      // checking whether the prefix is available or not
+      if (!title.match(/CC/g) && title !== 'Custom') {
+        const str = `CC ${title}`;
+        title = str.replace(/_/gm, '-');
+      }
+      myLicence = licenceList.find((item) => item.title === title);
+      // eslint-disable-next-line import/no-dynamic-require
+      const licensefile = require(`../../../lib/license/${title}.md`);
+      myLicence.licence = licensefile.default;
     }
+    setCopyRight(myLicence);
   };
   const loadLicence = () => {
     logger.debug('AdvancedSettingsDropdown.js', 'In loadLicence for loading the selected licence');

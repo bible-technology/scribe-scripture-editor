@@ -3,16 +3,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
-import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
-import { saveProjectsMeta, saveSupabaseProjectsMeta } from '../../core/projects/saveProjetcsMeta';
+import { saveProjectsMeta } from '../../core/projects/saveProjetcsMeta';
 import { environment } from '../../../environment';
 import staticLangJson from '../../lib/lang/langNames.json';
 import packageInfo from '../../../../package.json';
-
-import {
-  newPath, sbStorageList, sbStorageUpload, sbStorageDownload,
-} from '../../../../supabase';
 
 const path = require('path');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
@@ -108,48 +103,7 @@ const ProjectContextProvider = ({ children }) => {
     }
     fs.writeFileSync(file, JSON.stringify(json));
   };
-  const createWebSettingJson = (file) => {
-    logger.debug('ProjectContext.js', 'Loading data from AdvanceSetting.json file');
-    setCanonList(advanceSettings.canonSpecification);
-    setLicenseList((advanceSettings.copyright).push({
-      id: 'Other', title: 'Custom', licence: '', locked: false,
-    }));
-    // setLanguages([advanceSettings.languages]);
-    const json = {
-      version: environment.AG_USER_SETTING_VERSION,
-      history: {
-        copyright: [{
-          id: 'Other', title: 'Custom', licence: '', locked: false,
-        }],
-        languages: [],
-        textTranslation: {
-          canonSpecification: [{
-            id: 4, title: 'Other', currentScope: [], locked: false,
-          }],
-        },
-      },
-      appLanguage: 'en',
-      theme: 'light',
-      userWorkspaceLocation: '',
-      commonWorkspaceLocation: '',
-      resources: {
-        door43: {
-          translationNotes: [],
-          translationQuestions: [],
-          translationWords: [],
-          obsTranslationNotes: [],
-        },
-      },
-      sync: { services: { door43: [] } },
-    };
-    const data = sbStorageList(file);
-    if (data.length === 0) {
-      sbStorageUpload(file, JSON.stringify(json), {
-        cacheControl: '3600',
-        upsert: false,
-      });
-    }
-  };
+
   const concatLanguages = async (json, staticLangJson) => {
     logger.debug('ProjectContext.js', 'In concat languages');
     const userlanguages = [];
@@ -224,52 +178,6 @@ const ProjectContextProvider = ({ children }) => {
     }
   };
 
-  const loadWebSettings = async () => {
-    let currentUser;
-    await localforage.getItem('userProfile').then((value) => {
-      currentUser = value.user.email;
-      setUsername(value.user.email);
-    });
-    if (!currentUser) {
-      // eslint-disable-next-line no-console
-      console.error('ProjectContext.js', 'Unable to find current user');
-    }
-
-    const file = `${newPath}/${currentUser}/${environment.USER_SETTING_FILE}`;
-    const { data: agUserSettings, error } = await sbStorageDownload(file);
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('ProjectContext.js', 'Failed to read the data from file');
-    }
-    const json = JSON.parse(await agUserSettings.text());
-    if (json.version === environment.AG_USER_SETTING_VERSION) {
-      if (json.history?.copyright) {
-        if (json.history?.copyright?.licence) {
-          setLicenseList((advanceSettings.copyright)
-            .concat(json.history?.copyright));
-        } else {
-          const newObj = (advanceSettings.copyright).filter((item) => item.Id !== 'Other');
-          newObj.push({
-            id: 'Other', title: 'Custom', licence: '', locked: false,
-          });
-          setLicenseList(newObj);
-        }
-      } else {
-        setLicenseList(advanceSettings.copyright);
-      }
-      setCanonList(json.history?.textTranslation.canonSpecification
-        ? (advanceSettings.canonSpecification)
-          .concat(json.history?.textTranslation.canonSpecification)
-        : advanceSettings.canonSpecification);
-      // concat static and custom languages
-      const langFilter = await concatLanguages(json, staticLangJson);
-      const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang.trim() !== '');
-      setLanguages([...filteredLang]);
-      setCustomLanguages(langFilter.userlanguages);
-    } else {
-      createWebSettingJson(file);
-    }
-  };
   // Json for storing advance settings
   const updateJson = async (currentSettings) => {
     logger.debug('ProjectContext.js', 'In updateJson');
@@ -324,52 +232,6 @@ const ProjectContextProvider = ({ children }) => {
     }
   };
 
-  const updateWebJson = async (currentSettings) => {
-    let currentUser;
-    await localforage.getItem('userProfile').then((value) => {
-      currentUser = value.user.email;
-      setUsername(value.user.email);
-    });
-    const file = `${newPath}/${currentUser}/${environment.USER_SETTING_FILE}`;
-    const { data } = await sbStorageDownload(file);
-    if (data) {
-      const json = JSON.parse(await data.text());
-      // eslint-disable-next-line no-nested-ternary
-      const currentSetting = (currentSettings === 'copyright' ? copyright
-        : (currentSettings === 'languages' ? {
-          title: language.ang,
-          id: language.id,
-          scriptDirection: language.ld,
-          langCode: language.lc,
-          custom: true,
-        }
-          : canonSpecification));
-      if (currentSettings === 'canonSpecification') {
-        (json.history?.textTranslation[currentSettings])?.push(currentSetting);
-      } else if (json.history[currentSettings]
-          && uniqueId(json.history[currentSettings], currentSetting.id)) {
-        (json.history[currentSettings]).forEach((setting) => {
-          if (setting.id === currentSetting.id) {
-            const keys = Object.keys(setting);
-            keys.forEach((key) => {
-              setting[key] = currentSetting[key];
-            });
-          }
-        });
-      } else {
-        // updating the canon or pushing new language
-        (json.history[currentSettings]).push(currentSetting);
-      }
-      json.version = environment.AG_USER_SETTING_VERSION;
-      json.sync.services.door43 = json?.sync?.services?.door43 ? json?.sync?.services?.door43 : [];
-      await sbStorageUpload(file, JSON.stringify(json));
-      await loadWebSettings();
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('ProjectContext.js', 'Failed to read the data from file');
-    }
-  };
-
   // common functions for create projects
   const createProjectCommonUtils = async () => {
     logger.debug('ProjectContext.js', 'In createProject common utils');
@@ -380,18 +242,18 @@ const ProjectContextProvider = ({ children }) => {
           if (lang.id === language.id) {
             if (lang.ang !== language.ang
               || lang.ld !== language.ld || lang.lc !== language.lc) {
-              isElectron() ? await updateJson('languages') : await updateWebJson('languages');
+              await updateJson('languages');
             }
           }
         });
       } else {
         // add language to custom
-        isElectron() ? await updateJson('languages') : await updateWebJson('languages');
+        await updateJson('languages');
       }
     }
     // Update Custom licence into current list.
     if (copyright.title === 'Custom') {
-      isElectron() ? await updateJson('copyright') : await updateWebJson('copyright');
+      await updateJson('copyright');
     } else {
       const myLicence = Array.isArray(licenceList) ? licenceList.find((item) => item.title === copyright.title) : [];
       // eslint-disable-next-line import/no-dynamic-require
@@ -406,7 +268,7 @@ const ProjectContextProvider = ({ children }) => {
     logger.debug('ProjectContext.js', 'In createProject Translation utils');
     // Update Custom canon into current list.
     if (canonSpecification.title === 'Other') {
-      isElectron() ? await updateJson('canonSpecification') : await updateWebJson('canonSpecification');
+      await updateJson('canonSpecification');
     }
   };
 
@@ -434,34 +296,7 @@ const ProjectContextProvider = ({ children }) => {
       Object.assign(projectMetaObj, temp_obj);
     }
     logger.debug('ProjectContext.js', 'Calling saveProjectsMeta with required props');
-    const status = isElectron() ? await saveProjectsMeta(projectMetaObj) : await saveSupabaseProjectsMeta(projectMetaObj);
-    return status;
-  };
-
-  const createSupabaseProject = async (call, project, update, projectType) => {
-    createProjectCommonUtils();
-    // common props pass for all project type
-    setContextProjectType(projectType);
-    const projectMetaObj = {
-      newProjectFields,
-      language,
-      copyright,
-      importedFiles,
-      call,
-      project,
-      update,
-      projectType,
-    };
-    if (projectType !== 'OBS') {
-      createProjectTranslationUtils();
-      const temp_obj = {
-        versificationScheme: versificationScheme.title,
-        canonSpecification,
-      };
-      Object.assign(projectMetaObj, temp_obj);
-    }
-    logger.debug('ProjectContext.js', 'Calling saveSupabaseProjectsMeta with required props');
-    const status = saveSupabaseProjectsMeta(projectMetaObj);
+    const status = await saveProjectsMeta(projectMetaObj);
     return status;
   };
 
@@ -478,54 +313,28 @@ const ProjectContextProvider = ({ children }) => {
   };
 
   React.useEffect(() => {
-    if (isElectron()) {
-      loadSettings();
-      localforage.getItem('userProfile').then((value) => {
-        setUsername(value?.username);
-      });
-      localforage.getItem('currentProject').then((projectName) => {
+    loadSettings();
+    localforage.getItem('userProfile').then((value) => {
+      setUsername(value?.username);
+    });
+    localforage.getItem('currentProject').then((projectName) => {
+      setSelectedProject(projectName);
+      // setProjectMeta in a var
+      localforage.getItem('projectmeta').then((projectMeta) => {
         setSelectedProject(projectName);
         // setProjectMeta in a var
-        localforage.getItem('projectmeta').then((projectMeta) => {
-          setSelectedProject(projectName);
-          // setProjectMeta in a var
-          projectMeta?.projects.forEach((meta) => {
-            const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
-            const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurence(projectName, '_').then((arr) => {
-              if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
+        projectMeta?.projects.forEach((meta) => {
+          const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
+          const currentprojectName = meta.identification.name.en;
+          splitStringByLastOccurence(projectName, '_').then((arr) => {
+            if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
                 && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
-                setSelectedProjectMeta(meta);
-              }
-            });
+              setSelectedProjectMeta(meta);
+            }
           });
         });
       });
-    } else if (!process.env.NEXT_PUBLIC_IS_ELECTRON) {
-      loadWebSettings();
-      localforage.getItem('userProfile').then((value) => {
-        setUsername(value?.user?.email);
-      });
-      localforage.getItem('currentProject').then((projectName) => {
-        setSelectedProject(projectName);
-        // setProjectMeta in a var
-        localforage.getItem('projectmeta').then((projectMeta) => {
-          setSelectedProject(projectName);
-          // setProjectMeta in a var
-          projectMeta?.projects.forEach((meta) => {
-            const currentprojectId = Object.keys(meta.identification.primary[packageInfo.name])[0];
-            const currentprojectName = meta.identification.name.en;
-            splitStringByLastOccurence(projectName, '_').then((arr) => {
-              if (arr.length > 0 && arr[0].toLowerCase() === currentprojectName.toLowerCase()
-                && arr[1].toLowerCase() === currentprojectId.toLocaleLowerCase()) {
-                setSelectedProjectMeta(meta);
-              }
-            });
-          });
-        });
-      });
-    }
-
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -567,7 +376,6 @@ const ProjectContextProvider = ({ children }) => {
       setSideTabTitle,
       setSelectedProject,
       createProject,
-      createSupabaseProject,
       setLanguage,
       setScrollLock,
       setUsername,

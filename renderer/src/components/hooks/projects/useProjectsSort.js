@@ -3,7 +3,6 @@ import * as localForage from 'localforage';
 import moment from 'moment';
 import {
   updateAgSettings,
-  updateWebAgSettings,
 } from '../../../core/projects/updateAgSettings';
 import { isElectron } from '../../../core/handleElectron';
 import fetchProjectsMeta from '../../../core/projects/fetchProjectsMeta';
@@ -281,11 +280,7 @@ function useProjectsSort() {
       const projectName = `${name}_${id}`;
       logger.debug('useProjectsSort.js', `Updating archive/restore in scribe settings for ${name}`);
 
-      if (isElectron()) {
-        updateAgSettings(currentUser, projectName, _project);
-      } else {
-        updateWebAgSettings(currentUser, projectName, _project);
-      }
+      updateAgSettings(currentUser, projectName, _project);
     });
 
     await localForage.setItem('projectmeta', updatedProjects);
@@ -341,11 +336,7 @@ function useProjectsSort() {
       const id = Object.keys(projectToUpdate.identification.primary.scribe)[0];
       const projectName = `${name}_${id}`;
       logger.debug('useProjectsSort.js', `Updating star/unstar in Scribe settings for ${name}`);
-      if (isElectron()) {
-        updateAgSettings(currentUser, projectName, projectToUpdate);
-      } else {
-        updateWebAgSettings(currentUser, projectName, projectToUpdate);
-      }
+      updateAgSettings(currentUser, projectName, projectToUpdate);
     }
 
     settemparray(copy[0]);
@@ -374,12 +365,10 @@ function useProjectsSort() {
     },
     actions: {
       handleClickStarred,
-      // handleWebClickStarred,
       setCallEditProject,
       handleDelete,
       handleRequestSortUnstarred,
       archiveProject,
-      // archiveWebProject,
       setStarredRow,
       setProjects,
       setLoading,
