@@ -420,7 +420,8 @@ export default function EditorSection({
                 />
               </button>
             </div>
-            <div className="text-center">
+            {selectedProjectMeta?.type?.flavorType?.flavor?.name == 'textTranslation' &&
+            (<div className="text-center">
               <div className="p-5 text-xs uppercase pb-4">
                 {"Open checks"}
               </div>
@@ -441,7 +442,7 @@ export default function EditorSection({
                   aria-hidden="true"
                 />
               </button>
-            </div>
+            </div>)}
           </div>
         ) : referenceResources.selectedResource !== 'checks' ? (
           <div
