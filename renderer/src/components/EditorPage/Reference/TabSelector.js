@@ -34,7 +34,7 @@ function TabSelector({ currentTab, setCurrentTab, tabData }) {
 export default TabSelector;
 
 TabSelector.propTypes = {
-  currentTab: PropTypes.object,
+  currentTab: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
   setCurrentTab: PropTypes.func,
   tabData: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

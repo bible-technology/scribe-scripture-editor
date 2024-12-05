@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import {
   InputBase,
   Toolbar,
-} from '@material-ui/core';
-import { Search } from '@material-ui/icons';
+} from '@mui/material';
+import { Search } from '@mui/icons-material';
 import { searchStyles } from './SearchStyles';
 // import AwesomeDebouncePromise from 'awesome-debounce-promise';
 

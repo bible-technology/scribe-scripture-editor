@@ -1,9 +1,8 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import styled from 'styled-components';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 const FlexDiv = styled.div`
   display: flex;
@@ -16,10 +15,7 @@ const FlexSpacedDiv = styled.div`
 `;
 
 const TranslationhelpsNav = ({
-  items,
-  classes,
-  itemIndex,
-  setItemIndex,
+  items, classes, itemIndex, setItemIndex,
 }) => {
   const onPrevItem = () => {
     const newIndex = itemIndex - 1;
@@ -43,14 +39,14 @@ const TranslationhelpsNav = ({
     <>
       {items && (
         <FlexSpacedDiv>
-          <ChevronLeftIcon
+          <ChevronLeft
             className={classes.chevronIcon}
             onClick={onPrevItem}
           />
           <FlexDiv>
             {`${itemIndex + 1} of ${items.length}`}
           </FlexDiv>
-          <ChevronRightIcon
+          <ChevronRight
             className={classes.chevronIcon}
             onClick={onNextItem}
           />
@@ -60,11 +56,11 @@ const TranslationhelpsNav = ({
   );
 };
 
-export default TranslationhelpsNav;
-
 TranslationhelpsNav.propTypes = {
   items: PropTypes.array,
-  classes: PropTypes.bool,
+  classes: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   itemIndex: PropTypes.number,
   setItemIndex: PropTypes.func,
 };
+
+export default TranslationhelpsNav;

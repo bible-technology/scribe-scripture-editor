@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import i18n from '../../../../translations/i18n';
 import { AccordionPicker } from './SectionAccordion';

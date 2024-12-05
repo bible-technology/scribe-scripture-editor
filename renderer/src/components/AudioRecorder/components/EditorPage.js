@@ -222,7 +222,7 @@ const EditorPage = ({
 };
 export default EditorPage;
 EditorPage.propTypes = {
-  content: PropTypes.object,
+  content: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   onChangeVerse: PropTypes.any,
   verse: PropTypes.string,
   location: PropTypes.string,

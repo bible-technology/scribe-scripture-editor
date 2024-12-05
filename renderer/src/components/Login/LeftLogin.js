@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import * as localForage from 'localforage';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Restore } from '@material-ui/icons';
+import { Restore } from '@mui/icons-material';
 import LogoIcon from '@/icons/logo.svg';
 import { createUser, handleLogin, writeToFile } from '../../core/Login/handleLogin';
 import { isElectron } from '../../core/handleElectron';
@@ -304,7 +304,7 @@ const LeftLogin = () => {
                                   role="button"
                                   tabIndex={0}
                                   aria-label="submit"
-                                  dataId={user.username}
+                                  data-id={user.username}
                                   onClick={() => { handleSubmit({ username: user.username }); }}
                                   className="w-full p-4 py-3 text-sm rounded-lg cursor-pointer bg-[#F9F9F9] hover:bg-primary hover:text-white border border-[#E3E3E3] font-semibold"
                                 >

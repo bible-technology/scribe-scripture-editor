@@ -2,8 +2,8 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, CircularProgress, Typography,
-} from '@material-ui/core';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+} from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const progressCircletheme = createTheme({
   // older versions

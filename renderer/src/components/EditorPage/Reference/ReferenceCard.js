@@ -73,7 +73,7 @@ export default ReferenceCard;
 ReferenceCard.propTypes = {
   items: PropTypes.array,
   filters: PropTypes.array,
-  markdown: PropTypes.object,
+  markdown: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   languageId: PropTypes.string.isRequired,
   selectedQuote: PropTypes.string,
   setQuote: PropTypes.func,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { AppHeader } from '../AppHeader';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material'; // Updated import for MUI v5
 
 interface LayoutProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
@@ -14,5 +14,5 @@ export const Layout = ({ children }: LayoutProps) => {
         {children}
       </div>
     </Box>
-  )
-}
+  );
+};

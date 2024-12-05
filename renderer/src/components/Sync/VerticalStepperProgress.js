@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
   Box, Paper, Step, StepContent, StepLabel, Stepper, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 export function VerticalLinearStepper({ stepCount, steps, successMsg }) {
   const [activeStep, setActiveStep] = React.useState(0);

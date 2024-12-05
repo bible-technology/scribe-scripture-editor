@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Modal } from '@material-ui/core';
+import { Modal } from '@mui/material';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';

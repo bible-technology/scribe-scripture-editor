@@ -105,7 +105,7 @@ const MainPlayer = () => {
     const path = require('path');
     let i = 1;
     // Checking whether the take has any audio
-    if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
+    if (audioCurrentChapter?.filePath && fs.existsSync(path.join(audioCurrentChapter?.filePath, audioCurrentChapter?.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
       while (i < 4) {
       // Looking for the existed default file so that we can easily rename both the files
         if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {

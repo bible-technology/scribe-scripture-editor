@@ -1,6 +1,6 @@
 import {
   Box, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 const EnhancedTableToolbar = ({ title }) => (

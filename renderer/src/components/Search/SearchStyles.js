@@ -1,6 +1,7 @@
-import { alpha, makeStyles } from '@material-ui/core/styles';
+import { alpha } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
-export const searchStyles = makeStyles((theme) => ({
+export const searchStyles = styled((theme) => ({
   root: {
     flexGrow: 1,
   },

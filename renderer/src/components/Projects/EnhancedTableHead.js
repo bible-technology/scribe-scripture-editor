@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   TableSortLabel,
   TableCell,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   StarIcon,
 } from '@heroicons/react/24/outline';

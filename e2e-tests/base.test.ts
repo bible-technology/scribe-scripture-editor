@@ -132,7 +132,7 @@ test("Click the view users button and delete the playwright user from the active
         await archiveDiv.nth(i).click()
       }
       await window.locator('//*[@id="active-tab"]').click()
-      await window.locator(`//*[@dataId="${userName.toLowerCase()}"]`).click()
+      await window.locator(`//*[@data-id="${userName.toLowerCase()}"]`).click()
       break
     }
   }

@@ -242,7 +242,7 @@ export default function CustomNavigation({
 CustomNavigation.propTypes = {
   showVerse: PropTypes.bool,
   initialBook: PropTypes.string,
-  initialChapter: PropTypes.string,
+  initialChapter: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   initialVerse: PropTypes.string,
   setNavigation: PropTypes.func,
 };

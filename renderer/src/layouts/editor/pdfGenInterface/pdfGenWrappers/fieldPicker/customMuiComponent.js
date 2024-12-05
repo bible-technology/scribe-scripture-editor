@@ -1,9 +1,8 @@
 import {
   Tooltip, tooltipClasses,
-  alpha,
+  alpha, Switch,
 } from '@mui/material';
-import { styled } from '@material-ui/core/styles';
-import Switch from '@material-ui/core/Switch';
+import { styled } from '@mui/system';
 
 export const StyledSwitch = styled(Switch)(() => ({
   '& .MuiSwitch-switchBase.Mui-checked': {

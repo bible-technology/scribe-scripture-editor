@@ -10,7 +10,7 @@ import MicrophonePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.microphone.js
 
 // eslint-disable-next-line prefer-const
 let microphone = MicrophonePlugin.create();
-const AudioWaveForm = (props) => {
+const AudioWaveForm = ((props, ref) => {
   const {
     height,
     waveColor,
@@ -38,6 +38,7 @@ const AudioWaveForm = (props) => {
   // eslint-disable-next-line prefer-const
   // let microphone = useRef(null);
   const [playing, setPlaying] = useState(false);
+  const combinedRef = ref || waveformRef;
   const formWaveSurferOptions = (ref) => ({
     container: ref || '#waveform',
     waveColor,
@@ -59,7 +60,7 @@ const AudioWaveForm = (props) => {
   });
 
   const createForm = async (currentUrl) => {
-    const options = formWaveSurferOptions(waveformRef.current);
+    const options = formWaveSurferOptions(combinedRef.current);
     wavesurfer.current = WaveSurfer.create(options);
     // Below url is for testing/development purpose
     // const currentUrl = 'https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3';
@@ -85,7 +86,7 @@ const AudioWaveForm = (props) => {
   };
 
   const createRecForm = async () => {
-    const options = formWaveSurferOptions(waveformRef.current);
+    const options = formWaveSurferOptions(combinedRef.current);
     wavesurfer.current = WaveSurfer.create(options);
     wavesurfer.current?.microphone.on('deviceReady', (stream) => {
       // eslint-disable-next-line no-console
@@ -208,7 +209,7 @@ const AudioWaveForm = (props) => {
         && (
           <>
             <div className="w-full">
-              <div id="waveform" ref={waveformRef} />
+              <div id="waveform" ref={combinedRef} />
             </div>
             {show
             && (
@@ -234,7 +235,7 @@ const AudioWaveForm = (props) => {
         )}
     </div>
   );
-};
+});
 export default forwardRef(AudioWaveForm);
 AudioWaveForm.propTypes = {
   height: PropTypes.number,

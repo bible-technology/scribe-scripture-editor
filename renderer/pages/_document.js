@@ -12,7 +12,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link rel="stylesheet" />
+          <link />
         </Head>
         <body>
           <Main />

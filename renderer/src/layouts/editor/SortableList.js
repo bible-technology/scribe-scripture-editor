@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Button, Modal } from '@material-ui/core';
+import { Button, Modal } from '@mui/material';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import i18n from '../../translations/i18n';
 import { AccordionPicker } from './pdfGenInterface/pdfGenWrappers/SectionAccordion';

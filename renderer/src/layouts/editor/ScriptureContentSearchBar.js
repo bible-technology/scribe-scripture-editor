@@ -1,6 +1,5 @@
 import { useEffect, useContext, useState } from 'react';
-
-import { Modal } from '@material-ui/core';
+import { Modal } from '@mui/material';
 import { ProjectContext } from '@/components/context/ProjectContext';
 // eslint-disable-next-line
 import ScriptureContentPicker from '@/components/ScriptureContentPicker/ScriptureContentPicker.tsx';

@@ -1,7 +1,8 @@
 import React from 'react';
-import useAutocomplete from '@material-ui/lab/useAutocomplete';
-import NoSsr from '@material-ui/core/NoSsr';
-import CheckIcon from '@material-ui/icons/Check';
+import { useAutocomplete } from '@mui/material';
+import NoSsr from '@mui/material/NoSsr';
+import CheckIcon from '@mui/icons-material/Check';
+
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 

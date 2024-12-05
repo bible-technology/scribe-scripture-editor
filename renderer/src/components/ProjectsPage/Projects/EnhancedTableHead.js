@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   TableSortLabel,
   TableCell,
-} from '@material-ui/core';
+} from '@mui/material';
 // import {
 //   StarIcon,
 // } from '@heroicons/react/24/outline';
@@ -160,7 +160,7 @@ function EnhancedTableHead(props) {
                 {/* {headCell.label} */}
                 {t(headCell.label)}
                 {orderBy === headCell.id ? (
-                  <span hidden>
+                  <span hidden aria-live="assertive">
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>
                 ) : null}

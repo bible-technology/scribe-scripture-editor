@@ -337,9 +337,9 @@ TranslationHelps.propTypes = {
   languageId: PropTypes.string,
   refName: PropTypes.string,
   bookId: PropTypes.string,
-  chapter: PropTypes.string,
+  chapter: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   verse: PropTypes.string,
   owner: PropTypes.string,
   story: PropTypes.string,
-  offlineResource: PropTypes.bool || PropTypes.object,
+  offlineResource: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };

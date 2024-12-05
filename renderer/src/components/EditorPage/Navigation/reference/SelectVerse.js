@@ -170,7 +170,7 @@ export default function SelectVerse({
 SelectVerse.propTypes = {
   children: PropTypes.any,
   bookName: PropTypes.string,
-  chapter: PropTypes.string,
+  chapter: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   verse: PropTypes.string,
   chapterList: PropTypes.array,
   verseList: PropTypes.array,
