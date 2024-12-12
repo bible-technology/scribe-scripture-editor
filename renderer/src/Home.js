@@ -17,7 +17,6 @@ const Home = () => {
   const { states, action } = useContext(AuthenticationContext);
   const [token, setToken] = useState();
   const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
     logger.debug('Home.js', 'Triggers loadUsers for the users list');
     loadUsers();
@@ -33,7 +32,6 @@ const Home = () => {
       logger.debug('Home.js', `user ${user}`);
       setToken(states.accessToken);
       setUser(states?.currentUser);
-      setLoading(false);
       // // set app language from saved user data on start up
       if (states?.currentUser?.username) {
         const appLangCode = await getorPutAppLangage('get', states.currentUser.username);
@@ -48,11 +46,7 @@ const Home = () => {
     validateUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [states.accessToken]);
-  if (loading) {
-    return (
-      <></>
-    );
-  }
+
   return (
     <>
       {token && user ? (

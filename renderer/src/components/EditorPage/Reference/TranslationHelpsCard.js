@@ -101,6 +101,56 @@ export default function TranslationHelpsCard({
           // switch resources
           switch (resourceId) {
           case 'tn':
+            if (fs.existsSync(path.join(folder, projectName))) {
+              // eslint-disable-next-line array-callback-return
+              const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
+                if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
+                  return item;
+                }
+              });
+
+              if (currentFile?.length > 0) {
+                const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
+                // convert tsv to json
+                const headerArr = filecontent.split('\n')[0].split('\t');
+                let noteName;
+                let indexOfNote;
+                if (headerArr.indexOf('Note') > 0) {
+                  indexOfNote = headerArr.indexOf('Note');
+                  noteName = headerArr[indexOfNote];
+                } else if (headerArr.indexOf('OccurrenceNote')) {
+                  indexOfNote = headerArr.indexOf('OccurrenceNote');
+                  noteName = headerArr[indexOfNote];
+                }
+
+                let bvcType = true;
+                if (headerArr.includes('Reference') && headerArr.every((value) => !['Book', 'Verse', 'Chapter'].includes(value))) {
+                  bvcType = false;
+                }
+
+                const json = filecontent.split('\n')
+                  .map((file) => {
+                    if (bvcType) {
+                      const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
+                      return {
+                        Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote,
+                      };
+                    }
+                    const Book = projectId;
+                    const [ref, ID] = file.split('\t');
+                    const Chapter = ref.split(':')[0];
+                    const Verse = ref.split(':')[1];
+                    return {
+                      Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
+                    };
+                  }).filter((data) => data.Chapter === currentChapterVerse.chapter && data.Verse === currentChapterVerse.verse);
+                setOfflineItemsDisable(false);
+                setOfflineItems(json);
+              } else {
+                setOfflineMarkdown({ error: true, data: 'No Content Available' });
+              }
+            }
+            break;
           case 'x-bcvnotes':
             // console.log("yep", folder, 'and projectName ==', projectName);
             if (fs.existsSync(path.join(folder, projectName))) {

@@ -9,7 +9,7 @@ import { AutographaContext } from '@/components/context/AutographaContext';
 import ExportProjectPopUp from '@/layouts/projects/Export/ExportProjectPopUp';
 // import ProjectContextProvider from '@/components/context/ProjectContext';
 // import AuthenticationContextProvider from '@/components/Login/AuthenticationContextProvider';
-import LoadingScreen from '@/components/Loading/LoadingScreen';
+import { LoadingSpinner } from '../LoadingSpinner';
 import SearchTags from './SearchTags';
 import NewProject from './NewProject';
 import * as logger from '../../logger';
@@ -89,15 +89,25 @@ export default function ProjectList() {
                 <div className="-my-2 sm:-mx-6 lg:-mx-8">
                   <div className="align-middle inline-block min-w-full sm:px-6 lg:px-8">
                     <div className="shadow border-b border-gray-200 sm:rounded-lg">
-                      <table data-testid="tablelayout" id="projects-list" className="min-w-full divide-y divide-gray-200 mb-9">
-                        <EnhancedTableHead
-                          order={order}
-                          orderBy={orderBy}
-                          onRequestSort={handleRequestSort}
-                        />
-                        {projects ? <ProjectRow projects={projects} filteredProjects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={handleExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} manageProject={manageProject} />
-                          : <div><LoadingScreen /></div>}
-                      </table>
+                      {projects ? (
+                        <table data-testid="tablelayout" id="projects-list" className="min-w-full divide-y divide-gray-200 mb-9">
+                          <EnhancedTableHead
+                            order={order}
+                            orderBy={orderBy}
+                            onRequestSort={handleRequestSort}
+                          />
+                          <ProjectRow projects={projects} filteredProjects={filteredProjects} order={order} orderBy={orderBy} showArchived={showArchived} openExportPopUp={handleExportPopUp} setCurrentProject={setCurrentProject} handleClickStarred={handleClickStarred} manageProject={manageProject} />
+
+                        </table>
+                      ) : (
+                        <div
+                          className="bg-gray-50"
+                          style={{ height: '82vh' }}
+                        >
+                          <LoadingSpinner />
+                        </div>
+
+                      )}
                     </div>
                   </div>
                 </div>

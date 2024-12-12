@@ -134,7 +134,7 @@ export default function ProjectsLayout(props) {
           </header>
         )}
 
-        <div className="max-h-[85%] overflow-y-auto  ">
+        <div className="max-h-[88vh] overflow-y-auto  ">
           {children}
         </div>
 

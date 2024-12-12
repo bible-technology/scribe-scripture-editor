@@ -120,7 +120,7 @@ const GiteaFileBrowser = ({ changeRepo }) => {
   return (
     (!auth && authComponent)
     || (!repo && (
-      <div className="grid grid-rows-2">
+      <div className="grid grid-rows-2" style={{ overflowY: 'auto', height: '82vh' }}>
         <div>
           {refreshGiteaListUI.timeOut === true ? <LoadingSpinner /> : <div>{repoComponent}</div>}
         </div>

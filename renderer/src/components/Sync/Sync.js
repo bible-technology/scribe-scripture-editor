@@ -171,9 +171,9 @@ export default function Sync() {
       <ProjectContextProvider>
         <ReferenceContextProvider>
           <ProjectsLayout>
-            <div className="grid grid-cols-2 gap-2 bg-gray-50 h-full ">
+            <div className="grid grid-cols-2 gap-2 bg-gray-50 h-full[90vh] ">
               {/* local projecr side */}
-              <div className="bg-white border-x border-gray-200 h-screen ">
+              <div className="bg-white border-x border-gray-200 h-screen[90vh] ">
                 <div className="flex justify-between items-center p-3 px-5 uppercase tracking-wider shadow-sm border-b border-gray-200">
                   {/* <span className="font-semibold">Local Projects</span> */}
                   <span className="font-semibold">{t('label-prj-on-my-computer')}</span>
@@ -198,13 +198,13 @@ export default function Sync() {
                   </div>
                 </div>
 
-                <div>
+                <div style={{ overflowY: 'auto', height: '75vh' }}>
                   <ProjectFileBrowser />
                 </div>
               </div>
 
               {/* cloud project side */}
-              <div className="bg-white border-x border-gray-200 h-screen">
+              <div className="bg-white border-x border-gray-200 h-screen[90vh]">
                 <div className="flex justify-between items-center px-5 uppercase tracking-wider shadow-sm border-b border-gray-200">
                   <span className="font-semibold">{t('label-prj-on-cloud')}</span>
 
