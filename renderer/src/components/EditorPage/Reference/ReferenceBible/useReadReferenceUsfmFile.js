@@ -26,7 +26,7 @@ export const useReadReferenceUsfmFile = ({
   const {
     actions: {
       setReferenceLoading,
-      setCounter,
+      // setCounter,
     },
   } = useContext(ReferenceContext);
 
@@ -78,7 +78,7 @@ export const useReadReferenceUsfmFile = ({
                       status: true,
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });
-                    setCounter(4);
+                    // setCounter(4);
                   } else if (chosenResource.type === 'common') {
                     const commonResourcePath = path.join(newpath, packageInfo.name, 'common', 'resources', refName, key);
                     const commonResourceIngredients = await readIngredients({ filePath: commonResourcePath });
@@ -98,7 +98,7 @@ export const useReadReferenceUsfmFile = ({
                       status: true,
                       text: t('dynamic-msg-load-ref-bible-success'),
                     });
-                    setCounter(4);
+                    // setCounter(4);
                   } else {
                     setUsfmData([]);
                     setBookAvailable(false);

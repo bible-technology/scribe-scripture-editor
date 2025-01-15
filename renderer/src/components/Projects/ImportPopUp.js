@@ -13,8 +13,8 @@ import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { updateJsonJuxta } from './utils/updateJsonJuxta';
+import { extractBookCode } from './utils/extractBookCode';
 
-const grammar = require('usfm-grammar');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
 
 export default function ImportPopUp(props) {
@@ -119,7 +119,8 @@ export default function ImportPopUp(props) {
       switch (projectType) {
       case 'Translation': {
         const usfm = fs.readFileSync(filePath, 'utf8');
-        const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
+        const { isValid, validUSFM } = await validateUsfm(usfm);
+        const bookCode = extractBookCode(validUSFM);
         if (isValid) {
           // If importing a USFM file then ask user for replace of USFM with the new content or not
           replaceConformation(true);
@@ -137,15 +138,14 @@ export default function ImportPopUp(props) {
 
       case 'Audio': {
         const usfm = fs.readFileSync(filePath, 'utf8');
-        const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
-        const isJsonValid = myUsfmParser.validate();
-        if (isJsonValid) {
+        const { isValid, validUSFM } = await validateUsfm(usfm);
+        const bookCode = extractBookCode(validUSFM);
+        if (isValid) {
           // If importing a USFM file then ask user for replace of USFM with the new content or not
           replaceConformation(true);
           logger.debug('ImportPopUp.js', 'Valid USFM file.');
-          const jsonOutput = myUsfmParser.toJSON();
-          files.push({ id: jsonOutput.book.bookCode, content: usfm });
-          bookCodeList.push(jsonOutput.book.bookCode);
+          files.push({ id: bookCode, content: validUSFM });
+          bookCodeList.push(bookCode);
         } else {
           logger.warn('ImportPopUp.js', 'Invalid USFM file.');
           setNotify('failure');
@@ -186,17 +186,15 @@ export default function ImportPopUp(props) {
         const fileExt = filename.split('.').pop()?.toLowerCase();
         if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
             || fileExt === undefined) {
-          const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
-          const isJsonValid = myUsfmParser.validate();
+          const { isValid, validUSFM } = await validateUsfm(file);
+          const bookCode = extractBookCode(validUSFM);
           // if the USFM is valid
-          if (isJsonValid) {
+          if (isValid) {
             replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
-            // then we get the book code and we transform our data to our Juxta json file
-            const jsonOutput = myUsfmParser.toJSON();
-            const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
-            files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
-            bookCodeList.push(jsonOutput.book.bookCode);
+            const juxtaJson = JSON.stringify(readUsfm(file, bookCode));
+            files.push({ id: bookCode, content: juxtaJson });
+            bookCodeList.push(bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');

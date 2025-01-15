@@ -48,7 +48,7 @@ export default function ReferenceContextProvider({ children }) {
     status: false,
     text: '',
   });
-  const [counter, setCounter] = useState(7);
+  // const [counter, setCounter] = useState(7);
   const [bookmarksVerses, setBookmarksVerses] = useState([]);
   const myEditorRef = useRef();
   const [closeNavigation, setCloseNavigation] = useState(false);
@@ -227,7 +227,7 @@ export default function ReferenceContextProvider({ children }) {
       layout,
       row,
       referenceLoading,
-      counter,
+      // counter,
       bookmarksVerses,
       myEditorRef,
       closeNavigation,
@@ -280,7 +280,7 @@ export default function ReferenceContextProvider({ children }) {
       setLayout,
       setRow,
       setReferenceLoading,
-      setCounter,
+      // setCounter,
       setBookmarksVerses,
       setCloseNavigation,
       setProjectScriptureDir,

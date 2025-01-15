@@ -20,9 +20,6 @@ const defaultScrRef = {
 };
 
 export default function TextEditor() {
-  const [chapterNumber, setChapterNumber] = useState(1);
-  const [verseNumber, setVerseNumber] = useState(1);
-
   const [usjInput, setUsjInput] = useState();
   const [scrRef, setScrRef] = useState(defaultScrRef);
   const [navRef, setNavRef] = useState();
@@ -30,6 +27,8 @@ export default function TextEditor() {
   const {
     state: {
       bookId: defaultBookId,
+      chapter,
+      verse,
       selectedFont,
       editorFontSize,
       projectScriptureDir,
@@ -41,6 +40,9 @@ export default function TextEditor() {
       handleEditorFontSize,
     },
   } = useContext(ReferenceContext);
+  // console.log({ chapter, verse });
+  const [chapterNumber, setChapterNumber] = useState(chapter);
+  const [verseNumber, setVerseNumber] = useState(verse);
   const { showSnackbar } = useAutoSnackbar();
   const { t } = useTranslation();
   const [book, setBook] = useState(defaultBookId);
@@ -83,6 +85,11 @@ export default function TextEditor() {
       );
   }, [cachedData, loading]);
 
+  // useEffect(() => {
+  //   setChapterNumber(chapter);
+  //   setVerseNumber(verse);
+  // }, [chapter, verse]);
+
   useEffect(() => {
     setScrRef({
       bookCode: book,
@@ -105,7 +112,6 @@ export default function TextEditor() {
   const handleUsjChange = useMemo(
     () => debounce(async (updatedUsj) => {
       updateCacheNSaveFile(updatedUsj, book);
-      // console.log('usj updated', updatedUsj);
     }, 1000),
     [book],
   );
