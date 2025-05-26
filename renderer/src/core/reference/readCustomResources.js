@@ -8,7 +8,7 @@ export async function readCustomResources({ resourceId, translationData }) {
   const resourceMapObject = [
     { id: 'tn', resourceType: 'translationNotes' },
     { id: 'tq', resourceType: 'translationQuestions' },
-    { id: 'twlm', resourceType: 'translationWordList' },
+    { id: 'twl', resourceType: 'translationWordList' },
     { id: 'ta', resourceType: 'translationAcademys' },
     { id: 'obs-tn', resourceType: 'obsTranslationNotes' },
     // {id: 'tw', resourceType: "translationWords"},
@@ -70,7 +70,7 @@ export async function readCustomResources({ resourceId, translationData }) {
             }
           });
           break;
-        case 'twlm':
+        case 'twl':
           (agSettingsJson?.resources.door43.translationWords)?.forEach(async (url) => {
             const language = url.url?.split('/');
             let resourceExists = false;

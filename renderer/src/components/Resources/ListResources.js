@@ -114,7 +114,7 @@ export const ListResources = ({
         // case 'tw':
         //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
         //   break;
-      case 'twlm':
+      case 'twl':
         await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
         break;
       case 'tq':
@@ -147,7 +147,7 @@ export const ListResources = ({
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
         { id: 'x-bcvnotes', title: t('label-resource-tn'), resource: translationNote },
         { id: 'tir', title: t('label-resource-tir'), resource: translationImageResources },
-        { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
+        { id: 'twl', title: t('label-resource-twl'), resource: translationWordList },
         // { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
         { id: 'tq', title: t('label-resource-tq'), resource: translationQuestion },
         { id: 'ta', title: t('label-resource-ta'), resource: translationAcademy },
@@ -372,7 +372,7 @@ export const ListResources = ({
                       handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource);
                     }}
                   >
-                    {(filteredResources?.onlineResource?.id !== 'twlm' && filteredResources?.onlineResource?.id !== 'obs-twlm') && (
+                    {(filteredResources?.onlineResource?.id !== 'obs-twlm') && (
                       <div
                         className="cursor-pointer focus:outline-none flex justify-center items-center"
                         role="button"

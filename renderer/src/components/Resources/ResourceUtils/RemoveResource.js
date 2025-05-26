@@ -141,6 +141,7 @@ function RemoveResource({
         break;
       case 'tn':
       case 'tw':
+      case 'twl':
       case 'ta':
       case 'tq':
       case 'obs-tn':

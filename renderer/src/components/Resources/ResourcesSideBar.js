@@ -70,7 +70,7 @@ export default function ResourcesSidebar({
           Icon: CameraIcon,
         },
         {
-          id: 'twlm',
+          id: 'twl',
           title: t('label-resource-twl'),
           resourceType: 'translationWordList',
           Icon: ClipboardDocumentListIcon,

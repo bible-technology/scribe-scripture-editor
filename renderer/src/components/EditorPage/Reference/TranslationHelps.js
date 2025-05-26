@@ -135,10 +135,10 @@ const TranslationHelps = ({
           // fontSize={fontSize}
           /// >
           // );
-        case 'twlm':
+        case 'twl':
           return (
             <TranslationHelpsCard
-              title={t('label-resource-twlm')}
+              title={t('label-resource-twl')}
               verse={verse}
               chapter={chapter}
               projectId={bookId || 'mat'}
@@ -150,6 +150,7 @@ const TranslationHelps = ({
               server="https://git.door43.org"
               font={font}
               fontSize={fontSize}
+              offlineResource={offlineResource}
             />
           );
         case 'tq':
