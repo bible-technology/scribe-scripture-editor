@@ -129,6 +129,7 @@ export default function TranslationHelpsCard({
                 }
 
                 const json = filecontent.split('\n')
+                  .filter((line) => line.trim())
                   .map((file) => {
                     if (bvcType) {
                       const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
@@ -138,12 +139,18 @@ export default function TranslationHelpsCard({
                     }
                     const Book = projectId;
                     const [ref, ID] = file.split('\t');
+                    // Added safety checks for ref
+                    if (!ref || !ref.includes(':')) {
+                      return null;
+                    }
                     const Chapter = ref.split(':')[0];
                     const Verse = ref.split(':')[1];
                     return {
                       Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
                     };
-                  }).filter((data) => data.Chapter === currentChapterVerse.chapter && data.Verse === currentChapterVerse.verse);
+                  }).filter((data) => data !== null)
+                  .filter((data) => data.Chapter.toString() === currentChapterVerse.chapter.toString() && data.Verse.toString() === currentChapterVerse.verse.toString());
+
                 setOfflineItemsDisable(false);
                 setOfflineItems(json);
               } else {
