@@ -32,7 +32,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
       existingResource?.forEach((element) => {
         if (downloadProjectName === element.name) {
           setLoading(false);
-
+          // Delete the old tW resource to download the new one for the selected twl
+          if (projectResource.abbreviation === 'tw') {
+            fs.rmSync(path.join(folder, downloadProjectName), { recursive: true });
+          }
           // throw new Error('Resource Already Exist');
         }
       });
