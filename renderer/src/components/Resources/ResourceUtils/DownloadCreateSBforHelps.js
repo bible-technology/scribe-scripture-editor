@@ -21,7 +21,7 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
       // const id = uuidv5(key, environment.uuidToken);
       // check for existing resources
       const existingResource = fs.readdirSync(folder, { withFileTypes: true });
-      const projectName = projectResource?.name;
+      let projectName = projectResource?.name;
       const projectOwner = endPoint === 'gitea' ? projectResource?.owner : projectResource?.owner?.login;
       let downloadProjectName = `${projectName}_`;
       if (endPoint === 'gitea') {
@@ -32,7 +32,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
       existingResource?.forEach((element) => {
         if (downloadProjectName === element.name) {
           setLoading(false);
-
+          // Delete the old tW resource to download the new one for the selected twl
+          if (projectResource.abbreviation.toLowerCase() === 'tw') {
+            fs.rmSync(path.join(folder, downloadProjectName), { recursive: true });
+          }
           // throw new Error('Resource Already Exist');
         }
       });
@@ -76,7 +79,8 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
           const filecontent = await fs.readFileSync(path.join(folder, `${projectName}.zip`));
           const result = await JSZip.loadAsync(filecontent);
           const keys = Object.keys(result.files);
-
+          const zipFolder = projectName;
+          projectName = projectName.toLowerCase();
           // eslint-disable-next-line no-restricted-syntax
           for (const key of keys) {
             const item = result.files[key];
@@ -106,10 +110,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
           if (fs.existsSync(folder)) {
             const prjMain = endPoint === 'github' ? `${projectName }-main` : projectName;
             fs.renameSync(path.join(folder, prjMain), path.join(folder, downloadProjectName));
-            fs.unlinkSync(path.join(folder, `${projectName}.zip`), (err) => {
+            fs.unlinkSync(path.join(folder, `${zipFolder}.zip`), (err) => {
               if (err) {
                 logger.debug('DownloadCreateSBforHelps.js', 'error in deleting zip');
-                throw new Error(`Removing Resource Zip Failed :  ${projectName}.zip`);
+                throw new Error(`Removing Resource Zip Failed :  ${zipFolder}.zip`);
               }
             });
             if (update && update?.status) {

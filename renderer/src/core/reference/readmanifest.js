@@ -43,7 +43,7 @@ export async function readCustomResources({ resourceId }) {
             }
           });
           break;
-        case 'twlm':
+        case 'twl':
           (agSettingsJson?.resources.door43.translationWords)?.forEach(async (url) => {
             const url1 = path.join(url, '/raw/branch/master/', 'manifest.yaml');
             const url2 = url.split('/')[3];

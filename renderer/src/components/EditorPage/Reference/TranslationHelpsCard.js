@@ -5,6 +5,7 @@ import {
 } from 'translation-helps-rcl';
 import localForage from 'localforage';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
+import * as localforage from 'localforage';
 import ReferenceCard from './ReferenceCard';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
@@ -129,6 +130,7 @@ export default function TranslationHelpsCard({
                 }
 
                 const json = filecontent.split('\n')
+                  .filter((line) => line.trim())
                   .map((file) => {
                     if (bvcType) {
                       const [Book, Chapter, Verse, ID, SupportReference, OrigQuote, Occurrence, GLQuote, OccurrenceNote] = file.split('\t');
@@ -138,12 +140,18 @@ export default function TranslationHelpsCard({
                     }
                     const Book = projectId;
                     const [ref, ID] = file.split('\t');
+                    // Added safety checks for ref
+                    if (!ref || !ref.includes(':')) {
+                      return null;
+                    }
                     const Chapter = ref.split(':')[0];
                     const Verse = ref.split(':')[1];
                     return {
                       Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
                     };
-                  }).filter((data) => data.Chapter === currentChapterVerse.chapter && data.Verse === currentChapterVerse.verse);
+                  }).filter((data) => data !== null)
+                  .filter((data) => data.Chapter.toString() === currentChapterVerse.chapter.toString() && data.Verse.toString() === currentChapterVerse.verse.toString());
+
                 setOfflineItemsDisable(false);
                 setOfflineItems(json);
               } else {
@@ -319,6 +327,72 @@ export default function TranslationHelpsCard({
               setOfflineMarkdown(filecontent);
             } else {
               setOfflineMarkdown({ error: true, data: 'No Content Available' });
+            }
+            break;
+
+          case 'twl':
+            if (fs.existsSync(path.join(folder, projectName))) {
+              // eslint-disable-next-line array-callback-return
+              const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
+                if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
+                  return item;
+                }
+              });
+
+              if (currentFile?.length > 0) {
+                const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
+                // convert tsv to json
+                const headerArr = filecontent.split('\n')[0].split('\t');
+                let noteName;
+                let indexOfNote;
+                if (headerArr.indexOf('TWLink') > 0) {
+                  indexOfNote = headerArr.indexOf('TWLink');
+                  noteName = headerArr[indexOfNote];
+                }
+
+                let bvcType = true;
+                if (headerArr.includes('Reference') && headerArr.every((value) => !['Book', 'Verse', 'Chapter'].includes(value))) {
+                  bvcType = false;
+                }
+
+                const json = filecontent.split('\n')
+                  .map((file) => {
+                    if (bvcType) {
+                      const [Book, Chapter, Verse, ID, OrigWords, Occurrence, TWLink] = file.split('\t');
+                      return {
+                        Book, Chapter, Verse, ID, OrigWords, Occurrence, TWLink,
+                      };
+                    }
+
+                    const Book = projectId;
+                    const [ref, ID] = file.split('\t');
+                    const Chapter = ref.split(':')[0];
+                    const Verse = ref.split(':')[1];
+
+                    return {
+                      Book, Chapter, Verse, ID, [noteName]: file.split('\t')[indexOfNote],
+                    };
+                  }).filter((data) => data.Chapter.toString() === currentChapterVerse.chapter.toString() && data.Verse.toString() === currentChapterVerse.verse.toString());
+
+                const twLinks = json.map(async (item) => {
+                  const startIndex = item.TWLink.indexOf('dict/');
+                  let trimmedString = '';
+                  if (startIndex !== -1) {
+                    trimmedString = item.TWLink.substring(startIndex + 'dict/'.length);
+                  }
+                  const parts = trimmedString.split('/');
+                  const resources = await localforage.getItem('resources');
+                  const tW_project = `${offlineResource?.data?.value?.meta?.language}_tw_${offlineResource?.data?.value?.meta?.owner}`;
+                  const projectName = resources.find((item) => (item.projectDir).toLowerCase().includes(tW_project.toLowerCase()));
+                  const wordLink = path.join(...parts);
+                  const filecontent = fs.readFileSync(path.join(folder, projectName.projectDir, `${wordLink}.md`), 'utf8');
+                  return filecontent;
+                });
+                setOfflineItemsDisable(true);
+                setOfflineItems(twLinks);
+              } else {
+                setOfflineMarkdown({ error: true, data: 'No Content Available' });
+              }
             }
             break;
 

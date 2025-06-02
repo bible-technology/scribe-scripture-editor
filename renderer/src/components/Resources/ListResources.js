@@ -62,7 +62,7 @@ export const ListResources = ({
   const [translationImageResources, setTranslationImageResources] = useState([]);
   const [juxtalinear, setJuxtalinear] = useState([]);
   const [translationQuestion, setTranslationQuestion] = useState([]);
-  // const [translationWord, settranslationWord] = useState([]);
+  const [translationWord, settranslationWord] = useState([]);
   const [translationAcademy, setTranslationAcademy] = useState([]);
   const [obsTranslationNote, setObsTranslationNote] = useState([]);
   const [obsTranslationQuestion, setObsTranslationQuestion] = useState([]);
@@ -73,7 +73,17 @@ export const ListResources = ({
       try {
         logger.debug('ResourcesPopUp.js', 'Helps Download started');
         setCurrentDownloading(reference);
-        await DownloadCreateSBforHelps(reference?.responseData, setDownloading, false, offlineResource, endPoint, filteredReposResourcelinks);
+        if (selectResource === 'twl') {
+          const targetLanguage = reference.language;
+          const targetOwner = reference.owner;
+          const matchingResource = filteredResources.dependentResource.resource.find((resource) => resource.language === targetLanguage && resource.owner === targetOwner);
+          if (matchingResource) {
+            await DownloadCreateSBforHelps(matchingResource?.responseData, setDownloading, false, offlineResource, endPoint, filteredReposResourcelinks);
+            await DownloadCreateSBforHelps(reference?.responseData, setDownloading, false, offlineResource, endPoint, filteredReposResourcelinks);
+          }
+        } else {
+          await DownloadCreateSBforHelps(reference?.responseData, setDownloading, false, offlineResource, endPoint, filteredReposResourcelinks);
+        }
         setCurrentDownloading(null);
         setOpenSnackBar(true);
         setError('success');
@@ -114,8 +124,9 @@ export const ListResources = ({
         // case 'tw':
         //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
         //   break;
-      case 'twlm':
+      case 'twl':
         await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
+        await fetchTranslationResource('Translation Words', settranslationWord, 'tw', selectedPreProd, snackBarAction);
         break;
       case 'tq':
         await fetchTranslationResource('Translation Questions&subject=tsv Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
@@ -147,19 +158,20 @@ export const ListResources = ({
         { id: 'tn', title: t('label-resource-tn'), resource: translationNote },
         { id: 'x-bcvnotes', title: t('label-resource-tn'), resource: translationNote },
         { id: 'tir', title: t('label-resource-tir'), resource: translationImageResources },
-        { id: 'twlm', title: t('label-resource-twl'), resource: translationWordList },
-        // { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
+        { id: 'twl', title: t('label-resource-twl'), resource: translationWordList },
+        { id: 'tw', title: t('label-resource-twlm'), resource: translationWord },
         { id: 'tq', title: t('label-resource-tq'), resource: translationQuestion },
         { id: 'ta', title: t('label-resource-ta'), resource: translationAcademy },
         { id: 'obs-tn', title: t('label-resource-obs-tn'), resource: obsTranslationNote },
         { id: 'obs-tq', title: t('label-resource-obs-tq'), resource: obsTranslationQuestion },
         { id: 'obs-twlm', title: t('label-resource-obs-twl'), resource: obsTranslationWordList }];
       const reference = resources.find((r) => r.id === selectResource);
+      const dependentResource = (selectResource === 'twl' ? resources.find((r) => r.id === 'tw') : '');
       // filter for a resource OR an x-bcvnotes burrito
       // const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' || item?.value?.type?.flavorType?.flavor?.name === 'x-resourcelinks') || (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource)) : [];
       const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' && selectResource === 'tn') || ((item?.value?.type?.flavorType?.flavor?.name === 'x-imagedict' || item?.value?.type?.flavorType?.flavor?.name === 'x-videolinks') && selectResource === 'tir')) : [];
 
-      return { reference, offlineResource };
+      return { reference, offlineResource, dependentResource };
     };
     const data = getCurrentOnlineOfflineHelpsResources(selectResource);
     setCurrentFullResources(data);
@@ -319,7 +331,7 @@ export const ListResources = ({
                   className={`${notes?.responseData?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white group focus:outline-none`}
                   id={notes.name}
                   key={notes.name + notes.owner}
-                  onClick={(e) => (selectResource === 'tir' || selectResource === 'tn' ? handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource) : handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, ''))}
+                  onClick={(e) => (selectResource === 'tir' ? handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource) : handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, ''))}
                   role="button"
                 >
                   <td colSpan={2} className="p-2">
@@ -372,7 +384,7 @@ export const ListResources = ({
                       handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource);
                     }}
                   >
-                    {(filteredResources?.onlineResource?.id !== 'twlm' && filteredResources?.onlineResource?.id !== 'obs-twlm') && (
+                    {(filteredResources?.onlineResource?.id !== 'obs-twlm') && (
                       <div
                         className="cursor-pointer focus:outline-none flex justify-center items-center"
                         role="button"

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-// import localforage, * as localForage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import { SnackBar } from '@/components/SnackBar';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
@@ -10,7 +9,6 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
-// import TrashSvg from '@/icons/basil/Outline/Interface/Trash.svg';
 
 const path = require('path');
 
@@ -141,6 +139,14 @@ function RemoveResource({
         break;
       case 'tn':
       case 'tw':
+      case 'twl':
+        resourceName = resource?.projectDir;
+        localForage.getItem('resources').then(async (res) => {
+          const tW_project = `${resource?.value?.meta?.language}_tw_${resource?.value?.meta?.owner}`;
+          const projectName = res.find((item) => item.projectDir.includes(tW_project));
+          linkedResourceName = projectName?.projectDir;
+        });
+        break;
       case 'ta':
       case 'tq':
       case 'obs-tn':

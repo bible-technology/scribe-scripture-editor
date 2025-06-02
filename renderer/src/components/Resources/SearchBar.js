@@ -16,7 +16,7 @@ export default function SearchBar({
 
   return (
     <div className="flex justify-end items-center gap-10">
-      {(selectResource !== 'obs' && selectResource !== 'bible' && selectResource !== 'twlm' && selectResource !== 'audio')
+      {(selectResource !== 'obs' && selectResource !== 'bible' && selectResource !== 'twl' && selectResource !== 'audio')
         && (
           <div className="flex items-center gap-2">
             <input

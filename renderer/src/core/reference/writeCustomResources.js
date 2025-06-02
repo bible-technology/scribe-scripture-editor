@@ -27,7 +27,7 @@ export async function writeCustomResources({ resourceUrl }) {
             agSettingsJson?.resources.door43.translationQuestions.push({ name: resourceUrl.resourceName, url: resourceUrl.url });
           }
           break;
-        case 'twlm':
+        case 'twl':
           if (agSettingsJson?.resources.door43.translationWords.includes(resourceUrl.url) === false) {
             agSettingsJson?.resources.door43.translationWords.push({ name: resourceUrl.resourceName, url: resourceUrl.url });
           }
