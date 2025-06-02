@@ -5,7 +5,7 @@ import { readFile } from '../../../../core/editor/readFile';
 import packageInfo from '../../../../../../package.json';
 import { handleCache } from '../cacheUtils';
 
-export const useReadUsfmFile = (bookId) => {
+export const useReadUsfmFile = (bookId, onlyUsfm=false) => {
   const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setbookAvailable] = useState(false);
   const [usfmString, setUsfmString] = useState('');
@@ -39,16 +39,18 @@ export const useReadUsfmFile = (bookId) => {
         const filePath = path.join(newpath, packageInfo.name, 'users', userName, 'projects', projectName, 'ingredients', `${bookId?.toUpperCase()}.usfm`);
         if (currentBook) {
           const fileData = await readFile({ projectname: projectName, filename: currentBook.fileName, username: userName });
-          const cachedData = await handleCache(filePath, fileData, projectCachePath, fileCacheMapPath);
           const books = [{
             selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
             bookCode: currentBook.bookId?.toLowerCase(),
             data: fileData,
           }];
           setUsfmData(books);
-          setbookAvailable(true);
-          setUsfmString(fileData);
-          setCachedData(cachedData);
+          if(!onlyUsfm) {
+            const cachedData = await handleCache(filePath, fileData, projectCachePath, fileCacheMapPath);
+            setbookAvailable(true);
+            setUsfmString(fileData);
+            setCachedData(cachedData);
+          }
         } else {
           setUsfmData([]);
           setbookAvailable(false);
@@ -62,6 +64,9 @@ export const useReadUsfmFile = (bookId) => {
     }
     readLocalFile();
   }, [bookId]);
+  if(onlyUsfm) {
+    return usfmData;
+  }
   return {
     usfmData, bookAvailable, usfmString, bookId, cachedData, loading, booksInProject,
   };

@@ -99,6 +99,11 @@ export default function usePerf({
     setHtmlPerf(newPerfHtml);
   };
 
+  const getPerf = async () => {
+    const thePerf = await epiteleteHtml?.readPerf(bookCode);
+    return thePerf;
+  }
+
   const canUndo = (epiteleteHtml?.canUndo && epiteleteHtml?.canUndo(bookCode)) || false;
   const canRedo = (epiteleteHtml?.canRedo && epiteleteHtml?.canRedo(bookCode)) || false;
 
@@ -117,6 +122,7 @@ export default function usePerf({
     exportUsfm,
     undo,
     redo,
+    getPerf,
   };
 
   return { state, actions };

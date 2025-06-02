@@ -34,12 +34,14 @@ export default function LexicalEditor({
   useEffect(() => {
     if (usjInput) {
       setUsj(usjInput);
+      localStorage.setItem('usj', JSON.stringify(usjInput));
     }
   }, [usjInput]);
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (usj && editorRef.current) {
         editorRef.current.setUsj(usj);
+        localStorage.setItem('usj', JSON.stringify(usj));
       }
     }, 1000);
     return () => clearTimeout(timeoutId);

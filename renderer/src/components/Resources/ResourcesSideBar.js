@@ -24,6 +24,7 @@ export default function ResourcesSidebar({
   setShowInput,
   setTitle,
   selectedProjectMeta,
+  choosingSourceLang,
 }) {
   const { t } = useTranslation();
   const handleClick = (id) => {
@@ -140,36 +141,45 @@ export default function ResourcesSidebar({
     <div className="w-[35%] sm:w-[25%] bg-gray-100 h-[85vh] sm:h-[100%] flex flex-col gap-4 p-2">
       {resourcesList.map((resource, idx) => {
         const { Icon, id, title } = resource;
+        const isClickable = choosingSourceLang ? id === 'bible' : true;
+        if(choosingSourceLang) setSelectResource('bible');
         return (
           <div
             key={idx}
+            className={`${
+              choosingSourceLang && id !== 'bible' ? 'opacity-50 pointer-events-none' : ''
+            }`}
           >
             <ResourcesSideBarOption
               Icon={Icon}
               resource={resource}
-              handleClick={handleClick}
+              // Disable click for non-clickable categories
+              handleClick={isClickable ? handleClick : () => {}}
               selectedMenu={selectResource}
               setSelectedMenu={setSelectResource}
               setShowInput={setShowInput}
             />
             <div className="pl-2">
-              {resource.subCategory.length !== 0
-                && resource.subCategory.map(
-                  (subCategory, categoryIdx) => {
-                    const { Icon, id, title } = subCategory;
-                    return (
+              {resource.subCategory.length !== 0 &&
+                resource.subCategory.map((subCategory, categoryIdx) => {
+                  return (
+                    <div
+                      key={categoryIdx}
+                      className={`${
+                        choosingSourceLang ? 'opacity-50 pointer-events-none' : ''
+                      }`}
+                    >
                       <ResourcesSideBarOption
-                        key={categoryIdx}
-                        Icon={Icon}
+                        Icon={subCategory.Icon}
                         resource={subCategory}
-                        handleClick={handleClick}
+                        handleClick={choosingSourceLang ? () => {} : handleClick}
                         selectedMenu={selectResource}
                         setSelectedMenu={setSelectResource}
                         setShowInput={setShowInput}
                       />
-                    );
-                  },
-                )}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         );

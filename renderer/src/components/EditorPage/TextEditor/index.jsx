@@ -105,7 +105,7 @@ export default function TextEditor() {
   const handleUsjChange = useMemo(
     () => debounce(async (updatedUsj) => {
       updateCacheNSaveFile(updatedUsj, book);
-      // console.log('usj updated', updatedUsj);
+      localStorage.setItem('usj', JSON.stringify(updatedUsj));
     }, 1000),
     [book],
   );

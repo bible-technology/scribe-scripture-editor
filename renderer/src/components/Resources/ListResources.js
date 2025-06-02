@@ -38,6 +38,7 @@ export const ListResources = ({
   setFilteredResources,
   setfilteredBibleObsAudio,
   endPoint,
+  choosingSourceLang,
 }) => {
   const {
     states: {

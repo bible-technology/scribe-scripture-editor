@@ -274,6 +274,18 @@ p.paragraph:has(.chapter) {
 	@apply flex h-8 cursor-pointer items-center justify-center rounded-lg p-2 text-xs font-bold outline-none xl:px-4;
 }
 
+span.incorrect {
+	text-decoration-line: underline;
+	text-decoration-color: #F24822;
+	text-decoration-style: wavy;
+	text-decoration-thickness: 1px;
+}
+
+span.incorrect:hover {
+	background: var(--Primary-100, #FFCCB3);
+	cursor: pointer;
+}
+
 .pdfViewer {
 	overflow-y: scroll;
 	flex: 1;
@@ -3592,4 +3604,27 @@ span.read img {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
+}
+
+/* Highlight for entire verse */
+.highlight-verse {
+	background-color: yellow;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
+	padding: 5px;
+}
+
+/* Highlight for specific matching text */
+.highlight {
+	background-color: orange;
+	color: black;
+	font-weight: bold;
+	border-radius: 3px;
+	padding: 0 2px;
+}
+
+.highlight-chapter {
+	background-color: lightblue;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
 }

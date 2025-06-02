@@ -22,6 +22,8 @@ export default function ResourcesPopUp(
     header,
     selectedProjectMeta,
     referenceResources,
+    choosingSourceLang,
+    setReferenceSourceLang
   },
 ) {
   const cancelButtonRef = useRef(null);
@@ -64,16 +66,29 @@ export default function ResourcesPopUp(
     const offlineResource = offline
       ? { offline: true, data: offline }
       : { offline: false };
-    setReferenceResources({
-      selectedResource: selectResource,
-      languageId: row,
-      refName: name,
-      header: title,
-      owner,
-      offlineResource,
-      flavor: flavorname,
-      ownership: userOrCommon,
-    });
+    if (choosingSourceLang) {
+      setReferenceSourceLang({
+        selectedResource: selectResource,
+        languageId: row,
+        refName: name,
+        header: title,
+        owner,
+        offlineResource,
+        flavor: flavorname,
+        ownership: userOrCommon,
+      });
+    } else {
+      setReferenceResources({
+        selectedResource: selectResource,
+        languageId: row,
+        refName: name,
+        header: title,
+        owner,
+        offlineResource,
+        flavor: flavorname,
+        ownership: userOrCommon,
+      });
+    }
     removeSection();
   };
 
@@ -116,7 +131,7 @@ export default function ResourcesPopUp(
               </button>
             </div>
             <div className="flex border bg-white">
-              <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} />
+              <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} choosingSourceLang={choosingSourceLang} />
               <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
                 {selectResource !== 'local-helps' && (
                   <div className="flex items-center justify-between space-x-3 mb-4">
@@ -194,6 +209,7 @@ export default function ResourcesPopUp(
                       setLoading={setLoading}
                       setSubMenuItems={setSubMenuItems}
                       endPoint={searchSource}
+                      choosingSourceLang={choosingSourceLang}
                     />
                   )}
               </div>
