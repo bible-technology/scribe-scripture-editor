@@ -383,7 +383,7 @@ export default function TranslationHelpsCard({
                   const parts = trimmedString.split('/');
                   const resources = await localforage.getItem('resources');
                   const tW_project = `${offlineResource?.data?.value?.meta?.language}_tw_${offlineResource?.data?.value?.meta?.owner}`;
-                  const projectName = resources.find((item) => item.projectDir.includes(tW_project));
+                  const projectName = resources.find((item) => (item.projectDir).toLowerCase().includes(tW_project.toLowerCase()));
                   const wordLink = path.join(...parts);
                   const filecontent = fs.readFileSync(path.join(folder, projectName.projectDir, `${wordLink}.md`), 'utf8');
                   return filecontent;
