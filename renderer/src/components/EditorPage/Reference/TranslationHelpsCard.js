@@ -261,75 +261,95 @@ export default function TranslationHelpsCard({
 
       case 'tq':
         if (fs.existsSync(path.join(folder, projectName))) {
-          // eslint-disable-next-line array-callback-return
-          const currentFile = offlineResource?.data?.value?.projects.filter((item) => {
-            if (item?.identifier.toLowerCase() === projectId.toLowerCase()) {
-              return item;
-            }
-          });
-
-          if (currentFile.length && currentFile[0].path?.includes('.tsv')) {
-            const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile[0].path), 'utf8');
-            // convert tsv to json
-            const headerArr = filecontent.split('\n')[0].split('\t');
+          const currentProject = offlineResource?.data?.value?.projects.find((item) => item?.identifier.toLowerCase() === projectId.toLowerCase());
+          if (!currentProject) {
+            break;
+          }
+          if (currentProject.path?.includes('.tsv')) {
+            const filePath = path.join(folder, projectName, currentProject.path);
+            const filecontent = await fs.readFileSync(filePath, 'utf8');
+            const lines = filecontent.split('\n');
+            const headerArr = lines[0].split('\t');
             const questionIndex = headerArr.indexOf('Question');
             const responseIndex = headerArr.indexOf('Response');
+            const bvcType = !(headerArr.includes('Reference')
+              && headerArr.every((value) => !['Book', 'Verse', 'Chapter'].includes(value)));
+            const targetChapter = currentChapterVerse.chapter.toString();
+            const targetVerse = currentChapterVerse.verse.toString();
+            const matchingVerses = [];
 
-            let bvcType = true;
-            if (headerArr.includes('Reference') && headerArr.every((value) => !['Book', 'Verse', 'Chapter'].includes(value))) {
-              bvcType = false;
-            }
-
-            const joinedVerses = [];
-            const verseObjArr = filecontent.split('\n')
-              .map((file) => {
-                if (bvcType) {
-                  const [Book, Chapter, Verse, ID, Question, Response] = file.split('\t');
-                  return {
+            // Lines starting from index 1
+            for (let i = 1; i < lines.length; i++) {
+              const line = lines[i];
+              if (!line.trim()) { continue; }
+              const columns = line.split('\t');
+              if (bvcType) {
+                const [Book, Chapter, Verse, ID, Question, Response] = columns;
+                // Exit if this verse doesn't match
+                if (Chapter === targetChapter && Verse === targetVerse) {
+                  matchingVerses.push({
                     Book, Chapter, Verse, ID, Question, Response,
-                  };
+                  });
                 }
+              } else {
                 const Book = projectId;
-                const [ref, ID] = file.split('\t');
-                const Chapter = ref.split(':')[0];
-                const Verse = ref.split(':')[1];
-                if (Verse) {
-                  const splitVerse = Verse?.split('-');
-                  if (splitVerse.length > 1) {
-                    const start = parseInt(splitVerse[0], 10);
-                    const end = parseInt(splitVerse[1], 10);
-                    for (let i = start; i <= end; i++) {
-                      joinedVerses.push({
-                        Book, Chapter, Verse: i.toString(), ID, Question: file.split('\t')[questionIndex], Response: file.split('\t')[responseIndex],
-                      });
-                    }
-                    return { Chapter: -1, Verse: -1 };
-                  }
-                }
-                return {
-                  Book, Chapter, Verse, ID, Question: file.split('\t')[questionIndex], Response: file.split('\t')[responseIndex],
-                };
-              });
-            const finalJson = [...verseObjArr, ...joinedVerses];
-            const json = finalJson.filter((data) => data.Chapter === chapter && data.Verse === verse);
+                const [ref, ID] = columns;
+                if (!ref) { continue; }
+                const refParts = ref.split(':');
+                const Chapter = refParts[0];
+                const Verse = refParts[1];
+                if (!Verse) { continue; }
+                // Handle joint verse
+                if (Verse.includes('-')) {
+                  const [startStr, endStr] = Verse.split('-');
+                  const start = parseInt(startStr, 10);
+                  const end = parseInt(endStr, 10);
 
-            setOfflineItemsDisable(false);
-            setOfflineItems(json);
-          } else {
-            // this is for MD
-            // eslint-disable-next-line array-callback-return
-            offlineResource?.data?.value?.projects.filter(async (project) => {
-              if (project.identifier.toLowerCase() === projectId.toLowerCase()) {
-                const contentDir = path.join(folder, projectName, project.path, chapter.toString().padStart(2, 0));
-                if (fs.existsSync(path.join(contentDir, `${verse.toString().padStart(2, 0)}.md`))) {
-                  const filecontent = fs.readFileSync(path.join(contentDir, `${verse.toString().padStart(2, 0)}.md`), 'utf8');
-                  setOfflineItemsDisable(true);
-                  setOfflineMarkdown(filecontent);
-                } else {
-                  setOfflineMarkdown({ error: true, data: 'No Content Available' });
+                  // Joint verse
+                  const targetVerseNum = parseInt(targetVerse, 10);
+                  if (Chapter === targetChapter
+                      && targetVerseNum >= start && targetVerseNum <= end) {
+                    matchingVerses.push({
+                      Book,
+                      Chapter,
+                      Verse: targetVerse,
+                      ID,
+                      Question: columns[questionIndex],
+                      Response: columns[responseIndex],
+                    });
+                  }
+                } else if (Chapter === targetChapter && Verse === targetVerse) {
+                  matchingVerses.push({
+                    Book,
+                    Chapter,
+                    Verse,
+                    ID,
+                    Question: columns[questionIndex],
+                    Response: columns[responseIndex],
+                  });
                 }
               }
-            });
+            }
+
+            setOfflineItemsDisable(false);
+            setOfflineItems(matchingVerses);
+          } else {
+            // Handle MD files
+            const contentDir = path.join(
+              folder,
+              projectName,
+              currentProject.path,
+              chapter.toString().padStart(2, '0'),
+            );
+            const mdFilePath = path.join(contentDir, `${verse.toString().padStart(2, '0')}.md`);
+
+            if (fs.existsSync(mdFilePath)) {
+              const filecontent = fs.readFileSync(mdFilePath, 'utf8');
+              setOfflineItemsDisable(true);
+              setOfflineMarkdown(filecontent);
+            } else {
+              setOfflineMarkdown({ error: true, data: 'No Content Available' });
+            }
           }
         }
         break;
