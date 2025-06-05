@@ -17,7 +17,7 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
       logger.debug('uploadLocalHelpsResources.js', 'read manifest successfully');
 
       // check its not twl or obs-twl -> currently not supported
-      if (!['tn', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq'].includes(manifest.dublin_core.identifier)) {
+      if (!['tn', 'twl', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq'].includes(manifest.dublin_core.identifier)) {
         throw new Error(`${manifest.dublin_core.identifier} resource type is not currently supported`);
       }
 
