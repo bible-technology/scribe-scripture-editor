@@ -43,6 +43,7 @@ export default function TranslationHelpsCard({
   const [offlineMarkdown, setOfflineMarkdown] = useState('');
   const [resetTrigger, setResetTrigger] = useState(false);
   const [currentTnTab, setCurrentTnTab] = useState(2);
+  const isOfflineMode = offlineResource?.offline;
 
   // Memoize current chapter/verse to prevent object recreation
   const currentChapterVerse = useMemo(() => {
@@ -65,7 +66,7 @@ export default function TranslationHelpsCard({
     filePath,
     owner,
     server,
-    readyToFetch: true,
+    readyToFetch: !isOfflineMode, // Only fetch when NOT in offline mode
   }), [
     currentChapterVerse.verse,
     currentChapterVerse.chapter,
@@ -76,29 +77,30 @@ export default function TranslationHelpsCard({
     filePath,
     owner,
     server,
+    isOfflineMode,
   ]);
 
-  // Get content using memoized parameters
-  let items = [];
-  let markdown = '';
-  let isLoading = false;
-
+  // Always call useContent hook (moved before useCallback)
+  let contentResult = { items: [], markdown: '', isLoading: false };
   try {
-    const tmpRes = useContent(contentParams);
-    items = tmpRes.items;
-    markdown = tmpRes.markdown;
-    isLoading = tmpRes.isLoading;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    contentResult = useContent(contentParams);
   } catch (e) {
     logger.debug('TranslationHelpsCard.js', 'Error setting up in useContent');
   }
 
+  // Extract values from contentResult, but only use them if not in offline mode
+  const items = isOfflineMode ? [] : contentResult.items;
+  const markdown = isOfflineMode ? '' : contentResult.markdown;
+  const isLoading = isOfflineMode ? false : contentResult.isLoading;
+
   // Memoize offline resource processing function
   const processOfflineResource = useCallback(async () => {
-    if (!offlineResource?.offline) { return; }
+    if (!isOfflineMode) { return; }
 
     try {
       setOfflineMarkdown('');
-      setOfflineItems('');
+      setOfflineItems([]);
       let isBurrito = false;
       const user = await localForage.getItem('userProfile');
       logger.debug('TranslationHelpsCard.js', `reading offline helps ${offlineResource.data?.projectDir}`);
@@ -440,7 +442,7 @@ export default function TranslationHelpsCard({
               json.push(parsedData);
             }
 
-            const twLinks = json.map(async (item) => {
+            const twLinksPromises = json.map(async (item) => {
               const startIndex = item.TWLink.indexOf('dict/');
               let trimmedString = '';
               if (startIndex !== -1) {
@@ -451,9 +453,13 @@ export default function TranslationHelpsCard({
               const tW_project = `${offlineResource?.data?.value?.meta?.language}_tw_${offlineResource?.data?.value?.meta?.owner}`;
               const projectName = resources.find((item) => (item.projectDir).toLowerCase().includes(tW_project.toLowerCase()));
               const wordLink = path.join(...parts);
-              const filecontent = fs.readFileSync(path.join(folder, projectName.projectDir, `${wordLink}.md`), 'utf8');
-              return filecontent;
+              if (fs.existsSync(path.join(folder, projectName.projectDir, `${wordLink}.md`))) {
+                const filecontent = fs.readFileSync(path.join(folder, projectName.projectDir, `${wordLink}.md`), 'utf8');
+                item.markdown = filecontent;
+                return item;
+              }
             });
+            const twLinks = await Promise.all(twLinksPromises);
             setOfflineItemsDisable(true);
             setOfflineItems(twLinks);
           } else {
@@ -469,6 +475,7 @@ export default function TranslationHelpsCard({
       logger.debug('TranslationHelpsCard.js', `reading offline helps Error : ${err} `);
     }
   }, [
+    isOfflineMode,
     offlineResource,
     resourceId,
     projectId,
@@ -478,15 +485,15 @@ export default function TranslationHelpsCard({
 
   // Effect for processing offline resources
   useEffect(() => {
-    if (offlineResource?.offline) {
+    if (isOfflineMode) {
       processOfflineResource();
     }
     setResetTrigger(true);
-  }, [offlineResource, processOfflineResource]);
+  }, [isOfflineMode, processOfflineResource]);
 
   // Memoize final items and markdown to prevent unnecessary re-renders
   const finalItems = useMemo(() => {
-    const result = !offlineItemsDisable && offlineResource?.offline ? offlineItems : items;
+    const result = isOfflineMode ? offlineItems : items;
 
     // Process items for tn and x-bcvnotes
     if ((resourceId === 'tn' || resourceId === 'x-bcvnotes') && result && result[0]) {
@@ -501,11 +508,11 @@ export default function TranslationHelpsCard({
     }
 
     return result;
-  }, [items, offlineItems, offlineItemsDisable, offlineResource?.offline, resourceId]);
+  }, [items, offlineItems, offlineItemsDisable, isOfflineMode, resourceId]);
 
   const finalMarkdown = useMemo(
-    () => (offlineResource?.offline ? offlineMarkdown : markdown),
-    [offlineResource?.offline, offlineMarkdown, markdown],
+    () => (isOfflineMode ? offlineMarkdown : markdown),
+    [isOfflineMode, offlineMarkdown, markdown],
   );
 
   return (
