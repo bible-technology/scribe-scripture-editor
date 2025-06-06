@@ -1,159 +1,62 @@
-import { ProjectContext } from '@/components/context/ProjectContext';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useContext, useState } from 'react';
+import TextEditor from './TextEditor';
+import ObsAudioRecorder from './ObsAudioRecorder';
 
-const EditorPanel = ({ obsStory, storyUpdate }) => {
+const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
   const {
-    state: {
-      selectedFont,
-      editorFontSize,
-    },
-    actions: {
-      setSelectedStory,
-    },
+    state: { storyId },
   } = useContext(ReferenceContext);
 
-  const { states: { scrollLock } } = useContext(ProjectContext);
-  const { t } = useTranslation();
-  const handleChange = (e) => {
-    const index = e.target.getAttribute('data-id');
-    const value = (e.target.value).toString().replace(/[\n\r]/gm, '');
-    const story = obsStory[index - 1];
-    let newStory = {};
-    if (Object.prototype.hasOwnProperty.call(story, 'title')) {
-      newStory = {
-        id: story.id,
-        title: value,
-      };
-    } else if (Object.prototype.hasOwnProperty.call(story, 'text')) {
-      newStory = {
-        id: story.id,
-        img: story.img,
-        text: value,
-      };
-    } else if (Object.prototype.hasOwnProperty.call(story, 'end')) {
-      newStory = {
-        id: story.id,
-        end: value,
-      };
-    }
+  const effectiveStoryId = storyId || (obsStory && obsStory[0] && obsStory[0].title.split('.')[0]);
 
-    const newStories = obsStory.map((story) => (story.id !== newStory.id ? story : newStory));
-    let newData = { ...obsStory };
-    newData = newStories;
-    storyUpdate(newData);
-  };
-  const avoidEnter = (e) => {
-    // avoiding enter key for the Header
-    if (e.key === 'Enter' || e.keyCode === 13) {
-      e.preventDefault();
-      return false;
+  const [selectedParagraph, setSelectedParagraph] = useState(null);
+
+  const handleParagraphClick = (storyItem) => {
+    if ('text' in storyItem) {
+      setSelectedParagraph(storyItem.id);
     }
   };
 
-  const adjustTextareaHeight = (element) => {
-    element.style.height = 'auto';
-    element.style.height = `${element.scrollHeight }px`;
+  const handleTitleClick = (storyItem) => {
+    setSelectedParagraph(storyItem.id);
   };
 
-  const handleOnFocus = (status, e) => {
-    const element = e.target;
-    if (status) {
-      adjustTextareaHeight(element);
-    } else {
-      element.style.height = '58px';
-    }
-  };
-
-  const handleAutoHeight = (e) => {
-    adjustTextareaHeight(e.target);
+  const handleEndClick = (storyItem) => {
+    setSelectedParagraph(storyItem.id);
   };
 
   return (
-    <>
-      {obsStory.map((story, index) => (
-        <>
-          {Object.prototype.hasOwnProperty.call(story, 'title')
-          && (
-            <div
-              className="flex m-4 p-1 rounded-md min-h-0"
-              key={story.id}
-            >
-              <textarea
-                name={story.title}
-                onChange={handleChange}
-                onKeyDown={avoidEnter}
-                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-                value={story.title}
-                data-id={story.id}
-                className="flex-grow text-justify ml-2 p-2 text-xl"
-                style={{
-                  fontFamily: selectedFont || 'sans-serif',
-                  fontSize: `${editorFontSize}rem`,
-                }}
-              />
-            </div>
-          )}
-          {Object.prototype.hasOwnProperty.call(story, 'text')
-          && (
-            <div
-              className="flex m-4 p-1 rounded-md"
-              key={story.id}
-            >
-              <span className="w-5 h-5 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center p-3 ">
-                {/* {index} */}
-                {index.toString().split('').map((num) => t(`n-${num}`))}
-              </span>
-              <textarea
-                name={story.text}
-                onChange={handleChange}
-                onKeyDown={avoidEnter}
-                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-                value={story.text}
-                data-id={story.id}
-                className="flex-grow text-justify ml-2 p-2 text-sm"
-                onFocus={(e) => handleOnFocus(true, e)}
-                onBlur={(e) => handleOnFocus(false, e)}
-                onInput={(e) => handleAutoHeight(e)}
-                style={{
-                  fontFamily: selectedFont || 'sans-serif',
-                  fontSize: `${editorFontSize}rem`,
-                  lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
-                }}
-              />
-            </div>
-          )}
-          {Object.prototype.hasOwnProperty.call(story, 'end')
-          && (
-            <div
-              className="flex m-4 p-1 rounded-md min-h-0"
-              key={story.id}
-            >
-              <textarea
-                name={story.end}
-                onChange={handleChange}
-                onKeyDown={avoidEnter}
-                onClick={() => setSelectedStory(scrollLock === true ? 0 : story.id)}
-                value={story.end}
-                data-id={story.id}
-                className="flex-grow text-justify ml-2 p-2 text-sm"
-                style={{
-                  fontFamily: selectedFont || 'sans-serif',
-                  fontSize: `${editorFontSize}rem`,
-                  lineHeight: (editorFontSize > 1.3) ? 1.5 : '',
-                }}
-              />
-            </div>
-          )}
-        </>
-      ))}
-    </>
+    <div className="relative flex flex-col h-full">
+      <div className={`flex-1 ${audioEnabled ? 'pb-20' : ''}`}>
+        <TextEditor
+          obsStory={obsStory}
+          storyUpdate={storyUpdate}
+          selectedParagraph={selectedParagraph}
+          onParagraphClick={handleParagraphClick}
+          onTitleClick={handleTitleClick}
+          onEndClick={handleEndClick}
+          effectiveStoryId={effectiveStoryId}
+          audioEnabled={audioEnabled}
+        />
+      </div>
+
+      {audioEnabled && (
+        <ObsAudioRecorder
+          selectedParagraph={selectedParagraph}
+          effectiveStoryId={effectiveStoryId}
+          isVisible={audioEnabled}
+        />
+      )}
+    </div>
   );
 };
-export default EditorPanel;
+
 EditorPanel.propTypes = {
-  obsStory: PropTypes.array,
-  storyUpdate: PropTypes.func,
+  obsStory: PropTypes.array.isRequired,
+  storyUpdate: PropTypes.func.isRequired,
+  audioEnabled: PropTypes.bool,
 };
+
+export default EditorPanel;

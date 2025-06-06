@@ -3,6 +3,8 @@ import {
   LockOpenIcon,
   LockClosedIcon,
   BookmarkIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
 } from '@heroicons/react/24/outline';
 import * as localforage from 'localforage';
 import {
@@ -19,7 +21,7 @@ import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import * as logger from '../../logger';
 
 export default function Editor({
-  children, callFrom, editor,
+  children, callFrom, editor, audioEnabled = true, onAudioToggle,
 }) {
   const {
     states: {
@@ -59,6 +61,12 @@ export default function Editor({
     }
     if (status === 'inc' && editorFontSize < 2) {
       handleEditorFontSize(editorFontSize + 0.2);
+    }
+  };
+
+  const handleAudioToggle = () => {
+    if (onAudioToggle) {
+      onAudioToggle(!audioEnabled);
     }
   };
 
@@ -214,6 +222,22 @@ export default function Editor({
 
               </div>
             )}
+          {callFrom === 'obs' && onAudioToggle && (
+            <div
+              onClick={handleAudioToggle}
+              role="button"
+              tabIndex="0"
+              title={audioEnabled ? t('tooltip-hide-audio-player') : t('tooltip-show-audio-player')}
+              aria-label="toggle-audio-player"
+              className="mx-1 px-2 focus:outline-none border-r-2 border-l-2 border-white border-opacity-10 cursor-pointer"
+            >
+              {audioEnabled ? (
+                <SpeakerWaveIcon className="h-5 w-5 text-white hover:text-gray-200 transition-colors" aria-hidden="true" />
+              ) : (
+                <SpeakerXMarkIcon className="h-5 w-5 text-white hover:text-gray-200 transition-colors" aria-hidden="true" />
+              )}
+            </div>
+          )}
 
         </div>
       </div>
@@ -238,4 +262,6 @@ Editor.propTypes = {
   children: PropTypes.any,
   callFrom: PropTypes.string,
   editor: PropTypes.string,
+  audioEnabled: PropTypes.bool,
+  onAudioToggle: PropTypes.func,
 };

@@ -19,6 +19,12 @@ import burrito from '../../../lib/BurritoTemplate.json';
 import ConfirmationModal from '../../editor/ConfirmationModal';
 import { ProgressCircle } from '../../../components/ProgressCircle';
 import { exportDefaultAudio, exportFullAudio } from './ExportUtils';
+import {
+  exportObsTextOnly,
+  exportObsComplete,
+  exportObsCombinedStories,
+  exportObsDefaultAudio,
+} from './ObsExportUtils';
 import packageInfo from '../../../../../package.json';
 
 export default function ExportProjectPopUp(props) {
@@ -37,9 +43,9 @@ export default function ExportProjectPopUp(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [metadata, setMetadata] = React.useState({});
   const [audioExport, setAudioExport] = React.useState('default');
+  const [obsExport, setObsExport] = React.useState('text-only');
   const [checkText, setCheckText] = React.useState(false);
   const [checkZip, setCheckZip] = React.useState(true);
-
   const [totalExported, setTotalExported] = React.useState(0);
   const [totalExports, setTotalExports] = React.useState(0);
   const [exportStart, setExportstart] = React.useState(false);
@@ -104,7 +110,7 @@ export default function ExportProjectPopUp(props) {
           deleteGitAfterCopy(fs, path.join(folderPath, project.name), path)
             .then(async () => {
               // convert to zip if text translation and zip checked
-              if ((project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && checkZip) {
+              if ((project?.type === 'Text Translation' || project?.type === 'Juxtalinear' || project?.type === 'OBS') && checkZip) {
                 const AdmZip = window.require('adm-zip');
                 const zip = new AdmZip();
                 zip.addLocalFolder(path.join(folderPath, project.name));
@@ -158,7 +164,7 @@ export default function ExportProjectPopUp(props) {
     setNotify, setSnackText, setOpenSnackBar, setTotalExported, setTotalExports, setExportstart, resetExportProgress, setCheckText,
   };
   const ExportStates = {
-    checkText, audioExport, folderPath, project, exportStart,
+    checkText, audioExport, obsExport, folderPath, project, exportStart, checkZip,
   };
 
   const exportBible = async () => {
@@ -177,6 +183,7 @@ export default function ExportProjectPopUp(props) {
           metadata, folder, path, fs, username,
         });
         setExportstart(true); // export start for all type of export
+
         if (project?.type === 'Audio') {
           logger.debug('ExportProjectPopUp.js', 'Inside exportBible : export audio');
           if (audioExport === 'default' || audioExport === 'chapter') {
@@ -184,6 +191,25 @@ export default function ExportProjectPopUp(props) {
           } else {
             setTotalExports(3);// 3 step process
             exportFullAudio(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
+          }
+        } else if (project?.type === 'OBS') {
+          logger.debug('ExportProjectPopUp.js', 'Inside exportBible : export OBS');
+          // Handle OBS-specific exports
+          switch (obsExport) {
+          case 'text-only':
+            exportObsTextOnly(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
+            break;
+          case 'complete':
+            exportObsComplete(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
+            break;
+          case 'combined-stories':
+            exportObsCombinedStories(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
+            break;
+          case 'default-audio':
+            exportObsDefaultAudio(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
+            break;
+          default:
+            exportObsTextOnly(metadata, folder, path, fs, ExportActions, ExportStates, closePopUp, t);
           }
         } else if (burrito?.meta?.version !== metadata?.meta?.version) {
           logger.debug('ExportProjectPopUp.js', 'Inside exportBible : burrito ok');
@@ -203,6 +229,7 @@ export default function ExportProjectPopUp(props) {
       setOpenSnackBar(true);
     }
   };
+
   return (
     <>
       <Transition
@@ -276,6 +303,74 @@ export default function ExportProjectPopUp(props) {
                     <div>
                       <h4 className="text-red-500">{valid === true ? 'Enter valid location' : ''}</h4>
                     </div>
+
+                    {/* OBS Export Options */}
+                    { project?.type === 'OBS'
+                    && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-semibold mb-3 text-gray-700">OBS Export Options</h4>
+                        <div className=" mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="text-only"
+                            checked={obsExport === 'text-only'}
+                            onChange={() => setObsExport('text-only')}
+                            disabled={exportStart}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Export only MD files (story text content)">Text Only (MD files)</span>
+                        </div>
+                        <div className="mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="complete"
+                            checked={obsExport === 'complete'}
+                            onChange={() => setObsExport('complete')}
+                            disabled={exportStart}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Export complete project with all audio files and text MD files">Complete (Audio + Text)</span>
+                        </div>
+                        <div className="mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="combined-stories"
+                            checked={obsExport === 'combined-stories'}
+                            onChange={() => setObsExport('combined-stories')}
+                            disabled={exportStart}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Combine all story segments into one audio file per story + text MD files">Combined Stories Audio</span>
+                        </div>
+                        <div className="mb-3">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="default-audio"
+                            checked={obsExport === 'default-audio'}
+                            onChange={() => setObsExport('default-audio')}
+                            disabled={exportStart}
+                          />
+                          <span className=" ml-4 text-xs font-bold" title="Export only default tagged audio files + text MD files">Default Audio + Text</span>
+                        </div>
+
+                        <div className="w-full py-3 flex mt-3">
+                          <div className="flex flex-row justify-start">
+                            <input
+                              id="obs-zip"
+                              className="h-4 w-4 text-primary"
+                              type="checkbox"
+                              checked={checkZip}
+                              onChange={() => setCheckZip(!checkZip)}
+                              disabled={exportStart}
+                            />
+                            <span className="ml-2 text-xs font-bold" title="Export as compressed zip file">Export as ZIP</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Audio Export Options */}
                     { project?.type === 'Audio'
                     && (
                       <div>
@@ -286,10 +381,18 @@ export default function ExportProjectPopUp(props) {
                             value="Default"
                             checked={audioExport === 'default'}
                             onChange={() => setAudioExport('default')}
+                            disabled={exportStart}
                           />
                           <span className=" ml-4 text-xs font-bold" title="Verse-wise export with only the default take of each verse kept as a Scripture Burrito">Verse-wise Default</span>
                           <div className="flex flex-row justify-end mr-3">
-                            <input id="visible_1" className="visible" type="checkbox" checked={checkText} onClick={() => setCheckText(!checkText)} />
+                            <input
+                              id="visible_1"
+                              className="visible"
+                              type="checkbox"
+                              checked={checkText}
+                              onChange={() => setCheckText(!checkText)}
+                              disabled={exportStart}
+                            />
                             <span className="ml-2 text-xs font-bold" title="You can have the text content along with the Audio">With Text (if available)</span>
                           </div>
                         </div>
@@ -300,6 +403,7 @@ export default function ExportProjectPopUp(props) {
                             value="Chapter"
                             checked={audioExport === 'chapter'}
                             onChange={() => setAudioExport('chapter')}
+                            disabled={exportStart}
                           />
                           <span className=" ml-4 text-xs font-bold" title="Chapter Level export with only the default take of each verse">Chapter-wise</span>
                         </div>
@@ -311,21 +415,30 @@ export default function ExportProjectPopUp(props) {
                             value="full"
                             checked={audioExport === 'full'}
                             onChange={() => setAudioExport('full')}
+                            disabled={exportStart}
                           />
                           <span className=" ml-4 text-xs font-bold" title="All takes of every verse saved as a ZIP archive within Scripture Burrito">Full project</span>
                         </div>
                       </div>
                     )}
-                    {(project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && (
 
+                    {/* Text Translation and Juxtalinear Options */}
+                    {(project?.type === 'Text Translation' || project?.type === 'Juxtalinear') && (
                       <div className="w-full py-3 flex">
                         <div className="flex flex-row justify-end mr-3">
-                          <input id="visible_1" className="visible" type="checkbox" checked={checkZip} onClick={() => setCheckZip(!checkZip)} />
+                          <input
+                            id="visible_1"
+                            className="visible"
+                            type="checkbox"
+                            checked={checkZip}
+                            onChange={() => setCheckZip(!checkZip)}
+                            disabled={exportStart}
+                          />
                           <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
                         </div>
                       </div>
-
                     )}
+
                     <div className="absolute bottom-0 right-0 left-0 bg-white">
                       <div className="flex gap-6 mx-5 justify-end">
                         <button
@@ -335,7 +448,6 @@ export default function ExportProjectPopUp(props) {
                           disabled={exportStart}
                         >
                           {t('btn-cancel')}
-
                         </button>
                         <button
                           disabled={exportStart}
