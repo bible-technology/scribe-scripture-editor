@@ -7,7 +7,7 @@ import { getScriptureDirection } from '@/core/projects/languageUtil';
 import { useTranslation } from 'react-i18next';
 import { checkandDownloadObsImages } from '@/components/Resources/DownloadObsImages/checkandDownloadObsImages';
 import dynamic from 'next/dynamic';
-import { getDetails } from './utils/getDetails';
+import { error as logError } from '../../../logger';
 import LoadingScreen from '../../Loading/LoadingScreen';
 import ObsImage from './ObsImage';
 
@@ -22,7 +22,7 @@ const style = {
 };
 
 const ReferenceObs = ({
-  stories, font, title, fontSize,
+  stories, storyAudioPath, font, title, fontSize,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [direction, setDirection] = useState('ltr');
@@ -45,33 +45,54 @@ const ReferenceObs = ({
   // Get story ID from the first story if available
   const effectiveStoryId = stories && stories[0] && stories[0].title ? stories[0].title.split('.')[0] : null;
 
+  // Cross-platform path helper
+  const joinPath = (...parts) => {
+    const path = window.require('path');
+    return path.join(...parts);
+  };
+
   // Load metadata function
   const loadMetadata = async (folder) => {
     try {
       const fs = window.require('fs');
-      const path = window.require('path');
-      const metadataPath = path.join(folder, 'metadata.json');
+      const metadataPath = joinPath(folder, 'metadata.json');
 
       if (fs.existsSync(metadataPath)) {
         const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
         return metadata;
       }
     } catch (error) {
-      // console.error('Error loading metadata:', error);
+      logError('Error loading metadata:', error);
     }
     return null;
   };
 
-  // Load story audio function - updated to match new format
+  // Load story audio function - using storyAudioPath prop
   const loadStoryAudio = async () => {
     try {
-      if (!effectiveStoryId) { return; }
+      if (!effectiveStoryId || !storyAudioPath) {
+        setAudioEnabled(false);
+        return;
+      }
 
       const fs = window.require('fs');
-      const path = window.require('path');
-      const { projectsDir } = await getDetails();
-      const audioFolder = path.join(projectsDir, 'ingredients', 'audio');
-      const storyFolder = path.join(audioFolder, effectiveStoryId.toString());
+
+      // Check if the base audio path exists
+      if (!fs.existsSync(storyAudioPath)) {
+        setAudioEnabled(false);
+        return;
+      }
+
+      // Build the audio path: storyAudioPath/ingredients/audio
+      const audioFolder = joinPath(storyAudioPath, 'ingredients', 'audio');
+
+      if (!fs.existsSync(audioFolder)) {
+        setAudioEnabled(false);
+        return;
+      }
+
+      // Get the specific story folder
+      const storyFolder = joinPath(audioFolder, effectiveStoryId.toString());
 
       if (!fs.existsSync(storyFolder)) {
         setAudioEnabled(false);
@@ -88,8 +109,9 @@ const ReferenceObs = ({
 
       const updatedContent = {};
 
-      // Process files and create structure - updated for new format
+      // Process files and create structure
       files.forEach((file) => {
+        const path = window.require('path');
         const name = path.parse(file).name;
         const parts = name.split('_');
 
@@ -99,7 +121,9 @@ const ReferenceObs = ({
           const isDefault = rest.includes('default');
 
           const key = `story_${storyNum}_${paraNum}`;
-          const fullFilePath = path.join(storyFolder, file);
+          const fullFilePath = joinPath(storyFolder, file);
+
+          // Create file URL for cross-platform compatibility
           const fileUrl = `file://${fullFilePath.replace(/\\/g, '/')}`;
 
           if (!updatedContent[key]) {
@@ -110,11 +134,11 @@ const ReferenceObs = ({
               takes: {},
               defaultTake: '1',
               filePath: storyFolder,
-              audioPath: '', // Will be set to default take path
+              audioPath: '',
             };
           }
 
-          // Store with simple number (matching ObsAudioRecorder format)
+          // Store take information
           updatedContent[key].takes[takeNum] = {
             fileName: file,
             filePath: fullFilePath,
@@ -136,7 +160,6 @@ const ReferenceObs = ({
       // Ensure default is set for each paragraph and set audioPath
       Object.keys(updatedContent).forEach((key) => {
         if (!updatedContent[key].audioPath) {
-          // If no default was found from filename, use metadata or first available take
           let defaultTake = updatedContent[key].defaultTake;
 
           // Check metadata for default take
@@ -163,11 +186,10 @@ const ReferenceObs = ({
           }
         }
       });
-
       setAudioContent(updatedContent);
       setAudioEnabled(Object.keys(updatedContent).length > 0);
     } catch (error) {
-      // console.error('Error loading story audio:', error);
+      logError('Error loading story audio:', error);
       setAudioEnabled(false);
     }
   };
@@ -177,7 +199,7 @@ const ReferenceObs = ({
     setSelectedStory(story.id);
   };
 
-  // Get audio path for AudioWaveform - updated for new format
+  // Get audio path for AudioWaveform
   const getAudioPath = (storyId) => {
     const key = `story_${effectiveStoryId}_${storyId}`;
     const audioData = audioContent[key];
@@ -195,6 +217,14 @@ const ReferenceObs = ({
     }
 
     return '';
+  };
+
+  // Check if audio exists for a story
+  const hasAudioForStory = (storyId) => {
+    const key = `story_${effectiveStoryId}_${storyId}`;
+    const audioData = audioContent[key];
+    const hasAudio = audioData && (audioData.audioPath || (audioData.takes && Object.keys(audioData.takes).length > 0));
+    return hasAudio;
   };
 
   useEffect(() => {
@@ -215,13 +245,13 @@ const ReferenceObs = ({
       });
     }
 
-    // Load audio when stories are available
-    if (stories && effectiveStoryId) {
+    // Load audio when stories and storyAudioPath are available
+    if (stories && effectiveStoryId && storyAudioPath) {
       loadStoryAudio();
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stories, title, effectiveStoryId]);
+  }, [stories, title, effectiveStoryId, storyAudioPath]);
 
   // scroll based on story part selection
   const addtoItemEls = (el, id) => {
@@ -272,7 +302,7 @@ const ReferenceObs = ({
                         <p className="text-xl text-gray-600 w-full text-center" style={style.bold}>
                           {story.title}
                         </p>
-                        {audioEnabled && audioContent[`story_${effectiveStoryId}_${story.id}`] && (
+                        {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">
                             <AudioWaveform
                               height={24}
@@ -305,7 +335,7 @@ const ReferenceObs = ({
                         >
                           {story.text}
                         </p>
-                        {audioEnabled && audioContent[`story_${effectiveStoryId}_${story.id}`] && (
+                        {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">
                             <AudioWaveform
                               height={24}
@@ -327,7 +357,7 @@ const ReferenceObs = ({
                         <p className="text-md text-gray-600" style={style.italic}>
                           {story.end}
                         </p>
-                        {audioEnabled && audioContent[`story_${effectiveStoryId}_${story.id}`] && (
+                        {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">
                             <AudioWaveform
                               height={24}
@@ -355,6 +385,7 @@ const ReferenceObs = ({
 
 ReferenceObs.propTypes = {
   stories: PropTypes.arrayOf(PropTypes.object),
+  storyAudioPath: PropTypes.string,
   font: PropTypes.string,
   title: PropTypes.string,
   fontSize: PropTypes.number,
@@ -363,6 +394,7 @@ ReferenceObs.propTypes = {
 ReferenceObs.defaultProps = {
   font: 'sans-serif',
   fontSize: 1,
+  storyAudioPath: '',
 };
 
 export default ReferenceObs;

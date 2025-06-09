@@ -29,6 +29,13 @@ const ObsAudioRecorder = ({
   const [trigger, setTrigger] = useState('');
   const [recordingsPath, setRecordingsPath] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  // Add modal state
+  const [openModal, setOpenModal] = useState({
+    openModel: false,
+    title: '',
+    confirmMessage: '',
+    buttonName: '',
+  });
 
   // Helper function to rename files when default changes
   const renameAudioFile = (oldPath, newPath) => {
@@ -106,7 +113,6 @@ const ObsAudioRecorder = ({
     }
   };
 
-  // Fix the fetchUrl function to work with new format
   const fetchUrl = (paragraphId) => {
     const key = `story_${effectiveStoryId}_${paragraphId}`;
     const audioData = audioContent?.[key];
@@ -115,47 +121,56 @@ const ObsAudioRecorder = ({
     if (audioData && audioData.takes && Object.keys(audioData.takes).length > 0) {
       const defaultTake = audioData.defaultTake || '1';
       const defaultAudio = audioData.takes[defaultTake];
-      if (defaultAudio && defaultAudio.filePath) {
-        const fileUrl = `file://${defaultAudio.filePath.replace(/\\/g, '/')}`;
 
-        // Create URL structure compatible with Player (converting numbers to takeX format for Player)
-        const urlData = {
-          ...audioData,
-          [`take${defaultTake}`]: defaultAudio.fileName,
-          default: `take${defaultTake}`,
+      if (defaultAudio && defaultAudio.filePath) {
+      // Create Player-compatible URL structure
+        const playerCompatibleUrl = {
           verseNumber: paragraphId,
-          currentTakeData: defaultAudio,
-          currentTake: `take${defaultTake}`,
-          activeAudioUrl: fileUrl,
+          paragraph: paragraphId ? paragraphId.toString() : '',
+          storyNumber: effectiveStoryId ? effectiveStoryId.toString() : '',
+          default: `take${defaultTake}`,
+          defaultTake: `take${defaultTake}`,
+          // Add individual take properties that Player expects
+          take1: audioData.takes['1'] ? audioData.takes['1'].fileName : undefined,
+          take2: audioData.takes['2'] ? audioData.takes['2'].fileName : undefined,
+          take3: audioData.takes['3'] ? audioData.takes['3'].fileName : undefined,
+          // Add takes object for the new logic in Player
           takes: {},
         };
 
-        // Convert all takes to takeX format for Player compatibility
+        // Convert all takes to Player's expected format
         Object.keys(audioData.takes).forEach((takeNum) => {
           const takeKey = `take${takeNum}`;
-          urlData[takeKey] = audioData.takes[takeNum].fileName;
-          urlData.takes[takeKey] = {
-            ...audioData.takes[takeNum],
-            url: `file://${audioData.takes[takeNum].filePath.replace(/\\/g, '/')}`,
+          const takeData = audioData.takes[takeNum];
+
+          // Set the takeX property for legacy compatibility
+          playerCompatibleUrl[takeKey] = takeData.fileName;
+
+          // Set the takes object for new logic
+          playerCompatibleUrl.takes[takeKey] = {
+            ...takeData,
+            url: `file://${takeData.filePath.replace(/\\/g, '/')}`,
           };
         });
 
-        setCurrentUrl(urlData);
+        setCurrentUrl(playerCompatibleUrl);
         setTrigger('url');
         return;
       }
     }
+
+    // Default empty structure when no audio exists
     setCurrentUrl({
       paragraph: paragraphId ? paragraphId.toString() : '',
       storyNumber: effectiveStoryId ? effectiveStoryId.toString() : '',
-      takes: {},
-      defaultTake: 'take1',
       verseNumber: paragraphId,
+      takes: {},
+      default: 'take1',
+      defaultTake: 'take1',
     });
     setTrigger('');
   };
 
-  // Updated loadStoryAudio function
   const loadStoryAudio = async () => {
     try {
       const fs = window.require('fs');
@@ -237,32 +252,18 @@ const ObsAudioRecorder = ({
     }
   };
 
-  const playRecordingFeedback = useCallback(
-    async (blobUrl, blob, para) => {
-      setIsRecording(false);
-      if (para && blob) {
-        setNewBlob(blobUrl);
-
-        const saveSuccess = await saveAudio(blob, para);
-
-        if (saveSuccess) {
-          await loadStoryAudio();
-          setTimeout(() => {
-            setNewBlob(null);
-            fetchUrl(para);
-          }, 1000);
-        }
-      } else {
-        setNewBlob(blobUrl);
-      }
-    },
-    [effectiveStoryId, take, recordingsPath],
-  );
-
+  // Fix the changeDefault function parameter handling
   const changeDefault = async (para, takeValue) => {
     try {
-      // takeValue comes from Player as number (1, 2, 3)
-      const newDefaultTake = takeValue.toString();
+    // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
+    // Normalize it to a number string
+      let newDefaultTake;
+      if (typeof takeValue === 'string' && takeValue.startsWith('take')) {
+        newDefaultTake = takeValue.replace('take', '');
+      } else {
+        newDefaultTake = takeValue.toString();
+      }
+
       const folder = recordingsPath;
       const { path } = await getDetails();
       const fs = window.require('fs');
@@ -331,6 +332,28 @@ const ObsAudioRecorder = ({
     }
   };
 
+  const playRecordingFeedback = useCallback(
+    async (blobUrl, blob, para) => {
+      setIsRecording(false);
+      if (para && blob) {
+        setNewBlob(blobUrl);
+
+        const saveSuccess = await saveAudio(blob, para);
+
+        if (saveSuccess) {
+          await loadStoryAudio();
+          setTimeout(() => {
+            setNewBlob(null);
+            fetchUrl(para);
+          }, 1000);
+        }
+      } else {
+        setNewBlob(blobUrl);
+      }
+    },
+    [effectiveStoryId, take, recordingsPath],
+  );
+
   const {
     startRecording,
     stopRecording,
@@ -394,7 +417,83 @@ const ObsAudioRecorder = ({
   if (!isVisible) {
     return null;
   }
+  const deleteAudio = async (para, takeValue) => {
+    try {
+      const fs = window.require('fs');
+      const { path } = await getDetails();
 
+      // Normalize take value
+      let takeNum;
+      if (typeof takeValue === 'string' && takeValue.startsWith('take')) {
+        takeNum = takeValue.replace('take', '');
+      } else {
+        takeNum = takeValue.toString();
+      }
+
+      const folder = recordingsPath;
+
+      // Find the file to delete (could be with or without _default)
+      const defaultFile = `${effectiveStoryId}_${para}_${takeNum}_default.mp3`;
+      const regularFile = `${effectiveStoryId}_${para}_${takeNum}.mp3`;
+
+      const defaultPath = path.join(folder, defaultFile);
+      const regularPath = path.join(folder, regularFile);
+
+      let deletedFilePath = null;
+      let wasDefault = false;
+
+      // Check which file exists and delete it
+      if (fs.existsSync(defaultPath)) {
+        fs.unlinkSync(defaultPath);
+        deletedFilePath = defaultPath;
+        wasDefault = true;
+      } else if (fs.existsSync(regularPath)) {
+        fs.unlinkSync(regularPath);
+        deletedFilePath = regularPath;
+        wasDefault = false;
+      }
+
+      if (deletedFilePath) {
+      // If we deleted the default, make another take the default
+        if (wasDefault) {
+          const files = fs.readdirSync(folder)
+            .filter((file) => file.startsWith(`${effectiveStoryId}_${para}_`) && file.endsWith('.mp3'))
+            .filter((file) => !file.includes(`_${takeNum}_`)); // Exclude the deleted take
+
+          if (files.length > 0) {
+          // Get the first available take and make it default
+            const firstFile = files[0];
+            const parts = firstFile.split('_');
+            if (parts.length >= 3) {
+              const newDefaultTake = parts[2];
+              const oldPath = path.join(folder, firstFile);
+              const newPath = path.join(folder, `${effectiveStoryId}_${para}_${newDefaultTake}_default.mp3`);
+
+              if (fs.existsSync(oldPath)) {
+                fs.renameSync(oldPath, newPath);
+              }
+            }
+          }
+        }
+
+        // Reload audio content and update UI
+        await loadStoryAudio();
+
+        if (selectedParagraph === para) {
+          setTimeout(() => {
+            fetchUrl(para);
+          }, 100);
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error deleting audio:', error);
+      return false;
+    }
+  };
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
       <Player
@@ -412,6 +511,7 @@ const ObsAudioRecorder = ({
           setTake(takeNum);
         }}
         changeDefault={(v) => changeDefault(selectedParagraph, v)}
+        setOpenModal={setOpenModal} // Add this line
         trigger={trigger}
         setTrigger={(v) => setTrigger(v)}
         location={recordingsPath || ''}
@@ -419,6 +519,43 @@ const ObsAudioRecorder = ({
         recordingStatus={status}
         selectedParagraph={selectedParagraph}
       />
+
+      {/* Add Modal Component - You'll need to create or import your modal component */}
+      {openModal.openModel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">{openModal.title}</h3>
+            <p className="mb-6">{openModal.confirmMessage}</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                onClick={() => setOpenModal({ ...openModal, openModel: false })}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={() => {
+                  // Handle the action based on the trigger
+                  if (trigger === 'delete') {
+                    // Add your delete logic here  <-- REPLACE THIS LINE
+                    deleteAudio(selectedParagraph, take); // <-- WITH THIS LINE
+                  } else {
+                    // Handle re-record
+                    setTrigger('record');
+                    setIsRecording(true);
+                  }
+                  setOpenModal({ ...openModal, openModel: false });
+                }}
+              >
+                {openModal.buttonName}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
