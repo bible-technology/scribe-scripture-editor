@@ -280,7 +280,7 @@ const ReferenceObs = ({
   }, []);
 
   return (
-    <div className="relative flex flex-col h-full">
+    <div className="relative flex flex-col h-full pb-30">
       {/* Main content area */}
       <div className="flex-1 overflow-auto">
         { isLoading === false ? (
@@ -316,7 +316,6 @@ const ReferenceObs = ({
                       </div>
                     )
                   }
-
                   {/* Text Section */}
                   {Object.prototype.hasOwnProperty.call(story, 'text') && (
                     <div className="flex gap-5 items-start">
@@ -349,7 +348,6 @@ const ReferenceObs = ({
                       </div>
                     </div>
                   )}
-
                   {/* End Section */}
                   {
                     Object.prototype.hasOwnProperty.call(story, 'end') && (

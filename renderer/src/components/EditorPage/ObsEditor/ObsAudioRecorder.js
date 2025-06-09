@@ -1,7 +1,7 @@
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
 import {
-  useContext, useEffect, useState, useCallback,
+  useContext, useEffect, useState, useCallback, useRef,
 } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import Player from '@/components/AudioRecorder/components/Player';
@@ -37,6 +37,24 @@ const ObsAudioRecorder = ({
     buttonName: '',
   });
 
+  // Use refs to avoid stale closures
+  const audioContentRef = useRef(audioContent);
+  const selectedParagraphRef = useRef(selectedParagraph);
+  const effectiveStoryIdRef = useRef(effectiveStoryId);
+
+  // Update refs when values change
+  useEffect(() => {
+    audioContentRef.current = audioContent;
+  }, [audioContent]);
+
+  useEffect(() => {
+    selectedParagraphRef.current = selectedParagraph;
+  }, [selectedParagraph]);
+
+  useEffect(() => {
+    effectiveStoryIdRef.current = effectiveStoryId;
+  }, [effectiveStoryId]);
+
   // Helper function to rename files when default changes
   const renameAudioFile = (oldPath, newPath) => {
     try {
@@ -62,7 +80,7 @@ const ObsAudioRecorder = ({
 
       // New folder structure: ingredients/audio/{storyNum}/
       const audioFolder = path.join(projectsDir, 'ingredients', 'audio');
-      const storyFolder = path.join(audioFolder, effectiveStoryId.toString());
+      const storyFolder = path.join(audioFolder, effectiveStoryIdRef.current.toString());
 
       // Ensure directories exist
       if (!fs.existsSync(audioFolder)) {
@@ -74,11 +92,11 @@ const ObsAudioRecorder = ({
 
       // Check if this is the first recording for this paragraph by checking existing files
       const existingFiles = fs.readdirSync(storyFolder)
-        .filter((file) => file.startsWith(`${effectiveStoryId}_${para}_`) && file.endsWith('.mp3'));
+        .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'));
       const isFirstRecording = existingFiles.length === 0;
 
       // New filename format: {storyNum}_{para}_{take}_default.mp3 or {storyNum}_{para}_{take}.mp3
-      const baseFileName = `${effectiveStoryId}_${para}_${take}`;
+      const baseFileName = `${effectiveStoryIdRef.current}_${para}_${take}`;
       const fileName = isFirstRecording ? `${baseFileName}_default.mp3` : `${baseFileName}.mp3`;
       const filePath = path.join(storyFolder, fileName);
 
@@ -114,8 +132,8 @@ const ObsAudioRecorder = ({
   };
 
   const fetchUrl = (paragraphId) => {
-    const key = `story_${effectiveStoryId}_${paragraphId}`;
-    const audioData = audioContent?.[key];
+    const key = `story_${effectiveStoryIdRef.current}_${paragraphId}`;
+    const audioData = audioContentRef.current?.[key];
     setNewBlob(null);
 
     if (audioData && audioData.takes && Object.keys(audioData.takes).length > 0) {
@@ -123,11 +141,11 @@ const ObsAudioRecorder = ({
       const defaultAudio = audioData.takes[defaultTake];
 
       if (defaultAudio && defaultAudio.filePath) {
-      // Create Player-compatible URL structure
+        // Create Player-compatible URL structure
         const playerCompatibleUrl = {
           verseNumber: paragraphId,
           paragraph: paragraphId ? paragraphId.toString() : '',
-          storyNumber: effectiveStoryId ? effectiveStoryId.toString() : '',
+          storyNumber: effectiveStoryIdRef.current ? effectiveStoryIdRef.current.toString() : '',
           default: `take${defaultTake}`,
           defaultTake: `take${defaultTake}`,
           // Add individual take properties that Player expects
@@ -162,7 +180,7 @@ const ObsAudioRecorder = ({
     // Default empty structure when no audio exists
     setCurrentUrl({
       paragraph: paragraphId ? paragraphId.toString() : '',
-      storyNumber: effectiveStoryId ? effectiveStoryId.toString() : '',
+      storyNumber: effectiveStoryIdRef.current ? effectiveStoryIdRef.current.toString() : '',
       verseNumber: paragraphId,
       takes: {},
       default: 'take1',
@@ -178,7 +196,7 @@ const ObsAudioRecorder = ({
 
       const { projectsDir } = await getDetails();
       const audioFolder = path.join(projectsDir, 'ingredients', 'audio');
-      const storyFolder = path.join(audioFolder, effectiveStoryId.toString());
+      const storyFolder = path.join(audioFolder, effectiveStoryIdRef.current.toString());
 
       setRecordingsPath(storyFolder);
 
@@ -247,6 +265,13 @@ const ObsAudioRecorder = ({
 
       setAudioContent(updatedContent);
       setUpdateWave(!updateWave);
+
+      // Update current URL if we're viewing the same paragraph
+      if (selectedParagraphRef.current) {
+        setTimeout(() => {
+          fetchUrl(selectedParagraphRef.current);
+        }, 100);
+      }
     } catch (error) {
       // console.error('Error loading story audio:', error);
     }
@@ -255,8 +280,8 @@ const ObsAudioRecorder = ({
   // Fix the changeDefault function parameter handling
   const changeDefault = async (para, takeValue) => {
     try {
-    // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
-    // Normalize it to a number string
+      // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
+      // Normalize it to a number string
       let newDefaultTake;
       if (typeof takeValue === 'string' && takeValue.startsWith('take')) {
         newDefaultTake = takeValue.replace('take', '');
@@ -269,7 +294,7 @@ const ObsAudioRecorder = ({
       const fs = window.require('fs');
 
       // Get existing files to determine current default
-      const files = fs.readdirSync(folder).filter((file) => file.startsWith(`${effectiveStoryId}_${para}_`) && file.endsWith('.mp3'));
+      const files = fs.readdirSync(folder).filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'));
 
       let currentDefault = '1';
       files.forEach((file) => {
@@ -285,14 +310,14 @@ const ObsAudioRecorder = ({
       if (currentDefault === newDefaultTake) { return; }
 
       // Rename files: remove _default from old default, add _default to new default
-      const oldDefaultFile = `${effectiveStoryId}_${para}_${currentDefault}_default.mp3`;
+      const oldDefaultFile = `${effectiveStoryIdRef.current}_${para}_${currentDefault}_default.mp3`;
       const oldDefaultPath = path.join(folder, oldDefaultFile);
-      const newOldDefaultFile = `${effectiveStoryId}_${para}_${currentDefault}.mp3`;
+      const newOldDefaultFile = `${effectiveStoryIdRef.current}_${para}_${currentDefault}.mp3`;
       const newOldDefaultPath = path.join(folder, newOldDefaultFile);
 
-      const currentNewDefaultFile = `${effectiveStoryId}_${para}_${newDefaultTake}.mp3`;
+      const currentNewDefaultFile = `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}.mp3`;
       const currentNewDefaultPath = path.join(folder, currentNewDefaultFile);
-      const newDefaultFile = `${effectiveStoryId}_${para}_${newDefaultTake}_default.mp3`;
+      const newDefaultFile = `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}_default.mp3`;
       const newDefaultPath = path.join(folder, newDefaultFile);
 
       // Rename old default (remove _default)
@@ -306,23 +331,17 @@ const ObsAudioRecorder = ({
       }
 
       // Update local audio content
-      const key = `story_${effectiveStoryId}_${para}`;
-      if (audioContent[key]) {
+      const key = `story_${effectiveStoryIdRef.current}_${para}`;
+      if (audioContentRef.current[key]) {
         const updatedContent = {
-          ...audioContent,
+          ...audioContentRef.current,
           [key]: {
-            ...audioContent[key],
+            ...audioContentRef.current[key],
             defaultTake: newDefaultTake,
             default: `take${newDefaultTake}`,
           },
         };
         setAudioContent(updatedContent);
-
-        if (selectedParagraph === para) {
-          setTimeout(() => {
-            fetchUrl(para);
-          }, 100);
-        }
       }
 
       // Reload audio content to ensure everything is in sync
@@ -332,92 +351,7 @@ const ObsAudioRecorder = ({
     }
   };
 
-  const playRecordingFeedback = useCallback(
-    async (blobUrl, blob, para) => {
-      setIsRecording(false);
-      if (para && blob) {
-        setNewBlob(blobUrl);
-
-        const saveSuccess = await saveAudio(blob, para);
-
-        if (saveSuccess) {
-          await loadStoryAudio();
-          setTimeout(() => {
-            setNewBlob(null);
-            fetchUrl(para);
-          }, 1000);
-        }
-      } else {
-        setNewBlob(blobUrl);
-      }
-    },
-    [effectiveStoryId, take, recordingsPath],
-  );
-
-  const {
-    startRecording,
-    stopRecording,
-    pauseRecording,
-    resumeRecording,
-    status,
-  } = useReactMediaRecorder({
-    audio: true,
-    onStart: () => {
-      setIsRecording(true);
-    },
-    onStop: (blobUrl, blob) => {
-      setTimeout(() => {
-        playRecordingFeedback(blobUrl, blob, selectedParagraph);
-      }, 100);
-    },
-    blobPropertyBag: { type: 'audio/mp3' },
-  });
-
-  // Load audio when story changes
-  useEffect(() => {
-    if (effectiveStoryId) {
-      loadStoryAudio();
-    }
-  }, [effectiveStoryId]);
-
-  // Reset take when audio content changes
-  useEffect(() => {
-    if (audioContent && Object.keys(audioContent).length > 0) {
-      if (!take || !/^\d+$/.test(take)) {
-        setTake('1');
-      }
-    }
-  }, [audioContent]);
-
-  // Update audio URL when selected paragraph changes
-  useEffect(() => {
-    if (selectedParagraph && effectiveStoryId) {
-      setNewBlob(null);
-      setTrigger('');
-      setTake('1');
-      fetchUrl(selectedParagraph);
-    }
-  }, [selectedParagraph, effectiveStoryId]);
-
-  // Expose functions for parent component
-  const audioFunctions = {
-    fetchUrl,
-    loadStoryAudio,
-    changeDefault,
-    startRecording: () => {
-      if (selectedParagraph) {
-        startRecording();
-      }
-    },
-    stopRecording,
-    pauseRecording,
-    resumeRecording,
-  };
-
-  if (!isVisible) {
-    return null;
-  }
-  const deleteAudio = async (para, takeValue) => {
+  const handleDeleteAudio = async (para, takeValue) => {
     try {
       const fs = window.require('fs');
       const { path } = await getDetails();
@@ -433,8 +367,8 @@ const ObsAudioRecorder = ({
       const folder = recordingsPath;
 
       // Find the file to delete (could be with or without _default)
-      const defaultFile = `${effectiveStoryId}_${para}_${takeNum}_default.mp3`;
-      const regularFile = `${effectiveStoryId}_${para}_${takeNum}.mp3`;
+      const defaultFile = `${effectiveStoryIdRef.current}_${para}_${takeNum}_default.mp3`;
+      const regularFile = `${effectiveStoryIdRef.current}_${para}_${takeNum}.mp3`;
 
       const defaultPath = path.join(folder, defaultFile);
       const regularPath = path.join(folder, regularFile);
@@ -454,20 +388,20 @@ const ObsAudioRecorder = ({
       }
 
       if (deletedFilePath) {
-      // If we deleted the default, make another take the default
+        // If we deleted the default, make another take the default
         if (wasDefault) {
           const files = fs.readdirSync(folder)
-            .filter((file) => file.startsWith(`${effectiveStoryId}_${para}_`) && file.endsWith('.mp3'))
+            .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'))
             .filter((file) => !file.includes(`_${takeNum}_`)); // Exclude the deleted take
 
           if (files.length > 0) {
-          // Get the first available take and make it default
+            // Get the first available take and make it default
             const firstFile = files[0];
             const parts = firstFile.split('_');
             if (parts.length >= 3) {
               const newDefaultTake = parts[2];
               const oldPath = path.join(folder, firstFile);
-              const newPath = path.join(folder, `${effectiveStoryId}_${para}_${newDefaultTake}_default.mp3`);
+              const newPath = path.join(folder, `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}_default.mp3`);
 
               if (fs.existsSync(oldPath)) {
                 fs.renameSync(oldPath, newPath);
@@ -479,21 +413,115 @@ const ObsAudioRecorder = ({
         // Reload audio content and update UI
         await loadStoryAudio();
 
-        if (selectedParagraph === para) {
-          setTimeout(() => {
-            fetchUrl(para);
-          }, 100);
-        }
-
         return true;
       }
 
       return false;
     } catch (error) {
-      console.error('Error deleting audio:', error);
       return false;
     }
   };
+
+  const playRecordingFeedback = useCallback(
+    async (blobUrl, blob, para) => {
+      setIsRecording(false);
+      if (para && blob) {
+        setNewBlob(blobUrl);
+
+        const saveSuccess = await saveAudio(blob, para);
+
+        if (saveSuccess) {
+          // Reload audio content immediately
+          await loadStoryAudio();
+
+          // Clear the blob after a short delay
+          setTimeout(() => {
+            setNewBlob(null);
+          }, 500);
+        }
+      } else {
+        setNewBlob(blobUrl);
+      }
+    },
+    [take], // Only depend on take, not on functions that might cause re-renders
+  );
+
+  const {
+    startRecording,
+    stopRecording,
+    pauseRecording,
+    resumeRecording,
+    status,
+  } = useReactMediaRecorder({
+    audio: true,
+    onStart: () => {
+      setIsRecording(true);
+    },
+    onStop: (blobUrl, blob) => {
+      setTimeout(() => {
+        playRecordingFeedback(blobUrl, blob, selectedParagraphRef.current);
+      }, 100);
+    },
+    blobPropertyBag: { type: 'audio/mp3' },
+  });
+
+  // Load audio when story changes
+  useEffect(() => {
+    if (effectiveStoryId) {
+      loadStoryAudio();
+    }
+  }, [effectiveStoryId]);
+
+  // Reset take when audio content changes
+  useEffect(() => {
+    if (audioContent && Object.keys(audioContent).length > 0) {
+      if (!take || !/^\d+$/.test(take)) {
+        setTake('1');
+      }
+    }
+  }, [audioContent, take]);
+
+  // Update audio URL when selected paragraph changes
+  useEffect(() => {
+    if (selectedParagraph && effectiveStoryId) {
+      setNewBlob(null);
+      setTrigger('');
+      setTake('1');
+      fetchUrl(selectedParagraph);
+    }
+  }, [selectedParagraph, effectiveStoryId]);
+
+  // Separate effect to handle audio content changes for current paragraph
+  useEffect(() => {
+    if (selectedParagraph && audioContent) {
+      // Small delay to ensure all state updates are complete
+      const timeoutId = setTimeout(() => {
+        fetchUrl(selectedParagraph);
+      }, 50);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [audioContent]);
+
+  // Expose functions for parent component
+  const audioFunctions = {
+    fetchUrl,
+    loadStoryAudio,
+    changeDefault,
+    startRecording: () => {
+      if (selectedParagraph) {
+        startRecording();
+      }
+    },
+    stopRecording,
+    pauseRecording,
+    resumeRecording,
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
       <Player
@@ -540,8 +568,8 @@ const ObsAudioRecorder = ({
                 onClick={() => {
                   // Handle the action based on the trigger
                   if (trigger === 'delete') {
-                    // Add your delete logic here  <-- REPLACE THIS LINE
-                    deleteAudio(selectedParagraph, take); // <-- WITH THIS LINE
+                    // Use the local delete function since we need the specific file handling logic
+                    handleDeleteAudio(selectedParagraph, take);
                   } else {
                     // Handle re-record
                     setTrigger('record');
