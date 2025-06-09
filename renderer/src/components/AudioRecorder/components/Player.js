@@ -85,38 +85,33 @@ const Player = ({
   const milliseconds = playTime > 0 ? Math.floor((playTime - Math.floor(playTime)) * 100) : (time > 0 ? time % 100 : 0);
 
   const handleRecord = () => {
-	// check whether its a first record or re-recording
-	// Check if audio exists for this take using the new structure
-	const hasExistingAudio = url?.takes?.[take] || url?.[take];
-	
-	if (hasExistingAudio) {
-		setOpenModal({
-			openModel: true,
-			title: t('modal-title-re-record'),
-			confirmMessage: t('msg-re-record-audio'),
-			buttonName: t('label-re-record'),
-		});
-	} else {
-		// Recording for the first time
-		setTrigger('record');
-		setTime(0);
-		setIsRunning(true);
-	}
-};
-const handleDelete = () => {
-	// check whether audio exists for this take
-	const hasExistingAudio = url?.takes?.[take] || url?.[take];
-	
-	if (hasExistingAudio) {
-		setOpenModal({
-			openModel: true,
-			title: t('modal-title-delete-audio'),
-			confirmMessage: t('msg-delete-audio'),
-			buttonName: t('label-delete'),
-		});
-		setTrigger('delete');
-	}
-};
+    // check whether its a first record or re-recording
+    if (url[take]) {
+      setOpenModal({
+        openModel: true,
+        title: t('modal-title-re-record'),
+        confirmMessage: t('msg-re-record-audio'),
+        buttonName: t('label-re-record'),
+      });
+    } else {
+      // Recording for the first time
+      setTrigger('record');
+      setTime(0);
+      setIsRunning(true);
+    }
+  };
+  const handleDelete = () => {
+    // check whether its a first record or re-recording
+    if (url[take]) {
+      setOpenModal({
+        openModel: true,
+        title: t('modal-title-delete-audio'),
+        confirmMessage: t('msg-delete-audio'),
+        buttonName: t('label-delete'),
+      });
+      setTrigger('delete');
+    }
+  };
   const changeTake = (value) => {
     setTake(value);
     setTrigger();
