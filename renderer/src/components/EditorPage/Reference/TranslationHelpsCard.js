@@ -80,7 +80,6 @@ export default function TranslationHelpsCard({
     isOfflineMode,
   ]);
 
-  // Always call useContent hook (moved before useCallback)
   let contentResult = { items: [], markdown: '', isLoading: false };
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -89,7 +88,7 @@ export default function TranslationHelpsCard({
     logger.debug('TranslationHelpsCard.js', 'Error setting up in useContent');
   }
 
-  // Extract values from contentResult, but only use them if not in offline mode
+  // Extract values from contentResult, but only use them in online mode
   const items = isOfflineMode ? [] : contentResult.items;
   const markdown = isOfflineMode ? '' : contentResult.markdown;
   const isLoading = isOfflineMode ? false : contentResult.isLoading;
@@ -383,6 +382,14 @@ export default function TranslationHelpsCard({
           const currentFile = offlineResource?.data?.value?.projects.find(
             (item) => item?.identifier.toLowerCase() === projectId.toLowerCase(),
           );
+          const resources = await localforage.getItem('resources');
+          const tW_project = `${offlineResource?.data?.value?.meta?.language}_tw_${offlineResource?.data?.value?.meta?.owner}`;
+          const tWProjectName = resources.find((item) => (item.projectDir).toLowerCase().includes(tW_project.toLowerCase()));
+          if (!tWProjectName) {
+            setOfflineItemsDisable(true);
+            setOfflineMarkdown('### **Please upload the corresponding tW resource for the selected TWL resource**');
+            return;
+          }
 
           if (currentFile) {
             const filecontent = await fs.readFileSync(path.join(folder, projectName, currentFile.path), 'utf8');
@@ -449,12 +456,9 @@ export default function TranslationHelpsCard({
                 trimmedString = item.TWLink.substring(startIndex + 'dict/'.length);
               }
               const parts = trimmedString.split('/');
-              const resources = await localforage.getItem('resources');
-              const tW_project = `${offlineResource?.data?.value?.meta?.language}_tw_${offlineResource?.data?.value?.meta?.owner}`;
-              const projectName = resources.find((item) => (item.projectDir).toLowerCase().includes(tW_project.toLowerCase()));
               const wordLink = path.join(...parts);
-              if (fs.existsSync(path.join(folder, projectName.projectDir, `${wordLink}.md`))) {
-                const filecontent = fs.readFileSync(path.join(folder, projectName.projectDir, `${wordLink}.md`), 'utf8');
+              if (fs.existsSync(path.join(folder, tWProjectName.projectDir, `${wordLink}.md`))) {
+                const filecontent = fs.readFileSync(path.join(folder, tWProjectName.projectDir, `${wordLink}.md`), 'utf8');
                 item.markdown = filecontent;
                 return item;
               }
