@@ -118,7 +118,7 @@ const TextEditor = ({
   };
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto pb-[100px]">
       {obsStory.map((story, index) => (
         <div key={story.id} className="flex m-4 p-1 rounded-md min-h-0">
           {'title' in story && (
@@ -150,11 +150,12 @@ const TextEditor = ({
           )}
           {'text' in story && (
             <>
+             <div className="flex flex-col items-center mr-2">
               <span className="w-8 h-8 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center font-medium shrink-0">
                 {index.toString().split('').map((num) => t(`n-${num}`))}
               </span>
               {audioEnabled && (
-                <div className="flex items-center ml-2 mr-1">
+                <div className="mt-1">
                   <AudioIndicator
                     storyId={story.id}
                     effectiveStoryId={effectiveStoryId}
@@ -162,6 +163,7 @@ const TextEditor = ({
                   />
                 </div>
               )}
+              </div>
               <textarea
                 name={`text-${story.id}`}
                 value={story.text}

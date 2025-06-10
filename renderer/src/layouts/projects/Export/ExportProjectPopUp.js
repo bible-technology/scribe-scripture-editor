@@ -353,20 +353,6 @@ export default function ExportProjectPopUp(props) {
                           />
                           <span className=" ml-4 text-xs font-bold" title="Export only default tagged audio files + text MD files">Default Audio + Text</span>
                         </div>
-
-                        <div className="w-full py-3 flex mt-3">
-                          <div className="flex flex-row justify-start">
-                            <input
-                              id="obs-zip"
-                              className="h-4 w-4 text-primary"
-                              type="checkbox"
-                              checked={checkZip}
-                              onChange={() => setCheckZip(!checkZip)}
-                              disabled={exportStart}
-                            />
-                            <span className="ml-2 text-xs font-bold" title="Export as compressed zip file">Export as ZIP</span>
-                          </div>
-                        </div>
                       </div>
                     )}
 

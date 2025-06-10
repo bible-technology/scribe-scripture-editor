@@ -280,7 +280,7 @@ const ReferenceObs = ({
   }, []);
 
   return (
-    <div className="relative flex flex-col h-full pb-30">
+    <div className="relative flex flex-col h-full pb-[100px]">
       {/* Main content area */}
       <div className="flex-1 overflow-auto">
         { isLoading === false ? (

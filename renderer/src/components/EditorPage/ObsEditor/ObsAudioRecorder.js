@@ -221,7 +221,6 @@ const ObsAudioRecorder = ({
           const key = `story_${storyNum}_${paraNum}`;
           const fullFilePath = path.join(storyFolder, file);
           const fileUrl = `file://${fullFilePath.replace(/\\/g, '/')}`;
-
           if (!updatedContent[key]) {
             updatedContent[key] = {
               paragraph: paraNum,
@@ -363,7 +362,7 @@ const ObsAudioRecorder = ({
       } else {
         takeNum = takeValue.toString();
       }
-
+      
       const folder = recordingsPath;
 
       // Find the file to delete (could be with or without _default)
@@ -523,7 +522,7 @@ const ObsAudioRecorder = ({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
       <Player
         url={currentUrl || {}}
         blobUrl={newBlob}

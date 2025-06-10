@@ -508,14 +508,58 @@ const Player = ({
             barWidth="2"
             waveColor="#ffffff"
             btnColor="text-white"
-            // url={(location && Object.keys(url).length !== 0) && (take ? (url[take] ? url[take] : '') : url[url?.default])}
-            url={blobUrl || (location
-              && Object.keys(url).length !== 0
-              && (take
-                ? url[take]
-                  ? path.join(location, url[take])
-                  : ''
-                : path.join(location, url[url?.default])))}
+            url={
+							blobUrl ||
+							(() => {
+								if (
+									!location ||
+									!url ||
+									Object.keys(url).length === 0
+								)
+									return '';
+								if (
+									take &&
+									url.takes &&
+									url.takes[take] &&
+									url.takes[take].url
+								) {
+									console.log(
+										'Using take URL:',
+										url.takes[take].url,
+									);
+									return url.takes[take].url;
+								}
+								// Fall back to default take
+								const defaultTake =
+									url.default || url.defaultTake || 'take1';
+								if (
+									url.takes &&
+									url.takes[defaultTake] &&
+									url.takes[defaultTake].url
+								) {
+									console.log(
+										'Using default take URL:',
+										url.takes[defaultTake].url,
+									);
+									return url.takes[defaultTake].url;
+								}
+
+								// Legacy fallback - construct path
+								if (url[take]) {
+									const filePath = path.join(
+										location,
+										url[take],
+									);
+									const fileUrl = `file://${filePath.replace(
+										/\\/g,
+										'/',
+									)}`;
+									console.log('Using legacy URL:', fileUrl);
+									return fileUrl;
+								}
+								return '';
+							})()
+						}
             call={trigger}
             startRecording={startRecording}
             stopRecording={stopRecording}
