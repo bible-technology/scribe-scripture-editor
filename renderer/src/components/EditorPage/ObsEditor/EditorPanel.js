@@ -1,7 +1,7 @@
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
 import { useContext, useState } from 'react';
-import TextEditor from './TextEditor';
+import ObsTextEditor from './ObsTextEditor';
 import ObsAudioRecorder from './ObsAudioRecorder';
 
 const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
@@ -30,7 +30,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
   return (
     <div className="relative flex flex-col h-full">
       <div className={`flex-1 ${audioEnabled ? 'pb-20' : ''}`}>
-        <TextEditor
+        <ObsTextEditor
           obsStory={obsStory}
           storyUpdate={storyUpdate}
           selectedParagraph={selectedParagraph}

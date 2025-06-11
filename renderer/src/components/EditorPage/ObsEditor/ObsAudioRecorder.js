@@ -90,22 +90,20 @@ const ObsAudioRecorder = ({
         fs.mkdirSync(storyFolder, { recursive: true });
       }
 
-      // Check if this is the first recording for this paragraph by checking existing files
+      const newStoryId = para - 1;
+
       const existingFiles = fs.readdirSync(storyFolder)
-        .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'));
+        .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${newStoryId}_`) && file.endsWith('.mp3'));
       const isFirstRecording = existingFiles.length === 0;
 
-      // New filename format: {storyNum}_{para}_{take}_default.mp3 or {storyNum}_{para}_{take}.mp3
-      const baseFileName = `${effectiveStoryIdRef.current}_${para}_${take}`;
+      const baseFileName = `${effectiveStoryIdRef.current}_${newStoryId}_${take}`;
       const fileName = isFirstRecording ? `${baseFileName}_default.mp3` : `${baseFileName}.mp3`;
       const filePath = path.join(storyFolder, fileName);
 
-      // Convert blob to buffer and save
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       fs.writeFileSync(filePath, buffer);
 
-      // Verify file was created
       let attempts = 0;
       while (attempts < 5) {
         if (fs.existsSync(filePath)) {
@@ -116,7 +114,7 @@ const ObsAudioRecorder = ({
         }
         const waitUntil = Date.now() + 200;
         while (Date.now() < waitUntil) {
-          // Busy-wait for 200ms
+        // Busy-wait for 200ms
         }
         attempts += 1;
       }
@@ -132,7 +130,8 @@ const ObsAudioRecorder = ({
   };
 
   const fetchUrl = (paragraphId) => {
-    const key = `story_${effectiveStoryIdRef.current}_${paragraphId}`;
+    const newStoryId = paragraphId - 1;
+    const key = `story_${effectiveStoryIdRef.current}_${newStoryId}`;
     const audioData = audioContentRef.current?.[key];
     setNewBlob(null);
 
@@ -141,7 +140,7 @@ const ObsAudioRecorder = ({
       const defaultAudio = audioData.takes[defaultTake];
 
       if (defaultAudio && defaultAudio.filePath) {
-        // Create Player-compatible URL structure
+      // Create Player-compatible URL structure
         const playerCompatibleUrl = {
           verseNumber: paragraphId,
           paragraph: paragraphId ? paragraphId.toString() : '',
@@ -188,7 +187,6 @@ const ObsAudioRecorder = ({
     });
     setTrigger('');
   };
-
   const loadStoryAudio = async () => {
     try {
       const fs = window.require('fs');
@@ -272,15 +270,14 @@ const ObsAudioRecorder = ({
         }, 100);
       }
     } catch (error) {
-      // console.error('Error loading story audio:', error);
+    // console.error('Error loading story audio:', error);
     }
   };
 
-  // Fix the changeDefault function parameter handling
   const changeDefault = async (para, takeValue) => {
     try {
-      // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
-      // Normalize it to a number string
+    // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
+    // Normalize it to a number string
       let newDefaultTake;
       if (typeof takeValue === 'string' && takeValue.startsWith('take')) {
         newDefaultTake = takeValue.replace('take', '');
@@ -288,12 +285,13 @@ const ObsAudioRecorder = ({
         newDefaultTake = takeValue.toString();
       }
 
+      const newStoryId = para - 1;
       const folder = recordingsPath;
       const { path } = await getDetails();
       const fs = window.require('fs');
 
       // Get existing files to determine current default
-      const files = fs.readdirSync(folder).filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'));
+      const files = fs.readdirSync(folder).filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${newStoryId}_`) && file.endsWith('.mp3'));
 
       let currentDefault = '1';
       files.forEach((file) => {
@@ -309,14 +307,14 @@ const ObsAudioRecorder = ({
       if (currentDefault === newDefaultTake) { return; }
 
       // Rename files: remove _default from old default, add _default to new default
-      const oldDefaultFile = `${effectiveStoryIdRef.current}_${para}_${currentDefault}_default.mp3`;
+      const oldDefaultFile = `${effectiveStoryIdRef.current}_${newStoryId}_${currentDefault}_default.mp3`;
       const oldDefaultPath = path.join(folder, oldDefaultFile);
-      const newOldDefaultFile = `${effectiveStoryIdRef.current}_${para}_${currentDefault}.mp3`;
+      const newOldDefaultFile = `${effectiveStoryIdRef.current}_${newStoryId}_${currentDefault}.mp3`;
       const newOldDefaultPath = path.join(folder, newOldDefaultFile);
 
-      const currentNewDefaultFile = `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}.mp3`;
+      const currentNewDefaultFile = `${effectiveStoryIdRef.current}_${newStoryId}_${newDefaultTake}.mp3`;
       const currentNewDefaultPath = path.join(folder, currentNewDefaultFile);
-      const newDefaultFile = `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}_default.mp3`;
+      const newDefaultFile = `${effectiveStoryIdRef.current}_${newStoryId}_${newDefaultTake}_default.mp3`;
       const newDefaultPath = path.join(folder, newDefaultFile);
 
       // Rename old default (remove _default)
@@ -330,7 +328,7 @@ const ObsAudioRecorder = ({
       }
 
       // Update local audio content
-      const key = `story_${effectiveStoryIdRef.current}_${para}`;
+      const key = `story_${effectiveStoryIdRef.current}_${newStoryId}`;
       if (audioContentRef.current[key]) {
         const updatedContent = {
           ...audioContentRef.current,
@@ -346,7 +344,7 @@ const ObsAudioRecorder = ({
       // Reload audio content to ensure everything is in sync
       await loadStoryAudio();
     } catch (error) {
-      // console.error('Error changing default audio:', error);
+    // console.error('Error changing default audio:', error);
     }
   };
 
@@ -362,12 +360,13 @@ const ObsAudioRecorder = ({
       } else {
         takeNum = takeValue.toString();
       }
-      
+
+      const newStoryId = para - 1;
       const folder = recordingsPath;
 
       // Find the file to delete (could be with or without _default)
-      const defaultFile = `${effectiveStoryIdRef.current}_${para}_${takeNum}_default.mp3`;
-      const regularFile = `${effectiveStoryIdRef.current}_${para}_${takeNum}.mp3`;
+      const defaultFile = `${effectiveStoryIdRef.current}_${newStoryId}_${takeNum}_default.mp3`;
+      const regularFile = `${effectiveStoryIdRef.current}_${newStoryId}_${takeNum}.mp3`;
 
       const defaultPath = path.join(folder, defaultFile);
       const regularPath = path.join(folder, regularFile);
@@ -387,20 +386,20 @@ const ObsAudioRecorder = ({
       }
 
       if (deletedFilePath) {
-        // If we deleted the default, make another take the default
+      // If we deleted the default, make another take the default
         if (wasDefault) {
           const files = fs.readdirSync(folder)
-            .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${para}_`) && file.endsWith('.mp3'))
+            .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${newStoryId}_`) && file.endsWith('.mp3'))
             .filter((file) => !file.includes(`_${takeNum}_`)); // Exclude the deleted take
 
           if (files.length > 0) {
-            // Get the first available take and make it default
+          // Get the first available take and make it default
             const firstFile = files[0];
             const parts = firstFile.split('_');
             if (parts.length >= 3) {
               const newDefaultTake = parts[2];
               const oldPath = path.join(folder, firstFile);
-              const newPath = path.join(folder, `${effectiveStoryIdRef.current}_${para}_${newDefaultTake}_default.mp3`);
+              const newPath = path.join(folder, `${effectiveStoryIdRef.current}_${newStoryId}_${newDefaultTake}_default.mp3`);
 
               if (fs.existsSync(oldPath)) {
                 fs.renameSync(oldPath, newPath);
@@ -424,6 +423,7 @@ const ObsAudioRecorder = ({
   const playRecordingFeedback = useCallback(
     async (blobUrl, blob, para) => {
       setIsRecording(false);
+      setTrigger('');
       if (para && blob) {
         setNewBlob(blobUrl);
 

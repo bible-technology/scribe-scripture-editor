@@ -9,7 +9,8 @@ import { SpeakerWaveIcon } from '@heroicons/react/24/solid';
 const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
   if (!audioContent || !effectiveStoryId) { return null; }
 
-  const key = `story_${effectiveStoryId}_${storyId}`;
+  const zeroBased = storyId - 1;
+  const key = `story_${effectiveStoryId}_${zeroBased}`;
   const audioData = audioContent[key];
   const hasAudio = audioData && audioData.takes && Object.keys(audioData.takes).length > 0;
 
@@ -28,7 +29,7 @@ AudioIndicator.propTypes = {
   audioContent: PropTypes.object,
 };
 
-const TextEditor = ({
+const ObsTextEditor = ({
   obsStory,
   storyUpdate,
   selectedParagraph,
@@ -138,6 +139,7 @@ const TextEditor = ({
                 data-id={story.id}
                 onChange={handleChange}
                 onKeyDown={avoidEnter}
+                readOnly={audioEnabled}
                 onClick={() => handleTitleClick(story)}
                 className={`flex-grow text-justify ml-2 p-2 text-xl border rounded-lg transition-all duration-200 ${
                   selectedParagraph === story.id
@@ -150,19 +152,19 @@ const TextEditor = ({
           )}
           {'text' in story && (
             <>
-             <div className="flex flex-col items-center mr-2">
-              <span className="w-8 h-8 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center font-medium shrink-0">
-                {index.toString().split('').map((num) => t(`n-${num}`))}
-              </span>
-              {audioEnabled && (
-                <div className="mt-1">
-                  <AudioIndicator
-                    storyId={story.id}
-                    effectiveStoryId={effectiveStoryId}
-                    audioContent={audioContent}
-                  />
-                </div>
-              )}
+              <div className="flex flex-col items-center mr-2">
+                <span className="w-8 h-8 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center font-medium shrink-0">
+                  {index.toString().split('').map((num) => t(`n-${num}`))}
+                </span>
+                {audioEnabled && (
+                  <div className="mt-1">
+                    <AudioIndicator
+                      storyId={story.id}
+                      effectiveStoryId={effectiveStoryId}
+                      audioContent={audioContent}
+                    />
+                  </div>
+                )}
               </div>
               <textarea
                 name={`text-${story.id}`}
@@ -170,6 +172,7 @@ const TextEditor = ({
                 data-id={story.id}
                 onChange={handleChange}
                 onKeyDown={avoidEnter}
+                readOnly={audioEnabled}
                 onClick={() => handleParagraphClick(story)}
                 onFocus={(e) => handleOnFocus(true, e)}
                 onBlur={(e) => handleOnFocus(false, e)}
@@ -204,6 +207,7 @@ const TextEditor = ({
                 data-id={story.id}
                 onChange={handleChange}
                 onKeyDown={avoidEnter}
+                readOnly={audioEnabled}
                 onClick={() => handleEndClick(story)}
                 className={`flex-grow text-justify ml-2 p-3 text-sm border rounded-lg transition-all duration-200 ${
                   selectedParagraph === story.id
@@ -224,7 +228,7 @@ const TextEditor = ({
   );
 };
 
-TextEditor.propTypes = {
+ObsTextEditor.propTypes = {
   obsStory: PropTypes.array.isRequired,
   storyUpdate: PropTypes.func.isRequired,
   selectedParagraph: PropTypes.number,
@@ -235,4 +239,4 @@ TextEditor.propTypes = {
   audioEnabled: PropTypes.bool,
 };
 
-export default TextEditor;
+export default ObsTextEditor;

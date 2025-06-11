@@ -201,7 +201,8 @@ const ReferenceObs = ({
 
   // Get audio path for AudioWaveform
   const getAudioPath = (storyId) => {
-    const key = `story_${effectiveStoryId}_${storyId}`;
+    const newStoryId = storyId - 1;
+    const key = `story_${effectiveStoryId}_${newStoryId}`;
     const audioData = audioContent[key];
 
     if (audioData && audioData.audioPath) {
@@ -219,14 +220,13 @@ const ReferenceObs = ({
     return '';
   };
 
-  // Check if audio exists for a story
   const hasAudioForStory = (storyId) => {
-    const key = `story_${effectiveStoryId}_${storyId}`;
+    const newStoryId = storyId - 1;
+    const key = `story_${effectiveStoryId}_${newStoryId}`;
     const audioData = audioContent[key];
     const hasAudio = audioData && (audioData.audioPath || (audioData.takes && Object.keys(audioData.takes).length > 0));
     return hasAudio;
   };
-
   useEffect(() => {
     if (stories === undefined) {
       setIsLoading(true);
