@@ -60,13 +60,14 @@ export default function ResourcesPopUp(
   // New state to store the selected source
   const [searchSource, setSearchSource] = useState('gitea');
 
-  const handleRowSelect = (e, row, name, owner, flavorname, userOrCommon, offline = false) => {
+  const handleRowSelect = (e, row, name, owner, flavorname, userOrCommon, offline = false, data = '') => {
+    const iStsvtQ = data.includes('TSV Translation Questions');
     const offlineResource = offline
       ? { offline: true, data: offline }
       : { offline: false };
     setReferenceResources({
       selectedResource: selectResource,
-      languageId: row,
+      languageId: iStsvtQ ? `tsv-${row}` : row, // Since tQ has md and tsv to identify whether tsv/md
       refName: name,
       header: title,
       owner,

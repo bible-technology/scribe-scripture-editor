@@ -3,6 +3,7 @@
  - supported only manifest.yaml based door43 resources
  - Supported Resources are TN , TW, TQ, TA for obs and bible
 */
+import readLocalResources from '../useReadLocalResources';
 
 export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePath, raiseSnackbarErroOrWarning, logger) => {
   try {
@@ -17,7 +18,7 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
       logger.debug('uploadLocalHelpsResources.js', 'read manifest successfully');
 
       // check its not twl or obs-twl -> currently not supported
-      if (!['tn', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq'].includes(manifest.dublin_core.identifier)) {
+      if (!['tn', 'twl', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq'].includes(manifest.dublin_core.identifier)) {
         throw new Error(`${manifest.dublin_core.identifier} resource type is not currently supported`);
       }
 
@@ -60,6 +61,12 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
             // write metadata into the target dir
             await fs.writeFileSync(path.join(resourcePath, resourceName, 'metadata.json'), JSON.stringify(metaData));
             logger.debug('uploadLocalHelpsResources.js', 'write metadata is successfull and done uploading');
+            // Automatically load tw resource on upload, because twl is depended on tW
+            if ((manifest.dublin_core.identifier).toLowerCase() === 'tw') {
+              const parentDir = path.dirname(resourcePath);
+              const username = path.basename(parentDir);
+              readLocalResources(username, () => {});
+            }
             raiseSnackbarErroOrWarning({
               type: 'success',
               message: 'Resource uploaded successfully',
@@ -74,11 +81,22 @@ export const uploadLocalHelpsResources = async (fs, path, resourcePath, sourcePa
         });
       }
     } else {
-      logger.error('uploadLocalHelpsResources.js', 'Invalid resource or No manifest found');
-      raiseSnackbarErroOrWarning({
-        type: 'error',
-        message: 'Invalid resource. No manifest found',
-      });
+      const items = fs.readdirSync(sourcePath);
+      if (items.length > 0) {
+        items.map(async (item) => {
+          const fullPath = path.join(sourcePath, item);
+          const stats = fs.statSync(fullPath);
+          if (stats.isDirectory()) {
+            await uploadLocalHelpsResources(fs, path, resourcePath, fullPath, raiseSnackbarErroOrWarning, logger);
+          }
+        });
+      } else {
+        logger.error('uploadLocalHelpsResources.js', 'Invalid resource or No manifest found');
+        raiseSnackbarErroOrWarning({
+          type: 'error',
+          message: 'Invalid resource. No manifest found',
+        });
+      }
     }
   } catch (err) {
     logger.error('uploadLocalHelpsResources.js', `unkwon error : ${err?.message || err}`);

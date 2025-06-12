@@ -79,8 +79,8 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
           const filecontent = await fs.readFileSync(path.join(folder, `${projectName}.zip`));
           const result = await JSZip.loadAsync(filecontent);
           const keys = Object.keys(result.files);
-          const zipFolder = projectName;
-          projectName = projectName.toLowerCase();
+          const directoryName = keys[0].split('/')[0];
+          if (!directoryName.includes(projectName)) { projectName = directoryName; }
           // eslint-disable-next-line no-restricted-syntax
           for (const key of keys) {
             const item = result.files[key];
@@ -110,10 +110,10 @@ const DownloadCreateSBforHelps = async (projectResource, setLoading, update = fa
           if (fs.existsSync(folder)) {
             const prjMain = endPoint === 'github' ? `${projectName }-main` : projectName;
             fs.renameSync(path.join(folder, prjMain), path.join(folder, downloadProjectName));
-            fs.unlinkSync(path.join(folder, `${zipFolder}.zip`), (err) => {
+            fs.unlinkSync(path.join(folder, `${projectResource.name}.zip`), (err) => {
               if (err) {
                 logger.debug('DownloadCreateSBforHelps.js', 'error in deleting zip');
-                throw new Error(`Removing Resource Zip Failed :  ${zipFolder}.zip`);
+                throw new Error(`Removing Resource Zip Failed :  ${projectResource.name}.zip`);
               }
             });
             if (update && update?.status) {
