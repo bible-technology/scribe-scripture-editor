@@ -607,22 +607,21 @@ const ObsAudioRecorder = ({
         stopRecording={stopRecording}
         pauseRecording={pauseRecording}
         resumeRecording={resumeRecording}
-        take={`take${take}`} // Convert number to takeX format for Player
+        take={`take${take}`}
         setTake={(takeValue) => {
-          // Convert takeX back to number
           const takeNum = takeValue.replace('take', '');
           setTake(takeNum);
         }}
         changeDefault={(v) => changeDefault(selectedParagraph, v)}
-        setOpenModal={setOpenModal} // Add this line
+        setOpenModal={setOpenModal}
         trigger={trigger}
         setTrigger={(v) => setTrigger(v)}
         location={recordingsPath || ''}
         isRecording={isRecording}
         recordingStatus={status}
         selectedParagraph={selectedParagraph}
+        disableRecordStopShortcuts
       />
-
       {/* Add Modal Component - You'll need to create or import your modal component */}
       {openModal.openModel && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

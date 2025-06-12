@@ -36,6 +36,7 @@ const Player = ({
   trigger,
   setTrigger,
   location,
+   disableRecordStopShortcuts = false,
 }) => {
   const { t } = useTranslation();
   // const [volume, setVolume] = useState(0.5);
@@ -123,11 +124,13 @@ const Player = ({
     shell.openExternal('x-apple.systempreferences:');
   };
 
-  const handleKeyPress = useCallback((event) => {
+   const handleKeyPress = useCallback((event) => {
     const keyCode = event.keyCode;
     switch (keyCode) {
-      case 82: // --> r
-        handleRecord();
+      case 82: // --> r (Record)
+        if (!disableRecordStopShortcuts) {
+          handleRecord();
+        }
         break;
       case 69: // --> e
         setTrigger('recResume');
@@ -135,8 +138,11 @@ const Player = ({
       case 80: // --> p
         setTrigger('recPause');
         break;
-      case 83: // --> s
-        setTrigger('recStop');
+      case 83: // --> s (Stop)
+        if (!disableRecordStopShortcuts) {
+          setTrigger('recStop');
+          setIsRunning(false);
+        }
         break;
       case 188: // --> , comma
         setTrigger('rewind');
@@ -157,19 +163,17 @@ const Player = ({
         changeTake('take3');
         break;
       case 187: // --> + (not in number area)
-        // setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
         handleVolumeChange('inc');
         break;
       case 189: // --> - (left to +)
         handleVolumeChange('dec');
-        // setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
         break;
 
       default:
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger]); // ---> change to space for play and pause
+  }, [trigger, disableRecordStopShortcuts])
 
   useEffect(() => {
     // attach the event listener
@@ -592,4 +596,5 @@ Player.propTypes = {
   trigger: PropTypes.string,
   setTrigger: PropTypes.any,
   location: PropTypes.any,
+  disableRecordStopShortcuts: PropTypes.bool
 };
