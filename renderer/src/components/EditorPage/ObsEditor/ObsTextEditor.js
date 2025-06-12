@@ -5,14 +5,17 @@ import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SpeakerWaveIcon } from '@heroicons/react/24/solid';
 
-// Simplified AudioIndicator - only shows when audio exists
 const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
   if (!audioContent || !effectiveStoryId) { return null; }
 
-  const zeroBased = storyId - 1;
-  const key = `story_${effectiveStoryId}_${zeroBased}`;
+  const newStoryId = storyId - 1;
+  const key = `story_${effectiveStoryId}_${newStoryId}`;
   const audioData = audioContent[key];
-  const hasAudio = audioData && audioData.takes && Object.keys(audioData.takes).length > 0;
+
+  const hasAudio = audioData
+                   && audioData.takes
+                   && Object.keys(audioData.takes).length > 0
+                   && Object.values(audioData.takes).some((take) => take && take.fileName);
 
   if (!hasAudio) { return null; }
 
@@ -22,7 +25,6 @@ const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
     </div>
   );
 };
-
 AudioIndicator.propTypes = {
   storyId: PropTypes.number.isRequired,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

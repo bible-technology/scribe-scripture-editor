@@ -69,6 +69,20 @@ const ObsAudioRecorder = ({
     return false;
   };
 
+  // Helper function to clear player state
+  const clearPlayerState = () => {
+    setCurrentUrl({
+      paragraph: selectedParagraphRef.current ? selectedParagraphRef.current.toString() : '',
+      storyNumber: effectiveStoryIdRef.current ? effectiveStoryIdRef.current.toString() : '',
+      verseNumber: selectedParagraphRef.current,
+      takes: {},
+      default: 'take1',
+      defaultTake: 'take1',
+    });
+    setTrigger('clear');
+    setNewBlob(null);
+  };
+
   const saveAudio = async (blob, para) => {
     try {
       if (!blob || !para) {
@@ -129,18 +143,27 @@ const ObsAudioRecorder = ({
     }
   };
 
-  const fetchUrl = (paragraphId) => {
+  const fetchUrl = (paragraphId, specificTake = null) => {
     const newStoryId = paragraphId - 1;
     const key = `story_${effectiveStoryIdRef.current}_${newStoryId}`;
     const audioData = audioContentRef.current?.[key];
+
     setNewBlob(null);
 
     if (audioData && audioData.takes && Object.keys(audioData.takes).length > 0) {
+      const currentTake = specificTake || take;
+      const takeExists = audioData.takes[currentTake];
+
+      if (!takeExists) {
+        clearPlayerState();
+        return;
+      }
+
       const defaultTake = audioData.defaultTake || '1';
       const defaultAudio = audioData.takes[defaultTake];
 
       if (defaultAudio && defaultAudio.filePath) {
-      // Create Player-compatible URL structure
+        // Create Player-compatible URL structure
         const playerCompatibleUrl = {
           verseNumber: paragraphId,
           paragraph: paragraphId ? paragraphId.toString() : '',
@@ -176,17 +199,9 @@ const ObsAudioRecorder = ({
       }
     }
 
-    // Default empty structure when no audio exists
-    setCurrentUrl({
-      paragraph: paragraphId ? paragraphId.toString() : '',
-      storyNumber: effectiveStoryIdRef.current ? effectiveStoryIdRef.current.toString() : '',
-      verseNumber: paragraphId,
-      takes: {},
-      default: 'take1',
-      defaultTake: 'take1',
-    });
-    setTrigger('');
+    clearPlayerState();
   };
+
   const loadStoryAudio = async () => {
     try {
       const fs = window.require('fs');
@@ -200,10 +215,20 @@ const ObsAudioRecorder = ({
 
       if (!fs.existsSync(storyFolder)) {
         fs.mkdirSync(storyFolder, { recursive: true });
+        // Clear player state when no folder exists
+        clearPlayerState();
         return;
       }
 
       const files = fs.readdirSync(storyFolder).filter((file) => file.endsWith('.mp3'));
+
+      if (files.length === 0) {
+        // Clear player state when no files exist
+        clearPlayerState();
+        setAudioContent({});
+        return;
+      }
+
       const updatedContent = {};
 
       // Process files and create structure
@@ -249,35 +274,40 @@ const ObsAudioRecorder = ({
         }
       });
 
-      // Ensure default is set for each paragraph
+      // Ensure default is set for each paragraph and remove empty entries
+      const cleanedContent = {};
       Object.keys(updatedContent).forEach((key) => {
-        if (!updatedContent[key].default) {
-          const takeKeys = Object.keys(updatedContent[key].takes).sort();
-          if (takeKeys.length > 0) {
+        const takeKeys = Object.keys(updatedContent[key].takes);
+
+        // Only keep entries that have actual takes
+        if (takeKeys.length > 0) {
+          if (!updatedContent[key].default) {
             updatedContent[key].defaultTake = takeKeys[0];
             updatedContent[key].default = `take${takeKeys[0]}`;
           }
+          cleanedContent[key] = updatedContent[key];
         }
       });
 
-      setAudioContent(updatedContent);
+      setAudioContent(cleanedContent);
       setUpdateWave(!updateWave);
 
       // Update current URL if we're viewing the same paragraph
       if (selectedParagraphRef.current) {
         setTimeout(() => {
-          fetchUrl(selectedParagraphRef.current);
+          fetchUrl(selectedParagraphRef.current, take);
         }, 100);
       }
     } catch (error) {
-    // console.error('Error loading story audio:', error);
+      // console.error('Error loading story audio:', error);
+      clearPlayerState();
     }
   };
 
   const changeDefault = async (para, takeValue) => {
     try {
-    // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
-    // Normalize it to a number string
+      // takeValue comes from Player as number (1, 2, 3), but sometimes as takeX string
+      // Normalize it to a number string
       let newDefaultTake;
       if (typeof takeValue === 'string' && takeValue.startsWith('take')) {
         newDefaultTake = takeValue.replace('take', '');
@@ -344,7 +374,7 @@ const ObsAudioRecorder = ({
       // Reload audio content to ensure everything is in sync
       await loadStoryAudio();
     } catch (error) {
-    // console.error('Error changing default audio:', error);
+      // console.error('Error changing default audio:', error);
     }
   };
 
@@ -386,14 +416,14 @@ const ObsAudioRecorder = ({
       }
 
       if (deletedFilePath) {
-      // If we deleted the default, make another take the default
+        // If we deleted the default, make another take the default
         if (wasDefault) {
           const files = fs.readdirSync(folder)
             .filter((file) => file.startsWith(`${effectiveStoryIdRef.current}_${newStoryId}_`) && file.endsWith('.mp3'))
             .filter((file) => !file.includes(`_${takeNum}_`)); // Exclude the deleted take
 
           if (files.length > 0) {
-          // Get the first available take and make it default
+            // Get the first available take and make it default
             const firstFile = files[0];
             const parts = firstFile.split('_');
             if (parts.length >= 3) {
@@ -408,8 +438,42 @@ const ObsAudioRecorder = ({
           }
         }
 
+        // Clear player state immediately before reloading
+        clearPlayerState();
+
         // Reload audio content and update UI
         await loadStoryAudio();
+
+        // Check if the current take still exists after deletion
+        if (selectedParagraphRef.current) {
+          setTimeout(() => {
+            // If we deleted the current take, switch to take 1 or the first available take
+            const newStoryId = selectedParagraphRef.current - 1;
+            const key = `story_${effectiveStoryIdRef.current}_${newStoryId}`;
+            const audioData = audioContentRef.current?.[key];
+
+            if (audioData && audioData.takes) {
+              const availableTakes = Object.keys(audioData.takes);
+              if (availableTakes.length > 0) {
+                // If current take was deleted, switch to first available take
+                if (!audioData.takes[take]) {
+                  setTake(availableTakes[0]);
+                  fetchUrl(selectedParagraphRef.current, availableTakes[0]);
+                } else {
+                  fetchUrl(selectedParagraphRef.current, take);
+                }
+              } else {
+                // No takes left, clear everything
+                clearPlayerState();
+                setTake('1');
+              }
+            } else {
+              // No audio data, clear everything
+              clearPlayerState();
+              setTake('1');
+            }
+          }, 100);
+        }
 
         return true;
       }
@@ -495,12 +559,24 @@ const ObsAudioRecorder = ({
     if (selectedParagraph && audioContent) {
       // Small delay to ensure all state updates are complete
       const timeoutId = setTimeout(() => {
-        fetchUrl(selectedParagraph);
+        fetchUrl(selectedParagraph, take);
       }, 50);
 
       return () => clearTimeout(timeoutId);
     }
   }, [audioContent]);
+
+  // Handle take changes - this is crucial for proper cleanup
+  useEffect(() => {
+    if (selectedParagraph && take) {
+      // Clear current state before fetching new take
+      setNewBlob(null);
+      setTrigger('');
+
+      // Fetch the specific take
+      fetchUrl(selectedParagraph, take);
+    }
+  }, [take]);
 
   // Expose functions for parent component
   const audioFunctions = {
