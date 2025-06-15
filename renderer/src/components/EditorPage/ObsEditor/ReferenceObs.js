@@ -67,6 +67,24 @@ const ReferenceObs = ({
     return null;
   };
 
+  const checkDefaultAudioExport = () => {
+    try {
+      if (!storyAudioPath) { return false; }
+
+      const fs = window.require('fs');
+      const markerPath = joinPath(storyAudioPath, 'ingredients', '.scribe_default_audio_export');
+
+      if (fs.existsSync(markerPath)) {
+        const markerContent = JSON.parse(fs.readFileSync(markerPath, 'utf8'));
+        return markerContent.exportType === 'defaultAudio';
+      }
+      return false;
+    } catch (error) {
+      logError('Error checking default audio export marker:', error);
+      return false;
+    }
+  };
+
   // Load story audio function - using storyAudioPath prop
   const loadStoryAudio = async () => {
     try {
@@ -123,7 +141,6 @@ const ReferenceObs = ({
           const key = `story_${storyNum}_${paraNum}`;
           const fullFilePath = joinPath(storyFolder, file);
 
-          // Create file URL for cross-platform compatibility
           const fileUrl = `file://${fullFilePath.replace(/\\/g, '/')}`;
 
           if (!updatedContent[key]) {
@@ -199,22 +216,23 @@ const ReferenceObs = ({
     setSelectedStory(story.id);
   };
 
-  // Get audio path for AudioWaveform
+  // Get audio path for AudioWaveform - FIXED VERSION
   const getAudioPath = (storyId) => {
     const newStoryId = storyId - 1;
     const key = `story_${effectiveStoryId}_${newStoryId}`;
     const audioData = audioContent[key];
 
-    if (audioData && audioData.audioPath) {
-      return audioData.audioPath;
-    }
-
-    // Fallback: try to get from default take
     if (audioData && audioData.takes && audioData.defaultTake) {
       const defaultTakeData = audioData.takes[audioData.defaultTake];
       if (defaultTakeData && defaultTakeData.filePath) {
-        return defaultTakeData.filePath;
+        // Convert file path to proper file URL format
+        return `file://${defaultTakeData.filePath.replace(/\\/g, '/')}`;
       }
+    }
+
+    // Fallback: try audioPath if available
+    if (audioData && audioData.audioPath) {
+      return `file://${audioData.audioPath.replace(/\\/g, '/')}`;
     }
 
     return '';
@@ -227,6 +245,7 @@ const ReferenceObs = ({
     const hasAudio = audioData && (audioData.audioPath || (audioData.takes && Object.keys(audioData.takes).length > 0));
     return hasAudio;
   };
+
   useEffect(() => {
     if (stories === undefined) {
       setIsLoading(true);
@@ -245,9 +264,13 @@ const ReferenceObs = ({
       });
     }
 
-    // Load audio when stories and storyAudioPath are available
-    if (stories && effectiveStoryId && storyAudioPath) {
+    // Load audio only if stories, effectiveStoryId, storyAudioPath are available
+    // AND the project was exported with default audio
+    if (stories && effectiveStoryId && storyAudioPath && checkDefaultAudioExport()) {
       loadStoryAudio();
+    } else if (storyAudioPath && !checkDefaultAudioExport()) {
+      // If project exists but wasn't exported with default audio, disable audio
+      setAudioEnabled(false);
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -300,7 +323,7 @@ const ReferenceObs = ({
                     Object.prototype.hasOwnProperty.call(story, 'title') && (
                       <div className="w-full">
                         <p className="text-xl text-gray-600 w-full text-center" style={style.bold}>
-                          {story.title}
+                          {story?.title}
                         </p>
                         {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">
@@ -332,7 +355,7 @@ const ReferenceObs = ({
                             lineHeight: (fontSize > 1.3) ? 1.5 : '',
                           }}
                         >
-                          {story.text}
+                          {story?.text}
                         </p>
                         {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">
@@ -353,7 +376,7 @@ const ReferenceObs = ({
                     Object.prototype.hasOwnProperty.call(story, 'end') && (
                       <div className="w-full">
                         <p className="text-md text-gray-600" style={style.italic}>
-                          {story.end}
+                          {story?.end}
                         </p>
                         {audioEnabled && hasAudioForStory(story.id) && (
                           <div className="mt-2">

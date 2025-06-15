@@ -1,8 +1,10 @@
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
 import { useContext, useState } from 'react';
+import dynamic from 'next/dynamic';
 import ObsTextEditor from './ObsTextEditor';
-import ObsAudioRecorder from './ObsAudioRecorder';
+
+const ObsAudioRecorder = dynamic(() => import('./ObsAudioRecorder'), { ssr: false });
 
 const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
   const {

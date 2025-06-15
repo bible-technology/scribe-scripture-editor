@@ -355,7 +355,11 @@ const SectionPlaceholder2 = ({ editor }) => {
         ? (layout >= 1 && layout <= 2) : (layout > 1 && layout <= 2)) && (
         <>
           {(openResource3 === false || openResource4 === false) && (
-            <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} overflow-x-auto`}>
+            // eslint-disable-next-line no-nested-ternary
+            <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]'
+              : editor === 'textStories' ? 'max-h-[80vh]'
+                : 'h-editor'} overflow-x-auto`}
+            >
               {openResource3 === false && (
                 <EditorSection
                   row="3"

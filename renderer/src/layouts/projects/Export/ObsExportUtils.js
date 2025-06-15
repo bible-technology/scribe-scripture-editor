@@ -42,12 +42,25 @@ const updateMetadataForExport = async (exportPath, username, project, updateBurr
   logger.debug('ObsExportUtils.js', 'Updating metadata using updateObsSB');
 
   const originalUserPath = localStorage.getItem('userPath');
-  const exportUserPath = path.dirname(path.dirname(path.dirname(exportPath)));
-  localStorage.setItem('userPath', path.dirname(path.dirname(path.dirname(exportUserPath))));
-
   try {
+    if (!exportPath || !username || !project) {
+      throw new Error('Missing required parameters for metadata update');
+    }
+    const exportUserPath = path.dirname(path.dirname(path.dirname(exportPath)));
+    const newUserPath = path.dirname(path.dirname(path.dirname(exportUserPath)));
+    if (newUserPath && newUserPath !== '.' && newUserPath !== '/') {
+      localStorage.setItem('userPath', newUserPath);
+    } else {
+      logger.warn('ObsExportUtils.js', 'Invalid userPath calculated, using original or default');
+      if (originalUserPath) {
+        localStorage.setItem('userPath', originalUserPath);
+      }
+    }
     const result = await updateObsSB(username, project, updateBurrito);
     return result;
+  } catch (error) {
+    logger.error('ObsExportUtils.js', `Error in updateMetadataForExport: ${error.message}`);
+    throw error;
   } finally {
     if (originalUserPath) {
       localStorage.setItem('userPath', originalUserPath);
@@ -320,6 +333,10 @@ export const exportObsCombinedStories = async (metadata, folder, pathModule, fs,
 
     const username = ExportStates.username || 'default';
     const project = ExportStates.project;
+    if (!project || !project.name || !project.id) {
+      throw new Error('Invalid project data: missing name or id');
+    }
+    logger.debug('ObsExportUtils.js', `Updating metadata for export with username: ${username}, project: ${project.name}`);
     const updateResult = await updateMetadataForExport(exportPath, username, project, false);
     currentStep += 1;
     ExportActions.setTotalExported(currentStep);
@@ -356,7 +373,7 @@ export const exportObsDefaultAudio = async (metadata, folder, pathModule, fs, Ex
     const allAudioFiles = await walkObsAudio(audioBasePath, pathModule, fs);
     const defaultAudioFiles = allAudioFiles.filter((file) => file.includes('_default.'));
 
-    const totalSteps = 1 + 1 + defaultAudioFiles.length + 1;
+    const totalSteps = 1 + 1 + 1 + defaultAudioFiles.length + 1;
     ExportActions.setTotalExports(totalSteps);
 
     let currentStep = 0;
@@ -366,6 +383,16 @@ export const exportObsDefaultAudio = async (metadata, folder, pathModule, fs, Ex
     ExportActions.setTotalExported(currentStep);
 
     await fse.copy(pathModule.join(folder, 'metadata.json'), pathModule.join(exportPath, 'metadata.json'));
+    currentStep += 1;
+    ExportActions.setTotalExported(currentStep);
+
+    // Add marker to indicate this export contains default audio
+    const exportMarkerPath = pathModule.join(exportPath, 'ingredients', '.scribe_default_audio_export');
+    fs.writeFileSync(exportMarkerPath, JSON.stringify({
+      exportType: 'defaultAudio',
+      timestamp: new Date().toISOString(),
+      version: '1.0',
+    }));
     currentStep += 1;
     ExportActions.setTotalExported(currentStep);
 
