@@ -29,7 +29,7 @@ const TranslationHelps = ({
    */
   const findFileByPartialName = (fsInstance, directoryPath, partialName) => fsInstance.readdirSync(directoryPath).find((file) => file.includes(partialName)) || null;
 
-  const translationQuestionsPath = `${(chapter < 10) ? (`0${ chapter}`)
+  const translationQuestionsPath = languageId.includes('tsv') ? '' : `${(chapter < 10) ? (`0${ chapter}`)
     : chapter}/${(verse < 10) ? (`0${ verse}`) : verse}.md`;
 
   const filePathTa = `${taNavigationPath?.path}/01.md`;
@@ -162,7 +162,7 @@ const TranslationHelps = ({
               projectId={bookId || 'mat'}
               branch={branch}
               viewMode="question"
-              languageId={languageId}
+              languageId={languageId.includes('tsv') ? languageId.replace(/^tsv-/, '') : languageId}
               resourceId="tq"
               filePath={translationQuestionsPath}
               owner={owner}

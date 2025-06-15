@@ -129,13 +129,13 @@ export const ListResources = ({
         await fetchTranslationResource('Translation Words', settranslationWord, 'tw', selectedPreProd, snackBarAction);
         break;
       case 'tq':
-        await fetchTranslationResource('Translation Questions&subject=tsv Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        await fetchTranslationResource('Translation Questions&subject=TSV Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
         break;
       case 'obs-tn':
-        await fetchTranslationResource('OBS Translation Notes&subject=tsv obs Translation notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
+        await fetchTranslationResource('OBS Translation Notes&subject=TSV OBS Translation Notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
         break;
       case 'obs-tq':
-        await fetchTranslationResource('OBS Translation Questions&subject=tsv obs Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        await fetchTranslationResource('OBS Translation Questions&subject=TSV OBS Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
         break;
       case 'obs-twlm':
         await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
@@ -331,7 +331,7 @@ export const ListResources = ({
                   className={`${notes?.responseData?.stage === 'preprod' && 'bg-yellow-200'} hover:bg-primary hover:text-white group focus:outline-none`}
                   id={notes.name}
                   key={notes.name + notes.owner}
-                  onClick={(e) => (selectResource === 'tir' ? handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource) : handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, ''))}
+                  onClick={(e) => (selectResource === 'tir' ? handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource) : handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '', '', '', notes?.responseData?.subject))}
                   role="button"
                 >
                   <td colSpan={2} className="p-2">
