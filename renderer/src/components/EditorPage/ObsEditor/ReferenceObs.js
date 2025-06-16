@@ -72,6 +72,13 @@ const ReferenceObs = ({
       if (!storyAudioPath) { return false; }
 
       const fs = window.require('fs');
+
+      // First check if ingredients folder exists
+      const ingredientsPath = joinPath(storyAudioPath, 'ingredients');
+      if (!fs.existsSync(ingredientsPath)) {
+        return false;
+      }
+
       const markerPath = joinPath(storyAudioPath, 'ingredients', '.scribe_default_audio_export');
 
       if (fs.existsSync(markerPath)) {
@@ -101,10 +108,19 @@ const ReferenceObs = ({
         return;
       }
 
+      // Check if ingredients folder exists first
+      const ingredientsPath = joinPath(storyAudioPath, 'ingredients');
+      if (!fs.existsSync(ingredientsPath)) {
+        logError('Ingredients folder does not exist:', ingredientsPath);
+        setAudioEnabled(false);
+        return;
+      }
+
       // Build the audio path: storyAudioPath/ingredients/audio
       const audioFolder = joinPath(storyAudioPath, 'ingredients', 'audio');
 
       if (!fs.existsSync(audioFolder)) {
+        logError('Audio folder does not exist:', audioFolder);
         setAudioEnabled(false);
         return;
       }
@@ -113,6 +129,7 @@ const ReferenceObs = ({
       const storyFolder = joinPath(audioFolder, effectiveStoryId.toString());
 
       if (!fs.existsSync(storyFolder)) {
+        logError('Story folder does not exist:', storyFolder);
         setAudioEnabled(false);
         return;
       }
