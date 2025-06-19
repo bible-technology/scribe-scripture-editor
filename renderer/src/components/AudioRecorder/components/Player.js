@@ -38,15 +38,18 @@ const Player = ({
   location,
 }) => {
   const { t } = useTranslation();
-  // const [volume, setVolume] = useState(0.5);
   const [volume, setVolume] = useState((Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) && typeof Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY) === 'number')) ? Number(localStorage.getItem(LS_AUDIO_VOLUME_KEY)) : 0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const speed = [0.5, 1, 1.5, 2];
   const path = require('path');
   const [time, setTime] = useState(0);
-  const [playTime, setPlayTime] = useState(0);
+  // Fixed: Separate state for current playback time
+  const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
   // state to check stopwatch running or not
   const [isRunning, setIsRunning] = useState(false);
+  // Add state to track recording status
+  const [isRecording, setIsRecording] = useState(false);
+  // Fixed: Remove duplicate currentTime state, use currentPlaybackTime instead
 
   const handleVolumeChange = (action, value = 0.1, sliding = false) => {
     // sliding the value will be tha actual value of slide
@@ -74,15 +77,69 @@ const Player = ({
     return () => clearInterval(intervalId);
   }, [isRunning, time]);
 
-  // playTime is the total time of audio & time is recording time
-  // Minutes calculation
-  const minutes = playTime > 0 ? Math.floor(playTime / 60) : (time > 0 ? Math.floor((time % 360000) / 6000) : 0);
+  // Update recording status based on trigger
+  useEffect(() => {
+    switch (trigger) {
+      case 'record':
+      case 'recResume':
+        setIsRecording(true);
+        setIsRunning(true);
+        break;
+      case 'recPause':
+        setIsRecording(true);
+        setIsRunning(false);
+        break;
+      case 'recStop':
+        setIsRecording(false);
+        setIsRunning(false);
+        break;
+      case 'play':
+        // Fixed: Don't interfere with recording states during playback
+        if (!isRecording) {
+          setIsRunning(false);
+        }
+        break;
+      case 'pause':
+      case 'rewind':
+        // Fixed: Don't interfere with recording states during playback
+        if (!isRecording) {
+          setIsRunning(false);
+        }
+        break;
+      default:
+        if (!trigger) {
+          setIsRecording(false);
+          setIsRunning(false);
+        }
+        break;
+    }
+  }, [trigger]);
 
-  // Seconds calculation
-  const seconds = playTime > 0 ? Math.floor(playTime % 60) : (time > 0 ? Math.floor((time % 6000) / 100) : 0);
+  // Reset timer when changing takes or starting new recording
+  useEffect(() => {
+    if (trigger === 'record' || !url[take]) {
+      setTime(0);
+      setCurrentPlaybackTime(0);
+    }
+  }, [take, trigger]);
 
-  // Milliseconds calculation
-  const milliseconds = playTime > 0 ? Math.floor((playTime - Math.floor(playTime)) * 100) : (time > 0 ? time % 100 : 0);
+  // Fixed: Update display time logic
+  const getDisplayTime = () => {
+    if (isRecording) {
+      // During recording, show recording time in centiseconds
+      return time;
+    } else {
+      // During playback, show playback time converted to centiseconds
+      return Math.floor(currentPlaybackTime * 100);
+    }
+  };
+
+  const displayTime = getDisplayTime();
+
+  // Time calculations - works for both recording (centiseconds) and playback (converted to centiseconds)
+  const minutes = Math.floor(displayTime / 6000); // 6000 centiseconds = 1 minute
+  const seconds = Math.floor((displayTime % 6000) / 100); // 100 centiseconds = 1 second
+  const milliseconds = Math.floor(displayTime % 100); // Convert to milliseconds for display
 
   const handleRecord = () => {
     // check whether its a first record or re-recording
@@ -97,9 +154,12 @@ const Player = ({
       // Recording for the first time
       setTrigger('record');
       setTime(0);
+      setCurrentPlaybackTime(0);
       setIsRunning(true);
+      setIsRecording(true);
     }
   };
+  
   const handleDelete = () => {
     // check whether its a first record or re-recording
     if (url[take]) {
@@ -112,11 +172,18 @@ const Player = ({
       setTrigger('delete');
     }
   };
+  
   const changeTake = (value) => {
     setTake(value);
     setTrigger();
     setBlobUrl();
+    // Reset timer when changing takes
+    setTime(0);
+    setCurrentPlaybackTime(0);
+    setIsRunning(false);
+    setIsRecording(false);
   };
+  
   const micSettings = () => {
     const { shell } = window.require('electron');
     shell.openExternal('ms-settings:sound');
@@ -157,19 +224,15 @@ const Player = ({
         changeTake('take3');
         break;
       case 187: // --> + (not in number area)
-        // setVolume((prev) => (prev > 0.9 ? prev : prev + 0.1));
         handleVolumeChange('inc');
         break;
       case 189: // --> - (left to +)
         handleVolumeChange('dec');
-        // setVolume((prev) => (prev < 0.1 ? prev : prev - 0.1));
         break;
-
       default:
         break;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger]); // ---> change to space for play and pause
+  }, [trigger, url, take]); // Add dependencies
 
   useEffect(() => {
     // attach the event listener
@@ -180,6 +243,19 @@ const Player = ({
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, [handleKeyPress]);
+
+  // Fixed: Callback function to receive current playback time from waveform
+  const handleAudioPlayBackUpdate = useCallback((timeValue) => {
+    if (typeof timeValue === 'number') {
+      setCurrentPlaybackTime(timeValue);
+    }
+  }, []);
+
+  console.log("timer", time);
+  console.log("isRecording", isRecording);
+  console.log("trigger", trigger);
+  console.log("currentPlaybackTime", currentPlaybackTime);
+  console.log("displayTime", displayTime);
 
   return (
     <div className="relative">
@@ -306,7 +382,11 @@ const Player = ({
                 type="button"
                 title="S"
                 className="p-2 bg-dark rounded-md hover:bg-primary"
-                onClick={() => { setTrigger('recStop'); setIsRunning(false); }}
+                onClick={() => { 
+                  setTrigger('recStop'); 
+                  setIsRunning(false); 
+                  setIsRecording(false);
+                }}
               >
                 <StopIcon
                   fill="currentColor"
@@ -325,7 +405,11 @@ const Player = ({
                 type="button"
                 title="<"
                 className="p-2 bg-dark rounded-md hover:bg-error"
-                onClick={() => { setTrigger('rewind'); setTime(0); setPlayTime(0); }}
+                onClick={() => { 
+                  setTrigger('rewind'); 
+                  setTime(0); 
+                  setCurrentPlaybackTime(0);
+                }}
               >
                 <ArrowPathIcon
                   className="w-5 h-5"
@@ -442,7 +526,7 @@ const Player = ({
                     : 'bg-white'
                   } text-xs font-bold ${url?.take1 ? 'text-white' : 'text-black'
                   } uppercase tracking-wider rounded-full`}
-                onClick={() => { changeTake('take1'); setTime(0); setPlayTime(0); }}
+                onClick={() => changeTake('take1')}
                 title="select : A"
                 onDoubleClick={() => changeDefault(1)}
               >
@@ -460,7 +544,7 @@ const Player = ({
                     : 'bg-white'
                   } text-xs font-bold ${url?.take2 ? 'text-white' : 'text-black'
                   } uppercase tracking-wider rounded-full`}
-                onClick={() => { changeTake('take2'); setTime(0); setPlayTime(0); }}
+                onClick={() => changeTake('take2')}
                 title="select : B"
                 onDoubleClick={() => changeDefault(2)}
               >
@@ -478,7 +562,7 @@ const Player = ({
                     : 'bg-white'
                   } text-xs font-bold ${url?.take3 ? 'text-white' : 'text-black'
                   } uppercase tracking-wider rounded-full`}
-                onClick={() => { changeTake('take3'); setTime(0); setPlayTime(0); }}
+                onClick={() => changeTake('take3')}
                 title="select : C"
                 onDoubleClick={() => changeDefault(3)}
               >
@@ -502,20 +586,65 @@ const Player = ({
           </div>
         </div>
         <div className="border-t border-gray-800 bg-black text-white">
+          {/* Always show waveform - no conditional rendering */}
           <AudioWaveform
             height={80}
             barGap="4"
             barWidth="2"
             waveColor="#ffffff"
             btnColor="text-white"
-            // url={(location && Object.keys(url).length !== 0) && (take ? (url[take] ? url[take] : '') : url[url?.default])}
-            url={blobUrl || (location
-              && Object.keys(url).length !== 0
-              && (take
-                ? url[take]
-                  ? path.join(location, url[take])
-                  : ''
-                : path.join(location, url[url?.default])))}
+            url={
+              blobUrl ||
+              (() => {
+                if (
+                  !location ||
+                  !url ||
+                  Object.keys(url).length === 0
+                )
+                  return '';
+                if (
+                  take &&
+                  url.takes &&
+                  url.takes[take] &&
+                  url.takes[take].url
+                ) {
+                  console.log(
+                    'Using take URL:',
+                    url.takes[take].url,
+                  );
+                  return url.takes[take].url;
+                }
+                // Fall back to default take
+                const defaultTake =
+                  url.default || url.defaultTake || 'take1';
+                if (
+                  url.takes &&
+                  url.takes[defaultTake] &&
+                  url.takes[defaultTake].url
+                ) {
+                  console.log(
+                    'Using default take URL:',
+                    url.takes[defaultTake].url,
+                  );
+                  return url.takes[defaultTake].url;
+                }
+
+                // Legacy fallback - construct path
+                if (url[take]) {
+                  const filePath = path.join(
+                    location,
+                    url[take],
+                  );
+                  const fileUrl = `file://${filePath.replace(
+                    /\\/g,
+                    '/',
+                  )}`;
+                  console.log('Using legacy URL:', fileUrl);
+                  return fileUrl;
+                }
+                return '';
+              })()
+            }
             call={trigger}
             startRecording={startRecording}
             stopRecording={stopRecording}
@@ -525,7 +654,7 @@ const Player = ({
             speed={currentSpeed}
             show={false}
             setTrigger={setTrigger}
-            setAudioPlayBack={setPlayTime}
+            setAudioPlayBack={setCurrentPlaybackTime}
           />
         </div>
       </div>
