@@ -282,4 +282,9 @@ export const Fa = {
   'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
   'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
   'label-upload-help-resources': 'Upload Help Resources',
+  'obs-export-option': 'گزینه‌های برون‌ریزی OBS',
+  'obs-text-only': 'فقط متن (فایل‌های MD)',
+  'obs-complete': 'کامل (صدا + متن)',
+  'obs-combined-audio': 'صوت داستان‌های ترکیبی',
+  'obs-default-audio-text': 'صدای پیش‌فرض + متن',
 };

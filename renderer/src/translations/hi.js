@@ -292,4 +292,9 @@ export const Hi = {
   'label-scope-not-selected': 'आरंभ करने के लिए, स्कोप प्रबंधन पर जाएं, पुस्तक और अध्यायों का चयन करें और लागू करें बटन पर क्लिक करें',
   'label-scope-note-audio': 'प्रोजेक्ट लिस्टिंग पेज पर SCOPE MANAGEMENT विकल्प से पुस्तक और अध्याय चुनें',
   'modal-title-scope-management': 'स्कोप प्रबंधन',
+  'obs-export-option': 'OBS निर्यात विकल्प',
+  'obs-text-only': 'केवल पाठ (MD फ़ाइलें)',
+  'obs-complete': 'पूर्ण (ऑडियो + पाठ)',
+  'obs-combined-audio': 'संयुक्त कहानियाँ ऑडियो',
+  'obs-default-audio-text': 'डिफ़ॉल्ट ऑडियो + पाठ',
 };

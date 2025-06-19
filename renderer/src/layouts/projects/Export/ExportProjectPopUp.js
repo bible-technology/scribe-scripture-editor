@@ -308,7 +308,7 @@ export default function ExportProjectPopUp(props) {
                     { project?.type === 'OBS'
                     && (
                       <div className="mb-4">
-                        <h4 className="text-sm font-semibold mb-3 text-gray-700">OBS Export Options</h4>
+                        <h4 className="text-sm font-semibold mb-3 text-gray-700">{t('obs-export-option')}</h4>
                         <div className=" mb-3">
                           <input
                             type="radio"
@@ -318,7 +318,7 @@ export default function ExportProjectPopUp(props) {
                             onChange={() => setObsExport('text-only')}
                             disabled={exportStart}
                           />
-                          <span className=" ml-4 text-xs font-bold" title="Export only MD files (story text content)">Text Only (MD files)</span>
+                          <span className=" ml-4 text-xs font-bold" title="Export only MD files (story text content)">{t('obs-text-only')}</span>
                         </div>
                         <div className="mb-3">
                           <input
@@ -329,7 +329,7 @@ export default function ExportProjectPopUp(props) {
                             onChange={() => setObsExport('complete')}
                             disabled={exportStart}
                           />
-                          <span className=" ml-4 text-xs font-bold" title="Export complete project with all audio files and text MD files">Complete (Audio + Text)</span>
+                          <span className=" ml-4 text-xs font-bold" title="Export complete project with all audio files and text MD files">{t('obs-complete')}</span>
                         </div>
                         <div className="mb-3">
                           <input
@@ -340,7 +340,7 @@ export default function ExportProjectPopUp(props) {
                             onChange={() => setObsExport('combined-stories')}
                             disabled={exportStart}
                           />
-                          <span className=" ml-4 text-xs font-bold" title="Combine all story segments into one audio file per story + text MD files">Combined Stories Audio</span>
+                          <span className=" ml-4 text-xs font-bold" title="Combine all story segments into one audio file per story + text MD files">{t('obs-combined-audio')}</span>
                         </div>
                         <div className="mb-3">
                           <input
@@ -351,7 +351,7 @@ export default function ExportProjectPopUp(props) {
                             onChange={() => setObsExport('default-audio')}
                             disabled={exportStart}
                           />
-                          <span className=" ml-4 text-xs font-bold" title="Export only default tagged audio files + text MD files">Default Audio + Text</span>
+                          <span className=" ml-4 text-xs font-bold" title="Export only default tagged audio files + text MD files">{t('obs-default-audio-text')}</span>
                         </div>
                       </div>
                     )}

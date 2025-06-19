@@ -293,4 +293,9 @@ export const En = {
   'label-start': 'Start',
   'label-end': 'End',
   'label-apply': 'Apply',
+  'obs-export-option': 'OBS Export Options',
+  'obs-text-only': 'Text Only (MD files)',
+  'obs-complete': 'Complete (Audio + Text)',
+  'obs-combined-audio': 'Combined Stories Audio',
+  'obs-default-audio-text': 'Default Audio + Text',
 };

@@ -292,4 +292,9 @@ export const Ne = {
   'label-scope-not-selected': 'सुरु गर्न, स्कोप व्यवस्थापनमा जानुहोस् पुस्तक र अध्यायहरू चयन गर्नुहोस् र लागू गर्नुहोस् बटन क्लिक गर्नुहोस्',
   'label-scope-note-audio': 'परियोजना सूची पृष्ठमा स्कोप म्यानेजमेन्ट विकल्पबाट पुस्तक र अध्याय छान्नुहोस्',
   'modal-title-scope-management': 'स्कोप व्यवस्थापन',
+  'obs-export-option': 'OBS निर्यात विकल्पहरू',
+  'obs-text-only': 'केवल पाठ (MD फाइलहरू)',
+  'obs-complete': 'पूर्ण (अडियो + पाठ)',
+  'obs-combined-audio': 'मिश्रित कथाहरूको अडियो',
+  'obs-default-audio-text': 'पूर्वनिर्धारित अडियो + पाठ',
 };

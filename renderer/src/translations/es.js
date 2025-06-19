@@ -291,4 +291,9 @@ export const Es = {
   'label-scope-not-selected': 'Para comenzar, vaya a Gestión de alcance, seleccione el libro y los capítulos y haga clic en el botón Aplicar.',
   'label-scope-note-audio': 'Seleccione el libro y el capítulo de la opción GESTIÓN DEL ALCANCE en la página de listado de proyectos',
   'modal-title-scope-management': 'Gestión del alcance',
+  'obs-export-option': 'Opciones de exportación OBS',
+  'obs-text-only': 'Solo texto (archivos MD)',
+  'obs-complete': 'Completo (Audio + Texto)',
+  'obs-combined-audio': 'Audio de historias combinadas',
+  'obs-default-audio-text': 'Audio predeterminado + Texto',
 };

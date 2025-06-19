@@ -292,4 +292,9 @@ export const Kn = {
   'label-scope-not-selected': 'ಪ್ರಾರಂಭಿಸಲು, ಸ್ಕೋಪ್ ಮ್ಯಾನೇಜ್‌ಮೆಂಟ್‌ಗೆ ಹೋಗಿ ಪುಸ್ತಕ ಮತ್ತು ಅಧ್ಯಾಯಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ಅನ್ವಯಿಸು ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ',
   'label-scope-note-audio': 'ಪ್ರಾಜೆಕ್ಟ್ ಪಟ್ಟಿಯ ಪುಟದಲ್ಲಿನ SCOPE MANAGEMENT ಆಯ್ಕೆಯಿಂದ ಪುಸ್ತಕ ಮತ್ತು ಅಧ್ಯಾಯವನ್ನು ಆರಿಸಿ',
   'modal-title-scope-management': 'ವ್ಯಾಪ್ತಿ ನಿರ್ವಹಣೆ',
+  'obs-export-option': 'OBS ರಫ್ತು ಆಯ್ಕೆಗಳು',
+  'obs-text-only': 'ಪಠ್ಯ ಮಾತ್ರ (MD ಫೈಲ್‌ಗಳು)',
+  'obs-complete': 'ಪೂರ್ಣ (ಆಡಿಯೋ + ಪಠ್ಯ)',
+  'obs-combined-audio': 'ಸಂಯೋಜಿತ ಕಥೆಗಳ ಆಡಿಯೋ',
+  'obs-default-audio-text': 'ಡಿಫಾಲ್ಟ್ ಆಡಿಯೋ + ಪಠ್ಯ',
 };
