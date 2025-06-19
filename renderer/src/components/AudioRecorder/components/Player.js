@@ -36,7 +36,7 @@ const Player = ({
   trigger,
   setTrigger,
   location,
-   disableRecordStopShortcuts = false,
+  disableRecordStopShortcuts = false,
 }) => {
   const { t } = useTranslation();
   // const [volume, setVolume] = useState(0.5);
@@ -85,46 +85,89 @@ const Player = ({
   // Milliseconds calculation
   const milliseconds = playTime > 0 ? Math.floor((playTime - Math.floor(playTime)) * 100) : (time > 0 ? time % 100 : 0);
 
+  // Helper function to check if a take has audio
+  const takeHasAudio = (takeKey) => {
+    if (!url || !url.takes) return false;
+    return url.takes[takeKey] && url.takes[takeKey].url;
+  };
+
+  // Helper function to check if a take is the default
+  const takeIsDefault = (takeKey) => {
+    if (!url) return false;
+    return url.default === takeKey || url.defaultTake === takeKey.replace('take', '');
+  };
+
+  // Helper function to get take button class
+  const getTakeButtonClass = (takeKey, takeNum) => {
+    const isSelected = take === takeKey;
+    const hasAudio = takeHasAudio(takeKey);
+    const isDefault = takeIsDefault(takeKey);
+    
+    let baseClass = `w-6 h-6 flex items-center justify-center text-xs font-bold uppercase tracking-wider rounded-full`;
+    
+    // Selected state (yellow border)
+    if (isSelected) {
+      baseClass += ' border-2 border-yellow-400';
+    }
+    
+    // Background color based on audio state
+    if (hasAudio) {
+      if (isDefault) {
+        baseClass += ' bg-primary text-white'; // Blue for default
+      } else {
+        baseClass += ' bg-success text-white'; // Green for non-default with audio
+      }
+    } else {
+      baseClass += ' bg-white text-black'; // White for no audio
+    }
+    
+    return baseClass;
+  };
+
   const handleRecord = () => {
-    // check whether its a first record or re-recording
-    if (url[take]) {
+    const currentTakeNum = take.replace('take', '');
+    if (takeHasAudio(take)) {
       setOpenModal({
         openModel: true,
         title: t('modal-title-re-record'),
         confirmMessage: t('msg-re-record-audio'),
         buttonName: t('label-re-record'),
+        action: 'record',
       });
     } else {
-      // Recording for the first time
       setTrigger('record');
       setTime(0);
       setIsRunning(true);
+      startRecording();
     }
   };
+
   const handleDelete = () => {
-    // check whether its a first record or re-recording
-    if (url[take]) {
+    // Check if current take has audio
+    if (takeHasAudio(take)) {
       setOpenModal({
         openModel: true,
         title: t('modal-title-delete-audio'),
         confirmMessage: t('msg-delete-audio'),
         buttonName: t('label-delete'),
+        action: 'delete', // Set action for modal
       });
-      setTrigger('delete');
     }
   };
+
   const changeTake = (value) => {
     setTake(value);
     setTrigger();
     setBlobUrl();
   };
+
   const micSettings = () => {
     const { shell } = window.require('electron');
     shell.openExternal('ms-settings:sound');
     shell.openExternal('x-apple.systempreferences:');
   };
 
-   const handleKeyPress = useCallback((event) => {
+  const handleKeyPress = useCallback((event) => {
     const keyCode = event.keyCode;
     switch (keyCode) {
       case 82: // --> r (Record)
@@ -173,7 +216,7 @@ const Player = ({
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger, disableRecordStopShortcuts])
+  }, [trigger, disableRecordStopShortcuts, take, url])
 
   useEffect(() => {
     // attach the event listener
@@ -436,16 +479,7 @@ const Player = ({
             <div className="flex gap-2">
               <button
                 type="button"
-                className={`${take === 'take1'
-                  ? 'border-2 border-yellow-400'
-                  : ''
-                  } w-6 h-6 flex items-center justify-center ${url?.take1
-                    ? url?.default === 'take1'
-                      ? 'bg-primary'
-                      : 'bg-success'
-                    : 'bg-white'
-                  } text-xs font-bold ${url?.take1 ? 'text-white' : 'text-black'
-                  } uppercase tracking-wider rounded-full`}
+                className={getTakeButtonClass('take1', '1')}
                 onClick={() => { changeTake('take1'); setTime(0); setPlayTime(0); }}
                 title="select : A"
                 onDoubleClick={() => changeDefault(1)}
@@ -454,16 +488,7 @@ const Player = ({
               </button>
               <button
                 type="button"
-                className={`${take === 'take2'
-                  ? 'border-2 border-yellow-400'
-                  : ''
-                  } w-6 h-6 flex items-center justify-center ${url?.take2
-                    ? url?.default === 'take2'
-                      ? 'bg-primary'
-                      : 'bg-success'
-                    : 'bg-white'
-                  } text-xs font-bold ${url?.take2 ? 'text-white' : 'text-black'
-                  } uppercase tracking-wider rounded-full`}
+                className={getTakeButtonClass('take2', '2')}
                 onClick={() => { changeTake('take2'); setTime(0); setPlayTime(0); }}
                 title="select : B"
                 onDoubleClick={() => changeDefault(2)}
@@ -472,16 +497,7 @@ const Player = ({
               </button>
               <button
                 type="button"
-                className={`${take === 'take3'
-                  ? 'border-2 border-yellow-400'
-                  : ''
-                  } w-6 h-6 flex items-center justify-center ${url?.take3
-                    ? url?.default === 'take3'
-                      ? 'bg-primary'
-                      : 'bg-success'
-                    : 'bg-white'
-                  } text-xs font-bold ${url?.take3 ? 'text-white' : 'text-black'
-                  } uppercase tracking-wider rounded-full`}
+                className={getTakeButtonClass('take3', '3')}
                 onClick={() => { changeTake('take3'); setTime(0); setPlayTime(0); }}
                 title="select : C"
                 onDoubleClick={() => changeDefault(3)}
@@ -513,57 +529,57 @@ const Player = ({
             waveColor="#ffffff"
             btnColor="text-white"
             url={
-							blobUrl ||
-							(() => {
-								if (
-									!location ||
-									!url ||
-									Object.keys(url).length === 0
-								)
-									return '';
-								if (
-									take &&
-									url.takes &&
-									url.takes[take] &&
-									url.takes[take].url
-								) {
-									console.log(
-										'Using take URL:',
-										url.takes[take].url,
-									);
-									return url.takes[take].url;
-								}
-								// Fall back to default take
-								const defaultTake =
-									url.default || url.defaultTake || 'take1';
-								if (
-									url.takes &&
-									url.takes[defaultTake] &&
-									url.takes[defaultTake].url
-								) {
-									console.log(
-										'Using default take URL:',
-										url.takes[defaultTake].url,
-									);
-									return url.takes[defaultTake].url;
-								}
+              blobUrl ||
+              (() => {
+                if (
+                  !location ||
+                  !url ||
+                  Object.keys(url).length === 0
+                )
+                  return '';
+                if (
+                  take &&
+                  url.takes &&
+                  url.takes[take] &&
+                  url.takes[take].url
+                ) {
+                  console.log(
+                    'Using take URL:',
+                    url.takes[take].url,
+                  );
+                  return url.takes[take].url;
+                }
+                // Fall back to default take
+                const defaultTake =
+                  url.default || url.defaultTake || 'take1';
+                if (
+                  url.takes &&
+                  url.takes[defaultTake] &&
+                  url.takes[defaultTake].url
+                ) {
+                  console.log(
+                    'Using default take URL:',
+                    url.takes[defaultTake].url,
+                  );
+                  return url.takes[defaultTake].url;
+                }
 
-								// Legacy fallback - construct path
-								if (url[take]) {
-									const filePath = path.join(
-										location,
-										url[take],
-									);
-									const fileUrl = `file://${filePath.replace(
-										/\\/g,
-										'/',
-									)}`;
-									console.log('Using legacy URL:', fileUrl);
-									return fileUrl;
-								}
-								return '';
-							})()
-						}
+                // Legacy fallback - construct path
+                if (url[take]) {
+                  const filePath = path.join(
+                    location,
+                    url[take],
+                  );
+                  const fileUrl = `file://${filePath.replace(
+                    /\\/g,
+                    '/',
+                  )}`;
+                  console.log('Using legacy URL:', fileUrl);
+                  return fileUrl;
+                }
+                return '';
+              })()
+            }
             call={trigger}
             startRecording={startRecording}
             stopRecording={stopRecording}
