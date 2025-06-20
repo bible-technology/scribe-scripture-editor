@@ -13,7 +13,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
 
   const effectiveStoryId = storyId || (obsStory && obsStory[0] && obsStory[0].title.split('.')[0]);
 
-  const [selectedParagraph, setSelectedParagraph] = useState(null);
+  const [selectedParagraph, setSelectedParagraph] = useState(1);
 
   const handleParagraphClick = (storyItem) => {
     if ('text' in storyItem) {

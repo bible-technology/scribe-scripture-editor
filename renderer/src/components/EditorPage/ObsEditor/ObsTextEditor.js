@@ -12,10 +12,14 @@ const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
   const key = `story_${effectiveStoryId}_${newStoryId}`;
   const audioData = audioContent[key];
 
-  const hasAudio = audioData
-                   && audioData.takes
-                   && Object.keys(audioData.takes).length > 0
-                   && Object.values(audioData.takes).some((take) => take && take.fileName);
+  const hasAudio = audioData && (
+    audioData.take1
+    || audioData.take2
+    || audioData.take3
+    || (audioData.takes
+     && Object.keys(audioData.takes).length > 0
+     && Object.values(audioData.takes).some((take) => take && take.fileName))
+  );
 
   if (!hasAudio) { return null; }
 
@@ -25,6 +29,7 @@ const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
     </div>
   );
 };
+
 AudioIndicator.propTypes = {
   storyId: PropTypes.number.isRequired,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -155,18 +160,20 @@ const ObsTextEditor = ({
           )}
           {'text' in story && (
             <div className="flex m-4 p-1 rounded-md">
-              <span className="w-5 h-5 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center p-3">
-                {index.toString().split('').map((num) => t(`n-${num}`))}
-              </span>
-              {audioEnabled && (
-                <div className="flex flex-col items-center ml-2 mr-2">
-                  <AudioIndicator
-                    storyId={story.id}
-                    effectiveStoryId={effectiveStoryId}
-                    audioContent={audioContent}
-                  />
-                </div>
-              )}
+              <div className="flex flex-col items-center">
+                <span className="w-5 h-5 bg-gray-800 rounded-full flex justify-center text-sm text-white items-center p-3">
+                  {index.toString().split('').map((num) => t(`n-${num}`))}
+                </span>
+                {audioEnabled && (
+                  <div className="mt-1">
+                    <AudioIndicator
+                      storyId={story.id}
+                      effectiveStoryId={effectiveStoryId}
+                      audioContent={audioContent}
+                    />
+                  </div>
+                )}
+              </div>
               <textarea
                 // eslint-disable-next-line no-return-assign
                 ref={(el) => textareaRefs.current[`text-${story.id}`] = el}
