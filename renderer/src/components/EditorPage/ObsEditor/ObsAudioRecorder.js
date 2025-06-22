@@ -1,7 +1,6 @@
-import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
 import {
-  useContext, useEffect, useState, useCallback,
+  useState, useCallback, useEffect,
 } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import Player from '@/components/AudioRecorder/components/Player';
@@ -12,17 +11,14 @@ const ObsAudioRecorder = ({
   selectedParagraph,
   effectiveStoryId,
   isVisible = true,
+  audioContent,
+  recordingsPath,
+  onAudioUpdate,
 }) => {
-  const {
-    state: { audioContent, updateWave },
-    actions: { setAudioContent, setUpdateWave },
-  } = useContext(ReferenceContext);
-
   const [currentUrl, setCurrentUrl] = useState('');
   const [newBlob, setNewBlob] = useState();
   const [take, setTake] = useState('take1');
   const [trigger, setTrigger] = useState('');
-  const [recordingsPath, setRecordingsPath] = useState('');
   const [model, setModel] = useState({
     openModel: false,
     title: '',
@@ -31,7 +27,6 @@ const ObsAudioRecorder = ({
   });
 
   const clearAudioState = () => {
-    setCurrentUrl('');
     setNewBlob();
     setTrigger('');
     setTake('take1');
@@ -43,13 +38,13 @@ const ObsAudioRecorder = ({
     if (audioContent[key]) {
       const audioData = audioContent[key];
       const currentTake = audioData[take];
+      setCurrentUrl({
+        ...audioData,
+        currentTake: currentTake || null,
+        filePath: recordingsPath,
+      });
 
       if (currentTake) {
-        setCurrentUrl({
-          ...audioData,
-          currentTake,
-          filePath: recordingsPath,
-        });
         setTrigger('url');
       } else {
         setTrigger('');
@@ -59,62 +54,11 @@ const ObsAudioRecorder = ({
       setTrigger('');
     }
   };
-
-  const loadStoryAudio = async () => {
-    if (effectiveStoryId) {
-      const fs = window.require('fs');
-      const path = require('path');
-      const { projectsDir } = await getDetails();
-
-      const audioFolder = path.join(projectsDir, 'ingredients', 'audio');
-      const storyFolder = path.join(audioFolder, effectiveStoryId.toString());
-
-      setRecordingsPath(storyFolder);
-
-      if (!fs.existsSync(audioFolder)) {
-        fs.mkdirSync(audioFolder, { recursive: true });
-      }
-      if (!fs.existsSync(storyFolder)) {
-        fs.mkdirSync(storyFolder, { recursive: true });
-        setAudioContent({});
-        clearAudioState();
-        return;
-      }
-
-      const files = fs.readdirSync(storyFolder).filter((file) => file.endsWith('.mp3'));
-      const updatedContent = {};
-
-      files.forEach((file) => {
-        const name = path.parse(file).name;
-        const parts = name.split('_');
-
-        if (parts.length >= 3) {
-          const [storyNum, paraNum, takeNum, ...rest] = parts;
-          const isDefault = rest.includes('default');
-          const key = `story_${storyNum}_${paraNum}`;
-
-          if (!updatedContent[key]) {
-            updatedContent[key] = {
-              paragraph: paraNum,
-              storyNumber: storyNum,
-              verseNumber: parseInt(paraNum, 10),
-              default: 'take1',
-            };
-          }
-
-          const takeKey = `take${takeNum}`;
-          updatedContent[key][takeKey] = file;
-
-          if (isDefault) {
-            updatedContent[key].default = takeKey;
-          }
-        }
-      });
-
-      setAudioContent(updatedContent);
-      setUpdateWave(!updateWave);
+  useEffect(() => {
+    if (audioContent && Object.keys(audioContent).length > 0) {
+      fetchUrl();
     }
-  };
+  }, [audioContent, selectedParagraph, take, recordingsPath]);
 
   const changeDefault = (value) => {
     const takeValue = typeof value === 'string' ? value : `take${value}`;
@@ -158,7 +102,7 @@ const ObsAudioRecorder = ({
         }
         i += 1;
       }
-      loadStoryAudio();
+      onAudioUpdate();
     }
   };
 
@@ -194,7 +138,7 @@ const ObsAudioRecorder = ({
           // eslint-disable-next-line react/no-this-in-sfc
           fs.writeFile(filePath, Buffer.from(new Uint8Array(this.result)), (err) => {
             if (!err) {
-              loadStoryAudio();
+              onAudioUpdate();
             }
           });
         };
@@ -254,34 +198,15 @@ const ObsAudioRecorder = ({
 
       setTrigger('');
       setNewBlob();
-      loadStoryAudio();
+      onAudioUpdate();
     } else {
       setTrigger('record');
     }
   };
 
   useEffect(() => {
-    if (effectiveStoryId) {
-      clearAudioState();
-      loadStoryAudio();
-    }
-  }, [effectiveStoryId]);
-
-  useEffect(() => {
     clearAudioState();
   }, [selectedParagraph]);
-
-  useEffect(() => {
-    if (audioContent && Object.keys(audioContent).length > 0) {
-      fetchUrl();
-    }
-  }, [audioContent, selectedParagraph, recordingsPath]);
-
-  useEffect(() => {
-    if (audioContent && Object.keys(audioContent).length > 0 && recordingsPath) {
-      fetchUrl();
-    }
-  }, [take]);
 
   if (!isVisible) {
     return null;
@@ -304,9 +229,7 @@ const ObsAudioRecorder = ({
         setTrigger={(v) => setTrigger(v)}
         setOpenModal={(v) => setModel(v)}
         location={recordingsPath || ''}
-        selectedParagraph={selectedParagraph}
       />
-
       <ConfirmationModal
         openModal={model.openModel}
         setOpenModal={(open) => setModel((prev) => ({ ...prev, openModel: open }))}
@@ -323,6 +246,9 @@ ObsAudioRecorder.propTypes = {
   selectedParagraph: PropTypes.number,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   isVisible: PropTypes.bool,
+  audioContent: PropTypes.object,
+  recordingsPath: PropTypes.string,
+  onAudioUpdate: PropTypes.func.isRequired,
 };
 
 export default ObsAudioRecorder;

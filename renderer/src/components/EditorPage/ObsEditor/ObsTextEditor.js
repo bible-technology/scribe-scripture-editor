@@ -44,12 +44,12 @@ const ObsTextEditor = ({
   onEndClick,
   effectiveStoryId,
   audioEnabled = false,
+  audioContent = {},
 }) => {
   const {
     state: {
       selectedFont,
       editorFontSize,
-      audioContent,
     },
     actions: {
       setSelectedStory,
@@ -64,6 +64,7 @@ const ObsTextEditor = ({
     element.style.height = 'auto';
     element.style.height = `${element.scrollHeight}px`;
   };
+
   const handleChange = (e) => {
     const index = e.target.getAttribute('data-id');
     const value = e.target.value.replace(/\n|\r/g, '');
@@ -239,6 +240,7 @@ ObsTextEditor.propTypes = {
   onEndClick: PropTypes.func,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   audioEnabled: PropTypes.bool,
+  audioContent: PropTypes.object,
 };
 
 export default ObsTextEditor;
