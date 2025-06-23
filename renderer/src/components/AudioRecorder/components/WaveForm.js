@@ -88,6 +88,17 @@ const AudioWaveForm = ((props, ref) => {
     }
   };
 
+  const safeSetVolume = (volumeValue) => {
+    if (wavesurfer.current && currentMode === 'audio') {
+      try {
+        const clampedVolume = Math.max(0, Math.min(1, volumeValue || 0));
+        wavesurfer.current.setVolume(clampedVolume);
+      } catch (error) {
+        console.error('Error setting volume:', error);
+      }
+    }
+  };
+
   const createForm = async (currentUrl) => {
     destroyWavesurfer();
 
@@ -99,6 +110,7 @@ const AudioWaveForm = ((props, ref) => {
       if (duration && duration !== Infinity) {
         if (setAudioPlayBack) { setAudioPlayBack(duration); }
       } else if (setAudioPlayBack) { setAudioPlayBack(0); }
+      safeSetVolume(volume);
       setCurrentMode('audio');
     });
 
@@ -113,6 +125,7 @@ const AudioWaveForm = ((props, ref) => {
     });
 
     wavesurfer.current.on('play', () => {
+      safeSetVolume(volume);
       setPlaying(true);
     });
 
@@ -131,8 +144,10 @@ const AudioWaveForm = ((props, ref) => {
     // Load the audio file
     try {
       await wavesurfer.current.load(currentUrl);
-      wavesurfer.current.setVolume(volume || 0.5);
-      wavesurfer.current.setPlaybackRate(speed || 1);
+      safeSetVolume(volume);
+      if (speed && wavesurfer.current.setPlaybackRate) {
+        wavesurfer.current.setPlaybackRate(speed);
+      }
     } catch (error) {
       console.error('Error loading audio:', error);
     }
@@ -177,7 +192,7 @@ const AudioWaveForm = ((props, ref) => {
 
     return () => {
       destroyWavesurfer();
-      setAudioPlayBack(0);
+      if (setAudioPlayBack) { setAudioPlayBack(0); }
       setIsRecordingPaused(false);
     };
   }, []);
@@ -210,16 +225,24 @@ const AudioWaveForm = ((props, ref) => {
   }, [isRecordingPaused, currentMode]);
 
   useEffect(() => {
-    if (volume && wavesurfer.current && currentMode === 'audio') {
-      wavesurfer.current?.setVolume(volume);
+    if (wavesurfer.current && currentMode === 'audio') {
+      safeSetVolume(volume);
     }
-    if (speed && wavesurfer.current && currentMode === 'audio') {
-      wavesurfer.current?.setPlaybackRate(speed);
+  }, [volume, currentMode]);
+
+  useEffect(() => {
+    if (wavesurfer.current && currentMode === 'audio' && speed) {
+      try {
+        wavesurfer.current.setPlaybackRate(speed);
+      } catch (error) {
+        console.error('Error setting playback rate:', error);
+      }
     }
-  }, [volume, speed]);
+  }, [speed, currentMode]);
 
   const handlePlayPause = () => {
     if (wavesurfer.current && currentMode === 'audio') {
+      safeSetVolume(volume);
       wavesurfer.current.playPause();
     }
   };
@@ -231,7 +254,7 @@ const AudioWaveForm = ((props, ref) => {
         setAudioPlayBack(0);
       }
       try {
-        wavesurfer.current.setVolume(volume || 0.5);
+        safeSetVolume(volume);
         wavesurfer.current.play();
         if (setTrigger) {
           setTrigger();
@@ -241,6 +264,7 @@ const AudioWaveForm = ((props, ref) => {
           setTimeout(() => {
             if (wavesurfer.current) {
               wavesurfer.current.seekTo(0);
+              safeSetVolume(volume);
               wavesurfer.current.play();
             }
           }, 100);
@@ -252,16 +276,18 @@ const AudioWaveForm = ((props, ref) => {
   const handlePlay = () => {
     if (url && wavesurfer.current && currentMode === 'audio') {
       try {
-        wavesurfer.current.setVolume(volume || 0.5);
+        safeSetVolume(volume);
         wavesurfer.current.play();
         if (setTrigger) { setTrigger(); }
       } catch (error) {
-        createForm(url);
-        setTimeout(() => {
-          if (wavesurfer.current) {
-            wavesurfer.current.play();
-          }
-        }, 100);
+        createForm(url).then(() => {
+          setTimeout(() => {
+            if (wavesurfer.current) {
+              safeSetVolume(volume);
+              wavesurfer.current.play();
+            }
+          }, 100);
+        });
       }
     }
   };
