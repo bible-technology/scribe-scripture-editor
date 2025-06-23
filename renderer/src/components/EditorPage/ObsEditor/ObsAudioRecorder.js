@@ -30,6 +30,7 @@ const ObsAudioRecorder = ({
   const clearAudioState = () => {
     setNewBlob();
     setTrigger('');
+    setCurrentUrl('');
     setTake('take1');
   };
 
@@ -224,11 +225,8 @@ const ObsAudioRecorder = ({
 
   useEffect(() => {
     clearAudioState();
-  }, [selectedParagraph]);
-
-  useEffect(() => {
-    clearAudioState();
-  }, [effectiveStoryId]);
+    fetchUrl();
+  }, [selectedParagraph, effectiveStoryId]);
 
   if (!isVisible) {
     return null;
