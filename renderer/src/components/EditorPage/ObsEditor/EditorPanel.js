@@ -120,6 +120,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
           audioContent={audioContent}
           recordingsPath={recordingsPath}
           onAudioUpdate={refreshAudioData}
+          onAudioContentUpdate={setAudioContent}
         />
       )}
     </div>

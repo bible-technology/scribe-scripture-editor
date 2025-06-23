@@ -14,6 +14,7 @@ const ObsAudioRecorder = ({
   audioContent,
   recordingsPath,
   onAudioUpdate,
+  onAudioContentUpdate,
 }) => {
   const [currentUrl, setCurrentUrl] = useState('');
   const [newBlob, setNewBlob] = useState();
@@ -171,6 +172,7 @@ const ObsAudioRecorder = ({
       const path = require('path');
       const takeNum = take.replace(/take/g, '');
       const newStoryId = parseInt(selectedParagraph, 10) - 1;
+      const key = `story_${effectiveStoryId}_${newStoryId}`;
 
       const defaultFile = `${effectiveStoryId}_${newStoryId}_${takeNum}_default.mp3`;
       const regularFile = `${effectiveStoryId}_${newStoryId}_${takeNum}.mp3`;
@@ -196,8 +198,24 @@ const ObsAudioRecorder = ({
         fs.unlinkSync(regularPath);
       }
 
+      const updatedAudioContent = { ...audioContent };
+      if (updatedAudioContent[key]) {
+        delete updatedAudioContent[key][`take${takeNum}`];
+
+        const hasAnyTakes = ['take1', 'take2', 'take3'].some((takeKey) => updatedAudioContent[key][takeKey]);
+        if (!hasAnyTakes) {
+          delete updatedAudioContent[key];
+        }
+      }
+      onAudioContentUpdate(updatedAudioContent);
+
       setTrigger('');
       setNewBlob();
+
+      if (take === `take${takeNum}`) {
+        setCurrentUrl('');
+      }
+
       onAudioUpdate();
     } else {
       setTrigger('record');
@@ -207,6 +225,10 @@ const ObsAudioRecorder = ({
   useEffect(() => {
     clearAudioState();
   }, [selectedParagraph]);
+
+  useEffect(() => {
+    clearAudioState();
+  }, [effectiveStoryId]);
 
   if (!isVisible) {
     return null;
@@ -249,6 +271,7 @@ ObsAudioRecorder.propTypes = {
   audioContent: PropTypes.object,
   recordingsPath: PropTypes.string,
   onAudioUpdate: PropTypes.func.isRequired,
+  onAudioContentUpdate: PropTypes.func.isRequired,
 };
 
 export default ObsAudioRecorder;
