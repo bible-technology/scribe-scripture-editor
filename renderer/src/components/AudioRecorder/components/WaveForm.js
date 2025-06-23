@@ -8,9 +8,6 @@ import { PlayIcon, PauseIcon } from '@heroicons/react/24/solid';
 // eslint-disable-next-line import/extensions
 import MicrophonePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.microphone.js';
 
-// eslint-disable-next-line prefer-const
-let microphone = MicrophonePlugin.create();
-
 const AudioWaveForm = ((props, ref) => {
   const {
     height,
@@ -34,9 +31,10 @@ const AudioWaveForm = ((props, ref) => {
   } = props;
 
   const waveformRef = useRef(null);
-  // eslint-disable-next-line prefer-const
-  let wavesurfer = useRef(null);
+  const wavesurfer = useRef(null);
   const [playing, setPlaying] = useState(false);
+  const [isRecordingPaused, setIsRecordingPaused] = useState(false);
+  const [currentMode, setCurrentMode] = useState('empty'); // 'empty', 'audio', 'recording'
   const combinedRef = ref || waveformRef;
 
   const formWaveSurferOptions = (ref) => ({
@@ -52,38 +50,68 @@ const AudioWaveForm = ((props, ref) => {
     hideScrollbar: true,
     interact: interaction ?? true,
     backend: 'MediaElement',
+  });
+
+  const formRecordingOptions = (ref) => ({
+    container: ref || '#waveform',
+    waveColor: isRecordingPaused ? '#888888' : (waveColor || '#ff4e00'), // Gray when paused
+    progressColor: '#0073E5',
+    cursorColor: 'OrangeRed',
+    barWidth: barWidth ?? 1,
+    barRadius: barRadius ?? 1,
+    barGap: barGap ?? 2,
+    responsive: true,
+    height: height || 60,
+    hideScrollbar: true,
+    interact: false,
+    backend: 'WebAudio', // Use WebAudio for real-time recording
     plugins: [
-      microphone,
+      MicrophonePlugin.create({
+        bufferSize: 4096,
+        numberOfInputChannels: 1,
+        numberOfOutputChannels: 1,
+        constraints: {
+          video: false,
+          audio: true,
+        },
+      }),
     ],
   });
 
+  const destroyWavesurfer = () => {
+    if (wavesurfer.current) {
+      if (wavesurfer.current.microphone) {
+        wavesurfer.current.microphone.destroy();
+      }
+      wavesurfer.current.destroy();
+      wavesurfer.current = null;
+    }
+  };
+
   const createForm = async (currentUrl) => {
+    destroyWavesurfer();
+
     const options = formWaveSurferOptions(combinedRef.current);
     wavesurfer.current = WaveSurfer.create(options);
 
-    // Set up event listeners BEFORE loading
     wavesurfer.current.on('ready', () => {
       const duration = wavesurfer?.current?.getDuration();
       if (duration && duration !== Infinity) {
-        setAudioPlayBack(duration);
-      } else {
-        setAudioPlayBack(0);
-      }
+        if (setAudioPlayBack) { setAudioPlayBack(duration); }
+      } else if (setAudioPlayBack) { setAudioPlayBack(0); }
+      setCurrentMode('audio');
     });
 
-    // Fixed: Use 'audioprocess' for current time during playback
     wavesurfer.current.on('audioprocess', (time) => {
-      setAudioPlayBack(time);
+      if (setAudioPlayBack) { setAudioPlayBack(time); }
     });
 
-    // Fixed: Handle seeking properly
     wavesurfer.current.on('seek', (progress) => {
       const duration = wavesurfer.current.getDuration();
       const seekTime = progress * duration;
-      setAudioPlayBack(seekTime);
+      if (setAudioPlayBack) { setAudioPlayBack(seekTime); }
     });
 
-    // Fixed: Add play/pause event listeners to sync state
     wavesurfer.current.on('play', () => {
       setPlaying(true);
     });
@@ -96,80 +124,108 @@ const AudioWaveForm = ((props, ref) => {
       setPlaying(false);
     });
 
+    wavesurfer.current.on('error', () => {
+      setPlaying(false);
+    });
+
     // Load the audio file
-    wavesurfer.current?.load(currentUrl);
-    wavesurfer.current?.setVolume(volume || 0.5);
-    wavesurfer.current?.setPlaybackRate(speed || 1);
+    try {
+      await wavesurfer.current.load(currentUrl);
+      wavesurfer.current.setVolume(volume || 0.5);
+      wavesurfer.current.setPlaybackRate(speed || 1);
+    } catch (error) {
+      console.error('Error loading audio:', error);
+    }
   };
 
   const createRecForm = async () => {
+    destroyWavesurfer();
+
+    const options = formRecordingOptions(combinedRef.current);
+    wavesurfer.current = WaveSurfer.create(options);
+
+    wavesurfer.current?.microphone.on('deviceReady', () => {
+      setIsRecordingPaused(false);
+      setCurrentMode('recording');
+    });
+
+    wavesurfer.current?.microphone.on('deviceError', () => {
+      setIsRecordingPaused(false);
+      setCurrentMode('empty');
+    });
+
+    // Handle microphone pause/resume events if supported
+    wavesurfer.current?.microphone.on('pause', () => { });
+    wavesurfer.current?.microphone.on('resume', () => { });
+  };
+
+  const createEmptyForm = () => {
+    destroyWavesurfer();
+
     const options = formWaveSurferOptions(combinedRef.current);
     wavesurfer.current = WaveSurfer.create(options);
 
-    wavesurfer.current?.microphone.on('deviceReady', (stream) => {
-      console.log('Device ready!', stream);
-    });
-
-    wavesurfer.current?.microphone.on('deviceError', (code) => {
-      console.warn(`Device error: ${code}`);
-    });
+    // Create empty waveform (flat line)
+    wavesurfer.current.empty();
+    setCurrentMode('empty');
+    if (setAudioPlayBack) { setAudioPlayBack(0); }
   };
 
+  // Initialize waveform on mount
   useEffect(() => {
-    if (url) {
+    createEmptyForm();
+
+    return () => {
+      destroyWavesurfer();
+      setAudioPlayBack(0);
+      setIsRecordingPaused(false);
+    };
+  }, []);
+
+  // Handle URL changes - this is crucial for post-recording playback
+  useEffect(() => {
+    if (url && currentMode !== 'recording') {
       createForm(url);
-
-      return () => {
-        if (wavesurfer.current) {
-          wavesurfer.current.destroy();
-          if (wavesurfer.current.microphone) {
-            wavesurfer.current.microphone.destroy();
-          }
-          setAudioPlayBack(0);
-        }
-      };
+    } else if (!url && currentMode !== 'recording') {
+      createEmptyForm();
     }
-  }, [url]);
+  }, [url, currentMode]);
 
+  // Handle recording mode changes
   useEffect(() => {
-    if (call === 'record') {
-      if (wavesurfer.current) {
-        wavesurfer.current.destroy();
-        if (wavesurfer.current.microphone) {
-          wavesurfer.current.microphone.destroy();
-        }
-      }
+    if (call === 'record' && currentMode !== 'recording') {
       createRecForm();
-
-      return () => {
-        if (wavesurfer.current) {
-          wavesurfer.current.destroy();
-          if (wavesurfer.current.microphone) {
-            wavesurfer.current.microphone.destroy();
-          }
-        }
-      };
     }
   }, [call]);
 
+  // Handle recording pause state changes - recreate waveform to change appearance
   useEffect(() => {
-    if (volume && wavesurfer.current && url) {
+    if (currentMode === 'recording' && wavesurfer.current) {
+      const currentMicrophoneState = wavesurfer.current.microphone;
+      if (currentMicrophoneState && currentMicrophoneState.active) {
+        // update the waveColor through the wavesurfer instance
+        wavesurfer.current.setWaveColor(isRecordingPaused ? '#888888' : (waveColor || '#ff4e00'));
+      }
+    }
+  }, [isRecordingPaused, currentMode]);
+
+  useEffect(() => {
+    if (volume && wavesurfer.current && currentMode === 'audio') {
       wavesurfer.current?.setVolume(volume);
     }
-    if (speed && wavesurfer.current && url) {
+    if (speed && wavesurfer.current && currentMode === 'audio') {
       wavesurfer.current?.setPlaybackRate(speed);
     }
   }, [volume, speed]);
 
   const handlePlayPause = () => {
-    if (wavesurfer.current) {
+    if (wavesurfer.current && currentMode === 'audio') {
       wavesurfer.current.playPause();
-      // Don't manually set playing state here - let the event listeners handle it
     }
   };
 
   const handleRewind = () => {
-    if (url && wavesurfer.current) {
+    if (url && wavesurfer.current && currentMode === 'audio') {
       wavesurfer.current.stop();
       wavesurfer.current.seekTo(0);
       setAudioPlayBack(0);
@@ -178,15 +234,13 @@ const AudioWaveForm = ((props, ref) => {
   };
 
   const handlePlay = () => {
-    if (url && wavesurfer.current) {
+    if (url && wavesurfer.current && currentMode === 'audio') {
       try {
         wavesurfer.current.setVolume(volume || 0.5);
         wavesurfer.current.play();
-        setTrigger();
+        if (setTrigger) { setTrigger(); }
       } catch (error) {
-        console.error('Error playing audio:', error);
         createForm(url);
-        // Retry after recreation
         setTimeout(() => {
           if (wavesurfer.current) {
             wavesurfer.current.play();
@@ -197,19 +251,72 @@ const AudioWaveForm = ((props, ref) => {
   };
 
   const handlePause = () => {
-    if (url && wavesurfer.current) {
+    if (url && wavesurfer.current && currentMode === 'audio') {
       wavesurfer.current.pause();
     }
   };
 
   const handleStart = () => {
-    startRecording();
-    wavesurfer.current?.microphone.start();
+    if (startRecording) { startRecording(); }
+    if (wavesurfer.current && wavesurfer.current.microphone) {
+      wavesurfer.current.microphone.start();
+    }
   };
 
   const handleStop = () => {
-    stopRecording();
-    wavesurfer.current?.microphone.stop();
+    if (stopRecording) { stopRecording(); }
+    if (wavesurfer.current && wavesurfer.current.microphone) {
+      wavesurfer.current.microphone.stop();
+    }
+    setIsRecordingPaused(false);
+    // After stopping recording, re-create appropriate waveform
+    setTimeout(() => {
+      if (url) {
+        // If there's a URL (recorded audio), create audio waveform
+        createForm(url);
+      } else {
+        // Otherwise show empty waveform
+        createEmptyForm();
+      }
+    }, 200);
+  };
+
+  const handleRecordingPause = () => {
+    if (pauseRecording) { pauseRecording(); }
+    setIsRecordingPaused(true);
+
+    // Pause the microphone input to stop real-time waveform
+    if (wavesurfer.current && wavesurfer.current.microphone) {
+      try {
+        wavesurfer.current.microphone.pause();
+      } catch (error) {
+        // Alternative: temporarily disconnect the microphone
+        if (wavesurfer.current.microphone.micStream) {
+          wavesurfer.current.microphone.micStream.getTracks().forEach((track) => {
+            track.enabled = false;
+          });
+        }
+      }
+    }
+  };
+
+  const handleRecordingResume = () => {
+    if (resumeRecording) { resumeRecording(); }
+    setIsRecordingPaused(false);
+
+    // Resume the microphone input
+    if (wavesurfer.current && wavesurfer.current.microphone) {
+      try {
+        wavesurfer.current.microphone.start();
+      } catch (error) {
+        // Alternative: re-enable the microphone tracks
+        if (wavesurfer.current.microphone.micStream) {
+          wavesurfer.current.microphone.micStream.getTracks().forEach((track) => {
+            track.enabled = true;
+          });
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -227,10 +334,10 @@ const AudioWaveForm = ((props, ref) => {
       handleStart();
       break;
     case 'recPause':
-      pauseRecording();
+      handleRecordingPause();
       break;
     case 'recResume':
-      resumeRecording();
+      handleRecordingResume();
       break;
     case 'recStop':
       handleStop();
@@ -242,32 +349,25 @@ const AudioWaveForm = ((props, ref) => {
 
   return (
     <div className="flex items-center">
-      {(url || call === 'record')
-        && (
-          <>
-            <div className="w-full">
-              <div id="waveform" ref={combinedRef} />
-            </div>
-            {show
-            && (
-              <button type="button" onClick={handlePlayPause}>
-                {!playing
-                  ? (
-                    <PlayIcon
-                      className={`w-7 h-7 ${btnColor}`}
-                      aria-hidden="true"
-                    />
-                  )
-                  : (
-                    <PauseIcon
-                      className="w-7 h-7 text-error"
-                      aria-hidden="true"
-                    />
-                  )}
-              </button>
-            )}
-          </>
-        )}
+      <div className="w-full">
+        <div id="waveform" ref={combinedRef} />
+      </div>
+
+      {show && url && currentMode === 'audio' && (
+        <button type="button" onClick={handlePlayPause}>
+          {!playing ? (
+            <PlayIcon
+              className={`w-7 h-7 ${btnColor}`}
+              aria-hidden="true"
+            />
+          ) : (
+            <PauseIcon
+              className="w-7 h-7 text-error"
+              aria-hidden="true"
+            />
+          )}
+        </button>
+      )}
     </div>
   );
 });
