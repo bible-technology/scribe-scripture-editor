@@ -94,14 +94,16 @@ const Player = ({
         setIsRunning(false);
         break;
       case 'play':
-        // Fixed: Don't interfere with recording states during playback
+        if (!isRecording) {
+          setIsRunning(false);
+        }
+        break;
+      case 'rewind':
         if (!isRecording) {
           setIsRunning(false);
         }
         break;
       case 'pause':
-      case 'rewind':
-        // Fixed: Don't interfere with recording states during playback
         if (!isRecording) {
           setIsRunning(false);
         }
@@ -113,7 +115,7 @@ const Player = ({
         }
         break;
     }
-  }, [trigger]);
+  }, [trigger, isRecording]);
 
   // Reset timer when changing takes or starting new recording
   useEffect(() => {
@@ -409,6 +411,9 @@ const Player = ({
                   setTrigger('rewind'); 
                   setTime(0); 
                   setCurrentPlaybackTime(0);
+                  if (!isRecording) {
+                    setIsRunning(false);
+                  }
                 }}
               >
                 <ArrowPathIcon

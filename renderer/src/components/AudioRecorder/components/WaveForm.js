@@ -226,10 +226,26 @@ const AudioWaveForm = ((props, ref) => {
 
   const handleRewind = () => {
     if (url && wavesurfer.current && currentMode === 'audio') {
-      wavesurfer.current.stop();
       wavesurfer.current.seekTo(0);
-      setAudioPlayBack(0);
-      setPlaying(false);
+      if (setAudioPlayBack) {
+        setAudioPlayBack(0);
+      }
+      try {
+        wavesurfer.current.setVolume(volume || 0.5);
+        wavesurfer.current.play();
+        if (setTrigger) {
+          setTrigger();
+        }
+      } catch (error) {
+        createForm(url).then(() => {
+          setTimeout(() => {
+            if (wavesurfer.current) {
+              wavesurfer.current.seekTo(0);
+              wavesurfer.current.play();
+            }
+          }, 100);
+        });
+      }
     }
   };
 
@@ -329,6 +345,11 @@ const AudioWaveForm = ((props, ref) => {
       break;
     case 'rewind':
       handleRewind();
+      setTimeout(() => {
+        if (wavesurfer.current && currentMode === 'audio') {
+          wavesurfer.current.drawer && wavesurfer.current.drawer.progress(0);
+        }
+      }, 100);
       break;
     case 'record':
       handleStart();
