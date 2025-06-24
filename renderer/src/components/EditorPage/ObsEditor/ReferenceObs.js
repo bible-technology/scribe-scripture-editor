@@ -347,6 +347,7 @@ const ReferenceObs = ({
                             <AudioWaveform
                               height={24}
                               waveColor="#333333"
+                              volume={1}
                               url={getAudioPath(story.id)}
                               show
                               setAudioPlayBack={() => {}}
@@ -379,6 +380,7 @@ const ReferenceObs = ({
                             <AudioWaveform
                               height={24}
                               waveColor="#333333"
+                              volume={1}
                               url={getAudioPath(story.id)}
                               show
                               setAudioPlayBack={() => {}}
@@ -400,6 +402,7 @@ const ReferenceObs = ({
                             <AudioWaveform
                               height={24}
                               waveColor="#333333"
+                              volume={1}
                               url={getAudioPath(story.id)}
                               show
                               setAudioPlayBack={() => {}}
