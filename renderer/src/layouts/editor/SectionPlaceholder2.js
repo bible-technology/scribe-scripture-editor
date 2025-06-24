@@ -273,6 +273,8 @@ const SectionPlaceholder2 = ({ editor }) => {
   const [obsNavigation2, setObsNavigation2] = useState(1);
   const [stories1, setStories1] = useState();
   const [stories2, setStories2] = useState();
+  const [storyAudioPath1, setStoryAudioPath1] = useState();
+  const [storyAudioPath2, setStoryAudioPath2] = useState();
   const _obsNavigation1 = scrollLock === false ? obsNavigation : obsNavigation1;
   const _obsNavigation2 = scrollLock === false ? obsNavigation : obsNavigation2;
   const ObsNavigation1 = (
@@ -287,14 +289,47 @@ const SectionPlaceholder2 = ({ editor }) => {
       number={obsNavigation2}
     />
   );
+
+  const generateResourcePath = (refName, username, obsNavigation) => {
+    const newpath = localStorage.getItem('userPath');
+    const path = window.require('path');
+
+    // Simple path construction without packageInfo
+    const basePath = path.join(newpath, 'scribe', 'users', username, 'resources', refName);
+
+    // File name with zero-padded number
+    const fileName = `${obsNavigation.toString().padStart(2, '0')}.md`;
+
+    return {
+      basePath,
+      fileName,
+      metadataPath: path.join(basePath, 'metadata.json'),
+      // This would be the approximate path (actual path needs directory name from metadata)
+      approximatePath: path.join(basePath, '[directory]', fileName),
+    };
+  };
   useEffect(() => {
     localforage.getItem('userProfile').then((user) => {
       if (_obsNavigation1 && referenceColumnTwoData1.refName && referenceColumnTwoData1.selectedResource === 'obs') {
         const fs = window.require('fs');
+        const resourcePath = generateResourcePath(
+          referenceColumnTwoData1.refName,
+          user.username,
+          _obsNavigation1,
+        );
+        setStoryAudioPath1(resourcePath.basePath);
+        setStoryAudioPath1(resourcePath.basePath);
+
         setStories1(core(fs, _obsNavigation1, referenceColumnTwoData1.refName, user.username));
       }
       if (_obsNavigation2 && referenceColumnTwoData2.refName && referenceColumnTwoData2.selectedResource === 'obs') {
         const fs = window.require('fs');
+        const resourcePath = generateResourcePath(
+          referenceColumnTwoData2.refName,
+          user.username,
+          _obsNavigation2,
+        );
+        setStoryAudioPath2(resourcePath.basePath);
         setStories2(core(fs, _obsNavigation2, referenceColumnTwoData2.refName, user.username));
       }
     });
@@ -320,7 +355,11 @@ const SectionPlaceholder2 = ({ editor }) => {
         ? (layout >= 1 && layout <= 2) : (layout > 1 && layout <= 2)) && (
         <>
           {(openResource3 === false || openResource4 === false) && (
-            <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} overflow-x-auto`}>
+            // eslint-disable-next-line no-nested-ternary
+            <div className={`bg-white rounded-md grid gap-2 ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]'
+              : editor === 'textStories' ? 'max-h-[80vh]'
+                : 'h-editor'} overflow-x-auto`}
+            >
               {openResource3 === false && (
                 <EditorSection
                   row="3"
@@ -371,6 +410,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                             && (
                               <ReferenceObs
                                 stories={stories1}
+                                storyAudioPath={storyAudioPath1}
                                 font={font3}
                                 fontSize={fontSize3}
                                 title={referenceColumnTwoData1.refName}
@@ -455,6 +495,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                             && (
                               <ReferenceObs
                                 stories={stories2}
+                                storyAudioPath={storyAudioPath2}
                                 font={font4}
                                 fontSize={fontSize4}
                                 title={referenceColumnTwoData2.refName}

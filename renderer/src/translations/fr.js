@@ -292,4 +292,9 @@ export const Fr = {
   'label-scope-not-selected': 'Pour commencer, accédez à Gestiong du champs d\'application, sélectionnez le livre et les chapitres et cliquez sur le bouton Appliquer',
   'label-scope-note-audio': 'Choisissez le livre et le chapitre à partir de l\'option Gestiong du champs d\'application sur la page de liste des projets',
   'modal-title-scope-management': 'Gestiong du champs d\'application',
+  'obs-export-option': 'Options d’exportation OBS',
+  'obs-text-only': 'Texte uniquement (fichiers MD)',
+  'obs-complete': 'Complet (Audio + Texte)',
+  'obs-combined-audio': 'Audio des histoires combinées',
+  'obs-default-audio-text': 'Audio par défaut + Texte',
 };

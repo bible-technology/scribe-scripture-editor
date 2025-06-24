@@ -19,6 +19,7 @@ import { getDetails } from './utils/getDetails';
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
+  const [audioEnabled, setAudioEnabled] = useState(true); // Audio player toggle state
   const {
     state: {
       obsNavigation, loadData,
@@ -52,6 +53,12 @@ const ObsEditor = () => {
       });
     });
   };
+
+  // Handle audio toggle
+  const handleAudioToggle = (enabled) => {
+    setAudioEnabled(enabled);
+  };
+
   // this function is used to fetch the content from the given story number
   const readContent = useCallback(() => {
     setLoadData(false);
@@ -210,9 +217,13 @@ const ObsEditor = () => {
   }, [loadData]);
 
   return (
-    <Editor callFrom="obs">
+    <Editor
+      callFrom="obs"
+      audioEnabled={audioEnabled}
+      onAudioToggle={handleAudioToggle}
+    >
       {mdData
-        && <EditorPanel obsStory={mdData} storyUpdate={updateStory} />}
+        && <EditorPanel obsStory={mdData} storyUpdate={updateStory} audioEnabled={audioEnabled} />}
     </Editor>
   );
 };

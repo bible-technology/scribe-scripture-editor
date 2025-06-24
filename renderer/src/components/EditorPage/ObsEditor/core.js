@@ -4,28 +4,115 @@ const loadData = (fs, file, projectName, username) => {
   const newpath = localStorage.getItem('userPath');
   const path = require('path');
   const filePath = path.join(newpath, packageInfo.name, 'users', username, 'resources', projectName);
+
   if (fs.existsSync(path.join(filePath))) {
-    const data = fs.readFileSync(
-      path.join(filePath, 'metadata.json'),
-      'utf8',
-    );
-    const _data = JSON.parse(data);
-    let i = 0;
-    let j = 1;
-    let dirName;
-    while (i < j) {
-      const firstKey = Object.keys(_data.ingredients).filter((data) => data.endsWith(`${file}.md`))[0];
-      const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
-      dirName = folderName[0];
-      const stats = fs.statSync(path.join(filePath, dirName));
-      if (!stats.isDirectory()) {
-        j += 1;
+    const metadataPath = path.join(filePath, 'metadata.json');
+
+    if (fs.existsSync(metadataPath)) {
+      try {
+        const data = fs.readFileSync(metadataPath, 'utf8');
+        const _data = JSON.parse(data);
+
+        if (_data.ingredients) {
+          let i = 0;
+          let j = 1;
+          let dirName;
+
+          while (i < j) {
+            const firstKey = Object.keys(_data.ingredients).filter((data) => data.endsWith(`${file}.md`))[0];
+            if (!firstKey) {
+              break;
+            }
+
+            const folderName = firstKey.split(/[(\\)?(/)?]/gm).slice(0);
+            dirName = folderName[0];
+
+            const dirPath = path.join(filePath, dirName);
+            if (!fs.existsSync(dirPath)) {
+              break;
+            }
+
+            const stats = fs.statSync(dirPath);
+            if (!stats.isDirectory()) {
+              j += 1;
+            }
+            i += 1;
+          }
+
+          if (dirName) {
+            const contentFilePath = path.join(filePath, dirName, `${file}.md`);
+
+            if (fs.existsSync(contentFilePath)) {
+              const content = fs.readFileSync(contentFilePath, 'utf8');
+              return content;
+            }
+          }
+        }
+      } catch (error) {
+        // console.warn('Error reading metadata.json:', error.message);
       }
-      i += 1;
     }
-    const content = fs.readFileSync(path.join(filePath, dirName, `${file}.md`), 'utf8');
-    return content;
+
+    const directFilePath = path.join(filePath, `${file}.md`);
+    if (fs.existsSync(directFilePath)) {
+      const content = fs.readFileSync(directFilePath, 'utf8');
+      return content;
+    }
+
+    const paddedFile = file.toString().padStart(2, '0');
+    const paddedFilePath = path.join(filePath, `${paddedFile}.md`);
+    if (fs.existsSync(paddedFilePath)) {
+      const content = fs.readFileSync(paddedFilePath, 'utf8');
+      return content;
+    }
+
+    const findFileRecursively = (dir, fileName) => {
+      try {
+        const files = fs.readdirSync(dir);
+
+        if (files.includes(fileName)) {
+          return path.join(dir, fileName);
+        }
+
+        let foundPath = null;
+        files.some((file) => {
+          const fullPath = path.join(dir, file);
+
+          try {
+            const stat = fs.statSync(fullPath);
+
+            if (stat.isDirectory() && !['node_modules', '.git', '.vscode'].includes(file)) {
+              const found = findFileRecursively(fullPath, fileName);
+              if (found) {
+                foundPath = found;
+                return true;
+              }
+            }
+          } catch (statError) {
+            // console.warn('Error checking file stats:', fullPath, statError.message);
+          }
+
+          return false;
+        });
+
+        return foundPath;
+      } catch (error) {
+        // console.warn('Error searching directory:', dir, error.message);
+      }
+      return null;
+    };
+
+    const foundFilePath = findFileRecursively(filePath, `${file}.md`)
+                         || findFileRecursively(filePath, `${paddedFile}.md`);
+
+    if (foundFilePath) {
+      const content = fs.readFileSync(foundFilePath, 'utf8');
+      return content;
+    }
+
+    return 'No Content';
   }
+
   return 'No Content';
 };
 
@@ -63,6 +150,11 @@ const core = (fs, num, projectName, username) => {
   // eslint-disable-next-line prefer-const
   let id = 1; let footer = false;
   const data = loadData(fs, num.toString().padStart(2, 0), projectName, username);
+
+  if (data === 'No Content') {
+    return stories;
+  }
+
   const allLines = data.split(/\r\n|\n/);
   // Reading line by line
   allLines.forEach((line) => {

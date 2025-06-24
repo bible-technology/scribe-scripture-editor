@@ -36,6 +36,7 @@ const Player = ({
   trigger,
   setTrigger,
   location,
+  disableRecordStopShortcuts = false,
 }) => {
   const { t } = useTranslation();
   // const [volume, setVolume] = useState(0.5);
@@ -127,7 +128,9 @@ const Player = ({
     const keyCode = event.keyCode;
     switch (keyCode) {
       case 82: // --> r
+      if (!disableRecordStopShortcuts) {
         handleRecord();
+      }
         break;
       case 69: // --> e
         setTrigger('recResume');
@@ -136,8 +139,11 @@ const Player = ({
         setTrigger('recPause');
         break;
       case 83: // --> s
+      if (!disableRecordStopShortcuts) {
         setTrigger('recStop');
-        break;
+        setIsRunning(false);
+      }        
+      break;
       case 188: // --> , comma
         setTrigger('rewind');
         break;
@@ -502,13 +508,12 @@ const Player = ({
           </div>
         </div>
         <div className="border-t border-gray-800 bg-black text-white">
-          <AudioWaveform
+        <AudioWaveform
             height={80}
             barGap="4"
             barWidth="2"
             waveColor="#ffffff"
             btnColor="text-white"
-            // url={(location && Object.keys(url).length !== 0) && (take ? (url[take] ? url[take] : '') : url[url?.default])}
             url={blobUrl || (location
               && Object.keys(url).length !== 0
               && (take
@@ -548,4 +553,5 @@ Player.propTypes = {
   trigger: PropTypes.string,
   setTrigger: PropTypes.any,
   location: PropTypes.any,
+  disableRecordStopShortcuts: PropTypes.bool
 };
