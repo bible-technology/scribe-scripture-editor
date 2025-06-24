@@ -23,6 +23,8 @@ const Home = () => {
   }, []);
 
   const validateUser = async () => {
+    // fix-unhandle error due to app crash
+    localStorage.removeItem('resourcePopupOpen');
     if (!states.accessToken) {
       logger.debug('Home.js', 'Triggers getToken to fetch the Token if not available');
       action.getToken();
