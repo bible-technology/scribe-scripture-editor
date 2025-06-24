@@ -126,7 +126,6 @@ const AudioWaveForm = ((props, ref) => {
     });
 
     wavesurfer.current.on('play', () => {
-      safeSetVolume(volume);
       setPlaying(true);
     });
 
