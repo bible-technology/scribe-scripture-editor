@@ -281,4 +281,9 @@ export const Ar = {
   'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
   'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
   'label-upload-help-resources': 'Upload Help Resources',
+  'obs-export-option': 'خيارات تصدير OBS',
+  'obs-text-only': 'نص فقط (ملفات MD)',
+  'obs-complete': 'كامل (صوت + نص)',
+  'obs-combined-audio': 'الصوت المدمج للقصص',
+  'obs-default-audio-text': 'الصوت الافتراضي + النص',
 };

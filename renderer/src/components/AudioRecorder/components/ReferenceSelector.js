@@ -38,6 +38,7 @@ export default function ReferenceSelector({
                 <AudioWaveform
                   height={24}
                   waveColor="#333333"
+                  volume={1}
                   // url={story.audio} for development
                   url={story.audio ? path.join(versepath, story.audio) : ''}
                   show

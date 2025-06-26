@@ -292,4 +292,9 @@ export const Id = {
   'label-scope-not-selected': 'Untuk memulai, masuk ke Manajemen Lingkup pilih buku dan bab dan klik tombol Terapkan',
   'label-scope-note-audio': 'Pilih buku dan bab dari opsi MANAJEMEN RUANG LINGKUP pada halaman daftar proyek',
   'modal-title-scope-management': 'Manajemen Ruang Lingkup',
+  'obs-export-option': 'Opsi Ekspor OBS',
+  'obs-text-only': 'Hanya Teks (file MD)',
+  'obs-complete': 'Lengkap (Audio + Teks)',
+  'obs-combined-audio': 'Audio Cerita Gabungan',
+  'obs-default-audio-text': 'Audio Default + Teks',
 };

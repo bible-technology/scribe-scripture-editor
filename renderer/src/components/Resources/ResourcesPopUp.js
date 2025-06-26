@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, {
   useRef, useState, useContext, Fragment,
+  useEffect,
 } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import ResourcesSidebar from '@/components/Resources/ResourcesSideBar';
@@ -45,6 +46,7 @@ export default function ResourcesPopUp(
 
   const removeSection = () => {
     setOpenResourcePopUp(false);
+    localStorage.removeItem('resourcePopupOpen');
   };
 
   const {
@@ -81,6 +83,14 @@ export default function ResourcesPopUp(
   function closeImportPopUp() {
     setOpenImportResourcePopUp(false);
   }
+
+  useEffect(() => {
+    if (openResourcePopUp) {
+      localStorage.setItem('resourcePopupOpen', 'true');
+    } else {
+      localStorage.removeItem('resourcePopupOpen');
+    }
+  }, [openResourcePopUp]);
 
   return (
     <>
