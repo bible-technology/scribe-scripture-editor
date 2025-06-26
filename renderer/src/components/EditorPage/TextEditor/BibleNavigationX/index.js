@@ -11,7 +11,10 @@ import SelectChapter from './SelectChapter';
 
 export default function BibleNavigationX(props) {
   const {
-    chapterNumber, setChapterNumber, setBook, loading, bookAvailable, booksInProject, parseError,
+    chapterNumber, setChapterNumber,
+    setVerseNumber, setBook,
+    // loading,
+    bookAvailable, booksInProject, parseError,
   } = props;
 
   const {
@@ -21,9 +24,12 @@ export default function BibleNavigationX(props) {
       bookName,
       chapter,
       chapterList,
+      verse,
+      verseList,
     }, actions: {
       onChangeBook,
       onChangeChapter,
+      onChangeVerse,
       setCloseNavigation,
     },
   } = useContext(ReferenceContext);
@@ -100,6 +106,9 @@ export default function BibleNavigationX(props) {
           >
             <ChevronDownIcon className="\ h-4 w-4 mx-1 text-white" aria-hidden="true" />
           </span>
+          <span className="px-3">
+            { verse}
+          </span>
         </div>
       </div>
       <>
@@ -163,7 +172,8 @@ export default function BibleNavigationX(props) {
             className="fixed inset-0 z-10 overflow-y-auto"
             initialFocus={cancelButtonRef}
             static
-            open={!loading && openChapter}
+            open={openChapter}
+            // open={!loading && openChapter}
             onClose={closeChapters}
           >
             <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
@@ -171,13 +181,19 @@ export default function BibleNavigationX(props) {
               <div className=" w-6/12 max-w-md m-auto z-50 bg-black text-white shadow overflow-hidden sm:rounded-lg">
                 <SelectChapter
                   chapter={chapter}
+                  verse={verse}
                   chapterList={chapterList}
+                  verseList={verseList}
+                  onChangeVerse={onChangeVerse}
+                  // closeVerses={closeVerses}
                   bookName={bookName}
                   onChangeChapter={onChangeChapter}
                   closeBooks={closeBooks}
                   closeChapters={closeChapters}
                   setChapterNumber={setChapterNumber}
-                  loading={loading}
+                  setVerseNumber={setVerseNumber}
+                  setSelectedVerse={setVerseNumber}
+                  // loading={loading}
                 >
                   <button
                     type="button"
@@ -191,6 +207,7 @@ export default function BibleNavigationX(props) {
             </div>
           </Dialog>
         </Transition>
+
       </>
     </>
   );
@@ -199,7 +216,9 @@ export default function BibleNavigationX(props) {
 BibleNavigationX.propTypes = {
   chapterNumber: PropTypes.number,
   setChapterNumber: PropTypes.func,
+  // verseNumber: PropTypes.number,
+  setVerseNumber: PropTypes.func,
   setBook: PropTypes.func,
-  loading: PropTypes.bool,
+  // loading: PropTypes.bool,
   bookAvailable: PropTypes.bool,
 };

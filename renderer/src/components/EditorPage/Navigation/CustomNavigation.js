@@ -129,9 +129,7 @@ export default function CustomNavigation({
           {showVerse
             && (
               <span className="px-3">
-                {multiSelectVerse
-                  ? selectedVerses.join()
-                  : verse}
+                {verse}
               </span>
             )}
         </div>

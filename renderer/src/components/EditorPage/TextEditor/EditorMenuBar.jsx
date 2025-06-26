@@ -5,7 +5,8 @@ import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/TextEditor/BibleNavigationX';
 import { useTranslation } from 'react-i18next';
-import BibleNavigationX from './BibleNavigationX';
+import BibleNavigation from './BibleNavigationX';
+// import BibleNavigation from '../../../modules/biblenavigation/BibleNavigation';
 
 export default function EditorMenuBar(props) {
   const {
@@ -44,7 +45,7 @@ export default function EditorMenuBar(props) {
   return (
     <div className="h-[33px] flex flex-col bg-secondary rounded-t-md sticky top-0">
       <div className="flex min-h-[33px] items-center justify-between gap-2">
-        <BibleNavigationX
+        <BibleNavigation
           chapterNumber={chapterNumber}
           setChapterNumber={setChapterNumber}
           verseNumber={verseNumber}
@@ -55,6 +56,7 @@ export default function EditorMenuBar(props) {
           bookAvailable={bookAvailable}
           booksInProject={booksInProject}
           parseError={parseError}
+          showVerse
         />
         <div
           aria-label="editor-pane"
