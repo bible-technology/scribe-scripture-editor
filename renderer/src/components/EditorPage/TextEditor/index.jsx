@@ -82,7 +82,7 @@ export default function TextEditor() {
     }
   }, [navRef]);
 
-  useEffect(() => { console.log('index scrRef', scrRef); }, [scrRef]);
+  // useEffect(() => { console.log('index scrRef', scrRef); }, [scrRef]);
 
   // const handleUsfmChange = useMemo(
   //   () => debounce(async (updatedUsfm) => {
@@ -97,10 +97,10 @@ export default function TextEditor() {
     () => debounce(async (updatedUsfm) => {
       try {
         await saveToFile(updatedUsfm, book);
-        console.log('USFM updated and saved successfully');
+        // console.log('USFM updated and saved successfully');
         return Promise.resolve(); // Explicitly return resolved promise
       } catch (error) {
-        console.error('Failed to save USFM:', error);
+        // console.error('Failed to save USFM:', error);
         return Promise.reject(error); // Return rejected promise on error
       }
     }, 3000),

@@ -16,12 +16,10 @@ import { isElectron } from '../../core/handleElectron';
 
 export default function BibleNavigation(props) {
   const {
-    showVerse, chapterNumber, setChapterNumber, setBook, loading, bookAvailable, booksInProject,
+    showVerse,
   } = props;
   const supportedBooks = null; // if empty array or null then all books available
   // const supportedBooks = booksInProject; // if empty array or null then all books available
-  console.log('bookAvailable, bookAvailable', bookAvailable, booksInProject);
-
   const {
     state: {
       bookId,
@@ -45,20 +43,6 @@ export default function BibleNavigation(props) {
   useEffect(() => {
     applyBooksFilter(supportedBooks);
   }, [applyBooksFilter, supportedBooks]);
-
-  useEffect(() => {
-    console.log(
-      'ReferenceContext',
-      bookId,
-      bookList,
-      bookName,
-      chapter,
-      verse,
-      chapterList,
-      verseList,
-      languageId,
-    );
-  }, []);
 
   const [openBook, setOpenBook] = useState(false);
   const [openVerse, setOpenVerse] = useState(false);
@@ -216,7 +200,7 @@ export default function BibleNavigation(props) {
                 // "scope" is added to disable the click on the book list. scope="Other" will only
                 // allow to click/select the book.
                 scope="Other"
-                existingScope={booksInProject}
+                existingScope={[]}
                 disableScope={existingScopes}
                 call="audio-project"
               >
