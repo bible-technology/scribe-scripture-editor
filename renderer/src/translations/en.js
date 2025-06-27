@@ -161,7 +161,7 @@ export const En = {
   'dynamic-msg-resource-added': 'resource added successfully',
   'dynamic-msg-resource-unable-fetch-url': 'unable to fetch selected resource from the given url',
   'dynamic-msg-load-ref-bible-snack': 'successfully loaded {{refName}} files',
-  'dynamic-msg-load-ref-bible-snack-fail': 'failed to loaded {{refName}} files',
+  'dynamic-msg-load-ref-bible-snack-fail': 'failed to load {{refName}} files',
   'dynamic-msg-load-ref-bible-success': 'Reference-burrito loaded succesfully',
   'dynamic-msg-validate-hook-project-name': 'The input has to be between {{minLen}} and {{maxLen}} characters long',
   'dynamic-msg-update-burrito-version': 'Update the the burrito from {{version1}} to {{version2}}',
