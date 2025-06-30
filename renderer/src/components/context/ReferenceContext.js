@@ -75,6 +75,7 @@ export default function ReferenceContextProvider({ children }) {
   });
   // Trigger for updating the data after cloud sync from Editor pane
   const [loadData, setLoadData] = useState(false);
+  const [audioPlayerUI, setAudioPlayerUI] = useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -244,6 +245,7 @@ export default function ReferenceContextProvider({ children }) {
       resetResourceOnDeleteOffline,
       updateWave,
       loadData,
+      audioPlayerUI,
     },
     actions: {
       setLanguageId,
@@ -297,6 +299,7 @@ export default function ReferenceContextProvider({ children }) {
       setResetResourceOnDeleteOffline,
       setUpdateWave,
       setLoadData,
+      setAudioPlayerUI,
     },
   };
   // const goToChapter = (chapternum, versenum) => (

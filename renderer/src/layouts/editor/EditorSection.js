@@ -54,6 +54,7 @@ export default function EditorSection({
       openResource2,
       openResource3,
       openResource4,
+      audioPlayerUI,
     },
     actions: { setLayout },
   } = useContext(ReferenceContext);
@@ -204,7 +205,7 @@ export default function EditorSection({
         className={classNames(
           openResource ? 'hidden' : '',
           isNextRowOpen ? 'h-editor' : 'h-reference',
-          'flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group  overflow-hidden',
+          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : ''} overflow-hidden`,
         )}
       >
         <div
