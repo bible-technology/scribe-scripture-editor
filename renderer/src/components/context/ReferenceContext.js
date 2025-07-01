@@ -76,6 +76,16 @@ export default function ReferenceContextProvider({ children }) {
   // Trigger for updating the data after cloud sync from Editor pane
   const [loadData, setLoadData] = useState(false);
   const [audioPlayerUI, setAudioPlayerUI] = useState(false);
+  // Audio Recorder Context State
+  const [obsAudioContent, setObsAudioContent] = useState({});
+  const [selectedParagraph, setSelectedParagraph] = useState(null);
+  const [recordingsPath, setRecordingsPath] = useState('');
+  const [effectiveStoryId, setEffectiveStoryId] = useState(1);
+  const [storyId, setStoryId] = useState(null);
+
+  // Audio toggle state
+  const [audioEnabled, setAudioEnabled] = useState(true);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -246,6 +256,12 @@ export default function ReferenceContextProvider({ children }) {
       updateWave,
       loadData,
       audioPlayerUI,
+      obsAudioContent,
+      selectedParagraph,
+      recordingsPath,
+      effectiveStoryId,
+      storyId,
+      audioEnabled,
     },
     actions: {
       setLanguageId,
@@ -300,14 +316,14 @@ export default function ReferenceContextProvider({ children }) {
       setUpdateWave,
       setLoadData,
       setAudioPlayerUI,
+      setObsAudioContent,
+      setSelectedParagraph,
+      setRecordingsPath,
+      setEffectiveStoryId,
+      setStoryId,
+      setAudioEnabled,
     },
   };
-  // const goToChapter = (chapternum, versenum) => (
-  //   {
-  //     chapter: parseInt(chapternum || chapter, 10),
-  //     verse: parseInt(versenum || verse, 10),
-  //   }
-  // );
 
   return (
     <ReferenceContext.Provider value={value}>

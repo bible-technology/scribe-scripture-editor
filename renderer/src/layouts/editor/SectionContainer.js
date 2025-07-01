@@ -15,6 +15,11 @@ const MainPlayer = dynamic(
   { ssr: false },
 );
 
+const ObsAudioRecorder = dynamic(
+  () => import('@/components/EditorPage/ObsEditor/ObsAudioRecorder'),
+  { ssr: false },
+);
+
 const SectionContainer = () => {
   const [editor, setEditor] = useState();
   const {
@@ -67,6 +72,13 @@ const SectionContainer = () => {
           || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
       </div>
       {(editor === 'audioTranslation' && (<MainPlayer />))}
+      {(editor === 'textStories' && (
+        <ObsAudioRecorder
+          isVisible
+          autoLoadAudio
+          audioEnabled
+        />
+      ))}
     </>
   );
 };

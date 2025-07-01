@@ -129,7 +129,7 @@ const ObsTextEditor = ({
   };
 
   return (
-    <div className="flex-1 overflow-auto pb-[100px]">
+    <div className="flex-1 overflow-auto ">
       {obsStory.map((story, index) => (
         <div key={story.id}>
           {'title' in story && (

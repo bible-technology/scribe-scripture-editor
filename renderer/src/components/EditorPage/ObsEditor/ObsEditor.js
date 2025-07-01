@@ -19,11 +19,17 @@ import { getDetails } from './utils/getDetails';
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
-  const [audioEnabled, setAudioEnabled] = useState(true); // Audio player toggle state
+
   const {
     state: {
-      obsNavigation, loadData,
-    }, actions: { setLoadData },
+      obsNavigation,
+      loadData,
+      audioEnabled,
+    },
+    actions: {
+      setLoadData,
+      setAudioEnabled,
+    },
   } = useContext(ReferenceContext);
 
   const updateStory = (story) => {
@@ -54,7 +60,7 @@ const ObsEditor = () => {
     });
   };
 
-  // Handle audio toggle
+  // Handle audio toggle - now uses context setter
   const handleAudioToggle = (enabled) => {
     setAudioEnabled(enabled);
   };
