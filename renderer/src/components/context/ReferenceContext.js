@@ -75,8 +75,6 @@ export default function ReferenceContextProvider({ children }) {
   });
   // Trigger for updating the data after cloud sync from Editor pane
   const [loadData, setLoadData] = useState(false);
-  const [flavour, setFlavour] = useState('');
-  const [bibleNavigationHist, setBibleNavigationHist] = useState([]); // TextTranslation Navigation History stored in settings file
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -106,6 +104,30 @@ export default function ReferenceContextProvider({ children }) {
     }
   };
 
+  const {
+    state: {
+      chapter,
+      verse,
+      bookList,
+      chapterList,
+      verseList,
+      bookName,
+      bookId,
+    }, actions: {
+      onChangeBook,
+      onChangeChapter,
+      onChangeVerse,
+      applyBooksFilter,
+      goToBookChapterVerse,
+    },
+  } = useBibleReference(
+    {
+      initialBook,
+      initialChapter,
+      initialVerse,
+    },
+  );
+
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
@@ -119,7 +141,6 @@ export default function ReferenceContextProvider({ children }) {
                 ([, resources]) => {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
-                    setFlavour(resources.type.flavorType.flavor.name);
                     switch (resources.type.flavorType.flavor.name) {
                     case 'x-juxtalinear':
                       resProj = resources.project['x-juxtalinear'];
@@ -132,7 +153,9 @@ export default function ReferenceContextProvider({ children }) {
                       setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.textTranslation?.font);
                       setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
-                      setBibleNavigationHist(resources.project?.textTranslation?.navigationHistory);
+                      // eslint-disable-next-line no-case-declarations
+                      const bibleNavigationHist = resources.project?.textTranslation?.navigationHistory;
+                      bibleNavigationHist && goToBookChapterVerse(bibleNavigationHist[0], bibleNavigationHist[1], bibleNavigationHist[2]);
                       break;
                     case 'textStories':
                       setBookmarksVerses(resources.project?.textStories.bookMarks);
@@ -161,45 +184,16 @@ export default function ReferenceContextProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {
-    state: {
-      chapter,
-      verse,
-      bookList,
-      chapterList,
-      verseList,
-      bookName,
-      bookId,
-    }, actions: {
-      onChangeBook,
-      onChangeChapter,
-      onChangeVerse,
-      applyBooksFilter,
-      goToBookChapterVerse,
-    },
-  } = useBibleReference(
-    {
-      initialBook,
-      initialChapter,
-      initialVerse,
-    },
-  );
   useEffect(() => {
     const getNavigationHistory = async () => {
-      console.log(flavour, 'flavor', flavour === 'textTranslation');
-      if (flavour) {
-        if (flavour === 'textTranslation') {
-          if (bibleNavigationHist.length > 0) {
-            console.log(bibleNavigationHist, 'RR222');
-
-            goToBookChapterVerse(bibleNavigationHist[0], bibleNavigationHist[1], bibleNavigationHist[2]);
-          }
-        }
+      const navHistory = await localforage.getItem('navigationHistory');
+      if (navHistory) {
+        goToBookChapterVerse(navHistory[0], navHistory[1], navHistory[2] || '1');
       }
     };
     getNavigationHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flavour, bibleNavigationHist]);
+  }, []);
 
   const value = {
     state: {

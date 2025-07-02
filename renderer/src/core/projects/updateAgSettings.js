@@ -90,7 +90,7 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
     });
 
     // Save updated projectmeta to localforage
-    // await localforage.setItem('projectmeta', projectMeta);
+    await localforage.setItem('projectmeta', projectMeta);
     // logger.debug('updateAgSettings.js', 'projectmeta updated in localforage with navigationHistory');
 
     // Also update the settings file on disk if exists
