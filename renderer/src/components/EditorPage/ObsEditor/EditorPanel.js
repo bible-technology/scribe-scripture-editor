@@ -9,7 +9,6 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
     state: {
       storyId,
       updateWave,
-      obsAudioContent,
       selectedParagraph,
       effectiveStoryId,
     },
@@ -131,7 +130,6 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
           onEndClick={handleEndClick}
           effectiveStoryId={effectiveStoryId}
           audioEnabled={audioEnabled}
-          audioContent={obsAudioContent}
         />
       </div>
     </div>

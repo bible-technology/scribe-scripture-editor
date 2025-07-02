@@ -32,6 +32,13 @@ const ObsEditor = () => {
     },
   } = useContext(ReferenceContext);
 
+  useEffect(() => {
+    const savedAudioState = localStorage.getItem('obsEditorAudioEnabled');
+    if (savedAudioState !== null) {
+      setAudioEnabled(JSON.parse(savedAudioState));
+    }
+  }, [setAudioEnabled]);
+
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');
     setMdData(story);
@@ -60,8 +67,8 @@ const ObsEditor = () => {
     });
   };
 
-  // Handle audio toggle - now uses context setter
   const handleAudioToggle = (enabled) => {
+    localStorage.setItem('obsEditorAudioEnabled', JSON.stringify(enabled));
     setAudioEnabled(enabled);
   };
 

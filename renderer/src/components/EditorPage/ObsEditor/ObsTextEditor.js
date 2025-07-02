@@ -5,12 +5,20 @@ import { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SpeakerWaveIcon } from '@heroicons/react/24/solid';
 
-const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
-  if (!audioContent || !effectiveStoryId) { return null; }
+const AudioIndicator = ({ storyId, effectiveStoryId }) => {
+  const {
+    state: { obsAudioContent },
+  } = useContext(ReferenceContext);
+
+  const currentAudioContent = obsAudioContent;
+
+  if (!currentAudioContent || !effectiveStoryId) {
+    return null;
+  }
 
   const newStoryId = storyId - 1;
   const key = `story_${effectiveStoryId}_${newStoryId}`;
-  const audioData = audioContent[key];
+  const audioData = currentAudioContent[key];
 
   const hasAudio = audioData && (
     audioData.take1
@@ -21,7 +29,9 @@ const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
      && Object.values(audioData.takes).some((take) => take && take.fileName))
   );
 
-  if (!hasAudio) { return null; }
+  if (!hasAudio) {
+    return null;
+  }
 
   return (
     <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
@@ -33,7 +43,6 @@ const AudioIndicator = ({ storyId, effectiveStoryId, audioContent }) => {
 AudioIndicator.propTypes = {
   storyId: PropTypes.number.isRequired,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  audioContent: PropTypes.object,
 };
 
 const ObsTextEditor = ({
@@ -43,8 +52,7 @@ const ObsTextEditor = ({
   onTitleClick,
   onEndClick,
   effectiveStoryId,
-  audioEnabled = false,
-  audioContent = {},
+  audioEnabled,
 }) => {
   const {
     state: {
@@ -139,7 +147,6 @@ const ObsTextEditor = ({
                   <AudioIndicator
                     storyId={story.id}
                     effectiveStoryId={effectiveStoryId}
-                    audioContent={audioContent}
                   />
                 </div>
               )}
@@ -155,7 +162,7 @@ const ObsTextEditor = ({
                 readOnly={audioEnabled}
                 onClick={() => handleTitleClick(story)}
                 className="flex-grow text-justify ml-2 p-2 text-xl"
-                style={{ fontFamily: selectedFont || 'sans-serif', fontSize: `${editorFontSize}rem` }}
+                style={{ fontFamily: selectedFont || 'sans-serif', fontSize: `${editorFontSize}rem`, resize: 'none' }}
               />
             </div>
           )}
@@ -170,7 +177,6 @@ const ObsTextEditor = ({
                     <AudioIndicator
                       storyId={story.id}
                       effectiveStoryId={effectiveStoryId}
-                      audioContent={audioContent}
                     />
                   </div>
                 )}
@@ -191,6 +197,7 @@ const ObsTextEditor = ({
                   fontFamily: selectedFont || 'sans-serif',
                   fontSize: `${editorFontSize}rem`,
                   lineHeight: editorFontSize > 1.3 ? 1.5 : '',
+                  resize: 'none',
                 }}
               />
             </div>
@@ -202,7 +209,6 @@ const ObsTextEditor = ({
                   <AudioIndicator
                     storyId={story.id}
                     effectiveStoryId={effectiveStoryId}
-                    audioContent={audioContent}
                   />
                 </div>
               )}
@@ -222,6 +228,7 @@ const ObsTextEditor = ({
                   fontFamily: selectedFont || 'sans-serif',
                   fontSize: `${editorFontSize}rem`,
                   lineHeight: editorFontSize > 1.3 ? 1.5 : '',
+                  resize: 'none',
                 }}
               />
             </div>
@@ -240,7 +247,6 @@ ObsTextEditor.propTypes = {
   onEndClick: PropTypes.func,
   effectiveStoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   audioEnabled: PropTypes.bool,
-  audioContent: PropTypes.object,
 };
 
 export default ObsTextEditor;

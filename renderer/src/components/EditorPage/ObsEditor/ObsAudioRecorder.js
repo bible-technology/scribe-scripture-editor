@@ -17,17 +17,17 @@ const ObsAudioRecorder = ({
     state: {
       selectedParagraph,
       effectiveStoryId,
-      audioContent,
       recordingsPath,
       storyId,
       updateWave,
       audioEnabled,
+      obsAudioContent,
     },
     actions: {
-      setAudioContent,
       setRecordingsPath,
       setEffectiveStoryId,
       setUpdateWave,
+      setObsAudioContent,
     },
   } = useContext(ReferenceContext);
 
@@ -59,7 +59,7 @@ const ObsAudioRecorder = ({
       }
       if (!fs.existsSync(storyFolder)) {
         fs.mkdirSync(storyFolder, { recursive: true });
-        setAudioContent({});
+        setObsAudioContent({});
         return;
       }
 
@@ -93,7 +93,7 @@ const ObsAudioRecorder = ({
         }
       });
 
-      setAudioContent(updatedContent);
+      setObsAudioContent(updatedContent);
       setUpdateWave(!updateWave);
     }
   };
@@ -130,9 +130,9 @@ const ObsAudioRecorder = ({
   const fetchUrl = () => {
     const key = `story_${effectiveStoryId}_${parseInt(selectedParagraph, 10) - 1}`;
 
-    // Add null check for audioContent
-    if (audioContent && audioContent[key]) {
-      const audioData = audioContent[key];
+    const currentAudioContent = obsAudioContent;
+    if (currentAudioContent && currentAudioContent[key]) {
+      const audioData = currentAudioContent[key];
       const currentTake = audioData[take];
       setCurrentUrl({
         ...audioData,
@@ -152,11 +152,11 @@ const ObsAudioRecorder = ({
   };
 
   useEffect(() => {
-  // Only call fetchUrl if audioContent exists and has content and audio is enabled
-    if (audioEnabled && audioContent && Object.keys(audioContent).length > 0) {
+    const currentAudioContent = obsAudioContent;
+    if (audioEnabled && currentAudioContent && Object.keys(currentAudioContent).length > 0) {
       fetchUrl();
     }
-  }, [audioContent, selectedParagraph, take, recordingsPath, audioEnabled]);
+  }, [obsAudioContent, selectedParagraph, take, recordingsPath, audioEnabled]);
 
   const changeDefault = (value) => {
     const takeValue = typeof value === 'string' ? value : `take${value}`;
@@ -295,7 +295,8 @@ const ObsAudioRecorder = ({
         fs.unlinkSync(regularPath);
       }
 
-      const updatedAudioContent = { ...audioContent };
+      const currentAudioContent = obsAudioContent;
+      const updatedAudioContent = { ...currentAudioContent };
       if (updatedAudioContent[key]) {
         delete updatedAudioContent[key][`take${takeNum}`];
 
@@ -304,7 +305,7 @@ const ObsAudioRecorder = ({
           delete updatedAudioContent[key];
         }
       }
-      setAudioContent(updatedAudioContent);
+      setObsAudioContent(updatedAudioContent);
 
       setTrigger('');
       setNewBlob();

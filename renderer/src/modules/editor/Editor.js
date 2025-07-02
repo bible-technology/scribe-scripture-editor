@@ -21,7 +21,7 @@ import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import * as logger from '../../logger';
 
 export default function Editor({
-  children, callFrom, editor, audioEnabled = true, onAudioToggle,
+  children, callFrom, editor, audioEnabled, onAudioToggle,
 }) {
   const {
     states: {
@@ -65,8 +65,10 @@ export default function Editor({
   };
 
   const handleAudioToggle = () => {
+    const newState = !audioEnabled;
+    localStorage.setItem('obsEditorAudioEnabled', JSON.stringify(newState));
     if (onAudioToggle) {
-      onAudioToggle(!audioEnabled);
+      onAudioToggle(newState);
     }
   };
 
