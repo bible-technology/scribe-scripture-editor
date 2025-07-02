@@ -19,12 +19,25 @@ import { getDetails } from './utils/getDetails';
 const ObsEditor = () => {
   const [mdData, setMdData] = useState();
   const [directoryName, setDirectoryName] = useState();
-  const [audioEnabled, setAudioEnabled] = useState(true); // Audio player toggle state
+
   const {
     state: {
-      obsNavigation, loadData,
-    }, actions: { setLoadData },
+      obsNavigation,
+      loadData,
+      audioEnabled,
+    },
+    actions: {
+      setLoadData,
+      setAudioEnabled,
+    },
   } = useContext(ReferenceContext);
+
+  useEffect(() => {
+    const savedAudioState = localStorage.getItem('obsEditorAudioEnabled');
+    if (savedAudioState !== null) {
+      setAudioEnabled(JSON.parse(savedAudioState));
+    }
+  }, [setAudioEnabled]);
 
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');
@@ -54,8 +67,8 @@ const ObsEditor = () => {
     });
   };
 
-  // Handle audio toggle
   const handleAudioToggle = (enabled) => {
+    localStorage.setItem('obsEditorAudioEnabled', JSON.stringify(enabled));
     setAudioEnabled(enabled);
   };
 

@@ -21,7 +21,7 @@ import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
 import * as logger from '../../logger';
 
 export default function Editor({
-  children, callFrom, editor, audioEnabled = true, onAudioToggle,
+  children, callFrom, editor, audioEnabled, onAudioToggle,
 }) {
   const {
     states: {
@@ -65,8 +65,10 @@ export default function Editor({
   };
 
   const handleAudioToggle = () => {
+    const newState = !audioEnabled;
+    localStorage.setItem('obsEditorAudioEnabled', JSON.stringify(newState));
     if (onAudioToggle) {
-      onAudioToggle(!audioEnabled);
+      onAudioToggle(newState);
     }
   };
 
@@ -148,7 +150,8 @@ export default function Editor({
   };
   const { t } = useTranslation();
   return (
-    <div className={`flex flex-col bg-white border-b-2 border-secondary ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : 'h-editor'} rounded-md shadow scrollbar-width`}>
+  // eslint-disable-next-line no-nested-ternary
+    <div className={`flex flex-col bg-white border-b-2 border-secondary ${editor === 'audioTranslation' ? 'md:max-h-[64vh] lg:max-h-[70vh]' : (callFrom === 'obs' && audioEnabled) ? 'max-h-[71vh]' : 'h-editor'} rounded-md shadow scrollbar-width`}>
       <div className="flex flex-wrap items-center justify-between bg-secondary ">
         {/* {(callFrom === 'textTranslation' && <BibleNavigation />) || (callFrom === 'obs' && <ObsNavigation value={value} onChange={onChange} />)} */}
         {(callFrom === 'textTranslation' && <BibleNavigation />) || (callFrom === 'obs'
