@@ -52,7 +52,6 @@ export default function SelectChapter({
     closeChapters();
     // if (multiSelectVerse === false) { closeChapters(); }
     if (verseNum && setVerseNumber) {
-      // document.getElementById('editor').querySelector(`#ch${chapter}v${verseNum}`)?.scrollIntoView();
       setVerseNumber(verseNum);
     }
   };
@@ -65,14 +64,14 @@ export default function SelectChapter({
           </div>
           <div className="px-2 pt-2 bg-primary border-primary border-b-4 cursor-pointer">
             {t('label-chapter')}
+            {' '}
             :
             {chapter}
           </div>
         </div>
         <div className={`px-2 pt-2 ${openVerse ? 'bg-primary border-primary' : 'hover:bg-gray-600 border-gray-600'} border-b-4 cursor-pointer`}>
           {t('label-verse')}
-          : &nbsp;
-
+          :
           {verse}
         </div>
         <div className="flex justify-end">

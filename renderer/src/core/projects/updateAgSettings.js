@@ -59,3 +59,59 @@ export const saveReferenceResource = (font = '', fontSize = 1) => {
     });
   });
 };
+
+export const saveNavigationHistory = async (bookId, chapter, verse) => {
+  logger.debug('updateAgSettings.js', 'In saveNavigationHistory');
+  const newpath = localStorage.getItem('userPath');
+  const fs = window.require('fs');
+  const path = require('path');
+
+  try {
+    const username = (await localforage.getItem('userProfile'))?.username;
+    const projectName = await localforage.getItem('currentProject');
+    const projectMeta = await localforage.getItem('projectmeta');
+    const _projectname = await splitStringByLastOccurence(projectName, '_');
+
+    // Find the settings file path and update projectmeta
+    let settingsPath = '';
+    Object.entries(projectMeta).forEach(([/* key */, _value]) => {
+      Object.entries(_value).forEach(([/* key */, resources]) => {
+        if (resources.identification.name.en === _projectname[0]) {
+          // Update projectmeta with navigationHistory
+          if (!resources.project?.textTranslation) {
+            resources.project.textTranslation = {};
+          }
+          resources.project.textTranslation.navigationHistory = [bookId, chapter, verse];
+
+          const result = Object.keys(resources.ingredients).filter((key) => key.includes(environment.PROJECT_SETTING_FILE));
+          settingsPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, result[0]);
+        }
+      });
+    });
+
+    // Save updated projectmeta to localforage
+    // await localforage.setItem('projectmeta', projectMeta);
+    // logger.debug('updateAgSettings.js', 'projectmeta updated in localforage with navigationHistory');
+
+    // Also update the settings file on disk if exists
+    if (settingsPath && fs.existsSync(settingsPath)) {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+
+      if (!settings.project?.textTranslation) {
+        logger.error('updateAgSettings.js', 'textTranslation object not found in settings');
+        return;
+      }
+
+      settings.project.textTranslation.navigationHistory = [bookId, chapter, verse];
+      logger.debug('updateAgSettings.js', 'navigationHistory updated in settings file:', settings.project.textTranslation.navigationHistory);
+
+      await fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+      logger.debug('updateAgSettings.js', 'Settings file saved with navigationHistory');
+      console.log('Settings file saved with navigationHistory');
+    } else {
+      logger.error('updateAgSettings.js', 'Settings file not found');
+    }
+  } catch (error) {
+    logger.error('updateAgSettings.js', 'Error saving navigationHistory:', error);
+  }
+};

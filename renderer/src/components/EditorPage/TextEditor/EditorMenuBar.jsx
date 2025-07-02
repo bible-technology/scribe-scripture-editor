@@ -2,24 +2,22 @@ import React, { useContext } from 'react';
 
 import { ProjectContext } from '@/components/context/ProjectContext';
 import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
-import { LockClosedIcon, BookmarkIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import {
+  LockClosedIcon,
+  //  BookmarkIcon,
+  LockOpenIcon,
+} from '@heroicons/react/24/outline';
 // import BibleNavigationX from '@/components/EditorPage/TextEditor/BibleNavigationX';
 import { useTranslation } from 'react-i18next';
 import BibleNavigation from './BibleNavigationX';
-// import BibleNavigation from '../../../modules/biblenavigation/BibleNavigation';
+// import BibleNavigation from '../JuxtaTextEditor/BibleNavigationX';
 
 export default function EditorMenuBar(props) {
   const {
     selectedFont,
-    chapterNumber,
-    setChapterNumber,
-    verseNumber,
-    setVerseNumber,
     handleSelectedFont,
     handleEditorFontSize,
     editorFontSize,
-    book,
-    setBook,
     loading,
     bookAvailable,
     booksInProject,
@@ -46,12 +44,6 @@ export default function EditorMenuBar(props) {
     <div className="h-[33px] flex flex-col bg-secondary rounded-t-md sticky top-0">
       <div className="flex min-h-[33px] items-center justify-between gap-2">
         <BibleNavigation
-          chapterNumber={chapterNumber}
-          setChapterNumber={setChapterNumber}
-          verseNumber={verseNumber}
-          setVerseNumber={setVerseNumber}
-          book={book}
-          setBook={setBook}
           loading={loading}
           bookAvailable={bookAvailable}
           booksInProject={booksInProject}
@@ -94,10 +86,12 @@ export default function EditorMenuBar(props) {
         </button>
 
         <div
-          title="navigation lock/unlock"
           className="flex items-center mr-auto"
         >
-          <div>
+          <div
+            title="navigation lock/unlock"
+
+          >
             {scrollLock === true ? (
               <LockOpenIcon
                 aria-label="open-lock"
@@ -114,7 +108,7 @@ export default function EditorMenuBar(props) {
               />
             )}
           </div>
-          <div
+          {/* <div
             role="button"
             tabIndex="0"
             aria-label="bookmark"
@@ -125,8 +119,10 @@ export default function EditorMenuBar(props) {
               className="h-5 mr-4 w-5 text-white cursor-pointer"
               aria-hidden="true"
             />
+          </div> */}
+          <div title="select font">
+            <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
           </div>
-          <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
         </div>
       </div>
     </div>

@@ -4,16 +4,20 @@ import React, {
   Fragment, useContext, useEffect, useRef, useState,
 } from 'react';
 import { XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
-import * as localforage from 'localforage';
+// import * as localforage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { saveNavigationHistory } from '@/core/projects/updateAgSettings';
 import SelectBook from './SelectBook';
 import SelectChapter from './SelectChapter';
 
 export default function BibleNavigationX(props) {
   const {
-    chapterNumber, setChapterNumber,
-    setVerseNumber, setBook,
-    // loading,
+    // chapterNumber,
+    // setChapterNumber,
+    // // verseNumber,
+    // setVerseNumber,
+    // setBook,
+    loading,
     bookAvailable, booksInProject, parseError,
   } = props;
 
@@ -31,6 +35,7 @@ export default function BibleNavigationX(props) {
       onChangeChapter,
       onChangeVerse,
       setCloseNavigation,
+      // tobook
     },
   } = useContext(ReferenceContext);
 
@@ -60,11 +65,12 @@ export default function BibleNavigationX(props) {
   }
 
   useEffect(() => {
+    console.log(bookId, chapter, verse, 'bible navigatin setter');
     async function setReference() {
-      await localforage.setItem('navigationHistory', [bookId, chapter]);
+      await saveNavigationHistory(bookId, chapter, verse);
     }
     setReference();
-  }, [bookId, chapter]);
+  }, [bookId, chapter, verse]);
 
   useEffect(() => {
     if (parseError) {
@@ -96,7 +102,7 @@ export default function BibleNavigationX(props) {
           >
             <ChevronDownIcon className=" h-4 w-4 mx-1 text-white" aria-hidden="true" />
           </span>
-          <span className="px-3">{chapterNumber}</span>
+          <span className="px-3">{chapter}</span>
           <span
             aria-label="open-chapter"
             className="focus:outline-none bg-white py-2 bg-opacity-10"
@@ -140,7 +146,7 @@ export default function BibleNavigationX(props) {
                   multiSelectBook={multiSelectBook}
                   selectedBooks={selectedBooks}
                   setSelectedBooks={setSelectedBooks}
-                  setBook={setBook}
+                  // setBook={setBook}
                   scope="Other"
                   booksInProject={booksInProject}
                 >
@@ -172,8 +178,8 @@ export default function BibleNavigationX(props) {
             className="fixed inset-0 z-10 overflow-y-auto"
             initialFocus={cancelButtonRef}
             static
-            open={openChapter}
-            // open={!loading && openChapter}
+            // open={openChapter}
+            open={!loading && openChapter}
             onClose={closeChapters}
           >
             <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
@@ -190,10 +196,10 @@ export default function BibleNavigationX(props) {
                   onChangeChapter={onChangeChapter}
                   closeBooks={closeBooks}
                   closeChapters={closeChapters}
-                  setChapterNumber={setChapterNumber}
-                  setVerseNumber={setVerseNumber}
-                  setSelectedVerse={setVerseNumber}
-                  // loading={loading}
+                  // setChapterNumber={setChapterNumber}
+                  // setVerseNumber={setVerseNumber}
+                  // setSelectedVerse={setVerseNumber}
+                  loading={loading}
                 >
                   <button
                     type="button"
@@ -214,11 +220,11 @@ export default function BibleNavigationX(props) {
 }
 
 BibleNavigationX.propTypes = {
-  chapterNumber: PropTypes.number,
-  setChapterNumber: PropTypes.func,
+  // chapterNumber: PropTypes.number,
+  // setChapterNumber: PropTypes.func,
   // verseNumber: PropTypes.number,
-  setVerseNumber: PropTypes.func,
-  setBook: PropTypes.func,
+  // setVerseNumber: PropTypes.func,
+  // setBook: PropTypes.func,
   // loading: PropTypes.bool,
   bookAvailable: PropTypes.bool,
 };

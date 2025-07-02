@@ -12,7 +12,6 @@ export default function SelectBook({
   multiSelectBook,
   selectedBooks,
   scope,
-  setBook,
   booksInProject,
 }) {
   const [openNT, setOpenNT] = useState(true);
@@ -37,7 +36,6 @@ export default function SelectBook({
     e.preventDefault();
     if (booksInProject.includes(bookId.toLowerCase())) {
       onChangeBook(bookId, selectedBooks[0]);
-      setBook(bookId);
       if (multiSelectBook === false) { selectBook(); }
     }
   }
@@ -161,6 +159,6 @@ SelectBook.propTypes = {
   selectedBooks: PropTypes.array,
   multiSelectBook: PropTypes.bool,
   scope: PropTypes.string,
-  setBook: PropTypes.func,
+  // setBook: PropTypes.func,
   booksInProject: PropTypes.array,
 };

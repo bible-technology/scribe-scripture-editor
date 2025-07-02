@@ -49,6 +49,8 @@ export default function EditorSection({
   const { t } = useTranslation();
   const {
     state: {
+      chapter,
+      verse,
       layout,
       openResource1,
       openResource2,
@@ -64,6 +66,17 @@ export default function EditorSection({
   function removeResource() {
     setOpenModal(true);
   }
+
+  useEffect(() => {
+    if (!scrollLock) {
+      const refEditors = document.getElementsByClassName('ref-editor');
+      if (refEditors.length) {
+        Array.from(refEditors).forEach((editor) => {
+          editor.querySelector(`#ch${chapter}v${verse}`)?.scrollIntoView();
+        });
+      }
+    }
+  }, [scrollLock, chapter, verse]);
 
   const removeSection = () => {
     setRemovingSection(row);

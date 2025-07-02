@@ -10,6 +10,7 @@ import ReferenceScribex from '../../TextEditor/ReferenceScribex';
 
 const ReferenceBibleX = ({
   languageId,
+  refNum,
   refName,
   bookId,
   font,
@@ -49,6 +50,8 @@ const ReferenceBibleX = ({
     scrollLock,
     font,
     fontSize,
+    refNum,
+
   };
   return (
     <>

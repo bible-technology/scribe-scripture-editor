@@ -75,6 +75,8 @@ export default function ReferenceContextProvider({ children }) {
   });
   // Trigger for updating the data after cloud sync from Editor pane
   const [loadData, setLoadData] = useState(false);
+  const [flavour, setFlavour] = useState('');
+  const [bibleNavigationHist, setBibleNavigationHist] = useState([]); // TextTranslation Navigation History stored in settings file
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -117,6 +119,7 @@ export default function ReferenceContextProvider({ children }) {
                 ([, resources]) => {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
+                    setFlavour(resources.type.flavorType.flavor.name);
                     switch (resources.type.flavorType.flavor.name) {
                     case 'x-juxtalinear':
                       resProj = resources.project['x-juxtalinear'];
@@ -129,6 +132,7 @@ export default function ReferenceContextProvider({ children }) {
                       setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.textTranslation?.font);
                       setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
+                      setBibleNavigationHist(resources.project?.textTranslation?.navigationHistory);
                       break;
                     case 'textStories':
                       setBookmarksVerses(resources.project?.textStories.bookMarks);
@@ -171,6 +175,7 @@ export default function ReferenceContextProvider({ children }) {
       onChangeChapter,
       onChangeVerse,
       applyBooksFilter,
+      goToBookChapterVerse,
     },
   } = useBibleReference(
     {
@@ -181,15 +186,20 @@ export default function ReferenceContextProvider({ children }) {
   );
   useEffect(() => {
     const getNavigationHistory = async () => {
-      const navHistory = await localforage.getItem('navigationHistory');
-      if (navHistory) {
-        onChangeBook(navHistory[0], bookId);
-        onChangeChapter(navHistory[1], chapter);
+      console.log(flavour, 'flavor', flavour === 'textTranslation');
+      if (flavour) {
+        if (flavour === 'textTranslation') {
+          if (bibleNavigationHist.length > 0) {
+            console.log(bibleNavigationHist, 'RR222');
+
+            goToBookChapterVerse(bibleNavigationHist[0], bibleNavigationHist[1], bibleNavigationHist[2]);
+          }
+        }
       }
     };
     getNavigationHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [flavour, bibleNavigationHist]);
 
   const value = {
     state: {
@@ -256,6 +266,8 @@ export default function ReferenceContextProvider({ children }) {
       onChangeChapter,
       onChangeVerse,
       applyBooksFilter,
+      goToBookChapterVerse,
+
       handleEditorFontSize,
       setAnchorEl,
       handleClick,

@@ -11,7 +11,7 @@ export default function ReferenceScribex(props) {
   const { state, actions } = useContext(ScribexContext);
   const { verbose } = state;
   const {
-    usfmData, bookAvailable, refName, bookId, scrollLock, font, fontSize,
+    usfmData, bookAvailable, refName, bookId, scrollLock, font, fontSize, refNum,
   } = props;
   const [selectedBook, setSelectedBook] = useState();
   const [bookChange, setBookChange] = useState(false);
@@ -74,9 +74,11 @@ export default function ReferenceScribex(props) {
     ...perfActions,
     isLoading,
     bookName,
+    refNum,
     bookChange,
     bookAvailable,
     setBookChange,
+
   };
   return (
     <div
