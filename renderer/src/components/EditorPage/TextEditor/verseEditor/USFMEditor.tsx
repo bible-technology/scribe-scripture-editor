@@ -1,3 +1,5 @@
+
+
 import React, {
   useState,
   useRef,
@@ -177,10 +179,37 @@ const parseUSFM = (usfm) => {
   return parsed;
 };
 
+// Dirty State Indicator Component
+const DirtyStateIndicator = ({ isDirty }) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        fontSize: 12,
+        color: isDirty ? '#f57c00' : '#4caf50',
+        padding: '4px 8px',
+        backgroundColor: isDirty ? '#fff8e1' : '#f1f8e9',
+        borderRadius: '12px',
+        border: `1px solid ${isDirty ? '#ffcc02' : '#c8e6c9'}`,
+      }}>
+      <div
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          backgroundColor: isDirty ? '#ffcc02' : '#4caf50',
+        }}></div>
+      {isDirty ? 'Unsaved changes' : 'Saved'}
+    </div>
+  );
+};
+
 const USFMEditor = ({
   selectedFont = 'sans-serif',
   fontSize = 0,
-  usfmString,
+  usfmString = '',
   textDirection = 'ltr',
   setNavRef,
   scrRef,
@@ -190,6 +219,10 @@ const USFMEditor = ({
   onUsfmChange,
 }) => {
   const [parsed, setParsed] = useState([]);
+  const parsedRef = useRef([]);
+  const cursorPosRef = useRef(null);
+
+
   const [currentFocusId, setCurrentFocusId] = useState(null);
   const [selectedVerseId, setSelectedVerseId] = useState(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -202,20 +235,29 @@ const USFMEditor = ({
   const scrollTimeoutRef = useRef(null);
   const lastScrRefUpdate = useRef(null);
   const isDirtyRef = useRef(false);
-  const tabPressedRef = useRef(false);
-  useEffect(() => {
-    console.log('filepath', filePath)
-  }, [filePath])
 
+  // Parse USFM when usfmString changes
+  // useEffect(() => {
+  //   if (usfmString) {
+  //     const parsedUSFM = parseUSFM(usfmString);
+  //     setParsed(parsedUSFM);
+  //     isDirtyRef.current = false;
+  //     setIsDirty(false);
+  //   }
+  // }, [usfmString]);
   useEffect(() => {
     if (usfmString) {
       const parsedUSFM = parseUSFM(usfmString);
-      setParsed(parsedUSFM);
+      parsedRef.current = parsedUSFM;
+      setParsed(parsedUSFM); // Triggers controlled re-render
       isDirtyRef.current = false;
       setIsDirty(false);
     }
   }, [usfmString]);
 
+
+
+  // Scroll to reference when scrRef changes
   useEffect(() => {
     if (scrRef && parsed.length > 0) {
       setTimeout(() => {
@@ -224,6 +266,7 @@ const USFMEditor = ({
     }
   }, [scrRef, parsed]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (scrollTimeoutRef.current) {
@@ -232,32 +275,51 @@ const USFMEditor = ({
     };
   }, []);
 
-  const findPrecedingVerse = useCallback(
-    (currentId) => {
-      const editableIds = parsed.filter(
-        ({ tag, visible }) => visible && tag !== '\\c',
-      );
-      const currentIndex = editableIds.findIndex(
-        (el) => el.id === currentId,
-      );
-      if (currentIndex === -1) return null;
-      for (let i = currentIndex; i >= 0; i--) {
-        const element = editableIds[i];
-        if (element.tag === '\\v') {
-          return {
-            chapter: element.chapter,
-            verseNumber: element.verseNumber,
-            id: element.id,
-          };
-        }
+  // const findPrecedingVerse = useCallback(
+  //   (currentId) => {
+  //     const editableIds = parsed.filter(
+  //       ({ tag, visible }) => visible && tag !== '\\c',
+  //     );
+  //     const currentIndex = editableIds.findIndex(
+  //       (el) => el.id === currentId,
+  //     );
+  //     if (currentIndex === -1) return null;
+  //     for (let i = currentIndex; i >= 0; i--) {
+  //       const element = editableIds[i];
+  //       if (element.tag === '\\v') {
+  //         return {
+  //           chapter: element.chapter,
+  //           verseNumber: element.verseNumber,
+  //           id: element.id,
+  //         };
+  //       }
+  //     }
+  //     return null;
+  //   },
+  //   [parsed],
+  // );
+
+  const findPrecedingVerse = useCallback((currentId) => {
+    const editableIds = parsedRef.current.filter(({ tag, visible }) => visible && tag !== '\\c');
+    const currentIndex = editableIds.findIndex(el => el.id === currentId);
+    if (currentIndex === -1) return null;
+
+    for (let i = currentIndex; i >= 0; i--) {
+      const element = editableIds[i];
+      if (element.tag === '\\v') {
+        return {
+          chapter: element.chapter,
+          verseNumber: element.verseNumber,
+          id: element.id,
+        };
       }
-      return null;
-    },
-    [parsed],
-  );
+    }
+    return null;
+  }, []);
+
 
   const updateScrRefDebounced = useCallback(
-    (elementId) => {
+    debounce((elementId) => {
       const currentElement = parsed.find((el) => el.id === elementId);
       if (!currentElement) return;
       let targetVerse = null;
@@ -286,7 +348,7 @@ const USFMEditor = ({
           setNavRef && setNavRef(newScrRef);
         }
       }
-    },
+    }, 300),
     [parsed, findPrecedingVerse, setScrRef, setNavRef, bookId],
   );
 
@@ -327,10 +389,10 @@ const USFMEditor = ({
 
       scrollTimeoutRef.current = setTimeout(() => {
         const activeElement = document.activeElement;
-        if (!activeElement || !activeElement.matches('textarea')) {
-          const textarea = contentRefs.current[foundVerse.id];
-          if (textarea) {
-            textarea.focus();
+        if (!activeElement || !activeElement.matches('[contenteditable="true"]')) {
+          const editableElement = contentRefs.current[foundVerse.id];
+          if (editableElement) {
+            editableElement.focus();
             setCurrentFocusId(foundVerse.id);
           }
         }
@@ -346,153 +408,214 @@ const USFMEditor = ({
       }
       setIsScrolling(false);
     }
-  }, [parsed]);
+    // }, [parsed]);
+  }, []);
 
-  const autoResize = (textarea) => {
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${Math.max(textarea.scrollHeight, 100)}px`;
-    }
-  };
+  // Simplified debounced content change handler
+  // const handleContentChange = useCallback(
+  //   debounce((id, rawText) => {
+  //     const element = contentRefs.current[id];
+  //     if (!element) return;
+
+  //     // Clean the text (remove line breaks, normalize spaces)
+  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+  //     const updatedParsed = parsed.map((line) =>
+  //       line.id === id
+  //         ? {
+  //           ...line,
+  //           content: newText,
+  //           original:
+  //             line.tag === '\\qs'
+  //               ? `\\qs ${newText}\\qs*`
+  //               : line.tag === '\\v'
+  //                 ? `\\v ${line.verseNumber} ${newText}`
+  //                 : line.tag
+  //                   ? `${line.tag} ${newText}`
+  //                   : newText,
+  //         }
+  //         : line
+  //     );
+
+  //     setParsed(updatedParsed);
+
+  //     // Direct save to file via onUsfmChange
+  //     if (onUsfmChange) {
+  //       const usfmString = updatedParsed.map((line) => line.original).join('\n');
+  //       onUsfmChange(usfmString);
+  //       isDirtyRef.current = false;
+  //       setIsDirty(false);
+  //     }
+  //   }, 4000),
+  //   [parsed, onUsfmChange]
+  // );
+
+  // const handleContentChange = useCallback(
+  //   debounce((id, rawText) => {
+  //     const element = contentRefs.current[id];
+  //     if (!element) return;
+
+  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+  //     // Find and update the parsed item directly (mutation)
+  //     const itemIndex = parsed.findIndex((line) => line.id === id);
+  //     if (itemIndex !== -1) {
+  //       const line = parsed[itemIndex];
+  //       line.content = newText;
+  //       line.original =
+  //         line.tag === '\\qs'
+  //           ? `\\qs ${newText}\\qs*`
+  //           : line.tag === '\\v'
+  //             ? `\\v ${line.verseNumber} ${newText}`
+  //             : line.tag
+  //               ? `${line.tag} ${newText}`
+  //               : newText;
+  //     }
+
+  //     // Regenerate USFM without calling setParsed
+  //     if (onUsfmChange) {
+  //       const usfmString = parsed.map((line) => line.original).join('\n');
+  //       onUsfmChange(usfmString);
+  //       isDirtyRef.current = false;
+  //       setIsDirty(false);
+  //     }
+  //   }, 4000),
+  //   [parsed, onUsfmChange]
+  // );
+  // const handleContentChange = useMemo(() =>
+  //   debounce((id, rawText) => {
+  //     const element = contentRefs.current[id];
+  //     if (!element) return;
+
+  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+  //     const itemIndex = parsedRef.current.findIndex((line) => line.id === id);
+  //     if (itemIndex !== -1) {
+  //       const line = parsedRef.current[itemIndex];
+  //       line.content = newText;
+  //       line.original =
+  //         line.tag === '\\qs'
+  //           ? `\\qs ${newText}\\qs*`
+  //           : line.tag === '\\v'
+  //             ? `\\v ${line.verseNumber} ${newText}`
+  //             : line.tag
+  //               ? `${line.tag} ${newText}`
+  //               : newText;
+  //     }
+
+  //     if (onUsfmChange) {
+  //       const usfmOutput = parsedRef.current.map((line) => line.original).join('\n');
+  //       onUsfmChange(usfmOutput);
+  //       isDirtyRef.current = false;
+  //       setIsDirty(false);
+  //     }
+  //   }, 4000), [onUsfmChange]
+  // );
+
 
   const handleContentChange = useCallback(
-    debounce((id, newText) => {
-      const textarea = contentRefs.current[id];
-      if (!textarea) return;
+    debounce((id, rawText) => {
+      const element = contentRefs.current[id];
+      if (!element) return;
 
-      const cursorStart = textarea.selectionStart;
-      const cursorEnd = textarea.selectionEnd;
+      const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 
-      setParsed((prev) =>
-        prev.map((line) =>
-          line.id === id
-            ? {
-              ...line,
-              content: newText,
-              original:
-                line.tag === '\\qs'
-                  ? `\\qs ${newText}\\qs*`
-                  : line.tag === '\\v'
-                    ? `\\v ${line.verseNumber} ${newText}`
-                    : line.tag
-                      ? `${line.tag} ${newText}`
-                      : newText,
-            }
-            : line
-        )
+      const updatedParsed = parsed.map((line) =>
+        line.id === id
+          ? {
+            ...line,
+            content: newText,
+            original:
+              line.tag === '\\qs'
+                ? `\\qs ${newText}\\qs*`
+                : line.tag === '\\v'
+                  ? `\\v ${line.verseNumber} ${newText}`
+                  : line.tag
+                    ? `${line.tag} ${newText}`
+                    : newText,
+          }
+          : line
       );
 
-      isDirtyRef.current = true;
-      setIsDirty(true);
+      setParsed(updatedParsed);
 
-      // Save to file if onUsfmChange is provided
+      // Cursor restore logic after save triggers rerender
+      setTimeout(() => {
+        if (cursorPosRef.current?.id === id) {
+          const element = contentRefs.current[id];
+          if (element && element.firstChild) {
+            element.focus();
+            const selection = window.getSelection();
+            const range = document.createRange();
+            const pos = cursorPosRef.current.start;
+
+            const textNode = element.firstChild;
+            const safePos = Math.min(pos, textNode.length); // Avoid overflow errors
+
+            range.setStart(textNode, safePos);
+            range.setEnd(textNode, safePos);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+        }
+      }, 50); // Slight delay ensures DOM updated
+
       if (onUsfmChange) {
-        const updatedParsed = parsed.map((line) =>
-          line.id === id
-            ? {
-              ...line,
-              content: newText,
-              original:
-                line.tag === '\\qs'
-                  ? `\\qs ${newText}\\qs*`
-                  : line.tag === '\\v'
-                    ? `\\v ${line.verseNumber} ${newText}`
-                    : line.tag
-                      ? `${line.tag} ${newText}`
-                      : newText,
-            }
-            : line
-        );
         const usfmString = updatedParsed.map((line) => line.original).join('\n');
         onUsfmChange(usfmString);
         isDirtyRef.current = false;
         setIsDirty(false);
       }
-
-      setTimeout(() => {
-        if (textarea) {
-          textarea.selectionStart = Math.min(cursorStart, textarea.value.length);
-          textarea.selectionEnd = Math.min(cursorEnd, textarea.value.length);
-          autoResize(textarea);
-        }
-      }, 0);
-    }, 500),
-    [parsed, onUsfmChange],
+    }, 4000),
+    [parsed, onUsfmChange]
   );
 
-  const handleInput = (id) => {
-    const textarea = contentRefs.current[id];
-    if (!textarea) return;
 
-    const scrollPos = textarea.scrollTop;
-    const cursorStart = textarea.selectionStart;
-    const cursorEnd = textarea.selectionEnd;
-
-    autoResize(textarea);
-
-    textarea.scrollTop = scrollPos;
-    textarea.selectionStart = cursorStart;
-    textarea.selectionEnd = cursorEnd;
-
-    let newText = textarea.value || '';
-    newText = newText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-
+  const handleInput = useCallback((e, id) => {
+    // Mark as dirty immediately
     if (!isDirtyRef.current) {
       setIsDirty(true);
       isDirtyRef.current = true;
     }
 
+    // Get the current text content and call the debounced function
+    const newText = e.target.textContent || e.target.innerText || '';
+    // Save cursor position
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      cursorPosRef.current = {
+        id,
+        start: range.startOffset,
+        end: range.endOffset,
+      };
+    }
     handleContentChange(id, newText);
-  };
-  const handlePaste = (e, id) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData('text');
+  }, [handleContentChange]);
 
-    const cleaned = pastedData
-      .replace(/[\r\n]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    const textarea = contentRefs.current[id];
-    if (!textarea) return;
-
-    const { selectionStart, selectionEnd, value } = textarea;
-
-    const newValue =
-      value.slice(0, selectionStart) +
-      cleaned +
-      value.slice(selectionEnd);
-
-    textarea.value = newValue;
-
-    // Move cursor after inserted content
-    const newCursorPos = selectionStart + cleaned.length;
-    textarea.selectionStart = newCursorPos;
-    textarea.selectionEnd = newCursorPos;
-
-    autoResize(textarea);
-    handleInput(id); // Triggers cleaning and saving logic
-  };
-
-
-  const handleFocus = (id) => {
-    const textarea = contentRefs.current[id];
-    if (textarea) autoResize(textarea);
-
+  const handleFocus = useCallback((id) => {
     if (!isScrolling) {
       updateScrRefDebounced(id);
     }
     setCurrentFocusId(id);
-  };
+  }, [isScrolling, updateScrRefDebounced]);
 
-
-  const handleKeyDown = (e, id) => {
+  const handleKeyDown = useCallback((e, id) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // Block line breaks
-      return;
     }
-  };
+  }, []);
 
+  const handlePaste = useCallback((e, id) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    const sanitizedText = text.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+
+    const element = contentRefs.current[id];
+    if (element) {
+      document.execCommand('insertText', false, sanitizedText);
+    }
+  }, []);
 
   return (
     <div
@@ -506,7 +629,7 @@ const USFMEditor = ({
       }}
     >
       <div style={{ padding: '10px', backgroundColor: 'white' }}>
-        <strong>{isDirty ? 'Unsaved Changes' : 'All Changes Saved'}</strong>
+        <DirtyStateIndicator isDirty={isDirty} />
       </div>
       <div
         style={{ height: '93%', overflowY: 'auto', backgroundColor: 'white', padding: '10px' }}
@@ -536,6 +659,16 @@ const USFMEditor = ({
             );
           }
 
+          const commonProps = {
+            contentEditable: true,
+            suppressContentEditableWarning: true,
+            onBlur: () => handleContentChange.flush(),
+            onFocus: () => handleFocus(id),
+            onInput: (e) => handleInput(e, id),
+            onKeyDown: (e) => handleKeyDown(e, id),
+            onPaste: (e) => handlePaste(e, id),
+          };
+
           if (tag === '\\v') {
             const verseKey = `${chapter}-${verseNumber}`;
             const isSelected = selectedVerseId === id;
@@ -557,39 +690,31 @@ const USFMEditor = ({
                 >
                   {verseNumber}
                 </div>
-                <textarea
+                <div
                   ref={(el) => {
                     if (el) contentRefs.current[id] = el;
                   }}
+                  {...commonProps}
                   className={`${currentFocusId === id ? 'bg-gray-100' : isSelected ? 'bg-gray-50' : 'bg-transparent'}`}
                   style={{
                     width: '95%',
-                    minHeight: 100,
-                    resize: 'none',
+                    // minHeight: 100,
                     padding: '8px 12px',
                     outline: 'none',
                     fontSize: 16 + fontSize,
                     lineHeight: '1.5',
                     borderRadius: '4px',
-                    direction: textDirection,
-                    border: 'none',
-                    //   backgroundColor:
-                    //     currentFocusId === id ? '#f0f9ff' :
-                    //       isSelected ? 'rgba(238, 90, 36, 0.1)' : 'white',
-                  }}
-                  defaultValue={content}
-                  onBlur={() => handleContentChange.flush()}
-                  onFocus={() => handleFocus(id)}
-                  onInput={() => handleInput(id)}
-                  onKeyDown={(e) => handleKeyDown(e, id)}
-                  onPaste={(e) => handlePaste(e, id)}
+                    direction: textDirection as 'ltr' | 'rtl',
 
-                />
+                    border: 'none',
+                  }}
+                >
+                  {content}
+                </div>
               </div>
             );
           }
 
-          // Handle other tags (\\s, \\s1, \\s2, \\q, \\q1, \\q2, \\qs)
           if (['\\s', '\\s1', '\\s2'].includes(tag)) {
             return (
               <div
@@ -602,32 +727,27 @@ const USFMEditor = ({
                   textAlign: 'center',
                 }}
               >
-                <textarea
+                <div
                   ref={(el) => {
                     if (el) contentRefs.current[id] = el;
                   }}
+                  {...commonProps}
                   style={{
-                    width: '100%',
-                    minHeight: 50,
-                    resize: 'none',
+                    display: 'inline-block',
                     padding: '8px 16px',
+                    // minHeight: 50,
                     outline: 'none',
                     borderRadius: '4px',
-                    direction: textDirection,
+                    direction: textDirection as 'ltr' | 'rtl',
                     backgroundColor: currentFocusId === id ? '#fff3e0' : 'transparent',
                     border: currentFocusId === id ? '2px solid #ff9800' : '2px solid transparent',
                     transition: 'all 0.2s ease',
                     textAlign: 'center',
                     fontWeight: 'bold',
                   }}
-                  defaultValue={content}
-                  onBlur={() => handleContentChange.flush()}
-                  onFocus={() => handleFocus(id)}
-                  onInput={() => handleInput(id)}
-                  onKeyDown={(e) => handleKeyDown(e, id)}
-                  onPaste={(e) => handlePaste(e, id)}
-
-                />
+                >
+                  {content}
+                </div>
               </div>
             );
           }
@@ -641,34 +761,30 @@ const USFMEditor = ({
                   paddingInlineStart: indent,
                   fontStyle: 'italic',
                   marginBottom: 8,
-                  direction: textDirection,
+                  direction: textDirection as 'ltr' | 'rtl',
+
                 }}
               >
-                <textarea
+                <div
                   ref={(el) => {
                     if (el) contentRefs.current[id] = el;
                   }}
+                  {...commonProps}
                   style={{
-                    width: '100%',
-                    minHeight: 50,
-                    resize: 'none',
+                    display: 'inline-block',
                     padding: '6px 12px',
+                    // minHeight: 50,
                     outline: 'none',
                     borderRadius: '4px',
-                    direction: textDirection,
+                    direction: textDirection as 'ltr' | 'rtl',
                     backgroundColor: currentFocusId === id ? '#f3e5f5' : 'transparent',
                     border: currentFocusId === id ? '2px solid #9c27b0' : '2px solid transparent',
                     transition: 'all 0.2s ease',
                     fontStyle: 'italic',
                   }}
-                  defaultValue={content}
-                  onBlur={() => handleContentChange.flush()}
-                  onFocus={() => handleFocus(id)}
-                  onInput={() => handleInput(id)}
-                  onKeyDown={(e) => handleKeyDown(e, id)}
-                  onPaste={(e) => handlePaste(e, id)}
-
-                />
+                >
+                  {content}
+                </div>
               </div>
             );
           }
@@ -685,16 +801,15 @@ const USFMEditor = ({
                   color: '#666',
                 }}
               >
-                <textarea
+                <div
                   ref={(el) => {
                     if (el) contentRefs.current[id] = el;
                   }}
+                  {...commonProps}
                   style={{
-
-                    width: '100%',
-                    minHeight: 50,
-                    resize: 'none',
+                    display: 'inline-block',
                     padding: '8px 16px',
+                    minHeight: 50,
                     outline: 'none',
                     backgroundColor: currentFocusId === id ? '#e1f5fe' : '#f8f9fa',
                     borderRadius: '6px',
@@ -703,26 +818,17 @@ const USFMEditor = ({
                     textAlign: 'center',
                     fontStyle: 'italic',
                   }}
-                  defaultValue={content}
-                  onBlur={() => handleContentChange.flush()}
-                  onFocus={() => handleFocus(id)}
-                  onInput={() => handleInput(id)}
-                  onKeyDown={(e) => handleKeyDown(e, id)}
-                  onPaste={(e) => handlePaste(e, id)}
-
-                />
+                >
+                  {content}
+                </div>
               </div>
             );
           }
 
           return (
-            <div
-              key={id}
-              style={{
-                margin: '8px 0',
-                direction: textDirection,
-              }}
-            >
+            <div key={id} style={{
+              margin: '8px 0', direction: textDirection as 'ltr' | 'rtl',
+            }}>
               {content}
             </div>
           );

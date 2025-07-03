@@ -64,7 +64,6 @@ export default function SelectChapter({
           </div>
           <div className="px-2 pt-2 bg-primary border-primary border-b-4 cursor-pointer">
             {t('label-chapter')}
-            {' '}
             :
             {chapter}
           </div>
@@ -72,6 +71,7 @@ export default function SelectChapter({
         <div className={`px-2 pt-2 ${openVerse ? 'bg-primary border-primary' : 'hover:bg-gray-600 border-gray-600'} border-b-4 cursor-pointer`}>
           {t('label-verse')}
           :
+
           {verse}
         </div>
         <div className="flex justify-end">

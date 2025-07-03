@@ -91,7 +91,7 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
 
     // Save updated projectmeta to localforage
     await localforage.setItem('projectmeta', projectMeta);
-    // logger.debug('updateAgSettings.js', 'projectmeta updated in localforage with navigationHistory');
+    logger.debug('updateAgSettings.js', 'projectmeta updated in localforage with navigationHistory');
 
     // Also update the settings file on disk if exists
     if (settingsPath && fs.existsSync(settingsPath)) {
@@ -107,7 +107,6 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
 
       await fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
       logger.debug('updateAgSettings.js', 'Settings file saved with navigationHistory');
-      console.log('Settings file saved with navigationHistory');
     } else {
       logger.error('updateAgSettings.js', 'Settings file not found');
     }

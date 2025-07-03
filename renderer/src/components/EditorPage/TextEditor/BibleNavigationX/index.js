@@ -12,11 +12,6 @@ import SelectChapter from './SelectChapter';
 
 export default function BibleNavigationX(props) {
   const {
-    // chapterNumber,
-    // setChapterNumber,
-    // // verseNumber,
-    // setVerseNumber,
-    // setBook,
     loading,
     bookAvailable, booksInProject, parseError,
   } = props;
@@ -35,7 +30,6 @@ export default function BibleNavigationX(props) {
       onChangeChapter,
       onChangeVerse,
       setCloseNavigation,
-      // tobook
     },
   } = useContext(ReferenceContext);
 

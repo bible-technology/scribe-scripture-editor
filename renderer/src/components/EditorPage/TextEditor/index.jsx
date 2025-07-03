@@ -5,6 +5,7 @@ import React, {
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 // import { debounce } from 'lodash';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import EmptyScreen from '@/components/Loading/EmptySrceen';
 import { useReadUsfmFile } from './hooks/useReadUsfmFile';
 import EditorMenuBar from './EditorMenuBar';
 import { saveToFile } from './hooks/saveToFile';
@@ -101,7 +102,7 @@ export default function TextEditor() {
           {!parseError && bookAvailable && usfmString && ( */}
 
               {/* {<ErrorScreen />} */}
-              {/* {!bookAvailable && <EmptyScreen />} */}
+              {!bookAvailable && <EmptyScreen />}
               {bookAvailable && usfmString && (
                 // <LexicalEditor {...props} />
                 // console.log('usfmString', usfmString)
