@@ -6,18 +6,29 @@ import React, {
 } from 'react';
 import { debounce } from 'lodash';
 
-const VISIBLE_TAGS = [
+const BASE_VISIBLE_TAGS = [
   '\\h',
   '\\c',
   '\\v',
-  '\\s',
-  '\\s1',
-  '\\s2',
-  '\\q',
-  '\\q1',
-  '\\q2',
   '\\qs',
 ];
+
+// Function to check if a tag should be visible
+const isVisibleTag = (tag) => {
+  // Check base visible tags
+  if (BASE_VISIBLE_TAGS.includes(tag)) {
+    return true;
+  }
+  // Check for \s followed by optional number (s, s1, s2, s3, etc.)
+  if (/^\\s\d*$/.test(tag)) {
+    return true;
+  }
+  // Check for \q followed by optional number (q, q1, q2, q3, etc.)
+  if (/^\\q\d*$/.test(tag)) {
+    return true;
+  }
+  return false;
+};
 
 const parseUSFM = (usfm) => {
   const lines = usfm.split(/\r?\n/);
@@ -148,13 +159,13 @@ const parseUSFM = (usfm) => {
           chapter: currentChapter,
         });
       } else {
-        const isVisible = VISIBLE_TAGS.includes(fullTag);
+        const visible = isVisibleTag(fullTag);
         parsed.push({
           id: idCounter++,
           tag: fullTag,
           content,
           original: line,
-          visible: isVisible,
+          visible: visible,
           chapter: currentChapter,
         });
       }
@@ -551,13 +562,24 @@ const USFMEditor = ({
             );
           }
 
-          if (['\\s', '\\s1', '\\s2'].includes(tag)) {
+          // Handle all \s* tags (s, s1, s2, s3, etc.)
+          if (/^\\s\d*$/.test(tag)) {
+            const levelMatch = tag.match(/^\\s(\d*)$/);
+            const level = levelMatch ? levelMatch[1] : '';
+            
+            // Determine font size based on level
+            let fontSizeMultiplier = 1.2; // Default for \s
+            if (level === '1') fontSizeMultiplier = 1.2;
+            else if (level === '2') fontSizeMultiplier = 1.1;
+            else if (level === '3') fontSizeMultiplier = 1.0;
+            else if (level && parseInt(level) > 3) fontSizeMultiplier = 0.9;
+            
             return (
               <div
                 key={id}
                 style={{
                   fontWeight: 'bold',
-                  fontSize: tag === '\\s2' ? `${1.1 + fontSize / 16}em` : `${1.2 + fontSize / 16}em`,
+                  fontSize: `${fontSizeMultiplier + fontSize / 16}em`,
                   textDecoration: tag === '\\s' ? 'underline' : 'none',
                   margin: '16px 0',
                   textAlign: 'center',
@@ -588,8 +610,18 @@ const USFMEditor = ({
             );
           }
 
-          if (['\\q', '\\q1', '\\q2'].includes(tag)) {
-            const indent = tag === '\\q2' ? 40 : tag === '\\q1' ? 20 : 10;
+          // Handle all \q* tags (q, q1, q2, q3, etc.)
+          if (/^\\q\d*$/.test(tag)) {
+            const levelMatch = tag.match(/^\\q(\d*)$/);
+            const level = levelMatch ? levelMatch[1] : '';
+            
+            // Determine indent based on level
+            let indent = 10; // Default for \q
+            if (level === '1') indent = 20;
+            else if (level === '2') indent = 30;
+            else if (level === '3') indent = 40;
+            else if (level && parseInt(level) > 3) indent = 50;
+            
             return (
               <div
                 key={id}
