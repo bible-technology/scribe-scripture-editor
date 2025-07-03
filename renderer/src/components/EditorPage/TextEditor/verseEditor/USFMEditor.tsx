@@ -30,6 +30,17 @@ const isVisibleTag = (tag) => {
   return false;
 };
 
+// Function to process inline formatting tags within content
+const processInlineFormatting = (content) => {
+  // Handle \qs...\qs* tags
+  content = content.replace(/\\qs\s+(.*?)\\qs\*/g, '<span class="qs-inline">$1</span>');
+  // Handle \it...\it* tags (italic)
+  content = content.replace(/\\it\s+(.*?)\\it\*/g, '<span class="it-inline">$1</span>');
+  // Handle \f...\f* tags (footnotes) - just hide them for now
+  content = content.replace(/\\f\s+\+.*?\\f\*/g, '');
+  return content;
+};
+
 const parseUSFM = (usfm) => {
   const lines = usfm.split(/\r?\n/);
   const parsed = [];
@@ -139,10 +150,11 @@ const parseUSFM = (usfm) => {
         }
       } else if (fullTag === '\\v') {
         const [verseNumber, ...rest] = content.trim().split(' ');
+        const processedContent = processInlineFormatting(rest.join(' '));
         parsed.push({
           id: idCounter++,
           tag: fullTag,
-          content: rest.join(' '),
+          content: processedContent,
           verseNumber,
           original: line,
           visible: true,
@@ -160,10 +172,11 @@ const parseUSFM = (usfm) => {
         });
       } else {
         const visible = isVisibleTag(fullTag);
+        const processedContent = visible ? processInlineFormatting(content) : content;
         parsed.push({
           id: idCounter++,
           tag: fullTag,
-          content,
+          content: processedContent,
           original: line,
           visible: visible,
           chapter: currentChapter,
@@ -452,6 +465,9 @@ const USFMEditor = ({
     if (e.key === 'Enter') {
       e.preventDefault(); // Block line breaks
     }
+    if (e.key === 'Tab') {
+      cursorPosRef.current = null; // Clear cursor position on Tab
+    }
   }, []);
 
   const handlePaste = useCallback((e, id) => {
@@ -481,6 +497,20 @@ const USFMEditor = ({
       <div
         style={{ height: '93%', overflowY: 'auto', backgroundColor: 'white', padding: '10px' }}
       >
+        <style>{`
+          .qs-inline {
+            font-style: italic;
+            color: #666;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            border: 1px solid #e0e0e0;
+          }
+          .it-inline {
+            font-style: italic;
+          }
+        `}</style>
         {parsed.map(({ id, tag, content, verseNumber, visible, chapter }) => {
           if (!visible) return null;
 
@@ -525,7 +555,7 @@ const USFMEditor = ({
                 ref={(el) => {
                   if (el) verseRefs.current[verseKey] = el;
                 }}
-                style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}
+                style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10, flexDirection: textDirection === 'rtl' ? 'row-reverse' : 'row' }}
               >
                 <div
                   style={{
@@ -545,19 +575,16 @@ const USFMEditor = ({
                   className={`${currentFocusId === id ? 'bg-gray-100' : isSelected ? 'bg-gray-50' : 'bg-transparent'}`}
                   style={{
                     width: '95%',
-                    // minHeight: 100,
                     padding: '8px 12px',
                     outline: 'none',
                     fontSize: 16 + fontSize,
                     lineHeight: '1.5',
                     borderRadius: '4px',
                     direction: textDirection as 'ltr' | 'rtl',
-
                     border: 'none',
                   }}
-                >
-                  {content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
               </div>
             );
           }
@@ -566,14 +593,12 @@ const USFMEditor = ({
           if (/^\\s\d*$/.test(tag)) {
             const levelMatch = tag.match(/^\\s(\d*)$/);
             const level = levelMatch ? levelMatch[1] : '';
-            
             // Determine font size based on level
             let fontSizeMultiplier = 1.2; // Default for \s
             if (level === '1') fontSizeMultiplier = 1.2;
             else if (level === '2') fontSizeMultiplier = 1.1;
             else if (level === '3') fontSizeMultiplier = 1.0;
             else if (level && parseInt(level) > 3) fontSizeMultiplier = 0.9;
-            
             return (
               <div
                 key={id}
@@ -593,7 +618,6 @@ const USFMEditor = ({
                   style={{
                     display: 'inline-block',
                     padding: '8px 16px',
-                    // minHeight: 50,
                     outline: 'none',
                     borderRadius: '4px',
                     direction: textDirection as 'ltr' | 'rtl',
@@ -603,9 +627,8 @@ const USFMEditor = ({
                     textAlign: 'center',
                     fontWeight: 'bold',
                   }}
-                >
-                  {content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
               </div>
             );
           }
@@ -614,14 +637,12 @@ const USFMEditor = ({
           if (/^\\q\d*$/.test(tag)) {
             const levelMatch = tag.match(/^\\q(\d*)$/);
             const level = levelMatch ? levelMatch[1] : '';
-            
             // Determine indent based on level
             let indent = 10; // Default for \q
             if (level === '1') indent = 20;
             else if (level === '2') indent = 30;
             else if (level === '3') indent = 40;
             else if (level && parseInt(level) > 3) indent = 50;
-            
             return (
               <div
                 key={id}
@@ -649,9 +670,8 @@ const USFMEditor = ({
                     transition: 'all 0.2s ease',
                     fontStyle: 'italic',
                   }}
-                >
-                  {content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
               </div>
             );
           }
@@ -685,18 +705,17 @@ const USFMEditor = ({
                     textAlign: 'center',
                     fontStyle: 'italic',
                   }}
-                >
-                  {content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
               </div>
             );
           }
           return (
             <div key={id} style={{
               margin: '8px 0', direction: textDirection as 'ltr' | 'rtl',
-            }}>
-              {content}
-            </div>
+            }}
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           );
         })}
       </div>
