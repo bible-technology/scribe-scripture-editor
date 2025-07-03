@@ -1,11 +1,8 @@
-
-
 import React, {
   useState,
   useRef,
   useEffect,
   useCallback,
-  useMemo,
 } from 'react';
 import { debounce } from 'lodash';
 
@@ -68,7 +65,6 @@ const parseUSFM = (usfm) => {
             });
 
             let lastIndex = 0;
-
             for (const match of verseMatches) {
               const [full, verseNumber, verseText] = match;
 
@@ -87,7 +83,6 @@ const parseUSFM = (usfm) => {
               }
 
               const cleanVerseText = verseText.trim();
-
               parsed.push({
                 id: idCounter++,
                 tag: '\\v',
@@ -97,7 +92,6 @@ const parseUSFM = (usfm) => {
                 visible: true,
                 chapter: currentChapter,
               });
-
               lastIndex = match.index + full.length;
             }
 
@@ -175,7 +169,6 @@ const parseUSFM = (usfm) => {
       });
     }
   });
-
   return parsed;
 };
 
@@ -221,13 +214,10 @@ const USFMEditor = ({
   const [parsed, setParsed] = useState([]);
   const parsedRef = useRef([]);
   const cursorPosRef = useRef(null);
-
-
   const [currentFocusId, setCurrentFocusId] = useState(null);
   const [selectedVerseId, setSelectedVerseId] = useState(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-
   const contentRefs = useRef({});
   const containerRef = useRef(null);
   const chapterRefs = useRef({});
@@ -236,15 +226,6 @@ const USFMEditor = ({
   const lastScrRefUpdate = useRef(null);
   const isDirtyRef = useRef(false);
 
-  // Parse USFM when usfmString changes
-  // useEffect(() => {
-  //   if (usfmString) {
-  //     const parsedUSFM = parseUSFM(usfmString);
-  //     setParsed(parsedUSFM);
-  //     isDirtyRef.current = false;
-  //     setIsDirty(false);
-  //   }
-  // }, [usfmString]);
   useEffect(() => {
     if (usfmString) {
       const parsedUSFM = parseUSFM(usfmString);
@@ -254,8 +235,6 @@ const USFMEditor = ({
       setIsDirty(false);
     }
   }, [usfmString]);
-
-
 
   // Scroll to reference when scrRef changes
   useEffect(() => {
@@ -275,30 +254,6 @@ const USFMEditor = ({
     };
   }, []);
 
-  // const findPrecedingVerse = useCallback(
-  //   (currentId) => {
-  //     const editableIds = parsed.filter(
-  //       ({ tag, visible }) => visible && tag !== '\\c',
-  //     );
-  //     const currentIndex = editableIds.findIndex(
-  //       (el) => el.id === currentId,
-  //     );
-  //     if (currentIndex === -1) return null;
-  //     for (let i = currentIndex; i >= 0; i--) {
-  //       const element = editableIds[i];
-  //       if (element.tag === '\\v') {
-  //         return {
-  //           chapter: element.chapter,
-  //           verseNumber: element.verseNumber,
-  //           id: element.id,
-  //         };
-  //       }
-  //     }
-  //     return null;
-  //   },
-  //   [parsed],
-  // );
-
   const findPrecedingVerse = useCallback((currentId) => {
     const editableIds = parsedRef.current.filter(({ tag, visible }) => visible && tag !== '\\c');
     const currentIndex = editableIds.findIndex(el => el.id === currentId);
@@ -316,7 +271,6 @@ const USFMEditor = ({
     }
     return null;
   }, []);
-
 
   const updateScrRefDebounced = useCallback(
     debounce((elementId) => {
@@ -340,7 +294,6 @@ const USFMEditor = ({
           chapterNum: targetVerse.chapter.toString(),
           verseNum: targetVerse.verseNumber.toString(),
         };
-
         const refKey = `${newScrRef.bookCode}-${newScrRef.chapterNum}-${newScrRef.verseNum}`;
         if (lastScrRefUpdate.current !== refKey) {
           lastScrRefUpdate.current = refKey;
@@ -354,22 +307,17 @@ const USFMEditor = ({
 
   const scrollToReference = useCallback((ref) => {
     if (!ref || !ref.chapterNum || !ref.verseNum) return;
-
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
-
     setIsScrolling(true);
-
     const chapterNum = ref.chapterNum.toString();
     const verseNum = ref.verseNum.toString();
-
-    const foundVerse = parsed.find(item =>
+    const foundVerse = parsedRef.current.find(item =>
       item.tag === '\\v' &&
       item.chapter === chapterNum &&
       item.verseNumber === verseNum
     );
-
     if (!foundVerse) {
       setIsScrolling(false);
       return;
@@ -377,16 +325,13 @@ const USFMEditor = ({
 
     const verseKey = `${chapterNum}-${verseNum}`;
     const verseElement = verseRefs.current[verseKey];
-
     if (verseElement) {
       setSelectedVerseId(foundVerse.id);
-
       verseElement.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'nearest'
       });
-
       scrollTimeoutRef.current = setTimeout(() => {
         const activeElement = document.activeElement;
         if (!activeElement || !activeElement.matches('[contenteditable="true"]')) {
@@ -408,110 +353,7 @@ const USFMEditor = ({
       }
       setIsScrolling(false);
     }
-    // }, [parsed]);
   }, []);
-
-  // Simplified debounced content change handler
-  // const handleContentChange = useCallback(
-  //   debounce((id, rawText) => {
-  //     const element = contentRefs.current[id];
-  //     if (!element) return;
-
-  //     // Clean the text (remove line breaks, normalize spaces)
-  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-
-  //     const updatedParsed = parsed.map((line) =>
-  //       line.id === id
-  //         ? {
-  //           ...line,
-  //           content: newText,
-  //           original:
-  //             line.tag === '\\qs'
-  //               ? `\\qs ${newText}\\qs*`
-  //               : line.tag === '\\v'
-  //                 ? `\\v ${line.verseNumber} ${newText}`
-  //                 : line.tag
-  //                   ? `${line.tag} ${newText}`
-  //                   : newText,
-  //         }
-  //         : line
-  //     );
-
-  //     setParsed(updatedParsed);
-
-  //     // Direct save to file via onUsfmChange
-  //     if (onUsfmChange) {
-  //       const usfmString = updatedParsed.map((line) => line.original).join('\n');
-  //       onUsfmChange(usfmString);
-  //       isDirtyRef.current = false;
-  //       setIsDirty(false);
-  //     }
-  //   }, 4000),
-  //   [parsed, onUsfmChange]
-  // );
-
-  // const handleContentChange = useCallback(
-  //   debounce((id, rawText) => {
-  //     const element = contentRefs.current[id];
-  //     if (!element) return;
-
-  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-
-  //     // Find and update the parsed item directly (mutation)
-  //     const itemIndex = parsed.findIndex((line) => line.id === id);
-  //     if (itemIndex !== -1) {
-  //       const line = parsed[itemIndex];
-  //       line.content = newText;
-  //       line.original =
-  //         line.tag === '\\qs'
-  //           ? `\\qs ${newText}\\qs*`
-  //           : line.tag === '\\v'
-  //             ? `\\v ${line.verseNumber} ${newText}`
-  //             : line.tag
-  //               ? `${line.tag} ${newText}`
-  //               : newText;
-  //     }
-
-  //     // Regenerate USFM without calling setParsed
-  //     if (onUsfmChange) {
-  //       const usfmString = parsed.map((line) => line.original).join('\n');
-  //       onUsfmChange(usfmString);
-  //       isDirtyRef.current = false;
-  //       setIsDirty(false);
-  //     }
-  //   }, 4000),
-  //   [parsed, onUsfmChange]
-  // );
-  // const handleContentChange = useMemo(() =>
-  //   debounce((id, rawText) => {
-  //     const element = contentRefs.current[id];
-  //     if (!element) return;
-
-  //     const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-
-  //     const itemIndex = parsedRef.current.findIndex((line) => line.id === id);
-  //     if (itemIndex !== -1) {
-  //       const line = parsedRef.current[itemIndex];
-  //       line.content = newText;
-  //       line.original =
-  //         line.tag === '\\qs'
-  //           ? `\\qs ${newText}\\qs*`
-  //           : line.tag === '\\v'
-  //             ? `\\v ${line.verseNumber} ${newText}`
-  //             : line.tag
-  //               ? `${line.tag} ${newText}`
-  //               : newText;
-  //     }
-
-  //     if (onUsfmChange) {
-  //       const usfmOutput = parsedRef.current.map((line) => line.original).join('\n');
-  //       onUsfmChange(usfmOutput);
-  //       isDirtyRef.current = false;
-  //       setIsDirty(false);
-  //     }
-  //   }, 4000), [onUsfmChange]
-  // );
-
 
   const handleContentChange = useCallback(
     debounce((id, rawText) => {
@@ -519,7 +361,6 @@ const USFMEditor = ({
       if (!element) return;
 
       const newText = rawText.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-
       const updatedParsed = parsed.map((line) =>
         line.id === id
           ? {
@@ -538,7 +379,6 @@ const USFMEditor = ({
       );
 
       setParsed(updatedParsed);
-
       // Cursor restore logic after save triggers rerender
       setTimeout(() => {
         if (cursorPosRef.current?.id === id) {
@@ -548,10 +388,8 @@ const USFMEditor = ({
             const selection = window.getSelection();
             const range = document.createRange();
             const pos = cursorPosRef.current.start;
-
             const textNode = element.firstChild;
             const safePos = Math.min(pos, textNode.length); // Avoid overflow errors
-
             range.setStart(textNode, safePos);
             range.setEnd(textNode, safePos);
             selection.removeAllRanges();
@@ -569,7 +407,6 @@ const USFMEditor = ({
     }, 4000),
     [parsed, onUsfmChange]
   );
-
 
   const handleInput = useCallback((e, id) => {
     // Mark as dirty immediately
@@ -610,7 +447,6 @@ const USFMEditor = ({
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     const sanitizedText = text.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
-
     const element = contentRefs.current[id];
     if (element) {
       document.execCommand('insertText', false, sanitizedText);
@@ -762,7 +598,6 @@ const USFMEditor = ({
                   fontStyle: 'italic',
                   marginBottom: 8,
                   direction: textDirection as 'ltr' | 'rtl',
-
                 }}
               >
                 <div
@@ -824,7 +659,6 @@ const USFMEditor = ({
               </div>
             );
           }
-
           return (
             <div key={id} style={{
               margin: '8px 0', direction: textDirection as 'ltr' | 'rtl',
