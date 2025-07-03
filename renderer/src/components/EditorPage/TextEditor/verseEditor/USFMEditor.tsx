@@ -491,7 +491,16 @@ const USFMEditor = ({
         whiteSpace: 'pre-wrap',
       }}
     >
-      <div style={{ padding: '10px', backgroundColor: 'white' }}>
+      <div style={{
+        display: 'flex',
+        gap: '10px',
+        padding: '5px',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+
+
+      }}>
         <DirtyStateIndicator isDirty={isDirty} />
       </div>
       <div
