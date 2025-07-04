@@ -21,7 +21,7 @@ export default function EditorMenuBar(props) {
     loading,
     bookAvailable,
     booksInProject,
-    parseError,
+    // parseError,
   } = props;
 
   const { t } = useTranslation();
@@ -47,7 +47,6 @@ export default function EditorMenuBar(props) {
           loading={loading}
           bookAvailable={bookAvailable}
           booksInProject={booksInProject}
-          parseError={parseError}
           showVerse
         />
         <div

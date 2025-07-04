@@ -102,6 +102,7 @@ export const En = {
   'label-editor-font-char': 'A',
   'label-upload': 'upload',
   'label-no-content-available': 'No content available!',
+  'label-book-not-in-scope': 'Selected book is not in your scope',
   'label-enter-location': 'Enter location',
   'label-editor-load-module': 'Load a Module',
   'label-import-door43-resources': 'Import Door43 helps resources',

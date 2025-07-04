@@ -101,6 +101,7 @@ export const Ru = {
   'label-editor-font-char': 'A',
   'label-upload': 'загрузить',
   'label-no-content-available': 'Нет доступного контента!',
+  'label-book-not-in-scope': 'Выбранная книга не входит в ваш диапазон',
   'label-enter-location': 'Введите расположение',
   'label-editor-load-module': 'Загрузите модуль',
   'label-import-door43-resources': 'Импорт ресурсов DOOR43 помогает',

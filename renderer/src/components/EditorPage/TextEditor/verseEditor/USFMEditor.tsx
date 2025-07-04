@@ -7,7 +7,6 @@ import React, {
 import { debounce } from 'lodash';
 
 const BASE_VISIBLE_TAGS = [
-  '\\h',
   '\\c',
   '\\v',
   '\\qs',

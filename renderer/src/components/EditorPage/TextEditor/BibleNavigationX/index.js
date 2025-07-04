@@ -190,9 +190,6 @@ export default function BibleNavigationX(props) {
                   onChangeChapter={onChangeChapter}
                   closeBooks={closeBooks}
                   closeChapters={closeChapters}
-                  // setChapterNumber={setChapterNumber}
-                  // setVerseNumber={setVerseNumber}
-                  // setSelectedVerse={setVerseNumber}
                   loading={loading}
                 >
                   <button
@@ -214,11 +211,6 @@ export default function BibleNavigationX(props) {
 }
 
 BibleNavigationX.propTypes = {
-  // chapterNumber: PropTypes.number,
-  // setChapterNumber: PropTypes.func,
-  // verseNumber: PropTypes.number,
-  // setVerseNumber: PropTypes.func,
-  // setBook: PropTypes.func,
-  // loading: PropTypes.bool,
+  loading: PropTypes.bool,
   bookAvailable: PropTypes.bool,
 };

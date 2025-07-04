@@ -101,6 +101,7 @@ export const Ne = {
   'label-editor-font-char': 'अ',
   'label-upload': 'अपलोड गर्नुहोस्',
   'label-no-content-available': 'कुनै सामाग्री उपलब्ध छैन',
+  'label-book-not-in-scope': 'चयन गरिएको पुस्तक तपाइको दायरा मा छैन',
   'label-enter-location': 'स्थान दर्ता गर्नुहोस्',
   'label-editor-load-module': 'मोड्‍युल लोड गर्नुहोस्',
   'label-import-door43-resources': 'आयात DOOR43 संसाधनहरूको सहायता गर्छ',
