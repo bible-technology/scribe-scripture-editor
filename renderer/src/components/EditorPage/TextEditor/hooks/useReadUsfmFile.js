@@ -167,11 +167,12 @@ export const useReadUsfmFile = (bookId) => {
           setUsfmData(books);
           setbookAvailable(true);
           setUsfmString(fileData); // Use the fileData determined by the logic above
+          setLoading(false);
         } else {
           setUsfmData([]);
           setbookAvailable(false);
+          setLoading(false);
         }
-        setLoading(false);
       } catch (err) {
         setLoading(false);
         // eslint-disable-next-line no-console

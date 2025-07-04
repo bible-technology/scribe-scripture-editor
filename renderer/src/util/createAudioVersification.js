@@ -7,6 +7,7 @@ const path = require('path');
 const md5 = require('md5');
 
 export const createAudioVersification = (
+  books,
   username,
   project,
   versification,
@@ -78,6 +79,7 @@ export const createAudioVersification = (
               bookMarks: call === 'edit' ? currentBurrito.project.audioTranslation.bookMarks : [],
               font: '',
               fontSize: 1,
+              navigationHistory: [books[0].toLowerCase(), '1', '1'],
             },
           },
           sync: { services: { door43: [] } },

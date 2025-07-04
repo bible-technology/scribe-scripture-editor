@@ -9,6 +9,7 @@ import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook'
 import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVerse';
 
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { saveNavigationHistory } from '@/core/projects/updateAgSettings';
 
 export default function BibleNavigationX(props) {
   const {
@@ -92,7 +93,7 @@ export default function BibleNavigationX(props) {
 
   useEffect(() => {
     async function setReference() {
-      await localforage.setItem('navigationHistory', [bookId, chapter, verse]);
+      await saveNavigationHistory(bookId, chapter, verse);
     }
     setReference();
   }, [bookId, chapter, verse]);

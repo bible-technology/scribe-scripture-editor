@@ -50,7 +50,6 @@ export default function TextEditor() {
     if (navRef) {
       const { bookCode, chapterNum, verseNum } = navRef;
       goToBookChapterVerse(bookCode, chapterNum, verseNum);
-      console.log(bookCode, chapterNum, verseNum, 'usfm editor index');
     }
   }, [navRef]);
 
@@ -64,7 +63,6 @@ export default function TextEditor() {
 
   const _props = {
     selectedFont,
-
     handleSelectedFont,
     bookId: defaultBookId,
     loading,
@@ -105,7 +103,6 @@ export default function TextEditor() {
               {!bookAvailable && <EmptyScreen />}
               {bookAvailable && usfmString && (
                 // <LexicalEditor {...props} />
-                // console.log('usfmString', usfmString)
                 <USFMEditor {...props} />
               )}
             </>

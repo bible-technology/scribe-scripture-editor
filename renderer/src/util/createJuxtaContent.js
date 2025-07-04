@@ -90,6 +90,7 @@ export const createJuxtaContent = (
           refResources: call === 'edit' ? currentBurrito.project['x-juxtalinear'].refResources : [],
           bookMarks: call === 'edit' ? currentBurrito.project['x-juxtalinear'].bookMarks : [],
           font: '',
+          navigationHistory: [books[0].toLowerCase(), '1', '1'],
         },
       },
       sync: { services: { door43: [] } },

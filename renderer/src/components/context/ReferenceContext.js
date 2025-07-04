@@ -147,6 +147,9 @@ export default function ReferenceContextProvider({ children }) {
                       setBookmarksVerses(resProj.bookMarks);
                       setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
                       setSelectedFont(resProj?.font);
+                      // eslint-disable-next-line no-case-declarations
+                      const juxtaNavigationHist = resProj?.navigationHistory;
+                      juxtaNavigationHist && goToBookChapterVerse(juxtaNavigationHist[0], juxtaNavigationHist[1], juxtaNavigationHist[2]);
                       break;
                     case 'textTranslation':
                       setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
@@ -169,6 +172,9 @@ export default function ReferenceContextProvider({ children }) {
                       setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.audioTranslation?.font);
                       setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
+                      // eslint-disable-next-line no-case-declarations
+                      const audioNavigationHist = resources.project?.audioTranslation?.navigationHistory;
+                      audioNavigationHist && goToBookChapterVerse(audioNavigationHist[0], audioNavigationHist[1], audioNavigationHist[2]);
                       break;
                     default:
                       break;
@@ -181,17 +187,6 @@ export default function ReferenceContextProvider({ children }) {
         });
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const getNavigationHistory = async () => {
-      const navHistory = await localforage.getItem('navigationHistory');
-      if (navHistory) {
-        goToBookChapterVerse(navHistory[0], navHistory[1], navHistory[2] || '1');
-      }
-    };
-    getNavigationHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
