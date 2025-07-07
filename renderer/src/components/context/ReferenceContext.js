@@ -82,6 +82,7 @@ export default function ReferenceContextProvider({ children }) {
   const [recordingsPath, setRecordingsPath] = useState('');
   const [effectiveStoryId, setEffectiveStoryId] = useState(1);
   const [storyId, setStoryId] = useState(null);
+  const [projectType, setProjectType] = useState(null);
 
   // Audio toggle state
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -262,6 +263,7 @@ export default function ReferenceContextProvider({ children }) {
       effectiveStoryId,
       storyId,
       audioEnabled,
+      projectType,
     },
     actions: {
       setLanguageId,
@@ -322,6 +324,7 @@ export default function ReferenceContextProvider({ children }) {
       setEffectiveStoryId,
       setStoryId,
       setAudioEnabled,
+      setProjectType,
     },
   };
 

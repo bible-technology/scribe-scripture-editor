@@ -29,6 +29,7 @@ const ObsEditor = () => {
     actions: {
       setLoadData,
       setAudioEnabled,
+      setProjectType,
     },
   } = useContext(ReferenceContext);
 
@@ -228,6 +229,13 @@ const ObsEditor = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadData]);
+
+  useEffect(() => {
+    setProjectType('obs');
+    return () => {
+      setProjectType(null);
+    };
+  }, [setProjectType]);
 
   return (
     <Editor
