@@ -13,6 +13,9 @@ export const useReadUsfmFile = (bookId) => {
 
   useEffect(() => {
     async function readLocalFile() {
+      if (!bookId) {
+        return;
+      }
       setLoading(true);
       try {
         const userProfile = await localforage.getItem('userProfile');

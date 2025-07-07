@@ -82,10 +82,9 @@ export default function ReferenceContextProvider({ children }) {
   const [recordingsPath, setRecordingsPath] = useState('');
   const [effectiveStoryId, setEffectiveStoryId] = useState(1);
   const [storyId, setStoryId] = useState(null);
-
   // Audio toggle state
   const [audioEnabled, setAudioEnabled] = useState(true);
-
+  const [navFlag, setNavFlag] = useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -161,6 +160,7 @@ export default function ReferenceContextProvider({ children }) {
                       // eslint-disable-next-line no-case-declarations
                       const juxtaNavigationHist = resProj?.navigationHistory;
                       juxtaNavigationHist && goToBookChapterVerse(juxtaNavigationHist[0], juxtaNavigationHist[1], juxtaNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     case 'textTranslation':
                       setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
@@ -170,6 +170,7 @@ export default function ReferenceContextProvider({ children }) {
                       // eslint-disable-next-line no-case-declarations
                       const bibleNavigationHist = resources.project?.textTranslation?.navigationHistory;
                       bibleNavigationHist && goToBookChapterVerse(bibleNavigationHist[0], bibleNavigationHist[1], bibleNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     case 'textStories':
                       setBookmarksVerses(resources.project?.textStories.bookMarks);
@@ -186,6 +187,7 @@ export default function ReferenceContextProvider({ children }) {
                       // eslint-disable-next-line no-case-declarations
                       const audioNavigationHist = resources.project?.audioTranslation?.navigationHistory;
                       audioNavigationHist && goToBookChapterVerse(audioNavigationHist[0], audioNavigationHist[1], audioNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     default:
                       break;
@@ -261,6 +263,7 @@ export default function ReferenceContextProvider({ children }) {
       effectiveStoryId,
       storyId,
       audioEnabled,
+      navFlag,
     },
     actions: {
       setLanguageId,
@@ -323,6 +326,7 @@ export default function ReferenceContextProvider({ children }) {
       setEffectiveStoryId,
       setStoryId,
       setAudioEnabled,
+      setNavFlag,
     },
   };
 

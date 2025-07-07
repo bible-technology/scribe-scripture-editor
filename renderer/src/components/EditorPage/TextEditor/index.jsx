@@ -21,6 +21,7 @@ export default function TextEditor() {
       selectedFont,
       editorFontSize,
       projectScriptureDir,
+      navFlag,
     },
     actions: {
       handleSelectedFont,
@@ -34,7 +35,7 @@ export default function TextEditor() {
   const {
     loading,
     bookAvailable, booksInProject, usfmString, filePath,
-  } = useReadUsfmFile(defaultBookId);
+  } = useReadUsfmFile(navFlag ? defaultBookId : null);
 
   useEffect(() => {
     setScrRef({
