@@ -1,22 +1,32 @@
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PropTypes from 'prop-types';
-import { useContext, useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useContext, useEffect } from 'react';
 import ObsTextEditor from './ObsTextEditor';
 import { getDetails } from './utils/getDetails';
 
-const ObsAudioRecorder = dynamic(() => import('./ObsAudioRecorder'), { ssr: false });
-
 const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
   const {
-    state: { storyId, updateWave },
-    actions: { setUpdateWave },
+    state: {
+      storyId,
+      updateWave,
+      selectedParagraph,
+      effectiveStoryId,
+    },
+    actions: {
+      setUpdateWave,
+      setObsAudioContent,
+      setSelectedParagraph,
+      setRecordingsPath,
+      setEffectiveStoryId,
+    },
   } = useContext(ReferenceContext);
 
-  const effectiveStoryId = storyId || (obsStory && obsStory[0] && obsStory[0].title.split('.')[0]);
-  const [selectedParagraph, setSelectedParagraph] = useState(1);
-  const [audioContent, setAudioContent] = useState({});
-  const [recordingsPath, setRecordingsPath] = useState('');
+  const calculatedEffectiveStoryId = storyId || (obsStory && obsStory[0] && obsStory[0].title.split('.')[0]);
+  useEffect(() => {
+    if (calculatedEffectiveStoryId && calculatedEffectiveStoryId !== effectiveStoryId) {
+      setEffectiveStoryId(calculatedEffectiveStoryId);
+    }
+  }, [calculatedEffectiveStoryId, effectiveStoryId, setEffectiveStoryId]);
 
   const loadStoryAudio = async () => {
     if (effectiveStoryId) {
@@ -34,7 +44,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
       }
       if (!fs.existsSync(storyFolder)) {
         fs.mkdirSync(storyFolder, { recursive: true });
-        setAudioContent({});
+        setObsAudioContent({});
         return;
       }
 
@@ -68,7 +78,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
         }
       });
 
-      setAudioContent(updatedContent);
+      setObsAudioContent(updatedContent);
       setUpdateWave(!updateWave);
     }
   };
@@ -82,6 +92,17 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
       loadStoryAudio();
     }
   }, [effectiveStoryId, audioEnabled]);
+
+  useEffect(() => {
+    if (audioEnabled) {
+      window.refreshAudioData = refreshAudioData;
+    }
+    return () => {
+      if (window.refreshAudioData) {
+        delete window.refreshAudioData;
+      }
+    };
+  }, [audioEnabled, effectiveStoryId]);
 
   const handleParagraphClick = (storyItem) => {
     if ('text' in storyItem) {
@@ -99,7 +120,7 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
 
   return (
     <div className="relative flex flex-col h-full">
-      <div className={`flex-1 ${audioEnabled ? 'pb-20' : ''}`}>
+      <div className="flex-1 ">
         <ObsTextEditor
           obsStory={obsStory}
           storyUpdate={storyUpdate}
@@ -109,20 +130,8 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
           onEndClick={handleEndClick}
           effectiveStoryId={effectiveStoryId}
           audioEnabled={audioEnabled}
-          audioContent={audioContent}
         />
       </div>
-      {audioEnabled && (
-        <ObsAudioRecorder
-          selectedParagraph={selectedParagraph}
-          effectiveStoryId={effectiveStoryId}
-          isVisible={audioEnabled}
-          audioContent={audioContent}
-          recordingsPath={recordingsPath}
-          onAudioUpdate={refreshAudioData}
-          onAudioContentUpdate={setAudioContent}
-        />
-      )}
     </div>
   );
 };

@@ -129,19 +129,19 @@ const MainPlayer = () => {
         const fs = window.require('fs');
         const result = take.replace(/take/g, '');
         // Fetching the mp3 files
-        const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter));
+        const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString()));
         // Checking whether any takes are available for the selected verse
         const name = folderName.filter((w) => w.match(`^${chapter}_${verse}_`));
         let filePath;
         if (name.length > 0) {
         // While Re-recording replacing the file with same name
-          if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`))) {
-            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+          if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`))) {
+            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`);
           } else {
-            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}.mp3`);
+            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}.mp3`);
           }
         } else {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter, `${chapter}_${verse}_${result}_default.mp3`);
+          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`);
         }
 
         fs.mkdirSync(path.dirname(filePath), { recursive: true });

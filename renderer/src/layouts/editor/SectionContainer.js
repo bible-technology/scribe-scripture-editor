@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import localforage from 'localforage';
 import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
 import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
 import packageInfo from '../../../../package.json';
 import SectionPlaceholder1 from './SectionPlaceholder1';
 import SectionPlaceholder2 from './SectionPlaceholder2';
@@ -14,9 +15,18 @@ const MainPlayer = dynamic(
   { ssr: false },
 );
 
+const ObsAudioRecorder = dynamic(
+  () => import('@/components/EditorPage/ObsEditor/ObsAudioRecorder'),
+  { ssr: false },
+);
+
 const SectionContainer = () => {
   const [editor, setEditor] = useState();
-
+  const {
+    actions: {
+      setAudioPlayerUI,
+    },
+  } = useContext(ReferenceContext);
   useEffect(() => {
     localforage.getItem('userProfile').then((value) => {
       const username = value?.username;
@@ -28,6 +38,11 @@ const SectionContainer = () => {
         const data = fs.readFileSync(metaPath, 'utf-8');
         const metadata = JSON.parse(data);
         setEditor(metadata.type.flavorType.flavor.name);
+        if (metadata.type.flavorType.flavor.name === 'audioTranslation') {
+          setAudioPlayerUI(true);
+        } else {
+          setAudioPlayerUI(false);
+        }
       });
     });
   }, [editor]);
@@ -43,6 +58,13 @@ const SectionContainer = () => {
           || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
       </div>
       {(editor === 'audioTranslation' && (<MainPlayer />))}
+      {(editor === 'textStories' && (
+        <ObsAudioRecorder
+          isVisible
+          autoLoadAudio
+          audioEnabled
+        />
+      ))}
     </>
   );
 };
