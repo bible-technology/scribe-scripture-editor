@@ -29,6 +29,7 @@ const ObsEditor = () => {
     actions: {
       setLoadData,
       setAudioEnabled,
+      setProjectType,
     },
   } = useContext(ReferenceContext);
 
@@ -38,6 +39,13 @@ const ObsEditor = () => {
       setAudioEnabled(JSON.parse(savedAudioState));
     }
   }, [setAudioEnabled]);
+
+  useEffect(() => {
+    setProjectType('obs');
+    return () => {
+      setProjectType(null);
+    };
+  }, [setProjectType]);
 
   const updateStory = (story) => {
     logger.debug('ObsEditor.js', 'In updateStory for upadting the story to the backend md file');

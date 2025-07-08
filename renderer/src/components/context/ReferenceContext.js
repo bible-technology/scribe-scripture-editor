@@ -85,6 +85,7 @@ export default function ReferenceContextProvider({ children }) {
   // Audio toggle state
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [navFlag, setNavFlag] = useState(false);
+  const [projectType, setProjectType] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -264,6 +265,7 @@ export default function ReferenceContextProvider({ children }) {
       storyId,
       audioEnabled,
       navFlag,
+      projectType,
     },
     actions: {
       setLanguageId,
@@ -277,7 +279,6 @@ export default function ReferenceContextProvider({ children }) {
       onChangeVerse,
       applyBooksFilter,
       goToBookChapterVerse,
-
       handleEditorFontSize,
       setAnchorEl,
       handleClick,
@@ -327,6 +328,7 @@ export default function ReferenceContextProvider({ children }) {
       setStoryId,
       setAudioEnabled,
       setNavFlag,
+      setProjectType,
     },
   };
 
