@@ -101,6 +101,7 @@ export const Fr = {
   'label-editor-font-char': 'A',
   'label-upload': 'téléverser',
   'label-no-content-available': 'Aucun contenu disponible !',
+  'label-book-not-in-scope': 'Le livre sélectionné n\'est pas dans votre portée',
   'label-enter-location': 'Entrez l\'emplacement',
   'label-editor-load-module': 'Charger un module',
   'label-import-door43-resources': 'Importer DOOR43 aide les ressources',

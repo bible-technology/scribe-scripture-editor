@@ -82,10 +82,10 @@ export default function ReferenceContextProvider({ children }) {
   const [recordingsPath, setRecordingsPath] = useState('');
   const [effectiveStoryId, setEffectiveStoryId] = useState(1);
   const [storyId, setStoryId] = useState(null);
-
   // Audio toggle state
   const [audioEnabled, setAudioEnabled] = useState(true);
-
+  const [navFlag, setNavFlag] = useState(false);
+  const [projectType, setProjectType] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -115,6 +115,30 @@ export default function ReferenceContextProvider({ children }) {
     }
   };
 
+  const {
+    state: {
+      chapter,
+      verse,
+      bookList,
+      chapterList,
+      verseList,
+      bookName,
+      bookId,
+    }, actions: {
+      onChangeBook,
+      onChangeChapter,
+      onChangeVerse,
+      applyBooksFilter,
+      goToBookChapterVerse,
+    },
+  } = useBibleReference(
+    {
+      initialBook,
+      initialChapter,
+      initialVerse,
+    },
+  );
+
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {
       if (projectName) {
@@ -134,12 +158,20 @@ export default function ReferenceContextProvider({ children }) {
                       setBookmarksVerses(resProj.bookMarks);
                       setProjectScriptureDir(resProj?.scriptDirection?.toUpperCase());
                       setSelectedFont(resProj?.font);
+                      // eslint-disable-next-line no-case-declarations
+                      const juxtaNavigationHist = resProj?.navigationHistory;
+                      juxtaNavigationHist && goToBookChapterVerse(juxtaNavigationHist[0], juxtaNavigationHist[1], juxtaNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     case 'textTranslation':
                       setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
                       setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.textTranslation?.font);
                       setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
+                      // eslint-disable-next-line no-case-declarations
+                      const bibleNavigationHist = resources.project?.textTranslation?.navigationHistory;
+                      bibleNavigationHist && goToBookChapterVerse(bibleNavigationHist[0], bibleNavigationHist[1], bibleNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     case 'textStories':
                       setBookmarksVerses(resources.project?.textStories.bookMarks);
@@ -153,6 +185,10 @@ export default function ReferenceContextProvider({ children }) {
                       setProjectScriptureDir(resources.project?.audioTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.audioTranslation?.font);
                       setEditorFontSize(resources.project?.audioTranslation?.fontSize || 1);
+                      // eslint-disable-next-line no-case-declarations
+                      const audioNavigationHist = resources.project?.audioTranslation?.navigationHistory;
+                      audioNavigationHist && goToBookChapterVerse(audioNavigationHist[0], audioNavigationHist[1], audioNavigationHist[2]);
+                      setNavFlag(true);
                       break;
                     default:
                       break;
@@ -165,40 +201,6 @@ export default function ReferenceContextProvider({ children }) {
         });
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const {
-    state: {
-      chapter,
-      verse,
-      bookList,
-      chapterList,
-      verseList,
-      bookName,
-      bookId,
-    }, actions: {
-      onChangeBook,
-      onChangeChapter,
-      onChangeVerse,
-      applyBooksFilter,
-    },
-  } = useBibleReference(
-    {
-      initialBook,
-      initialChapter,
-      initialVerse,
-    },
-  );
-  useEffect(() => {
-    const getNavigationHistory = async () => {
-      const navHistory = await localforage.getItem('navigationHistory');
-      if (navHistory) {
-        onChangeBook(navHistory[0], bookId);
-        onChangeChapter(navHistory[1], chapter);
-      }
-    };
-    getNavigationHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -262,6 +264,8 @@ export default function ReferenceContextProvider({ children }) {
       effectiveStoryId,
       storyId,
       audioEnabled,
+      navFlag,
+      projectType,
     },
     actions: {
       setLanguageId,
@@ -274,6 +278,7 @@ export default function ReferenceContextProvider({ children }) {
       onChangeChapter,
       onChangeVerse,
       applyBooksFilter,
+      goToBookChapterVerse,
       handleEditorFontSize,
       setAnchorEl,
       handleClick,
@@ -322,6 +327,8 @@ export default function ReferenceContextProvider({ children }) {
       setEffectiveStoryId,
       setStoryId,
       setAudioEnabled,
+      setNavFlag,
+      setProjectType,
     },
   };
 

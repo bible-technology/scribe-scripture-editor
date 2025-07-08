@@ -101,6 +101,7 @@ export const Ar = {
   'label-editor-font-char': 'أ',
   'label-upload': 'تحميل',
   'label-no-content-available': 'لا يوجد محتوى متاح!',
+  'label-book-not-in-scope': 'الكتاب المحدد ليس في نطاقك',
   'label-enter-location': 'أدخل الموقع',
   'label-editor-load-module': 'تحميل وحدة',
   'label-import-door43-resources': 'Import Door43 helps resources',

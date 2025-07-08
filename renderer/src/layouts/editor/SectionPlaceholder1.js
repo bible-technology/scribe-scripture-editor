@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import dynamic from 'next/dynamic';
-import { useContext, useEffect, useState } from 'react';
+import {
+  useContext, useEffect, useState,
+} from 'react';
 import localforage from 'localforage';
 import PropTypes from 'prop-types';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -115,6 +117,24 @@ const SectionPlaceholder1 = ({ editor }) => {
   const _bookId2 = scrollLock === false ? bookId : naviagation2.bookId;
   const _chapter2 = scrollLock === false ? chapter : naviagation2.chapter;
   const _verse2 = scrollLock === false ? verse : naviagation2.verse;
+
+  useEffect(() => {
+    if (scrollLock) {
+      const refEditor = document.getElementById('ref-editor-1');
+      if (refEditor) {
+        refEditor.querySelector(`#ch${_chapter1}v${_verse1}`)?.scrollIntoView();
+      }
+    }
+  }, [scrollLock, _chapter1, _verse1]);
+
+  useEffect(() => {
+    if (scrollLock) {
+      const refEditor = document.getElementById('ref-editor-2');
+      if (refEditor) {
+        refEditor.querySelector(`#ch${_chapter2}v${_verse2}`)?.scrollIntoView();
+      }
+    }
+  }, [scrollLock, _chapter2, _verse2]);
 
   useEffect(() => {
     if (layout > 0 && layout <= 2) {
@@ -338,8 +358,8 @@ const SectionPlaceholder1 = ({ editor }) => {
     if (referenceColumnOneData2.font) {
       setFont2(referenceColumnOneData2?.font);
     }
-    setFontsize1(referenceColumnOneData1?.fontSize);
-    setFontsize2(referenceColumnOneData2?.fontSize);
+    setFontsize1(referenceColumnOneData1?.fontSize || 1);
+    setFontsize2(referenceColumnOneData2?.fontSize || 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_obsNavigation1, _obsNavigation2, referenceColumnOneData1, referenceColumnOneData2]);
 
@@ -390,6 +410,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                           && (
                             <ScribexContextProvider editable={false} reference>
                               <ReferenceBibleX
+                                refNum={1}
                                 languageId={referenceColumnOneData1.languageId}
                                 refName={referenceColumnOneData1.refName}
                                 bookId={_bookId1}
@@ -475,6 +496,7 @@ const SectionPlaceholder1 = ({ editor }) => {
                           && (
                             <ScribexContextProvider editable={false} reference>
                               <ReferenceBibleX
+                                refNum={2}
                                 languageId={referenceColumnOneData2.languageId}
                                 refName={referenceColumnOneData2.refName}
                                 bookId={_bookId2}

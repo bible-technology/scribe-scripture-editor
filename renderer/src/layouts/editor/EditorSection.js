@@ -49,6 +49,8 @@ export default function EditorSection({
   const { t } = useTranslation();
   const {
     state: {
+      chapter,
+      verse,
       layout,
       openResource1,
       openResource2,
@@ -56,6 +58,7 @@ export default function EditorSection({
       openResource4,
       audioPlayerUI,
       audioEnabled,
+      projectType,
     },
     actions: { setLayout },
   } = useContext(ReferenceContext);
@@ -66,6 +69,17 @@ export default function EditorSection({
   function removeResource() {
     setOpenModal(true);
   }
+
+  useEffect(() => {
+    if (!scrollLock) {
+      const refEditors = document.getElementsByClassName('ref-editor');
+      if (refEditors.length) {
+        Array.from(refEditors).forEach((editor) => {
+          editor.querySelector(`#ch${chapter}v${verse}`)?.scrollIntoView();
+        });
+      }
+    }
+  }, [scrollLock, chapter, verse]);
 
   const removeSection = () => {
     setRemovingSection(row);
@@ -207,7 +221,7 @@ export default function EditorSection({
           openResource ? 'hidden' : '',
           isNextRowOpen ? 'h-editor' : 'h-reference',
           // eslint-disable-next-line no-nested-ternary
-          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled ? 'max-h-[71vh]' : ''} overflow-hidden`,
+          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled && projectType === 'obs' ? 'max-h-[71vh]' : ''} overflow-hidden`,
         )}
       >
         <div

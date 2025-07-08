@@ -44,6 +44,7 @@ export const factoryCreateContent = async ({
     break;
   case 'Audio':
     promise = await createAudioVersification(
+      books,
       username,
       project,
       versification,

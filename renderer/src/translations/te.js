@@ -101,6 +101,7 @@ export const Te = {
   'label-editor-font-char': 'ఏ',
   'label-upload': 'అప్లోడ్',
   'label-no-content-available': 'ఏ కంటెంట్ అందుబాటులో లేదు!',
+  'label-book-not-in-scope': 'ఎంచుకున్న పుస్తకం మీ పరిధిలో లేదు',
   'label-enter-location': 'స్థానాన్ని నమోదు చేయండి',
   'label-editor-load-module': 'మాడ్యూల్‌ను లోడ్ చేయండి',
   'label-import-door43-resources': 'దిగుమతి డోర్ 43 వనరులకు సహాయపడుతుంది',

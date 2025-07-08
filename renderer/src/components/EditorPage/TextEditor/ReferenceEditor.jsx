@@ -27,6 +27,7 @@ export default function ReferenceEditor(props) {
     saveHtmlPerf,
     setGraftSequenceId,
     bookAvailable,
+    refNum,
   } = props;
 
   const {
@@ -104,7 +105,7 @@ export default function ReferenceEditor(props) {
     autoSaveIndication,
   };
   return (
-    <div className="ref-editor" id="ref-editor" style={style}>
+    <div className="ref-editor" id={`ref-editor-${refNum}`} style={style}>
       {!bookAvailable && <EmptyScreen />}
       {bookAvailable && (!sequenceId || bookChange) && <LoadingScreen />}
       {bookAvailable && sequenceId && !bookChange && (

@@ -162,6 +162,7 @@ export const createVersificationUSFM = (
               bookMarks: call === 'edit' ? currentBurrito.project?.textTranslation.bookMarks : [],
               font: '',
               fontSize: 1,
+              navigationHistory: [books[0].toLowerCase(), '1', '1'],
             },
           },
           sync: { services: { door43: [] } },

@@ -116,6 +116,24 @@ const SectionPlaceholder2 = ({ editor }) => {
   const _verse2 = scrollLock === false ? verse : naviagation2.verse;
 
   useEffect(() => {
+    if (scrollLock) {
+      const refEditor = document.getElementById('ref-editor-3');
+      if (refEditor) {
+        refEditor.querySelector(`#ch${_chapter1}v${_verse1}`)?.scrollIntoView();
+      }
+    }
+  }, [scrollLock, _chapter1, _verse1]);
+
+  useEffect(() => {
+    if (scrollLock) {
+      const refEditor = document.getElementById('ref-editor-4');
+      if (refEditor) {
+        refEditor.querySelector(`#ch${_chapter2}v${_verse2}`)?.scrollIntoView();
+      }
+    }
+  }, [scrollLock, _chapter2, _verse2]);
+
+  useEffect(() => {
     if (layout > 0 && layout <= 2) {
       setRow(0);
       if (sectionNum === 0) { setSectionNum(1); }
@@ -393,6 +411,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                             && (
                               <ScribexContextProvider editable={false} reference>
                                 <ReferenceBibleX
+                                  refNum={3}
                                   languageId={referenceColumnTwoData1.languageId}
                                   refName={referenceColumnTwoData1.refName}
                                   bookId={_bookId1}
@@ -478,6 +497,7 @@ const SectionPlaceholder2 = ({ editor }) => {
                             && (
                               <ScribexContextProvider editable={false} reference>
                                 <ReferenceBibleX
+                                  refNum={4}
                                   languageId={referenceColumnTwoData2.languageId}
                                   refName={referenceColumnTwoData2.refName}
                                   bookId={_bookId2}

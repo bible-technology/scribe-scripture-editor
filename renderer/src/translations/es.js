@@ -101,6 +101,7 @@ export const Es = {
   'label-editor-font-char': 'A',
   'label-upload': 'subir',
   'label-no-content-available': '¡No hay contenido disponible!',
+  'label-book-not-in-scope': 'El libro seleccionado no está en su alcance',
   'label-enter-location': 'Introducir ubicación',
   'label-editor-load-module': 'Cargar un módulo',
   'label-import-door43-resources': 'Importar recursos de ayuda de Door43',

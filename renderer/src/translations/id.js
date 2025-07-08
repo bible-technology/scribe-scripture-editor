@@ -102,6 +102,7 @@ export const Id = {
   'label-editor-font-char': 'A',
   'label-upload': 'Unggah',
   'label-no-content-available': 'Konten Tidak Tersedia!',
+  'label-book-not-in-scope': 'Kitab yang dipilih tidak ada dalam lingkup Anda',
   'label-enter-location': 'Masukan Lokasi',
   'label-editor-load-module': 'Muat Modul',
   'label-import-door43-resources': 'Impor sumber Daya Bantuan Door43',

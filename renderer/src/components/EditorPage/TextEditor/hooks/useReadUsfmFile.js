@@ -3,18 +3,19 @@ import localforage from 'localforage';
 import { readRefBurrito } from '../../../../core/reference/readRefBurrito';
 import { readFile } from '../../../../core/editor/readFile';
 import packageInfo from '../../../../../../package.json';
-import { handleCache } from '../cacheUtils';
 
 export const useReadUsfmFile = (bookId) => {
-  const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setbookAvailable] = useState(false);
   const [usfmString, setUsfmString] = useState('');
-  const [cachedData, setCachedData] = useState({});
   const [loading, setLoading] = useState(true);
   const [booksInProject, setBooksInProject] = useState([]);
+  const [filePath, setFilePath] = useState('');
 
   useEffect(() => {
     async function readLocalFile() {
+      if (!bookId) {
+        return;
+      }
       setLoading(true);
       try {
         const userProfile = await localforage.getItem('userProfile');
@@ -34,23 +35,14 @@ export const useReadUsfmFile = (bookId) => {
         });
         setBooksInProject(_books.map((bookObj) => bookObj.bookId.toLowerCase()));
         const [currentBook] = _books.filter((bookObj) => bookObj.bookId === bookId?.toUpperCase());
-        const projectCachePath = path.join(newpath, packageInfo.name, 'users', userName, 'project_cache', projectName);
-        const fileCacheMapPath = path.join(projectCachePath, 'fileCacheMap.json');
-        const filePath = path.join(newpath, packageInfo.name, 'users', userName, 'projects', projectName, 'ingredients', `${bookId?.toUpperCase()}.usfm`);
-        if (currentBook) {
+        const _filePath = path.join(newpath, packageInfo.name, 'users', userName, 'projects', projectName, 'ingredients', `${bookId?.toUpperCase()}.usfm`);
+        setFilePath(_filePath);
+        if (currentBook !== undefined) {
           const fileData = await readFile({ projectname: projectName, filename: currentBook.fileName, username: userName });
-          const cachedData = await handleCache(filePath, fileData, projectCachePath, fileCacheMapPath);
-          const books = [{
-            selectors: { org: 'unfoldingWord', lang: 'en', abbr: 'ult' },
-            bookCode: currentBook.bookId?.toLowerCase(),
-            data: fileData,
-          }];
-          setUsfmData(books);
+
           setbookAvailable(true);
           setUsfmString(fileData);
-          setCachedData(cachedData);
         } else {
-          setUsfmData([]);
           setbookAvailable(false);
         }
         setLoading(false);
@@ -63,18 +55,11 @@ export const useReadUsfmFile = (bookId) => {
     readLocalFile();
   }, [bookId]);
   return {
-    usfmData, bookAvailable, usfmString, bookId, cachedData, loading, booksInProject,
+    bookAvailable,
+    usfmString,
+    bookId,
+    loading,
+    booksInProject,
+    filePath,
   };
 };
-
-export async function getCachePaths(bookId) {
-  const path = require('path');
-  const userProfile = await localforage.getItem('userProfile');
-  const projectName = await localforage.getItem('currentProject');
-  const newPath = await localforage.getItem('userPath');
-  const userName = userProfile?.username;
-  const projectCachePath = path.join(newPath, packageInfo.name, 'users', userName, 'project_cache', projectName);
-  const fileCacheMapPath = path.join(projectCachePath, 'fileCacheMap.json');
-  const filePath = path.join(newPath, packageInfo.name, 'users', userName, 'projects', projectName, 'ingredients', `${bookId?.toUpperCase()}.usfm`);
-  return { filePath, projectCachePath, fileCacheMapPath };
-}

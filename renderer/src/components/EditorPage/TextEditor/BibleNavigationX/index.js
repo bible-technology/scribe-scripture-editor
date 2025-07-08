@@ -4,14 +4,16 @@ import React, {
   Fragment, useContext, useEffect, useRef, useState,
 } from 'react';
 import { XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
-import * as localforage from 'localforage';
+// import * as localforage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import { saveNavigationHistory } from '@/core/projects/updateAgSettings';
 import SelectBook from './SelectBook';
 import SelectChapter from './SelectChapter';
 
 export default function BibleNavigationX(props) {
   const {
-    chapterNumber, setChapterNumber, setBook, loading, bookAvailable, booksInProject, parseError,
+    loading,
+    bookAvailable, booksInProject, parseError,
   } = props;
 
   const {
@@ -21,9 +23,12 @@ export default function BibleNavigationX(props) {
       bookName,
       chapter,
       chapterList,
+      verse,
+      verseList,
     }, actions: {
       onChangeBook,
       onChangeChapter,
+      onChangeVerse,
       setCloseNavigation,
     },
   } = useContext(ReferenceContext);
@@ -54,11 +59,12 @@ export default function BibleNavigationX(props) {
   }
 
   useEffect(() => {
+    console.log(bookId, chapter, verse, 'bible navigatin setter');
     async function setReference() {
-      await localforage.setItem('navigationHistory', [bookId, chapter]);
+      await saveNavigationHistory(bookId, chapter, verse);
     }
     setReference();
-  }, [bookId, chapter]);
+  }, [bookId, chapter, verse]);
 
   useEffect(() => {
     if (parseError) {
@@ -90,7 +96,7 @@ export default function BibleNavigationX(props) {
           >
             <ChevronDownIcon className=" h-4 w-4 mx-1 text-white" aria-hidden="true" />
           </span>
-          <span className="px-3">{chapterNumber}</span>
+          <span className="px-3">{chapter}</span>
           <span
             aria-label="open-chapter"
             className="focus:outline-none bg-white py-2 bg-opacity-10"
@@ -99,6 +105,9 @@ export default function BibleNavigationX(props) {
             tabIndex="-1"
           >
             <ChevronDownIcon className="\ h-4 w-4 mx-1 text-white" aria-hidden="true" />
+          </span>
+          <span className="px-3">
+            { verse}
           </span>
         </div>
       </div>
@@ -131,7 +140,7 @@ export default function BibleNavigationX(props) {
                   multiSelectBook={multiSelectBook}
                   selectedBooks={selectedBooks}
                   setSelectedBooks={setSelectedBooks}
-                  setBook={setBook}
+                  // setBook={setBook}
                   scope="Other"
                   booksInProject={booksInProject}
                 >
@@ -163,6 +172,7 @@ export default function BibleNavigationX(props) {
             className="fixed inset-0 z-10 overflow-y-auto"
             initialFocus={cancelButtonRef}
             static
+            // open={openChapter}
             open={!loading && openChapter}
             onClose={closeChapters}
           >
@@ -171,12 +181,15 @@ export default function BibleNavigationX(props) {
               <div className=" w-6/12 max-w-md m-auto z-50 bg-black text-white shadow overflow-hidden sm:rounded-lg">
                 <SelectChapter
                   chapter={chapter}
+                  verse={verse}
                   chapterList={chapterList}
+                  verseList={verseList}
+                  onChangeVerse={onChangeVerse}
+                  // closeVerses={closeVerses}
                   bookName={bookName}
                   onChangeChapter={onChangeChapter}
                   closeBooks={closeBooks}
                   closeChapters={closeChapters}
-                  setChapterNumber={setChapterNumber}
                   loading={loading}
                 >
                   <button
@@ -191,15 +204,13 @@ export default function BibleNavigationX(props) {
             </div>
           </Dialog>
         </Transition>
+
       </>
     </>
   );
 }
 
 BibleNavigationX.propTypes = {
-  chapterNumber: PropTypes.number,
-  setChapterNumber: PropTypes.func,
-  setBook: PropTypes.func,
   loading: PropTypes.bool,
   bookAvailable: PropTypes.bool,
 };

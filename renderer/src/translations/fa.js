@@ -101,6 +101,7 @@ export const Fa = {
   'label-editor-font-char': 'آ',
   'label-upload': 'بارگذاری',
   'label-no-content-available': 'هیچ محتوایی در دسترس نیست!',
+  'label-book-not-in-scope': 'کتاب انتخاب شده در محدوده شما نیست',
   'label-enter-location': 'موقعیت مکانی را وارد کنید',
   'label-editor-load-module': 'یک ماژول را بارگیری کنید',
   'label-import-door43-resources': 'Import Door43 helps resources',

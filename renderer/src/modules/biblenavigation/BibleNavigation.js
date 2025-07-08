@@ -12,12 +12,15 @@ import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook'
 import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVerse';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
+import { saveNavigationHistory } from '@/core/projects/updateAgSettings';
 import { isElectron } from '../../core/handleElectron';
 
 export default function BibleNavigation(props) {
-  const { showVerse } = props;
+  const {
+    showVerse,
+  } = props;
   const supportedBooks = null; // if empty array or null then all books available
-
+  // const supportedBooks = booksInProject; // if empty array or null then all books available
   const {
     state: {
       bookId,
@@ -113,8 +116,11 @@ export default function BibleNavigation(props) {
   }, [languageId, applyBooksFilter]);
 
   useEffect(() => {
-    localforage.setItem('navigationHistory', [bookId, chapter]);
-  }, [bookId, chapter]);
+    async function setReference() {
+      await saveNavigationHistory(bookId, chapter, verse);
+    }
+    setReference();
+  }, [bookId, chapter, verse]);
 
   useEffect(() => {
     if (Object.keys(existingScopes) < 1) {

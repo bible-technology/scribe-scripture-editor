@@ -101,6 +101,7 @@ export const Hi = {
   'label-editor-font-char': 'अ',
   'label-upload': 'अपलोड करें',
   'label-no-content-available': 'कोई सामग्री उपलब्ध नहीं है!',
+  'label-book-not-in-scope': 'चयनित पुस्तक आपके दायरे में नहीं है',
   'label-enter-location': 'स्थान दर्ज करें',
   'label-editor-load-module': 'मॉड्यूल लोड करें',
   'label-import-door43-resources': 'आयात DOOR43 संसाधनों की सहायता करता है',

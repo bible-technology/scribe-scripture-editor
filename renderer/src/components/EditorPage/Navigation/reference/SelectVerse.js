@@ -22,7 +22,7 @@ export default function SelectVerse({
   setSelectedVerses,
   verselectActive,
   setVerseSelectActive,
-  setChapterNumber,
+  // setChapterNumber,
   setVerseNumber,
   scopedChapters,
   call = '',
@@ -37,11 +37,11 @@ export default function SelectVerse({
     onChangeChapter(chapterNum, chapter);
     setOpenChapter(false);
     setOpenVerse(true);
-    window.location.href = `#ch-${chapterNum}`;
-    if (chapterNum && setChapterNumber) {
-      setChapterNumber(chapterNum);
-      document.getElementById('editor').querySelector(`#ch-${chapterNum}`)?.scrollIntoView();
-    }
+    // window.location.href = `#ch-${chapterNum}`;
+    // if (chapterNum && setChapterNumber) {
+    //   setChapterNumber(chapterNum);
+    //   document.getElementById('editor').querySelector(`#ch-${chapterNum}`)?.scrollIntoView();
+    // }
   };
 
   const onVerseSelect = (e, verseNum) => {

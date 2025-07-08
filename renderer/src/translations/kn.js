@@ -101,6 +101,7 @@ export const Kn = {
   'label-editor-font-char': 'A',
   'label-upload': 'ಅಪ್ಲೋಡ್',
   'label-no-content-available': 'ವಿಷಯ-ಲಭ್ಯವಿಲ್ಲ!',
+  'label-book-not-in-scope': 'ಆಯ್ಕೆ ಮಾಡಲಾದ ಪುಸ್ತಕ ನಿಮ್ಮ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಇಲ್ಲ',
   'label-enter-location': 'ಸ್ಥಳವನ್ನು ನಮೂದಿಸಿ',
   'label-editor-load-module': 'ಮಾಡ್ಯೂಲ್ ಅನ್ನು ಲೋಡ್ ಮಾಡಿ',
   'label-import-door43-resources': 'Door43 ಸಹಾಯ ಸಂಪನ್ಮೂಲಗಳನ್ನು ಆಮದು ಮಾಡಿ',
