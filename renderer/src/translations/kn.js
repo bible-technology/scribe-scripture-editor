@@ -20,8 +20,8 @@ export const Kn = {
   'label-main-menu': 'ಮುಖ್ಯ ಮೆನು ತೆರೆಯಿರಿ',
   'label-dont-have-account': 'ಖಾತೆ ಇಲ್ಲವೇ?',
   'label-already-have-account': 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ???',
-  'label-new-langauge': 'ಹೊಸ ಭಾಷೆ',
-  'label-edit-langauge': 'ಭಾಷೆ ಸಂಪಾದಿಸಿ',
+  'label-new-language': 'ಹೊಸ ಭಾಷೆ',
+  'label-edit-language': 'ಭಾಷೆ ಸಂಪಾದಿಸಿ',
   'label-script-direction': 'ಲಿಪಿ ದಿಕ್ಕು',
   'label-drop-file-upload': 'ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಫೈಲ್‌ಗಳನ್ನು ಇಲ್ಲಿ ಡ್ರಾಪ್ ಮಾಡಿ',
   'projects-page': 'ಯೋಜನೆಗಳು',
@@ -298,4 +298,5 @@ export const Kn = {
   'obs-complete': 'ಪೂರ್ಣ (ಆಡಿಯೋ + ಪಠ್ಯ)',
   'obs-combined-audio': 'ಸಂಯೋಜಿತ ಕಥೆಗಳ ಆಡಿಯೋ',
   'obs-default-audio-text': 'ಡಿಫಾಲ್ಟ್ ಆಡಿಯೋ + ಪಠ್ಯ',
+  'label-resource-tir': 'ಅನುವಾದ ಮಾಧ್ಯಮ ಸಂಪನ್ಮೂಲಗಳು',
 };

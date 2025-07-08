@@ -20,8 +20,8 @@ export const Fa = {
   'label-main-menu': 'باز کردن منوی اصلی',
   'label-dont-have-account': 'حساب کاربری ندارید؟',
   'label-already-have-account': 'پیشتر حساب کاربری داشته اید؟',
-  'label-new-langauge': 'زبان جدید',
-  'label-edit-langauge': 'ویرایش زبان',
+  'label-new-language': 'زبان جدید',
+  'label-edit-language': 'ویرایش زبان',
   'label-script-direction': 'جهت نوشتاری',
   'label-drop-file-upload': 'فایل را برای آپلود در اینجا رها کنید',
   'projects-page': 'پروژه ها',
@@ -288,4 +288,5 @@ export const Fa = {
   'obs-complete': 'کامل (صدا + متن)',
   'obs-combined-audio': 'صوت داستان‌های ترکیبی',
   'obs-default-audio-text': 'صدای پیش‌فرض + متن',
+  'label-resource-tir': 'منابع چندرسانه‌ای ترجمه',
 };

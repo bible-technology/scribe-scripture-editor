@@ -250,7 +250,7 @@ export default function TargetLanguagePopover({ projectType }) {
               <div className="h-[27rem] w-[26rem] rounded shadow border border-gray-200 bg-white">
                 <div className="grid grid-rows-2 gap-1 m-8">
                   <div>
-                    <h2 className="uppercase font-bold leading-5 tracking-widest mb-5 ">{edit === true ? t('label-edit-langauge') : t('label-new-langauge')}</h2>
+                    <h2 className="uppercase font-bold leading-5 tracking-widest mb-5 ">{edit === true ? t('label-edit-language') : t('label-new-language')}</h2>
                     <div>
                       <h3 className="mb-1 text-xs font-base text-primary tracking-wide leading-4 font-light">{t('label-language')}</h3>
                       <input

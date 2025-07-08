@@ -20,8 +20,8 @@ export const Es = {
   'label-main-menu': 'Abrir menú principal',
   'label-dont-have-account': '¿No tiene una cuenta?',
   'label-already-have-account': '¿Ya tiene una cuenta??',
-  'label-new-langauge': 'Nuevo idioma',
-  'label-edit-langauge': 'Editar Idioma',
+  'label-new-language': 'Nuevo idioma',
+  'label-edit-language': 'Editar Idioma',
   'label-script-direction': 'Direccionalidad de escritura',
   'label-drop-file-upload': 'Suelte aquí los archivos para cargarlos',
   'projects-page': 'Proyectos',
@@ -297,4 +297,5 @@ export const Es = {
   'obs-complete': 'Completo (Audio + Texto)',
   'obs-combined-audio': 'Audio de historias combinadas',
   'obs-default-audio-text': 'Audio predeterminado + Texto',
+  'label-resource-tir': 'Recursos multimedia de traducción',
 };
