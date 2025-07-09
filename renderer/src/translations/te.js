@@ -20,8 +20,8 @@ export const Te = {
   'label-main-menu': 'ప్రాధమిక కార్యక్రమాల పట్టిక తెరవండి',
   'label-dont-have-account': 'ఖాతా లేదా?',
   'label-already-have-account': 'ఖాతా కలిగి ఉన్నారా??',
-  'label-new-langauge': 'క్రొత్త భాష',
-  'label-edit-langauge': 'భాషని సవరించండి',
+  'label-new-language': 'క్రొత్త భాష',
+  'label-edit-language': 'భాషని సవరించండి',
   'label-script-direction': 'స్క్రిప్ట్ దర్శకత్వం',
   'label-drop-file-upload': 'అప్‌లోడ్ చేయడానికి ఫైల్‌లను ఇక్కడ వదలండి',
   'projects-page': 'ప్రాజెక్ట్స్',
@@ -298,4 +298,5 @@ export const Te = {
   'obs-complete': 'పూర్తి (ఆడియో + పాఠ్యం)',
   'obs-combined-audio': 'మిళిత కథల ఆడియో',
   'obs-default-audio-text': 'డీఫాల్ట్ ఆడియో + పాఠ్యం',
+  'label-resource-tir': 'అనువాద మల్టీమీడియా వనరులు',
 };

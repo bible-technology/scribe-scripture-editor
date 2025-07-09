@@ -23,7 +23,7 @@ export const getScriptureDirection = async (projectName) => {
       languageCode = projectDetails?.value?.languages[0]?.tag;
     });
   if (languageCode) {
-    logger.debug('languageUtil.js', 'In getScriptureDirection:- fetching langauge code from burrito');
+    logger.debug('languageUtil.js', 'In getScriptureDirection:- fetching language code from burrito');
     scriptureDirection = getLanguageDirection(languageCode);
   }
   return scriptureDirection;

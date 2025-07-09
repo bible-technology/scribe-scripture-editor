@@ -278,5 +278,6 @@
 	"obs-text-only": "Только текст (MD файлы)",
 	"obs-complete": "Полный (аудио + текст)",
 	"obs-combined-audio": "Объединённые истории (аудио)",
-	"obs-default-audio-text": "Аудио по умолчанию + текст"
+	"obs-default-audio-text": "Аудио по умолчанию + текст",
+	"label-resource-tir": "Ресурсы мультимедиа для перевода"
 }

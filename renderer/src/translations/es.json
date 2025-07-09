@@ -278,5 +278,6 @@
 	"obs-text-only": "Solo texto (archivos MD)",
 	"obs-complete": "Completo (Audio + Texto)",
 	"obs-combined-audio": "Audio de historias combinadas",
-	"obs-default-audio-text": "Audio predeterminado + Texto"
+	"obs-default-audio-text": "Audio predeterminado + Texto",
+	"label-resource-tir": "Recursos multimedia de traducción"
 }

@@ -278,5 +278,6 @@
 	"obs-text-only": "केवल पाठ (MD फ़ाइलें)",
 	"obs-complete": "पूर्ण (ऑडियो + पाठ)",
 	"obs-combined-audio": "संयुक्त कहानियाँ ऑडियो",
-	"obs-default-audio-text": "डिफ़ॉल्ट ऑडियो + पाठ"
+	"obs-default-audio-text": "डिफ़ॉल्ट ऑडियो + पाठ",
+	"label-resource-tir": "अनुवाद मल्टीमीडिया संसाधन"
 }

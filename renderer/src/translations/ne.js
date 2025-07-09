@@ -20,8 +20,8 @@ export const Ne = {
   'label-main-menu': 'मुख्य व्‍यंजन सुची खोल्नुहोस्',
   'label-dont-have-account': 'खाता छैन',
   'label-already-have-account': 'पहिलेबाट एउटा खाता छ',
-  'label-new-langauge': 'नया भाषा',
-  'label-edit-langauge': 'भाषा संपादित गर्नुहोस्',
+  'label-new-language': 'नया भाषा',
+  'label-edit-language': 'भाषा संपादित गर्नुहोस्',
   'label-script-direction': 'लिपि निर्देशन',
   'label-drop-file-upload': 'अपलोड गर्नको लागि फाइल यहाँ हाल्नुहोस्',
   'projects-page': 'पृष्‍ठ प्रोजेक्ट',
@@ -298,4 +298,5 @@ export const Ne = {
   'obs-complete': 'पूर्ण (अडियो + पाठ)',
   'obs-combined-audio': 'मिश्रित कथाहरूको अडियो',
   'obs-default-audio-text': 'पूर्वनिर्धारित अडियो + पाठ',
+  'label-resource-tir': 'अनुवाद बहुभाषिक स्रोतहरू',
 };

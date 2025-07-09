@@ -278,5 +278,6 @@
 	"obs-text-only": "نص فقط (ملفات MD)",
 	"obs-complete": "كامل (صوت + نص)",
 	"obs-combined-audio": "الصوت المدمج للقصص",
-	"obs-default-audio-text": "الصوت الافتراضي + النص"
+	"obs-default-audio-text": "الصوت الافتراضي + النص",
+	"label-resource-tir": "موارد الوسائط المتعددة للترجمة"
 }

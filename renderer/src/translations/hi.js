@@ -20,8 +20,8 @@ export const Hi = {
   'label-main-menu': 'मुख्य मेन्यू खोलें',
   'label-dont-have-account': 'खाता नहीं है?',
   'label-already-have-account': 'पहले से ही एक खाता है?',
-  'label-new-langauge': 'नई भाषा',
-  'label-edit-langauge': 'भाषा संपादित करें',
+  'label-new-language': 'नई भाषा',
+  'label-edit-language': 'भाषा संपादित करें',
   'label-script-direction': 'स्क्रिप्ट दिशा',
   'label-drop-file-upload': 'अपलोड करने के लिए फ़ाइलें यहाँ डालें',
   'projects-page': 'प्रोजेक्ट्स',
@@ -298,4 +298,5 @@ export const Hi = {
   'obs-complete': 'पूर्ण (ऑडियो + पाठ)',
   'obs-combined-audio': 'संयुक्त कहानियाँ ऑडियो',
   'obs-default-audio-text': 'डिफ़ॉल्ट ऑडियो + पाठ',
+  'label-resource-tir': 'अनुवाद मल्टीमीडिया संसाधन',
 };

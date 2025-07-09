@@ -20,8 +20,8 @@ export const Ar = {
   'label-main-menu': 'فتح القائمة الرئيسية',
   'label-dont-have-account': 'ليس لديك حساب؟',
   'label-already-have-account': 'هل لديك حساب ؟؟',
-  'label-new-langauge': 'لغة جديدة',
-  'label-edit-langauge': 'تعديل اللغة',
+  'label-new-language': 'لغة جديدة',
+  'label-edit-language': 'تعديل اللغة',
   'label-script-direction': 'اتجاه النص ',
   'label-drop-file-upload': 'ضع الملفات هنا للتحميل',
   'projects-page': 'المشاريع',
@@ -287,4 +287,5 @@ export const Ar = {
   'obs-complete': 'كامل (صوت + نص)',
   'obs-combined-audio': 'الصوت المدمج للقصص',
   'obs-default-audio-text': 'الصوت الافتراضي + النص',
+  'label-resource-tir': 'موارد الوسائط المتعددة للترجمة',
 };

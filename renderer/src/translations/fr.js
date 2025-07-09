@@ -20,8 +20,8 @@ export const Fr = {
   'label-main-menu': 'Ouvrir le menu principal',
   'label-dont-have-account': 'Vous n\'avez pas de compte ?',
   'label-already-have-account': 'Vous avez déjà un compte ?',
-  'label-new-langauge': 'Nouveau langage',
-  'label-edit-langauge': 'Modifier la langue',
+  'label-new-language': 'Nouveau langage',
+  'label-edit-language': 'Modifier la langue',
   'label-script-direction': 'Direction du scénario',
   'label-drop-file-upload': 'Déposer des fichiers ici pour télécharger',
   'projects-page': 'Projets',
@@ -298,4 +298,5 @@ export const Fr = {
   'obs-complete': 'Complet (Audio + Texte)',
   'obs-combined-audio': 'Audio des histoires combinées',
   'obs-default-audio-text': 'Audio par défaut + Texte',
+  'label-resource-tir': 'Ressources multimédias de traduction',
 };

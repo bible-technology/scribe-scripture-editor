@@ -20,8 +20,8 @@ export const Ru = {
   'label-main-menu': 'Открыть главное меню',
   'label-dont-have-account': 'У вас нет аккаунта?',
   'label-already-have-account': 'Уже имеете аккаунт?',
-  'label-new-langauge': 'Новый язык',
-  'label-edit-langauge': 'Изменить язык',
+  'label-new-language': 'Новый язык',
+  'label-edit-language': 'Изменить язык',
   'label-script-direction': 'Направленность письменности',
   'label-drop-file-upload': 'Перетащите сюда файлы для загрузки',
   'projects-page': 'Проекты',
@@ -298,4 +298,5 @@ export const Ru = {
   'obs-complete': 'Полный (аудио + текст)',
   'obs-combined-audio': 'Объединённые истории (аудио)',
   'obs-default-audio-text': 'Аудио по умолчанию + текст',
+  'label-resource-tir': 'Ресурсы мультимедиа для перевода',
 };
