@@ -196,27 +196,90 @@ export default function ImportProjectPopUp(props) {
     }
   };
 
-   const startTextTranslationMergeProcess = async (startOver=false) => {
-    try {
-      if(startOver) {
-        const path = require('path');
-        const fs = window.require('fs');
-        const newpath = localStorage.getItem('userPath');
-        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-        await fs.rmSync(path.join(USFMMergeDirPath,projectDirName), { recursive: true, force: true });
+  //  const startTextTranslationMergeProcess = async (startOver=false) => {
+  //   try {
+  //     if(startOver) {
+  //       const path = require('path');
+  //       const fs = window.require('fs');
+  //       const newpath = localStorage.getItem('userPath');
+  //       const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+  //       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+  //        const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
+  //       if (fs.existsSync(projectMergePath)) {
+  //       console.log(`Deleting folder: ${projectMergePath}`);
+  //     //  fs.rmSync(path.join(USFMMergeDirPath,projectDirName), { recursive: true, force: true });
+  //              fs.rmSync(projectMergePath, { recursive: true, force: true });
+
+  // console.log(`Deleted folder: ${projectMergePath}`);
+  //     await new Promise((resolve) => setTimeout(resolve, 800));
+
+  //     } else {
+  //       console.log(`Folder does not exist: ${projectMergePath}`);
+  //     }
+  //     }
+  //     // start conflict checks continue / start over
+  //      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar, startOver)
+  //     console.log("completed merge idenitfy process ------");
+  //     setSbData({});
+  //     setFolderPath()
+  //   } catch(err) {
+  //     setSbData({});
+  //     console.error("error in merge process : ", err);
+  //   }
+  // }
+  // Fix 2: Update startTextTranslationMergeProcess to handle dialog state properly
+const startTextTranslationMergeProcess = async (startOver = false) => {
+  try {
+    if (startOver) {
+      const path = require('path');
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+      const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+      const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
+      
+      if (fs.existsSync(projectMergePath)) {
+        console.log(`Deleting folder: ${projectMergePath}`);
+        fs.rmSync(projectMergePath, { recursive: true, force: true });
+        console.log(`Deleted folder: ${projectMergePath}`);
+      } else {
+        console.log(`Folder does not exist: ${projectMergePath}`);
       }
-      // start conflict checks continue / start over
-      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar, startOver)
-      console.log("completed merge idenitfy process ------");
-      setSbData({});
-      setFolderPath()
-    } catch(err) {
-      setSbData({});
-      console.error("error in merge process : ", err);
     }
+
+    // This will return true if conflicts found, false if no conflicts
+    const hasConflicts = await mergeTextTranslationProject(
+      folderPath, 
+      currentUser, 
+      setConflictPopup, 
+      setProcessMerge, 
+      sbData, 
+      triggerSnackBar, 
+      startOver
+    );
+    
+    console.log("completed merge identify process ------");
+    
+    // If no conflicts found, close the import dialog
+    if (!hasConflicts) {
+      console.log("No conflicts - closing import dialog");
+      setSbData({});
+      setFolderPath();
+      close("NoConflicts");
+    }
+    // If conflicts found, dialog stays open until conflict resolution is complete
+    
+  } catch (err) {
+    console.error("error in merge process: ", err);
+    triggerSnackBar('error', 'Merge process failed: ' + err.message);
+    setProcessMerge(false);
+    
+    // Clear state and close dialog on error
+    setSbData({});
+    setFolderPath();
+    close("Error");
   }
-  
+};
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
@@ -231,51 +294,133 @@ export default function ImportProjectPopUp(props) {
   };
 
 
-  const MergeFunction = async () => {
-    logger.debug('importProjectPopUp.js', 'call for merge');
-    setProcessMerge(true)
-    modelClose();
-    // await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-     if (sbData?.burritoType === 'gloss / textStories'){
+  // const MergeFunction = async () => {
+  //   logger.debug('importProjectPopUp.js', 'call for merge');
+  //   setProcessMerge(true)
+  //   modelClose();
+  //   // await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+  //    if (sbData?.burritoType === 'gloss / textStories'){
+  //     await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+  //   }else if (sbData?.burritoType === 'scripture / textTranslation') {
+  //     console.log("Started Indentify Merge conflicts ------");
+  //     try {
+  //       // confirm the user need to comtinue or start over the conflict process before move
+  //       const path = require('path');
+  //       const fs = window.require('fs');
+  //       const newpath = localStorage.getItem('userPath');
+  //       const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+  //       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+  //       if(fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+  //         console.log("in IF ###############");
+  //         setModel({
+  //           openModel: true,
+  //           title: "Confirm",
+  //           confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
+  //           buttonName: t('label-startover'),
+  //           buttonName2 : {
+  //             active: true,
+  //             loading: false,
+  //             name:t('label-continue'),
+  //             action: () => startTextTranslationMergeProcess(false),
+  //           }
+  //         });
+  //       } else {
+  //         console.log("in ELSE ###############");
+  //         await startTextTranslationMergeProcess(false)
+  //       }
+  //     } catch(err) {
+  //       setMerge(false)
+  //       setProcessMerge(false)
+  //       console.log("error merge fucntion : ", err);
+  //     }
+  //   }
+  //   setMerge(false)
+  //   // setSbData({});
+  //   close()
+  //   logger.debug('importProjectPopUp.js', 'git merge process done');
+  // }
+
+  // Fix 1: Remove the close() call from MergeFunction
+const MergeFunction = async () => {
+  logger.debug('importProjectPopUp.js', 'call for merge');
+  setProcessMerge(true);
+  modelClose();
+
+  try {
+    if (sbData?.burritoType === 'gloss / textStories') {
       await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-    }else if (sbData?.burritoType === 'scripture / textTranslation') {
-      console.log("Started Indentify Merge conflicts ------");
-      try {
-        // confirm the user need to comtinue or start over the conflict process before move
-        const path = require('path');
-        const fs = window.require('fs');
-        const newpath = localStorage.getItem('userPath');
-        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-        if(fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
-          console.log("in IF ###############");
-          setModel({
-            openModel: true,
-            title: "Confirm",
-            confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
-            buttonName: t('label-startover'),
-            buttonName2 : {
-              active: true,
-              loading: false,
-              name:t('label-continue'),
-              action: () => startTextTranslationMergeProcess(false),
-            }
-          });
-        } else {
-          console.log("in ELSE ###############");
-          await startTextTranslationMergeProcess(false)
-        }
-      } catch(err) {
-        setMerge(false)
-        setProcessMerge(false)
-        console.log("error merge fucntion : ", err);
+    } else if (sbData?.burritoType === 'scripture / textTranslation') {
+      console.log("Started Identify Merge conflicts ------");
+      
+      const path = require('path');
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+      const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+      
+      if (fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+        console.log("in IF ###############");
+        setModel({
+          openModel: true,
+          title: "Confirm",
+          confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
+          buttonName: t('label-startover'),
+          buttonName2: {
+            active: true,
+            loading: false,
+            name: t('label-continue'),
+            action: () => startTextTranslationMergeProcess(false),
+          }
+        });
+      } else {
+        console.log("in ELSE ###############");
+        await startTextTranslationMergeProcess(false);
       }
     }
-    setMerge(false)
-    // setSbData({});
-    close()
-    logger.debug('importProjectPopUp.js', 'git merge process done');
+  } catch (err) {
+    console.error("error merge function: ", err);
+    triggerSnackBar('error', 'Merge process failed: ' + err.message);
+  } finally {
+    setMerge(false);
+    setProcessMerge(false);
   }
+  
+  // Don't close the dialog here - let the merge process handle it
+  logger.debug('importProjectPopUp.js', 'git merge process done');
+};
+// Add these functions to handle dialog closing after conflict resolution
+
+// This should be called when conflict resolution is completed successfully
+const handleConflictResolutionComplete = () => {
+  console.log("Conflict resolution completed - closing import dialog");
+  setSbData({});
+  setFolderPath();
+  setConflictPopup({ open: false, data: {} }); // Close conflict popup
+  close("ConflictResolved");
+  triggerSnackBar('success', 'Project merged successfully');
+};
+
+// This should be called when user cancels conflict resolution
+const handleConflictResolutionCancel = () => {
+  console.log("Conflict resolution cancelled - closing import dialog");
+  setSbData({});
+  setFolderPath();
+  setConflictPopup({ open: false, data: {} }); // Close conflict popup
+  close("ConflictCancelled");
+};
+
+// Update the conflict popup data to include these callbacks
+const openConflictPopupWithCallbacks = (conflictData) => {
+  setConflictPopup({
+    open: true,
+    data: {
+      ...conflictData,
+      onComplete: handleConflictResolutionComplete,
+      onCancel: handleConflictResolutionCancel,
+    },
+  });
+};
+
   console.log({sbData, model});
 
   const importProject = async () => {
