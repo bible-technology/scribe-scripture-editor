@@ -180,14 +180,11 @@ export default function ObsBibleAudioTab({
                                   && (
                                     <CheckHelpsUpdatePopUp resource={ref} selectResource={selectResource} />
                                   )}
-                                {selectResource !== 'audio'
-                                  && (
-                                    <RemoveResource
-                                      resource={ref}
-                                      selectResource={selectResource}
-                                      setRenderApp={setRenderApp}
-                                    />
-                                  )}
+                                <RemoveResource
+                                  resource={ref}
+                                  selectResource={selectResource}
+                                  setRenderApp={setRenderApp}
+                                />
                               </div>
                             </div>
                           </td>

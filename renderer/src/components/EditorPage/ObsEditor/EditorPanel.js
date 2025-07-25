@@ -118,6 +118,20 @@ const EditorPanel = ({ obsStory, storyUpdate, audioEnabled }) => {
     setSelectedParagraph(storyItem.id);
   };
 
+  useEffect(() => {
+    const handleSpacebarScroll = (event) => {
+      if (audioEnabled && (event.keyCode === 32 || event.key === ' ')) {
+        event.preventDefault();
+      }
+    };
+    if (audioEnabled) {
+      document.addEventListener('keydown', handleSpacebarScroll, true);
+    }
+    return () => {
+      document.removeEventListener('keydown', handleSpacebarScroll, true);
+    };
+  }, [audioEnabled]);
+
   return (
     <div className="relative flex flex-col h-full">
       <div className="flex-1 ">

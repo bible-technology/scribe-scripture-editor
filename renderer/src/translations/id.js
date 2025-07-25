@@ -298,4 +298,5 @@ export const Id = {
   'obs-complete': 'Lengkap (Audio + Teks)',
   'obs-combined-audio': 'Audio Cerita Gabungan',
   'obs-default-audio-text': 'Audio Default + Teks',
+  'dynamic-msg-confirm-replace-panel-resource': '¡Se encontró un proyecto existente con el mismo nombre! Revisa la pestaña "Archivado" o la pestaña "Proyectos". Pulsa "Reemplazar" para sobrescribir el contenido existente en libros superpuestos. Pulsa "Cancelar" para evitar cambios.',
 };
