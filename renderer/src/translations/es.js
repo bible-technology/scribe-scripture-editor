@@ -27,7 +27,7 @@ export const Es = {
   'projects-page': 'Proyectos',
   'label-search': 'Buscar',
   'label-project': 'Proyecto',
-  'label-flavour': 'Sabor',
+  'label-flavor': 'Sabor',
   'label-project-type': 'Tipo de proyecto',
   'label-project-name': 'Nombre del proyecto',
   'label-language': 'Nombre del idioma',
@@ -298,4 +298,5 @@ export const Es = {
   'obs-combined-audio': 'Audio de historias combinadas',
   'obs-default-audio-text': 'Audio predeterminado + Texto',
   'label-resource-tir': 'Recursos multimedia de traducción',
+  'label-filter': 'Filtro',
 };

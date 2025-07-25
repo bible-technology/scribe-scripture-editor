@@ -27,7 +27,7 @@ export const Te = {
   'projects-page': 'ప్రాజెక్ట్స్',
   'label-search': 'వెతకండి',
   'label-project': 'ప్రాజెక్ట్',
-  'label-flavour': 'ఫ్లేవర్',
+  'label-flavor': 'ఫ్లేవర్',
   'label-project-type': 'ప్రాజెక్ట్ రకం',
   'label-project-name': 'ప్రాజెక్ట్ పేరు',
   'label-language': 'భాష పేరు',

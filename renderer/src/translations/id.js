@@ -27,7 +27,7 @@ export const Id = {
   'projects-page': 'Proyek',
   'label-search': 'Cari',
   'label-project': 'Proyek',
-  'label-flavour': 'Flavour',
+  'label-flavor': 'Flavour',
   'label-project-type': 'Jenis Proyek',
   'label-project-name': 'Nama Proyek',
   'label-language': 'Nama Bahasa',

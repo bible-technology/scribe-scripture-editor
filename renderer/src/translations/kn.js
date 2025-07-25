@@ -27,7 +27,7 @@ export const Kn = {
   'projects-page': 'ಯೋಜನೆಗಳು',
   'label-search': 'ಹುಡುಕಿ',
   'label-project': 'ಯೋಜನೆ',
-  'label-flavour': 'ಫ್ಲೇವರ್',
+  'label-flavor': 'ಫ್ಲೇವರ್',
   'label-project-type': 'ಯೋಜನೆಯ ಪ್ರಕಾರ',
   'label-project-name': 'ಯೋಜನೆಯ ಹೆಸರು',
   'label-language': 'ಭಾಷೆಯ ಹೆಸರು',

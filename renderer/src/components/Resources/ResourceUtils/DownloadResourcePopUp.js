@@ -344,7 +344,7 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
             selectedList={selectedTypeFilter}
             setSelectedList={setSelectedTypeFilter}
             customData={selectResource === 'bible' ? subjectTypeArray.bible : [subjectTypeArray.obs]}
-            placeholder="Select Types"
+            placeholder={t('select-type')}
             dropArrow
             multiSelect
           />

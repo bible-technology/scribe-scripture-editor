@@ -202,7 +202,7 @@ export const Hi = {
   'msg-lang-code-req': 'भाषा कोड आवश्यक है',
   'msg-lang-name-req': 'भाषा का नाम आवश्यक है',
   'msg-min-three-letter': 'न्यूनतम 3 अक्षर टाइप करने के लिए खोजें',
-  'label-prj-on-my-computer': '',
+  'label-prj-on-my-computer': 'मेरे कंप्यूटर पर प्रोजेक्ट',
   'label-save-to-cloud': 'क्लाउड में सहेजें',
   'label-saved-to-cloud': 'क्लाउड में सहेजा गया',
   'label-last-synced': 'अंतिम बार समन्वयित किया गया',
@@ -299,4 +299,5 @@ export const Hi = {
   'obs-combined-audio': 'संयुक्त कहानियाँ ऑडियो',
   'obs-default-audio-text': 'डिफ़ॉल्ट ऑडियो + पाठ',
   'label-resource-tir': 'अनुवाद मल्टीमीडिया संसाधन',
+  'label-downloaded-resources': 'डाउनलोड किए गए संसाधन',
 };
