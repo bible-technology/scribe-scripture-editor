@@ -16,6 +16,7 @@ import UsfmConflictEditor from './UsfmConflictEditor';
 import { processAndIdentiyVerseChangeinUSFMJsons } from './processUsfmObjs';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
+import * as logger from '../../logger';
 
 const grammar = require('usfm-grammar');
 const path = require('path');
@@ -40,6 +41,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   const [conflictedChapters, setConflictedChapters] = useState({});
   const [chapterResolveDone, setChapterResolveDone] = useState(false);
   const [finishedConflict, setFinishedConflict] = useState([]);
+  const [manualResolve, setManualResolve] = useState(false);
 
   const removeSection = async (abort = false) => {
     if (abort === false) {
@@ -100,7 +102,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       triggerSnackBar('success', 'Conflict Resolved Successfully');
       closeMergeWindow();
     } catch (err) {
-      console.error('Error Finish Process : ', err);
+      logger.error('TranslationMergeUI.jsx', `Error removing merge project directory : ${err}`);
       setLoading(false);
     }
   };
@@ -128,7 +130,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
       setLoading(false);
     } catch (err) {
-      console.error('error writeBackPerfUSFMandUpdateConfig : ', err);
+      logger.error('TranslationMergeUI.jsx', `Error writeBackPerfUSFMandUpdateConfig will updating metadata : ${err}`);
       setLoading(false);
     }
   };
@@ -143,29 +145,26 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     if (generatedUSFM && resolvedMergeJson.book.bookCode) {
       writeBackPerfUSFMandUpdateConfig(generatedUSFM, resolvedMergeJson.book.bookCode.toUpperCase());
     } else {
-      console.error('Can not generate usfm of current book : ', selectedBook);
+      logger.error('TranslationMergeUI.jsx', `Can not generate usfm of current book : ${selectedBook}`);
     }
   };
 
   // Function to write back the current usfmJSON data as config in the .merge
   const writeBackConflictConfigData = async (projectFullName, configData) => {
-    if (conflictedChapters?.length > 0) {
-      try {
-        const fs = window.require('fs');
-        const newpath = localStorage.getItem('userPath');
-        const path = require('path');
-        localforage.getItem('userProfile').then((user) => {
-          const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
-          if (!fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
-            fs.mkdirSync(path.join(USFMMergeDirPath, projectFullName), { recursive: true });
-          }
+    try {
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const path = require('path');
+      localforage.getItem('userProfile').then((user) => {
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', user?.username, '.merge-usfm');
+        if (fs.existsSync(path.join(USFMMergeDirPath, projectFullName))) {
           fs.writeFileSync(path.join(USFMMergeDirPath, projectFullName, 'usfmJsons.json'), JSON.stringify(configData));
-          setLoading(false);
-        });
-      } catch (err) {
-        console.error('Error Writeback config : ', err);
+        }
         setLoading(false);
-      }
+      });
+    } catch (err) {
+      logger.error('TranslationMergeUI.jsx', `Error creating usfmJsons.json file : ${err}`);
+      setLoading(false);
     }
   };
 
@@ -206,7 +205,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       setUsfmJsons(currentUSFMJsonsData);
       await writeBackConflictConfigData(projectFullName, currentUSFMJsonsData);
     } catch (err) {
-      console.error('Failed resolve book : ', err);
+      logger.error('TranslationMergeUI.jsx', `Failed resolve book : ${err}`);
       setLoading(false);
     }
   };
@@ -233,7 +232,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
           const currentJson = await parseUsfm(currentBookUsfm);
           // generate the merge object with current , incoming , merge verses
           const processOutArr = await processAndIdentiyVerseChangeinUSFMJsons(currentJson.data, importedJson.data).catch((err) => {
-            console.error('process usfm : ', err);
+            logger.error('TranslationMergeUI.jsx', `Error while process USFM data : ${err}`);
           });
           const mergeJson = processOutArr[0];
           const conflcitedChapters = processOutArr[1];
@@ -248,7 +247,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
             // resolve the book automatically ; the conflict in md5 only not on content
             await resolveAndMarkDoneChapter();
             triggerSnackBar('info', 'No conflict in verse level. The conflict may be because of extra tags.');
-            await handleFinishMergeProcess();
           }
           setLoading(false);
         }
@@ -305,10 +303,10 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
         setResolvedBooks(resolvedBooksArr);
         setConflictedChapters(conflictedChsOfBooks);
       } else {
-        console.error('Inprogress project config is corrupted');
+        logger.error('TranslationMergeUI.jsx', 'Inprogress project config is corrupted');
       }
     } else {
-      console.error('Unable to get the inprogress config');
+      logger.error('TranslationMergeUI.jsx', 'Unable to get the inprogress config');
     }
   };
 
@@ -355,6 +353,10 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     }
   }, [selectedBook, usfmJsons.conflictMeta]);
 
+  useEffect(() => {
+    if (finishedConflict === true && manualResolve === false) { handleFinishMergeProcess(); }
+  }, [finishedConflict]);
+
   return (
     <>
       <Transition
@@ -382,13 +384,16 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
               <h1 className="text-white font-bold text-sm uppercase">{t('label-resolve-conflict')}</h1>
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               {/* close btn section */}
-              <button
-                type="button"
-                className="focus:outline-none w-9 h-9 bg-black text-white p-2"
-                onClick={() => removeSection(true)}
-              >
-                <XMarkIcon />
-              </button>
+              {!finishedConflict
+              && (
+                <button
+                  type="button"
+                  className="focus:outline-none w-9 h-9 bg-black text-white p-2"
+                  onClick={() => removeSection(true)}
+                >
+                  <XMarkIcon />
+                </button>
+              )}
             </div>
 
             {/* contents section */}
@@ -445,7 +450,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
                         !resolvedBooks.includes(selectedBook) && (
                           <button
                             type="button"
-                            onClick={() => resolveAndMarkDoneChapter()}
+                            onClick={() => { resolveAndMarkDoneChapter(); setManualResolve(true); }}
                             disabled={!chapterResolveDone}
                             className={`px-4 py-1  rounded-md uppercase
                         ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '}
