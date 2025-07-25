@@ -77,8 +77,6 @@ export default function ImportProjectPopUp(props) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
     removeExtractedZipDir()
     setValid(false);
-    // setSbData()
-    // setFolderPath()
     closePopUp(false);
     setShow(false);
     setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
@@ -86,7 +84,6 @@ export default function ImportProjectPopUp(props) {
 
   const openFileDialogSettingData = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
-    // const options = { properties: ['openFile','openDirectory'] };
     const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
     const { dialog } = window.require('@electron/remote');
     const chosenFolder = await dialog.showOpenDialog(options);
@@ -94,7 +91,6 @@ export default function ImportProjectPopUp(props) {
     if ((chosenFolder.filePaths).length > 0) {
       logger.debug('ImportProjectPopUp.js', 'Selected a directory');
       await localforage.getItem('userProfile').then(async (value) => {
-        // setShow(true);
         setCurrentUser(value.username)
         // Adding 'projects' to check the duplication in the user project resources list
         selectedFolderPath = chosenFolder.filePaths[0]
@@ -196,38 +192,7 @@ export default function ImportProjectPopUp(props) {
     }
   };
 
-  //  const startTextTranslationMergeProcess = async (startOver=false) => {
-  //   try {
-  //     if(startOver) {
-  //       const path = require('path');
-  //       const fs = window.require('fs');
-  //       const newpath = localStorage.getItem('userPath');
-  //       const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-  //       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-  //        const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
-  //       if (fs.existsSync(projectMergePath)) {
-  //       console.log(`Deleting folder: ${projectMergePath}`);
-  //     //  fs.rmSync(path.join(USFMMergeDirPath,projectDirName), { recursive: true, force: true });
-  //              fs.rmSync(projectMergePath, { recursive: true, force: true });
-
-  // console.log(`Deleted folder: ${projectMergePath}`);
-  //     await new Promise((resolve) => setTimeout(resolve, 800));
-
-  //     } else {
-  //       console.log(`Folder does not exist: ${projectMergePath}`);
-  //     }
-  //     }
-  //     // start conflict checks continue / start over
-  //      await mergeTextTranslationProject(folderPath, currentUser, setConflictPopup, setProcessMerge, sbData, triggerSnackBar, startOver)
-  //     console.log("completed merge idenitfy process ------");
-  //     setSbData({});
-  //     setFolderPath()
-  //   } catch(err) {
-  //     setSbData({});
-  //     console.error("error in merge process : ", err);
-  //   }
-  // }
-  // Fix 2: Update startTextTranslationMergeProcess to handle dialog state properly
+  // Update startTextTranslationMergeProcess to handle dialog state properly
 const startTextTranslationMergeProcess = async (startOver = false) => {
   try {
     if (startOver) {
@@ -239,9 +204,7 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
       const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
       
       if (fs.existsSync(projectMergePath)) {
-        console.log(`Deleting folder: ${projectMergePath}`);
         fs.rmSync(projectMergePath, { recursive: true, force: true });
-        console.log(`Deleted folder: ${projectMergePath}`);
       } else {
         console.log(`Folder does not exist: ${projectMergePath}`);
       }
@@ -258,17 +221,12 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
       startOver
     );
     
-    console.log("completed merge identify process ------");
-    
     // If no conflicts found, close the import dialog
     if (!hasConflicts) {
-      console.log("No conflicts - closing import dialog");
       setSbData({});
       setFolderPath();
       close("NoConflicts");
     }
-    // If conflicts found, dialog stays open until conflict resolution is complete
-    
   } catch (err) {
     console.error("error in merge process: ", err);
     triggerSnackBar('error', 'Merge process failed: ' + err.message);
@@ -293,53 +251,6 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
     }
   };
 
-
-  // const MergeFunction = async () => {
-  //   logger.debug('importProjectPopUp.js', 'call for merge');
-  //   setProcessMerge(true)
-  //   modelClose();
-  //   // await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-  //    if (sbData?.burritoType === 'gloss / textStories'){
-  //     await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-  //   }else if (sbData?.burritoType === 'scripture / textTranslation') {
-  //     console.log("Started Indentify Merge conflicts ------");
-  //     try {
-  //       // confirm the user need to comtinue or start over the conflict process before move
-  //       const path = require('path');
-  //       const fs = window.require('fs');
-  //       const newpath = localStorage.getItem('userPath');
-  //       const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-  //       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-  //       if(fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
-  //         console.log("in IF ###############");
-  //         setModel({
-  //           openModel: true,
-  //           title: "Confirm",
-  //           confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
-  //           buttonName: t('label-startover'),
-  //           buttonName2 : {
-  //             active: true,
-  //             loading: false,
-  //             name:t('label-continue'),
-  //             action: () => startTextTranslationMergeProcess(false),
-  //           }
-  //         });
-  //       } else {
-  //         console.log("in ELSE ###############");
-  //         await startTextTranslationMergeProcess(false)
-  //       }
-  //     } catch(err) {
-  //       setMerge(false)
-  //       setProcessMerge(false)
-  //       console.log("error merge fucntion : ", err);
-  //     }
-  //   }
-  //   setMerge(false)
-  //   // setSbData({});
-  //   close()
-  //   logger.debug('importProjectPopUp.js', 'git merge process done');
-  // }
-
   // Fix 1: Remove the close() call from MergeFunction
 const MergeFunction = async () => {
   logger.debug('importProjectPopUp.js', 'call for merge');
@@ -349,9 +260,7 @@ const MergeFunction = async () => {
   try {
     if (sbData?.burritoType === 'gloss / textStories') {
       await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-    } else if (sbData?.burritoType === 'scripture / textTranslation') {
-      console.log("Started Identify Merge conflicts ------");
-      
+    } else if (sbData?.burritoType === 'scripture / textTranslation') {      
       const path = require('path');
       const fs = window.require('fs');
       const newpath = localStorage.getItem('userPath');
@@ -359,7 +268,6 @@ const MergeFunction = async () => {
       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
       
       if (fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
-        console.log("in IF ###############");
         setModel({
           openModel: true,
           title: "Confirm",
@@ -373,7 +281,6 @@ const MergeFunction = async () => {
           }
         });
       } else {
-        console.log("in ELSE ###############");
         await startTextTranslationMergeProcess(false);
       }
     }
@@ -392,7 +299,6 @@ const MergeFunction = async () => {
 
 // This should be called when conflict resolution is completed successfully
 const handleConflictResolutionComplete = () => {
-  console.log("Conflict resolution completed - closing import dialog");
   setSbData({});
   setFolderPath();
   setConflictPopup({ open: false, data: {} }); // Close conflict popup
@@ -402,7 +308,6 @@ const handleConflictResolutionComplete = () => {
 
 // This should be called when user cancels conflict resolution
 const handleConflictResolutionCancel = () => {
-  console.log("Conflict resolution cancelled - closing import dialog");
   setSbData({});
   setFolderPath();
   setConflictPopup({ open: false, data: {} }); // Close conflict popup
@@ -420,8 +325,6 @@ const openConflictPopupWithCallbacks = (conflictData) => {
     },
   });
 };
-
-  console.log({sbData, model});
 
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
@@ -464,7 +367,6 @@ const openConflictPopupWithCallbacks = (conflictData) => {
   React.useEffect(() => {
     if (open) {
       setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
-      // openFileDialogSettingData();
       setShow(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
