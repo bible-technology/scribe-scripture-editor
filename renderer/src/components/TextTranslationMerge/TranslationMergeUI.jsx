@@ -65,7 +65,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   };
 
   const handleStartOver = () => {
-    console.log('start over called ----');
+    // console.log('start over called ----');
     modalClose();
   };
 
@@ -87,11 +87,9 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   }
 
   async function parseJsonToUsfm(json) {
-    console.log('json data', json);
     const myUsfmParser = new grammar.JSONParser(json);
 
     const usfm = myUsfmParser.toUSFM();
-    console.log(usfm, 'usfm data');
 
     return usfm;
   }
@@ -113,7 +111,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   };
   const writeBackPerfUSFMandUpdateConfig = async (generatedPerfUSFM, currentBookCode) => {
     try {
-      console.log('generated perf in useEffect &&&&&&&&&&&&&&&&&&&&&&&& : ', generatedPerfUSFM);
       const fs = window.require('fs');
       setChapterResolveDone(false);
       // setCurrentPerfInputArr([]);
@@ -152,7 +149,6 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
     console.log('handle finish book resolution ===> ', resolvedBooks);
     // work on single book
     const resolvedMergeJson = resolvedBooks[selectedBook]?.mergeJson;
-    console.log('resolvedMergeJson', resolvedMergeJson);
     const generatedUSFM = await parseJsonToUsfm(resolvedMergeJson);
 
     if (generatedUSFM && resolvedMergeJson.book.bookCode) {
@@ -189,10 +185,14 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       const restOfTheChapters = conflictedChapters[selectedBook]?.filter((chNo) => chNo !== selectedChapter);
       setConflictedChapters((prev) => ({ ...prev, [selectedBook]: restOfTheChapters || [] }));
       let isBookResolved = false;
+      console.log('conflictedChapters,selectedChapter', conflictedChapters, selectedChapter, restOfTheChapters);
+
       if (!restOfTheChapters) {
         setResolvedBooks((prev) => [...prev, selectedBook]);
+        console.log('restOfTheChapters?.length', restOfTheChapters?.length);
         // isBookResolved = true;
       } else if (restOfTheChapters?.length === 0) {
+        console.log('inside else if (restOfTheChapters?.length === 0) ');
         // completed conflicts for that particualr book
         flushSync(() => {
           setLoading(true);
@@ -331,6 +331,7 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
   // useEffect to trigger completed all conflict Resolution
   useEffect(() => {
     if (resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length) {
+      console.log('resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length', resolvedBooks.length >= usfmJsons?.conflictMeta?.files?.length);
       setFinishedConflict(true);
     } else {
       setFinishedConflict(false);
