@@ -284,6 +284,8 @@ export const Fa = {
   'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
   'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
   'label-upload-help-resources': 'Upload Help Resources',
+  'msg-conflict-resolution-duplicate-book': 'حل تعارض برای {{bookId}} در حال انجام است. آیا می‌خواهید از نو شروع کنید؟ تمام پیشرفت خود را از دست خواهید داد و قابل بازگشت نخواهد بود.',
+  'label-startover': 'شروع مجدد',
   'obs-export-option': 'گزینه‌های برون‌ریزی OBS',
   'obs-text-only': 'فقط متن (فایل‌های MD)',
   'obs-complete': 'کامل (صدا + متن)',

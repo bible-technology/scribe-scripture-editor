@@ -284,6 +284,8 @@ export const Hi = {
   'tooltip-supported-resources': 'समर्थित संसाधन TN, TW, TQ, TA हैं।',
   'label-upload-help-resources': 'सहायता संसाधन अपलोड करें',
   'label-filter': 'फ़िल्टर',
+  'msg-conflict-resolution-duplicate-book': '{{bookId}} के लिए संघर्ष समाधान प्रगति में है। क्या आप फिर से शुरू करना चाहते हैं? आप अपनी सारी प्रगति खो देंगे और इसे वापस नहीं किया जा सकता।',
+  'label-startover': 'फिर से शुरू करें',
   'label-book-selection': 'पुस्तक चयन',
   'label-chapter-selection': 'अध्याय चयन',
   'label-select': 'चयन्',

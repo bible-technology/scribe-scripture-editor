@@ -283,6 +283,8 @@ export const Ar = {
   'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
   'tooltip-supported-resources': 'supported resources are TN, TW, TQ, TA',
   'label-upload-help-resources': 'Upload Help Resources',
+  'msg-conflict-resolution-duplicate-book': 'حل النزاع للكتاب {{bookId}} قيد التقدم. هل تريد البدء من جديد؟ ستفقد كل تقدمك ولا يمكن التراجع عن ذلك.',
+  'label-startover': 'ابدأ من جديد',
   'obs-export-option': 'خيارات تصدير OBS',
   'obs-text-only': 'نص فقط (ملفات MD)',
   'obs-complete': 'كامل (صوت + نص)',

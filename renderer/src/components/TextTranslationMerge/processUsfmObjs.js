@@ -26,7 +26,6 @@ async function processAndIdentiyVerseChangeinUSFMJsons(currentJson, IncomingJson
           }
         });
       });
-      // console.log({ mergeTempJson, conflictedChapters });
     };
     comparisonResult().then(() => resolve([mergeTempJson, conflictedChapters])).catch((err) => reject(err));
   });

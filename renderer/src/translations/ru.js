@@ -284,6 +284,8 @@ export const Ru = {
   'tooltip-supported-resources': 'поддерживаемые ресурсы: TN, TW, TQ, TA',
   'label-upload-help-resources': 'Загрузить справочные ресурсы',
   'label-filter': 'фильтр',
+  'msg-conflict-resolution-duplicate-book': 'Разрешение конфликта для {{bookId}} выполняется. Хотите начать заново? Вы потеряете весь свой прогресс, и это нельзя будет отменить.',
+  'label-startover': 'начать заново',
   'label-book-selection': 'Выбор книги',
   'label-chapter-selection': 'Выбор главы',
   'label-select': 'Выбирать',

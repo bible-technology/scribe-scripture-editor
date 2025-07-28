@@ -284,6 +284,8 @@ export const Fr = {
   'tooltip-supported-resources': 'les ressources prises en charge sont TN, TW, TQ, TA',
   'label-upload-help-resources': 'Télécharger des ressources d\'aide',
   'label-filter': 'Filtre',
+  'msg-conflict-resolution-duplicate-book': 'La résolution de conflit pour {{bookId}} est en cours. Voulez-vous recommencer ? Vous perdrez tous vos progrès et cela ne peut pas être annulé.',
+  'label-startover': 'recommencer',
   'label-book-selection': 'Sélection de livres',
   'label-chapter-selection': 'Sélection de chapitre',
   'label-select': 'Sélectionner',
