@@ -53,15 +53,40 @@ const ProjectRowItem = ({
     });
   };
 
+  const getDropdownStyle = () => {
+    if (!menuButtonRef.current) { return {}; }
+    const rect = menuButtonRef.current.getBoundingClientRect();
+    const headerHeight = 64;
+    const baseItemHeight = 40;
+    const padding = 8;
+    let itemCount = 3;
+    if (project.type === 'Audio') {
+      itemCount = 4;
+    }
+    const actualDropdownHeight = (itemCount * baseItemHeight) + padding;
+    return {
+      top: dropdownPosition === 'top'
+        ? `${Math.max(rect.top - actualDropdownHeight - 4, headerHeight + 8)}px`
+        : `${rect.bottom + 4}px`,
+      left: `${rect.right - 224}px`,
+    };
+  };
+
   const handleMenuOpen = () => {
     if (menuButtonRef.current) {
       const buttonRect = menuButtonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = 200;
-      const spaceBelow = viewportHeight - buttonRect.bottom;
-      const spaceAbove = buttonRect.top;
+      const baseItemHeight = 40;
+      const padding = 8;
+      let itemCount = 3;
+      if (project.type === 'Audio') {
+        itemCount = 4;
+      }
+      const actualDropdownHeight = (itemCount * baseItemHeight) + padding;
+      const spaceBelow = viewportHeight - buttonRect.bottom - 20;
+      const spaceAbove = buttonRect.top - 64 - 20;
 
-      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+      if (spaceBelow < actualDropdownHeight && spaceAbove > actualDropdownHeight) {
         setDropdownPosition('top');
       } else {
         setDropdownPosition('bottom');
@@ -152,11 +177,9 @@ const ProjectRowItem = ({
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className={`absolute right-0 w-56 z-50 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
-                      dropdownPosition === 'top'
-                        ? 'bottom-full mb-2 origin-bottom-right'
-                        : 'top-full mt-2 origin-top-right'
-                    }`}
+                    <Menu.Items
+                      className="fixed w-56 z-50 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                      style={getDropdownStyle()}
                     >
                       <div className="px-1 py-1">
                         <Menu.Item>
