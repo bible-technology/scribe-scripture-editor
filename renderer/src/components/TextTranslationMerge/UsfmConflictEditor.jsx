@@ -174,61 +174,66 @@ function UsfmConflictEditor({
                   item.resolved.status ? (
                     <div>
                       <div className="flex gap-2 border border-gray-500 w-full p-1 rounded-md relative">
-                        {/* <div>{item.resolved.resolvedContent.verseText}</div> */}
                         <div>{item.verseText}</div>
                         {conflictedChapters?.includes(selectedChapter) && (
-                          <ArrowPathRoundedSquareIcon
-                            className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
-                            onClick={() => handleResetSingle(item.verseNumber)}
-                          />
+                          <div>
+                            <ArrowPathRoundedSquareIcon
+                              className="w-6 h-6 bg-gray-300 text-black p-1  rounded-full cursor-pointer "
+                              onClick={() => handleResetSingle(item.verseNumber)}
+                            />
+                          </div>
                         )}
                       </div>
                     </div>
                   )
                     : (
                       // conflict Exist Show Both data
-                      <div className="flex px-2 gap-4 min-h-[6rem]">
+                      <div className="flex px-2 gap-4 min-h-[6rem] w-full">
                         <div className="flex flex-col gap-2  w-full p-1 rounded-md ">
                           <div
                             title="Click to accept current change"
                             role="button"
                             tabIndex={-1}
-                            className=" p-1"
+                            className=" p-1 flex flex-row justify-between w-full items-center "
                           >
-                            {item.current.verseText}
+                            <div>
+                              {item.current.verseText}
+                            </div>
+                            <div className="mx-5">
+                              <div
+                                role="button"
+                                tabIndex={-1}
+                                onClick={() => handleResolveSingle('current', item.verseNumber)}
+                                title={t('tooltip-merge-orginal-btn')}
+                                className="bg-black w-6 h-6 rounded-full flex justify-center items-center"
+                              >
+                                <ArrowSmallUpIcon className="w-5 h-5 text-white " />
+                              </div>
+                            </div>
                           </div>
                           <div
                             title="Click to accept incoming change"
                             role="button"
                             tabIndex={-1}
-                            className=" p-1 text-success"
+                            className=" p-1 text-success flex flex-row justify-between items-center "
                           >
-                            {item.incoming.verseText}
+                            <div>
+                              {item.incoming.verseText}
+                            </div>
+                            <div className="mx-5">
+                              <div
+                                role="button"
+                                tabIndex={-3}
+                                onClick={() => handleResolveSingle('incoming', item.verseNumber)}
+                                title={t('tooltip-merge-new-btn')}
+                                className="bg-success w-6 h-6 rounded-full flex justify-center items-center"
+                              >
+                                <ArrowSmallDownIcon className="w-5 h-5 text-white" />
+                              </div>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex flex-col justify-around self-stretch">
-                          {/* current */}
-                          <div
-                            role="button"
-                            tabIndex={-1}
-                            onClick={() => handleResolveSingle('current', item.verseNumber)}
-                            title={t('tooltip-merge-orginal-btn')}
-                            className="bg-black w-6 h-6 rounded-full flex justify-center items-center"
-                          >
-                            <ArrowSmallUpIcon className="w-4 h-4 text-white " />
-                          </div>
-                          {/* Incoming */}
-                          <div
-                            role="button"
-                            tabIndex={-3}
-                            onClick={() => handleResolveSingle('incoming', item.verseNumber)}
-                            title={t('tooltip-merge-new-btn')}
-                            className="bg-success w-6 h-6 rounded-full flex justify-center items-center"
-                          >
-                            <ArrowSmallDownIcon className="w-5 h-5 text-white" />
-                          </div>
-                        </div>
                       </div>
                     )
                 )
