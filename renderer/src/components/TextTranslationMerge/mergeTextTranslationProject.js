@@ -1,6 +1,7 @@
 import updateTranslationSB from '@/core/burrito/updateTranslationSB';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
+import * as logger from '../../logger';
 
 export const mergeTextTranslationProject = async (incomingPath, currentUser, setConflictPopup, setProcessMerge, incomingMeta, triggerSnackBar, startOver = false) => {
   try {
@@ -93,7 +94,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
   // rest of the codes are in the current implementation ofr book wise chapter conflict
   } catch (err) {
     setProcessMerge(false);
-    console.error('Failue in MergeText Process : ', err);
+    logger.error('Failue in MergeText Process : ', err);
     throw new Error(err);
   }
 };

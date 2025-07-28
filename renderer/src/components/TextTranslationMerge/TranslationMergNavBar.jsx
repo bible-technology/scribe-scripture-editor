@@ -1,7 +1,6 @@
 function TranslationMergNavBar({
   conflictedBooks, selectedBook, setSelectedBook, resolvedBooks, disableSelection, conflictedChapters, selectedChapter, setSelectedChapter,
 }) {
-  // const { t } = useTranslation();
   return (
     <div className="bg-white border-2 rounded-md border-black h-[78vh] overflow-hidden ">
       <div className="flex items-center justify-between bg-black py-1.5 px-2.5">
@@ -11,7 +10,6 @@ function TranslationMergNavBar({
           {' '}
           {`${conflictedBooks?.length} `}
         </span>
-        {/* <Cog8ToothIcon className="w-5 h-5 text-white" /> */}
       </div>
 
       <div className="h-full overflow-auto ">
@@ -21,7 +19,6 @@ function TranslationMergNavBar({
             return (
               <li
                 key={book}
-                // className="w-full"
                 className={`w-full py-2 mb-4 ${resolvedBooks.includes(book)
                   ? 'pointer-events-none'
                   : `${selectedBook === book ? 'bg-primary/70' : 'hover:bg-primary cursor-pointer'}`} `}

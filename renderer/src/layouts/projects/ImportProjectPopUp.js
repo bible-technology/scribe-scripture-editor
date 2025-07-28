@@ -242,6 +242,16 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
       checkBurritoVersion();
+      const path = require('path');
+      const fs = window.require('fs');
+      const newpath = localStorage.getItem('userPath');
+      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+      const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+      const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
+      
+      if (fs.existsSync(projectMergePath)) {
+        fs.rmSync(projectMergePath, { recursive: true, force: true });
+      }
     } 
     else if(model.buttonName === t('label-startover')) {
       startTextTranslationMergeProcess(true)
@@ -298,33 +308,33 @@ const MergeFunction = async () => {
 // Add these functions to handle dialog closing after conflict resolution
 
 // This should be called when conflict resolution is completed successfully
-const handleConflictResolutionComplete = () => {
-  setSbData({});
-  setFolderPath();
-  setConflictPopup({ open: false, data: {} }); // Close conflict popup
-  close("ConflictResolved");
-  triggerSnackBar('success', 'Project merged successfully');
-};
+// const handleConflictResolutionComplete = () => {
+//   setSbData({});
+//   setFolderPath();
+//   setConflictPopup({ open: false, data: {} }); // Close conflict popup
+//   close("ConflictResolved");
+//   triggerSnackBar('success', 'Project merged successfully');
+// };
 
-// This should be called when user cancels conflict resolution
-const handleConflictResolutionCancel = () => {
-  setSbData({});
-  setFolderPath();
-  setConflictPopup({ open: false, data: {} }); // Close conflict popup
-  close("ConflictCancelled");
-};
+// // This should be called when user cancels conflict resolution
+// const handleConflictResolutionCancel = () => {
+//   setSbData({});
+//   setFolderPath();
+//   setConflictPopup({ open: false, data: {} }); // Close conflict popup
+//   close("ConflictCancelled");
+// };
 
 // Update the conflict popup data to include these callbacks
-const openConflictPopupWithCallbacks = (conflictData) => {
-  setConflictPopup({
-    open: true,
-    data: {
-      ...conflictData,
-      onComplete: handleConflictResolutionComplete,
-      onCancel: handleConflictResolutionCancel,
-    },
-  });
-};
+// const openConflictPopupWithCallbacks = (conflictData) => {
+//   setConflictPopup({
+//     open: true,
+//     data: {
+//       ...conflictData,
+//       onComplete: handleConflictResolutionComplete,
+//       onCancel: handleConflictResolutionCancel,
+//     },
+//   });
+// };
 
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
@@ -401,7 +411,8 @@ const openConflictPopupWithCallbacks = (conflictData) => {
                     {t('label-import-project')}
                   </div>
                   <button
-                    onClick={() => { setFolderPath(); setSbData({}); close('Backdrop') }}                    type="button"
+                    onClick={() => { setFolderPath(); setSbData({}); close('Backdrop') }}
+                    type="button"
                     className="focus:outline-none"
                   >
                     <CloseIcon
@@ -547,12 +558,7 @@ const openConflictPopupWithCallbacks = (conflictData) => {
         buttonName={model.buttonName}
         closeModal={() => callFunction()}
         buttonName2={model?.buttonName2}
-        // buttonName2={{
-        //   active: merge,
-        //   loading: processMerge,
-        //   name:t('label-merge'),
-        //   action: () => MergeFunction(),
-        // }}
+   
       />
     </>
   );

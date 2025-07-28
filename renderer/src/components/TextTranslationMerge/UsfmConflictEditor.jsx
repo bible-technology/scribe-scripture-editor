@@ -13,10 +13,6 @@ function UsfmConflictEditor({
   const [resetAlll, setResetAll] = useState(false);
   const { t } = useTranslation();
 
-  console.log({
-    usfmJsons, currentProjectMeta, selectedChapter,
-  });
-
   const resolveAllTogether = (type) => {
     usfmJsons[selectedBook].mergeJson.chapters.slice(selectedChapter - 1, selectedChapter)[0]
       .contents.forEach((verseObj) => {
@@ -118,7 +114,7 @@ function UsfmConflictEditor({
   return (
     <div className="bg-white flex-1 border-2 border-gray-100 rounded-md ">
       {/* Header and Buttons */}
-      <div className="flex justify-between bg-gray-100 border border-gray-100 ">
+      <div className="sticky top-0 z-10 flex justify-between bg-gray-100 border border-gray-100 ">
         <div className="flex w-full justify-between">
           <div className="flex py-1.5 px-1 gap-2.5">
             <span className="px-2.5 py-0.5 text-black font-semibold tracking-wider text-xs uppercase rounded-xl">{t('label-comparison')}</span>
@@ -145,17 +141,6 @@ function UsfmConflictEditor({
 
             </button>
 
-            {/* <button
-              type="button"
-              onClick={() => resolveAllTogether('both')}
-              disabled={resolveAllActive === false}
-              title={t('tooltip-merge-all-both-btn')}
-              className={`${resolveAllActive ? 'px-2.5 py-0.5 bg-blue-500 text-white font-semibold tracking-wider text-xs uppercase rounded-xl' : 'hidden'}`}
-            >
-              {t('label-both')}
-
-            </button> */}
-
             <button
               type="button"
               onClick={() => resetAllResolved()}
@@ -168,12 +153,8 @@ function UsfmConflictEditor({
 
           </div>
         </div>
-        {/* <div className="bg-black flex items-center px-2 rounded-tr-md">
-          <Cog8ToothIcon className="w-5 h-5 text-white" />
-        </div> */}
-      </div>
 
-      {/* --------------------------------------------- testing -------------------------------------------- */}
+      </div>
 
       <div className="">
         {selectedChapter && usfmJsons[selectedBook].mergeJson
@@ -185,7 +166,7 @@ function UsfmConflictEditor({
                 className={`flex gap-2 mb-2 
               ${currentProjectMeta.languages[0].scriptDirection?.toLowerCase() === 'rtl' ? 'flex-row-reverse' : 'flex-row'}`}
               >
-                <span className="font-medium self-center">{item.verseNumber}</span>
+                <span className="font-medium ">{item.verseNumber}</span>
                 {/* conflict is / was there */}
                 {(item?.resolved) ? (
 
@@ -213,7 +194,6 @@ function UsfmConflictEditor({
                             role="button"
                             tabIndex={-1}
                             className=" p-1"
-                          // onClick={() => handleResolveSingle('current', item.verseNumber)}
                           >
                             {item.current.verseText}
                           </div>
@@ -222,7 +202,6 @@ function UsfmConflictEditor({
                             role="button"
                             tabIndex={-1}
                             className=" p-1 text-success"
-                          // onClick={() => handleResolveSingle('incoming', item.verseNumber)}
                           >
                             {item.incoming.verseText}
                           </div>
@@ -234,32 +213,16 @@ function UsfmConflictEditor({
                             role="button"
                             tabIndex={-1}
                             onClick={() => handleResolveSingle('current', item.verseNumber)}
-                            // onMouseEnter={() => setHoveredId('current')}
-                            // onMouseLeave={() => setHoveredId('')}
                             title={t('tooltip-merge-orginal-btn')}
                             className="bg-black w-6 h-6 rounded-full flex justify-center items-center"
                           >
                             <ArrowSmallUpIcon className="w-4 h-4 text-white " />
                           </div>
-                          {/* Both */}
-                          {/* <div
-                            role="button"
-                            tabIndex={-2}
-                            onClick={() => { }}
-                            onMouseEnter={() => setHoveredId('both')}
-                            onMouseLeave={() => setHoveredId('')}
-                            title={t('tooltip-merge-both-btn')}
-                            className="bg-blue-500 w-6 h-6 rounded-full flex justify-center items-center"
-                          >
-                            <ArrowsUpDownIcon className="w-4 h-4 text-white" />
-                          </div> */}
                           {/* Incoming */}
                           <div
                             role="button"
                             tabIndex={-3}
                             onClick={() => handleResolveSingle('incoming', item.verseNumber)}
-                            // onMouseEnter={() => setHoveredId('incoming')}
-                            // onMouseLeave={() => setHoveredId('')}
                             title={t('tooltip-merge-new-btn')}
                             className="bg-success w-6 h-6 rounded-full flex justify-center items-center"
                           >
