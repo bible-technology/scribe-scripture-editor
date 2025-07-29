@@ -155,12 +155,11 @@ export default function ProjectsLayout(props) {
 
             </header>
           )}
-          <div className="max-h-[85%] overflow-y-auto  ">
+
+          <div className="max-h-[88vh] overflow-hidden  ">
             {children}
           </div>
-
         </div>
-
       </div>
       <SnackBar
         openSnackBar={snackBar}

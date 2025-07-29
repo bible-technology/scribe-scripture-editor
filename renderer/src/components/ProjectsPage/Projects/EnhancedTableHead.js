@@ -53,6 +53,7 @@ function EnhancedTableHead(props) {
       <tr>
         <th
           scope="col"
+          className="sticky top-0 z-10 bg-gray-50"
           // colSpan="2"
           // className="px-4 py-3 text-left text-xs font-medium text-gray-400"
         >
@@ -62,7 +63,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            className="bg-gray-50"
+            className="sticky top-0 z-10 bg-gray-50"
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <div className="flex content-center">
@@ -173,7 +174,7 @@ function EnhancedTableHead(props) {
 
         <th
           scope="col"
-          className="px-4 py-3 text-left text-xs font-medium text-gray-400"
+          className="px-4 py-3 text-left text-xs font-medium text-gray-400 sticky top-0 z-10 bg-gray-50"
         >
           {/* <ExternalLinkIcon className="h-5 w-5" aria-hidden="true" /> */}
         </th>

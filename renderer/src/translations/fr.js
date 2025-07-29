@@ -302,4 +302,6 @@ export const Fr = {
   'obs-combined-audio': 'Audio des histoires combinées',
   'obs-default-audio-text': 'Audio par défaut + Texte',
   'label-resource-tir': 'Ressources multimédias de traduction',
+  'dynamic-msg-confirm-replace-panel-resource': 'Un projet existant portant le même nom a été trouvé ! Vérifiez l’onglet "Archivé" ou l’onglet "Projets". Appuyez sur "Remplacer" pour écraser le contenu existant dans les livres qui se chevauchent. Appuyez sur "Annuler" pour éviter les modifications.',
+
 };
