@@ -101,6 +101,11 @@ export const ListResources = ({
       setSnackText('Download in progress');
     }
   };
+  const handleRemoveSuccess = (message) => {
+    setOpenSnackBar(true);
+    setError('success');
+    setSnackText(message);
+  };
   const snackBarAction = {
     setOpenSnackBar,
     setError,
@@ -188,7 +193,7 @@ export const ListResources = ({
   return (
     <div className="h-full">
       {selectResource
-        && loading ? <LoadingScreen />
+      && loading ? <LoadingScreen />
         : selectResource && Object.keys(filteredResources).length > 0 && (
           <table className="w-full text-left text-sm">
             <thead>
@@ -312,13 +317,13 @@ export const ListResources = ({
                           resource={resource}
                           selectResource={selectResource}
                           setRenderApp={setRenderApp}
+                          onRemoveSuccess={handleRemoveSuccess}
                         />
                       </div>
                     </div>
                   </td>
                 </tr>
               ))}
-
               <tr className="bg-gray-100 border-y-2">
                 <td colSpan="6" className="p-2 text-gray-900 font-bold">
                   {t('label-online-resources')}
@@ -349,7 +354,6 @@ export const ListResources = ({
                   <td className="p-2 uppercase">
                     <div
                       className="focus:outline-none"
-                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
@@ -359,7 +363,6 @@ export const ListResources = ({
                   <td className="p-2">
                     <div
                       className="focus:outline-none"
-                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
@@ -369,7 +372,6 @@ export const ListResources = ({
                   <td className="p-2">
                     <div
                       className="focus:outline-none"
-                      // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
                       role="button"
                       tabIndex="0"
                     >
@@ -390,7 +392,6 @@ export const ListResources = ({
                         role="button"
                         tabIndex={0}
                         title={t('tooltip-download')}
-
                       >
                         {downloading && currentDownloading?.responseData?.id === notes?.responseData?.id ? (
                           <div className="w-5 h-5 text-primary group-hover:text-white">
@@ -411,7 +412,6 @@ export const ListResources = ({
                 </tr>
               ))}
             </tbody>
-
           </table>
         )}
     </div>

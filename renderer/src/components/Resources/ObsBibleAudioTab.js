@@ -17,6 +17,9 @@ export default function ObsBibleAudioTab({
   loading,
   setSubMenuItems,
   subMenuItems,
+  setOpenSnackBar,
+  setError,
+  setSnackText,
 }) {
   const { t } = useTranslation();
   const [renderApp, setRenderApp] = useState(false);
@@ -31,6 +34,11 @@ export default function ObsBibleAudioTab({
     { resourceType: 'audio', flavorName: 'audioTranslation' },
   ];
   const currentResourceType = resourceMap.find((resourceItem) => resourceItem.resourceType === selectResource);
+  const handleRemoveSuccess = (message) => {
+    setOpenSnackBar(true);
+    setError('success');
+    setSnackText(message);
+  };
 
   useEffect(() => { // LOADS  locally available
     readLocalResources(username, setSubMenuItems);
@@ -77,7 +85,6 @@ export default function ObsBibleAudioTab({
                     filteredBibleObsAudio.map((ref) => (ref?.value?.type?.flavorType?.flavor?.name === currentResourceType.flavorName
                       ? (
                         <tr className="hover:bg-gray-200" key={ref.value.identification.name.en + ref.projectDir}>
-
                           <td colSpan={2} className="p-2">
                             <div
                               className="focus:outline-none"
@@ -132,44 +139,44 @@ export default function ObsBibleAudioTab({
                             </div>
                           </td>
                           {selectResource !== 'audio'
-                            && (
-                              <>
-                                <td className="p-2 text-gray-600">
-                                  <div
-                                    className="focus:outline-none"
-                                    onClick={(e) => handleRowSelect(
-                                      e,
-                                      ref.value.languages[0].name.en,
-                                      ref.projectDir,
-                                      '',
-                                      ref.value.type.flavorType.name,
-                                      ref.type,
-                                    )}
-                                    role="button"
-                                    tabIndex="0"
-                                  >
-                                    {ref?.value?.resourceMeta && (ref.value.resourceMeta.released).split('T')[0]}
-                                  </div>
-                                </td>
-                                <td className="p-2 text-gray-600">
-                                  <div
-                                    className="focus:outline-none"
-                                    onClick={(e) => handleRowSelect(
-                                      e,
-                                      ref.value.languages[0].name.en,
-                                      ref.projectDir,
-                                      '',
-                                      ref.value.type.flavorType.name,
-                                      ref.type,
-                                    )}
-                                    role="button"
-                                    tabIndex="0"
-                                  >
-                                    {ref?.value?.resourceMeta && ref?.value?.resourceMeta?.release.tag_name}
-                                  </div>
-                                </td>
-                              </>
-                            )}
+                          && (
+                            <>
+                              <td className="p-2 text-gray-600">
+                                <div
+                                  className="focus:outline-none"
+                                  onClick={(e) => handleRowSelect(
+                                    e,
+                                    ref.value.languages[0].name.en,
+                                    ref.projectDir,
+                                    '',
+                                    ref.value.type.flavorType.name,
+                                    ref.type,
+                                  )}
+                                  role="button"
+                                  tabIndex="0"
+                                >
+                                  {ref?.value?.resourceMeta && (ref.value.resourceMeta.released).split('T')[0]}
+                                </div>
+                              </td>
+                              <td className="p-2 text-gray-600">
+                                <div
+                                  className="focus:outline-none"
+                                  onClick={(e) => handleRowSelect(
+                                    e,
+                                    ref.value.languages[0].name.en,
+                                    ref.projectDir,
+                                    '',
+                                    ref.value.type.flavorType.name,
+                                    ref.type,
+                                  )}
+                                  role="button"
+                                  tabIndex="0"
+                                >
+                                  {ref?.value?.resourceMeta && ref?.value?.resourceMeta?.release.tag_name}
+                                </div>
+                              </td>
+                            </>
+                          )}
                           <td className="p-2">
                             <div className="flex justify-center items-center gap-4">
                               <div className="text-xxs text-gray-400">
@@ -177,13 +184,14 @@ export default function ObsBibleAudioTab({
                               </div>
                               <div className="flex justify-center items-center gap-4">
                                 {ref?.value?.resourceMeta?.released
-                                  && (
-                                    <CheckHelpsUpdatePopUp resource={ref} selectResource={selectResource} />
-                                  )}
+                                && (
+                                  <CheckHelpsUpdatePopUp resource={ref} selectResource={selectResource} />
+                                )}
                                 <RemoveResource
                                   resource={ref}
                                   selectResource={selectResource}
                                   setRenderApp={setRenderApp}
+                                  onRemoveSuccess={handleRemoveSuccess}
                                 />
                               </div>
                             </div>

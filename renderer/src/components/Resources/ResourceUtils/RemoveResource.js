@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { SnackBar } from '@/components/SnackBar';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import localForage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -90,14 +89,10 @@ const ResourceResetAfterCheckSameOnRefResourceAgSettings = async (setResetResour
 };
 
 function RemoveResource({
-  resource, selectResource, setRenderApp,
+  resource, selectResource, setRenderApp, onRemoveSuccess,
 }) {
   logger.warn('removeResource.js', 'inside remove resource');
   const { t } = useTranslation();
-  const [snackBar, setOpenSnackBar] = React.useState(false);
-  const [snackText, setSnackText] = React.useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [notify, setNotify] = React.useState();
   const [openModal, setOpenModal] = React.useState(false);
 
   /**
@@ -170,20 +165,17 @@ function RemoveResource({
           linkedResErr = await fs.rmdir(path.join(folder, linkedResourceName), { recursive: true }, (err) => err);
         }
         if (err || linkedResErr) {
-          setOpenSnackBar(true);
-          setNotify('failure');
-          setSnackText('Remove Resource Failed');
+          if (onRemoveSuccess) {
+            onRemoveSuccess('Remove Resource Failed');
+          }
           return;
-          // throw new Error(`Remove Resource failed :  ${err}`);
         }
-        // console.log('resource remove success');
         // read Scribe-settings of the project
         await ResourceResetAfterCheckSameOnRefResourceAgSettings(setResetResourceOnDeleteOffline, resource);
-        // handleRowSelect(null, null, null, null, '');
+        if (onRemoveSuccess) {
+          onRemoveSuccess('Removed Resource Successfully');
+        }
         setRenderApp(true);
-        setOpenSnackBar(true);
-        setNotify('success');
-        setSnackText('Removed Resource Successfully');
       });
     });
   };
@@ -201,15 +193,6 @@ function RemoveResource({
           className="w-4 h-4"
         />
       </div>
-
-      <SnackBar
-        openSnackBar={snackBar}
-        snackText={snackText}
-        setOpenSnackBar={setOpenSnackBar}
-        setSnackText={setSnackText}
-        error={notify}
-      />
-
       <ConfirmationModal
         openModal={openModal}
         title={t('modal-title-remove-resource')}
@@ -227,6 +210,7 @@ RemoveResource.propTypes = {
   resource: PropTypes.object,
   selectResource: PropTypes.string,
   setRenderApp: PropTypes.func,
+  onRemoveSuccess: PropTypes.func,
 };
 
 export default RemoveResource;

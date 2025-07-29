@@ -23,6 +23,9 @@ export default function ResourceTabPane({
   subMenuItems,
   setSubMenuItems,
   setfilteredBibleObsAudio,
+  setOpenSnackBar,
+  setError,
+  setSnackText,
 }) {
   const { t } = useTranslation();
   const [isOpenDonwloadPopUp, setIsOpenDonwloadPopUp] = useState(false);
@@ -128,6 +131,9 @@ export default function ResourceTabPane({
                 handleRowSelect={handleRowSelect}
                 setSubMenuItems={setSubMenuItems}
                 subMenuItems={subMenuItems}
+                setOpenSnackBar={setOpenSnackBar}
+                setError={setError}
+                setSnackText={setSnackText}
               />
             </Tab.Panel>
           )}

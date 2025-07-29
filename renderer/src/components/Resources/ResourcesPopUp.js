@@ -180,6 +180,9 @@ export default function ResourcesPopUp(
                       setSubMenuItems={setSubMenuItems}
                       setfilteredBibleObsAudio={setfilteredBibleObsAudio}
                       referenceResources={referenceResources}
+                      setOpenSnackBar={setOpenSnackBar}
+                      setError={setError}
+                      setSnackText={setSnackText}
                     />
                   )
                   : (
