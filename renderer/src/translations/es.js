@@ -298,4 +298,5 @@ export const Es = {
   'obs-combined-audio': 'Audio de historias combinadas',
   'obs-default-audio-text': 'Audio predeterminado + Texto',
   'label-resource-tir': 'Recursos multimedia de traducción',
+  'dynamic-msg-confirm-replace-panel-resource': '¡Se encontró un proyecto existente con el mismo nombre! Revisa la pestaña "Archivado" o la pestaña "Proyectos". Pulsa "Reemplazar" para sobrescribir el contenido existente en libros superpuestos. Pulsa "Cancelar" para evitar cambios.',
 };

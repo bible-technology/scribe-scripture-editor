@@ -237,7 +237,7 @@ const MainPlayer = () => {
   }, [audioContent, bookId, verse, chapter]);
 
   return (
-    <>
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
       <Player
         url={currentUrl || {}}
         blobUrl={newBlob}
@@ -262,7 +262,7 @@ const MainPlayer = () => {
         buttonName={model.buttonName}
         closeModal={() => handleFunction()}
       />
-    </>
+    </div>
 
   );
 };

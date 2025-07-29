@@ -42,7 +42,7 @@ export default function ImportResource({
     setValid(false);
   }
 
-  const raiseSnackbarErroOrWarning = async (data) => {
+  const raiseSnackbarErrorOrWarning = async (data) => {
     // type : success/error/warning , message : error / message
     await addNotification('Resource', data.message, data.type);
     if (data?.message && data?.type) {
@@ -52,21 +52,24 @@ export default function ImportResource({
     }
   };
 
-  const importReference = async (projectsDir, name, burritoType) => {
+  const importReference = async (projectsDir, name, burritoType, sourceFolderPath) => {
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
     const path = require('path');
     let dirPath;
+    const sourceFolder = sourceFolderPath || folderPath;
     // Identify the projects with 'audio' folder (projects with Text will have 'audio' folder)
-    if (burritoType === 'scripture / audioTranslation' && !fs.existsSync(path.join(folderPath, 'audio'))) {
+    if (burritoType === 'scripture / audioTranslation' && !fs.existsSync(path.join(sourceFolder, 'audio'))) {
       dirPath = path.join(projectsDir, name, 'audio');
     } else {
       dirPath = path.join(projectsDir, name);
     }
-    await fse.copy(folderPath, dirPath, { overwrite: true })
+    await fse.copy(sourceFolder, dirPath, { overwrite: true })
       .then(async () => {
-        if (burritoType === 'scripture / audioTranslation' && !fs.existsSync(path.join(folderPath, 'audio'))) {
-          await fs.renameSync(path.join(projectsDir, name, 'audio', 'metadata.json'), path.join(projectsDir, name, 'metadata.json'));
+        if (burritoType === 'scripture / audioTranslation' && !fs.existsSync(path.join(sourceFolder, 'audio'))) {
+          const oldMetadataPath = path.join(projectsDir, name, 'audio', 'metadata.json');
+          const newMetadataPath = path.join(projectsDir, name, 'metadata.json');
+          await fs.renameSync(oldMetadataPath, newMetadataPath);
         }
         setOpenSnackBar(true);
         setNotify('success');
@@ -79,7 +82,9 @@ export default function ImportResource({
       })
       .catch((err) => {
         logger.debug('ImportResource.js', 'error in uploading resource to specified location');
-        setNotify(err);
+        setNotify('error');
+        setSnackText(`Copy failed: ${err.message}`);
+        setOpenSnackBar(true);
       });
     setFolderPath('');
   };
@@ -97,7 +102,7 @@ export default function ImportResource({
 
       // section for upload local door43 helps resource (upload and convert to burrito type)
       if (selectResource === 'local-helps') {
-        await uploadLocalHelpsResources(fs, path, projectsDir, folderPath, raiseSnackbarErroOrWarning, logger);
+        await uploadLocalHelpsResources(fs, path, projectsDir, folderPath, raiseSnackbarErrorOrWarning, logger);
       } else {
         // section for burrito based local resource for bible, obs and audio
         const result = await viewBurrito(folderPath, user?.username, 'resources');
@@ -110,14 +115,17 @@ export default function ImportResource({
           // path.basename is not working for windows
           // const name = path.basename(folderPath);
           const name = (folderPath.split(/[(\\)?(/)?]/gm)).pop();
-          setDataForImport({ projectsDir, name });
-          if (fs.existsSync(path.join(projectsDir, result.projectName))) {
+          setDataForImport({
+            projectsDir, name, burritoType: result.burritoType, folderPath,
+          });
+          const existingProjectPath = path.join(projectsDir, result.projectName);
+          if (fs.existsSync(existingProjectPath)) {
             logger.warn('ImportResource.js', 'Project already available');
             setOpenModal(true);
           } else {
             setLoading(true);
             logger.debug('ImportResource.js', 'Its a new project');
-            importReference(projectsDir, name, result.burritoType);
+            await importReference(projectsDir, name, result.burritoType, folderPath);
           }
         } else {
           setOpenSnackBar(true);
@@ -129,8 +137,9 @@ export default function ImportResource({
     } catch (err) {
       logger.debug('ImportResource.js', 'error in loading resource');
       setNotify('error');
+      setSnackText(`Upload failed: ${err.message}`);
+      setOpenSnackBar(true);
     } finally {
-      setFolderPath('');
       setLoading(false);
     }
   };
@@ -194,9 +203,13 @@ export default function ImportResource({
         openModal={openModal}
         title={t('modal-title-replace-resource')}
         setOpenModal={setOpenModal}
-        confirmMessage={t('dynamic-msg-confirm-replace-resource')}
+        confirmMessage={t('dynamic-msg-confirm-replace-panel-resource')}
         buttonName={t('btn-replace')}
-        closeModal={() => importReference(dataForImport.projectsDir, dataForImport.name)}
+        closeModal={() => {
+          if (dataForImport) {
+            importReference(dataForImport.projectsDir, dataForImport.name, dataForImport.burritoType, dataForImport.folderPath);
+          }
+        }}
       />
     </>
   );
