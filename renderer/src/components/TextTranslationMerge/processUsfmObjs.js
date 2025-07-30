@@ -13,10 +13,12 @@ async function processAndIdentiyVerseChangeinUSFMJsons(currentJson, IncomingJson
             /**
              * handle conflict detection coniditons
              * conflict only if
-             *  - both have valid string ([a-zA-Z0-9]) and not same
+             *  - both have valid unicode string ([\p{L}\p{N}]+) and not same
+             * \p{L} = any kind of letter from any language (Unicode-aware)
+             * \p{N} = any kind of number
              *  - valid content in incoming , current can be anything
              * */
-            if ((content.verseText !== IncomingVerse.verseText) && (/[a-zA-Z0-9]/.test(IncomingVerse.verseText))) {
+            if ((content.verseText !== IncomingVerse.verseText) && (/[\p{L}\p{N}]+/u.test(IncomingVerse.verseText))) {
               // add incoming data
               content.current = JSON.parse(JSON.stringify(content));
               content.incoming = IncomingVerse;
