@@ -61,9 +61,6 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
           await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
           // commit existing changes before merge start
-          // const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
-
-          console.log(JSON.stringify(commitAuthor), 'commitAuthor');
           const backupMessage = `Scribe Internal Commit Before Text Merge Start : ${projectDirName}  : ${new Date()} , startOver : ${startOver}`;
           await commitChanges(fs, sourceProjectPath, commitAuthor, backupMessage, true);
         } else {
