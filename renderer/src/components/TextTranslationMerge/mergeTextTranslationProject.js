@@ -1,4 +1,5 @@
 import updateTranslationSB from '@/core/burrito/updateTranslationSB';
+import { readUserSettings } from '@/core/projects/userSettings';
 import packageInfo from '../../../../package.json';
 import { commitChanges } from '../Sync/Isomorphic/utils';
 import * as logger from '../../logger';
@@ -10,6 +11,16 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
     const fs = window.require('fs');
     const path = require('path');
     const newpath = localStorage.getItem('userPath');
+    const userSettings = await readUserSettings();
+    let commitAuthor = { name: currentUser, email: '' };
+
+    if (userSettings?.sync?.services?.door43?.length > 0) {
+      const door43User = userSettings.sync.services.door43[0];
+      commitAuthor = {
+        name: door43User.username || currentUser,
+        email: door43User.token?.user?.email || '',
+      };
+    }
 
     await updateTranslationSB(currentUser, { name: incomingMeta.projectName, id: incomingMeta.id }, false).then(async (updatedCurrentMeta) => {
       // compare md5s of incoming and current ingredients
@@ -50,7 +61,9 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
           fs.mkdirSync(path.join(USFMMergeDirPath, projectDirName), { recursive: true });
           await fse.copy(incomingPath, path.join(USFMMergeDirPath, projectDirName, 'incoming'));
           // commit existing changes before merge start
-          const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+          // const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
+
+          console.log(JSON.stringify(commitAuthor), 'commitAuthor');
           const backupMessage = `Scribe Internal Commit Before Text Merge Start : ${projectDirName}  : ${new Date()} , startOver : ${startOver}`;
           await commitChanges(fs, sourceProjectPath, commitAuthor, backupMessage, true);
         } else {
@@ -74,6 +87,7 @@ export const mergeTextTranslationProject = async (incomingPath, currentUser, set
             incomingMeta: isNewProjectMerge ? incomingMeta : existingIncomingMeta,
             currentMeta: updatedCurrentMeta,
             projectId: incomingMeta.id[0],
+            author: commitAuthor,
             projectName: incomingMeta.projectName,
             projectFullName: projectDirName,
             sourceProjectPath,
