@@ -90,11 +90,10 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
     let sb = fs.readFileSync(path.join(filePath, 'metadata.json'));
     const metadata = JSON.parse(sb);
     // Fixing the issue of previous version of AG. The dateCreated was left empty and it will fail the validation.
-    const agId = Object.keys(metadata?.identification?.primary?.scribe);
-    result.id = agId;
+    const scribeId = Object.keys(metadata?.identification?.primary?.scribe);
+    result.id = scribeId;
     if (!metadata?.meta?.dateCreated) {
-      const agId = Object.keys(metadata?.identification?.primary?.scribe);
-      metadata.meta.dateCreated = metadata?.identification?.primary?.scribe[agId[0]].timestamp;
+      metadata.meta.dateCreated = metadata?.identification?.primary?.scribe[scribeId[0]].timestamp;
       sb = JSON.stringify(metadata);
     }
     const success = await validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
@@ -211,8 +210,8 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
     }
     // Fixing the issue of previous version of AG. The dateCreated was left empty and it will fail the validation.
     if (!metadata?.meta?.dateCreated) {
-      const agId = Object.keys(metadata?.identification?.primary?.scribe);
-      metadata.meta.dateCreated = metadata?.identification?.primary?.scribe[agId[0]].timestamp;
+      const scribeId = Object.keys(metadata?.identification?.primary?.scribe);
+      metadata.meta.dateCreated = metadata?.identification?.primary?.scribe[scribeId[0]].timestamp;
       sb = JSON.stringify(metadata);
     }
     const success = validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
