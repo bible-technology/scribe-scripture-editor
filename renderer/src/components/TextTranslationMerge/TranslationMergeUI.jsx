@@ -125,9 +125,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
       fs.writeFileSync(path.join(sourceIngredientPath, 'metadata.json'), JSON.stringify(sourceMetaJson));
 
       // commit for the overwritten usfm
-      const commitAuthor = { name: 'scribeInternal', email: 'scribe@bridgeconn.com' };
       const backupMessage = `Scribe Internal Commit - conflict resolved for book : ${currentBookCode}  : ${new Date()}`;
-      await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, commitAuthor, backupMessage, true);
+      await commitChanges(fs, usfmJsons.conflictMeta.sourceProjectPath, conflictData.data.author, backupMessage, true);
       setLoading(false);
     } catch (err) {
       logger.error('TranslationMergeUI.jsx', `Error writeBackPerfUSFMandUpdateConfig will updating metadata : ${err}`);
@@ -385,15 +384,15 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
               <div aria-label="resources-search" className="pt-1.5 pb-[6.5px]  bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
               {/* close btn section */}
               {!finishedConflict
-              && (
-                <button
-                  type="button"
-                  className="focus:outline-none w-9 h-9 bg-black text-white p-2"
-                  onClick={() => removeSection(true)}
-                >
-                  <XMarkIcon />
-                </button>
-              )}
+                && (
+                  <button
+                    type="button"
+                    className="focus:outline-none w-9 h-9 bg-black text-white p-2"
+                    onClick={() => removeSection(true)}
+                  >
+                    <XMarkIcon />
+                  </button>
+                )}
             </div>
 
             {/* contents section */}

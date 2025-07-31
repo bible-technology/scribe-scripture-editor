@@ -270,6 +270,8 @@ const MergeFunction = async () => {
   try {
     if (sbData?.burritoType === 'gloss / textStories') {
       await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+      setSbData({});
+      close('MergeFunction OBS');
     } else if (sbData?.burritoType === 'scripture / textTranslation') {      
       const path = require('path');
       const fs = window.require('fs');
