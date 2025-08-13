@@ -39,6 +39,7 @@ const ProjectRowItem = ({
   const disclosureRef = useRef(null);
   const menuButtonRef = useRef(null);
   const [dropdownPosition, setDropdownPosition] = useState('bottom');
+  const [menuStyle, setMenuStyle] = useState({});
 
   const handleDisclosureClick = () => {
     requestAnimationFrame(() => {
@@ -53,44 +54,32 @@ const ProjectRowItem = ({
     });
   };
 
-  const getDropdownStyle = () => {
-    if (!menuButtonRef.current) { return {}; }
-    const rect = menuButtonRef.current.getBoundingClientRect();
-    const headerHeight = 64;
-    const baseItemHeight = 40;
-    const padding = 8;
-    let itemCount = 3;
-    if (project.type === 'Audio') {
-      itemCount = 4;
-    }
-    const actualDropdownHeight = (itemCount * baseItemHeight) + padding;
-    return {
-      top: dropdownPosition === 'top'
-        ? `${Math.max(rect.top - actualDropdownHeight - 4, headerHeight + 8)}px`
-        : `${rect.bottom + 4}px`,
-      left: `${rect.right - 224}px`,
-    };
-  };
-
   const handleMenuOpen = () => {
     if (menuButtonRef.current) {
-      const buttonRect = menuButtonRef.current.getBoundingClientRect();
+      const rect = menuButtonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+
       const baseItemHeight = 40;
       const padding = 8;
-      let itemCount = 3;
-      if (project.type === 'Audio') {
-        itemCount = 4;
-      }
+      let itemCount = project.type === 'Audio' ? 4 : 3;
       const actualDropdownHeight = (itemCount * baseItemHeight) + padding;
-      const spaceBelow = viewportHeight - buttonRect.bottom - 20;
-      const spaceAbove = buttonRect.top - 64 - 20;
 
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      let top;
       if (spaceBelow < actualDropdownHeight && spaceAbove > actualDropdownHeight) {
-        setDropdownPosition('top');
+        top = rect.top - actualDropdownHeight;
       } else {
-        setDropdownPosition('bottom');
+        top = rect.bottom;
       }
+
+      setMenuStyle({
+        position: 'fixed',
+        top: `${top}px`,
+        left: `${rect.right - 224}px`, 
+        zIndex: 9999,
+      });
     }
   };
 
@@ -166,8 +155,9 @@ const ProjectRowItem = ({
                     className="px-1 py-1 hover:bg-gray-100 rounded"
                     onClick={handleMenuOpen}
                   >
-                    <EllipsisVerticalIcon className="h-5 w-5 text-primary" aria-label="menu-project" aria-hidden="true" />
+                    <EllipsisVerticalIcon className="h-5 w-5 text-primary" aria-hidden="true" />
                   </Menu.Button>
+
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"
@@ -178,8 +168,8 @@ const ProjectRowItem = ({
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items
-                      className="fixed w-56 z-50 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                      style={getDropdownStyle()}
+                      className="w-56 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                      style={menuStyle}
                     >
                       <div className="px-1 py-1">
                         <Menu.Item>
@@ -188,7 +178,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="edit-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 editProject(project, setCurrentProject, setCallEditProject);
@@ -204,7 +194,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="export-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 openExportPopUp(project);
@@ -220,7 +210,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="archive-restore-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 archiveProject(project, project.name);
@@ -239,7 +229,7 @@ const ProjectRowItem = ({
                                   type="button"
                                   aria-label="manage-project"
                                   className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                    } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     manageProject(project);
