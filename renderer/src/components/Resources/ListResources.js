@@ -111,40 +111,40 @@ export const ListResources = ({
       setLoading(true);
       logger.debug('ResourcesPopUp.js', `get available selected resources ${selectResource}`);
       switch (selectResource) {
-        case 'jxl':
-          await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'tn':
-        case 'x-bcvnotes':
-          await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction, endPoint);
-          break;
-        case 'tir':
-          await fetchTranslationResource('TSV Translation Image Resources', setTranslationImageResources, selectResource, selectedPreProd, snackBarAction, endPoint, setFilteredReposResourcelinks);
-          break;
+      case 'jxl':
+        await fetchTranslationResource('Juxtalinear', setJuxtalinear, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'tn':
+      case 'x-bcvnotes':
+        await fetchTranslationResource('TSV Translation Notes', setTranslationNote, selectResource, selectedPreProd, snackBarAction, endPoint);
+        break;
+      case 'tir':
+        await fetchTranslationResource('TSV Translation Image Resources', setTranslationImageResources, selectResource, selectedPreProd, snackBarAction, endPoint, setFilteredReposResourcelinks);
+        break;
         // case 'tw':
         //   await fetchTranslationResource('Translation Words', settranslationWord, selectResource, selectedPreProd, snackBarAction);
         //   break;
-        case 'twl':
-          await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
-          await fetchTranslationResource('Translation Words', settranslationWord, 'tw', selectedPreProd, snackBarAction);
-          break;
-        case 'tq':
-          await fetchTranslationResource('Translation Questions&subject=TSV Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-tn':
-          await fetchTranslationResource('OBS Translation Notes&subject=TSV OBS Translation Notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-tq':
-          await fetchTranslationResource('OBS Translation Questions&subject=TSV OBS Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'obs-twlm':
-          await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
-          break;
-        case 'ta':
-          await fetchTranslationResource('Translation Academy&subject=tsv Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
-          break;
-        default:
-          break;
+      case 'twl':
+        await fetchTranslationResource('TSV Translation Words Links', settranslationWordList, selectResource, selectedPreProd, snackBarAction);
+        await fetchTranslationResource('Translation Words', settranslationWord, 'tw', selectedPreProd, snackBarAction);
+        break;
+      case 'tq':
+        await fetchTranslationResource('Translation Questions&subject=TSV Translation Questions', setTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-tn':
+        await fetchTranslationResource('OBS Translation Notes&subject=TSV OBS Translation Notes', setObsTranslationNote, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-tq':
+        await fetchTranslationResource('OBS Translation Questions&subject=TSV OBS Translation Questions', setObsTranslationQuestion, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'obs-twlm':
+        await fetchTranslationResource('TSV OBS Translation Words Links', setObsTranslationWordList, selectResource, selectedPreProd, snackBarAction);
+        break;
+      case 'ta':
+        await fetchTranslationResource('Translation Academy&subject=tsv Translation Academy', setTranslationAcademy, selectResource, selectedPreProd, snackBarAction);
+        break;
+      default:
+        break;
       }
       setLoading(false);
     })();

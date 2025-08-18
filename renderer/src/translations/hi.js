@@ -304,7 +304,6 @@ export const Hi = {
   'label-resource-tir': 'अनुवाद मल्टीमीडिया संसाधन',
   'dynamic-msg-confirm-replace-panel-resource': 'इसी नाम की एक मौजूदा परियोजना मिली है! "आर्काइव टैब" या "परियोजनाएं टैब" देखें। किसी भी ओवरलैपिंग पुस्तक की सामग्री को ओवरराइट करने के लिए "बदलें" दबाएँ। परिवर्तन से बचने के लिए "रद्द करें" दबाएँ।',
   'label-downloaded-resources': 'डाउनलोड की गई संसाधन',
-  'label-editor-pane': 'संपादक',
   'btn-resolve-book': 'समाधान पुस्तक',
   'btn-done': 'पूरा हुआ',
   'btn-finish': 'समाप्त करें',

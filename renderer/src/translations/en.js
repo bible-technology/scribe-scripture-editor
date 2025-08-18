@@ -307,5 +307,4 @@ export const En = {
   'btn-resolve-book': 'Resolve Book',
   'btn-done': 'Done',
   'btn-finish': 'Finish',
-  
 };
