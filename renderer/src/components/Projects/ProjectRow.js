@@ -177,7 +177,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="edit-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 editProject(project, setCurrentProject, setCallEditProject);
@@ -193,7 +193,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="export-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 openExportPopUp(project);
@@ -209,7 +209,7 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="archive-restore-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 archiveProject(project, project.name);
@@ -228,7 +228,7 @@ const ProjectRowItem = ({
                                   type="button"
                                   aria-label="manage-project"
                                   className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                    } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     manageProject(project);

@@ -303,4 +303,9 @@ export const En = {
   'obs-complete': 'Complete (Audio + Text)',
   'obs-combined-audio': 'Combined Stories Audio',
   'obs-default-audio-text': 'Default Audio + Text',
+  'label-downloaded-resources': 'Downloaded Resources',
+  'btn-resolve-book': 'Resolve Book',
+  'btn-done': 'Done',
+  'btn-finish': 'Finish',
+  
 };

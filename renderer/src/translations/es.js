@@ -27,7 +27,7 @@ export const Es = {
   'projects-page': 'Proyectos',
   'label-search': 'Buscar',
   'label-project': 'Proyecto',
-  'label-flavour': 'Sabor',
+  'label-flavor': 'Sabor',
   'label-project-type': 'Tipo de proyecto',
   'label-project-name': 'Nombre del proyecto',
   'label-language': 'Nombre del idioma',
@@ -302,4 +302,10 @@ export const Es = {
   'obs-default-audio-text': 'Audio predeterminado + Texto',
   'label-resource-tir': 'Recursos multimedia de traducción',
   'dynamic-msg-confirm-replace-panel-resource': '¡Se encontró un proyecto existente con el mismo nombre! Revisa la pestaña "Archivado" o la pestaña "Proyectos". Pulsa "Reemplazar" para sobrescribir el contenido existente en libros superpuestos. Pulsa "Cancelar" para evitar cambios.',
+  'label-downloaded-resources': 'Recursos descargados',
+  'label-resource-audio': 'Audio',
+  'btn-resolve-book': 'Libro de Resolución',
+  'btn-done': 'Hecho',
+  'btn-finish': 'Finalizar',
+
 };
