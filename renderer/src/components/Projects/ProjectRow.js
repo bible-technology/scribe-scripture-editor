@@ -203,7 +203,6 @@ const ProjectRowItem = ({
                             </button>
                           )}
                         </Menu.Item>
-
                         <Menu.Item>
                           {({ active }) => (
                             <button
