@@ -207,7 +207,7 @@ export const ListResources = ({
               {filteredResources?.offlineResource?.length > 0 && (
                 <tr className="bg-gray-100 border-y-2">
                   <td colSpan="6" className="p-2 text-gray-900 font-bold">
-                    Downloaded Resources
+                    {t('label-downloaded-resources')}
                   </td>
                 </tr>
               )}

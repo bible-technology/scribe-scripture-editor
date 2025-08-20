@@ -27,7 +27,7 @@ export const Te = {
   'projects-page': 'ప్రాజెక్ట్స్',
   'label-search': 'వెతకండి',
   'label-project': 'ప్రాజెక్ట్',
-  'label-flavour': 'ఫ్లేవర్',
+  'label-flavor': 'రుచి',
   'label-project-type': 'ప్రాజెక్ట్ రకం',
   'label-project-name': 'ప్రాజెక్ట్ పేరు',
   'label-language': 'భాష పేరు',
@@ -303,4 +303,8 @@ export const Te = {
   'obs-default-audio-text': 'డీఫాల్ట్ ఆడియో + పాఠ్యం',
   'label-resource-tir': 'అనువాద మల్టీమీడియా వనరులు',
   'dynamic-msg-confirm-replace-panel-resource': 'ఇటీవలి పేరు గల ప్రాజెక్ట్ ఇప్పటికే ఉంది! "ఆర్కైవ్ ట్యాబ్" లేదా "ప్రాజెక్ట్స్ ట్యాబ్"ని తనిఖీ చేయండి. ఓవర్లాప్ అయ్యే పుస్తకాలలో ఉన్న కంటెంట్‌ను తుడిచివేసేందుకు "మార్చు"ని నొక్కండి. మార్పులను నివారించేందుకు "రద్దు"ని నొక్కండి.',
+  'label-downloaded-resources': 'డౌన్‌లోడ్ చేసిన వనరులు',
+  'btn-resolve-book': 'పరిష్కార పుస్తకం',
+  'btn-done': 'పూర్తైంది',
+  'btn-finish': 'ముగించు',
 };
