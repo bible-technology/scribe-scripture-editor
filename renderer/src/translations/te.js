@@ -307,4 +307,6 @@ export const Te = {
   'btn-resolve-book': 'పరిష్కార పుస్తకం',
   'btn-done': 'పూర్తైంది',
   'btn-finish': 'ముగించు',
+  "tooltip-select-font": "ఫాంట్ ఎంచుకోండి",
+  'tooltip-print-pdf': 'PDF కు ముద్రించండి',
 };

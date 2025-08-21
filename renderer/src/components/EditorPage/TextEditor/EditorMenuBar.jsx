@@ -53,7 +53,7 @@ export default function EditorMenuBar(props) {
           aria-label="editor-pane"
           className="flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
         >
-          Editor
+           {t('label-editor-pane')}
         </div>
 
         <button
@@ -88,7 +88,7 @@ export default function EditorMenuBar(props) {
           className="flex items-center mr-auto"
         >
           <div
-            title="navigation lock/unlock"
+            title={t('tooltip-editor-lock')}
 
           >
             {scrollLock === true ? (
@@ -119,7 +119,7 @@ export default function EditorMenuBar(props) {
               aria-hidden="true"
             />
           </div> */}
-          <div title="select font">
+         <div title={t('tooltip-select-font')}>
             <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
           </div>
         </div>

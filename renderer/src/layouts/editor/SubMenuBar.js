@@ -284,7 +284,7 @@ export default function SubMenuBar() {
               // eslint-disable-next-line
               <div
                 aria-label="add-panels"
-                title="Print to PDF"
+                title={t('tooltip-print-pdf')}
                 // title={t('TODO')}
                 type="div"
                 role="button"

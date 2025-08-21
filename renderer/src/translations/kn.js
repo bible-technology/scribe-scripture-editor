@@ -307,4 +307,9 @@ export const Kn = {
   'btn-resolve-book': 'ಪರಿಹಾರದ ಪುಸ್ತಕ',
   'btn-done': 'ಮುಗಿದಿದೆ',
   'btn-finish': 'ಮುಗಿಸು',
+  "tooltip-select-font": "ಫಾಂಟ್ ಆಯ್ಕೆಮಾಡಿ",
+  'tooltip-print-pdf': 'PDF ಗೆ ಮುದ್ರಿಸಿ',
+  'tooltip-hide-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಅಡಗಿಸಿ',
+  'tooltip-show-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ತೋರಿಸಿ',
+
 };
