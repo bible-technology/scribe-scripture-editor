@@ -308,7 +308,7 @@ export const Es = {
   'btn-resolve-book': 'Libro de Resolución',
   'btn-done': 'Hecho',
   'btn-finish': 'Finalizar',
-  "tooltip-select-font": "Seleccionar fuente",
+  'tooltip-select-font': 'Seleccionar fuente',
   'tooltip-print-pdf': 'Imprimir en PDF',
   'tooltip-hide-audio-player': 'Ocultar reproductor de audio',
   'tooltip-show-audio-player': 'Mostrar reproductor de audio',

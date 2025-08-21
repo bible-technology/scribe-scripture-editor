@@ -307,7 +307,7 @@ export const Ne = {
   'btn-resolve-book': ' समाधान पुस्तक',
   'btn-done': 'सम्पन्न भयो',
   'btn-finish': 'समाप्त गर्नुहोस्',
-  "tooltip-select-font": "फन्ट चयन गर्नुहोस्",
+  'tooltip-select-font': 'फन्ट चयन गर्नुहोस्',
   'tooltip-print-pdf': 'PDF मा मुद्रण गर्नुहोस्',
   'tooltip-hide-audio-player': 'अडियो प्लेयर लुकाउनुहोस्',
   'tooltip-show-audio-player': 'अडियो प्लेयर देखाउनुहोस्',

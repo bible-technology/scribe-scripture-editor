@@ -307,7 +307,7 @@ export const Hi = {
   'btn-resolve-book': 'समाधान पुस्तक',
   'btn-done': 'पूरा हुआ',
   'btn-finish': 'समाप्त करें',
-  "tooltip-select-font": "फ़ॉन्ट चुनें",
+  'tooltip-select-font': 'फ़ॉन्ट चुनें',
   'tooltip-print-pdf': 'PDF में प्रिंट करें',
   'tooltip-hide-audio-player': 'ऑडियो प्लेयर छिपाएँ',
   'tooltip-show-audio-player': 'ऑडियो प्लेयर दिखाएँ',

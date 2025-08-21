@@ -304,7 +304,7 @@ export const Fa = {
   'label-apply': 'اعمال',
   'label-book-selection': 'انتخاب کتاب',
   'label-chapter-selection': 'انتخاب فصل',
-  "tooltip-select-font": " انتخاب فونت",
+  'tooltip-select-font': 'انتخاب فونت',
   'tooltip-print-pdf': 'چاپ به PDF',
   'tooltip-hide-audio-player': 'پنهان کردن پخش‌کننده صدا',
   'tooltip-show-audio-player': 'نمایش پخش‌کننده صدا',

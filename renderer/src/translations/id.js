@@ -304,7 +304,7 @@ export const Id = {
   'btn-resolve-book': 'Buku Penyelesaian',
   'btn-done': 'Selesai',
   'btn-finish': 'Akhiri',
-  "tooltip-select-font": "Pilih font",
+  'tooltip-select-font': 'Pilih font',
   'tooltip-print-pdf': 'Cetak ke PDF',
   'tooltip-hide-audio-player': 'Sembunyikan pemutar audio',
   'tooltip-show-audio-player': 'Tampilkan pemutar audio',

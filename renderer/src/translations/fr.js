@@ -308,7 +308,7 @@ export const Fr = {
   'btn-resolve-book': 'Livre de Résolution',
   'btn-done': 'Terminé',
   'btn-finish': 'Finir',
-  "tooltip-select-font": " Sélectionner la police",
+  'tooltip-select-font': 'Sélectionner la police',
   'tooltip-print-pdf': 'Imprimer en PDF',
   'tooltip-hide-audio-player': 'Masquer le lecteur audio',
   'tooltip-show-audio-player': 'Afficher le lecteur audio',
