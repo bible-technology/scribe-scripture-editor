@@ -61,7 +61,7 @@ export const Ru = {
   'label-bookmarks': 'Закладки',
   'label-custom': 'Обычай',
   'label-show-hidden-file': 'Показать скрытые файлы',
-  'label-scope': 'Scope',
+  'label-scope': 'охват',
   'label-door43': 'Door 43',
   'label-paratext': 'Паратекст',
   'label-license': 'Лицензия',

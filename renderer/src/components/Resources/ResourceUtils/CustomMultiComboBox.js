@@ -5,7 +5,7 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
 function CustomMultiComboBox({
   selectedList, setSelectedList, customData, filterParams = 'name', multiSelect = false, dropArrow = false, showLangCode = { show: false, langkey: 'lc' },
-  placeholder = 'Select Language',
+  placeholder = 'label-select-language',
 }) {
   let filteredData = [];
   const [query, setQuery] = useState('');
