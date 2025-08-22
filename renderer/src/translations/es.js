@@ -313,5 +313,4 @@ export const Es = {
   'tooltip-hide-audio-player': 'Ocultar reproductor de audio',
   'tooltip-show-audio-player': 'Mostrar reproductor de audio',
 
-
 };

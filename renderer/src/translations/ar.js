@@ -303,7 +303,7 @@ export const Ar = {
   'label-apply': 'تطبيق',
   'label-book-selection': 'Book Selection',
   'label-chapter-selection': 'Chapter Selection',
-  "tooltip-select-font": "اختر الخط",
+  'tooltip-select-font': 'اختر الخط',
   'tooltip-print-pdf': 'طباعة إلى PDF',
   'tooltip-hide-audio-player': 'إخفاء مشغل الصوت',
   'tooltip-show-audio-player': 'إظهار مشغل الصوت',

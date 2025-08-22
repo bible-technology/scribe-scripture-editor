@@ -307,12 +307,8 @@ export const Ru = {
   'btn-resolve-book': 'Книга решений',
   'btn-done': 'Готово',
   'btn-finish': 'Завершить',
-  "tooltip-select-font": "Выбрать шрифт",
+  'tooltip-select-font': 'Выбрать шрифт',
   'tooltip-print-pdf': 'Печать в PDF',
   'tooltip-hide-audio-player': 'Скрыть аудиоплеер',
   'tooltip-show-audio-player': 'Показать аудиоплеер',
-  'tooltip-hide-audio-player': 'ఆడియో ప్లేయర్ దాచు',
-  'tooltip-show-audio-player': 'ఆడియో ప్లేయర్ చూపించు',
-
-
 };
