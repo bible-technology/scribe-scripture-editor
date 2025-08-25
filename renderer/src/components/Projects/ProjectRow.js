@@ -167,7 +167,7 @@ const ProjectRowItem = ({
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items
-                      className="w-56 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                      className="min-w-[280px] max-w-[320px]  bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                       style={menuStyle}
                     >
                       <div className="px-1 py-1">
