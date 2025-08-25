@@ -242,7 +242,7 @@ export const ListResources = ({
                       )}
                     </div>
                   </td>
-                  <td className="p-2 uppercase">
+                  <td className="px-5 py-3 uppercase">
                     <div
                       // className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
@@ -346,7 +346,7 @@ export const ListResources = ({
                       </span>
                     </div>
                   </td>
-                  <td className="p-2 uppercase">
+                  <td className="px-5 py-3 uppercase">
                     <div
                       className="focus:outline-none"
                       // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}
