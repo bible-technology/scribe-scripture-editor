@@ -29,7 +29,7 @@ export default function SideBar() {
   }
 
   return (
-    <div className="relative w-30 bg-white shadow min-h-screen">
+    <div className="relative w-32 bg-white shadow min-h-screen">
       <div className="grid justify-items-center items-center h-16 border border-b-1">
         <LogoIcon
           className="h-8 w-8"
