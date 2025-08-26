@@ -177,8 +177,8 @@ const ProjectRowItem = ({
                               type="button"
                               aria-label="edit-project"
                               className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
-                                onClick={(event) => {
+                              } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                              onClick={(event) => {
                                 event.stopPropagation();
                                 editProject(project, setCurrentProject, setCallEditProject);
                               }}
