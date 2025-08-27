@@ -107,7 +107,18 @@ export default function EditorMenuBar(props) {
               />
             )}
           </div>
-        
+        {/* <div
+            role="button"
+            tabIndex="0"
+            aria-label="bookmark"
+            title="bookmark"
+            className="focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
+          >
+            <BookmarkIcon
+              className="h-5 mr-4 w-5 text-white cursor-pointer"
+              aria-hidden="true"
+            />
+          </div> */}
          <div title={t('tooltip-select-font')}className="ml-1">
             <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="px-1 py-0 mr-2 button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300" />
           </div>
