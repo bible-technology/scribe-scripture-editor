@@ -281,7 +281,7 @@ export const Fa = {
   'label-documentation': 'راهنما',
   'label-tech-support': ' پشتیبانی فنی',
   'label-filter': 'فیلتر',
-  'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
+  'msg-helps-filepath': 'مسیر فایل منبع راهنما با manifest.yaml معتبر',
   'tooltip-supported-resources': 'منابع پشتیبانی‌شده عبارتند از TN، TW، TQ، TA',
   'label-upload-help-resources': 'منابع کمکی آپلود شده',
   'msg-conflict-resolution-duplicate-book': 'حل تعارض برای {{bookId}} در حال انجام است. آیا می‌خواهید از نو شروع کنید؟ تمام پیشرفت خود را از دست خواهید داد و قابل بازگشت نخواهد بود.',
