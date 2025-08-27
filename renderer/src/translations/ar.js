@@ -311,5 +311,4 @@ export const Ar = {
   'label-end': 'النهاية',
   'label-select': 'اختر',
 
-
 };
