@@ -104,7 +104,7 @@ export const Fa = {
   'label-book-not-in-scope': 'کتاب انتخاب شده در محدوده شما نیست',
   'label-enter-location': 'موقعیت مکانی را وارد کنید',
   'label-editor-load-module': 'یک ماژول را بارگیری کنید',
-  'label-import-door43-resources': 'Import Door43 helps resources',
+  'label-import-door43-resources': 'وارد کردن منابع راهنما از Door43',
   'tooltip-editor-lock': 'قفل / باز کردن مکان یاب',
   'tooltip-editor-bookmark': 'نشانه گذاری',
   'tooltip-editor-notification': 'اعلانات',
@@ -308,5 +308,8 @@ export const Fa = {
   'tooltip-print-pdf': 'چاپ به PDF',
   'tooltip-hide-audio-player': 'پنهان کردن پخش‌کننده صدا',
   'tooltip-show-audio-player': 'نمایش پخش‌کننده صدا',
+  'label-start': 'شروع',
+  'label-end': 'پایان',
+  'label-select': 'انتخاب',
 
 };
