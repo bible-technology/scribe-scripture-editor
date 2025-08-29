@@ -104,7 +104,7 @@ export const Ar = {
   'label-book-not-in-scope': 'الكتاب المحدد ليس في نطاقك',
   'label-enter-location': 'أدخل الموقع',
   'label-editor-load-module': 'تحميل وحدة',
-  'label-import-door43-resources': 'Import Door43 helps resources',
+  'label-import-door43-resources': 'استيراد موارد المساعدة من Door43',
   'tooltip-editor-lock': 'تصفحَ فتح / اقفال ',
   'tooltip-editor-bookmark': 'إشارة مرجعية',
   'tooltip-editor-notification': 'إشعار',
@@ -281,7 +281,7 @@ export const Ar = {
   'label-check-updates': 'التحقق من التحديثات',
   'label-documentation': 'التوثيق',
   'label-tech-support': ' الدعم الفني',
-  'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
+  'msg-helps-filepath': 'مسار ملف مورد المساعدة مع manifest.yaml صالح',
   'tooltip-supported-resources': 'الموارد المدعومة هي TN، TW، TQ، TA',
   'label-upload-help-resources': 'موارد المساعدة التي تم تحميلها',
   'msg-conflict-resolution-duplicate-book': 'حل النزاع للكتاب {{bookId}} قيد التقدم. هل تريد البدء من جديد؟ ستفقد كل تقدمك ولا يمكن التراجع عن ذلك.',
@@ -307,5 +307,7 @@ export const Ar = {
   'tooltip-print-pdf': 'طباعة إلى PDF',
   'tooltip-hide-audio-player': 'إخفاء مشغل الصوت',
   'tooltip-show-audio-player': 'إظهار مشغل الصوت',
-
+  'label-start': 'ابدأ',
+  'label-end': 'النهاية',
+  'label-select': 'اختر',
 };
