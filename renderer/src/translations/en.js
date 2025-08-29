@@ -307,7 +307,7 @@ export const En = {
   'btn-resolve-book': 'Resolve Book',
   'btn-done': 'Done',
   'btn-finish': 'Finish',
-  'tooltip-select-fon': 'select font',
+  'tooltip-select-font': 'select font',
   'tooltip-print-pdf': 'Print to PDF',
   'tooltip-hide-audio-player': 'Hide Audio Player',
   'tooltip-show-audio-player': 'Show Audio Player',

@@ -104,7 +104,7 @@ export const Fa = {
   'label-book-not-in-scope': 'کتاب انتخاب شده در محدوده شما نیست',
   'label-enter-location': 'موقعیت مکانی را وارد کنید',
   'label-editor-load-module': 'یک ماژول را بارگیری کنید',
-  'label-import-door43-resources': 'Import Door43 helps resources',
+  'label-import-door43-resources': 'وارد کردن منابع راهنما از Door43',
   'tooltip-editor-lock': 'قفل / باز کردن مکان یاب',
   'tooltip-editor-bookmark': 'نشانه گذاری',
   'tooltip-editor-notification': 'اعلانات',
@@ -281,7 +281,7 @@ export const Fa = {
   'label-documentation': 'راهنما',
   'label-tech-support': ' پشتیبانی فنی',
   'label-filter': 'فیلتر',
-  'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
+  'msg-helps-filepath': 'مسیر فایل منبع راهنما با manifest.yaml معتبر',
   'tooltip-supported-resources': 'منابع پشتیبانی‌شده عبارتند از TN، TW، TQ، TA',
   'label-upload-help-resources': 'منابع کمکی آپلود شده',
   'msg-conflict-resolution-duplicate-book': 'حل تعارض برای {{bookId}} در حال انجام است. آیا می‌خواهید از نو شروع کنید؟ تمام پیشرفت خود را از دست خواهید داد و قابل بازگشت نخواهد بود.',
@@ -308,5 +308,7 @@ export const Fa = {
   'tooltip-print-pdf': 'چاپ به PDF',
   'tooltip-hide-audio-player': 'پنهان کردن پخش‌کننده صدا',
   'tooltip-show-audio-player': 'نمایش پخش‌کننده صدا',
-
+  'label-start': 'شروع',
+  'label-end': 'پایان',
+  'label-select': 'انتخاب',
 };
