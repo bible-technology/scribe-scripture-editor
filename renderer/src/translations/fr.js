@@ -295,7 +295,7 @@ export const Fr = {
   'label-apply': 'Appliquer',
   'label-scope-not-selected': 'Pour commencer, accédez à Gestiong du champs d\'application, sélectionnez le livre et les chapitres et cliquez sur le bouton Appliquer',
   'label-scope-note-audio': 'Choisissez le livre et le chapitre à partir de l\'option Gestiong du champs d\'application sur la page de liste des projets',
-  'modal-title-scope-management': 'Gestiong du champs d\'application',
+  'modal-title-scope-management': 'Gestiong du champ d\'application',
   'obs-export-option': 'Options d’exportation OBS',
   'obs-text-only': 'Texte uniquement (fichiers MD)',
   'obs-complete': 'Complet (Audio + Texte)',
@@ -308,5 +308,9 @@ export const Fr = {
   'btn-resolve-book': 'Livre de Résolution',
   'btn-done': 'Terminé',
   'btn-finish': 'Finir',
+  'tooltip-select-font': 'Sélectionner la police',
+  'tooltip-print-pdf': 'Imprimer en PDF',
+  'tooltip-hide-audio-player': 'Masquer le lecteur audio',
+  'tooltip-show-audio-player': 'Afficher le lecteur audio',
 
 };

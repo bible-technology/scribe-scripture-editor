@@ -282,7 +282,7 @@ export const Id = {
   'msg-helps-filepath': 'Membantu Sumber daya filepath dengan valid manifest.yaml',
   'tooltip-supported-resources': 'Sumber Daya Pendukung Lainnya Adalah TN, TW, TQ, TA',
   'label-upload-help-resources': 'Unggah Sumber Daya Bantuan',
-  'label-filter': 'Filter',
+  'label-filter': 'menyaring',
   'label-book-selection': 'Pemilihan Buku',
   'label-chapter-selection': 'Pemilihan Bab',
   'label-select': 'Memilih',
@@ -304,4 +304,9 @@ export const Id = {
   'btn-resolve-book': 'Buku Penyelesaian',
   'btn-done': 'Selesai',
   'btn-finish': 'Akhiri',
+  'tooltip-select-font': 'Pilih font',
+  'tooltip-print-pdf': 'Cetak ke PDF',
+  'tooltip-hide-audio-player': 'Sembunyikan pemutar audio',
+  'tooltip-show-audio-player': 'Tampilkan pemutar audio',
+
 };

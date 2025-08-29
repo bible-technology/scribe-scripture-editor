@@ -53,13 +53,13 @@ export default function EditorMenuBar(props) {
           aria-label="editor-pane"
           className="flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
         >
-          Editor
+           {t('label-editor-pane')}
         </div>
 
         <button
           type="button"
           className="inline-flex items-center justify-center border rounded-md shadow-sm
-                  text-xs h-fit py-1
+                  text-xs h-fit py-1 mr-3
                   focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-gray-300 focus:ring-gray-300"
         >
           <div
@@ -85,42 +85,31 @@ export default function EditorMenuBar(props) {
         </button>
 
         <div
-          className="flex items-center mr-auto"
+          className="flex items-center"
         >
           <div
-            title="navigation lock/unlock"
+            title={t('tooltip-editor-lock')}
 
           >
             {scrollLock === true ? (
               <LockOpenIcon
                 aria-label="open-lock"
-                className="h-6 mr-2 w-6 text-white cursor-pointer"
+                className="h-5 w-5 text-white cursor-pointer"
                 aria-hidden="true"
                 onClick={() => setScrollLock(!scrollLock)}
               />
             ) : (
               <LockClosedIcon
                 aria-label="close-lock"
-                className="h-5 mr-3 w-5 text-white cursor-pointer"
+                className="h-5  w-5 text-white cursor-pointer"
                 aria-hidden="true"
                 onClick={() => setScrollLock(!scrollLock)}
               />
             )}
           </div>
-          {/* <div
-            role="button"
-            tabIndex="0"
-            aria-label="bookmark"
-            title="bookmark"
-            className="focus:outline-none border-r-2 border-l-2 border-white border-opacity-10"
-          >
-            <BookmarkIcon
-              className="h-5 mr-4 w-5 text-white cursor-pointer"
-              aria-hidden="true"
-            />
-          </div> */}
-          <div title="select font">
-            <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300 gap-1" />
+        
+         <div title={t('tooltip-select-font')}className="ml-1">
+            <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="px-1 py-0 mr-2 button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300" />
           </div>
         </div>
       </div>
