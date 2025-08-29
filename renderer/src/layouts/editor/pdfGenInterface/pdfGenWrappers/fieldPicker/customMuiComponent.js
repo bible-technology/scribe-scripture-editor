@@ -8,7 +8,7 @@ export const StyledSwitch = styled(Switch)(() => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
     color: '#FF5500',
     '&:hover': {
-      backgroundColor: '##FF7733',
+      backgroundColor: '#FF7733',
     },
   },
   '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
@@ -31,7 +31,7 @@ export const LoopSwitch = styled(Switch)(({ theme }) => ({
     '&:hover': {
       backgroundColor: alpha(
         '#FF5500',
-        theme.palette.action.hoverOpacity,
+        theme?.palette?.action?.hoverOpacity ?? 0.08,
       ),
     },
   },

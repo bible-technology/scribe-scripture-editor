@@ -106,7 +106,7 @@ export default function EditorMenuBar(props) {
                 onClick={() => setScrollLock(!scrollLock)}
               />
             )}
-          </div>        
+          </div>
          <div title={t('tooltip-select-font')}className="ml-1">
             <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="px-1 py-0 mr-2 button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300" />
           </div>
