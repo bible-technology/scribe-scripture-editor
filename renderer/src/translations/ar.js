@@ -310,5 +310,4 @@ export const Ar = {
   'label-start': 'ابدأ',
   'label-end': 'النهاية',
   'label-select': 'اختر',
-
 };
