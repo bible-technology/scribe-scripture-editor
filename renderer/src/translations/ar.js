@@ -281,7 +281,7 @@ export const Ar = {
   'label-check-updates': 'التحقق من التحديثات',
   'label-documentation': 'التوثيق',
   'label-tech-support': ' الدعم الفني',
-  'msg-helps-filepath': 'Helps Resource filepath with valid manifest.yaml',
+  'msg-helps-filepath': 'مسار ملف مورد المساعدة مع manifest.yaml صالح',
   'tooltip-supported-resources': 'الموارد المدعومة هي TN، TW، TQ، TA',
   'label-upload-help-resources': 'موارد المساعدة التي تم تحميلها',
   'msg-conflict-resolution-duplicate-book': 'حل النزاع للكتاب {{bookId}} قيد التقدم. هل تريد البدء من جديد؟ ستفقد كل تقدمك ولا يمكن التراجع عن ذلك.',
@@ -310,6 +310,5 @@ export const Ar = {
   'label-start': 'ابدأ',
   'label-end': 'النهاية',
   'label-select': 'اختر',
-
 
 };
