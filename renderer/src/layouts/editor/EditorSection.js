@@ -66,6 +66,8 @@ export default function EditorSection({
     states: { scrollLock, selectedProjectMeta },
   } = useContext(ProjectContext);
 
+  const flavorName = selectedProjectMeta?.type?.flavorType?.flavor?.name;
+
   function removeResource() {
     setOpenModal(true);
   }
@@ -84,20 +86,20 @@ export default function EditorSection({
   const removeSection = () => {
     setRemovingSection(row);
     switch (row) {
-    case '1':
-      setOpenResource1(true);
-      break;
-    case '2':
-      setOpenResource2(true);
-      break;
-    case '3':
-      setOpenResource3(true);
-      break;
-    case '4':
-      setOpenResource4(true);
-      break;
-    default:
-      break;
+      case '1':
+        setOpenResource1(true);
+        break;
+      case '2':
+        setOpenResource2(true);
+        break;
+      case '3':
+        setOpenResource3(true);
+        break;
+      case '4':
+        setOpenResource4(true);
+        break;
+      default:
+        break;
     }
     if (sectionNum > 0) {
       setSectionNum(sectionNum - 1);
@@ -167,22 +169,39 @@ export default function EditorSection({
     }
     setAddingSection(row);
     switch (row) {
-    case '1':
-      setOpenResource2(false);
-      break;
-    case '2':
-      setOpenResource1(false);
-      break;
-    case '3':
-      setOpenResource4(false);
-      break;
-    case '4':
-      setOpenResource3(false);
-      break;
-    default:
-      break;
+      case '1':
+        setOpenResource2(false);
+        break;
+      case '2':
+        setOpenResource1(false);
+        break;
+      case '3':
+        setOpenResource4(false);
+        break;
+      case '4':
+        setOpenResource3(false);
+        break;
+      default:
+        break;
     }
   };
+
+  const getEditorHeight = () => {
+    if (isNextRowOpen) return 'h-full';
+
+    switch (flavorName) {
+      case 'audioTranslation':
+        return 'md:h-[34.5vh]';   
+      case 'textStories':
+        return audioEnabled ? 'md:h-[34.5vh]' : 'md:h-[42.5vh]';
+      case 'textTranslation':
+      case 'x-juxtalinear':
+        return 'md:h-[42.5vh]';  
+      default:
+        return 'md:h-[42.5vh]';   
+    }
+  };
+
 
   useEffect(() => {
     // Since we are adding reference resources from different places the data we have are inconsistant.
@@ -213,15 +232,16 @@ export default function EditorSection({
     }
   }, [referenceResources, title]);
 
+
   return (
     <>
       <div // div 1
         aria-label="resources-panel"
         className={classNames(
           openResource ? 'hidden' : '',
-          isNextRowOpen ? 'h-full' : 'md:h-[34.5vh]',
+          getEditorHeight(),
           // eslint-disable-next-line no-nested-ternary
-          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled && projectType === 'obs' ? 'max-h-[71vh]' : ''} overflow-hidden`,
+          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled && projectType === 'obs' ? 'max-h-[70vh]' : ''} overflow-hidden`,
         )}
       >
         <div
@@ -232,59 +252,59 @@ export default function EditorSection({
             <div className="flex">
               {selectedResource === 'ta'
                 || selectedResource === 'tw' ? (
-                  <div className="h-12 flex">
-                    {selectedResource === 'ta' ? (
-                      <TaNavigation
-                        languageId={languageId}
-                        referenceResources={
-                          referenceResources
-                        }
-                      />
-                    ) : (
-                      <TwNavigation
-                        languageId={languageId}
-                        referenceResources={
-                          referenceResources
-                        }
-                        setReferenceResources={
-                          setReferenceResources
-                        }
-                      />
-                    )}
+                <div className="h-12 flex">
+                  {selectedResource === 'ta' ? (
+                    <TaNavigation
+                      languageId={languageId}
+                      referenceResources={
+                        referenceResources
+                      }
+                    />
+                  ) : (
+                    <TwNavigation
+                      languageId={languageId}
+                      referenceResources={
+                        referenceResources
+                      }
+                      setReferenceResources={
+                        setReferenceResources
+                      }
+                    />
+                  )}
 
-                    <div
-                      className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate"
-                      title={title}
-                    >
-                      {title}
-                    </div>
+                  <div
+                    className="relative lg:left-72 sm:left-48 sm:ml-2.5 top-4 text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                    title={title}
+                  >
+                    {title}
                   </div>
-                ) : (
-                  <>
-                    {scrollLock && title ? (
-                      <>
-                        {CustomNavigation}
+                </div>
+              ) : (
+                <>
+                  {scrollLock && title ? (
+                    <>
+                      {CustomNavigation}
+                      <div
+                        title={title}
+                        className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                      >
+                        {title}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex">
+                      <div className="py-2 uppercase tracking-wider text-xs font-semibold">
                         <div
                           title={title}
-                          className="ml-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
+                          className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
                         >
                           {title}
                         </div>
-                      </>
-                    ) : (
-                      <div className="flex">
-                        <div className="py-2 uppercase tracking-wider text-xs font-semibold">
-                          <div
-                            title={title}
-                            className="ml-4 h-4 flex justify-center items-center text-xxs uppercase tracking-wider font-bold leading-3 truncate"
-                          >
-                            {title}
-                          </div>
-                        </div>
                       </div>
-                    )}
-                  </>
-                )}
+                    </div>
+                  )}
+                </>
+              )}
               <div className="flex bg-gray-300 absolute h-full -right-0 rounded-tr  group-hover:visible  pl-2 items-center">
 
                 <button
@@ -370,7 +390,7 @@ export default function EditorSection({
               direction: `${projectScriptureDir?.toUpperCase() === 'RTL'
                 ? 'rtl'
                 : 'ltr'
-              }`,
+                }`,
             }}
             className="prose-sm p-1 text-xl h-full overflow-auto scrollbars-width"
           >
@@ -417,7 +437,7 @@ export default function EditorSection({
           buttonName={t('btn-remove')}
           closeModal={confirmRemove}
         />
-      </div>
+      </div >
     </>
   );
 }
