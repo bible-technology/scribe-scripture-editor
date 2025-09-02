@@ -167,7 +167,7 @@ const ProjectRowItem = ({
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items
-                      className="w-56 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                      className="min-w-[240px] max-w-[280px]  bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                       style={menuStyle}
                     >
                       <div className="px-1 py-1">
@@ -228,7 +228,9 @@ const ProjectRowItem = ({
                                   type="button"
                                   aria-label="manage-project"
                                   className={`${active ? 'bg-primary text-white' : 'text-gray-900'
-                                  } group rounded-md items-center w-full px-2 py-2 text-sm ${project.isArchived ? 'hidden' : 'flex'}`}
+                                  } group rounded-md w-full px-2 py-2 text-sm 
+                                    ${project.isArchived ? 'hidden' : 'flex items-center'}
+                                    leading-normal whitespace-normal break-words`}
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     manageProject(project);
