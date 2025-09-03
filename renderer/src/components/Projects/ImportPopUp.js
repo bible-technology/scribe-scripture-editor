@@ -63,19 +63,56 @@ export default function ImportPopUp(props) {
 
   const getBooks = (filePaths) => {
     logger.debug('ImportPopUp.js', 'In getBooks for displaying books name using the paths');
-    const book = [];
-    // regex to split path to two groups '(.*[\\\/])' for path and '(.*)' for file name
+
     const regexPath = /^(.*[\\//])(.*)$/;
-    // execute the match on the string filePath
-    filePaths.forEach((filePath) => {
+    const bookList = filePaths.map((filePath) => {
       const match = regexPath.exec(filePath);
       if (match !== null) {
-        // we ignore the match[0] because it's the match for the hole path string
         const fileName = match[2];
-        book.push(fileName);
+        return { name: fileName, path: filePath, valid: null };
       }
+      return null;
+    }).filter(Boolean);
+
+    setBooks(bookList);
+  };
+
+  const OBSValidate = (filename) => {
+    let match = false;
+    logger.debug('ImportPopUp.js', 'Inside OBS validate, allow file name with 01-50 only');
+    logger.debug('ImportPopUp.js', filename);
+    if (filename === 'front.md' || filename === 'back.md') {
+      match = true;
+    } else {
+      const regexExp = /^(5[0]|[1-4][0-9]|[0][1-9]).md$/;
+      match = regexExp.exec(filename);
+    }
+    return match;
+  };
+
+  const validateFiles = async (bookList) => {
+    const fs = window.require('fs');
+
+    const validationPromises = bookList.map(async (book) => {
+      let isValid = false;
+
+      if (projectType === 'Translation') {
+        const usfm = fs.readFileSync(book.path, 'utf8');
+        const { isValid: validUsfm } = await validateUsfm(usfm);
+        isValid = validUsfm;
+      } else if (projectType === 'Audio' || projectType === 'Juxta') {
+        const file = fs.readFileSync(book.path, 'utf8');
+        const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
+        isValid = myUsfmParser.validate();
+      } else if (projectType === 'OBS') {
+        isValid = OBSValidate(book.name);
+      }
+
+      return { ...book, valid: isValid };
     });
-    setBooks(book);
+
+    const validatedBooks = await Promise.all(validationPromises);
+    setBooks(validatedBooks);
   };
 
   const openFileDialogSettingData = async () => {
@@ -95,19 +132,13 @@ export default function ImportPopUp(props) {
     }
     await getBooks(chosenFolder.filePaths);
     setFolderPath(chosenFolder.filePaths);
-  };
-
-  const OBSValidate = (filename) => {
-    let match = false;
-    logger.debug('ImportPopUp.js', 'Inside OBS validate, allow file name with 01-50 only');
-    logger.debug('ImportPopUp.js', filename);
-    if (filename === 'front.md' || filename === 'back.md') {
-      match = true;
-    } else {
-      const regexExp = /^(5[0]|[1-4][0-9]|[0][1-9]).md$/;
-      match = regexExp.exec(filename);
-    }
-    return match;
+    await validateFiles(
+      chosenFolder.filePaths.map((filePath) => ({
+        name: filePath.split(/[/\\]/).pop(),
+        path: filePath,
+        valid: null,
+      })),
+    );
   };
 
   const importFiles = (folderPath) => {
@@ -230,6 +261,7 @@ export default function ImportPopUp(props) {
         break;
       }
     });
+
     const newCanonSpecification = {
       currentScope: bookCodeList,
       id: 4,
@@ -253,6 +285,12 @@ export default function ImportPopUp(props) {
     setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
     close();
+  };
+
+  const bgColors = {
+    null: 'bg-gray-300',
+    true: 'bg-green-500',
+    false: 'bg-red-500',
   };
 
   const importProject = async () => {
@@ -369,14 +407,32 @@ export default function ImportPopUp(props) {
                       <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ''}</h4>
                     </div>
                     <div className="bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide">
-                      {
-                        books.map((book) => (
-                          <div key={book} className={`${styles.select} group`}>
-                            <DocumentTextIcon className="w-6 mr-2 group-hover:text-white" />
-                            {book}
+                      {books.map((book, index) => (
+                        <div
+                          key={book.name}
+                          className={`
+                            ${styles.select} relative p-2 rounded font-medium flex items-start w-full
+                            ${bgColors[book.valid]}
+                          `}
+                        >
+                          <div className="flex items-start w-full pr-6">
+                            <DocumentTextIcon className="w-6 mr-2 text-white flex-shrink-0" />
+                            <span className="text-black break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2">
+                              {book.name}
+                            </span>
                           </div>
-                        ))
-                      }
+                          <button
+                            type="button"
+                            className="absolute top-1 right-1 text-black hover:text-gray-700"
+                            onClick={() => {
+                              setBooks((prev) => prev.filter((_, i) => i !== index));
+                              setFolderPath((prev) => prev.filter((_, i) => i !== index));
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
                     </div>
 
                   </div>
