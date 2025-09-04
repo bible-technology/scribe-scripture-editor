@@ -207,7 +207,7 @@ export const ListResources = ({
               {filteredResources?.offlineResource?.length > 0 && (
                 <tr className="bg-gray-100 border-y-2">
                   <td colSpan="6" className="p-2 text-gray-900 font-bold">
-                    Downloaded Resources
+                    {t('label-downloaded-resources')}
                   </td>
                 </tr>
               )}
@@ -242,7 +242,7 @@ export const ListResources = ({
                       )}
                     </div>
                   </td>
-                  <td className="p-2 uppercase">
+                  <td className="px-5 py-3 uppercase">
                     <div
                       // className="focus:outline-none"
                       onClick={(e) => handleRowSelect(
@@ -346,7 +346,7 @@ export const ListResources = ({
                       </span>
                     </div>
                   </td>
-                  <td className="p-2 uppercase">
+                  <td className="px-5 py-3 uppercase">
                     <div
                       className="focus:outline-none"
                       // onClick={(e) => selectResource !== 'tir' ? handleRowSelect(e, notes.language, `${filteredResources?.onlineResource?.title} ${notes.name}`, notes.owner, '') : handleDownloadHelpsResources(e, notes, filteredResources?.offlineResource)}

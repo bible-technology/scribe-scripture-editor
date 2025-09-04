@@ -442,7 +442,8 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
                           onClick={() => handleFinishMergeProcess()}
                           className="px-4 py-1  rounded-md uppercase bg-success/75 cursor-pointer hover:bg-success text-white"
                         >
-                          Finish
+                          {t('btn-finish')}
+
                         </button>
                       ) : (
 
@@ -455,7 +456,9 @@ function TranslationMergeUI({ conflictData, closeMergeWindow, triggerSnackBar })
                         ${chapterResolveDone ? 'bg-success/75 cursor-pointer hover:bg-success text-white' : 'bg-gray-300 text-black cursor-not-allowed '}
                         `}
                           >
-                            {conflictedChapters?.[selectedBook]?.length <= 1 ? 'Resolve Book' : 'Done'}
+                            {conflictedChapters?.[selectedBook]?.length <= 1
+                              ? t('btn-resolve-book')
+                              : t('btn-done')}
                           </button>
                         )
                       )

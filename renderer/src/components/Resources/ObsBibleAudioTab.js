@@ -115,7 +115,7 @@ export default function ObsBibleAudioTab({
                               {ref.value.resourceMeta?.subject}
                             </div>
                           </td>
-                          <td className="p-2 uppercase">
+                          <td className="px-5 py-3 uppercase">
                             <div
                               className="focus:outline-none"
                               onClick={(e) => handleRowSelect(
@@ -171,11 +171,11 @@ export default function ObsBibleAudioTab({
                               </>
                             )}
                           <td className="p-2">
-                            <div className="flex justify-center items-center gap-4">
+                            <div className="flex justify-between items-center w-full">
                               <div className="text-xxs text-gray-400">
                                 {ref?.value?.resourceMeta && ref?.value?.resourceMeta?.lastUpdatedAg.split('T')[0]}
                               </div>
-                              <div className="flex justify-center items-center gap-4">
+                              <div className="flex items-center gap-4">
                                 {ref?.value?.resourceMeta?.released
                                   && (
                                     <CheckHelpsUpdatePopUp resource={ref} selectResource={selectResource} />

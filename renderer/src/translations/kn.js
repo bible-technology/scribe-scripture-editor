@@ -27,7 +27,7 @@ export const Kn = {
   'projects-page': 'ಯೋಜನೆಗಳು',
   'label-search': 'ಹುಡುಕಿ',
   'label-project': 'ಯೋಜನೆ',
-  'label-flavour': 'ಫ್ಲೇವರ್',
+  'label-flavor': 'ಫ್ಲೇವರ್',
   'label-project-type': 'ಯೋಜನೆಯ ಪ್ರಕಾರ',
   'label-project-name': 'ಯೋಜನೆಯ ಹೆಸರು',
   'label-language': 'ಭಾಷೆಯ ಹೆಸರು',
@@ -303,4 +303,13 @@ export const Kn = {
   'obs-default-audio-text': 'ಡಿಫಾಲ್ಟ್ ಆಡಿಯೋ + ಪಠ್ಯ',
   'label-resource-tir': 'ಅನುವಾದ ಮಾಧ್ಯಮ ಸಂಪನ್ಮೂಲಗಳು',
   'dynamic-msg-confirm-replace-panel-resource': 'ಅದೇ ಹೆಸರಿನ ಒಂದು ಯೋಜನೆಯು ಈಗಾಗಲೇ ಇದೆ! "ಆರ್ಕೈವ್ ಮಾಡಿದ ಟ್ಯಾಬ್" ಅಥವಾ "ಪ್ರಾಜೆಕ್ಟ್ಸ್ ಟ್ಯಾಬ್" ಅನ್ನು ಪರಿಶೀಲಿಸಿ. ಓವರ್‌ಲಾಪ್ ಆಗಿರುವ ಪುಸ್ತಕಗಳಲ್ಲಿನ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ವಿಷಯವನ್ನು ಬದಲಾಯಿಸಲು "ಬದಲಾಯಿಸಿ" ಒತ್ತಿರಿ. ಬದಲಾವಣೆಗಳನ್ನು ತಪ್ಪಿಸಲು "ರದ್ದುಮಾಡಿ" ಒತ್ತಿರಿ.',
+  'label-downloaded-resources': 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿದ ಸಂಪನ್ಮೂಲಗಳು',
+  'btn-resolve-book': 'ಪರಿಹಾರದ ಪುಸ್ತಕ',
+  'btn-done': 'ಮುಗಿದಿದೆ',
+  'btn-finish': 'ಮುಗಿಸು',
+  'tooltip-select-font': 'ಫಾಂಟ್ ಆಯ್ಕೆಮಾಡಿ',
+  'tooltip-print-pdf': 'PDF ಗೆ ಮುದ್ರಿಸಿ',
+  'tooltip-hide-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಅಡಗಿಸಿ',
+  'tooltip-show-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ತೋರಿಸಿ',
+
 };

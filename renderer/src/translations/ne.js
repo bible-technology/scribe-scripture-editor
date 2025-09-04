@@ -303,4 +303,13 @@ export const Ne = {
   'obs-default-audio-text': 'पूर्वनिर्धारित अडियो + पाठ',
   'label-resource-tir': 'अनुवाद बहुभाषिक स्रोतहरू',
   'dynamic-msg-confirm-replace-panel-resource': 'यस्तै नामको पहिले नै परियोजना फेला परेको छ! "आर्काइभ गरिएको ट्याब" वा "परियोजनाहरू ट्याब" हेर्नुहोस्। ओभरल्याप हुने पुस्तकहरूको सामग्री मेट्न "बदल्नुहोस्" थिच्नुहोस्। परिवर्तन नगर्न "रद्द गर्नुहोस्" थिच्नुहोस्।',
+  'label-downloaded-resources': 'डाउनलोड गरिएका स्रोतहरू',
+  'btn-resolve-book': ' समाधान पुस्तक',
+  'btn-done': 'सम्पन्न भयो',
+  'btn-finish': 'समाप्त गर्नुहोस्',
+  'tooltip-select-font': 'फन्ट चयन गर्नुहोस्',
+  'tooltip-print-pdf': 'PDF मा मुद्रण गर्नुहोस्',
+  'tooltip-hide-audio-player': 'अडियो प्लेयर लुकाउनुहोस्',
+  'tooltip-show-audio-player': 'अडियो प्लेयर देखाउनुहोस्',
+
 };

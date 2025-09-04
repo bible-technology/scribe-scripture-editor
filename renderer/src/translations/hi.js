@@ -303,4 +303,13 @@ export const Hi = {
   'obs-default-audio-text': 'डिफ़ॉल्ट ऑडियो + पाठ',
   'label-resource-tir': 'अनुवाद मल्टीमीडिया संसाधन',
   'dynamic-msg-confirm-replace-panel-resource': 'इसी नाम की एक मौजूदा परियोजना मिली है! "आर्काइव टैब" या "परियोजनाएं टैब" देखें। किसी भी ओवरलैपिंग पुस्तक की सामग्री को ओवरराइट करने के लिए "बदलें" दबाएँ। परिवर्तन से बचने के लिए "रद्द करें" दबाएँ।',
+  'label-downloaded-resources': 'डाउनलोड की गई संसाधन',
+  'btn-resolve-book': 'समाधान पुस्तक',
+  'btn-done': 'पूरा हुआ',
+  'btn-finish': 'समाप्त करें',
+  'tooltip-select-font': 'फ़ॉन्ट चुनें',
+  'tooltip-print-pdf': 'PDF में प्रिंट करें',
+  'tooltip-hide-audio-player': 'ऑडियो प्लेयर छिपाएँ',
+  'tooltip-show-audio-player': 'ऑडियो प्लेयर दिखाएँ',
+
 };

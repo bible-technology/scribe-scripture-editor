@@ -26,7 +26,7 @@ export default function CustomList({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className={`absolute z-50 w-52 lg:w-${dropdownWidth} py-1 mt-1 overflow-auto scrollbars-width text-base bg-white rounded-md shadow-lg max-h-44 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}>
+          <Listbox.Options className={`absolute z-50 w-52 lg:w-${dropdownWidth} py-1 mt-1 overflow-auto scrollbars-width text-base bg-white rounded-md shadow-lg max-h-24 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}>
             {options.map((option) => (
               <Listbox.Option
                 key={option.title}
