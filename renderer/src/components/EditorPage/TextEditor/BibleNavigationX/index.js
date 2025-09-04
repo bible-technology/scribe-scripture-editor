@@ -59,7 +59,6 @@ export default function BibleNavigationX(props) {
   }
 
   useEffect(() => {
-    // console.log(bookId, chapter, verse, 'bible navigatin setter');
     async function setReference() {
       await saveNavigationHistory(bookId, chapter, verse);
     }
