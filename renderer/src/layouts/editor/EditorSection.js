@@ -66,6 +66,8 @@ export default function EditorSection({
     states: { scrollLock, selectedProjectMeta },
   } = useContext(ProjectContext);
 
+  const flavorName = selectedProjectMeta?.type?.flavorType?.flavor?.name;
+
   function removeResource() {
     setOpenModal(true);
   }
@@ -184,6 +186,22 @@ export default function EditorSection({
     }
   };
 
+  const getEditorHeight = () => {
+    if (isNextRowOpen) { return 'h-full'; }
+
+    switch (flavorName) {
+    case 'audioTranslation':
+      return 'md:h-[34.5vh]';
+    case 'textStories':
+      return audioEnabled ? 'md:h-[34.5vh]' : 'md:h-[42.5vh]';
+    case 'textTranslation':
+    case 'x-juxtalinear':
+      return 'md:h-[42.5vh]';
+    default:
+      return 'md:h-[42.5vh]';
+    }
+  };
+
   useEffect(() => {
     // Since we are adding reference resources from different places the data we have are inconsistant.
     // Looking for flavor from the flavors because flavor is only available for scripture and gloss(obs), not for Translation resources
@@ -219,9 +237,9 @@ export default function EditorSection({
         aria-label="resources-panel"
         className={classNames(
           openResource ? 'hidden' : '',
-          isNextRowOpen ? 'flex-1' : 'flex-1',
+          getEditorHeight(),
           // eslint-disable-next-line no-nested-ternary
-          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled && projectType === 'obs' ? 'max-h-[71vh]' : ''} overflow-hidden`,
+          `flex flex-col relative first:mt-0 border bg-white border-grey-600 rounded shadow-sm group ${audioPlayerUI ? 'md:max-h-[64vh] lg:max-h-[70vh]' : audioEnabled && projectType === 'obs' ? 'max-h-[70vh]' : ''} overflow-hidden`,
         )}
       >
         <div
