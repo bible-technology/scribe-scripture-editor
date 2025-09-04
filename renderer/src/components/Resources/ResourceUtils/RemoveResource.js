@@ -180,10 +180,12 @@ function RemoveResource({
         // read Scribe-settings of the project
         await ResourceResetAfterCheckSameOnRefResourceAgSettings(setResetResourceOnDeleteOffline, resource);
         // handleRowSelect(null, null, null, null, '');
-        setRenderApp(true);
         setOpenSnackBar(true);
         setNotify('success');
         setSnackText('Removed Resource Successfully');
+        setTimeout(() => {
+          setRenderApp(true);
+        }, 1000);
       });
     });
   };
