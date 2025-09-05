@@ -53,7 +53,7 @@ export default function EditorMenuBar(props) {
           aria-label="editor-pane"
           className="flex flex-1 justify-center text-white text-xxs uppercase tracking-wider font-bold leading-3 truncate"
         >
-           {t('label-editor-pane')}
+          {t('label-editor-pane')}
         </div>
 
         <button
@@ -107,7 +107,7 @@ export default function EditorMenuBar(props) {
               />
             )}
           </div>
-         <div title={t('tooltip-select-font')}className="ml-1">
+          <div title={t('tooltip-select-font')} className="ml-1">
             <MenuDropdown selectedFont={selectedFont || 'sans-serif'} setSelectedFont={handleSelectedFont} buttonStyle="px-1 py-0 mr-2 button text-gray-200 bg-primary-500 hover:bg-primary-500/90 text-highlight-300" />
           </div>
         </div>

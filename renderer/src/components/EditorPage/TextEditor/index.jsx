@@ -9,6 +9,7 @@ import BookOutOfScope from '@/components/Loading/BookOutOfScope';
 import { useReadUsfmFile } from './hooks/useReadUsfmFile';
 import EditorMenuBar from './EditorMenuBar';
 import { saveToFile } from './hooks/saveToFile';
+import * as logger from '../../../logger';
 
 // eslint-disable-next-line import/extensions
 import USFMEditor from './verseEditor/USFMEditor';
@@ -58,7 +59,7 @@ export default function TextEditor() {
     try {
       await saveToFile(updatedUsfm, defaultBookId);
     } catch (error) {
-      console.error('Failed to save USFM:', error);
+      logger.error('Failed to save USFM:', error);
     }
   }, [defaultBookId]);
 
