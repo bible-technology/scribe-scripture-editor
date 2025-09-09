@@ -43,15 +43,9 @@ export default function ImportPopUp(props) {
     actions: { setCanonSpecification, setImportedBookCodes, setImportedFiles },
   } = useContext(ProjectContext);
 
-
-
-
-
-
   const compareArrays = (a, b) => a.length === b.length
     && a.every((element) => b.indexOf(element) !== -1)
     && b.every((element) => a.indexOf(element) !== -1);
-
 
   function close() {
     logger.debug('ImportPopUp.js', 'Closing the Import UI');
@@ -106,7 +100,7 @@ export default function ImportPopUp(props) {
         const { isValid: validUsfm, bookCode } = await validateUsfm(usfm);
         isValid = validUsfm;
         return { ...book, valid: isValid, id: bookCode };
-      } else if (projectType === 'Audio' || projectType === 'Juxta') {
+      } if (projectType === 'Audio' || projectType === 'Juxta') {
         const file = await fs.readFile(book.path, 'utf8');
         const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
         isValid = myUsfmParser.validate();
@@ -170,34 +164,85 @@ export default function ImportPopUp(props) {
     const fileProcessingPromises = folderPath.map(async (filePath) => {
       try {
         switch (projectType) {
-          case 'Translation': {
-            const usfm = await fs.readFile(filePath, 'utf8');
-            const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
-            if (isValid) {
-              // If importing a USFM file then ask user for replace of USFM with the new content or not
-              replaceConformation(true);
-              logger.debug('ImportPopUp.js', 'Valid USFM file.');
-              files.push({ id: bookCode, content: validUSFM });
-              bookCodeList.push(bookCode);
-            } else {
-              logger.warn('ImportPopUp.js', 'Invalid USFM file.');
-              setNotify('failure');
-              setSnackText(t('dynamic-msg-invalid-usfm-file'));
-              setOpenSnackBar(true);
-            }
-            break;
+        case 'Translation': {
+          const usfm = await fs.readFile(filePath, 'utf8');
+          const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
+          if (isValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            replaceConformation(true);
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
+            files.push({ id: bookCode, content: validUSFM });
+            bookCodeList.push(bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-invalid-usfm-file'));
+            setOpenSnackBar(true);
           }
+          break;
+        }
 
-          case 'Audio': {
-            const usfm = await fs.readFile(filePath, 'utf8');
-            const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+        case 'Audio': {
+          const usfm = await fs.readFile(filePath, 'utf8');
+          const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+          const isJsonValid = myUsfmParser.validate();
+          if (isJsonValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            replaceConformation(true);
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
+            const jsonOutput = myUsfmParser.toJSON();
+            files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-invalid-usfm-file'));
+            setOpenSnackBar(true);
+          }
+          break;
+        }
+
+        case 'OBS': {
+          const mdfile = await fs.readFile(filePath, 'utf8');
+          let filename = filePath.split(/[(\\)?(/)?]/gm).pop();
+          const regexExp = /^([1-9]).md$/;
+
+          const matchSingleDigit = regexExp.exec(filename);
+          if (matchSingleDigit) {
+            let fileNum = filename.split('.')[0];
+            fileNum = fileNum.toString().padStart(2, 0);
+            filename = `${fileNum}.md`;
+          }
+          const isMdValid = OBSValidate(filename);
+          if (isMdValid) {
+            logger.debug('ImportPopUp.js', 'Valid Md file.');
+            files.push({ id: filename, content: mdfile });
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid Md file.');
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-invalid-md-file'));
+            setOpenSnackBar(true);
+          }
+          break;
+        }
+
+        case 'Juxta': {
+          const file = await fs.readFile(filePath, 'utf8');
+          const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
+
+          const fileExt = filename.split('.').pop()?.toLowerCase();
+          if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
+              || fileExt === undefined) {
+            const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
             const isJsonValid = myUsfmParser.validate();
+            // if the USFM is valid
             if (isJsonValid) {
-              // If importing a USFM file then ask user for replace of USFM with the new content or not
               replaceConformation(true);
               logger.debug('ImportPopUp.js', 'Valid USFM file.');
+              // then we get the book code and we transform our data to our Juxta json file
               const jsonOutput = myUsfmParser.toJSON();
-              files.push({ id: jsonOutput.book.bookCode, content: usfm });
+              const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
+              files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
               bookCodeList.push(jsonOutput.book.bookCode);
             } else {
               logger.warn('ImportPopUp.js', 'Invalid USFM file.');
@@ -205,82 +250,31 @@ export default function ImportPopUp(props) {
               setSnackText(t('dynamic-msg-invalid-usfm-file'));
               setOpenSnackBar(true);
             }
-            break;
-          }
-
-          case 'OBS': {
-            const mdfile = await fs.readFile(filePath, 'utf8');
-            let filename = filePath.split(/[(\\)?(/)?]/gm).pop();
-            const regexExp = /^([1-9]).md$/;
-
-            const matchSingleDigit = regexExp.exec(filename);
-            if (matchSingleDigit) {
-              let fileNum = filename.split('.')[0];
-              fileNum = fileNum.toString().padStart(2, 0);
-              filename = `${fileNum}.md`;
-            }
-            const isMdValid = OBSValidate(filename);
-            if (isMdValid) {
-              logger.debug('ImportPopUp.js', 'Valid Md file.');
-              files.push({ id: filename, content: mdfile });
-            } else {
-              logger.warn('ImportPopUp.js', 'Invalid Md file.');
-              setNotify('failure');
-              setSnackText(t('dynamic-msg-invalid-md-file'));
-              setOpenSnackBar(true);
-            }
-            break;
-          }
-
-          case 'Juxta': {
-            const file = await fs.readFile(filePath, 'utf8');
-            const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
-
-            const fileExt = filename.split('.').pop()?.toLowerCase();
-            if (fileExt === 'txt' || fileExt === 'usfm' || fileExt === 'text' || fileExt === 'sfm'
-              || fileExt === undefined) {
-              const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
-              const isJsonValid = myUsfmParser.validate();
-              // if the USFM is valid
-              if (isJsonValid) {
-                replaceConformation(true);
-                logger.debug('ImportPopUp.js', 'Valid USFM file.');
-                // then we get the book code and we transform our data to our Juxta json file
-                const jsonOutput = myUsfmParser.toJSON();
-                const juxtaJson = JSON.stringify(readUsfm(file, jsonOutput.book.bookCode));
-                files.push({ id: jsonOutput.book.bookCode, content: juxtaJson });
-                bookCodeList.push(jsonOutput.book.bookCode);
-              } else {
-                logger.warn('ImportPopUp.js', 'Invalid USFM file.');
-                setNotify('failure');
-                setSnackText(t('dynamic-msg-invalid-usfm-file'));
-                setOpenSnackBar(true);
-              }
-            } else if (fileExt === 'json') {
-              // TODO add a validator for our juxta type
-              const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
-              if (updatedFile.error) {
-                logger.warn('ImportPopUp.js', 'Invalid filename.');
-                setNotify('failure');
-                // Nicolas : TODO translations
-                setSnackText(updatedFile.error);
-                setOpenSnackBar(true);
-                break;
-              }
-              logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
-              files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
-              bookCodeList.push(updatedFile.bookCode);
-            } else {
-              logger.warn('ImportPopUp.js', 'Invalid file.');
+          } else if (fileExt === 'json') {
+            // TODO add a validator for our juxta type
+            const updatedFile = updateJsonJuxta(file, filename.split('.')[0]);
+            if (updatedFile.error) {
+              logger.warn('ImportPopUp.js', 'Invalid filename.');
               setNotify('failure');
               // Nicolas : TODO translations
-              setSnackText('invalid file type');
+              setSnackText(updatedFile.error);
               setOpenSnackBar(true);
+              break;
             }
-            break;
+            logger.debug('ImportPopUp.js', 'Valid Json juxta file.');
+            files.push({ id: updatedFile.bookCode, content: JSON.stringify(updatedFile) });
+            bookCodeList.push(updatedFile.bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid file.');
+            setNotify('failure');
+            // Nicolas : TODO translations
+            setSnackText('invalid file type');
+            setOpenSnackBar(true);
           }
-          default:
-            break;
+          break;
+        }
+        default:
+          break;
         }
       } catch (err) {
         logger.error('ImportPopUp.js', `Error processing file: ${err.message}`);
@@ -315,13 +309,6 @@ export default function ImportPopUp(props) {
     close();
   };
 
-  const getBgColor = (valid) => {
-    if (valid === true) return 'bg-success hover:bg-success/80';
-    if (valid === false) return 'bg-error hover:bg-error/80';
-    return 'bg-gray-300 hover:bg-gray-400';
-  };
-
-
   const importProject = async () => {
     logger.debug('ImportPopUp.js', 'Inside importProject');
 
@@ -334,51 +321,88 @@ export default function ImportPopUp(props) {
       return;
     }
 
-    const invalidFiles = books.filter(b => b.valid === false);
+    const invalidFiles = books.filter((b) => b.valid === false);
 
     let outOfScopeFiles = [];
     if (projectType !== 'OBS') {
       outOfScopeFiles = books.filter(
-        b => !canonSpecification.currentScope.includes(b.id)
+        (b) => !canonSpecification.currentScope.includes(b.id),
       );
     }
 
-    const seen = new Set();
-    const duplicateWithinBatch = [];
-    for (const book of books) {
-      if (!book.id) continue;
-      if (seen.has(book.id)) {
-        duplicateWithinBatch.push(book);
-      } else {
-        seen.add(book.id);
+    const duplicateWithinBatch = books.filter((book, index, arr) => {
+      if (!book.id || book.valid === false || !canonSpecification.currentScope.includes(book.id)) {
+        return false;
       }
-    }
+      return arr.findIndex((b) => b.id === book.id) !== index;
+    });
 
-
-    // 3. Block import if any invalid, out-of-scope, or within-batch duplicates exist
     if (invalidFiles.length > 0 || outOfScopeFiles.length > 0 || duplicateWithinBatch.length > 0) {
-      const msg = [
-        invalidFiles.length > 0 ? `Invalid files: ${invalidFiles.map(b => b.name).join(', ')}` : '',
-        outOfScopeFiles.length > 0 ? `Out-of-scope files: ${outOfScopeFiles.map(b => b.name).join(', ')}` : '',
-        duplicateWithinBatch.length > 0 ? `Duplicate in current selection: ${duplicateWithinBatch.map(b => b.name).join(', ')}` : '',
-      ].filter(Boolean).join('\n');
+      const msg = (
+        <div className="space-y-1">
+          {invalidFiles.length > 0 && (
+            <div>
+              <span className="font-bold text-black">Invalid files:</span>
+              {' '}
+              {invalidFiles.map((b) => b.name).join(', ')}
+            </div>
+          )}
+          {outOfScopeFiles.length > 0 && (
+            <div>
+              <span className="font-bold text-black">Out-of-scope files:</span>
+              {' '}
+              {outOfScopeFiles.map((b) => b.name).join(', ')}
+            </div>
+          )}
+          {duplicateWithinBatch.length > 0 && (
+            <div>
+              <span className="font-bold text-black">Duplicate in current selection:</span>
+              {' '}
+              {duplicateWithinBatch.map((b) => b.name).join(', ')}
+            </div>
+          )}
+        </div>
+      );
 
       setNotify('warning');
       setSnackText(msg);
       setOpenSnackBar(true);
-      return; // ❌ stop here until user fixes issues
+      return;
     }
 
-    const duplicateWithImported = books.filter(b => importedBookCodes.includes(b.id));
+    const duplicateWithImported = books.filter(
+      (b) => b.valid !== false && !outOfScopeFiles.includes(b) && importedBookCodes.includes(b.id),
+    );
 
-  if (duplicateWithImported.length > 0) {
-    const msg = `Duplicate with existing imports: ${duplicateWithImported.map(b => b.name).join(', ')}`;
-    const confirmOverwrite = window.confirm(`${msg}\nDo you want to overwrite them?`);
-    if (!confirmOverwrite) return;
-  }
+    if (duplicateWithImported.length > 0) {
+      const msg = `Duplicate with existing imports: ${duplicateWithImported.map((b) => b.name).join(', ')}`;
+      setNotify('warning');
+      setSnackText(
+        <div>
+          <p>{msg}</p>
+          <button
+            type="button"
+            onClick={async () => {
+              setOpenSnackBar(false);
+              await importFiles(folderPath, { overwrite: true });
+            }}
+            className="bg-green-500 text-white px-2 py-1 rounded"
+          >
+            Overwrite
+          </button>
+          <button
+            type="button"
+            onClick={() => setOpenSnackBar(false)}
+            className="bg-gray-500 text-white px-2 py-1 rounded"
+          >
+            Cancel
+          </button>
+        </div>,
+      );
+      setOpenSnackBar(true);
+      return;
+    }
 
-
-    // 4. Proceed with import if everything checks out
     setLoading(true);
     setValid(false);
     try {
@@ -390,28 +414,27 @@ export default function ImportPopUp(props) {
     }
   };
 
-
   useEffect(() => {
     logger.debug('ImportPopUp.js', 'Inside useEffect to set filter types of Import');
     switch (projectType) {
-      case 'Translation':
-        setfileFilter([{ name: 'usfm files', extensions: ['usfm', 'sfm', 'USFM', 'SFM'] }]);
-        setLabelImportFiles(t('label-choose-usfm-files'));
-        break;
+    case 'Translation':
+      setfileFilter([{ name: 'usfm files', extensions: ['usfm', 'sfm', 'USFM', 'SFM'] }]);
+      setLabelImportFiles(t('label-choose-usfm-files'));
+      break;
 
-      case 'OBS':
-        setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
-        setLabelImportFiles(t('label-choose-md-files'));
-        break;
+    case 'OBS':
+      setfileFilter([{ name: 'markdown files', extensions: ['md', 'markdown', 'MD', 'MARKDOWN'] }]);
+      setLabelImportFiles(t('label-choose-md-files'));
+      break;
 
-      case 'Juxta':
-        setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
-        // Nicolas : TODO translation
-        setLabelImportFiles('Choose json files');
-        break;
+    case 'Juxta':
+      setfileFilter([{ name: 'json, text, usfm files', extensions: ['json', 'JSON', 'txt', 'TXT', 'text', 'TEXT', 'usfm', 'sfm', 'USFM', 'SFM'] }]);
+      // Nicolas : TODO translation
+      setLabelImportFiles('Choose json files');
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectType]);
@@ -427,7 +450,6 @@ export default function ImportPopUp(props) {
       });
     }
   }, [open]);
-
 
   useEffect(() => {
     if (open) {
@@ -509,34 +531,47 @@ export default function ImportPopUp(props) {
                       <div>
                         <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ''}</h4>
                       </div>
-                      <div className="bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide">
-                        {books.map((book, index) => (
-                          <div
-                            key={book.name}
-                            className={`
-                              ${styles.select} relative p-2 rounded font-medium flex items-start w-full 
-                              ${getBgColor(book.valid)}
-                            `}
 
-                          >
-                            <div className="flex items-start w-full pr-6">
-                              <DocumentTextIcon className="w-6 mr-2 text-white flex-shrink-0" />
-                              <span className="text-black break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2">
-                                {book.name}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              className="absolute top-1 right-1 text-black hover:text-gray-700"
-                              onClick={() => {
-                                setBooks((prev) => prev.filter((_, i) => i !== index));
-                                setFolderPath((prev) => prev.filter((_, i) => i !== index));
-                              }}
+                      <div className="bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide">
+                        {books.map((book, index) => {
+                          const outOfScope = projectType !== 'OBS' && !canonSpecification.currentScope.includes(book.id);
+                          const duplicateInBatch = books.filter((b) => b.id === book.id && b.valid !== false && !outOfScope).length > 1;
+                          const duplicateWithImported = importedBookCodes.includes(book.id) && book.valid !== false && !outOfScope;
+
+                          let bgColor = 'bg-gray-300 hover:bg-gray-400';
+                          if (book.valid === false) { bgColor = 'bg-error hover:bg-error/80'; } else if (!outOfScope) { bgColor = 'bg-success hover:bg-success/80'; }
+                          if (duplicateInBatch) { bgColor = 'bg-blue-500 hover:bg-blue-600'; } else if (duplicateWithImported) { bgColor = 'bg-yellow-400 hover:bg-yellow-500'; }
+
+                          const fileExt = book.name.split('.').pop()?.toUpperCase() || '';
+                          let tooltip = fileExt;
+
+                          if (book.valid === false) { tooltip += ' — Invalid file'; } else if (outOfScope) { tooltip += ' — Out-of-scope'; } else if (duplicateInBatch) { tooltip += ' — Duplicate in selection'; } else if (duplicateWithImported) { tooltip += ' — Already imported'; } else { tooltip = `Valid file — ${fileExt}`; }
+
+                          return (
+                            <div
+                              key={book.name}
+                              className={`${styles.select} relative p-2 rounded font-medium flex items-start w-full ${bgColor}`}
+                              title={tooltip}
                             >
-                              <XMarkIcon className="h-4 w-4" aria-hidden="true" />
-                            </button>
-                          </div>
-                        ))}
+                              <div className="flex items-start w-full pr-6">
+                                <DocumentTextIcon className="w-6 mr-2 flex-shrink-0 text-white" />
+                                <span className="text-white break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2">
+                                  {book.name}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                className="absolute top-1 right-1 text-black hover:text-gray-700"
+                                onClick={() => {
+                                  setBooks((prev) => prev.filter((_, i) => i !== index));
+                                  setFolderPath((prev) => prev.filter((_, i) => i !== index));
+                                }}
+                              >
+                                <XMarkIcon className="h-4 w-4" aria-hidden="true" />
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
 
                     </div>
@@ -593,4 +628,3 @@ ImportPopUp.propTypes = {
   projectType: PropTypes.string.isRequired,
   replaceConformation: PropTypes.func.isRequired,
 };
-
