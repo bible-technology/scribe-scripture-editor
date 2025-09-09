@@ -26,6 +26,7 @@ export default function ImportPopUp(props) {
     replaceConformation,
   } = props;
 
+  const [overwriteDialog, setOverwriteDialog] = useState({ open: false, duplicates: [] });
   const cancelButtonRef = useRef(null);
   const [books, setBooks] = useState([]);
   const [folderPath, setFolderPath] = useState([]);
@@ -375,31 +376,7 @@ export default function ImportPopUp(props) {
     );
 
     if (duplicateWithImported.length > 0) {
-      const msg = `Duplicate with existing imports: ${duplicateWithImported.map((b) => b.name).join(', ')}`;
-      setNotify('warning');
-      setSnackText(
-        <div>
-          <p>{msg}</p>
-          <button
-            type="button"
-            onClick={async () => {
-              setOpenSnackBar(false);
-              await importFiles(folderPath, { overwrite: true });
-            }}
-            className="bg-green-500 text-white px-2 py-1 rounded"
-          >
-            Overwrite
-          </button>
-          <button
-            type="button"
-            onClick={() => setOpenSnackBar(false)}
-            className="bg-gray-500 text-white px-2 py-1 rounded"
-          >
-            Cancel
-          </button>
-        </div>,
-      );
-      setOpenSnackBar(true);
+      setOverwriteDialog({ open: true, duplicates: duplicateWithImported });
       return;
     }
 
@@ -468,7 +445,7 @@ export default function ImportPopUp(props) {
       {!loading && (
         <Transition
           show={show}
-          as={Fragment}
+          as="div"
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
           enterTo="transform scale-100 opacity-100"
@@ -476,6 +453,45 @@ export default function ImportPopUp(props) {
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
+
+          <Dialog
+            as="div"
+            className="fixed inset-0 z-20 overflow-y-auto"
+            open={overwriteDialog.open}
+            onClose={() => setOverwriteDialog({ open: false, duplicates: [] })}
+            initialFocus={cancelButtonRef}
+          >
+            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+            <div className="flex items-center justify-center h-screen">
+              <div className="bg-white rounded shadow-lg p-6 w-96 z-50">
+                <Dialog.Title className="text-lg font-bold mb-4">Duplicate Files Found</Dialog.Title>
+                <div className="mb-4">
+                  {overwriteDialog.duplicates.map((b) => (
+                    <div key={b.id}>{b.name}</div>
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-500 text-white rounded"
+                    onClick={() => setOverwriteDialog({ open: false, duplicates: [] })}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-green-500 text-white rounded"
+                    onClick={async () => {
+                      setOverwriteDialog({ open: false, duplicates: [] });
+                      await importFiles(folderPath, { overwrite: true });
+                    }}
+                  >
+                    Overwrite
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Dialog>
           <Dialog
             as="div"
             className="fixed inset-0 z-10 overflow-y-auto"
