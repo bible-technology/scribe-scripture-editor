@@ -54,7 +54,8 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   const [isShow, setIsShow] = React.useState(true);
   const [bibleNav, setBibleNav] = React.useState(false);
   const [handleNav, setHandleNav] = React.useState();
-  const [setCurrentScope] = React.useState();
+  // eslint-disable-next-line no-unused-vars
+  const [currentScope, setCurrentScope] = React.useState();
   const { t } = useTranslation();
   const handleClick = () => {
     setIsShow(!isShow);
