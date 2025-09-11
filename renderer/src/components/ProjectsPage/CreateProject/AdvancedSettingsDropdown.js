@@ -54,7 +54,6 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   const [isShow, setIsShow] = React.useState(true);
   const [bibleNav, setBibleNav] = React.useState(false);
   const [handleNav, setHandleNav] = React.useState();
-  // eslint-disable-next-line no-unused-vars
   const [currentScope, setCurrentScope] = React.useState();
   const { t } = useTranslation();
   const handleClick = () => {
@@ -72,16 +71,16 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     logger.debug('AdvancedSettingsDropdown.js', 'In loadScope for loading a exact scope from burrito');
     const vals = Object.keys(project.type.flavorType.currentScope).map((key) => key);
     if (vals.length === 66) {
-      setCanonSpecification({ id: 'ALL', title: t('label-all'), currentScope: vals });
+      setCanonSpecification({ title: t('label-all'), currentScope: vals });
       setCurrentScope({ title: t('label-all'), currentScope: vals });
     } else if (vals.length === 39 && vals.every((val) => OT.includes(val))) {
-      setCanonSpecification({ id: 'OT', title: t('label-old-testament'), currentScope: vals });
+      setCanonSpecification({ title: t('label-old-testament'), currentScope: vals });
       setCurrentScope({ title: t('label-old-testament'), currentScope: vals });
     } else if (vals.length === 27 && vals.every((val) => NT.includes(val))) {
-      setCanonSpecification({ id: 'NT', title: t('label-new-testament'), currentScope: vals });
+      setCanonSpecification({ title: t('label-new-testament'), currentScope: vals });
       setCurrentScope({ title: t('label-new-testament'), currentScope: vals });
     } else {
-      setCanonSpecification({ id: 'OTHER', title: t('label-other'), currentScope: vals });
+      setCanonSpecification({ title: t('label-other'), currentScope: vals });
       setCurrentScope({ title: t('label-other'), currentScope: vals });
     }
   };
@@ -147,15 +146,18 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     }
   };
   const selectCanon = (val) => {
-    const value = { ...val };
+    const value = val;
+    // console.log(val)
 
-    if (value.title === 'Other') {
-      // Always start with an empty scope when switching to Custom
-      value.currentScope = canonSpecification.title === 'Other'
-        ? canonSpecification.currentScope // keep current custom selection if already in Custom
-        : []; // otherwise start fresh
+    if (call === 'edit' && value.title === 'Other') {
+      if (canonSpecification.title === 'Other') {
+        value.currentScope = canonSpecification.currentScope;
+      } else {
+        value.currentScope = currentScope.currentScope;
+      }
+    } else if (canonSpecification.title === 'Other' && value.title === 'Other') {
+      value.currentScope = canonSpecification.currentScope;
     }
-
     setCanonSpecification(value);
     openBibleNav('edit');
   };
@@ -232,7 +234,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
 
                   <div className="py-5 flex flex-wrap lg:flex-nowrap gap-3 uppercase text-sm font-medium">
                     <div
-                      className={canonSpecification.id === 'ALL' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'All Books' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[0])}
                       role="button"
                       tabIndex="0"
@@ -241,7 +243,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       {t('label-all')}
                     </div>
                     <div
-                      className={canonSpecification.id === 'OT' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'Old Testament (OT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[1])}
                       role="button"
                       aria-label="old-testament"
@@ -250,7 +252,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       {`${t('label-old-testament')} (OT)`}
                     </div>
                     <div
-                      className={canonSpecification.id === 'NT' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'New Testament (NT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[2])}
                       role="button"
                       aria-label="new-testament"
@@ -259,7 +261,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       {`${t('label-new-testament')} (NT)`}
                     </div>
                     <div
-                      className={canonSpecification.id === 'OTHER' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'Other' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[3])}
                       role="button"
                       tabIndex="0"

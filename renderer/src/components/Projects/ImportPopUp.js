@@ -300,7 +300,7 @@ export default function ImportPopUp(props) {
     } else if (bookCodeList.length === advanceSettings.canonSpecification[1].length
       && compareArrays(advanceSettings.currentScope, bookCodeList)) {
       newCanonSpecification.title = advanceSettings.canonSpecification[1].title;
-      newCanonSpecification.id = advanceSettings.canonSpecification[2].id;
+      newCanonSpecification.id = advanceSettings.canonSpecification[1].id;
     } else if (bookCodeList.length === advanceSettings.canonSpecification[0].length
       && compareArrays(advanceSettings.currentScope, bookCodeList)) {
       newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
@@ -451,7 +451,7 @@ export default function ImportPopUp(props) {
             initialFocus={cancelButtonRef}
             static
             open={show}
-            onClose={close}
+            onClose={() => close}
           >
             <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
             <div className="flex items-center justify-center h-screen">
@@ -601,7 +601,7 @@ export default function ImportPopUp(props) {
 }
 ImportPopUp.propTypes = {
   open: PropTypes.bool,
-  closePopUp: PropTypes.func.isRequired,
-  projectType: PropTypes.string.isRequired,
-  replaceConformation: PropTypes.func.isRequired,
+  closePopUp: PropTypes.func,
+  projectType: PropTypes.string,
+  replaceConformation: PropTypes.func,
 };
