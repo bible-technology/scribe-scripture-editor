@@ -26,7 +26,6 @@ export default function ImportPopUp(props) {
     replaceConformation,
   } = props;
 
-  const [overwriteDialog, setOverwriteDialog] = useState({ open: false, duplicates: [] });
   const cancelButtonRef = useRef(null);
   const [books, setBooks] = useState([]);
   const [folderPath, setFolderPath] = useState([]);
@@ -97,10 +96,13 @@ export default function ImportPopUp(props) {
       let isValid = false;
       let bookCode = null;
       if (projectType === 'Translation') {
-        const usfm = await fs.readFile(book.path, 'utf8');
-        const { isValid: validUsfm, bookCode } = await validateUsfm(usfm);
+        const fileContent = await fs.readFile(book.path, 'utf8');
+        if (!fileContent.trim()) {
+          return { ...book, valid: false, id: null };
+        }
+        const { isValid: validUsfm, bookCode: code } = await validateUsfm(fileContent);
         isValid = validUsfm;
-        return { ...book, valid: isValid, id: bookCode };
+        bookCode = code || null;
       } if (projectType === 'Audio' || projectType === 'Juxta') {
         const file = await fs.readFile(book.path, 'utf8');
         const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
@@ -323,69 +325,59 @@ export default function ImportPopUp(props) {
     }
 
     const invalidFiles = books.filter((b) => b.valid === false);
-
-    let outOfScopeFiles = [];
-    if (projectType !== 'OBS') {
-      outOfScopeFiles = books.filter(
-        (b) => !canonSpecification.currentScope.includes(b.id),
-      );
-    }
-
+    const outOfScopeFiles = projectType !== 'OBS'
+      ? books.filter((b) => !canonSpecification.currentScope.includes(b.id) && b.valid !== false)
+      : [];
     const duplicateWithinBatch = books.filter((book, index, arr) => {
-      if (!book.id || book.valid === false || !canonSpecification.currentScope.includes(book.id)) {
-        return false;
-      }
+      if (!book.id || book.valid === false || !canonSpecification.currentScope.includes(book.id)) { return false; }
       return arr.findIndex((b) => b.id === book.id) !== index;
     });
 
-    if (invalidFiles.length > 0 || outOfScopeFiles.length > 0 || duplicateWithinBatch.length > 0) {
-      const msg = (
-        <div className="space-y-1">
-          {invalidFiles.length > 0 && (
-            <div>
-              <span className="font-bold text-black">Invalid files:</span>
-              {' '}
-              {invalidFiles.map((b) => b.name).join(', ')}
-            </div>
-          )}
-          {outOfScopeFiles.length > 0 && (
-            <div>
-              <span className="font-bold text-black">Out-of-scope files:</span>
-              {' '}
-              {outOfScopeFiles.map((b) => b.name).join(', ')}
-            </div>
-          )}
-          {duplicateWithinBatch.length > 0 && (
-            <div>
-              <span className="font-bold text-black">Duplicate in current selection:</span>
-              {' '}
-              {duplicateWithinBatch.map((b) => b.name).join(', ')}
-            </div>
-          )}
-        </div>
+    if (invalidFiles.length > 0) {
+      setNotify('failure');
+      setSnackText(
+        <div>
+          <span className="font-bold text-black">Invalid files:</span>
+          {' '}
+          {invalidFiles.map((b) => b.name).join(', ')}
+        </div>,
       );
-
-      setNotify('warning');
-      setSnackText(msg);
       setOpenSnackBar(true);
       return;
     }
 
-    const duplicateWithImported = books.filter(
-      (b) => b.valid !== false && !outOfScopeFiles.includes(b) && importedBookCodes.includes(b.id),
-    );
-
-    if (duplicateWithImported.length > 0) {
-      setOverwriteDialog({ open: true, duplicates: duplicateWithImported });
+    if (outOfScopeFiles.length > 0) {
+      setNotify('warning');
+      setSnackText(
+        <div>
+          <span className="font-bold text-black">Out-of-scope files:</span>
+          {' '}
+          {outOfScopeFiles.map((b) => b.name).join(', ')}
+        </div>,
+      );
+      setOpenSnackBar(true);
       return;
     }
 
+    if (duplicateWithinBatch.length > 0) {
+      setNotify('info');
+      setSnackText(
+        <div>
+          <span className="font-bold text-black">Duplicate in current selection:</span>
+          {' '}
+          {duplicateWithinBatch.map((b) => b.name).join(', ')}
+        </div>,
+      );
+      setOpenSnackBar(true);
+      return;
+    }
+
+    // If nothing wrong, proceed to import
     setLoading(true);
     setValid(false);
     try {
       closePopUp(false);
-      await importFiles(folderPath, { overwrite: duplicateWithImported.length > 0 });
-      logger.debug('ImportPopUp.js', 'Import successful');
+      await importFiles(folderPath);
     } finally {
       setLoading(false);
     }
@@ -453,45 +445,6 @@ export default function ImportPopUp(props) {
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-
-          <Dialog
-            as="div"
-            className="fixed inset-0 z-20 overflow-y-auto"
-            open={overwriteDialog.open}
-            onClose={() => setOverwriteDialog({ open: false, duplicates: [] })}
-            initialFocus={cancelButtonRef}
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-            <div className="flex items-center justify-center h-screen">
-              <div className="bg-white rounded shadow-lg p-6 w-96 z-50">
-                <Dialog.Title className="text-lg font-bold mb-4">Duplicate Files Found</Dialog.Title>
-                <div className="mb-4">
-                  {overwriteDialog.duplicates.map((b) => (
-                    <div key={b.id}>{b.name}</div>
-                  ))}
-                </div>
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-gray-500 text-white rounded"
-                    onClick={() => setOverwriteDialog({ open: false, duplicates: [] })}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-green-500 text-white rounded"
-                    onClick={async () => {
-                      setOverwriteDialog({ open: false, duplicates: [] });
-                      await importFiles(folderPath, { overwrite: true });
-                    }}
-                  >
-                    Overwrite
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Dialog>
           <Dialog
             as="div"
             className="fixed inset-0 z-10 overflow-y-auto"
@@ -554,9 +507,17 @@ export default function ImportPopUp(props) {
                           const duplicateInBatch = books.filter((b) => b.id === book.id && b.valid !== false && !outOfScope).length > 1;
                           const duplicateWithImported = importedBookCodes.includes(book.id) && book.valid !== false && !outOfScope;
 
-                          let bgColor = 'bg-gray-300 hover:bg-gray-400';
-                          if (book.valid === false) { bgColor = 'bg-error hover:bg-error/80'; } else if (!outOfScope) { bgColor = 'bg-success hover:bg-success/80'; }
-                          if (duplicateInBatch) { bgColor = 'bg-blue-500 hover:bg-blue-600'; } else if (duplicateWithImported) { bgColor = 'bg-yellow-400 hover:bg-yellow-500'; }
+                          let bgColor = 'bg-gray-300 hover:bg-gray-400'; // default: neutral
+
+                          if (book.valid === false) {
+                            bgColor = 'bg-error hover:bg-error/80'; // invalid files
+                          } else if (outOfScope) {
+                            bgColor = 'bg-gray-300 hover:bg-gray-400'; // out-of-scope
+                          } else if (duplicateInBatch) {
+                            bgColor = 'bg-blue-500 hover:bg-blue-600'; // duplicate in current selection
+                          } else {
+                            bgColor = 'bg-success hover:bg-success/80'; // valid
+                          }
 
                           const fileExt = book.name.split('.').pop()?.toUpperCase() || '';
                           let tooltip = fileExt;
