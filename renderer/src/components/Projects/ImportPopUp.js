@@ -419,7 +419,6 @@ export default function ImportPopUp(props) {
       });
     }
   }, [open, projectType]);
-  
 
   useEffect(() => {
     if (open) {
