@@ -24,6 +24,7 @@ export default function ImportPopUp(props) {
     closePopUp,
     projectType,
     replaceConformation,
+    call,
   } = props;
 
   const cancelButtonRef = useRef(null);
@@ -306,7 +307,9 @@ export default function ImportPopUp(props) {
       newCanonSpecification.title = advanceSettings.canonSpecification[0].title;
       newCanonSpecification.id = advanceSettings.canonSpecification[0].id;
     }
-    setCanonSpecification(newCanonSpecification);
+    if (call === 'new' && canonSpecification?.currentScope?.length === 66) {
+      setCanonSpecification(newCanonSpecification);
+    }
     setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
     close();

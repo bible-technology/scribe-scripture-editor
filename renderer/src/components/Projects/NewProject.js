@@ -466,7 +466,7 @@ export default function NewProject({ call, project, closeEdit }) {
                   </button>
                   {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
                   {call !== 'edit' && headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
-                  <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
+                  <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} call={call} />
                 </div>
               </div>
 
