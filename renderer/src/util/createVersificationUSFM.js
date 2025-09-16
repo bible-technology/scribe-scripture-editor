@@ -163,10 +163,16 @@ export const createVersificationUSFM = (
               font: '',
               fontSize: 1,
               navigationHistory: [
-                books?.[0]?.id ? books[0].id.toLowerCase() : 'unknown',
+                String(
+                  currentBurrito?.project?.textTranslation?.navigationHistory?.[0]
+                  || importedFiles?.[0]?.id
+                  || books?.[0]
+                  || '',
+                ).toLowerCase(),
                 '1',
                 '1',
               ],
+
             },
           },
           sync: { services: { door43: [] } },

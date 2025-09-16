@@ -409,18 +409,6 @@ export default function ImportPopUp(props) {
   }, [projectType]);
 
   useEffect(() => {
-    if (open && canonSpecification.currentScope.length === 0 && projectType !== 'edit') {
-      const allBooks = advanceSettings.canonSpecification[0].currentScope;
-      setCanonSpecification({
-        currentScope: allBooks,
-        id: advanceSettings.canonSpecification[0].id,
-        locked: false,
-        title: advanceSettings.canonSpecification[0].title,
-      });
-    }
-  }, [open, projectType]);
-
-  useEffect(() => {
     if (open) {
       openFileDialogSettingData();
     }
