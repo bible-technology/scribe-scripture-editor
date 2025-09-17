@@ -308,5 +308,5 @@ export const Id = {
   'tooltip-print-pdf': 'Cetak ke PDF',
   'tooltip-hide-audio-player': 'Sembunyikan pemutar audio',
   'tooltip-show-audio-player': 'Tampilkan pemutar audio',
-
+  'label-clear-all': 'Bersihkan semua',
 };

@@ -312,5 +312,5 @@ export const Es = {
   'tooltip-print-pdf': 'Imprimir en PDF',
   'tooltip-hide-audio-player': 'Ocultar reproductor de audio',
   'tooltip-show-audio-player': 'Mostrar reproductor de audio',
-
+  'label-clear-all': 'Borrar todo',
 };

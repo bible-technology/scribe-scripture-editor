@@ -311,4 +311,5 @@ export const Te = {
   'tooltip-print-pdf': 'PDF కు ముద్రించండి',
   'tooltip-hide-audio-player': 'ఆడియో ప్లేయర్ దాచు',
   'tooltip-show-audio-player': 'ఆడియో ప్లేయర్ చూపించు',
+  'label-clear-all': 'అన్నీ క్లియర్ చేయండి',
 };

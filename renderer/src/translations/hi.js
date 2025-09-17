@@ -311,5 +311,6 @@ export const Hi = {
   'tooltip-print-pdf': 'PDF में प्रिंट करें',
   'tooltip-hide-audio-player': 'ऑडियो प्लेयर छिपाएँ',
   'tooltip-show-audio-player': 'ऑडियो प्लेयर दिखाएँ',
+  'label-clear-all': 'सभी साफ़ करें',
 
 };

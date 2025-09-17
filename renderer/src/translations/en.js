@@ -311,4 +311,6 @@ export const En = {
   'tooltip-print-pdf': 'Print to PDF',
   'tooltip-hide-audio-player': 'Hide Audio Player',
   'tooltip-show-audio-player': 'Show Audio Player',
+  'label-clear-all': 'Clear all',
+
 };

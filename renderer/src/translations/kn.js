@@ -311,5 +311,6 @@ export const Kn = {
   'tooltip-print-pdf': 'PDF ಗೆ ಮುದ್ರಿಸಿ',
   'tooltip-hide-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಅಡಗಿಸಿ',
   'tooltip-show-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ತೋರಿಸಿ',
+  'label-clear-all': 'ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ',
 
 };

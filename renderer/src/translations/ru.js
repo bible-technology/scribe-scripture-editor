@@ -311,4 +311,5 @@ export const Ru = {
   'tooltip-print-pdf': 'Печать в PDF',
   'tooltip-hide-audio-player': 'Скрыть аудиоплеер',
   'tooltip-show-audio-player': 'Показать аудиоплеер',
+  'label-clear-all': 'Очистить все',
 };

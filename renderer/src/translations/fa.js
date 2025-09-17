@@ -311,4 +311,5 @@ export const Fa = {
   'label-start': 'شروع',
   'label-end': 'پایان',
   'label-select': 'انتخاب',
+  'label-clear-all': 'پاک کردن همه',
 };

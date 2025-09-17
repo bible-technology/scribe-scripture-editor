@@ -312,5 +312,6 @@ export const Fr = {
   'tooltip-print-pdf': 'Imprimer en PDF',
   'tooltip-hide-audio-player': 'Masquer le lecteur audio',
   'tooltip-show-audio-player': 'Afficher le lecteur audio',
+  'label-clear-all': 'Tout effacer',
 
 };
