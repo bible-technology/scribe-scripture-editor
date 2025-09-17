@@ -61,7 +61,6 @@ const CustomNofications = () => {
 
   return (
     <>
-      {/* Bell button with floating count */}
       <div className="relative inline-block">
         <button
           aria-label="notification-button"
@@ -82,12 +81,10 @@ const CustomNofications = () => {
         )}
       </div>
 
-      {/* Notifications sidebar */}
       <Notifications isOpen={openSideNotification} closeNotifications={closeNotifications}>
-        {/* Header with Clear All */}
+
         <div className="w-80 max-w-xs">
           <div className="flex justify-between items-center mb-2 px-4">
-            {/* <span className="font-semibold text-sm">{t('label-notifications')}</span> */}
             <button
               type="button"
               onClick={clearAllNotifications}
@@ -96,11 +93,8 @@ const CustomNofications = () => {
               {t('label-clear-all')}
             </button>
           </div>
-
-          {/* Notification list */}
           {notifications?.map((val) => (
             <div key={val.time} className="relative mb-2" aria-label="notification">
-              {/* X button for individual dismissal */}
               <button
                 type="button"
                 onClick={() => removeNotification(val.time)}
@@ -108,8 +102,6 @@ const CustomNofications = () => {
               >
                 <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-700" />
               </button>
-
-              {/* Success Notification */}
               {val.type === 'success' && (
                 <div className="relative mb-2 bg-gray-200 rounded-lg text-sm text-black overflow-hidden">
                   <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-gray-300 text-gray-700">
@@ -121,8 +113,6 @@ const CustomNofications = () => {
                   <p className="px-4 py-2">{val.text}</p>
                 </div>
               )}
-
-              {/* Failure Notification */}
               {val.type === 'failure' && (
                 <div className="relative mb-2 bg-validation rounded-lg text-sm text-black">
                   <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-secondary text-error rounded-t">
@@ -136,8 +126,6 @@ const CustomNofications = () => {
                   </p>
                 </div>
               )}
-
-              {/* Progress Notification */}
               {val.type === 'progress' && (
                 <div className="relative mb-2 bg-light rounded-lg text-sm text-black">
                   <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-secondary text-primary rounded-t">
