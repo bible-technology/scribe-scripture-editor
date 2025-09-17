@@ -243,7 +243,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       {t('label-all')}
                     </div>
                     <div
-                      className={canonSpecification.title === 'Old Testament (OT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'Old Testament' || canonSpecification.title === 'Old Testament (OT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[1])}
                       role="button"
                       aria-label="old-testament"
@@ -252,7 +252,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
                       {`${t('label-old-testament')} (OT)`}
                     </div>
                     <div
-                      className={canonSpecification.title === 'New Testament (NT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
+                      className={canonSpecification.title === 'New Testament' || canonSpecification.title === 'New Testament (NT)' ? 'bg-primary hover:bg-secondary text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap' : 'bg-gray-200 hover:bg-primary hover:text-white px-3 py-1 rounded-full cursor-pointer whitespace-nowrap'}
                       onClick={() => selectCanon(canonList[2])}
                       role="button"
                       aria-label="new-testament"

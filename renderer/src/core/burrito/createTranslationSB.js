@@ -29,7 +29,7 @@ const createTranslationSB = (
         json = updateVersion(json);
       }
     } else {
-      json = burrito;
+      json = JSON.parse(JSON.stringify(burrito));
     }
     json.meta.generator.userName = username;
     json.meta.generator.softwareVersion = packageInfo.version;
