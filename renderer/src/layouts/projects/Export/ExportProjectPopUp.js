@@ -277,7 +277,7 @@ export default function ExportProjectPopUp(props) {
                   <div className="p-8 overflow-auto w-full h-full no-scrollbars">
                     <div className="bg-white text-sm text-left tracking-wide">
                       <h4 className="text-xs font-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-export-file-path')}</h4>
-                      <div className="flex items-center justify-around mb-4">
+                      <div className="flex items-center mb-4">
                         <input
                           type="text"
                           name="location"
