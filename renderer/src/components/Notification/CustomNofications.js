@@ -18,10 +18,19 @@ const CustomNofications = () => {
   } = useContext(AutographaContext);
 
   useEffect(() => {
-    localforage.getItem('notification').then((value) => {
-      setNotification(value || []);
-    });
-  }, []);
+    const fetchNotifications = () => {
+      localforage.getItem('notification').then((value) => {
+        const notificationList = value || [];
+        setNotification(notificationList);
+        const unread = notificationList.filter((n) => !n.isRead).length;
+        setActiveNotificationCount(unread);
+      });
+    };
+
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 3000);
+    return () => clearInterval(interval);
+  }, [setActiveNotificationCount]);
 
   function sortFunction(a, b) {
     const dateA = new Date(a.time).getTime();
@@ -32,8 +41,18 @@ const CustomNofications = () => {
   const openSideBars = () => {
     localforage.getItem('notification').then((value) => {
       const _val = [...(value || [])].sort(sortFunction);
-      setNotification(_val);
-      setActiveNotificationCount(0);
+
+      const updatedNotifications = _val.map((notification) => ({
+        ...notification,
+        isRead: true,
+      }));
+
+      setNotification(updatedNotifications);
+
+      localforage.setItem('notification', updatedNotifications).then(() => {
+        setNotifications(updatedNotifications);
+        setActiveNotificationCount(0);
+      });
     });
     setOpenSideNotification(true);
   };
@@ -55,10 +74,10 @@ const CustomNofications = () => {
     setNotification(updated);
     localforage.setItem('notification', updated).then(() => {
       setNotifications(updated);
-      setActiveNotificationCount(updated.length);
+      const unreadNotifications = updated.filter((n) => !n.isRead);
+      setActiveNotificationCount(unreadNotifications.length);
     });
   };
-
   return (
     <>
       <div className="relative inline-block">
@@ -88,7 +107,7 @@ const CustomNofications = () => {
             <button
               type="button"
               onClick={clearAllNotifications}
-              className="text-xs text-red-500 hover:underline"
+              className="text-xs text-red-500 hover:bg-red-500 hover:text-white hover:rounded px-2 py-1 transition-colors"
             >
               {t('label-clear-all')}
             </button>
@@ -98,10 +117,13 @@ const CustomNofications = () => {
               <button
                 type="button"
                 onClick={() => removeNotification(val.time)}
-                className="absolute top-2 right-2 z-10 p-1 rounded-full bg-white hover:bg-gray-200 shadow"
+                className="absolute top-5 right-2 z-10 p-1 rounded-full bg-white hover:bg-gray-200 shadow"
               >
-                <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+                <XMarkIcon className="h-3 w-3 text-gray-500 hover:text-gray-700" />
               </button>
+              {!val.isRead && (
+                <div className="absolute top-2 left-2 w-2 h-2 bg-blue-500 rounded-full" />
+              )}
               {val.type === 'success' && (
                 <div className="relative mb-2 bg-gray-200 rounded-lg text-sm text-black overflow-hidden">
                   <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-gray-300 text-gray-700">
