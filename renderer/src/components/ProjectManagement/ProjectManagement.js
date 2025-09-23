@@ -135,7 +135,16 @@ export default function ProjectMangement(props) {
                 <div className=" w-full h-full flex-1 flex flex-col overflow-y-scroll mb-5">
 
                   <div className="flex-grow-[5]">
-                    {loading ? <LoadingSpinner /> : <ScopeManagement metadata={metadata} currentScope={currentScope} setCurrentScope={setCurrentScope} backendScope={backendScope} />}
+                    {loading ? <LoadingSpinner /> : (
+                      <ScopeManagement
+                        metadata={metadata}
+                        currentScope={currentScope}
+                        setCurrentScope={setCurrentScope}
+                        backendScope={backendScope}
+                        projectName={project?.name}
+                        projectId={project?.id?.[0]}
+                      />
+                    )}
                   </div>
 
                   <div className="h-[10%] flex justify-end items-center me-5">

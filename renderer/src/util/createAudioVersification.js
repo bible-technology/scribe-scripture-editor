@@ -15,6 +15,7 @@ export const createAudioVersification = (
   copyright,
   currentBurrito,
   call,
+  importedFiles,
 ) => {
   logger.debug('createAudioVersification.js', 'In createAudioVersification');
   const newpath = localStorage.getItem('userPath');
@@ -79,7 +80,16 @@ export const createAudioVersification = (
               bookMarks: call === 'edit' ? currentBurrito.project.audioTranslation.bookMarks : [],
               font: '',
               fontSize: 1,
-              navigationHistory: [books[0].toLowerCase(), '1', '1'],
+              navigationHistory: [
+                String(
+                  currentBurrito?.project?.textTranslation?.navigationHistory?.[0]
+                  || importedFiles?.[0]?.id
+                  || books?.[0]
+                  || '',
+                ).toLowerCase(),
+                '1',
+                '1',
+              ],
             },
           },
           sync: { services: { door43: [] } },

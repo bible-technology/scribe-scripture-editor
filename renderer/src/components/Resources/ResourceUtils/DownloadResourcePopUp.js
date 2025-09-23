@@ -56,21 +56,29 @@ function DownloadResourcePopUp({ selectResource, isOpenDonwloadPopUp, setIsOpenD
     // states: { resourceDownload },
     action: {
       setNotifications,
+      setActiveNotificationCount,
       // setResourceDownload,
     },
   } = React.useContext(AutographaContext);
 
   const addNewNotification = async (title, text, type) => {
     localForage.getItem('notification').then((value) => {
-      const temp = [...value];
-      temp.push({
+      const temp = [...(value || [])];
+      const newNotification = {
         title,
         text,
         type,
         time: moment().format(),
         hidden: true,
+        isRead: false,
+      };
+
+      temp.push(newNotification);
+      localForage.setItem('notification', temp).then(() => {
+        setNotifications(temp);
+        const unreadCount = temp.filter((n) => !n.isRead).length;
+        setActiveNotificationCount(unreadCount);
       });
-      setNotifications(temp);
     });
   };
 
