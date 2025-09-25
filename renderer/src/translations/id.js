@@ -309,4 +309,7 @@ export const Id = {
   'tooltip-hide-audio-player': 'Sembunyikan pemutar audio',
   'tooltip-show-audio-player': 'Tampilkan pemutar audio',
   'label-clear-all': 'Bersihkan semua',
+  'modal-title-clear-all-notifications': 'Bersihkan Semua Notifikasi',
+  'msg-clear-all-notifications': 'Apakah Anda yakin ingin menghapus semua notifikasi? Tindakan ini tidak dapat dibatalkan.',
+  'btn-clear-all': 'Bersihkan semua',
 };

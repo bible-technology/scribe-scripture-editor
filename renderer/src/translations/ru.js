@@ -312,4 +312,7 @@ export const Ru = {
   'tooltip-hide-audio-player': 'Скрыть аудиоплеер',
   'tooltip-show-audio-player': 'Показать аудиоплеер',
   'label-clear-all': 'Очистить все',
+  'modal-title-clear-all-notifications': 'Очистить все уведомления',
+  'msg-clear-all-notifications': 'Вы действительно хотите очистить все уведомления? Это действие нельзя отменить.',
+  'btn-clear-all': 'Очистить все',
 };

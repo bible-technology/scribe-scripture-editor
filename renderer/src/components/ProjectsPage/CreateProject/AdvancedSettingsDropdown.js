@@ -20,6 +20,7 @@ function BookNumberTag(props) {
   if (children.toString() === '1') {
     numberOfBooks = t('label-book');
   }
+
   return (
     <div className="rounded-full px-2 py-1 bg-gray-200 text-xs uppercase font-semibold">
       <div className="flex">

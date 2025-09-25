@@ -312,4 +312,7 @@ export const Te = {
   'tooltip-hide-audio-player': 'ఆడియో ప్లేయర్ దాచు',
   'tooltip-show-audio-player': 'ఆడియో ప్లేయర్ చూపించు',
   'label-clear-all': 'అన్నీ క్లియర్ చేయండి',
+  'modal-title-clear-all-notifications': 'అన్నీ క్లియర్ చేయండి నోటిఫికేషన్లు',
+  'msg-clear-all-notifications': 'మీరు నిజంగా అన్ని నోటిఫికేషన్లను క్లియర్ చేయాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేరు.',
+  'btn-clear-all': 'అన్నీ క్లియర్ చేయండి',
 };

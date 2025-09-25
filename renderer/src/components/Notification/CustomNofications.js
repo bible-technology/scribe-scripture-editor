@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import localforage from 'localforage';
 import moment from 'moment';
 import { t } from 'i18next';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import Notifications from './Notifications';
 import menuStyles from '../../layouts/editor/MenuBar.module.css';
 import { AutographaContext } from '../context/AutographaContext';
@@ -12,6 +13,7 @@ import { AutographaContext } from '../context/AutographaContext';
 const CustomNofications = () => {
   const [notifications, setNotification] = useState([]);
   const [openSideNotification, setOpenSideNotification] = useState(false);
+  const [openClearAllModal, setOpenClearAllModal] = useState(false);
   const {
     states: { activeNotificationCount },
     action: { setNotifications, setActiveNotificationCount },
@@ -103,21 +105,29 @@ const CustomNofications = () => {
       <Notifications isOpen={openSideNotification} closeNotifications={closeNotifications}>
 
         <div className="w-80 max-w-xs">
-          <div className="flex justify-between items-center mb-2 px-4">
+          <div className="flex justify-between items-center mb-2 px-1">
             <button
               type="button"
-              onClick={clearAllNotifications}
-              className="text-xs text-red-500 hover:bg-red-500 hover:text-white hover:rounded px-2 py-1 transition-colors"
+              onClick={() => setOpenClearAllModal(true)}
+              className="ml-auto text-xs font-bold border border-red-500 bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 transition-colors"
             >
               {t('label-clear-all')}
             </button>
           </div>
+          <ConfirmationModal
+            openModal={openClearAllModal}
+            title={t('modal-title-clear-all-notifications') || 'Clear All Notifications'}
+            setOpenModal={setOpenClearAllModal}
+            confirmMessage={t('msg-clear-all-notifications') || 'Do you really want to clear all notifications? This action cannot be undone.'}
+            buttonName={t('btn-clear-all') || 'Clear All'}
+            closeModal={() => clearAllNotifications()}
+          />
           {notifications?.map((val) => (
             <div key={val.time} className="relative mb-2" aria-label="notification">
               <button
                 type="button"
                 onClick={() => removeNotification(val.time)}
-                className="absolute top-5 right-2 z-10 p-1 rounded-full bg-white hover:bg-gray-200 shadow"
+                className="absolute top-0 right-0 z-10 p-1.5 bg-grey-900 hover:bg-gray-200 shadow"
               >
                 <XMarkIcon className="h-3 w-3 text-gray-500 hover:text-gray-700" />
               </button>
@@ -126,7 +136,7 @@ const CustomNofications = () => {
               )}
               {val.type === 'success' && (
                 <div className="relative mb-2 bg-gray-200 rounded-lg text-sm text-black overflow-hidden">
-                  <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-gray-300 text-gray-700">
+                  <div className="flex justify-between px-4 py-1 text-xs uppercase font-semibold bg-gray-300 text-gray-700 pr-7">
                     {val.title}
                     <span className="opacity-100 text-xxs text-gray-400">
                       {moment(val.time, 'YYYY-MM-DD h:mm:ss').fromNow()}

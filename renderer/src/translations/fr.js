@@ -313,5 +313,7 @@ export const Fr = {
   'tooltip-hide-audio-player': 'Masquer le lecteur audio',
   'tooltip-show-audio-player': 'Afficher le lecteur audio',
   'label-clear-all': 'Tout effacer',
-
+  'modal-title-clear-all-notifications': 'Effacer toutes les notifications',
+  'msg-clear-all-notifications': 'Voulez-vous vraiment effacer toutes les notifications ? Cette action ne peut pas être annulée.',
+  'btn-clear-all': 'Tout effacer',
 };
