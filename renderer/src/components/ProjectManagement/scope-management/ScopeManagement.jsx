@@ -472,12 +472,28 @@ function ScopeManagement({
 
             const normalizedKey = String(parseInt(key, 10));
             const isFullyRecorded = completionMap[bookId?.toLowerCase()]?.[normalizedKey]?.fullyRecorded || false;
+
+            const totalVerses = versificationData[bookId?.toUpperCase()]?.[parseInt(key, 10) - 1] || 0;
+            let recordedVerses = 0;
+            const chapterAudioPath = path.join(
+              projectBasePath,
+              'audio',
+              'ingredients',
+              bookId?.toUpperCase(),
+              normalizedKey
+            );
+            if (fs.existsSync(chapterAudioPath)) {
+              for (let verse = 1; verse <= totalVerses; verse++) {
+                const audioFilePath = path.join(chapterAudioPath, `${normalizedKey}_${verse}_1_default.mp3`);
+                if (fs.existsSync(audioFilePath)) recordedVerses += 1;
+              }
+            }
             function getBookButtonClass({ isFullyRecorded, disable, isInScope }) {
               if (isFullyRecorded) {
                 return 'border min-w-8 text-center bg-success text-white font-medium pointer-events-none cursor-default';
               }
               if (disable) {
-                return 'border min-w-8 text-center bg-gray-400 pointer-events-none cursor-default';
+                return 'border min-w-8 text-center bg-gray-400 hover:bg-gray-500';
               }
               if (isInScope) {
                 return 'border min-w-8 text-center bg-primary text-white font-medium';
@@ -489,6 +505,7 @@ function ScopeManagement({
                 onClick={(e) => handleChapterSelection(e, name)}
                 key={key}
                 className={getBookButtonClass({ isFullyRecorded, disable, isInScope })}
+                title={`${recordedVerses}/${totalVerses} verses recorded`}
               >
                 {name}
               </BookButton>
