@@ -480,12 +480,14 @@ function ScopeManagement({
               'audio',
               'ingredients',
               bookId?.toUpperCase(),
-              normalizedKey
+              normalizedKey,
             );
             if (fs.existsSync(chapterAudioPath)) {
               for (let verse = 1; verse <= totalVerses; verse++) {
                 const audioFilePath = path.join(chapterAudioPath, `${normalizedKey}_${verse}_1_default.mp3`);
-                if (fs.existsSync(audioFilePath)) recordedVerses += 1;
+                if (fs.existsSync(audioFilePath)) {
+                  recordedVerses += 1;
+                }
               }
             }
             function getBookButtonClass({ isFullyRecorded, disable, isInScope }) {
