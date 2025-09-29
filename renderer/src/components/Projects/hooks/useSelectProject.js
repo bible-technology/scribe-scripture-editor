@@ -1,5 +1,5 @@
 import * as localforage from 'localforage';
-import moment from 'moment';
+// import moment from 'moment';
 import * as logger from '../../../logger';
 
 const useHandleSelectProject = () => {
@@ -20,13 +20,13 @@ const useHandleSelectProject = () => {
 
     localforage.getItem('notification').then((value) => {
       const temp = [...(value || [])];
-      const newNotification = {
-        title: 'Project',
-        text: `successfully loaded ${projectName} files`,
-        type: 'success',
-        time: moment().format(),
-        hidden: true,
-      };
+      // const newNotification = {
+      //   title: 'Project',
+      //   text: `successfully loaded ${projectName} files`,
+      //   type: 'success',
+      //   time: moment().format(),
+      //   hidden: true,
+      // };
       // temp.push(newNotification);
 
       localforage.setItem('notification', temp).then(() => {
