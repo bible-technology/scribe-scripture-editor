@@ -27,8 +27,7 @@ const useHandleSelectProject = () => {
         time: moment().format(),
         hidden: true,
       };
-
-      temp.push(newNotification);
+      // temp.push(newNotification);
 
       localforage.setItem('notification', temp).then(() => {
         setNotifications(temp);
