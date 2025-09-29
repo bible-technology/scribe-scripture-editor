@@ -505,7 +505,7 @@ function ScopeManagement({
                 onClick={(e) => handleChapterSelection(e, name)}
                 key={key}
                 className={getBookButtonClass({ isFullyRecorded, disable, isInScope })}
-                title={`${recordedVerses}/${totalVerses} verses recorded`}
+                title={disable ? `${recordedVerses}/${totalVerses} verses recorded` : ''}
               >
                 {name}
               </BookButton>
