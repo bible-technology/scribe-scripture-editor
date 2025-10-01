@@ -93,132 +93,130 @@ export default function ResourcesPopUp(
   }, [openResourcePopUp]);
 
   return (
-    <>
-      <Transition
-        show={openResourcePopUp}
-        as={Fragment}
-        enter="transition duration-100 ease-out"
-        enterFrom="transform scale-95 opacity-0"
-        enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 ease-out"
-        leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-95 opacity-0"
+    <Transition
+      show={openResourcePopUp}
+      as={Fragment}
+      enter="transition duration-100 ease-out"
+      enterFrom="transform scale-95 opacity-0"
+      enterTo="transform scale-100 opacity-100"
+      leave="transition duration-75 ease-out"
+      leaveFrom="transform scale-100 opacity-100"
+      leaveTo="transform scale-95 opacity-0"
+    >
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-10 overflow-y-auto"
+        initialFocus={cancelButtonRef}
+        static
+        open={openResourcePopUp}
+        onClose={removeSection}
       >
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
-          initialFocus={cancelButtonRef}
-          static
-          open={openResourcePopUp}
-          onClose={removeSection}
-        >
 
-          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-          <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
-            <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
-              <h1 className="text-white font-bold text-sm">{t('label-resource')}</h1>
-              <div aria-label="resources-search" className="pt-1.5 pb-[6.5px] bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
-              <button
-                type="button"
-                className="bg-primary absolute h-full rounded-tr-lg right-0 text-white"
-                onClick={removeSection}
-              >
-                <XMarkIcon className="mx-3 h-5 w-5" />
-              </button>
-            </div>
-            <div className="flex border bg-white">
-              <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} />
-              <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
-                {selectResource !== 'local-helps' && (
-                  <div className="flex items-center justify-between space-x-3 mb-4">
-                    {(selectResource === 'tn' || selectResource === 'tir') && (
-                      <div className="flex ml-4 bg-gray-200 p-1 rounded-md">
-                        <button
-                          type="button"
-                          className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'gitea' ? 'bg-primary text-white' : 'bg-transparent'}`}
-                          onClick={() => setSearchSource('gitea')}
-                        >
-                          {t('Door43')}
-                        </button>
-                        <button
-                          type="button"
-                          className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'github' ? 'bg-primary text-white' : 'bg-transparent'}`}
-                          onClick={() => setSearchSource('github')}
-                        >
-                          {t('GitHub')}
-                        </button>
-                      </div>
-                    )}
-                    <SearchBar
-                      currentFullResources={currentFullResources}
-                      selectResource={selectResource}
-                      setFilteredResources={setFilteredResources}
-                      subMenuItems={subMenuItems}
-                      setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-                      selectedPreProd={selectedPreProd}
-                      setSelectedPreProd={setSelectedPreProd}
-                      // searchSource={searchSource} {/* Pass the selected source */}
-                    />
-                  </div>
-                )}
-
-                {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible' || selectResource === 'local-helps')
-                  ? (
-                    <ResourceTabPane
-                      selectResource={selectResource}
-                      filteredBibleObsAudio={filteredBibleObsAudio}
-                      removeSection={removeSection}
-                      loading={loading}
-                      handleRowSelect={handleRowSelect}
-                      openImportResourcePopUp={openImportResourcePopUp}
-                      closeImportPopUp={closeImportPopUp}
-                      setOpenImportResourcePopUp={setOpenImportResourcePopUp}
-                      setOpenResourcePopUp={setOpenResourcePopUp}
-                      setLoading={setLoading}
-                      openResourceDialog={openResourceDialog}
-                      subMenuItems={subMenuItems}
-                      setSubMenuItems={setSubMenuItems}
-                      setfilteredBibleObsAudio={setfilteredBibleObsAudio}
-                      referenceResources={referenceResources}
-                    />
-                  )
-                  : (
-                    <ListResources
-                      selectResource={selectResource}
-                      loading={loading}
-                      filteredResources={filteredResources}
-                      filteredReposResourcelinks={filteredReposResourcelinks}
-                      downloading={downloading}
-                      removeSection={removeSection}
-                      handleRowSelect={handleRowSelect}
-                      currentDownloading={currentDownloading}
-                      setCurrentDownloading={setCurrentDownloading}
-                      setOpenSnackBar={setOpenSnackBar}
-                      setError={setError}
-                      setSnackText={setSnackText}
-                      setDownloading={setDownloading}
-                      selectedPreProd={selectedPreProd}
-                      subMenuItems={subMenuItems}
-                      setCurrentFullResources={setCurrentFullResources}
-                      setFilteredResources={setFilteredResources}
-                      setFilteredReposResourcelinks={setFilteredReposResourcelinks}
-                      setLoading={setLoading}
-                      setSubMenuItems={setSubMenuItems}
-                      endPoint={searchSource}
-                    />
+        <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+        <div className="flex flex-col mx-12 mt-10 fixed inset-0 z-10 overflow-y-auto">
+          <div className="bg-black relative flex justify-between px-3 items-center rounded-t-lg h-10 ">
+            <h1 className="text-white font-bold text-sm">{t('label-resource')}</h1>
+            <div aria-label="resources-search" className="pt-1.5 pb-[6.5px] bg-secondary text-white text-xs tracking-widest leading-snug text-center" />
+            <button
+              type="button"
+              className="bg-primary absolute h-full rounded-tr-lg right-0 text-white"
+              onClick={removeSection}
+            >
+              <XMarkIcon className="mx-3 h-5 w-5" />
+            </button>
+          </div>
+          <div className="flex border bg-white">
+            <ResourcesSidebar selectResource={selectResource} setSelectResource={setSelectResource} setShowInput={setShowInput} setTitle={setTitle} selectedProjectMeta={selectedProjectMeta} />
+            <div className="h-[85vh] w-full overflow-x-scroll bg-gray-50 items-center p-3 justify-between">
+              {selectResource !== 'local-helps' && (
+                <div className="flex items-center justify-between space-x-3 mb-4">
+                  {(selectResource === 'tn' || selectResource === 'tir') && (
+                    <div className="flex ml-4 bg-gray-200 p-1 rounded-md">
+                      <button
+                        type="button"
+                        className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'gitea' ? 'bg-primary text-white' : 'bg-transparent'}`}
+                        onClick={() => setSearchSource('gitea')}
+                      >
+                        {t('Door43')}
+                      </button>
+                      <button
+                        type="button"
+                        className={`flex w-full items-center gap-1 px-3 py-2 rounded-md cursor-pointer ${searchSource === 'github' ? 'bg-primary text-white' : 'bg-transparent'}`}
+                        onClick={() => setSearchSource('github')}
+                      >
+                        {t('GitHub')}
+                      </button>
+                    </div>
                   )}
-              </div>
+                  <SearchBar
+                    currentFullResources={currentFullResources}
+                    selectResource={selectResource}
+                    setFilteredResources={setFilteredResources}
+                    subMenuItems={subMenuItems}
+                    setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                    selectedPreProd={selectedPreProd}
+                    setSelectedPreProd={setSelectedPreProd}
+                    // searchSource={searchSource} {/* Pass the selected source */}
+                  />
+                </div>
+              )}
+
+              {(selectResource === 'obs' || selectResource === 'audio' || selectResource === 'bible' || selectResource === 'local-helps')
+                ? (
+                  <ResourceTabPane
+                    selectResource={selectResource}
+                    filteredBibleObsAudio={filteredBibleObsAudio}
+                    removeSection={removeSection}
+                    loading={loading}
+                    handleRowSelect={handleRowSelect}
+                    openImportResourcePopUp={openImportResourcePopUp}
+                    closeImportPopUp={closeImportPopUp}
+                    setOpenImportResourcePopUp={setOpenImportResourcePopUp}
+                    setOpenResourcePopUp={setOpenResourcePopUp}
+                    setLoading={setLoading}
+                    openResourceDialog={openResourceDialog}
+                    subMenuItems={subMenuItems}
+                    setSubMenuItems={setSubMenuItems}
+                    setfilteredBibleObsAudio={setfilteredBibleObsAudio}
+                    referenceResources={referenceResources}
+                  />
+                )
+                : (
+                  <ListResources
+                    selectResource={selectResource}
+                    loading={loading}
+                    filteredResources={filteredResources}
+                    filteredReposResourcelinks={filteredReposResourcelinks}
+                    downloading={downloading}
+                    removeSection={removeSection}
+                    handleRowSelect={handleRowSelect}
+                    currentDownloading={currentDownloading}
+                    setCurrentDownloading={setCurrentDownloading}
+                    setOpenSnackBar={setOpenSnackBar}
+                    setError={setError}
+                    setSnackText={setSnackText}
+                    setDownloading={setDownloading}
+                    selectedPreProd={selectedPreProd}
+                    subMenuItems={subMenuItems}
+                    setCurrentFullResources={setCurrentFullResources}
+                    setFilteredResources={setFilteredResources}
+                    setFilteredReposResourcelinks={setFilteredReposResourcelinks}
+                    setLoading={setLoading}
+                    setSubMenuItems={setSubMenuItems}
+                    endPoint={searchSource}
+                  />
+                )}
             </div>
           </div>
-        </Dialog>
-      </Transition>
-      <SnackBar
-        openSnackBar={openSnackBar}
-        setOpenSnackBar={setOpenSnackBar}
-        snackText={snackText}
-        setSnackText={setSnackText}
-        error={error}
-      />
-    </>
+        </div>
+        <SnackBar
+          openSnackBar={openSnackBar}
+          setOpenSnackBar={setOpenSnackBar}
+          snackText={snackText}
+          setSnackText={setSnackText}
+          error={error}
+        />
+      </Dialog>
+    </Transition>
   );
 }

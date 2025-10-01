@@ -25,12 +25,12 @@ export default function ResourceTabPane({
   setfilteredBibleObsAudio,
 }) {
   const { t } = useTranslation();
-  const [isOpenDonwloadPopUp, setIsOpenDonwloadPopUp] = useState(false);
+  const [isOpenDownloadPopUp, setIsOpenDownloadPopUp] = useState(false);
   const [resourceIconClick, setResourceIconClick] = useState(false);
   const openResourceDialogBox = () => {
     if (selectResource === 'bible' || selectResource === 'obs') {
       logger.debug('DownloadResourcePopUp.js', 'Calling bible resource pop up');
-      setIsOpenDonwloadPopUp(true);
+      setIsOpenDownloadPopUp(true);
     }
   };
 
@@ -137,8 +137,8 @@ export default function ResourceTabPane({
               <Tab.Panel className="p-4 bg-white">
                 <DownloadResourcePopUp
                   selectResource={selectResource}
-                  isOpenDonwloadPopUp={isOpenDonwloadPopUp}
-                  setIsOpenDonwloadPopUp={setIsOpenDonwloadPopUp}
+                  isOpenDownloadPopUp={isOpenDownloadPopUp}
+                  setIsOpenDownloadPopUp={setIsOpenDownloadPopUp}
                 />
               </Tab.Panel>
             )}
