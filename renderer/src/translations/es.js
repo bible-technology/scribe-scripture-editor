@@ -312,5 +312,8 @@ export const Es = {
   'tooltip-print-pdf': 'Imprimir en PDF',
   'tooltip-hide-audio-player': 'Ocultar reproductor de audio',
   'tooltip-show-audio-player': 'Mostrar reproductor de audio',
-
+  'label-clear-all': 'Borrar todo',
+  'modal-title-clear-all-notifications': 'Borrar todas las notificaciones',
+  'msg-clear-all-notifications': '¿Realmente desea borrar todas las notificaciones? Esta acción no se puede deshacer.',
+  'btn-clear-all': 'Borrar todo',
 };

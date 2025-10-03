@@ -311,5 +311,8 @@ export const Kn = {
   'tooltip-print-pdf': 'PDF ಗೆ ಮುದ್ರಿಸಿ',
   'tooltip-hide-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಅಡಗಿಸಿ',
   'tooltip-show-audio-player': 'ಆಡಿಯೋ ಪ್ಲೇಯರ್ ತೋರಿಸಿ',
-
+  'label-clear-all': 'ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ',
+  'modal-title-clear-all-notifications': 'ಎಲ್ಲಾ ಸೂಚನೆಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ',
+  'msg-clear-all-notifications': 'ನೀವು ನಿಜವಾಗಿಯೂ ಎಲ್ಲಾ ಸೂಚನೆಗಳನ್ನು ತೆರವುಗೊಳಿಸಲು ಬಯಸುವಿರಾ? ಈ ಕ್ರಿಯೆಯನ್ನು ಹಿಂತಿರುಗಿಸಲಾಗುವುದಿಲ್ಲ.',
+  'btn-clear-all': 'ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ',
 };

@@ -311,5 +311,8 @@ export const Hi = {
   'tooltip-print-pdf': 'PDF में प्रिंट करें',
   'tooltip-hide-audio-player': 'ऑडियो प्लेयर छिपाएँ',
   'tooltip-show-audio-player': 'ऑडियो प्लेयर दिखाएँ',
-
+  'label-clear-all': 'सभी साफ़ करें',
+  'modal-title-clear-all-notifications': 'सभी सूचनाएँ साफ़ करें',
+  'msg-clear-all-notifications': 'क्या आप वाकई सभी सूचनाएँ साफ़ करना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता है।',
+  'btn-clear-all': 'सभी साफ़ करें',
 };

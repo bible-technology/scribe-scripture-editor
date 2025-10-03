@@ -310,4 +310,8 @@ export const Ar = {
   'label-start': 'ابدأ',
   'label-end': 'النهاية',
   'label-select': 'اختر',
+  'label-clear-all': 'مسح الكل',
+  'modal-title-clear-all-notifications': 'مسح جميع الإشعارات',
+  'msg-clear-all-notifications': 'هل تريد حقًا مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
+  'btn-clear-all': 'مسح الكل',
 };

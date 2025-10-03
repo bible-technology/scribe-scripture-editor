@@ -311,4 +311,8 @@ export const En = {
   'tooltip-print-pdf': 'Print to PDF',
   'tooltip-hide-audio-player': 'Hide Audio Player',
   'tooltip-show-audio-player': 'Show Audio Player',
+  'label-clear-all': 'Clear all',
+  'modal-title-clear-all-notifications': 'Clear All Notifications',
+  'msg-clear-all-notifications': 'Do you really want to clear all notifications? This action cannot be undone.',
+  'btn-clear-all': 'Clear All',
 };

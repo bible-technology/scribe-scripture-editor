@@ -311,4 +311,8 @@ export const Fa = {
   'label-start': 'شروع',
   'label-end': 'پایان',
   'label-select': 'انتخاب',
+  'label-clear-all': 'پاک کردن همه',
+  'modal-title-clear-all-notifications': 'پاک کردن همه اعلان‌ها',
+  'msg-clear-all-notifications': 'آیا واقعاً می‌خواهید همه اعلان‌ها را پاک کنید؟ این عمل قابل بازگشت نیست.',
+  'btn-clear-all': 'پاک کردن همه',
 };

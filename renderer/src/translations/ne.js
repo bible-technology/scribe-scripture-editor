@@ -311,5 +311,8 @@ export const Ne = {
   'tooltip-print-pdf': 'PDF मा मुद्रण गर्नुहोस्',
   'tooltip-hide-audio-player': 'अडियो प्लेयर लुकाउनुहोस्',
   'tooltip-show-audio-player': 'अडियो प्लेयर देखाउनुहोस्',
-
+  'label-clear-all': 'सबै खाली गर्नुहोस्',
+  'modal-title-clear-all-notifications': 'सबै सूचनाहरू खाली गर्नुहोस्',
+  'msg-clear-all-notifications': 'के तपाइँ साँच्चिकै सबै सूचनाहरू खाली गर्न चाहनुहुन्छ? यो कार्य उल्टाउन सकिँदैन।',
+  'btn-clear-all': 'सबै खाली गर्नुहोस्',
 };
