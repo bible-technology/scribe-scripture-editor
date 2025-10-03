@@ -143,11 +143,13 @@ export default function SelectBook({
                       key={book.name}
                       role="presentation"
                       aria-label={`nt-${book.name}`}
-                      onClick={(e) => (
-                        multiSelectBook
+                      onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
+                        ? (multiSelectBook
                           ? selectMultipleBooks(e, book.key, book.name)
-                          : bookSelect(e, book.key, book.name))}
-                      className={`${styles.bookSelect} ${selectedBooks.includes((book.key).toUpperCase()) ? styles.active : ''}`}
+                          : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
+                        ? selectMultipleBooks(e, book.key, book.name)
+                        : bookSelect(e, book.key, book.name)))}
+                      className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
                     >
                       {book.name}
                     </div>

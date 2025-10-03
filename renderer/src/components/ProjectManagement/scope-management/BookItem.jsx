@@ -4,12 +4,12 @@ import BookButton from '../Common/Button/BookButton';
 import XMark from '@/icons/Xelah/XMark.svg';
 
 function BookItem({
-  book, handleSelectBook, handleRemoveScope, isInScope, disable,
+  book, handleSelectBook, handleRemoveScope, isInScope, disable, fullyRecorded,
 }) {
   return (
     <div className="flex items-center">
       <BookButton
-        className={`flex items-center gap-1.5 w-full border ${disable ? 'bg-gray-400' : (isInScope ? 'bg-primary/25' : '')}`}
+        className={`flex items-center gap-1.5 w-full border ${fullyRecorded ? 'bg-success text-white font-medium' : disable ? 'bg-gray-400' : (isInScope ? 'bg-primary/25' : '')}`}
         onClick={(e) => handleSelectBook(e, book)}
       >
         <div

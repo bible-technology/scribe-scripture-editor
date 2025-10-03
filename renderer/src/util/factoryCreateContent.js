@@ -52,6 +52,7 @@ export const factoryCreateContent = async ({
       copyright,
       currentBurrito,
       call,
+      importedFiles,
     );
     break;
   case 'OBS':

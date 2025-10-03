@@ -165,7 +165,6 @@ export const createVersificationUSFM = (
               navigationHistory: [
                 String(
                   currentBurrito?.project?.textTranslation?.navigationHistory?.[0]
-                  || importedFiles?.[0]?.id
                   || books?.[0]
                   || '',
                 ).toLowerCase(),
