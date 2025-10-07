@@ -1,5 +1,5 @@
 import React, {
-  useRef, Fragment, useContext, useEffect, useState,
+  useRef, useContext, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -136,8 +136,6 @@ export default function ImportPopUp(props) {
 
     if ((chosenFolder.filePaths).length > 0) {
       setLoading(true);
-
-      // Let React flush & render spinner
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
@@ -149,9 +147,13 @@ export default function ImportPopUp(props) {
         valid: null,
       }));
       if (append) {
-        // Append mode: add new files to existing ones
-        const combinedPaths = [...folderPath, ...newFilePaths];
-        const combinedBooks = [...books, ...newBookList];
+        // Append mode: add new files to existing ones, avoiding duplicates
+        const existingPaths = new Set(folderPath);
+        const uniqueNewPaths = newFilePaths.filter((path) => !existingPaths.has(path));
+        const uniqueNewBooks = newBookList.filter((book) => !existingPaths.has(book.path));
+
+        const combinedPaths = [...folderPath, ...uniqueNewPaths];
+        const combinedBooks = [...books, ...uniqueNewBooks];
 
         setFolderPath(combinedPaths);
         await getBooks(combinedPaths);
@@ -500,7 +502,7 @@ export default function ImportPopUp(props) {
                             className="px-5"
                             onClick={() => openFileDialogSettingData()}
                           >
-                            <FolderOpenIcon className="h-6 w-6 text-primary " strokeWidth={2} aria-hidden="true" />
+                            <FolderOpenIcon className="h-6 w-6 text-primary " aria-hidden="true" />
                           </button>
                           {books.length > 0 && (
                             <button
@@ -509,7 +511,7 @@ export default function ImportPopUp(props) {
                               onClick={addMoreFiles}
                               title="Add more files"
                             >
-                              <PlusIcon className="h-6 w-6 text-primary" aria-hidden="true" />
+                              <PlusIcon className="h-6 w-6 text-primary" strokeWidth={2} aria-hidden="true" />
                             </button>
                           )}
                         </div>
@@ -518,7 +520,11 @@ export default function ImportPopUp(props) {
                         <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ''}</h4>
                       </div>
 
-                      <div className="bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide">
+                      <div
+                        className={`bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide max-h-72 ${books.length > 24 ? 'overflow-y-auto' : ''
+                        }`}
+                      >
+
                         {books.map((book, index) => {
                           const outOfScope = projectType !== 'OBS' && !canonSpecification.currentScope.includes(book.id);
                           const duplicateInBatch = books.filter((b) => b.id === book.id && b.valid !== false && !outOfScope).length > 1;
@@ -543,25 +549,25 @@ export default function ImportPopUp(props) {
 
                           return (
                             <div
-                              key={book.name}
-                              className={`relative p-2 rounded font-medium flex items-start w-full ${bgColor}`}
+                              key={book.path}
+                              className={`relative p-2 rounded font-medium flex items-center justify-between w-full ${bgColor}`}
                               title={tooltip}
                             >
-                              <div className="flex items-start w-full pr-6">
-                                <DocumentTextIcon className="w-6 mr-2 flex-shrink-0 text-white" />
-                                <span className="text-white break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <DocumentTextIcon className="w-5 h-5 flex-shrink-0 text-white" />
+                                <span className="text-white break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2 text-xs">
                                   {book.name}
                                 </span>
                               </div>
                               <button
                                 type="button"
-                                className="absolute top-1 right-1 text-black hover:text-gray-700"
+                                className="flex-shrink-0 ml-2 text-white hover:text-gray-200 transition-colors"
                                 onClick={() => {
                                   setBooks((prev) => prev.filter((_, i) => i !== index));
                                   setFolderPath((prev) => prev.filter((_, i) => i !== index));
                                 }}
                               >
-                                <XMarkIcon className="h-4 w-4" aria-hidden="true" />
+                                <XMarkIcon className="h-4 w-4 hover:opacity-50 transition-opacity" aria-hidden="true" />
                               </button>
                             </div>
                           );
