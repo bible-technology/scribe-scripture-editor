@@ -1,16 +1,17 @@
 import React, {
-  useRef, Fragment, useContext, useEffect, useState,
+  useRef, useContext, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Dialog, Transition } from '@headlessui/react';
-import { DocumentTextIcon, FolderOpenIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  DocumentTextIcon, FolderOpenIcon, XMarkIcon, PlusIcon,
+} from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { readUsfm } from '@/components/Projects/utils/readUsfm';
 import { validateUsfm } from '@/components/EditorPage/TextEditor/conversionUtils';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
 import { updateJsonJuxta } from './utils/updateJsonJuxta';
@@ -124,7 +125,7 @@ export default function ImportPopUp(props) {
     setBooks(validatedBooks);
   };
 
-  const openFileDialogSettingData = async () => {
+  const openFileDialogSettingData = async (append = false) => {
     logger.debug('ImportPopUp.js', 'Inside openFileDialogSettingData');
     const options = {
       properties: ['openFile', 'multiSelections'],
@@ -135,22 +136,34 @@ export default function ImportPopUp(props) {
 
     if ((chosenFolder.filePaths).length > 0) {
       setLoading(true);
-
-      // Let React flush & render spinner
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
       logger.debug('ImportPopUp.js', 'Selected the files');
-      await getBooks(chosenFolder.filePaths);
-      setFolderPath(chosenFolder.filePaths);
+      const newFilePaths = chosenFolder.filePaths;
+      const newBookList = newFilePaths.map((filePath) => ({
+        name: filePath.split(/[/\\]/).pop(),
+        path: filePath,
+        valid: null,
+      }));
+      if (append) {
+        // Append mode: add new files to existing ones, avoiding duplicates
+        const existingPaths = new Set(folderPath);
+        const uniqueNewPaths = newFilePaths.filter((path) => !existingPaths.has(path));
+        const uniqueNewBooks = newBookList.filter((book) => !existingPaths.has(book.path));
 
-      await validateFiles(
-        chosenFolder.filePaths.map((filePath) => ({
-          name: filePath.split(/[/\\]/).pop(),
-          path: filePath,
-          valid: null,
-        })),
-      );
+        const combinedPaths = [...folderPath, ...uniqueNewPaths];
+        const combinedBooks = [...books, ...uniqueNewBooks];
+
+        setFolderPath(combinedPaths);
+        await getBooks(combinedPaths);
+        await validateFiles(combinedBooks);
+      } else {
+        // Replace mode: replace all files
+        await getBooks(newFilePaths);
+        setFolderPath(newFilePaths);
+        await validateFiles(newBookList);
+      }
 
       setLoading(false);
       setShow(true);
@@ -158,6 +171,11 @@ export default function ImportPopUp(props) {
       logger.debug('ImportPopUp.js', 'Didn\'t select any file');
       close();
     }
+  };
+
+  const addMoreFiles = async () => {
+    logger.debug('ImportPopUp.js', 'Adding more files to existing selection');
+    await openFileDialogSettingData(true);
   };
 
   const importFiles = async (folderPath) => {
@@ -484,15 +502,29 @@ export default function ImportPopUp(props) {
                             className="px-5"
                             onClick={() => openFileDialogSettingData()}
                           >
-                            <FolderOpenIcon className="h-6 w-6 text-primary" aria-hidden="true" />
+                            <FolderOpenIcon className="h-6 w-6 text-primary " aria-hidden="true" />
                           </button>
+                          {books.length > 0 && (
+                            <button
+                              type="button"
+                              className="px-2"
+                              onClick={addMoreFiles}
+                              title="Add more files"
+                            >
+                              <PlusIcon className="h-6 w-6 text-primary" strokeWidth={2} aria-hidden="true" />
+                            </button>
+                          )}
                         </div>
                       </div>
                       <div>
                         <h4 className="text-red-500">{valid === true ? t('label-enter-location') : ''}</h4>
                       </div>
 
-                      <div className="bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide">
+                      <div
+                        className={`bg-white grid grid-cols-4 gap-2 p-4 pb-24 text-sm text-left tracking-wide max-h-72 ${books.length > 24 ? 'overflow-y-auto' : ''
+                        }`}
+                      >
+
                         {books.map((book, index) => {
                           const outOfScope = projectType !== 'OBS' && !canonSpecification.currentScope.includes(book.id);
                           const duplicateInBatch = books.filter((b) => b.id === book.id && b.valid !== false && !outOfScope).length > 1;
@@ -501,13 +533,13 @@ export default function ImportPopUp(props) {
                           let bgColor = 'bg-gray-300 hover:bg-gray-400'; // default: neutral
 
                           if (book.valid === false) {
-                            bgColor = 'bg-error hover:bg-error/80'; // invalid files
+                            bgColor = 'bg-error hover:bg-red-600'; // invalid files
                           } else if (outOfScope) {
                             bgColor = 'bg-gray-300 hover:bg-gray-400'; // out-of-scope
                           } else if (duplicateInBatch) {
-                            bgColor = 'bg-blue-500 hover:bg-blue-600'; // duplicate in current selection
+                            bgColor = 'bg-blue-500 hover:bg-blue-700'; // duplicate in current selection
                           } else {
-                            bgColor = 'bg-success hover:bg-success/80'; // valid
+                            bgColor = 'bg-success hover:bg-green-600'; // valid
                           }
 
                           const fileExt = book.name.split('.').pop()?.toUpperCase() || '';
@@ -517,25 +549,25 @@ export default function ImportPopUp(props) {
 
                           return (
                             <div
-                              key={book.name}
-                              className={`${styles.select} relative p-2 rounded font-medium flex items-start w-full ${bgColor}`}
+                              key={book.path}
+                              className={`relative p-2 rounded font-medium flex items-center justify-between w-full ${bgColor}`}
                               title={tooltip}
                             >
-                              <div className="flex items-start w-full pr-6">
-                                <DocumentTextIcon className="w-6 mr-2 flex-shrink-0 text-white" />
-                                <span className="text-white break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <DocumentTextIcon className="w-5 h-5 flex-shrink-0 text-white" />
+                                <span className="text-white break-words whitespace-normal overflow-hidden text-ellipsis line-clamp-2 text-xs">
                                   {book.name}
                                 </span>
                               </div>
                               <button
                                 type="button"
-                                className="absolute top-1 right-1 text-black hover:text-gray-700"
+                                className="flex-shrink-0 ml-2 text-white hover:text-gray-200 transition-colors"
                                 onClick={() => {
                                   setBooks((prev) => prev.filter((_, i) => i !== index));
                                   setFolderPath((prev) => prev.filter((_, i) => i !== index));
                                 }}
                               >
-                                <XMarkIcon className="h-4 w-4" aria-hidden="true" />
+                                <XMarkIcon className="h-4 w-4 hover:opacity-50 transition-opacity" aria-hidden="true" />
                               </button>
                             </div>
                           );
