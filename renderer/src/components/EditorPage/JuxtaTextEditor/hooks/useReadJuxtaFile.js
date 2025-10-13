@@ -10,6 +10,7 @@ export const useReadJuxtaFile = () => {
   const [readFileName, setReadFileName] = useState('');
   const [usfmData, setUsfmData] = useState([]);
   const [bookAvailable, setbookAvailable] = useState(false);
+  const [booksInProject, setBooksInProject] = useState([]);
   const {
     state: {
       bookId,
@@ -33,6 +34,8 @@ export const useReadJuxtaFile = () => {
             _books.push(bookObj);
           }
         });
+        const bookIds = _books.map((book) => book.bookId.toLowerCase());
+        setBooksInProject(bookIds);
         const [currentBook] = _books.filter((bookObj) => bookObj.bookId === bookId?.toUpperCase());
         if (currentBook) {
           setReadFileName(currentBook.fileName);
@@ -57,5 +60,7 @@ export const useReadJuxtaFile = () => {
     }
     readLocalFile();
   }, [bookId]);
-  return { usfmData, bookAvailable, readFileName };
+  return {
+    usfmData, bookAvailable, readFileName, booksInProject,
+  };
 };

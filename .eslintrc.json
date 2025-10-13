@@ -149,7 +149,7 @@
 					],
 					[
 						"@/hooks",
-						"./renderer/src/hooks/"
+						"./renderer/src/components/hooks/"
 					]
 				],
 				"node": {

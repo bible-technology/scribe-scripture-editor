@@ -42,6 +42,14 @@ export const createJuxtaContent = (
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder, { recursive: true });
   }
+  const schemes = [
+    { name: 'eng', file: 'eng.json' },
+    { name: 'lxx', file: 'lxx.json' },
+    { name: 'org', file: 'org.json' },
+    { name: 'rsc', file: 'rsc.json' },
+    { name: 'rso', file: 'rso.json' },
+    { name: 'vul', file: 'vul.json' },
+  ];
   return new Promise(async (resolve) => {
     // eslint-disable-next-line import/no-dynamic-require
     await books.forEach((book) => {
@@ -59,6 +67,28 @@ export const createJuxtaContent = (
           scope: {},
         };
         ingredients[path.join('ingredients', `${book}.json`)].scope[book] = [];
+      }
+    });
+    schemes.forEach(async (scheme) => {
+      if (versification.toLowerCase() === scheme.name) {
+        logger.debug('createJuxtaContent.js', `Creating versification.json with ${scheme.name} scheme`);
+        // eslint-disable-next-line import/no-dynamic-require
+        const versificationFile = require(`../lib/versification/${scheme.file}`);
+
+        await fs.writeFileSync(
+          path.join(folder, 'versification.json'),
+          JSON.stringify(versificationFile, null, 2),
+        );
+
+        const versificationStats = fs.statSync(path.join(folder, 'versification.json'));
+        ingredients[path.join('ingredients', 'versification.json')] = {
+          checksum: {
+            md5: md5(JSON.stringify(versificationFile)),
+          },
+          mimeType: 'application/json',
+          size: versificationStats.size,
+          role: 'x-versification',
+        };
       }
     });
     if (call === 'edit' && currentBurrito?.copyright?.shortStatements && (copyright.licence).length <= 500) {
@@ -91,6 +121,7 @@ export const createJuxtaContent = (
           bookMarks: call === 'edit' ? currentBurrito.project['x-juxtalinear'].bookMarks : [],
           font: '',
           navigationHistory: [books[0].toLowerCase(), '1', '1'],
+
         },
       },
       sync: { services: { door43: [] } },

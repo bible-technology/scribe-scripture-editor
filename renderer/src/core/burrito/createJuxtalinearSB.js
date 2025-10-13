@@ -22,14 +22,14 @@ const createJuxtalinearSB = (
   return new Promise((resolve) => {
     let json = {};
     if (call === 'edit') {
-      json = project;
+      json = JSON.parse(JSON.stringify(project));
       delete json.project;
       delete json.version;
       if (update) {
         json = updateVersion(json);
       }
     } else {
-      json = burrito;
+      json = JSON.parse(JSON.stringify(burrito));
     }
     json.type.flavorType.flavor.name = 'x-juxtalinear';
     json.meta.generator.userName = username;

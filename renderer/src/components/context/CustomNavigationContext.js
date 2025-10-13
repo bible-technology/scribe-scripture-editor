@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
-import { useBibleReference } from 'bible-reference-rcl';
+import { useBibleReference } from '@/hooks/useBibleReference';
 
 export const CustomNavigationContext = createContext({});
 

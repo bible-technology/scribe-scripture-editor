@@ -50,7 +50,6 @@ export default function Editor(props) {
   const { usfmData, bookAvailable, readFileName } = useReadJuxtaFile();
   const [jsonFileContent, setJsonFileContent] = useState(null);
   const [loadingSentencesInProgress, setLoadingSentencesInProgress] = useState(true);
-
   const [zoomLeftJuxtalign, setZoomLeftJuxtalign] = useState(24);
   const [zoomRightJuxtalign, setZoomRightJuxtalign] = useState(24);
 
