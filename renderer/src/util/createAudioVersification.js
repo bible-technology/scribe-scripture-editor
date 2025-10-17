@@ -22,7 +22,6 @@ export const createAudioVersification = (
   const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.projectName}_${id}`, 'audio', 'ingredients');
   const schemes = [
     { name: 'eng', file: 'eng.json' },
-    { name: 'lxx', file: 'lxx.json' },
     { name: 'org', file: 'org.json' },
     { name: 'rsc', file: 'rsc.json' },
     { name: 'rso', file: 'rso.json' },
