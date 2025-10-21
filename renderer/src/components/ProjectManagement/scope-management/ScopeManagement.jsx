@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useBibleReference } from 'bible-reference-rcl';
+import { useBibleReference } from '@/hooks/useBibleReference';
 import { useTranslation } from 'react-i18next';
 import TitleBar from './TitleBar';
 import BookButton from '../Common/Button/BookButton';
@@ -95,6 +95,7 @@ function ScopeManagement({
     initialBook,
     initialChapter,
     initialVerse,
+    projectPath: projectBasePath,
   });
 
   const checkChapterCompletion = (bookCode, chapterNumber) => {

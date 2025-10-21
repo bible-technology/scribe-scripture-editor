@@ -17,6 +17,7 @@ export default function EditorMenuBar(props) {
     setChapterNumber,
     verseNumber,
     setVerseNumber,
+    booksInProject,
     // handleSelectedFont,
     // setTriggerVerseInsert,
   } = props;
@@ -34,6 +35,7 @@ export default function EditorMenuBar(props) {
           setChapterNumber={setChapterNumber}
           verseNumber={verseNumber}
           setVerseNumber={setVerseNumber}
+          booksInProject={booksInProject}
         />
         <div
           aria-label="editor-pane"

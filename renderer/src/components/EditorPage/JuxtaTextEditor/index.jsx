@@ -25,7 +25,7 @@ export default function JuxtaTextEditor() {
   // const [newVerChapNumber, setInsertNumber] = useState('');
   // const [insertVerseRChapter, setInsertVerseRChapter] = useState('');
 
-  const { usfmData, bookAvailable } = useReadJuxtaFile();
+  const { usfmData, bookAvailable, booksInProject } = useReadJuxtaFile();
 
   const {
     state: { bookId, selectedFont },
@@ -95,6 +95,7 @@ export default function JuxtaTextEditor() {
     bookName,
     bookChange,
     bookAvailable,
+    booksInProject,
     setBookChange,
     setChapterNumber,
     setVerseNumber,

@@ -18,6 +18,7 @@ export default function SelectBook({
   existingScope = [],
   disableScope = {},
   call = '',
+  booksInProject = [],
 }) {
   const [openNT, setOpenNT] = useState(true);
   const [openOT, setOpenOT] = useState(true);
@@ -34,26 +35,57 @@ export default function SelectBook({
     setOpenNT(true);
     setOpenOT(true);
   }
+  const isBookAvailable = (bookKey) => {
+    const lowerKey = bookKey.toLowerCase();
+    const upperKey = bookKey.toUpperCase();
+
+    if (call === 'audio-project') {
+      return Object.prototype.hasOwnProperty.call(disableScope, upperKey);
+    }
+
+    if (booksInProject && booksInProject.length > 0) {
+      return booksInProject.includes(lowerKey);
+    }
+
+    return true;
+  };
+
+  const getBookClassName = (book) => {
+    const isAvailable = isBookAvailable(book.key);
+    const isSelected = selectedBooks.includes(book.key.toUpperCase());
+
+    if (!isAvailable) { return styles.disabled; }
+
+    if (call === 'audio-project') {
+      return Object.prototype.hasOwnProperty.call(disableScope, book.key.toUpperCase())
+        ? (isSelected ? `${styles.bookSelect} ${styles.active}` : styles.bookSelect)
+        : styles.disabled;
+    }
+
+    return isSelected ? `${styles.bookSelect} ${styles.active}` : styles.bookSelect;
+  };
 
   function bookSelect(e, bookId) {
     e.preventDefault();
+
+    if (!isBookAvailable(bookId)) { return; }
+
     onChangeBook(bookId, selectedBooks[0]);
-    setBook && setBook(bookId);
+    if (setBook) { setBook(bookId); }
     if (multiSelectBook === false) { selectBook(); }
   }
 
   function selectMultipleBooks(e, bookID) {
-    if (selectedBooks.includes(bookID.toUpperCase()) === false) {
-      const _selectedBooks = [...selectedBooks];
-      _selectedBooks.push(bookID.toUpperCase());
-      setSelectedBooks(_selectedBooks);
+    const upperBook = bookID.toUpperCase();
+    if (!selectedBooks.includes(upperBook)) {
+      setSelectedBooks([...selectedBooks, upperBook]);
     } else {
-      const _selectedBooks = [...selectedBooks];
-      const selectedIndex = _selectedBooks.indexOf(bookID.toUpperCase());
-      if (!(scope === 'Other' && existingScope?.length > 0 && existingScope.includes(bookID.toUpperCase()))) {
-        _selectedBooks.splice(selectedIndex, 1);
+      const updated = [...selectedBooks];
+      const index = updated.indexOf(upperBook);
+      if (!(scope === 'Other' && existingScope?.length > 0 && existingScope.includes(upperBook))) {
+        updated.splice(index, 1);
       }
-      setSelectedBooks(_selectedBooks);
+      setSelectedBooks(updated);
     }
   }
   React.useEffect(() => {
@@ -102,13 +134,10 @@ export default function SelectBook({
                         role="presentation"
                         key={book.name}
                         aria-label={`ot-${book.name}`}
-                        onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
-                          ? (multiSelectBook
-                            ? selectMultipleBooks(e, book.key, book.name)
-                            : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
-                          ? selectMultipleBooks(e, book.key, book.name)
-                          : bookSelect(e, book.key, book.name)))}
-                        className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
+                        onClick={(e) => (multiSelectBook
+                          ? selectMultipleBooks(e, book.key)
+                          : bookSelect(e, book.key))}
+                        className={getBookClassName(book)}
                       >
                         {book.name}
                       </div>
@@ -143,13 +172,10 @@ export default function SelectBook({
                       key={book.name}
                       role="presentation"
                       aria-label={`nt-${book.name}`}
-                      onClick={(e) => (call === 'audio-project' ? (Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase())
-                        ? (multiSelectBook
-                          ? selectMultipleBooks(e, book.key, book.name)
-                          : bookSelect(e, book.key, book.name)) : '') : (multiSelectBook
-                        ? selectMultipleBooks(e, book.key, book.name)
-                        : bookSelect(e, book.key, book.name)))}
-                      className={`${call === 'audio-project' && !Object.prototype.hasOwnProperty.call(disableScope, (book.key).toUpperCase()) ? styles.disabled : (selectedBooks.includes((book.key).toUpperCase()) ? (styles.bookSelect, styles.active) : styles.bookSelect)}`}
+                      onClick={(e) => (multiSelectBook
+                        ? selectMultipleBooks(e, book.key)
+                        : bookSelect(e, book.key))}
+                      className={getBookClassName(book)}
                     >
                       {book.name}
                     </div>

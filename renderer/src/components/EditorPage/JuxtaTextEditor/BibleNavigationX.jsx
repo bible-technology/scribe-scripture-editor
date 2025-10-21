@@ -13,7 +13,7 @@ import { saveNavigationHistory } from '@/core/projects/updateAgSettings';
 
 export default function BibleNavigationX(props) {
   const {
-    showVerse, chapterNumber, setChapterNumber, verseNumber, setVerseNumber,
+    showVerse, chapterNumber, setChapterNumber, verseNumber, setVerseNumber, booksInProject,
   } = props;
   const supportedBooks = null; // if empty array or null then all books available
 
@@ -174,6 +174,7 @@ export default function BibleNavigationX(props) {
                 // "scope" is added to disable the click on the book list. scope="Other" will only
                 // allow to click/select the book.
                 scope="Other"
+                booksInProject={booksInProject}
               >
                 <button
                   type="button"

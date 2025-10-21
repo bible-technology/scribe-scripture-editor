@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import { useBibleReference } from 'bible-reference-rcl';
+import { getProjectPath } from '@/util/getProjectPath';
 import React, {
   useState, createContext, useRef, useEffect,
 } from 'react';
@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
+import { useBibleReference } from '@/hooks/useBibleReference';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
@@ -44,6 +45,7 @@ export default function ReferenceContextProvider({ children }) {
   const [fontSize4, setFontsize4] = React.useState(1);
   const [layout, setLayout] = useState(0);
   const [row, setRow] = useState(0);
+  const [projectPath, setProjectPath] = useState(null);
   const [referenceLoading, setReferenceLoading] = useState({
     status: false,
     text: '',
@@ -136,8 +138,17 @@ export default function ReferenceContextProvider({ children }) {
       initialBook,
       initialChapter,
       initialVerse,
+      projectPath,
     },
   );
+
+  useEffect(() => {
+    const loadProjectPath = async () => {
+      const path = await getProjectPath();
+      setProjectPath(path);
+    };
+    loadProjectPath();
+  }, []);
 
   useEffect(() => {
     localforage.getItem('currentProject').then(async (projectName) => {

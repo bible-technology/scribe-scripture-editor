@@ -7,9 +7,9 @@ import {
   XMarkIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/solid';
-import { useBibleReference } from 'bible-reference-rcl';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
 import SelectVerse from '@/components/EditorPage/Navigation/reference/SelectVerse';
+import { useBibleReference } from '@/hooks/useBibleReference';
 
 export default function CustomNavigation({
   initialBook,

@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { useBibleReference } from 'bible-reference-rcl';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import SelectBook from '@/components/EditorPage/Navigation/reference/SelectBook';
+import { useBibleReference } from '@/hooks/useBibleReference';
 import { ProjectContext } from '../../context/ProjectContext';
 import * as logger from '../../../logger';
 
