@@ -10,7 +10,13 @@ const useHandleSelectProject = () => {
     setSelectedProject,
   ) => {
     logger.debug('ProjectList.js', 'In handleSelectProject');
-    setSelectedProject(projectName);
+
+    if (typeof setSelectedProject === 'function') {
+      setSelectedProject(projectName);
+    } else {
+      logger.warn('setSelectedProject is not a function');
+    }
+
     localforage.setItem('currentProject', `${projectName}_${projectId}`);
     router.push('/home');
   };
