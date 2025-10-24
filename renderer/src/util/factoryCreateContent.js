@@ -1,10 +1,11 @@
 import { createVersificationUSFM } from './createVersificationUSFM';
 import { createAudioVersification } from './createAudioVersification';
+import { createVideoVersification } from './createVideoVersification';
 import { createObsContent } from './createObsContent';
 import { createJuxtaContent } from './createJuxtaContent';
 import * as logger from '../logger';
 
-// const projectTypes = ['Translation', 'Audio', 'OBS', 'Juxta'];
+// const projectTypes = ['Translation', 'Audio', 'Video', 'OBS', 'Juxta'];
 
 /**
  *
@@ -44,6 +45,19 @@ export const factoryCreateContent = async ({
     break;
   case 'Audio':
     promise = await createAudioVersification(
+      books,
+      username,
+      project,
+      versification,
+      id,
+      copyright,
+      currentBurrito,
+      call,
+      importedFiles,
+    );
+    break;
+  case 'Video':
+    promise = await createVideoVersification(
       books,
       username,
       project,

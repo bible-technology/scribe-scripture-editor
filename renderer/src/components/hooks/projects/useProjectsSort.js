@@ -211,6 +211,19 @@ function useProjectsSort() {
                         starred = _project.project?.audioTranslation?.starred;
                         flavorType = 'Audio';
                         break;
+                      case 'videoTranslation':
+                        lastSeen = _project.project
+                          ?.videoTranslation
+                          ?.lastSeen;
+                        description = _project.project
+                          ?.videoTranslation
+                          ?.description;
+                        isArchived = _project.project
+                          ?.videoTranslation
+                          ?.isArchived;
+                        starred = _project.project?.videoTranslation?.starred;
+                        flavorType = 'Video';
+                        break;
                       default:
                         break;
                       }
@@ -266,6 +279,7 @@ function useProjectsSort() {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        videoTranslation: 'videoTranslation',
         'x-juxtalinear': 'x-juxtalinear',
       };
 
@@ -294,6 +308,7 @@ function useProjectsSort() {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
         audioTranslation: 'audioTranslation',
+        videoTranslation: 'videoTranslation',
         'x-juxtalinear': 'x-juxtalinear',
       };
       return dirNameMap[flavorName];

@@ -1,10 +1,11 @@
 import createTranslationSB from '../core/burrito/createTranslationSB';
 import createJuxtalinearSB from '../core/burrito/createJuxtalinearSB';
 import createAudioSB from '../core/burrito/createAudioSB';
+import createVideoSB from '../core/burrito/createVideoSB';
 import createObsSB from '../core/burrito/createObsSB';
 import * as logger from '../logger';
 
-// const projectTypes = ['Translation', 'Audio', 'OBS', 'Juxta'];
+// const projectTypes = ['Translation', 'Audio', 'Video', 'OBS', 'Juxta'];
 
 export const factoryCreateSB = async ({
   projectTypeToUse,
@@ -52,6 +53,21 @@ export const factoryCreateSB = async ({
       update,
     );
     break;
+  case 'Video':
+    burritoFilePromise = await createVideoSB(
+      username,
+      projectFields,
+      selectedScope,
+      language,
+      langCode,
+      direction,
+      copyright,
+      id,
+      project,
+      call,
+      update,
+    );
+    break;
   case 'OBS':
     burritoFilePromise = await createObsSB(
       username,
@@ -82,7 +98,7 @@ export const factoryCreateSB = async ({
     );
     break;
   default:
-    logger.error('factoryCreateContent.js', `projectTypeToUse doesn't exist [Translation, Audio, OBS, Juxta]: ${projectTypeToUse}`);
+    logger.error('factoryCreateContent.js', `projectTypeToUse doesn't exist [Translation, Audio, Video, OBS, Juxta]: ${projectTypeToUse}`);
   }
   return burritoFilePromise;
 };

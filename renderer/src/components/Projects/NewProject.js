@@ -14,7 +14,7 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
-import { BookOpenIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, InformationCircleIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { environment } from '../../../environment';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
@@ -34,6 +34,11 @@ const solutions = [
     name: 'Audio',
     href: '##',
     icon: BullhornIcon,
+  },
+  {
+    name: 'Video',
+    href: '##',
+    icon: VideoCameraIcon,
   },
   // {
   //   name: 'MT',
@@ -324,6 +329,10 @@ export default function NewProject({ call, project, closeEdit }) {
 
     case 'audioTranslation':
       setHeaderDropDown('Audio');
+      break;
+
+    case 'videoTranslation':
+      setHeaderDropDown('Video');
       break;
 
     case 'x-juxtalinear':

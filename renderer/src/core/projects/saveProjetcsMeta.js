@@ -14,6 +14,7 @@ const bookAvailable = (list, id) => list.some((obj) => obj === id);
 const flavors = {
   Translation: 'textTranslation',
   Audio: 'audioTranslation',
+  Video: 'videoTranslation',
   OBS: 'textStories',
   Juxta: 'x-juxtalinear',
 };
@@ -84,7 +85,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
 
   /**
    * the factory function that creates a project
-   * @param {string} type one of ["Translation", "OBS", "Audio", "Juxta"]
+   * @param {string} type one of ["Translation", "OBS", "Audio", "Video", "Juxta"]
    * @param {boolean} doChecks
    */
   const burritoChecksAndCreation = async (type, doChecks) => {
@@ -169,8 +170,8 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       ), JSON.stringify(burritoFile));
 
       // then maybe make a SB usfm
-      if (type === 'Audio') {
-        // Adding text USFM to audio project
+      if (type === 'Audio' || type === 'Video') {
+        // Adding text USFM to audio and video projects
         if ((projectMetaObj.importedFiles).length !== 0) {
           const newScope = [];
           projectMetaObj.importedFiles.forEach((file) => {

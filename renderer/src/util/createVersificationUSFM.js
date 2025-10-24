@@ -30,7 +30,7 @@ export const createVersificationUSFM = (
     ingredientsDirName = Object.keys(currentBurrito.ingredients).filter((key) => key.includes(environment.PROJECT_SETTING_FILE));
     ingredientsDirName = ingredientsDirName[0].split(/[(\\)?(/)?]/gm).slice(0)[0];
   }
-  if (projectType === 'Audio') {
+  if (projectType === 'Audio' || projectType === 'Video') {
     folder = path.join(folder, 'text-1', call === 'edit' ? 'ingredients' : ingredientsDirName);
   } else {
     folder = path.join(folder, ingredientsDirName);
