@@ -105,7 +105,7 @@ export default function ImportPopUp(props) {
         const { isValid: validUsfm, bookCode: code } = await validateUsfm(fileContent);
         isValid = validUsfm;
         bookCode = code || null;
-      } if (projectType === 'Audio' || projectType === 'Juxta') {
+      } if (projectType === 'Audio' || projectType === 'Juxta' || projectType === 'Video') {
         const file = await fs.readFile(book.path, 'utf8');
         const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
         isValid = myUsfmParser.validate();
@@ -205,6 +205,26 @@ export default function ImportPopUp(props) {
         }
 
         case 'Audio': {
+          const usfm = await fs.readFile(filePath, 'utf8');
+          const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+          const isJsonValid = myUsfmParser.validate();
+          if (isJsonValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            replaceConformation(true);
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
+            const jsonOutput = myUsfmParser.toJSON();
+            files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-invalid-usfm-file'));
+            setOpenSnackBar(true);
+          }
+          break;
+        }
+
+        case 'Video': {
           const usfm = await fs.readFile(filePath, 'utf8');
           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
           const isJsonValid = myUsfmParser.validate();
