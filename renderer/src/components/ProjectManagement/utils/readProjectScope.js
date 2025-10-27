@@ -53,9 +53,29 @@ export const readProjectScope = async (projectName) => {
       const metadataFile = await fs.readFileSync(filePath, 'utf-8');
       if (metadataFile) {
         logger.debug('readProjectScope.js', `read metadata file successfully - ${projectName}`);
-        const project = path.join(file, projectName, 'audio', 'ingredients');
-        const backendScope = await getScope(project);
         const json = await JSON.parse(metadataFile);
+
+        const projectType = json?.type?.flavorType?.flavor?.name;
+        let ingredientsFolder = 'audio';
+
+        if (projectType === 'videoTranslation') {
+          ingredientsFolder = 'video';
+        } else if (projectType === 'audioTranslation') {
+          ingredientsFolder = 'audio';
+        }
+
+        logger.debug('readProjectScope.js', `Detected project type: ${projectType}, using folder: ${ingredientsFolder}`);
+
+        const project = path.join(file, projectName, ingredientsFolder, 'ingredients');
+
+        let backendScope = {};
+        if (fs.existsSync(project)) {
+          backendScope = await getScope(project);
+          logger.debug('readProjectScope.js', `Backend scope found: ${JSON.stringify(backendScope)}`);
+        } else {
+          logger.warn('readProjectScope.js', `Ingredients folder not found at ${project}`);
+        }
+
         return { metadata: json, scope: backendScope };
       }
       throw new Error(`failed to read settings file - ${projectName}`);

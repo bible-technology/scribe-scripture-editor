@@ -94,6 +94,12 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
             }
             resources.project.audioTranslation.navigationHistory = [bookId, chapter, verse];
             logger.debug('updateAgSettings.js', 'Updated audioTranslation navigationHistory:', [bookId, chapter, verse]);
+          } else if (flavorType === 'videoTranslation') {
+            if (!resources.project?.videoTranslation) {
+              resources.project.videoTranslation = {};
+            }
+            resources.project.videoTranslation.navigationHistory = [bookId, chapter, verse];
+            logger.debug('updateAgSettings.js', 'Updated videoTranslation navigationHistory:', [bookId, chapter, verse]);
           } else if (flavorType === 'x-juxtalinear') {
             if (!resources.project['x-juxtalinear']) {
               resources.project['x-juxtalinear'] = {};
@@ -130,13 +136,20 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
         }
         settings.project.audioTranslation.navigationHistory = [bookId, chapter, verse];
         logger.debug('updateAgSettings.js', 'navigationHistory updated in audioTranslation settings file:', settings.project.audioTranslation.navigationHistory);
+      } else if (flavorType === 'videoTranslation') {
+        if (!settings.project?.videoTranslation) {
+          logger.error('updateAgSettings.js', 'videoTranslation object not found in settings');
+          return;
+        }
+        settings.project.videoTranslation.navigationHistory = [bookId, chapter, verse];
+        logger.debug('updateAgSettings.js', 'navigationHistory updated in videoTranslation settings file:', settings.project.videoTranslation.navigationHistory);
       } else if (flavorType === 'x-juxtalinear') {
         if (!settings.project['x-juxtalinear']) {
           logger.error('updateAgSettings.js', 'x-juxtalinear object not found in settings');
           return;
         }
         settings.project['x-juxtalinear'].navigationHistory = [bookId, chapter, verse];
-        logger.debug('updateAgSettings.js', 'navigationHistory updated in x-juxtalinear settings file:', settings.project.audioTranslation.navigationHistory);
+        logger.debug('updateAgSettings.js', 'navigationHistory updated in x-juxtalinear settings file:', settings.project.juxtaTranslation.navigationHistory);
       }
 
       await fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));

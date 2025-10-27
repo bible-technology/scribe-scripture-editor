@@ -4,6 +4,7 @@ import localforage from 'localforage';
 import ObsEditor from '@/components/EditorPage/ObsEditor/ObsEditor';
 import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import VideoEditor from '@/components/EditorPage/VideoEditor/VideoEditor';
 import packageInfo from '../../../../package.json';
 import SectionPlaceholder1 from './SectionPlaceholder1';
 import SectionPlaceholder2 from './SectionPlaceholder2';
@@ -55,7 +56,9 @@ const SectionContainer = () => {
         {(editor === 'textTranslation' && <TextEditor />)
           || (editor === 'textStories' && <ObsEditor />)
           || (editor === 'x-juxtalinear' && <JuxtaTextEditor />)
-          || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)}
+          || (editor === 'audioTranslation' && <AudioEditor editor={editor} />)
+          || (editor === 'videoTranslation' && <VideoEditor editor={editor} />)}
+
       </div>
       {(editor === 'audioTranslation' && (<MainPlayer />))}
       {(editor === 'textStories' && (

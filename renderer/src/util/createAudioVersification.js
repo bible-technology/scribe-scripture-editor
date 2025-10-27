@@ -81,7 +81,7 @@ export const createAudioVersification = (
               fontSize: 1,
               navigationHistory: [
                 String(
-                  currentBurrito?.project?.textTranslation?.navigationHistory?.[0]
+                  currentBurrito?.project?.audioTranslation?.navigationHistory?.[0]
                   || importedFiles?.[0]?.id
                   || books?.[0]
                   || '',

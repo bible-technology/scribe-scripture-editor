@@ -37,7 +37,9 @@ function ScopeManagement({
 
   const fs = window.require('fs');
   const path = window.require('path');
-
+  const projectType = metadata?.type?.flavorType?.flavor?.name;
+  const ingredientsFolder = projectType === 'videoTranslation' ? 'video' : 'audio';
+  const fileExtension = projectType === 'videoTranslation' ? 'mp4' : 'mp3';
   useEffect(() => {
     const loadVersification = async () => {
       try {
@@ -50,7 +52,7 @@ function ScopeManagement({
         const projectFolderName = `${projectName}_${projectId}`;
         const projectBasePath = path.join(baseProjectsDir, projectFolderName);
         setProjectBasePath(projectBasePath);
-        const versificationPath = path.join(projectBasePath, 'audio', 'ingredients', 'versification.json');
+        const versificationPath = path.join(projectBasePath, ingredientsFolder, 'ingredients', 'versification.json');
         if (fs.existsSync(versificationPath)) {
           const data = JSON.parse(fs.readFileSync(versificationPath, 'utf8'));
           setVersificationData(data.maxVerses || {});
@@ -59,11 +61,11 @@ function ScopeManagement({
           if (!fs.existsSync(projectBasePath)) {
             logger.error('Project directory does not exist:', projectBasePath);
           }
-          const audioDir = path.join(projectBasePath, 'audio');
-          if (!fs.existsSync(audioDir)) {
-            logger.error('Audio directory does not exist:', audioDir);
+          const mediaDir = path.join(projectBasePath, ingredientsFolder);
+          if (!fs.existsSync(mediaDir)) {
+            logger.error('Audio/Video directory does not exist:', mediaDir);
           }
-          const ingredientsDir = path.join(projectBasePath, 'audio', 'ingredients');
+          const ingredientsDir = path.join(projectBasePath, ingredientsFolder, 'ingredients');
           if (!fs.existsSync(ingredientsDir)) {
             logger.error('Ingredients directory does not exist:', ingredientsDir);
           }
@@ -107,16 +109,15 @@ function ScopeManagement({
     // Ensure consistent case handling
     const normalizedBookCode = bookCode.toLowerCase();
     const normalizedChapterNumber = String(parseInt(chapterNumber, 10));
-
-    const audioPath = path.join(
+    const mediaPath = path.join(
       projectBasePath,
-      'audio',
+      ingredientsFolder,
       'ingredients',
       normalizedBookCode.toUpperCase(),
       normalizedChapterNumber,
     );
 
-    if (!fs.existsSync(audioPath)) {
+    if (!fs.existsSync(mediaPath)) {
       return false;
     }
     const bookVerses = versificationData?.[bookCode.toUpperCase()];
@@ -140,13 +141,13 @@ function ScopeManagement({
     // Check if default take exists for each verse
     let foundFiles = 0;
     for (let verse = 1; verse <= totalVerses; verse++) {
-      const audioFile = `${normalizedChapterNumber}_${verse}_1_default.mp3`;
-      const audioFilePath = path.join(audioPath, audioFile);
+      const mediaFile = `${normalizedChapterNumber}_${verse}_1_default.${fileExtension}`;
+      const mediaFilePath = path.join(mediaPath, mediaFile);
 
-      if (fs.existsSync(audioFilePath)) {
+      if (fs.existsSync(mediaFilePath)) {
         foundFiles += 1;
       } else {
-        logger.warn(`Missing audio file: ${audioFilePath}`);
+        logger.warn(`Missing audio/video file: ${mediaFilePath}`);
       }
     }
 
@@ -155,7 +156,7 @@ function ScopeManagement({
     return isComplete;
   };
 
-  const checkBookCompletion = (bookCode, versificationDataRef) => {
+  const checkBookCompletion = (bookCode, versificationDataRef, ingredientsFolder) => {
     const normalizedBookCode = bookCode.toLowerCase();
     const bookVerses = versificationDataRef[bookCode.toUpperCase()];
     if (!bookVerses) {
@@ -163,7 +164,7 @@ function ScopeManagement({
     }
     for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
       const chapterNumber = chapterIndex + 1; // Convert to 1-based chapter number
-      if (!checkChapterCompletion(normalizedBookCode, chapterNumber.toString(), versificationDataRef)) {
+      if (!checkChapterCompletion(normalizedBookCode, chapterNumber.toString(), versificationDataRef, ingredientsFolder)) {
         return false;
       }
     }
@@ -176,6 +177,8 @@ function ScopeManagement({
       logger.log('Not ready to build completion map yet - missing data');
       return;
     }
+    const projectType = metadata?.type?.flavorType?.flavor?.name;
+    const ingredientsFolder = projectType === 'videoTranslation' ? 'video' : 'audio';
     const completion = {};
     const bookCompletionTemp = {};
     bookList?.forEach((book) => {
@@ -195,14 +198,14 @@ function ScopeManagement({
         bookCompletionTemp[bookCode] = false;
         return;
       }
-      const bookAudioPath = path.join(
+      const bookMediaPath = path.join(
         projectBasePath,
-        'audio',
+        ingredientsFolder,
         'ingredients',
         bookCode,
       );
 
-      if (!fs.existsSync(bookAudioPath)) {
+      if (!fs.existsSync(bookMediaPath)) {
         // Still create completion entries but mark as incomplete
         for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
           const chapterNumber = (chapterIndex + 1).toString();
@@ -227,6 +230,9 @@ function ScopeManagement({
   const handleChangeBookToggle = (event) => {
     setBookFilter(event.target.value);
     const bookObj = {};
+    if (chapterFilter) {
+      setChapterFilter('');
+    }
     if (event.target.value === 'all') {
       bookList.forEach((book) => {
         bookObj[book.key.toUpperCase()] = [];
@@ -262,6 +268,9 @@ function ScopeManagement({
   const handleSelectBook = (e, book) => {
     if (bookFilter) {
       setBookFilter('');
+    }
+    if (chapterFilter) {
+      setChapterFilter('');
     }
     const bookCode = book.key.toUpperCase();
     setCurrentScope((prev) => {
@@ -345,16 +354,21 @@ function ScopeManagement({
 
   useEffect(() => {
     if (metadata?.type?.flavorType?.currentScope) {
-      const scopeObj = metadata?.type?.flavorType?.currentScope;
-      setSelectedChaptersSet(new Set(scopeObj[Object.keys(scopeObj)[0]]) || new Set([]));
-      const bookCode = Object.keys(scopeObj)[0];
-      onChangeBook(bookCode.toLowerCase(), bookCode.toLowerCase());
+      const scopeObj = metadata.type.flavorType.currentScope;
+      const bookKeys = Object.keys(scopeObj);
+      if (bookKeys.length > 0) {
+        setSelectedChaptersSet(new Set(scopeObj[bookKeys[0]]) || new Set([]));
+        const bookCode = bookKeys[0];
+        onChangeBook(bookCode.toLowerCase(), bookCode.toLowerCase());
+      } else {
+        setSelectedChaptersSet(new Set());
+        onChangeBook(null);
+      }
       setCurrentScope(scopeObj);
     } else {
       logger.error('ScopeManagement.js', 'Unable to read the scope from burrito');
     }
   }, []);
-
   return (
     <div className="w-full h-full pt-5 px-5">
       <TitleBar>
@@ -476,17 +490,17 @@ function ScopeManagement({
 
             const totalVerses = versificationData[bookId?.toUpperCase()]?.[parseInt(key, 10) - 1] || 0;
             let recordedVerses = 0;
-            const chapterAudioPath = path.join(
+            const chapterMediaPath = path.join(
               projectBasePath,
-              'audio',
+              ingredientsFolder,
               'ingredients',
               bookId?.toUpperCase(),
               normalizedKey,
             );
-            if (fs.existsSync(chapterAudioPath)) {
+            if (fs.existsSync(chapterMediaPath)) {
               for (let verse = 1; verse <= totalVerses; verse++) {
-                const audioFilePath = path.join(chapterAudioPath, `${normalizedKey}_${verse}_1_default.mp3`);
-                if (fs.existsSync(audioFilePath)) {
+                const mediaFilePath = path.join(chapterMediaPath, `${normalizedKey}_${verse}_1_default.${fileExtension}`);
+                if (fs.existsSync(mediaFilePath)) {
                   recordedVerses += 1;
                 }
               }

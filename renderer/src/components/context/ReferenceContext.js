@@ -201,6 +201,16 @@ export default function ReferenceContextProvider({ children }) {
                       audioNavigationHist && goToBookChapterVerse(audioNavigationHist[0], audioNavigationHist[1], audioNavigationHist[2]);
                       setNavFlag(true);
                       break;
+                    case 'videoTranslation':
+                      setBookmarksVerses(resources.project?.videoTranslation.bookMarks);
+                      setProjectScriptureDir(resources.project?.videoTranslation?.scriptDirection?.toUpperCase());
+                      setSelectedFont(resources.project?.videoTranslation?.font);
+                      setEditorFontSize(resources.project?.videoTranslation?.fontSize || 1);
+                      // eslint-disable-next-line no-case-declarations
+                      const videoNavigationHist = resources.project?.videoTranslation?.navigationHistory;
+                      videoNavigationHist && goToBookChapterVerse(videoNavigationHist[0], videoNavigationHist[1], videoNavigationHist[2]);
+                      setNavFlag(true);
+                      break;
                     default:
                       break;
                     }
