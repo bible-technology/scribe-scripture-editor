@@ -41,26 +41,3 @@ export const debug = async (filename, text) => {
   }
 };
 export default logger;
-
-// switch (level) {
-//   case 'error':
-//     log.error(`${filename}: ${text}`);
-//     break;
-//   case 'warn':
-//     log.warn(`${filename}: ${text}`);
-//     break;
-//   case 'info':
-//     log.info(`${filename}: ${text}`);
-//     break;
-//   case 'debug':
-//     log.debug(`${filename}: ${text}`);
-//     break;
-//   default:
-//     log.warn(`${filename}: ${text}`);
-// }
-// }
-//   else {
-//     log.transports.file.level = process.env.NODE_ENV === 'production' ? 'warn' : 'debug';
-//     log.transports.console.level = false;
-//     log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s} [{level}] {text}';
-//   }

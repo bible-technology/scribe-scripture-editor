@@ -16,10 +16,6 @@ export function VerticalLinearStepper({ stepCount, steps, successMsg }) {
     setActiveStep(0);
   };
 
-  // const handleNext = () => {
-  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  // };
-
   React.useEffect(() => {
     handleReset();
   }, []);
@@ -69,23 +65,3 @@ VerticalLinearStepper.propTypes = {
   stepCount: PropTypes.number,
   successMsg: PropTypes.string,
 };
-
-// export default function VerticalStepperProgress() {
-// //   const [progress, setProgress] = React.useState(0);
-// //   React.useEffect(() => {
-// //     // console.log(currentValue, totalValue);
-// //     const calculated = ((currentValue * 100) / totalValue);
-// //     setProgress(calculated);
-// //   }, [currentValue, totalValue]);
-
-//   return (
-//     <Box sx={{ width: '100%' }}>
-//       <VerticalLinearStepper />
-//     </Box>
-//   );
-// }
-
-// VerticalStepperProgress.propTypes = {
-// //   currentValue: PropTypes.number.isRequired,
-// //   totalValue: PropTypes.number.isRequired,
-// };
