@@ -315,4 +315,9 @@ export const En = {
   'modal-title-clear-all-notifications': 'Clear All Notifications',
   'msg-clear-all-notifications': 'Do you really want to clear all notifications? This action cannot be undone.',
   'btn-clear-all': 'Clear All',
+  'modal-title-delete-video': 'Delete Video',
+  'msg-delete-video': 'Are you sure you want to delete this video recording?',
+  'msg-video-deleted-success': 'Video deleted successfully',
+  'msg-video-delete-failed': 'Failed to delete video. Please try again.',
+  'label-no-text-available': 'No text available',
 };

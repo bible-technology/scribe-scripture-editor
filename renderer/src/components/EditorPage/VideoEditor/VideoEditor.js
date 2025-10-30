@@ -1,27 +1,46 @@
-/* eslint-disable no-nested-ternary */
-import { useState, useEffect, useContext } from 'react';
-import Editor from '@/modules/editor/Editor';
 import PropTypes from 'prop-types';
-import { isElectron } from '@/core/handleElectron';
-import { readRefMeta } from '@/core/reference/readRefMeta';
-import { readRefBurrito } from '@/core/reference/readRefBurrito';
-import { ReferenceContext } from '@/components/context/ReferenceContext';
-import { readFile } from '@/core/editor/readFile';
-import EditorPage from '@/components/AudioRecorder/components/EditorPage';
-import { SnackBar } from '@/components/SnackBar';
+import Editor from '@/modules/editor/Editor';
 import { useTranslation } from 'react-i18next';
+import { SnackBar } from '@/components/SnackBar';
+import { readFile } from '@/core/editor/readFile';
+import { isElectron } from '@/core/handleElectron';
+import { useState, useEffect, useContext } from 'react';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
+import { readRefMeta } from '@/core/reference/readRefMeta';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
+import { readRefBurrito } from '@/core/reference/readRefBurrito';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { ReferenceContext } from '@/components/context/ReferenceContext';
+import VideoPlayer from '@/components/EditorPage/VideoEditor/VideoPlayer';
 import { getDetails } from '../ObsEditor/utils/getDetails';
+import * as logger from '../../../logger';
 
 const grammar = require('usfm-grammar');
 
 const VideoEditor = ({ editor }) => {
-  const [snackBar, setOpenSnackBar] = useState(false);
-  const [snackText, setSnackText] = useState('');
-  const [notify, setNotify] = useState();
-  const [displyScreen, setDisplayScreen] = useState(false);
   const { t } = useTranslation();
+  const [notify, setNotify] = useState();
+  const [snackText, setSnackText] = useState('');
+  const [snackBar, setOpenSnackBar] = useState(false);
+  const [displyScreen, setDisplayScreen] = useState(false);
+  const [model, setModel] = useState({
+    openModel: false,
+    title: '',
+    confirmMessage: '',
+    buttonName: '',
+    action: '',
+    actionData: {},
+  });
+  const modelClose = () => {
+    setModel({
+      openModel: false,
+      title: '',
+      confirmMessage: '',
+      buttonName: '',
+      action: '',
+      actionData: {},
+    });
+  };
   const {
     state: {
       bookId,
@@ -32,8 +51,7 @@ const VideoEditor = ({ editor }) => {
       audioPath,
       selectedFont,
       editorFontSize,
-      // eslint-disable-next-line no-unused-vars
-      updateWave, // updateWave is used to update the waveform in the Editor after recording audio
+      updateWave,
     }, actions: {
       onChangeVerse,
       setIsLoading,
@@ -42,6 +60,60 @@ const VideoEditor = ({ editor }) => {
       setAudioPath,
     },
   } = useContext(ReferenceContext);
+
+  const executeDeleteVideo = (verseNumber, videoFileName) => {
+    try {
+      const fs = window.require('fs');
+      const path = require('path');
+      const videoPath = path.join(audioPath, videoFileName);
+
+      if (fs.existsSync(videoPath)) {
+        fs.unlinkSync(videoPath);
+        logger.info('Video file deleted:', videoPath);
+      }
+      const updatedContent = audioContent.map((item) => {
+        if (item.verseNumber === verseNumber) {
+          const updated = { ...item };
+          delete updated.take1;
+          delete updated[updated.default];
+          updated.default = '';
+          return updated;
+        }
+        return item;
+      });
+
+      setAudioContent(updatedContent);
+      setNotify('success');
+      setSnackText(t('msg-video-deleted-success') || 'Video deleted successfully');
+      setOpenSnackBar(true);
+    } catch (err) {
+      setNotify('failure');
+      setSnackText(t('msg-video-delete-failed') || 'Failed to delete video. Please try again.');
+      logger.error('Error deleting video file:', err);
+      setOpenSnackBar(true);
+      return false;
+    }
+  };
+
+  const handleModalConfirm = () => {
+    if (model.action === 'deleteVideo') {
+      executeDeleteVideo(model.actionData.verseNumber, model.actionData.videoFileName);
+    } else if (model.action === 'reRecordVideo') {
+      try {
+        const fs = window.require('fs');
+        if (fs.existsSync(model.actionData.filePath)) {
+          fs.unlinkSync(model.actionData.filePath);
+          logger.info('Deleted existing video for re-recording');
+        }
+      } catch (err) {
+        setNotify('failure');
+        setSnackText('Failed to delete existing video');
+        logger.error('Error deleting existing video file:', err);
+        setOpenSnackBar(true);
+      }
+    }
+    modelClose();
+  };
 
   useEffect(() => {
     if (isElectron()) {
@@ -56,7 +128,7 @@ const VideoEditor = ({ editor }) => {
           readRefMeta({
             projectsDir,
           }).then((refs) => {
-          // setIsLoading(true);
+            // setIsLoading(true);
             refs.forEach(() => {
               readRefBurrito({
                 metaPath,
@@ -66,21 +138,18 @@ const VideoEditor = ({ editor }) => {
                   const _books = [];
                   Object.entries(_data.type.flavorType.currentScope).forEach(
                     async ([key]) => {
-                      // Checking whether the selected book and chapter is in the scope or not
                       if (key === bookId.toUpperCase() && _data.type.flavorType.currentScope[key].includes(chapter.toString())) {
                         _books.push(bookId.toUpperCase());
                         const fs = window.require('fs');
                         const path = require('path');
                         let bookContent = [];
                         const exists = fs.existsSync(path.join(projectsDir, 'text-1', 'ingredients', `${bookId.toUpperCase()}.usfm`));
-                        // The project has any textTranslation data or not
                         if (exists) {
                           const usfm = fs.readFileSync(path.join(projectsDir, 'text-1', 'ingredients', `${bookId.toUpperCase()}.usfm`), 'utf8');
                           const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
                           const isJsonValid = myUsfmParser.validate();
                           if (isJsonValid) {
                             const jsonOutput = myUsfmParser.toJSON();
-                            // Storing the chapters data in a array
                             bookContent = jsonOutput.chapters;
                           } else {
                             setNotify('failure');
@@ -88,7 +157,6 @@ const VideoEditor = ({ editor }) => {
                             setOpenSnackBar(true);
                           }
                         } else {
-                        // Since this project doesn't have text data, we will create a JSON using the versification scheme
                           await readFile({
                             projectname: projectName,
                             filename: path.join('video', 'ingredients', 'versification.json'),
@@ -122,10 +190,8 @@ const VideoEditor = ({ editor }) => {
                         if (!fs.existsSync(path.join(projectsDir, 'video', 'ingredients', bookId.toUpperCase()))) {
                           fs.mkdirSync(path.join(projectsDir, 'video', 'ingredients', bookId.toUpperCase()));
                         }
-                        // Getting the list of folders
                         const folders = fs.readdirSync(path.join(projectsDir, 'video', 'ingredients'));
                         folders.forEach((folder) => {
-                        // Checking whether the video is available for the selected book
                           const re = new RegExp(bookId, 'gi');
                           const arr = folder.match(re);
                           if (arr) {
@@ -136,7 +202,6 @@ const VideoEditor = ({ editor }) => {
                             const folderName = fs.readdirSync(filePath);
                             folderName.forEach((chapterNum) => {
                               if (chapterNum === chapter) {
-                              // Setting the bookContent to use it for updating the frontend data after every record,defaulting etc... without loading whole page
                                 setAudioCurrentChapter({ bookContent, filePath, chapterNum });
                                 const chapters = fs.readdirSync(path.join(filePath, chapterNum));
                                 chapters.forEach((verse) => {
@@ -148,17 +213,13 @@ const VideoEditor = ({ editor }) => {
                                         Object.entries(bookContent[key].contents).forEach(
                                           ([v]) => {
                                             if (bookContent[key].contents[v].verseNumber === verseNum[1]) {
-                                            // const url = 'https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3';
                                               if (verseNum[2]) {
                                                 const take = `take${verseNum[2]}`;
-                                                // Replacing url with verse, url is used for development purpose
                                                 bookContent[key].contents[v][take] = verse;
                                                 if (verseNum[3] === 'default') {
                                                   bookContent[key].contents[v].default = take;
                                                 }
                                               } else {
-                                              // If found only one video for the verse then making that video as default one.
-                                              // replace url with `${chapter}_${verseNum[1]}_1_default.mp3`
                                                 bookContent[key].contents[v].take1 = `${chapter}_${verseNum[1]}_1_default.mp4`;
                                                 bookContent[key].contents[v].default = 'take1';
                                                 fs.renameSync(path.join(filePath, chapterNum, verse), path.join(filePath, chapterNum, `${chapter}_${verseNum[1]}_1_default.mp4`));
@@ -174,12 +235,10 @@ const VideoEditor = ({ editor }) => {
                               }
                             });
                           }
-                          // Should only display the content if it has text or video or both text and video
                           if (arr || exists) {
                             Object.entries(bookContent).forEach(
                               ([key]) => {
                                 if (bookContent[key].chapterNumber === chapter.toString()) {
-                                // Storing the content in the ReferenceContext for the MainPlayer component
                                   setAudioContent(bookContent[key].contents);
                                 }
                               },
@@ -206,24 +265,35 @@ const VideoEditor = ({ editor }) => {
           });
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, chapter]);
   return (
     <Editor callFrom="textTranslation" editor={editor}>
-      {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="audio" />}
-      {isLoading && !displyScreen && <LoadingScreen /> }
+      {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="video" />}
+      {isLoading && !displyScreen && <LoadingScreen />}
       {audioContent && isLoading === false
-      && (
-        <EditorPage
-          content={audioContent}
-          onChangeVerse={onChangeVerse}
-          verse={verse}
-          location={audioPath}
-          updateWave={updateWave}
-          fontSize={editorFontSize}
-          selectedFont={selectedFont}
-        />
-      )}
+        && (
+          <VideoPlayer
+            content={audioContent}
+            onChangeVerse={onChangeVerse}
+            verse={verse}
+            location={audioPath}
+            updateWave={updateWave}
+            fontSize={editorFontSize}
+            selectedFont={selectedFont}
+            setOpenModal={setModel}
+            onDeleteVideo={executeDeleteVideo}
+            chapter={chapter}
+            bookId={bookId}
+          />
+        )}
+      <ConfirmationModal
+        openModal={model.openModel}
+        title={model.title}
+        setOpenModal={() => modelClose()}
+        confirmMessage={model.confirmMessage}
+        buttonName={model.buttonName}
+        closeModal={() => handleModalConfirm()}
+      />
       <SnackBar
         openSnackBar={snackBar}
         snackText={snackText}
