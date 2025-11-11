@@ -9,11 +9,25 @@ import {
   ChevronRightIcon,
   VideoCameraIcon,
   PlayIcon,
+  PauseIcon,
   StopIcon,
   ExclamationCircleIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { isJoinedVerse } from '@/core/editor/verseJoining';
 import * as logger from '../../../logger';
+
+const getNextVerseNumber = (currentVerse, content) => {
+  const currentIndex = content.findIndex((v) => v.verseNumber === currentVerse);
+  if (currentIndex === -1 || currentIndex >= content.length - 1) { return null; }
+  return content[currentIndex + 1].verseNumber;
+};
+
+const getPreviousVerseNumber = (currentVerse, content) => {
+  const currentIndex = content.findIndex((v) => v.verseNumber === currentVerse);
+  if (currentIndex === -1 || currentIndex === 0) { return null; }
+  return content[currentIndex - 1].verseNumber;
+};
 
 const VideoRecorder = ({
   verse,
@@ -22,8 +36,9 @@ const VideoRecorder = ({
   projectPath,
   onRecordingComplete,
   onClose,
-  totalVerses,
   onVerseChange,
+  content,
+  mode = 'record',
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -31,6 +46,8 @@ const VideoRecorder = ({
   const [error, setError] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentMode, setCurrentMode] = useState(mode);
 
   const videoPreviewRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -41,19 +58,34 @@ const VideoRecorder = ({
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('success');
 
+  const currentVerseData = content?.find((v) => v.verseNumber === verse);
+  const hasVideo = currentVerseData?.default && currentVerseData[currentVerseData.default];
+
   useEffect(() => {
     const fs = window.require('fs');
     const path = window.require('path');
     const filename = `${chapter}_${verse}_1_default.mp4`;
     const filePath = path.join(projectPath, filename);
 
-    setExistingVideo(fs.existsSync(filePath));
-  }, [chapter, verse, projectPath]);
+    const videoExists = fs.existsSync(filePath);
+    setExistingVideo(videoExists);
+
+    if (videoExists && mode === 'view') {
+      setCurrentMode('view');
+    } else {
+      setCurrentMode('record');
+    }
+  }, [chapter, verse, projectPath, mode]);
 
   useEffect(() => {
     let mounted = true;
 
     const initCamera = async () => {
+      if (currentMode === 'view') {
+        setCameraReady(false);
+        return;
+      }
+
       try {
         const constraints = {
           video: {
@@ -105,7 +137,29 @@ const VideoRecorder = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [isAudioEnabled]);
+  }, [isAudioEnabled, currentMode]);
+
+  useEffect(() => {
+    if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
+      const path = require('path');
+      const videoPath = `file://${path.join(projectPath, currentVerseData[currentVerseData.default])}`;
+      videoPreviewRef.current.src = videoPath;
+      videoPreviewRef.current.load();
+    }
+  }, [currentMode, hasVideo, verse, projectPath, currentVerseData]);
+
+  useEffect(() => {
+    if (currentMode === 'view' && videoPreviewRef.current) {
+      if (isPlaying) {
+        videoPreviewRef.current.play().catch((err) => {
+          logger.error('Error playing video:', err);
+          setIsPlaying(false);
+        });
+      } else {
+        videoPreviewRef.current.pause();
+      }
+    }
+  }, [isPlaying, currentMode]);
 
   const showSnackbarMessage = (message, type = 'success') => {
     setSnackbarMessage(message);
@@ -142,8 +196,12 @@ const VideoRecorder = ({
         });
       }
 
+      setExistingVideo(true);
+      setCurrentMode('view');
       setIsProcessing(false);
     } catch (err) {
+      logger.error('Error saving video:', err);
+      showSnackbarMessage(`Failed to save video: ${err.message}`, 'error');
       setIsProcessing(false);
     }
   }, [chapter, verse, projectPath, onRecordingComplete]);
@@ -158,6 +216,7 @@ const VideoRecorder = ({
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         setExistingVideo(false);
+        setCurrentMode('record');
 
         if (onRecordingComplete) {
           onRecordingComplete({
@@ -282,16 +341,29 @@ const VideoRecorder = ({
     }
   };
 
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
   const handlePreviousVerse = () => {
-    if (verse > 1 && onVerseChange) {
-      onVerseChange(parseInt(verse, 10) - 1);
+    const prevVerse = getPreviousVerseNumber(verse, content);
+    if (prevVerse && onVerseChange) {
+      setIsPlaying(false);
+      onVerseChange(prevVerse);
     }
   };
 
   const handleNextVerse = () => {
-    if (verse < totalVerses && onVerseChange) {
-      onVerseChange(parseInt(verse, 10) + 1);
+    const nextVerse = getNextVerseNumber(verse, content);
+    if (nextVerse && onVerseChange) {
+      setIsPlaying(false);
+      onVerseChange(nextVerse);
     }
+  };
+
+  const switchToRecordMode = () => {
+    setCurrentMode('record');
+    setIsPlaying(false);
   };
 
   const formatTime = (seconds) => {
@@ -299,6 +371,9 @@ const VideoRecorder = ({
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  const hasPreviousVerse = () => getPreviousVerseNumber(verse, content) !== null;
+  const hasNextVerse = () => getNextVerseNumber(verse, content) !== null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4">
@@ -308,8 +383,8 @@ const VideoRecorder = ({
             <VideoCameraIcon className="w-6 h-6" />
             <div>
               <h2 className="text-lg font-semibold">
-                Video Recording -
-                {' '}
+                {currentMode === 'view' ? 'Video Player' : 'Video Recording'}
+                {' - '}
                 {bookId.toUpperCase()}
                 {' '}
                 {chapter}
@@ -317,8 +392,17 @@ const VideoRecorder = ({
                 {verse}
               </h2>
               <p className="text-sm text-gray-200">
-                {isRecording ? `Recording: ${formatTime(recordingTime)}` : 'Ready to record'}
+                {(() => {
+                  if (isRecording) {
+                    return `Recording: ${formatTime(recordingTime)}`;
+                  }
+                  if (currentMode === 'view') {
+                    return isPlaying ? 'Playing' : 'Paused';
+                  }
+                  return 'Ready to record';
+                })()}
               </p>
+
             </div>
           </div>
           <button
@@ -346,24 +430,33 @@ const VideoRecorder = ({
           <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-6" style={{ aspectRatio: '16/9' }}>
             <video
               ref={videoPreviewRef}
-              autoPlay
-              muted
+              autoPlay={currentMode === 'record'}
+              muted={currentMode === 'record'}
               playsInline
               className="w-full h-full object-contain"
-            />
+              onEnded={() => setIsPlaying(false)}
+              onError={(e) => {
+                logger.error('Video playback error:', e);
+                setIsPlaying(false);
+              }}
+            >
+              <track kind="captions" src="" label="No captions" />
+            </video>
 
-            {isRecording && (
-              <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2 animate-pulse">
-                <div className="w-3 h-3 bg-white rounded-full" />
-                <span className="text-sm font-medium">REC</span>
-              </div>
-            )}
-
-            {!cameraReady && !error && (
+            {currentMode === 'record' && !cameraReady && !error && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
                 <div className="text-center text-white">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
                   <p>Initializing camera...</p>
+                </div>
+              </div>
+            )}
+
+            {currentMode === 'view' && !hasVideo && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                <div className="text-center text-gray-400">
+                  <VideoCameraIcon className="w-16 h-16 mx-auto mb-3 opacity-50" />
+                  <p className="text-lg">No video available</p>
                 </div>
               </div>
             )}
@@ -399,41 +492,75 @@ const VideoRecorder = ({
 
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={toggleAudio}
-                disabled={!cameraReady || isProcessing}
-                className={`p-4 rounded-full transition-colors ${isAudioEnabled
-                  ? 'bg-primary text-white hover:bg-primary-dark'
-                  : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-                title={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
-              >
-                {isAudioEnabled ? <MicrophoneIcon className="w-6 h-6" /> : <MicrophoneIcon className="w-6 h-6 " />}
-              </button>
+              {currentMode === 'record' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={toggleAudio}
+                    disabled={!cameraReady || isProcessing}
+                    className={`p-4 rounded-full transition-colors ${isAudioEnabled
+                      ? 'bg-primary text-white hover:bg-primary-dark'
+                      : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
+                  >
+                    {isAudioEnabled ? <MicrophoneIcon className="w-6 h-6" /> : <MicrophoneIcon className="w-6 h-6 " />}
+                  </button>
 
-              <button
-                type="button"
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={!cameraReady || isProcessing || existingVideo}
-                className={`p-6 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
-                  isRecording
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-primary hover:bg-primary-dark text-white'
-                }`}
-                title={(() => {
-                  if (isRecording) { return 'Stop recording'; }
-                  if (existingVideo) { return 'Recording exists - delete it first'; }
-                  return 'Start recording';
-                })()}
+                  <button
+                    type="button"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={!cameraReady || isProcessing || existingVideo}
+                    className={`p-6 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
+                      ? 'bg-red-600 hover:bg-red-700 text-white'
+                      : 'bg-primary hover:bg-primary-dark text-white'
+                    }`}
+                    title={(() => {
+                      if (isRecording) { return 'Stop recording'; }
+                      // if (existingVideo) { return 'Recording exists - delete it first'; }
+                      // return 'Start recording';
+                    })()}
 
-              >
-                {isRecording ? (
-                  <StopIcon className="w-8 h-8" fill="currentColor" />
-                ) : (
-                  <PlayIcon className="w-8 h-8" fill="currentColor" />
-                )}
-              </button>
+                  >
+                    {isRecording ? (
+                      <StopIcon className="w-8 h-8" fill="currentColor" />
+                    ) : (
+                      <PlayIcon className="w-8 h-8" fill="currentColor" />
+                    )}
+                  </button>
+                </>
+              )}
+
+              {currentMode === 'view' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={switchToRecordMode}
+                    disabled={isRecording}
+                    className="p-4 rounded-full bg-primary hover:bg-primary-dark text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Switch to record mode"
+                  >
+                    <VideoCameraIcon className="w-6 h-6" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={togglePlayPause}
+                    disabled={!hasVideo}
+                    className={`p-6 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
+                      ? 'bg-success hover:bg-green-700 text-white'
+                      : 'bg-gray-600 text-gray-400'
+                    }`}
+                    title={isPlaying ? 'Pause video' : 'Play video'}
+                  >
+                    {isPlaying ? (
+                      <PauseIcon className="w-8 h-8" />
+                    ) : (
+                      <PlayIcon className="w-8 h-8" fill="currentColor" />
+                    )}
+                  </button>
+
+                </>
+              )}
               <button
                 type="button"
                 onClick={handleDeleteExistingVideo}
@@ -453,22 +580,30 @@ const VideoRecorder = ({
               <button
                 type="button"
                 onClick={handlePreviousVerse}
-                disabled={verse <= 1 || isRecording}
+                disabled={!hasPreviousVerse() || isRecording}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeftIcon className="w-5 h-5" />
                 <span>Previous Verse</span>
               </button>
 
-              <div className="text-center px-6 py-2 bg-gray-100 rounded-lg">
+              <div className={`text-center px-6 py-2 rounded-lg ${isJoinedVerse(verse)
+                ? 'bg-amber-50 border border-amber-500'
+                : 'bg-gray-100'
+              }`}
+              >
                 <p className="text-sm text-gray-600">Current Verse</p>
-                <p className="text-2xl font-bold text-gray-900">{verse}</p>
+                <p className={`text-2xl font-bold ${isJoinedVerse(verse) ? 'text-amber-900' : 'text-gray-900'
+                }`}
+                >
+                  {verse}
+                </p>
               </div>
 
               <button
                 type="button"
                 onClick={handleNextVerse}
-                disabled={verse >= totalVerses || isRecording}
+                disabled={!hasNextVerse() || isRecording}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>Next Verse</span>
@@ -477,13 +612,6 @@ const VideoRecorder = ({
             </div>
           </div>
         </div>
-
-        {/* <div className="bg-gray-50 px-6 py-4 border-t text-sm text-gray-600">
-          <p>
-            <strong>Instructions:</strong> Click the play button to start recording. Click the stop button when finished.
-            Navigate between verses using the Previous/Next buttons.
-          </p>
-        </div> */}
       </div>
     </div>
   );
@@ -496,13 +624,15 @@ VideoRecorder.propTypes = {
   projectPath: PropTypes.string.isRequired,
   onRecordingComplete: PropTypes.func,
   onClose: PropTypes.func.isRequired,
-  totalVerses: PropTypes.number.isRequired,
   onVerseChange: PropTypes.func,
+  content: PropTypes.array.isRequired,
+  mode: PropTypes.oneOf(['record', 'view']),
 };
 
 VideoRecorder.defaultProps = {
   onRecordingComplete: null,
   onVerseChange: null,
+  mode: 'record',
 };
 
 export default VideoRecorder;

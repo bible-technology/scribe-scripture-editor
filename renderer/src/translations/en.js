@@ -320,4 +320,13 @@ export const En = {
   'msg-video-deleted-success': 'Video deleted successfully',
   'msg-video-delete-failed': 'Failed to delete video. Please try again.',
   'label-no-text-available': 'No text available',
+  'msg-confirm-join-title': 'Confirm Join Verses',
+  'msg-join-warning-videos': 'Joining verses will delete all existing videos for both verses. Do you want to continue?',
+  'btn-continue': 'Continue',
+  'msg-confirm-disjoin-title': 'Confirm Disjoin Verse',
+  'msg-disjoin-warning-videos': 'Disjoining the verse will delete all existing videos for the joined verse. Do you want to continue?',
+  'modal-title-re-record-video': 'Re-record Video',
+  'msg-re-record-video': 'This verse already has a recording. Do you want to re-record it?',
+  'msg-disjoin-last-verse': 'Disjoin the first  verse',
+  'msg-join-with-previous': 'Join with previous verse',
 };

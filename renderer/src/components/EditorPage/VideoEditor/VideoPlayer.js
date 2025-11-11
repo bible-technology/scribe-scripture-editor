@@ -1,19 +1,17 @@
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import {
-  useContext, useState, useRef, useEffect,
+  useContext, useState,
 } from 'react';
+import { isJoinedVerse } from '@/core/editor/verseJoining';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import VideoRecorder from '@/components/EditorPage/VideoEditor/VideoRecorder';
 import {
   VideoCameraIcon,
   PlayIcon,
-  PauseIcon,
   TrashIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
+import VerseContextMenu from '@/components/EditorPage/VideoEditor/VerseContextMenu.jsx';
 import * as logger from '../../../logger';
 
 const VideoPlayer = ({
@@ -24,58 +22,59 @@ const VideoPlayer = ({
   fontSize,
   selectedFont,
   setOpenModal,
+  onJoinVerse,
+  onDisjoinVerse,
+  chapter,
+  bookId,
 }) => {
-  const path = require('path');
-  const fs = window.require('fs');
   const { t } = useTranslation();
 
   const [showVideoRecorder, setShowVideoRecorder] = useState(false);
   const [currentRecordingVerse, setCurrentRecordingVerse] = useState(null);
-  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
-  const [playingVerseNumber, setPlayingVerseNumber] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoPlayerRef = useRef(null);
+  const [recorderMode, setRecorderMode] = useState('record');
+
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    verse: null,
+    isFirstVerse: false,
+    isJoinedVerse: false,
+  });
 
   const {
-    state: {
-      bookId,
-      chapter,
-    },
     actions: {
-      setAudioContent,
+      setVideoContent,
     },
   } = useContext(ReferenceContext);
 
-  const playingVerseData = content?.find((item) => item.verseNumber === playingVerseNumber);
-  const hasVideoPlaying = playingVerseData?.default && playingVerseData[playingVerseData.default];
-
-  useEffect(() => {
-    if (videoPlayerRef.current) {
-      if (isPlaying) {
-        videoPlayerRef.current.play().catch((err) => {
-          logger.error('Error playing video:', err);
-          setIsPlaying(false);
-        });
-      } else {
-        videoPlayerRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (showVideoPlayer && hasVideoPlaying) {
-      setIsPlaying(true);
-    }
-  }, [showVideoPlayer, playingVerseNumber]);
-
-  useEffect(() => {
-    if (videoPlayerRef.current) {
-      videoPlayerRef.current.currentTime = 0;
-    }
-  }, [playingVerseNumber]);
-
   const selectVerse = (value) => {
     onChangeVerse(value.toString(), verse);
+  };
+
+  const handleContextMenu = (e, verseItem) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      verse: verseItem,
+      isFirstVerse: verseItem.verseNumber === 1,
+      isJoinedVerse: isJoinedVerse(verseItem.verseNumber),
+    });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu({
+      visible: false,
+      x: 0,
+      y: 0,
+      verse: null,
+      isFirstVerse: false,
+      isJoinedVerse: false,
+    });
   };
 
   const handlePlayVideoForVerse = (verseNumber, e) => {
@@ -85,29 +84,25 @@ const VideoPlayer = ({
     const hasVideo = verseData?.default && verseData[verseData.default];
 
     if (hasVideo) {
-      setPlayingVerseNumber(verseNumber);
-      setShowVideoPlayer(true);
-      setIsPlaying(true);
+      setCurrentRecordingVerse(verseNumber);
+      setRecorderMode('view');
+      setShowVideoRecorder(true);
     }
-  };
-
-  const handleCloseVideoPlayer = () => {
-    setShowVideoPlayer(false);
-    setIsPlaying(false);
-    setPlayingVerseNumber(null);
   };
 
   const handleOpenVideoRecorder = (verseNumber, e) => {
     e.stopPropagation();
+    const fs = window.require('fs');
+    const path = window.require('path');
     const filename = `${chapter}_${verseNumber}_1_default.mp4`;
     const filePath = path.join(location, filename);
 
     if (fs.existsSync(filePath)) {
       setOpenModal({
         openModel: true,
-        title: t('modal-title-re-record-video') || 'Re-record Video',
-        confirmMessage: t('msg-re-record-video') || 'This verse already has a recording. Do you want to re-record it?',
-        buttonName: t('label-re-record') || 'Re-record',
+        title: t('modal-title-re-record-video'),
+        confirmMessage: t('msg-re-record-video'),
+        buttonName: t('label-re-record'),
         action: 'reRecordVideo',
         actionData: {
           verseNumber,
@@ -116,6 +111,7 @@ const VideoPlayer = ({
       });
     } else {
       setCurrentRecordingVerse(verseNumber);
+      setRecorderMode('record');
       setShowVideoRecorder(true);
     }
   };
@@ -141,7 +137,7 @@ const VideoPlayer = ({
       return item;
     });
 
-    setAudioContent(updatedContent);
+    setVideoContent(updatedContent);
   };
 
   const handleVerseChangeInRecorder = (newVerseNumber) => {
@@ -165,74 +161,9 @@ const VideoPlayer = ({
     });
   };
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handlePreviousVerse = () => {
-    if (!playingVerseNumber) { return; }
-
-    const currentIndex = content.findIndex((item) => item.verseNumber === playingVerseNumber);
-    if (currentIndex > 0) {
-      const prevVerse = content[currentIndex - 1];
-      // Only navigate to previous verse if it has a video
-      if (prevVerse.default && prevVerse[prevVerse.default]) {
-        setPlayingVerseNumber(prevVerse.verseNumber);
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const handleNextVerse = () => {
-    if (!playingVerseNumber) { return; }
-
-    const currentIndex = content.findIndex((item) => item.verseNumber === playingVerseNumber);
-    if (currentIndex < content.length - 1) {
-      const nextVerse = content[currentIndex + 1];
-      // Only navigate to next verse if it has a video
-      if (nextVerse.default && nextVerse[nextVerse.default]) {
-        setPlayingVerseNumber(nextVerse.verseNumber);
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const getVideoPath = () => {
-    if (playingVerseData?.default && playingVerseData[playingVerseData.default]) {
-      return `file://${path.join(location, playingVerseData[playingVerseData.default])}`;
-    }
-    return null;
-  };
-
-  const hasPreviousVideo = () => {
-    if (!playingVerseNumber) { return false; }
-    const currentIndex = content.findIndex((item) => item.verseNumber === playingVerseNumber);
-    if (currentIndex <= 0) { return false; }
-
-    for (let i = currentIndex - 1; i >= 0; i--) {
-      if (content[i].default && content[i][content[i].default]) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const hasNextVideo = () => {
-    if (!playingVerseNumber) { return false; }
-    const currentIndex = content.findIndex((item) => item.verseNumber === playingVerseNumber);
-    if (currentIndex < 0 || currentIndex >= content.length - 1) { return false; }
-
-    for (let i = currentIndex + 1; i < content.length; i++) {
-      if (content[i].default && content[i][content[i].default]) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   return (
     <div className="bg-white rounded-md overflow-hidden">
-      {content?.map((mainChunk) => (
+      {content?.map((mainChunk, index) => (
         mainChunk.verseNumber && (
           <div
             role="button"
@@ -240,15 +171,20 @@ const VideoPlayer = ({
             tabIndex={0}
             key={mainChunk.verseNumber}
             className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'
+            } ${isJoinedVerse(mainChunk.verseNumber) ? 'border-l-4 border-amber-500 bg-amber-50' : ''
             } m-3 px-3 py-4 justify-center items-center border border-gray-200 rounded-lg hover:bg-light cursor-pointer`}
             onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
+            onContextMenu={(e) => handleContextMenu(e, mainChunk, index)}
           >
             <div className="flex w-full items-start group-hover:text-white">
-              <div className="flex items-center justify-center bg-primary w-10 h-8 mr-2 rounded-full text-sm text-white flex-shrink-0">
+              <div className={`flex items-center justify-center w-10 h-8 mr-2 rounded-full text-sm text-white flex-shrink-0 ${isJoinedVerse(mainChunk.verseNumber) ? 'bg-amber-600' : 'bg-primary'
+              }`}
+              >
                 {mainChunk.verseNumber}
               </div>
               <p
-                className="m-0 flex-1 text-sm text-gray-500"
+                className={`m-0 flex-1 text-sm ${isJoinedVerse(mainChunk.verseNumber) ? 'text-amber-900 font-medium' : 'text-gray-500'
+                }`}
                 style={{
                   fontFamily: selectedFont || 'sans-serif',
                   fontSize: `${fontSize}rem`,
@@ -267,7 +203,7 @@ const VideoPlayer = ({
                     title="Play recorded video"
                     aria-label={`Play video for verse ${mainChunk.verseNumber}`}
                   >
-                    <PlayIcon className="w-5 h-5" />
+                    <PlayIcon ne className="w-5 h-5" />
                   </button>
 
                   <button
@@ -295,154 +231,17 @@ const VideoPlayer = ({
           </div>
         )
       ))}
-
-      {showVideoPlayer && playingVerseNumber && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="bg-secondary text-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <PlayIcon className="w-6 h-6" />
-                <div>
-                  <h2 className="text-lg font-semibold">
-                    Video Player -
-                    {' '}
-                    {bookId.toUpperCase()}
-                    {' '}
-                    {chapter}
-                    :
-                    {playingVerseNumber}
-                  </h2>
-                  <p className="text-sm text-gray-200">
-                    {isPlaying ? 'Playing' : 'Paused'}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleCloseVideoPlayer}
-                className="hover:bg-white hover:bg-opacity-20 p-2 rounded-full transition-colors"
-                title="Close"
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-auto bg-gray-900 p-6">
-              <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-4" style={{ aspectRatio: '16/9' }}>
-                {hasVideoPlaying ? (
-                  <video
-                    ref={videoPlayerRef}
-                    src={getVideoPath()}
-                    className="w-full h-full object-contain"
-                    onEnded={() => setIsPlaying(false)}
-                    onError={(e) => {
-                      logger.error('Video playback error:', e);
-                      setIsPlaying(false);
-                    }}
-                  >
-                    <track kind="captions" src="" label="No captions" />
-                  </video>
-
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-gray-400">
-                      <VideoCameraIcon className="w-16 h-16 mx-auto mb-3 opacity-50" />
-                      <p className="text-lg">Video not available</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Verse Text */}
-              {/* {playingVerseData?.verseText && (
-                <div className="bg-gray-800 rounded-lg p-4 mb-4">
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center bg-primary w-8 h-8 rounded-full text-sm text-white flex-shrink-0">
-                      {playingVerseNumber}
-                    </div>
-                    <p
-                      className="flex-1 text-gray-200"
-                      style={{
-                        fontFamily: selectedFont || 'sans-serif',
-                        fontSize: `${fontSize}rem`,
-                        lineHeight: fontSize > 1.3 ? 1.5 : 1.6,
-                      }}
-                    >
-                      {playingVerseData.verseText}
-                    </p>
-                  </div>
-                </div>
-              )} */}
-
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={togglePlayPause}
-                    disabled={!hasVideoPlaying}
-                    className={`p-6 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${
-                      hasVideoPlaying
-                        ? 'bg-success hover:bg-green-700 text-white'
-                        : 'bg-gray-600 text-gray-400'
-                    }`}
-                    title={isPlaying ? 'Pause video' : 'Play video'}
-                  >
-                    {isPlaying ? (
-                      <PauseIcon className="w-8 h-8" />
-                    ) : (
-                      <PlayIcon className="w-8 h-8" fill="currentColor" />
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      handleDeleteVideo(e, playingVerseNumber, playingVerseData[playingVerseData.default]);
-                      handleCloseVideoPlayer();
-                    }}
-                    disabled={!hasVideoPlaying}
-                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${
-                      hasVideoPlaying
-                        ? 'bg-error hover:bg-red-700 text-white'
-                        : 'bg-gray-600 text-gray-400'
-                    }`}
-                    title="Delete video"
-                  >
-                    <TrashIcon className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-center gap-6 pt-4 border-t border-gray-700">
-                  <button
-                    type="button"
-                    onClick={handlePreviousVerse}
-                    disabled={!hasPreviousVideo()}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeftIcon className="w-5 h-5" />
-                    <span>Previous</span>
-                  </button>
-
-                  <div className="text-center px-6 py-2 bg-primary bg-opacity-20 rounded-lg border border-primary">
-                    <p className="text-xs text-gray-400 mb-1">Verse</p>
-                    <p className="text-2xl font-bold text-white">{playingVerseNumber}</p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleNextVerse}
-                    disabled={!hasNextVideo()}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span>Next</span>
-                    <ChevronRightIcon className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <VerseContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        verse={contextMenu.verse}
+        isFirstVerse={contextMenu.isFirstVerse}
+        isJoinedVerse={contextMenu.isJoinedVerse}
+        onJoinVerse={onJoinVerse}
+        onDisjoinVerse={onDisjoinVerse}
+        onClose={handleCloseContextMenu}
+      />
 
       {showVideoRecorder && currentRecordingVerse && (
         <VideoRecorder
@@ -450,33 +249,14 @@ const VideoPlayer = ({
           chapter={chapter}
           bookId={bookId}
           projectPath={location}
-          totalVerses={content?.length || 0}
+          content={content}
+          mode={recorderMode}
           onRecordingComplete={handleRecordingComplete}
           onClose={() => {
             setShowVideoRecorder(false);
             setCurrentRecordingVerse(null);
           }}
           onVerseChange={handleVerseChangeInRecorder}
-          onDeleteVideo={(verseNum) => {
-            const updatedContent = content.map((item) => {
-              if (item.verseNumber === verseNum.toString()) {
-                const updated = { ...item };
-                delete updated.take1;
-                delete updated[updated.default];
-                updated.default = '';
-                return updated;
-              }
-              return item;
-            });
-            setAudioContent(updatedContent);
-
-            // If we deleted the currently playing video, close the player
-            if (verseNum.toString() === playingVerseNumber) {
-              handleCloseVideoPlayer();
-            }
-
-            return true;
-          }}
         />
       )}
     </div>
@@ -491,6 +271,10 @@ VideoPlayer.propTypes = {
   fontSize: PropTypes.number,
   selectedFont: PropTypes.string,
   setOpenModal: PropTypes.func.isRequired,
+  onJoinVerse: PropTypes.func.isRequired,
+  onDisjoinVerse: PropTypes.func.isRequired,
+  chapter: PropTypes.string.isRequired,
+  bookId: PropTypes.string.isRequired,
 };
 
 VideoPlayer.defaultProps = {

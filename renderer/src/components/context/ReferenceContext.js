@@ -64,6 +64,11 @@ export default function ReferenceContextProvider({ children }) {
     option: '',
     path: '',
   });
+  const [videoContent, setVideoContent] = useState();
+  const [videoPath, setVideoPath] = useState();
+  const [videoCurrentChapter, setVideoCurrentChapter] = useState();
+  const [updateVideoWave, setUpdateVideoWave] = useState(false);
+  const [originalVideoBookContent, setOriginalVideoBookContent] = useState(null);
   const [audioContent, setAudioContent] = useState();
   const [audioPath, setAudioPath] = useState();
   const [updateWave, setUpdateWave] = useState(false);
@@ -210,6 +215,7 @@ export default function ReferenceContextProvider({ children }) {
                       const videoNavigationHist = resources.project?.videoTranslation?.navigationHistory;
                       videoNavigationHist && goToBookChapterVerse(videoNavigationHist[0], videoNavigationHist[1], videoNavigationHist[2]);
                       setNavFlag(true);
+                      setProjectType('videoTranslation');
                       break;
                     default:
                       break;
@@ -275,6 +281,11 @@ export default function ReferenceContextProvider({ children }) {
       audioContent,
       audioCurrentChapter,
       audioPath,
+      videoContent,
+      videoCurrentChapter,
+      videoPath,
+      updateVideoWave,
+      originalVideoBookContent,
       resetResourceOnDeleteOffline,
       updateWave,
       loadData,
@@ -338,6 +349,11 @@ export default function ReferenceContextProvider({ children }) {
       setAudioContent,
       setAudioCurrentChapter,
       setAudioPath,
+      setVideoContent,
+      setVideoCurrentChapter,
+      setVideoPath,
+      setUpdateVideoWave,
+      setOriginalVideoBookContent,
       setResetResourceOnDeleteOffline,
       setUpdateWave,
       setLoadData,
