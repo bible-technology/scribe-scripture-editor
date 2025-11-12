@@ -39,10 +39,14 @@ const VideoRecorder = ({
   onVerseChange,
   content,
   mode = 'record',
+  setOpenModal,
+  isVisible = true,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [playbackTime, setPlaybackTime] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
   const [error, setError] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -53,6 +57,7 @@ const VideoRecorder = ({
   const mediaRecorderRef = useRef(null);
   const streamRef = useRef(null);
   const timerRef = useRef(null);
+  const playbackTimerRef = useRef(null);
   const [existingVideo, setExistingVideo] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -70,7 +75,7 @@ const VideoRecorder = ({
     const videoExists = fs.existsSync(filePath);
     setExistingVideo(videoExists);
 
-    if (videoExists && mode === 'view') {
+    if (videoExists) {
       setCurrentMode('view');
     } else {
       setCurrentMode('record');
@@ -82,6 +87,10 @@ const VideoRecorder = ({
 
     const initCamera = async () => {
       if (currentMode === 'view') {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
         setCameraReady(false);
         return;
       }
@@ -142,9 +151,47 @@ const VideoRecorder = ({
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
       const path = require('path');
-      const videoPath = `file://${path.join(projectPath, currentVerseData[currentVerseData.default])}`;
+      const filename = currentVerseData[currentVerseData.default];
+      const videoPath = `file://${path.join(projectPath, filename)}`;
+
+      logger.info('Loading video for playback:', videoPath);
+
+      setIsPlaying(false);
+      setPlaybackTime(0);
+
+      videoPreviewRef.current.srcObject = null;
       videoPreviewRef.current.src = videoPath;
       videoPreviewRef.current.load();
+
+      videoPreviewRef.current.onloadedmetadata = () => {
+        const video = videoPreviewRef.current;
+        if (!video) { return; }
+        let dur = video.duration;
+
+        if (!Number.isFinite(dur) || dur === 0) {
+          logger.warn('Duration invalid, forcing recalculation...');
+          video.currentTime = 1e101;
+          video.ontimeupdate = () => {
+            if (!videoPreviewRef.current) { return; }
+            video.ontimeupdate = null;
+            dur = video.duration;
+            if (Number.isFinite(dur)) {
+              setVideoDuration(dur);
+              logger.info('Duration fixed:', dur);
+            } else {
+              setVideoDuration(0);
+            }
+            video.currentTime = 0;
+          };
+        } else {
+          setVideoDuration(dur);
+        }
+      };
+
+      videoPreviewRef.current.onloadeddata = () => {
+        if (!videoPreviewRef.current) { return; }
+        logger.info('Video data loaded and ready to play');
+      };
     }
   }, [currentMode, hasVideo, verse, projectPath, currentVerseData]);
 
@@ -155,10 +202,30 @@ const VideoRecorder = ({
           logger.error('Error playing video:', err);
           setIsPlaying(false);
         });
+
+        playbackTimerRef.current = setInterval(() => {
+          if (videoPreviewRef.current) {
+            setPlaybackTime(videoPreviewRef.current.currentTime);
+          }
+        }, 100);
       } else {
         videoPreviewRef.current.pause();
+
+        if (playbackTimerRef.current) {
+          clearInterval(playbackTimerRef.current);
+          playbackTimerRef.current = null;
+        }
+        if (videoPreviewRef.current) {
+          setPlaybackTime(videoPreviewRef.current.currentTime);
+        }
       }
     }
+
+    return () => {
+      if (playbackTimerRef.current) {
+        clearInterval(playbackTimerRef.current);
+      }
+    };
   }, [isPlaying, currentMode]);
 
   const showSnackbarMessage = (message, type = 'success') => {
@@ -199,6 +266,40 @@ const VideoRecorder = ({
       setExistingVideo(true);
       setCurrentMode('view');
       setIsProcessing(false);
+
+      setTimeout(() => {
+        if (videoPreviewRef.current) {
+          const videoPath = `file://${filePath}`;
+          videoPreviewRef.current.srcObject = null;
+          videoPreviewRef.current.src = videoPath;
+          videoPreviewRef.current.load();
+
+          videoPreviewRef.current.onloadedmetadata = () => {
+            const video = videoPreviewRef.current;
+            if (!video) { return; }
+            let dur = video.duration;
+
+            if (!Number.isFinite(dur) || dur === 0) {
+              logger.warn('Duration invalid, forcing recalculation...');
+              video.currentTime = 1e101;
+              video.ontimeupdate = () => {
+                if (!videoPreviewRef.current) { return; }
+                video.ontimeupdate = null;
+                dur = video.duration;
+                if (Number.isFinite(dur)) {
+                  setVideoDuration(dur);
+                  logger.info('Duration fixed:', dur);
+                } else {
+                  setVideoDuration(0);
+                }
+                video.currentTime = 0;
+              };
+            } else {
+              setVideoDuration(dur);
+            }
+          };
+        }
+      }, 100);
     } catch (err) {
       logger.error('Error saving video:', err);
       showSnackbarMessage(`Failed to save video: ${err.message}`, 'error');
@@ -206,37 +307,27 @@ const VideoRecorder = ({
     }
   }, [chapter, verse, projectPath, onRecordingComplete]);
 
-  const handleDeleteExistingVideo = () => {
-    try {
-      const fs = window.require('fs');
-      const path = window.require('path');
-      const filename = `${chapter}_${verse}_1_default.mp4`;
-      const filePath = path.join(projectPath, filename);
+  const handleDeleteClick = () => {
+    const path = window.require('path');
+    const filename = `${chapter}_${verse}_1_default.mp4`;
+    const filePath = path.join(projectPath, filename);
 
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        setExistingVideo(false);
-        setCurrentMode('record');
+    onClose();
 
-        if (onRecordingComplete) {
-          onRecordingComplete({
-            verse,
-            chapter,
-            filePath: null,
-            filename: null,
-            deleted: true,
-          });
-        }
-
-        showSnackbarMessage('Video deleted successfully.', 'success');
-        logger.info('Video deleted:', filePath);
-      } else {
-        showSnackbarMessage('Video file not found.', 'error');
-      }
-    } catch (err) {
-      logger.error('Error deleting existing video:', err);
-      showSnackbarMessage(`Failed to delete video: ${err.message}`, 'error');
-    }
+    setOpenModal({
+      openModel: true,
+      title: 'Delete Video Recording?',
+      confirmMessage: 'Are you sure you want to delete this video recording? This action cannot be undone.',
+      buttonName: 'Delete',
+      action: 'deleteVideoFromRecorder',
+      actionData: {
+        verse,
+        chapter,
+        filePath,
+        filename,
+        currentMode,
+      },
+    });
   };
 
   const startNewRecording = useCallback(() => {
@@ -364,11 +455,18 @@ const VideoRecorder = ({
   const switchToRecordMode = () => {
     setCurrentMode('record');
     setIsPlaying(false);
+    setPlaybackTime(0);
+    setVideoDuration(0);
+    if (playbackTimerRef.current) {
+      clearInterval(playbackTimerRef.current);
+      playbackTimerRef.current = null;
+    }
   };
 
   const formatTime = (seconds) => {
+    if (!Number.isFinite(seconds) || seconds <= 0) { return '00:00'; }
     const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
@@ -376,7 +474,12 @@ const VideoRecorder = ({
   const hasNextVerse = () => getNextVerseNumber(verse, content) !== null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4">
+
+    <div
+      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${
+        !isVisible ? 'hidden' : ''
+      }`}
+    >
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="bg-secondary text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -397,7 +500,7 @@ const VideoRecorder = ({
                     return `Recording: ${formatTime(recordingTime)}`;
                   }
                   if (currentMode === 'view') {
-                    return isPlaying ? 'Playing' : 'Paused';
+                    return `${isPlaying ? 'Playing' : 'Paused'}: ${formatTime(playbackTime)} / ${formatTime(videoDuration)}`;
                   }
                   return 'Ready to record';
                 })()}
@@ -517,10 +620,9 @@ const VideoRecorder = ({
                     }`}
                     title={(() => {
                       if (isRecording) { return 'Stop recording'; }
-                      // if (existingVideo) { return 'Recording exists - delete it first'; }
-                      // return 'Start recording';
+                      if (existingVideo) { return 'Recording exists - delete it first'; }
+                      return 'Start recording';
                     })()}
-
                   >
                     {isRecording ? (
                       <StopIcon className="w-8 h-8" fill="currentColor" />
@@ -563,7 +665,7 @@ const VideoRecorder = ({
               )}
               <button
                 type="button"
-                onClick={handleDeleteExistingVideo}
+                onClick={handleDeleteClick}
                 disabled={!existingVideo || isRecording || isProcessing}
                 className={`p-4 rounded-full transition-all ${existingVideo
                   ? 'bg-error text-white hover:bg-red-700'
@@ -614,6 +716,7 @@ const VideoRecorder = ({
         </div>
       </div>
     </div>
+
   );
 };
 
@@ -627,6 +730,8 @@ VideoRecorder.propTypes = {
   onVerseChange: PropTypes.func,
   content: PropTypes.array.isRequired,
   mode: PropTypes.oneOf(['record', 'view']),
+  setOpenModal: PropTypes.func.isRequired,
+  isVisible: PropTypes.bool,
 };
 
 VideoRecorder.defaultProps = {

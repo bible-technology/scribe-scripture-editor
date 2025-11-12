@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import {
-  useContext, useState,
+  useContext, useState, useEffect,
 } from 'react';
 import { isJoinedVerse } from '@/core/editor/verseJoining';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
@@ -26,13 +26,15 @@ const VideoPlayer = ({
   onDisjoinVerse,
   chapter,
   bookId,
+  pendingRecorderReopen,
+  setPendingRecorderReopen,
 }) => {
   const { t } = useTranslation();
 
   const [showVideoRecorder, setShowVideoRecorder] = useState(false);
   const [currentRecordingVerse, setCurrentRecordingVerse] = useState(null);
   const [recorderMode, setRecorderMode] = useState('record');
-
+  const [isRecorderVisible, setIsRecorderVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -47,6 +49,14 @@ const VideoPlayer = ({
       setVideoContent,
     },
   } = useContext(ReferenceContext);
+  useEffect(() => {
+    if (pendingRecorderReopen) {
+      setCurrentRecordingVerse(pendingRecorderReopen.verse);
+      setRecorderMode(pendingRecorderReopen.mode);
+      setShowVideoRecorder(true);
+      setPendingRecorderReopen(null);
+    }
+  }, [pendingRecorderReopen, setPendingRecorderReopen]);
 
   const selectVerse = (value) => {
     onChangeVerse(value.toString(), verse);
@@ -255,8 +265,11 @@ const VideoPlayer = ({
           onClose={() => {
             setShowVideoRecorder(false);
             setCurrentRecordingVerse(null);
+            setIsRecorderVisible;
           }}
           onVerseChange={handleVerseChangeInRecorder}
+          setOpenModal={setOpenModal}
+          isVisible={isRecorderVisible}
         />
       )}
     </div>
@@ -275,6 +288,8 @@ VideoPlayer.propTypes = {
   onDisjoinVerse: PropTypes.func.isRequired,
   chapter: PropTypes.string.isRequired,
   bookId: PropTypes.string.isRequired,
+  pendingRecorderReopen: PropTypes.object,
+  setPendingRecorderReopen: PropTypes.func,
 };
 
 VideoPlayer.defaultProps = {

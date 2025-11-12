@@ -339,6 +339,7 @@ const VideoEditor = ({ editor }) => {
   const [snackBar, setOpenSnackBar] = useState(false);
   const [displyScreen, setDisplayScreen] = useState(false);
   const [originalBookContent, setOriginalBookContent] = useState(null);
+  const [pendingRecorderReopen, setPendingRecorderReopen] = useState(null);
   const [model, setModel] = useState({
     openModel: false,
     title: '',
@@ -349,6 +350,13 @@ const VideoEditor = ({ editor }) => {
   });
 
   const modelClose = () => {
+    if (model.action === 'deleteVideoFromRecorder') {
+      setPendingRecorderReopen({
+        verse: model.actionData.verse,
+        mode: model.actionData.currentMode,
+      });
+    }
+
     setModel({
       openModel: false,
       title: '',
@@ -358,7 +366,6 @@ const VideoEditor = ({ editor }) => {
       actionData: {},
     });
   };
-
   const {
     state: {
       bookId,
@@ -385,12 +392,12 @@ const VideoEditor = ({ editor }) => {
     handleDisjoinVerse,
     executePendingOperation,
   } = useVerseJoining({
+    bookId,
+    chapter,
+    videoPath,
     videoContent,
     setVideoContent,
     originalBookContent,
-    chapter,
-    videoPath,
-    bookId,
     t,
     setNotify,
     setSnackText,
@@ -467,6 +474,43 @@ const VideoEditor = ({ editor }) => {
   const handleModalConfirm = () => {
     if (model.action === 'deleteVideo') {
       executeDeleteVideo(model.actionData.verseNumber, model.actionData.videoFileName);
+    } else if (model.action === 'deleteVideoFromRecorder') {
+      try {
+        const fs = window.require('fs');
+        const { filePath, verse: verseNum } = model.actionData;
+
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          logger.info('Video deleted from recorder:', filePath);
+        }
+
+        const updatedContent = videoContent.map((item) => {
+          if (item.verseNumber === verseNum.toString()) {
+            const updated = { ...item };
+            delete updated.take1;
+            delete updated[updated.default];
+            updated.default = '';
+            return updated;
+          }
+          return item;
+        });
+
+        setVideoContent(updatedContent);
+
+        setPendingRecorderReopen({
+          verse: verseNum,
+          mode: 'record',
+        });
+
+        setNotify('success');
+        setSnackText(t('msg-video-deleted-success'));
+        setOpenSnackBar(true);
+      } catch (err) {
+        setNotify('failure');
+        setSnackText(t('msg-video-delete-failed'));
+        logger.error('Error deleting video from recorder:', err);
+        setOpenSnackBar(true);
+      }
     } else if (model.action === 'reRecordVideo') {
       try {
         const fs = window.require('fs');
@@ -485,7 +529,6 @@ const VideoEditor = ({ editor }) => {
     }
     modelClose();
   };
-
   useEffect(() => {
     if (isElectron()) {
       setIsLoading(true);
@@ -658,9 +701,10 @@ const VideoEditor = ({ editor }) => {
 
   return (
     <Editor callFrom="textTranslation" editor={editor}>
-      {isLoading || (!videoContent && displyScreen) ? <EmptyScreen call="video" /> : null}
-      {isLoading && !displyScreen ? <LoadingScreen /> : null}
-      {videoContent && !isLoading ? (
+      {((isLoading || !videoContent) && displyScreen) && <EmptyScreen call="video" />}
+      {isLoading && !displyScreen && <LoadingScreen />}
+      {videoContent && isLoading === false
+      && (
         <VideoPlayer
           verse={verse}
           location={videoPath}
@@ -675,8 +719,10 @@ const VideoEditor = ({ editor }) => {
           setOpenModal={setModel}
           chapter={chapter}
           bookId={bookId}
+          pendingRecorderReopen={pendingRecorderReopen}
+          setPendingRecorderReopen={setPendingRecorderReopen}
         />
-      ) : null}
+      )}
       <ConfirmationModal
         openModal={model.openModel}
         title={model.title}
