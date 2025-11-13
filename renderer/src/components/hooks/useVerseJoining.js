@@ -8,6 +8,55 @@ import {
 } from '@/core/editor/verseJoining';
 import * as logger from '../../logger';
 
+const parseVpMarkers = (verseText, verseNumber) => {
+  try {
+    // Pattern: \vp NUMBER\vp*
+    const vpRegex = /\\vp\s+(\d+)\\vp\*/g;
+    const segments = [];
+
+    let lastIndex = 0;
+    let match;
+    let currentVerse = null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = vpRegex.exec(verseText)) !== null) {
+      const markerVerse = parseInt(match[1], 10);
+      const markerEnd = match.index + match[0].length;
+
+      if (currentVerse !== null && lastIndex < match.index) {
+        const text = verseText.substring(lastIndex, match.index).trim();
+        if (text) {
+          segments.push({ verse: currentVerse, text });
+        }
+      }
+
+      currentVerse = markerVerse;
+      lastIndex = markerEnd;
+    }
+    if (currentVerse !== null && lastIndex < verseText.length) {
+      const text = verseText.substring(lastIndex).trim();
+      if (text) {
+        segments.push({ verse: currentVerse, text });
+      }
+    }
+
+    if (segments.length === 0) {
+      return null;
+    }
+
+    logger.info('Parsed verse segments from \\vp markers:', {
+      verseNumber,
+      segmentCount: segments.length,
+      verses: segments.map((s) => s.verse),
+    });
+
+    return segments;
+  } catch (err) {
+    logger.error('Error parsing \\vp markers:', err);
+    return null;
+  }
+};
+
 export const useVerseJoining = ({
   videoContent,
   setVideoContent,
@@ -50,12 +99,32 @@ export const useVerseJoining = ({
       allStructure[bookIdUpper][chapterKey] = {
         chapter: chapterKey,
         lastModified: new Date().toISOString(),
-        verses: updatedContent.map((verse) => ({
-          verseNumber: verse.verseNumber,
-          verseText: verse.verseText,
-          joinedVerses: verse.joinedVerses || null,
-          // hasVideo: hasVerseRecordings(verse),
-        })),
+        verses: updatedContent
+          .filter((verse) => verse.verseNumber && verse.verseText !== undefined)
+          .map((verse) => {
+            const verseData = {
+              verseNumber: verse.verseNumber,
+              verseText: verse.verseText,
+              joinedVerses: verse.joinedVerses || null,
+            };
+
+            if (verse.joinedVerses && verse.joinedVerses.length > 0) {
+              verseData.verseSegments = verse.joinedVerses.map((vNum) => {
+                const text = getOriginalVerseText(
+                  originalBookContent,
+                  chapter.toString(),
+                  vNum,
+                );
+                return {
+                  verse: vNum,
+                  text: text || '',
+                };
+              });
+              logger.info(`Stored ${verse.joinedVerses.length} verse segments for ${verse.verseNumber}`);
+            }
+
+            return verseData;
+          }),
       };
 
       const dir = path.dirname(structureFile);
@@ -71,7 +140,7 @@ export const useVerseJoining = ({
       logger.error('Error saving verse structure:', err);
       return false;
     }
-  }, [videoPath, chapter, bookId]);
+  }, [videoPath, chapter, bookId, originalBookContent]);
 
   const loadVerseStructure = useCallback(async () => {
     try {
@@ -112,8 +181,8 @@ export const useVerseJoining = ({
       const currentVerseNum = parseInt(currentVerse.verseNumber.split('-')[0], 10);
       const previousVerseNum = previousVerse.verseNumber;
 
-      let newVerseNumber; let
-        joinedVerses;
+      let newVerseNumber;
+      let joinedVerses;
 
       if (previousVerseNum.includes('-')) {
         const parts = previousVerseNum.split('-').map(Number);
@@ -203,17 +272,35 @@ export const useVerseJoining = ({
         allVerseNumbers,
         firstVerseNum,
         remainingVerses,
+        hasStoredSegments: !!verse.verseSegments,
+        hasVpMarkers: verse.verseText.includes('\\vp'),
       });
 
       const updatedContent = [...videoContent];
 
-      const firstVerseText = getOriginalVerseText(
-        originalBookContent,
-        chapter.toString(),
-        firstVerseNum,
-      );
+      let segments = null;
 
-      logger.info('First verse:', { firstVerseNum, text: firstVerseText });
+      if (verse.verseSegments && verse.verseSegments.length > 0) {
+        segments = verse.verseSegments;
+        logger.info('Using stored verseSegments from JSON');
+      } else if (verse.verseText.includes('\\vp')) {
+        segments = parseVpMarkers(verse.verseText, joinedVerseNumber);
+        if (segments) {
+          logger.info('Parsed segments from \\vp USFM markers');
+        }
+      }
+
+      let firstVerseText;
+      if (segments) {
+        const firstSegment = segments.find((seg) => seg.verse === firstVerseNum);
+        firstVerseText = firstSegment ? firstSegment.text : '';
+      } else {
+        firstVerseText = getOriginalVerseText(
+          originalBookContent,
+          chapter.toString(),
+          firstVerseNum,
+        );
+      }
 
       updatedContent[verseIndex] = {
         verseNumber: firstVerseNum.toString(),
@@ -223,16 +310,17 @@ export const useVerseJoining = ({
       let newVerseEntry;
 
       if (remainingVerses.length === 1) {
-        const remainingText = getOriginalVerseText(
-          originalBookContent,
-          chapter.toString(),
-          remainingVerses[0],
-        );
-
-        logger.info('Single remaining verse:', {
-          verseNum: remainingVerses[0],
-          text: remainingText,
-        });
+        let remainingText;
+        if (segments) {
+          const remainingSegment = segments.find((seg) => seg.verse === remainingVerses[0]);
+          remainingText = remainingSegment ? remainingSegment.text : '';
+        } else {
+          remainingText = getOriginalVerseText(
+            originalBookContent,
+            chapter.toString(),
+            remainingVerses[0],
+          );
+        }
 
         newVerseEntry = {
           verseNumber: remainingVerses[0].toString(),
@@ -241,18 +329,21 @@ export const useVerseJoining = ({
       } else {
         const remainingRange = `${remainingVerses[0]}-${remainingVerses[remainingVerses.length - 1]}`;
 
-        const textArray = remainingVerses
-          .map((verseNum) => getOriginalVerseText(originalBookContent, chapter.toString(), verseNum))
-          .filter((text) => text);
+        let textArray;
+        if (segments) {
+          textArray = remainingVerses
+            .map((verseNum) => {
+              const segment = segments.find((seg) => seg.verse === verseNum);
+              return segment ? segment.text : '';
+            })
+            .filter((text) => text);
+        } else {
+          textArray = remainingVerses
+            .map((verseNum) => getOriginalVerseText(originalBookContent, chapter.toString(), verseNum))
+            .filter((text) => text);
+        }
 
         const remainingText = textArray.join(' ').trim();
-
-        logger.info('Multiple remaining verses:', {
-          remainingRange,
-          remainingVerses,
-          textArray,
-          remainingText,
-        });
 
         newVerseEntry = {
           verseNumber: remainingRange,

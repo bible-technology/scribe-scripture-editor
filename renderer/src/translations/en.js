@@ -329,4 +329,8 @@ export const En = {
   'msg-re-record-video': 'This verse already has a recording. Do you want to re-record it?',
   'msg-disjoin-last-verse': 'Disjoin the first  verse',
   'msg-join-with-previous': 'Join with previous verse',
+  'video-export-option': 'Video Export Options',
+  'video-json-only': 'JSON Structure Only (with videos)',
+  'video-updated-usfm': 'Updated USFM (JSON structure applied)',
+  'video-both-usfm-json': 'Both USFM and JSON (unaltered)',
 };

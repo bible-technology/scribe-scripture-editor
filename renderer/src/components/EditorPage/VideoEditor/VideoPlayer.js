@@ -65,13 +65,19 @@ const VideoPlayer = ({
   const handleContextMenu = (e, verseItem) => {
     e.preventDefault();
     e.stopPropagation();
+    const first = Number(verseItem.verseNumber) === 1;
+    const joined = isJoinedVerse(verseItem.verseNumber);
+
+    if (first && !joined) {
+      return;
+    }
 
     setContextMenu({
       visible: true,
       x: e.clientX,
       y: e.clientY,
       verse: verseItem,
-      isFirstVerse: verseItem.verseNumber === 1,
+      isFirstVerse: Number(verseItem.verseNumber) === 1,
       isJoinedVerse: isJoinedVerse(verseItem.verseNumber),
     });
   };
