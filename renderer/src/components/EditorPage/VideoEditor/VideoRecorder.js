@@ -28,6 +28,53 @@ const getPreviousVerseNumber = (currentVerse, content) => {
   if (currentIndex === -1 || currentIndex === 0) { return null; }
   return content[currentIndex - 1].verseNumber;
 };
+const getCameraErrorMessage = (err) => {
+  if (!err) { return 'Unknown error'; }
+
+  switch (err.name) {
+  case 'NotAllowedError':
+    return 'Camera permission denied. Please allow camera access.';
+  case 'NotFoundError':
+    return 'No camera found. Please connect a camera.';
+  case 'OverconstrainedError':
+    return 'Camera constraints not supported. Trying fallback...';
+  default:
+    return 'Failed to access camera. Please check your camera connection.';
+  }
+};
+
+const getPreferredCamera = async () => {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+
+    if (videoDevices.length === 0) {
+      throw new Error('No camera devices found');
+    }
+
+    const builtInKeywords = ['integrated', 'built-in', 'webcam', 'facetime'];
+
+    const usbCamera = videoDevices.find((device) => device.label.toLowerCase().includes('usb'));
+
+    if (usbCamera) {
+      return usbCamera.deviceId;
+    }
+
+    const externalCamera = videoDevices.find((device) => {
+      const label = device.label.toLowerCase();
+      return !builtInKeywords.some((keyword) => label.includes(keyword));
+    });
+
+    if (externalCamera) {
+      return externalCamera.deviceId;
+    }
+
+    return videoDevices[0].deviceId;
+  } catch (err) {
+    logger.error('Error enumerating devices:', err);
+    return null;
+  }
+};
 
 const VideoRecorder = ({
   verse,
@@ -65,6 +112,8 @@ const VideoRecorder = ({
 
   const currentVerseData = content?.find((v) => v.verseNumber === verse);
   const hasVideo = currentVerseData?.default && currentVerseData[currentVerseData.default];
+  const [videoDevices, setVideoDevices] = useState([]);
+  const [selectedCamera, setSelectedCamera] = useState(null);
 
   useEffect(() => {
     const fs = window.require('fs');
@@ -96,12 +145,24 @@ const VideoRecorder = ({
       }
 
       try {
+        const tempStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+        tempStream.getTracks().forEach((track) => track.stop());
+
+        const targetCameraId = selectedCamera || (await getPreferredCamera());
+
         const constraints = {
-          video: {
+          video: targetCameraId ? {
+            deviceId: { exact: targetCameraId },
             width: { ideal: 1920 },
             height: { ideal: 1080 },
             frameRate: { ideal: 30 },
-            facingMode: 'user',
+          } : {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 30 },
           },
           audio: isAudioEnabled,
         };
@@ -121,16 +182,39 @@ const VideoRecorder = ({
             if (mounted) {
               videoPreviewRef.current.play();
               setCameraReady(true);
+
+              const videoTrack = stream.getVideoTracks()[0];
+              logger.info('Using camera:', videoTrack.label);
             }
           };
         }
       } catch (err) {
         if (mounted) {
-          setError(
-            err.name === 'NotAllowedError'
-              ? 'Camera permission denied. Please allow camera access.'
-              : 'Failed to access camera. Please check your camera connection.',
-          );
+          logger.error('Camera initialization error:', err);
+          setError(getCameraErrorMessage(err));
+
+          if (err.name === 'OverconstrainedError') {
+            try {
+              const fallbackStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: isAudioEnabled,
+              });
+
+              if (mounted && videoPreviewRef.current) {
+                streamRef.current = fallbackStream;
+                videoPreviewRef.current.srcObject = fallbackStream;
+                videoPreviewRef.current.onloadedmetadata = () => {
+                  if (mounted) {
+                    videoPreviewRef.current.play();
+                    setCameraReady(true);
+                    setError(null);
+                  }
+                };
+              }
+            } catch (fallbackErr) {
+              logger.error('Fallback camera access failed:', fallbackErr);
+            }
+          }
         }
       }
     };
@@ -146,7 +230,7 @@ const VideoRecorder = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [isAudioEnabled, currentMode]);
+  }, [isAudioEnabled, currentMode, selectedCamera]);
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
@@ -236,6 +320,21 @@ const VideoRecorder = ({
       setShowSnackbar(false);
     }, 3000);
   };
+
+  useEffect(() => {
+    async function loadCameras() {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cams = devices.filter((d) => d.kind === 'videoinput');
+      setVideoDevices(cams);
+
+      if (!selectedCamera) {
+        const preferred = await getPreferredCamera();
+        setSelectedCamera(preferred);
+      }
+    }
+
+    loadCameras();
+  }, []);
 
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
@@ -476,8 +575,7 @@ const VideoRecorder = ({
   return (
 
     <div
-      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${
-        !isVisible ? 'hidden' : ''
+      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''
       }`}
     >
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -529,6 +627,26 @@ const VideoRecorder = ({
               </div>
             </div>
           )}
+          <div className="mb-4 flex gap-3 items-center">
+            <label className="text-sm font-medium text-gray-700">Camera:</label>
+            <select
+              className="border border-gray-300 rounded p-2"
+              value={selectedCamera || ''}
+              onChange={(e) => {
+                setSelectedCamera(e.target.value);
+                setCameraReady(false);
+                if (streamRef.current) {
+                  streamRef.current.getTracks().forEach((t) => t.stop());
+                }
+              }}
+            >
+              {videoDevices.map((device) => (
+                <option key={device.deviceId} value={device.deviceId}>
+                  {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-6" style={{ aspectRatio: '16/9' }}>
             <video

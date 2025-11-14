@@ -8,7 +8,7 @@ const config = require("dotenv");
 config.config();
 
 // Packages
-const { BrowserWindow, app, ipcMain } = require('electron');
+const { BrowserWindow, app, ipcMain, session, systemPreferences } = require('electron');
 // const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
 const { autoUpdater } = require('electron-updater');
@@ -110,8 +110,30 @@ async function verifyAndInstallChrome(version) {
   });
 }
 
+async function requestCameraPermissionMacOS() {
+  if (process.platform === 'darwin') {
+    try {
+      const cameraStatus = systemPreferences.getMediaAccessStatus('camera');
+      console.log('Camera permission status:', cameraStatus);
+      
+      if (cameraStatus !== 'granted') {
+        const granted = await systemPreferences.askForMediaAccess('camera');
+        console.log('Camera permission granted:', granted);
+        return granted;
+      }
+      return true;
+    } catch (err) {
+      console.error('Error requesting camera permission:', err);
+      return false;
+    }
+  }
+  return true;
+}
+
 // Prepare the renderer once the app is ready
 async function createWindow() {
+  await requestCameraPermissionMacOS();
+
  mainWindow = new BrowserWindow({
     width: 900,
     height: 600,
@@ -125,6 +147,35 @@ async function createWindow() {
     },
   });
   require('@electron/remote/main').enable(mainWindow.webContents);
+
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    console.log('Permission requested:', permission);
+    
+    if (permission === 'media' || permission === 'mediaKeySystem') {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+
+  session.defaultSession.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+    console.log('Permission check:', permission, details);
+    
+    if (permission === 'media') {
+      return true;
+    }
+    return false;
+  });
+
+  session.defaultSession.setDevicePermissionHandler((details) => {
+    console.log('Device permission requested:', details);
+    
+    if (details.deviceType === 'videoinput' || details.deviceType === 'audioinput') {
+      return true;
+    }
+    return false;
+  });
+
   const url = isDev()
     ? 'http://localhost:8000'
     : format({
@@ -135,6 +186,7 @@ async function createWindow() {
 
   // useful line of code to debug puppet with the console in the app
   // app.commandLine.appendSwitch('remote-debugging-port', '8000');
+  app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
 
   verifyAndInstallChrome('121.0.6167.85')
   .catch(err => {
