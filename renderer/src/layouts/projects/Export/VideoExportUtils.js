@@ -32,7 +32,7 @@ const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
 
       if (verse.verseSegments && verse.verseSegments.length > 0) {
         verseText = verse.verseSegments
-          .map((seg) => `\\vp ${seg.verse}\\vp* ${seg.text}`)
+          .map((seg) => seg.text.trim())
           .join(' ');
       } else {
         verseText = verse.verseText || '';

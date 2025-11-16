@@ -34,6 +34,44 @@ const doesVideoMatchVerse = (videoVerseNumber, targetVerseNumber) => {
   return false;
 };
 
+const normalizeVerseData = (verses) => {
+  if (!verses || !Array.isArray(verses)) {
+    return verses;
+  }
+
+  return verses.map((verse) => {
+    const isRangeVerse = verse.verseNumber.includes('-');
+
+    const hasVerseSegments = verse.verseSegments
+                            && Array.isArray(verse.verseSegments)
+                            && verse.verseSegments.length > 0;
+
+    const isPreCombined = verse.isPreCombined === true
+      || (isRangeVerse && !hasVerseSegments);
+
+    let joinedVerses = verse.joinedVerses;
+    if (isPreCombined && (!joinedVerses || joinedVerses === null)) {
+      const parts = verse.verseNumber.split('-').map(Number);
+      if (parts.length === 2) {
+        joinedVerses = Array.from(
+          { length: parts[1] - parts[0] + 1 },
+          (_, i) => parts[0] + i,
+        );
+      }
+    }
+
+    if (isPreCombined) {
+      logger.info(`Verse ${verse.verseNumber} marked as pre-combined (no verseSegments)`);
+    }
+
+    return {
+      ...verse,
+      isPreCombined,
+      joinedVerses,
+    };
+  });
+};
+
 const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
   try {
     const fs = window.require('fs');
@@ -51,11 +89,13 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
       if (allStructure[bookIdUpper]
         && allStructure[bookIdUpper][chapterKey]
         && allStructure[bookIdUpper][chapterKey].verses) {
-        logger.info(`✓ Loaded verse structure from ${bookIdLower}.json for chapter ${chapterKey}`);
-        logger.info(`  - Found ${allStructure[bookIdUpper][chapterKey].verses.length} verses in structure`);
+        const normalizedVerses = normalizeVerseData(allStructure[bookIdUpper][chapterKey].verses);
+
+        logger.info(`Loaded verse structure from ${bookIdLower}.json for chapter ${chapterKey}`);
+        logger.info(`Found ${normalizedVerses.length} verses in structure`);
         return {
           success: true,
-          verses: allStructure[bookIdUpper][chapterKey].verses,
+          verses: normalizedVerses,
           source: `${bookIdLower}.json`,
         };
       }
@@ -97,7 +137,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
     if (!isJsonValid) {
       logger.error('Invalid USFM file');
       return {
-        success: false, bookContent: null, verses: null, sjoinource: null,
+        success: false, bookContent: null, verses: null, source: null,
       };
     }
 
@@ -115,11 +155,32 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
       };
     }
 
-    logger.info('Loaded verses from USFM file');
+    logger.info(`Found ${chapterData.contents.length} verses in USFM for chapter ${chapter}`);
+
+    const versesWithPreCombinedFlag = chapterData.contents.map((verse) => {
+      const isRangeVerse = verse.verseNumber && verse.verseNumber.includes('-');
+
+      if (isRangeVerse) {
+        logger.info(`Found pre-combined verse ${verse.verseNumber} in USFM`);
+        return {
+          ...verse,
+          isPreCombined: true,
+          joinedVerses: null,
+        };
+      }
+
+      return {
+        ...verse,
+        isPreCombined: false,
+        joinedVerses: null,
+      };
+    });
+
+    logger.info('Successfully loaded verses from USFM file');
     return {
       success: true,
       bookContent,
-      verses: chapterData.contents,
+      verses: versesWithPreCombinedFlag,
       source: 'USFM',
     };
   } catch (err) {
@@ -464,7 +525,7 @@ const VideoEditor = ({ editor }) => {
         title: t('msg-confirm-disjoin-title'),
         confirmMessage:
           t('msg-disjoin-warning-videos'),
-        buttonName: t('btn-continue') || 'Continue',
+        buttonName: t('btn-continue'),
         action: 'disjoinVerse',
         actionData: operation.data,
       });
