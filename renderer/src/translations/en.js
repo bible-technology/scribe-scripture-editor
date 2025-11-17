@@ -333,4 +333,10 @@ export const En = {
   'video-json-only': 'JSON Structure Only (with videos)',
   'video-updated-usfm': 'Updated USFM (JSON structure applied)',
   'video-both-usfm-json': 'Both USFM and JSON (unaltered)',
+  'msg-verses-joined': 'Verses joined successfully',
+  'msg-verses-disjoined': 'Verse disjoined successfully',
+  'msg-cannot-join-to-precombined': 'Cannot join to a pre-combined verse',
+  'msg-cannot-disjoin-precombined': 'Cannot disjoin a pre-combined verse',
+  'msg-cannot-disjoin-missing-verses': 'Cannot disjoin - missing verses in original USFM for remaining range',
+
 };

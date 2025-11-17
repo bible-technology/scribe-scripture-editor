@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
-import { FolderOpenIcon } from '@heroicons/react/24/outline';
+import { FolderOpenIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as localforage from 'localforage';
 import { useTranslation } from 'react-i18next';
 import updateTranslationSB from '@/core/burrito/updateTranslationSB';
@@ -429,7 +429,7 @@ export default function ExportProjectPopUp(props) {
                     {project?.type === 'Video'
                       && (
                         <div className="mb-4">
-                          <div className="mb-3">
+                          <div className="mb-3 flex items-center">
                             <input
                               type="radio"
                               className="form-radio h-4 w-4 text-primary"
@@ -439,11 +439,15 @@ export default function ExportProjectPopUp(props) {
                               disabled={exportStart}
                             />
                             <span className="ml-4 text-xs font-bold">
-                              Normal Export
+                              Default Export
                             </span>
+                            <InformationCircleIcon
+                              className="h-4 w-4 text-primary ml-2 cursor-pointer"
+                              title="Exports video files in default format"
+                            />
                           </div>
 
-                          <div className="mb-3">
+                          <div className="mb-3 flex items-center">
                             <input
                               type="radio"
                               className="form-radio h-4 w-4 text-primary"
@@ -455,6 +459,10 @@ export default function ExportProjectPopUp(props) {
                             <span className="ml-4 text-xs font-bold">
                               Synchronized Export
                             </span>
+                            <InformationCircleIcon
+                              className="h-4 w-4 text-primary ml-2 cursor-pointer"
+                              title="This import cannot be used to disjoin already joined verses when imported back into Scribe. "
+                            />
 
                           </div>
 

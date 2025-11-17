@@ -30,7 +30,8 @@ export const useVerseJoining = ({
       const bookFolder = path.dirname(videoPath);
       const bookIdUpper = bookId.toUpperCase();
       const bookIdLower = bookId.toLowerCase();
-      const structureFile = path.join(bookFolder, `${bookIdLower}.json`);
+      const structureFile = path.join(bookFolder, `${bookIdLower}.j      // Block if the verse is marked as pre-combined (from USFM)
+son`);
       const chapterKey = chapter.toString();
 
       let allStructure = {};
@@ -50,7 +51,8 @@ export const useVerseJoining = ({
       allStructure[bookIdUpper][chapterKey] = {
         chapter: chapterKey,
         lastModified: new Date().toISOString(),
-        verses: updatedContent
+        verses: updatedContent      // Block if the verse is marked as pre-combined (from USFM)
+
           .filter((verse) => verse.verseNumber && verse.verseText !== undefined)
           .map((verse) => {
             const verseData = {
@@ -184,10 +186,7 @@ export const useVerseJoining = ({
       if (previousVerse.isPreCombined) {
         logger.warn('BLOCKED: Cannot join to pre-combined verse from USFM');
         setNotify('failure');
-        setSnackText(
-          t('msg-cannot-join-to-precombined')
-          || `Cannot join to verse ${previousVerseNum} - it is combined in the original USFM and must remain as a single unit`,
-        );
+        setSnackText(t('msg-cannot-join-to-precombined'));
         setOpenSnackBar(true);
         return false;
       }
@@ -195,10 +194,7 @@ export const useVerseJoining = ({
       if (currentVerse.isPreCombined) {
         logger.warn('BLOCKED: Cannot join pre-combined verse from USFM');
         setNotify('failure');
-        setSnackText(
-          t('msg-cannot-join-precombined')
-          || `Cannot join verse ${currentVerseNumber} - it is combined in the original USFM and must remain as a single unit`,
-        );
+        setSnackText(t('msg-cannot-join-precombined'));
         setOpenSnackBar(true);
         return false;
       }
@@ -261,7 +257,7 @@ export const useVerseJoining = ({
       });
 
       setNotify('success');
-      setSnackText(t('msg-verses-joined') || `Verses joined successfully: ${newVerseNumber}`);
+      setSnackText(t('msg-verses-joined'));
       setOpenSnackBar(true);
 
       return true;
@@ -277,51 +273,83 @@ export const useVerseJoining = ({
   const executeDisjoinVerse = useCallback((joinedVerseNumber, verseIndex) => {
     try {
       const verse = videoContent[verseIndex];
+      const hasUSFM = !!originalBookContent && Object.keys(originalBookContent).length > 0;
+
+      if (!verse) {
+        logger.error('executeDisjoinVerse: verse not found at index', verseIndex);
+        setNotify('failure');
+        setSnackText(t('msg-disjoin-failed') || 'Failed to separate verses');
+        setOpenSnackBar(true);
+        return false;
+      }
 
       if (verse.isPreCombined) {
         logger.warn('BLOCKED: Cannot disjoin pre-combined verse from USFM');
         setNotify('failure');
-        setSnackText(
-          t('msg-cannot-disjoin-precombined')
-        || `Cannot separate verse ${joinedVerseNumber} - it was combined in the original USFM and must remain as a single unit`,
-        );
+        setSnackText(t('msg-cannot-disjoin-precombined'));
         setOpenSnackBar(true);
         return false;
       }
 
-      const parts = joinedVerseNumber.split('-').map(Number);
-      if (parts.length < 2) {
-        logger.warn('Not enough parts to disjoin');
+      const parts = joinedVerseNumber.split('-').map((p) => Number(p));
+      if (parts.length < 2 || Number.isNaN(parts[0]) || Number.isNaN(parts[parts.length - 1])) {
+        logger.warn('executeDisjoinVerse: invalid joinedVerseNumber', joinedVerseNumber);
         return false;
       }
 
-      const firstVerseNum = parts[0];
-      const lastVerseNum = parts[parts.length - 1];
+      const start = parts[0];
+      const end = parts[parts.length - 1];
+
+      const firstVerseNum = start;
+      const remainingStart = start + 1;
+
+      let remainingLabel = 'none';
+
+      if (remainingStart <= end) {
+        if (remainingStart === end) {
+          remainingLabel = `${end}`;
+        } else {
+          remainingLabel = `${remainingStart}-${end}`;
+        }
+      }
 
       logger.info('Attempting incremental split:', {
         original: joinedVerseNumber,
         firstVerse: firstVerseNum,
-        remaining: lastVerseNum > firstVerseNum + 1 ? `${firstVerseNum + 1}-${lastVerseNum}` : `${lastVerseNum}`,
+        remaining: remainingLabel,
       });
 
-      const firstVerseText = getOriginalVerseText(
-        originalBookContent,
-        chapter.toString(),
-        firstVerseNum,
-      );
-
-      if (!firstVerseText || firstVerseText.trim() === '') {
+      const firstVerseText = getOriginalVerseText(originalBookContent, chapter.toString(), firstVerseNum);
+      if (hasUSFM && (!firstVerseText || firstVerseText.trim() === '')) {
         logger.error('Cannot disjoin - first verse not found in original USFM:', firstVerseNum);
         setNotify('failure');
-        setSnackText(
-          t('msg-cannot-disjoin-missing-verses')
-        || `Cannot separate verses - verse ${firstVerseNum} not found in original text`,
-        );
+        setSnackText(t('msg-cannot-disjoin-missing-verses'));
         setOpenSnackBar(true);
         return false;
       }
 
-      const updatedContent = [...videoContent];
+      if (remainingStart > end) {
+        logger.warn('executeDisjoinVerse: no remaining verses after split', joinedVerseNumber);
+        return false;
+      }
+
+      const remainingVerses = [];
+      for (let v = remainingStart; v <= end; v += 1) {
+        remainingVerses.push(v);
+      }
+
+      const missing = remainingVerses.filter((vnum) => {
+        const txt = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
+        return !txt || txt.trim() === '';
+      });
+
+      if (hasUSFM && missing.length > 0) {
+        logger.error('Cannot disjoin - missing verses in original USFM for remaining range:', missing);
+        setNotify('failure');
+        setSnackText(t('msg-cannot-disjoin-missing-verses'));
+        setOpenSnackBar(true);
+        return false;
+      }
 
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
@@ -330,28 +358,12 @@ export const useVerseJoining = ({
       };
 
       let remainingVerseEntry;
-
-      if (lastVerseNum === firstVerseNum + 1) {
-        const lastVerseText = getOriginalVerseText(
-          originalBookContent,
-          chapter.toString(),
-          lastVerseNum,
-        );
-
-        if (!lastVerseText || lastVerseText.trim() === '') {
-          logger.error('Cannot disjoin - last verse not found in original USFM:', lastVerseNum);
-          setNotify('failure');
-          setSnackText(
-            t('msg-cannot-disjoin-missing-verses')
-          || `Cannot separate verses - verse ${lastVerseNum} not found in original text`,
-          );
-          setOpenSnackBar(true);
-          return false;
-        }
-
+      if (remainingVerses.length === 1) {
+        const singleNum = remainingVerses[0];
+        const singleText = getOriginalVerseText(originalBookContent, chapter.toString(), singleNum) || '';
         remainingVerseEntry = {
-          verseNumber: lastVerseNum.toString(),
-          verseText: lastVerseText,
+          verseNumber: singleNum.toString(),
+          verseText: singleText,
           isPreCombined: false,
         };
 
@@ -360,65 +372,39 @@ export const useVerseJoining = ({
           second: remainingVerseEntry.verseNumber,
         });
       } else {
-        const remainingStart = firstVerseNum + 1;
-        const remainingVerseNumber = `${remainingStart}-${lastVerseNum}`;
-
-        const remainingVerses = Array.from(
-          { length: lastVerseNum - remainingStart + 1 },
-          (_, i) => remainingStart + i,
-        );
-
-        const remainingJoinedVerses = remainingVerses;
-
         let segments = null;
 
-        if (verse.verseSegments && verse.verseSegments.length > 0) {
-          segments = verse.verseSegments.filter((seg) => seg.verse !== firstVerseNum);
-          logger.info('Using stored verseSegments for remaining verses:', segments);
-        } else if (verse.joinedVerses && verse.joinedVerses.length > 0) {
+        if (Array.isArray(verse.verseSegments) && verse.verseSegments.length > 0) {
+          segments = verse.verseSegments.filter((seg) => Number(seg.verse) !== firstVerseNum);
+          segments = remainingVerses.map((vnum) => {
+            const found = segments.find((s) => Number(s.verse) === vnum);
+            if (found) { return found; }
+            return { verse: vnum, text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '' };
+          });
+          logger.info('Using stored verseSegments for remaining verses');
+        } else if (Array.isArray(verse.joinedVerses) && verse.joinedVerses.length > 0) {
           segments = verse.joinedVerses
-            .filter((vNum) => vNum !== firstVerseNum)
-            .map((vNum) => {
-              const text = getOriginalVerseText(originalBookContent, chapter.toString(), vNum);
-              return {
-                verse: vNum,
-                text: text || '',
-              };
-            });
-          logger.info('Rebuilt verseSegments for remaining verses:', segments);
+            .filter((vnum) => Number(vnum) !== firstVerseNum)
+            .map((vnum) => ({
+              verse: vnum,
+              text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
+            }));
+          logger.info('Rebuilt verseSegments for remaining verses from joinedVerses');
         } else {
-          segments = remainingVerses.map((vNum) => ({
-            verse: vNum,
-            text: getOriginalVerseText(originalBookContent, chapter.toString(), vNum) || '',
+          segments = remainingVerses.map((vnum) => ({
+            verse: vnum,
+            text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
           }));
+          logger.info('Built verseSegments for remaining verses from original text');
         }
 
-        const remainingTextArray = segments.map((seg) => seg.text).filter(Boolean);
+        const remainingTextArray = segments.map((seg) => (seg.text || '').trim()).filter(Boolean);
         const remainingCombinedText = remainingTextArray.join(' ').trim();
 
-        const missingVerses = [];
-        remainingVerses.forEach((verseNum) => {
-          const text = getOriginalVerseText(originalBookContent, chapter.toString(), verseNum);
-          if (!text || text.trim() === '') {
-            missingVerses.push(verseNum);
-          }
-        });
-
-        if (missingVerses.length > 0) {
-          logger.error('Cannot disjoin - missing verses in original USFM:', missingVerses);
-          setNotify('failure');
-          setSnackText(
-            t('msg-cannot-disjoin-missing-verses')
-          || `Cannot separate verses - verse(s) ${missingVerses.join(', ')} not found in original text`,
-          );
-          setOpenSnackBar(true);
-          return false;
-        }
-
         remainingVerseEntry = {
-          verseNumber: remainingVerseNumber,
+          verseNumber: `${remainingVerses[0]}-${remainingVerses[remainingVerses.length - 1]}`,
           verseText: remainingCombinedText,
-          joinedVerses: remainingJoinedVerses,
+          joinedVerses: remainingVerses,
           verseSegments: segments,
           isPreCombined: false,
         };
@@ -426,10 +412,10 @@ export const useVerseJoining = ({
         logger.info('Split into single verse and range:', {
           first: firstVerseEntry.verseNumber,
           remaining: remainingVerseEntry.verseNumber,
-          remainingJoinedVerses,
         });
       }
 
+      const updatedContent = [...videoContent];
       updatedContent.splice(verseIndex, 1, firstVerseEntry, remainingVerseEntry);
 
       logger.info('Updated content after incremental disjoin:', {
@@ -457,10 +443,7 @@ export const useVerseJoining = ({
       });
 
       setNotify('success');
-      setSnackText(
-        t('msg-verses-disjoined')
-      || `Verse ${firstVerseNum} separated from ${remainingVerseEntry.verseNumber}`,
-      );
+      setSnackText(t('msg-verses-disjoined'));
       setOpenSnackBar(true);
 
       return true;
@@ -472,6 +455,7 @@ export const useVerseJoining = ({
       return false;
     }
   }, [videoContent, setVideoContent, originalBookContent, chapter, videoPath, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
+
   const handleJoinVerse = useCallback((currentVerseNumber) => {
     const validation = validateVerseJoin(videoContent, currentVerseNumber);
 
