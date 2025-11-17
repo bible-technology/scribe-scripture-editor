@@ -30,8 +30,7 @@ export const useVerseJoining = ({
       const bookFolder = path.dirname(videoPath);
       const bookIdUpper = bookId.toUpperCase();
       const bookIdLower = bookId.toLowerCase();
-      const structureFile = path.join(bookFolder, `${bookIdLower}.j      // Block if the verse is marked as pre-combined (from USFM)
-son`);
+      const structureFile = path.join(bookFolder, `${bookIdLower}.json`);
       const chapterKey = chapter.toString();
 
       let allStructure = {};
@@ -51,8 +50,7 @@ son`);
       allStructure[bookIdUpper][chapterKey] = {
         chapter: chapterKey,
         lastModified: new Date().toISOString(),
-        verses: updatedContent      // Block if the verse is marked as pre-combined (from USFM)
-
+        verses: updatedContent
           .filter((verse) => verse.verseNumber && verse.verseText !== undefined)
           .map((verse) => {
             const verseData = {
