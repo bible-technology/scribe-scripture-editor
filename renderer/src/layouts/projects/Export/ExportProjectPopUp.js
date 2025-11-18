@@ -457,7 +457,7 @@ export default function ExportProjectPopUp(props) {
                               disabled={exportStart}
                             />
                             <span className="ml-4 text-xs font-bold">
-                               Export for external use
+                              Export for external use
                             </span>
                             <InformationCircleIcon
                               className="h-4 w-4 text-primary ml-2 cursor-pointer"
