@@ -439,11 +439,11 @@ export default function ExportProjectPopUp(props) {
                               disabled={exportStart}
                             />
                             <span className="ml-4 text-xs font-bold">
-                              Default Export
+                              Default Export(Recommended)
                             </span>
                             <InformationCircleIcon
                               className="h-4 w-4 text-primary ml-2 cursor-pointer"
-                              title="Exports video files in default format"
+                              title="Exports video files in default format to be used within Scribe."
                             />
                           </div>
 
@@ -457,11 +457,11 @@ export default function ExportProjectPopUp(props) {
                               disabled={exportStart}
                             />
                             <span className="ml-4 text-xs font-bold">
-                              Synchronized Export
+                               Export for external use
                             </span>
                             <InformationCircleIcon
                               className="h-4 w-4 text-primary ml-2 cursor-pointer"
-                              title="This import cannot be used to disjoin already joined verses when imported back into Scribe. "
+                              title="This export is not recommneded for import into Scribe."
                             />
 
                           </div>

@@ -230,54 +230,83 @@ const VideoRecorder = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [isAudioEnabled, currentMode, selectedCamera]);
+  }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter]);
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
       const path = require('path');
       const filename = currentVerseData[currentVerseData.default];
-      const videoPath = `file://${path.join(projectPath, filename)}`;
+
+      const timestamp = Date.now();
+      const videoPath = `file://${path.join(projectPath, filename)}?t=${timestamp}`;
 
       logger.info('Loading video for playback:', videoPath);
 
       setIsPlaying(false);
       setPlaybackTime(0);
 
-      videoPreviewRef.current.srcObject = null;
-      videoPreviewRef.current.src = videoPath;
-      videoPreviewRef.current.load();
+      const video = videoPreviewRef.current;
 
-      videoPreviewRef.current.onloadedmetadata = () => {
-        const video = videoPreviewRef.current;
-        if (!video) { return; }
-        let dur = video.duration;
+      video.pause();
+      video.srcObject = null;
+      video.removeAttribute('src');
+      video.load();
 
-        if (!Number.isFinite(dur) || dur === 0) {
-          logger.warn('Duration invalid, forcing recalculation...');
-          video.currentTime = 1e101;
-          video.ontimeupdate = () => {
-            if (!videoPreviewRef.current) { return; }
-            video.ontimeupdate = null;
-            dur = video.duration;
-            if (Number.isFinite(dur)) {
-              setVideoDuration(dur);
-              logger.info('Duration fixed:', dur);
-            } else {
-              setVideoDuration(0);
-            }
-            video.currentTime = 0;
-          };
-        } else {
-          setVideoDuration(dur);
-        }
-      };
-
-      videoPreviewRef.current.onloadeddata = () => {
+      setTimeout(() => {
         if (!videoPreviewRef.current) { return; }
-        logger.info('Video data loaded and ready to play');
-      };
+        video.src = videoPath;
+        video.load();
+        video.onloadedmetadata = () => {
+          if (!videoPreviewRef.current) { return; }
+          let dur = video.duration;
+
+          if (!Number.isFinite(dur) || dur === 0) {
+            logger.warn('Duration invalid, forcing recalculation...');
+            video.currentTime = 1e101;
+            video.ontimeupdate = () => {
+              if (!videoPreviewRef.current) { return; }
+              video.ontimeupdate = null;
+              dur = video.duration;
+              if (Number.isFinite(dur)) {
+                setVideoDuration(dur);
+                logger.info('Duration fixed:', dur);
+              } else {
+                setVideoDuration(0);
+              }
+              video.currentTime = 0;
+            };
+          } else {
+            setVideoDuration(dur);
+          }
+        };
+
+        video.onloadeddata = () => {
+          if (!videoPreviewRef.current) { return; }
+          logger.info('Video data loaded and ready to play');
+        };
+
+        video.onerror = (e) => {
+          logger.error('Video load error:', e);
+          setError('Failed to load video file');
+        };
+      }, 50);
     }
   }, [currentMode, hasVideo, verse, projectPath, currentVerseData]);
+  useEffect(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+
+    if (videoPreviewRef.current) {
+      videoPreviewRef.current.pause();
+      videoPreviewRef.current.srcObject = null;
+      videoPreviewRef.current.removeAttribute('src');
+      videoPreviewRef.current.load();
+    }
+
+    setCameraReady(false);
+  }, [verse, chapter]);
 
   useEffect(() => {
     if (currentMode === 'view' && videoPreviewRef.current) {
@@ -368,7 +397,12 @@ const VideoRecorder = ({
 
       setTimeout(() => {
         if (videoPreviewRef.current) {
-          const videoPath = `file://${filePath}`;
+          const timestamp = Date.now();
+          const videoPath = `file://${filePath}?t=${timestamp}`;
+          videoPreviewRef.current.pause();
+          videoPreviewRef.current.removeAttribute('src');
+          videoPreviewRef.current.load();
+
           videoPreviewRef.current.srcObject = null;
           videoPreviewRef.current.src = videoPath;
           videoPreviewRef.current.load();
@@ -538,6 +572,13 @@ const VideoRecorder = ({
   const handlePreviousVerse = () => {
     const prevVerse = getPreviousVerseNumber(verse, content);
     if (prevVerse && onVerseChange) {
+      if (videoPreviewRef.current) {
+        const video = videoPreviewRef.current;
+        video.pause();
+        video.srcObject = null;
+        video.removeAttribute('src');
+        video.load();
+      }
       setIsPlaying(false);
       onVerseChange(prevVerse);
     }
@@ -546,16 +587,31 @@ const VideoRecorder = ({
   const handleNextVerse = () => {
     const nextVerse = getNextVerseNumber(verse, content);
     if (nextVerse && onVerseChange) {
+      if (videoPreviewRef.current) {
+        const video = videoPreviewRef.current;
+        video.pause();
+        video.srcObject = null;
+        video.removeAttribute('src');
+        video.load();
+      }
       setIsPlaying(false);
       onVerseChange(nextVerse);
     }
   };
 
   const switchToRecordMode = () => {
+    if (videoPreviewRef.current) {
+      const video = videoPreviewRef.current;
+      video.pause();
+      video.srcObject = null;
+      video.removeAttribute('src');
+      video.load();
+    }
     setCurrentMode('record');
     setIsPlaying(false);
     setPlaybackTime(0);
     setVideoDuration(0);
+
     if (playbackTimerRef.current) {
       clearInterval(playbackTimerRef.current);
       playbackTimerRef.current = null;
