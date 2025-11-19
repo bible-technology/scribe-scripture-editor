@@ -62,16 +62,28 @@ export const useVerseJoining = ({
 
             if (verse.joinedVerses && verse.joinedVerses.length > 0) {
               verseData.verseSegments = verse.joinedVerses.map((vNum) => {
-                const text = getOriginalVerseText(
+                const freshText = getOriginalVerseText(
                   originalBookContent,
                   chapter.toString(),
                   vNum,
                 );
+                const existingSegment = verse.verseSegments?.find((s) => Number(s.verse) === vNum);
+
                 return {
                   verse: vNum,
-                  text: text || '',
+                  text: freshText || existingSegment?.text || ''
                 };
               });
+
+              if (!verse.verseText || verse.verseText.trim() === '') {
+                const combinedText = verseData.verseSegments
+                  .map(seg => seg.text)
+                  .filter(Boolean)
+                  .join(' ')
+                  .trim();
+                verseData.verseText = combinedText;
+              }
+
               logger.info(`Stored ${verse.joinedVerses.length} verse segments for ${verse.verseNumber}`);
             }
 
@@ -373,13 +385,19 @@ export const useVerseJoining = ({
         let segments = null;
 
         if (Array.isArray(verse.verseSegments) && verse.verseSegments.length > 0) {
-          segments = verse.verseSegments.filter((seg) => Number(seg.verse) !== firstVerseNum);
           segments = remainingVerses.map((vnum) => {
-            const found = segments.find((s) => Number(s.verse) === vnum);
-            if (found) { return found; }
-            return { verse: vnum, text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '' };
+            const freshText = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
+
+            if (freshText && freshText.trim() !== '') {
+              return { verse: vnum, text: freshText };
+            }
+            const storedSegment = verse.verseSegments.find((s) => Number(s.verse) === vnum);
+            return {
+              verse: vnum,
+              text: storedSegment?.text || ''
+            };
           });
-          logger.info('Using stored verseSegments for remaining verses');
+          logger.info('Rebuilt verseSegments for remaining verses (USFM + stored)');
         } else if (Array.isArray(verse.joinedVerses) && verse.joinedVerses.length > 0) {
           segments = verse.joinedVerses
             .filter((vnum) => Number(vnum) !== firstVerseNum)
