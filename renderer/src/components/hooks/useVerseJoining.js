@@ -71,13 +71,13 @@ export const useVerseJoining = ({
 
                 return {
                   verse: vNum,
-                  text: freshText || existingSegment?.text || ''
+                  text: freshText || existingSegment?.text || '',
                 };
               });
 
               if (!verse.verseText || verse.verseText.trim() === '') {
                 const combinedText = verseData.verseSegments
-                  .map(seg => seg.text)
+                  .map((seg) => seg.text)
                   .filter(Boolean)
                   .join(' ')
                   .trim();
@@ -394,7 +394,7 @@ export const useVerseJoining = ({
             const storedSegment = verse.verseSegments.find((s) => Number(s.verse) === vnum);
             return {
               verse: vnum,
-              text: storedSegment?.text || ''
+              text: storedSegment?.text || '',
             };
           });
           logger.info('Rebuilt verseSegments for remaining verses (USFM + stored)');
