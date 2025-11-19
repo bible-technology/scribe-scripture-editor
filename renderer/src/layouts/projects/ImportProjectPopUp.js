@@ -377,7 +377,7 @@ export default function ImportProjectPopUp(props) {
         >
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex items-center justify-center h-screen">
-            <div className="w-5/12 h-3/6 items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
+            <div className="w-[43%] h-3/6 items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
               <div className="relative h-full rounded shadow overflow-hidden bg-white">
                 <div className="flex justify-between items-center bg-secondary">
                   <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center">
@@ -408,10 +408,10 @@ export default function ImportProjectPopUp(props) {
                   <div className="p-8 overflow-auto w-full h-full scrollbars-width flex flex-col justify-between">
 
                     <div className="bg-white text-sm text-left tracking-wide">
-                      <div className="flex gap-6">
-                        <h4 className="text-sm font-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-burrito-directory')}</h4>
+                      <div className="flex gap-1">
+                        <h4 className="text-sm fot-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-burrito-directory')}</h4>
                         <button title={t('msg-select-dir-for-SB')} type="button" disabled>
-                          <InformationCircleIcon className="h-6 w-6 text-primary" />
+                          <InformationCircleIcon className="h-5 w-5 text-primary" />
                         </button>
                       </div>
                       <div className="flex items-center mb-4">

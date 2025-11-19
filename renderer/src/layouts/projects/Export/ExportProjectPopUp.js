@@ -461,7 +461,7 @@ export default function ExportProjectPopUp(props) {
                             </span>
                             <InformationCircleIcon
                               className="h-4 w-4 text-primary ml-2 cursor-pointer"
-                              title="This export is not recommneded for import into Scribe."
+                              title="This export is not recommended for import into Scribe."
                             />
 
                           </div>
