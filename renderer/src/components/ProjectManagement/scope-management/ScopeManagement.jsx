@@ -43,7 +43,7 @@ const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
     const recordedVerseSet = new Set();
     let recordedFiles = 0;
 
-    files.forEachO((file) => {
+    files.forEach((file) => {
       const verses = parseVerseFromFilename(file, fileExtension);
       if (verses) {
         recordedFiles += 1;

@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react';
+import moment from 'moment';
 import PropTypes from 'prop-types';
+import { v5 as uuidv5 } from 'uuid';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import ProjectsLayout from '@/layouts/projects/Layout';
-import AdvancedSettingsDropdown from '@/components/ProjectsPage/CreateProject/AdvancedSettingsDropdown';
-import { ProjectContext } from '@/components/context/ProjectContext';
-import TargetLanguagePopover from '@/components/ProjectsPage/CreateProject/TargetLanguagePopover';
-import PopoverProjectType from '@/layouts/editor/PopoverProjectType';
 import { SnackBar } from '@/components/SnackBar';
+import ProjectsLayout from '@/layouts/projects/Layout';
 import useValidator from '@/components/hooks/useValidator';
-import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import PopoverProjectType from '@/layouts/editor/PopoverProjectType';
 import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
-import moment from 'moment';
-import { v5 as uuidv5 } from 'uuid';
+import TargetLanguagePopover from '@/components/ProjectsPage/CreateProject/TargetLanguagePopover';
+import AdvancedSettingsDropdown from '@/components/ProjectsPage/CreateProject/AdvancedSettingsDropdown';
 import { BookOpenIcon, InformationCircleIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
-import { environment } from '../../../environment';
-import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
+import { ProjectContext } from '@/components/context/ProjectContext';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
+import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
+import { environment } from '../../../environment';
+import ImportPopUp, { deleteVideoFiles } from './ImportPopUp';
+import burrito from '../../lib/BurritoTemplate.json';
 import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
-import ImportPopUp from './ImportPopUp';
-import burrito from '../../lib/BurritoTemplate.json';
-// eslint-disable-next-line no-unused-vars
+
 const solutions = [
   {
     name: 'Translation',
@@ -207,20 +207,28 @@ export default function NewProject({ call, project, closeEdit }) {
    * @returns {Boolean} true if the two arrays are equal
    */
   const compareArrays = (a, b) => a.length === b.length
-                                  && a.every((element) => b.indexOf(element) !== -1)
-                                  && b.every((element) => a.indexOf(element) !== -1);
+    && a.every((element) => b.indexOf(element) !== -1)
+    && b.every((element) => a.indexOf(element) !== -1);
 
-  const createTheProject = (update) => {
+  const createTheProject = async (update) => {
     logger.debug('NewProject.js', 'Creating new project.');
     // headerDropDown === projectType
     const value = createProject(call, metadata, update, headerDropDown);
-    value.then((status) => {
+    try {
+      const status = await value;
       logger.debug('NewProject.js', status[0].value);
       setLoading(false);
       setNotify(status[0].type);
       setSnackText(status[0].value);
       setOpenSnackBar(true);
+
       if (status[0].type === 'success') {
+        if (call === 'edit' && headerDropDown === 'Video' && window.pendingBookCodesToDeleteVideos) {
+          logger.info('NewProject.js', 'Project saved successfully, now deleting videos for imported books');
+          await deleteVideoFiles(window.pendingBookCodesToDeleteVideos);
+          window.pendingBookCodesToDeleteVideos = null;
+        }
+
         setImportedBookCodes([]);
         if (call === 'edit') {
           closeEdit();
@@ -228,7 +236,13 @@ export default function NewProject({ call, project, closeEdit }) {
           router.push('/projects');
         }
       }
-    });
+    } catch (error) {
+      logger.error('NewProject.js', 'Error creating project:', error);
+      setLoading(false);
+      setNotify('error');
+      setSnackText('Failed to create project');
+      setOpenSnackBar(true);
+    }
   };
   const validate = async () => {
     logger.debug('NewProject.js', 'Validating the fields.');
@@ -345,7 +359,7 @@ export default function NewProject({ call, project, closeEdit }) {
   };
   useEffect(() => {
     setEditLanguage(projectLangData);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languages.length, projectLangData]);
 
   useEffect(() => {
@@ -356,12 +370,13 @@ export default function NewProject({ call, project, closeEdit }) {
       const defaulLang = languages.filter((lang) => lang.lc === 'en');
       setLanguage(defaulLang[0]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [call]);
+
   return (
     <ProjectsLayout
       title={call === 'new' ? t('new-project-page') : t('edit-project')}
-      // header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
+    // header={BibleHeaderTagDropDown(headerDropDown, handleDropDown, call)}
     >
       {loading === true
         ? (
@@ -500,7 +515,12 @@ export default function NewProject({ call, project, closeEdit }) {
                         type="button"
                         aria-label="cancel-edit-project"
                         className="w-40 h-10  bg-error leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                        onClick={() => closeEdit()}
+                        onClick={() => {
+                          if (window.pendingBookCodesToDeleteVideos) {
+                            window.pendingBookCodesToDeleteVideos = null;
+                          }
+                          closeEdit();
+                        }}
                       >
                         {t('btn-cancel')}
                       </button>
@@ -535,12 +555,27 @@ export default function NewProject({ call, project, closeEdit }) {
       />
       <ConfirmationModal
         openModal={replaceWarning}
-        title="Confirm Overwriting content"
+        title="Confirm Overwriting Content"
         setOpenModal={setReplaceWarning}
-        confirmMessage="This will overwrite existing content in your project. Do you want to proceed?"
+        confirmMessage={
+          headerDropDown === 'Video'
+            ? "This will overwrite existing content in your project.<br/><br/><strong style='color: #dc2626;'>WARNING: Importing these books will delete all existing videos for the imported books if present. Export your project to keep your data. </strong><br/><br/>Do you want to proceed?"
+            : 'This will overwrite existing content in your project. Do you want to proceed?'
+        }
         buttonName={t('btn-cancel')}
-        closeModal={closeEdit}
+        closeModal={() => {
+          setReplaceWarning(false);
+          if (window.pendingImportData) {
+            window.pendingImportData = null;
+          }
+          if (window.pendingBookCodesToDeleteVideos) {
+            window.pendingBookCodesToDeleteVideos = null;
+          }
+        }}
         cancelButtonName={t('label-overwrite')}
+        buttonName2={{
+          active: false,
+        }}
       />
       <ConfirmationModal
         openModal={openModalJuxtaWrongSetOfBooks}
