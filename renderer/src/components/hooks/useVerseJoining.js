@@ -283,8 +283,10 @@ export const useVerseJoining = ({
   const executeDisjoinVerse = useCallback((joinedVerseNumber, verseIndex) => {
     try {
       const verse = videoContent[verseIndex];
-      const hasUSFM = !!originalBookContent && Object.keys(originalBookContent).length > 0;
 
+      const hasUSFM = !!originalBookContent
+        && Object.keys(originalBookContent).length > 0
+        && originalBookContent.some((ch) => ch.contents && ch.contents.some((v) => v.verseText && v.verseText.trim() !== ''));
       if (!verse) {
         logger.error('executeDisjoinVerse: verse not found at index', verseIndex);
         setNotify('failure');
@@ -329,13 +331,19 @@ export const useVerseJoining = ({
         remaining: remainingLabel,
       });
 
-      const firstVerseText = getOriginalVerseText(originalBookContent, chapter.toString(), firstVerseNum);
-      if (hasUSFM && (!firstVerseText || firstVerseText.trim() === '')) {
-        logger.error('Cannot disjoin - first verse not found in original USFM:', firstVerseNum);
-        setNotify('failure');
-        setSnackText(t('msg-cannot-disjoin-missing-verses'));
-        setOpenSnackBar(true);
-        return false;
+      let firstVerseText = '';
+      if (hasUSFM) {
+        firstVerseText = getOriginalVerseText(originalBookContent, chapter.toString(), firstVerseNum) || '';
+        if (!firstVerseText || firstVerseText.trim() === '') {
+          logger.error('Cannot disjoin - first verse not found in original USFM:', firstVerseNum);
+          setNotify('failure');
+          setSnackText(t('msg-cannot-disjoin-missing-verses'));
+          setOpenSnackBar(true);
+          return false;
+        }
+      } else {
+        firstVerseText = verse.verseSegments?.find((s) => Number(s.verse) === firstVerseNum)?.text || '';
+        logger.info('No USFM available, using stored segments for first verse');
       }
 
       if (remainingStart > end) {
@@ -348,29 +356,35 @@ export const useVerseJoining = ({
         remainingVerses.push(v);
       }
 
-      const missing = remainingVerses.filter((vnum) => {
-        const txt = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
-        return !txt || txt.trim() === '';
-      });
+      if (hasUSFM) {
+        const missing = remainingVerses.filter((vnum) => {
+          const txt = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
+          return !txt || txt.trim() === '';
+        });
 
-      if (hasUSFM && missing.length > 0) {
-        logger.error('Cannot disjoin - missing verses in original USFM for remaining range:', missing);
-        setNotify('failure');
-        setSnackText(t('msg-cannot-disjoin-missing-verses'));
-        setOpenSnackBar(true);
-        return false;
+        if (missing.length > 0) {
+          logger.error('Cannot disjoin - missing verses in original USFM for remaining range:', missing);
+          setNotify('failure');
+          setSnackText(t('msg-cannot-disjoin-missing-verses'));
+          setOpenSnackBar(true);
+          return false;
+        }
+      } else {
+        logger.info('No USFM available, skipping validation for remaining verses');
       }
 
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
-        verseText: firstVerseText,
+        verseText: firstVerseText || '',
         isPreCombined: false,
       };
 
       let remainingVerseEntry;
       if (remainingVerses.length === 1) {
         const singleNum = remainingVerses[0];
-        const singleText = getOriginalVerseText(originalBookContent, chapter.toString(), singleNum) || '';
+        const singleText = hasUSFM
+          ? (getOriginalVerseText(originalBookContent, chapter.toString(), singleNum) || '')
+          : (verse.verseSegments?.find((s) => Number(s.verse) === singleNum)?.text || '');
         remainingVerseEntry = {
           verseNumber: singleNum.toString(),
           verseText: singleText,
@@ -386,10 +400,11 @@ export const useVerseJoining = ({
 
         if (Array.isArray(verse.verseSegments) && verse.verseSegments.length > 0) {
           segments = remainingVerses.map((vnum) => {
-            const freshText = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
-
-            if (freshText && freshText.trim() !== '') {
-              return { verse: vnum, text: freshText };
+            if (hasUSFM) {
+              const freshText = getOriginalVerseText(originalBookContent, chapter.toString(), vnum);
+              if (freshText && freshText.trim() !== '') {
+                return { verse: vnum, text: freshText };
+              }
             }
             const storedSegment = verse.verseSegments.find((s) => Number(s.verse) === vnum);
             return {
@@ -403,13 +418,17 @@ export const useVerseJoining = ({
             .filter((vnum) => Number(vnum) !== firstVerseNum)
             .map((vnum) => ({
               verse: vnum,
-              text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
+              text: hasUSFM
+                ? (getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '')
+                : '',
             }));
           logger.info('Rebuilt verseSegments for remaining verses from joinedVerses');
         } else {
           segments = remainingVerses.map((vnum) => ({
             verse: vnum,
-            text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
+            text: hasUSFM
+              ? (getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '')
+              : '',
           }));
           logger.info('Built verseSegments for remaining verses from original text');
         }
