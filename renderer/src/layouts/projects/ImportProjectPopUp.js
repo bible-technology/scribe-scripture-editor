@@ -206,7 +206,7 @@ export default function ImportProjectPopUp(props) {
         if (fs.existsSync(projectMergePath)) {
           fs.rmSync(projectMergePath, { recursive: true, force: true });
         } else {
-          logger.log(`Folder does not exist: ${projectMergePath}`);
+          logger.debug(`Folder does not exist: ${projectMergePath}`);
         }
       }
 

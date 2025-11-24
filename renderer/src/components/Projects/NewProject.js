@@ -224,7 +224,7 @@ export default function NewProject({ call, project, closeEdit }) {
 
       if (status[0].type === 'success') {
         if (call === 'edit' && headerDropDown === 'Video' && window.pendingBookCodesToDeleteVideos) {
-          logger.info('NewProject.js', 'Project saved successfully, now deleting videos for imported books');
+          logger.debug('NewProject.js', 'Project saved successfully, now deleting videos for imported books');
           await deleteVideoFiles(window.pendingBookCodesToDeleteVideos);
           window.pendingBookCodesToDeleteVideos = null;
         }

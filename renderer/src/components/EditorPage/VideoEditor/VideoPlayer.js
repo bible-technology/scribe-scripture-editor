@@ -133,7 +133,7 @@ const VideoPlayer = ({
   };
 
   const handleRecordingComplete = (data) => {
-    logger.info('Video recording completed:', data);
+    logger.log('Video recording completed:', data);
 
     const updatedContent = content.map((item) => {
       if (item.verseNumber === data.verse.toString()) {

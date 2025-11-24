@@ -76,7 +76,7 @@ export const deleteVerseVideos = (verse, videoDirPath) => {
 
     const videoKeys = Object.keys(verse).filter((key) => key.startsWith('take'));
 
-    logger.info('Deleting videos for verse:', {
+    logger.debug('Deleting videos for verse:', {
       verseNumber: verse.verseNumber,
       videoKeys,
       videoDirPath,
@@ -86,13 +86,10 @@ export const deleteVerseVideos = (verse, videoDirPath) => {
     videoKeys.forEach((take) => {
       const videoFileName = verse[take];
       const fullVideoPath = path.join(videoDirPath, videoFileName);
-
-      logger.info('Attempting to delete video file:', fullVideoPath);
-
       if (fs.existsSync(fullVideoPath)) {
         try {
           fs.unlinkSync(fullVideoPath);
-          logger.info('Successfully deleted video file:', fullVideoPath);
+          logger.debug('Successfully deleted video file:', fullVideoPath);
           deletedCount += 1;
         } catch (deleteError) {
           logger.error('Failed to delete video file:', fullVideoPath, deleteError);
@@ -102,7 +99,7 @@ export const deleteVerseVideos = (verse, videoDirPath) => {
       }
     });
 
-    logger.info(`Deleted ${deletedCount} video file(s) for verse ${verse.verseNumber}`);
+    logger.debug(`Deleted ${deletedCount} video file(s) for verse ${verse.verseNumber}`);
     return deletedCount > 0;
   } catch (error) {
     logger.error('Error deleting verse videos:', error);

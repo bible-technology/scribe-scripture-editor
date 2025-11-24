@@ -184,7 +184,7 @@ const VideoRecorder = ({
               setCameraReady(true);
 
               const videoTrack = stream.getVideoTracks()[0];
-              logger.info('Using camera:', videoTrack.label);
+              logger.debug('Using camera:', videoTrack.label);
             }
           };
         }
@@ -240,7 +240,7 @@ const VideoRecorder = ({
       const timestamp = Date.now();
       const videoPath = `file://${path.join(projectPath, filename)}?t=${timestamp}`;
 
-      logger.info('Loading video for playback:', videoPath);
+      logger.log('Loading video for playback:', videoPath);
 
       setIsPlaying(false);
       setPlaybackTime(0);
@@ -269,7 +269,6 @@ const VideoRecorder = ({
               dur = video.duration;
               if (Number.isFinite(dur)) {
                 setVideoDuration(dur);
-                logger.info('Duration fixed:', dur);
               } else {
                 setVideoDuration(0);
               }
@@ -282,7 +281,7 @@ const VideoRecorder = ({
 
         video.onloadeddata = () => {
           if (!videoPreviewRef.current) { return; }
-          logger.info('Video data loaded and ready to play');
+          logger.debug('Video data loaded and ready to play');
         };
 
         video.onerror = (e) => {
@@ -421,7 +420,7 @@ const VideoRecorder = ({
                 dur = video.duration;
                 if (Number.isFinite(dur)) {
                   setVideoDuration(dur);
-                  logger.info('Duration fixed:', dur);
+                  logger.log('Duration fixed:', dur);
                 } else {
                   setVideoDuration(0);
                 }
@@ -541,7 +540,7 @@ const VideoRecorder = ({
 
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          logger.info('Deleted existing video for re-recording');
+          logger.log('Deleted existing video for re-recording');
         }
       }
 

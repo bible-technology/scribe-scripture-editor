@@ -113,12 +113,9 @@ async function verifyAndInstallChrome(version) {
 async function requestCameraPermissionMacOS() {
   if (process.platform === 'darwin') {
     try {
-      const cameraStatus = systemPreferences.getMediaAccessStatus('camera');
-      console.log('Camera permission status:', cameraStatus);
-      
+      const cameraStatus = systemPreferences.getMediaAccessStatus('camera');      
       if (cameraStatus !== 'granted') {
         const granted = await systemPreferences.askForMediaAccess('camera');
-        console.log('Camera permission granted:', granted);
         return granted;
       }
       return true;
@@ -148,9 +145,7 @@ async function createWindow() {
   });
   require('@electron/remote/main').enable(mainWindow.webContents);
 
-  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-    console.log('Permission requested:', permission);
-    
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {    
     if (permission === 'media' || permission === 'mediaKeySystem') {
       callback(true);
     } else {
@@ -158,18 +153,14 @@ async function createWindow() {
     }
   });
 
-  session.defaultSession.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
-    console.log('Permission check:', permission, details);
-    
+  session.defaultSession.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {    
     if (permission === 'media') {
       return true;
     }
     return false;
   });
 
-  session.defaultSession.setDevicePermissionHandler((details) => {
-    console.log('Device permission requested:', details);
-    
+  session.defaultSession.setDevicePermissionHandler((details) => {    
     if (details.deviceType === 'videoinput' || details.deviceType === 'audioinput') {
       return true;
     }

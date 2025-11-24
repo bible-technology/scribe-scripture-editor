@@ -51,12 +51,12 @@ export const deleteVideoFiles = async (bookCodesToImport) => {
 
               if (itemStats?.isDirectory()) {
                 await fs.rm(itemPath, { recursive: true, force: true });
-                logger.info('ImportPopUp.js', `Deleted chapter folder: ${itemPath}`);
+                logger.debug('ImportPopUp.js', `Deleted chapter folder: ${itemPath}`);
               }
             }),
           );
 
-          logger.info(
+          logger.debug(
             'ImportPopUp.js',
             `Successfully deleted all videos for ${bookCode.toUpperCase()}`,
           );

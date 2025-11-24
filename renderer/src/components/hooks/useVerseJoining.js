@@ -84,7 +84,7 @@ export const useVerseJoining = ({
                 verseData.verseText = combinedText;
               }
 
-              logger.info(`Stored ${verse.joinedVerses.length} verse segments for ${verse.verseNumber}`);
+              logger.debug(`Stored ${verse.joinedVerses.length} verse segments for ${verse.verseNumber}`);
             }
 
             return verseData;
@@ -97,8 +97,6 @@ export const useVerseJoining = ({
       }
 
       fs.writeFileSync(structureFile, JSON.stringify(allStructure, null, 2), 'utf8');
-      logger.info('Verse structure saved successfully:', structureFile);
-
       return true;
     } catch (err) {
       logger.error('Error saving verse structure:', err);
@@ -118,7 +116,7 @@ export const useVerseJoining = ({
       const chapterKey = chapter.toString();
 
       if (!fs.existsSync(structureFile)) {
-        logger.info(`No ${bookId}.json found`);
+        logger.debug(`No ${bookId}.json found`);
         return null;
       }
 
@@ -126,7 +124,7 @@ export const useVerseJoining = ({
       const allStructure = JSON.parse(data);
 
       if (allStructure[bookIdUpper] && allStructure[bookIdUpper][chapterKey]) {
-        logger.info(`Loaded verse structure for ${bookIdUpper} chapter ${chapterKey}`);
+        logger.debug(`Loaded verse structure for ${bookIdUpper} chapter ${chapterKey}`);
 
         const verses = allStructure[bookIdUpper][chapterKey].verses.map((verse) => {
           const isRangeVerse = verse.verseNumber.includes('-');
@@ -141,7 +139,7 @@ export const useVerseJoining = ({
           }
 
           if (isPreCombined) {
-            logger.info(`Verse ${verse.verseNumber} is pre-combined (locked) - no verseSegments present`);
+            logger.debug(`Verse ${verse.verseNumber} is pre-combined (locked) - no verseSegments present`);
 
             let joinedVerses = verse.joinedVerses;
             if (!joinedVerses || joinedVerses === null) {
@@ -159,7 +157,7 @@ export const useVerseJoining = ({
           }
 
           if (isRangeVerse && hasVerseSegments) {
-            logger.info(`✓ Verse ${verse.verseNumber} is app-joined - has verseSegments`);
+            logger.debug(`Verse ${verse.verseNumber} is app-joined - has verseSegments`);
           }
 
           return {
@@ -171,7 +169,7 @@ export const useVerseJoining = ({
         return verses;
       }
 
-      logger.info(`No structure for ${bookId} chapter ${chapterKey}`);
+      logger.debug(`No structure for ${bookId} chapter ${chapterKey}`);
       return null;
     } catch (err) {
       logger.error('Error loading verse structure:', err);
@@ -186,7 +184,7 @@ export const useVerseJoining = ({
       const currentVerseNum = parseInt(currentVerse.verseNumber.split('-')[0], 10);
       const previousVerseNum = previousVerse.verseNumber;
 
-      logger.info('Attempting to join verses:', {
+      logger.debug('Attempting to join verses:', {
         current: currentVerseNumber,
         previous: previousVerseNum,
         previousIsPreCombined: previousVerse.isPreCombined,
@@ -208,9 +206,6 @@ export const useVerseJoining = ({
         setOpenSnackBar(true);
         return false;
       }
-
-      logger.info('Join allowed - proceeding with join operation');
-
       let newVerseNumber;
       let joinedVerses;
 
@@ -252,11 +247,11 @@ export const useVerseJoining = ({
           try {
             if (hasVerseRecordings(currentVerse)) {
               deleteVerseVideos(currentVerse, videoPath);
-              logger.info('Deleted current verse videos after join');
+              logger.debug('Deleted current verse videos after join');
             }
             if (hasVerseRecordings(previousVerse)) {
               deleteVerseVideos(previousVerse, videoPath);
-              logger.info('Deleted previous verse videos after join');
+              logger.debug('Deleted previous verse videos after join');
             }
           } catch (deleteErr) {
             logger.error('Error deleting videos after join:', deleteErr);
@@ -325,7 +320,7 @@ export const useVerseJoining = ({
         }
       }
 
-      logger.info('Attempting incremental split:', {
+      logger.debug('Attempting incremental split:', {
         original: joinedVerseNumber,
         firstVerse: firstVerseNum,
         remaining: remainingLabel,
@@ -343,7 +338,7 @@ export const useVerseJoining = ({
         }
       } else {
         firstVerseText = verse.verseSegments?.find((s) => Number(s.verse) === firstVerseNum)?.text || '';
-        logger.info('No USFM available, using stored segments for first verse');
+        logger.debug('No USFM available, using stored segments for first verse');
       }
 
       if (remainingStart > end) {
@@ -370,7 +365,7 @@ export const useVerseJoining = ({
           return false;
         }
       } else {
-        logger.info('No USFM available, skipping validation for remaining verses');
+        logger.debug('No USFM available, skipping validation for remaining verses');
       }
 
       const firstVerseEntry = {
@@ -391,7 +386,7 @@ export const useVerseJoining = ({
           isPreCombined: false,
         };
 
-        logger.info('Split into two single verses:', {
+        logger.debug('Split into two single verses:', {
           first: firstVerseEntry.verseNumber,
           second: remainingVerseEntry.verseNumber,
         });
@@ -412,7 +407,7 @@ export const useVerseJoining = ({
               text: storedSegment?.text || '',
             };
           });
-          logger.info('Rebuilt verseSegments for remaining verses (USFM + stored)');
+          logger.debug('Rebuilt verseSegments for remaining verses (USFM + stored)');
         } else if (Array.isArray(verse.joinedVerses) && verse.joinedVerses.length > 0) {
           segments = verse.joinedVerses
             .filter((vnum) => Number(vnum) !== firstVerseNum)
@@ -422,7 +417,7 @@ export const useVerseJoining = ({
                 ? (getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '')
                 : '',
             }));
-          logger.info('Rebuilt verseSegments for remaining verses from joinedVerses');
+          logger.debug('Rebuilt verseSegments for remaining verses from joinedVerses');
         } else {
           segments = remainingVerses.map((vnum) => ({
             verse: vnum,
@@ -430,7 +425,7 @@ export const useVerseJoining = ({
               ? (getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '')
               : '',
           }));
-          logger.info('Built verseSegments for remaining verses from original text');
+          logger.debug('Built verseSegments for remaining verses from original text');
         }
 
         const remainingTextArray = segments.map((seg) => (seg.text || '').trim()).filter(Boolean);
@@ -444,7 +439,7 @@ export const useVerseJoining = ({
           isPreCombined: false,
         };
 
-        logger.info('Split into single verse and range:', {
+        logger.debug('Split into single verse and range:', {
           first: firstVerseEntry.verseNumber,
           remaining: remainingVerseEntry.verseNumber,
         });
@@ -453,7 +448,7 @@ export const useVerseJoining = ({
       const updatedContent = [...videoContent];
       updatedContent.splice(verseIndex, 1, firstVerseEntry, remainingVerseEntry);
 
-      logger.info('Updated content after incremental disjoin:', {
+      logger.debug('Updated content after incremental disjoin:', {
         originalIndex: verseIndex,
         newVerses: [firstVerseEntry.verseNumber, remainingVerseEntry.verseNumber],
       });
@@ -462,12 +457,12 @@ export const useVerseJoining = ({
 
       saveVerseStructure(updatedContent).then((saved) => {
         if (saved) {
-          logger.info('Verse structure saved after incremental disjoin');
+          logger.debug('Verse structure saved after incremental disjoin');
 
           try {
             if (hasVerseRecordings(verse)) {
               deleteVerseVideos(verse, videoPath);
-              logger.info('Deleted joined verse videos after disjoin');
+              logger.debug('Deleted joined verse videos after disjoin');
             }
           } catch (deleteErr) {
             logger.error('Error deleting videos after disjoin:', deleteErr);

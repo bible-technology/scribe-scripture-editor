@@ -151,7 +151,7 @@ function ScopeManagement({
 
   const checkChapterCompletion = (bookCode, chapterNumber) => {
     if (!projectBasePath) {
-      logger.log('Project base path not available yet');
+      logger.debug('Project base path not available yet');
       return false;
     }
 
@@ -172,18 +172,18 @@ function ScopeManagement({
     const bookVerses = versificationData?.[bookCode.toUpperCase()];
 
     if (!bookVerses) {
-      logger.log(`No versification data for ${bookCode.toUpperCase()}, available keys:`, Object.keys(versificationData?.maxVerses || {}));
+      logger.debug(`No versification data for ${bookCode.toUpperCase()}, available keys:`, Object.keys(versificationData?.maxVerses || {}));
       return false;
     }
     const chapterIndex = parseInt(normalizedChapterNumber, 10) - 1;
     if (chapterIndex < 0 || chapterIndex >= bookVerses.length) {
-      logger.log(`Invalid chapter index: ${chapterIndex} for ${normalizedBookCode}`);
+      logger.debug(`Invalid chapter index: ${chapterIndex} for ${normalizedBookCode}`);
       return false;
     }
 
     const totalVerses = parseInt(bookVerses[chapterIndex], 10);
     if (!totalVerses || totalVerses <= 0) {
-      logger.log(`Invalid verse count: ${totalVerses}`);
+      logger.debug(`Invalid verse count: ${totalVerses}`);
       return false;
     }
 

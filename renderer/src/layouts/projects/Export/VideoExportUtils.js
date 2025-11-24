@@ -2,7 +2,7 @@ import * as logger from '../../../logger';
 
 const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
   try {
-    logger.info(`Building updated chapter ${chapterNumber}...`);
+    logger.debug(`Building updated chapter ${chapterNumber}...`);
 
     const chapterMarker = `\\c ${chapterNumber}`;
     const chapterIndex = originalUSFM.indexOf(chapterMarker);
@@ -43,7 +43,7 @@ const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
 
     const updatedUSFM = beforeChapter + newChapterContent + afterChapter;
 
-    logger.info(`Built updated chapter ${chapterNumber}`);
+    logger.debug(`Built updated chapter ${chapterNumber}`);
     return updatedUSFM;
   } catch (err) {
     logger.error('Error building updated USFM:', err);
@@ -53,10 +53,10 @@ const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
 
 const mergeUSFMWithJSON = (originalUSFM, jsonData) => {
   try {
-    logger.info('Merging USFM with JSON updates...');
+    logger.debug('Merging USFM with JSON updates...');
 
     const updatedChapterNumbers = Object.keys(jsonData);
-    logger.info(`Chapters to update: ${updatedChapterNumbers.join(', ')}`);
+    logger.debug(`Chapters to update: ${updatedChapterNumbers.join(', ')}`);
 
     let mergedUSFM = originalUSFM;
 
@@ -65,7 +65,7 @@ const mergeUSFMWithJSON = (originalUSFM, jsonData) => {
 
       if (jsonChapter.verses) {
         mergedUSFM = buildUpdatedUSFM(mergedUSFM, jsonChapter, chapterNum);
-        logger.info(`Updated chapter ${chapterNum}`);
+        logger.debug(`Updated chapter ${chapterNum}`);
       }
     });
 
@@ -93,7 +93,6 @@ export const exportVideoNormal = async (
   const { folderPath, project, checkZip } = ExportStates;
 
   try {
-    logger.info('Starting video export (Normal - as-is)...');
     setTotalExports(3);
     setTotalExported(1);
 
@@ -151,7 +150,6 @@ export const exportVideoSynchronized = async (
   const { folderPath, project, checkZip } = ExportStates;
 
   try {
-    logger.info('Starting video export (Synchronized - USFM with \\vp markers)...');
     setTotalExports(6);
     setTotalExported(1);
 
@@ -187,7 +185,7 @@ export const exportVideoSynchronized = async (
                 );
 
                 fs.writeFileSync(usfmPath, updatedUSFM, 'utf8');
-                logger.info(`✓ Updated USFM for ${bookFolder} (with \\vp markers)`);
+                logger.debug(`Updated USFM for ${bookFolder}`);
               } else {
                 logger.warn(`No original USFM found for ${bookFolder}, skipping`);
               }
@@ -200,7 +198,7 @@ export const exportVideoSynchronized = async (
     }
     setTotalExported(3);
 
-    logger.info('Removing JSON structure files from export...');
+    logger.debug('Removing JSON structure files from export...');
     const exportVideoPath = path.join(exportPath, 'video', 'ingredients');
     if (fs.existsSync(exportVideoPath)) {
       const bookFolders = fs.readdirSync(exportVideoPath);
@@ -208,7 +206,7 @@ export const exportVideoSynchronized = async (
         const jsonFilePath = path.join(exportVideoPath, bookFolder, `${bookFolder.toLowerCase()}.json`);
         if (fs.existsSync(jsonFilePath)) {
           fs.unlinkSync(jsonFilePath);
-          logger.info(`Deleted ${bookFolder.toLowerCase()}.json from export`);
+          logger.debug(`Deleted ${bookFolder.toLowerCase()}.json from export`);
         }
       });
     }

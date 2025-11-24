@@ -61,7 +61,7 @@ const normalizeVerseData = (verses) => {
     }
 
     if (isPreCombined) {
-      logger.info(`Verse ${verse.verseNumber} marked as pre-combined (no verseSegments)`);
+      logger.log(`Verse ${verse.verseNumber} marked as pre-combined (no verseSegments)`);
     }
 
     return {
@@ -91,17 +91,16 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
         && allStructure[bookIdUpper][chapterKey].verses) {
         const normalizedVerses = normalizeVerseData(allStructure[bookIdUpper][chapterKey].verses);
 
-        logger.info(`Loaded verse structure from ${bookIdLower}.json for chapter ${chapterKey}`);
-        logger.info(`Found ${normalizedVerses.length} verses in structure`);
+        logger.debug(`Loaded verse structure from ${bookIdLower}.json for chapter ${chapterKey}`);
         return {
           success: true,
           verses: normalizedVerses,
           source: `${bookIdLower}.json`,
         };
       }
-      logger.info(`Chapter ${chapterKey} not found in ${bookIdLower}.json structure`);
+      logger.debug(`Chapter ${chapterKey} not found in ${bookIdLower}.json structure`);
     } else {
-      logger.info(`${bookIdLower}.json not found at ${structureFile}`);
+      logger.debug(`${bookIdLower}.json not found at ${structureFile}`);
     }
 
     return { success: false, verses: null, source: null };
@@ -124,7 +123,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
     );
 
     if (!fs.existsSync(usfmPath)) {
-      logger.info('USFM file not found');
+      logger.debug('USFM file not found');
       return {
         success: false, bookContent: null, verses: null, source: null,
       };
@@ -155,13 +154,13 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
       };
     }
 
-    logger.info(`Found ${chapterData.contents.length} verses in USFM for chapter ${chapter}`);
+    logger.debug(`Found ${chapterData.contents.length} verses in USFM for chapter ${chapter}`);
 
     const versesWithPreCombinedFlag = chapterData.contents.map((verse) => {
       const isRangeVerse = verse.verseNumber && verse.verseNumber.includes('-');
 
       if (isRangeVerse) {
-        logger.info(`Found pre-combined verse ${verse.verseNumber} in USFM`);
+        logger.debug(`Found pre-combined verse ${verse.verseNumber} in USFM`);
         return {
           ...verse,
           isPreCombined: true,
@@ -176,7 +175,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
       };
     });
 
-    logger.info('Successfully loaded verses from USFM file');
+    logger.debug('Successfully loaded verses from USFM file');
     return {
       success: true,
       bookContent,
@@ -193,7 +192,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
 
 const loadVersesFromVersification = async (projectName, username, bookId, chapter) => {
   try {
-    logger.info('Attempting to load from versification.json');
+    logger.debug('Attempting to load from versification.json');
 
     const value = await readFile({
       projectname: projectName,
@@ -243,8 +242,7 @@ const loadVersesFromVersification = async (projectName, username, bookId, chapte
         success: false, bookContent, verses: null, source: null,
       };
     }
-
-    logger.info('Loaded verses from versification.json (empty text)');
+    logger.debug('Loaded verses from versification.json (empty text)');
     return {
       success: true,
       bookContent,
@@ -317,7 +315,7 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
     }
 
     const videoFiles = fs.readdirSync(videoPath);
-    logger.info('Scanning for video files:', {
+    logger.debug('Scanning for video files:', {
       videoPath,
       fileCount: videoFiles.length,
       chapter: chapter.toString(),
@@ -338,7 +336,7 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
         const fileTakeNumber = parts[2];
         const isDefault = parts[3] === 'default';
 
-        logger.info(`  Checking video: ${fileName}`, {
+        logger.debug(`  Checking video: ${fileName}`, {
           fileChapter,
           fileVerseNumber,
           targetChapter: chapter.toString(),
@@ -358,7 +356,7 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
             }
 
             attachedCount += 1;
-            logger.info(`Attached video to verse ${updatedVerses[verseIndex].verseNumber}:`, {
+            logger.debug(`Attached video to verse ${updatedVerses[verseIndex].verseNumber}:`, {
               verse: updatedVerses[verseIndex].verseNumber,
               file: fileName,
               take,
@@ -373,14 +371,14 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
             });
           }
         } else {
-          logger.info(`Skipping video from different chapter: ${fileChapter} (current: ${chapter})`);
+          logger.debug(`Skipping video from different chapter: ${fileChapter} (current: ${chapter})`);
         }
       } else {
         logger.warn(`Invalid video filename format: ${fileName}`);
       }
     });
 
-    logger.info('Video attachment complete:', {
+    logger.debug('Video attachment complete:', {
       total: videoFiles.length,
       attached: attachedCount,
       skipped: skippedCount,
@@ -473,7 +471,7 @@ const VideoEditor = ({ editor }) => {
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        logger.info('Video file deleted:', filePath);
+        logger.log('Video file deleted:', filePath);
       }
 
       const updatedContent = videoContent.map((item) => {
@@ -542,7 +540,7 @@ const VideoEditor = ({ editor }) => {
 
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          logger.info('Video deleted from recorder:', filePath);
+          logger.log('Video deleted from recorder:', filePath);
         }
 
         const updatedContent = videoContent.map((item) => {
@@ -577,7 +575,7 @@ const VideoEditor = ({ editor }) => {
         const fs = window.require('fs');
         if (fs.existsSync(model.actionData.filePath)) {
           fs.unlinkSync(model.actionData.filePath);
-          logger.info('Deleted existing video for re-recording');
+          logger.log('Deleted existing video for re-recording');
         }
       } catch (err) {
         setNotify('failure');
@@ -627,11 +625,6 @@ const VideoEditor = ({ editor }) => {
                   _books.push(bookId.toUpperCase());
                   const fs = window.require('fs');
                   const path = require('path');
-
-                  logger.info('='.repeat(60));
-                  logger.info(`LOADING VERSES FOR ${bookId.toUpperCase()} CHAPTER ${chapter}`);
-                  logger.info('='.repeat(60));
-
                   const bookFolder = path.join(
                     projectsDir,
                     'video',
@@ -658,12 +651,12 @@ const VideoEditor = ({ editor }) => {
                   );
 
                   if (structureResult.success) {
-                    logger.info('Using saved verse structure, fetching text from USFM...');
+                    logger.debug('Using saved verse structure, fetching text from USFM...');
 
                     const usfmResult = loadVersesFromUSFM(projectsDir, bookId, chapter);
 
                     if (usfmResult.success) {
-                      logger.info('Merging structure with USFM text');
+                      logger.debug('Merging structure with USFM text');
                       finalVerses = updateVerseTextsFromUSFM(
                         structureResult.verses,
                         usfmResult.bookContent,
@@ -677,7 +670,7 @@ const VideoEditor = ({ editor }) => {
                       dataSource = `${bookId.toLowerCase()}.json`;
                     }
                   } else {
-                    logger.info('No structure found, trying USFM...');
+                    logger.debug('No structure found, trying USFM...');
                     const usfmResult = loadVersesFromUSFM(projectsDir, bookId, chapter);
 
                     if (usfmResult.success) {
@@ -708,22 +701,16 @@ const VideoEditor = ({ editor }) => {
                       }
                     }
                   }
-
-                  logger.info('='.repeat(60));
-                  logger.info(`DATA SOURCE: ${dataSource}`);
-                  logger.info(`VERSES LOADED: ${finalVerses.length}`);
-                  logger.info('='.repeat(60));
-
                   setOriginalBookContent(bookContent);
 
-                  logger.info('Starting video attachment process...');
+                  logger.debug('Starting video attachment process...');
                   const versesWithVideos = attachVideosToVerses(
                     finalVerses,
                     chapterFolder,
                     chapter,
                   );
 
-                  logger.info('Video attachment complete, updating state...');
+                  logger.debug('Video attachment complete, updating state...');
 
                   setVideoPath(chapterFolder);
                   setVideoCurrentChapter({
