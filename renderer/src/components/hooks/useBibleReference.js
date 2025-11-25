@@ -27,6 +27,7 @@ export const useBibleReference = ({
           path.join(projectPath, 'ingredients', 'versification.json'),
           path.join(projectPath, 'audio', 'ingredients', 'versification.json'),
           path.join(projectPath, 'text', 'ingredients', 'versification.json'),
+          path.join(projectPath, 'video', 'ingredients', 'versification.json'),
         ];
 
         const versificationPath = possiblePaths.find((p) => fs.existsSync(p)) || null;
@@ -113,6 +114,7 @@ export const useBibleReference = ({
   }, [bookId, chapter, versificationData]);
 
   const onChangeBook = useCallback((bookKey) => {
+    if (!bookKey) { return; }
     const newBookKey = bookKey.toLowerCase();
     setBookId(newBookKey);
     setChapter('1');

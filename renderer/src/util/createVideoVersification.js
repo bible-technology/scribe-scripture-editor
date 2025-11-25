@@ -6,7 +6,7 @@ import packageInfo from '../../../package.json';
 const path = require('path');
 const md5 = require('md5');
 
-export const createAudioVersification = (
+export const createVideoVersification = (
   books,
   username,
   project,
@@ -17,9 +17,9 @@ export const createAudioVersification = (
   call,
   importedFiles,
 ) => {
-  logger.debug('createAudioVersification.js', 'In createAudioVersification');
+  logger.debug('createVideoVersification.js', 'In createVideoVersification');
   const newpath = localStorage.getItem('userPath');
-  const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.projectName}_${id}`, 'audio', 'ingredients');
+  const folder = path.join(newpath, packageInfo.name, 'users', username, 'projects', `${project.projectName}_${id}`, 'video', 'ingredients');
   const schemes = [
     { name: 'eng', file: 'eng.json' },
     { name: 'org', file: 'org.json' },
@@ -31,17 +31,17 @@ export const createAudioVersification = (
   return new Promise((resolve) => {
     schemes.forEach(async (scheme) => {
       if (versification.toLowerCase() === scheme.name) {
-        logger.debug('createAudioVersification.js', 'Creating the files with selected scheme');
+        logger.debug('createVideoVersification.js', 'Creating the files with selected scheme');
         // eslint-disable-next-line import/no-dynamic-require
         const file = require(`../lib/versification/${scheme.file}`);
         const fs = window.require('fs');
         if (!fs.existsSync(folder)) {
           fs.mkdirSync(folder, { recursive: true });
         }
-        logger.debug('createAudioVersification.js', 'Creating versification.json file in ingredients');
+        logger.debug('createVideoVersification.js', 'Creating versification.json file in ingredients');
         await fs.writeFileSync(path.join(folder, 'versification.json'), JSON.stringify(file));
         const stats = fs.statSync(path.join(folder, 'versification.json'));
-        ingredients[path.join('audio', 'ingredients', 'versification.json')] = {
+        ingredients[path.join('video', 'ingredients', 'versification.json')] = {
           checksum: {
             md5: md5(file),
           },
@@ -50,12 +50,12 @@ export const createAudioVersification = (
           role: 'x-versification',
         };
         if (call === 'edit' && currentBurrito?.copyright?.shortStatements && (copyright.licence).length <= 500) {
-          logger.debug('createAudioVersification.js', 'Won\'t create license.md file in ingredients and update the current shortStatements');
+          logger.debug('createVideoVersification.js', 'Won\'t create license.md file in ingredients and update the current shortStatements');
         } else {
-          logger.debug('createAudioVersification.js', 'Creating license.md file in ingredients');
+          logger.debug('createCreateVersification.js', 'Creating license.md file in ingredients');
           await fs.writeFileSync(path.join(folder, 'license.md'), copyright.licence);
           const copyrightStats = fs.statSync(path.join(folder, 'license.md'));
-          ingredients[path.join('audio', 'ingredients', 'license.md')] = {
+          ingredients[path.join('video', 'ingredients', 'license.md')] = {
             checksum: {
               md5: md5(file),
             },
@@ -67,21 +67,21 @@ export const createAudioVersification = (
         const settings = {
           version: environment.AG_SETTING_VERSION,
           project: {
-            audioTranslation: {
+            videoTranslation: {
               // scriptDirection: direction,
-              starred: call === 'edit' ? currentBurrito.project.audioTranslation.starred : false,
-              isArchived: call === 'edit' ? currentBurrito.project.audioTranslation.isArchived : false,
+              starred: call === 'edit' ? currentBurrito.project.videoTranslation.starred : false,
+              isArchived: call === 'edit' ? currentBurrito.project.videoTranslation.isArchived : false,
               versification,
               description: project.description,
               copyright: copyright.title,
               lastSeen: moment().format(),
-              refResources: call === 'edit' ? currentBurrito.project.audioTranslation.refResources : [],
-              bookMarks: call === 'edit' ? currentBurrito.project.audioTranslation.bookMarks : [],
+              refResources: call === 'edit' ? currentBurrito.project.videoTranslation.refResources : [],
+              bookMarks: call === 'edit' ? currentBurrito.project.videoTranslation.bookMarks : [],
               font: '',
               fontSize: 1,
               navigationHistory: [
                 String(
-                  currentBurrito?.project?.audioTranslation?.navigationHistory?.[0]
+                  currentBurrito?.project?.videoTranslation?.navigationHistory?.[0]
                   || importedFiles?.[0]?.id
                   || books?.[0]
                   || '',
@@ -96,10 +96,10 @@ export const createAudioVersification = (
         if (call === 'edit') {
           settings.sync = currentBurrito?.sync;
         }
-        logger.debug('createAudioVersification.js', `Creating ${environment.PROJECT_SETTING_FILE} file in ingredients`);
+        logger.debug('createVideoVersification.js', `Creating ${environment.PROJECT_SETTING_FILE} file in ingredients`);
         await fs.writeFileSync(path.join(folder, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
         const stat = fs.statSync(path.join(folder, environment.PROJECT_SETTING_FILE));
-        ingredients[path.join('audio', 'ingredients', environment.PROJECT_SETTING_FILE)] = {
+        ingredients[path.join('video', 'ingredients', environment.PROJECT_SETTING_FILE)] = {
           checksum: {
             md5: md5(settings),
           },
@@ -107,7 +107,7 @@ export const createAudioVersification = (
           size: stat.size,
           role: 'x-scribe',
         };
-        logger.debug('createAudioVersification.js', 'Returning the ingredients data');
+        logger.debug('createVideoVersification.js', 'Returning the ingredients data');
         resolve(ingredients);
       }
     });

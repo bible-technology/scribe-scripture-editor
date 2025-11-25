@@ -13,6 +13,55 @@ const initialBook = 'gen';
 const initialChapter = '1';
 const initialVerse = '1';
 
+const parseVerseFromFilename = (filename, fileExtension) => {
+  const pattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${fileExtension}$`);
+  const match = filename.match(pattern);
+  if (!match) {
+    return null;
+  }
+  const verseStr = match[1];
+
+  if (verseStr.includes('-')) {
+    const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
+    const verses = [];
+    for (let i = start; i <= end; i++) {
+      verses.push(i);
+    }
+    return verses;
+  }
+
+  return [parseInt(verseStr, 10)];
+};
+
+const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
+  if (!fs.existsSync(chapterMediaPath)) {
+    return { recordedVerses: 0, recordedFiles: 0, coveredVerses: [] };
+  }
+
+  try {
+    const files = fs.readdirSync(chapterMediaPath);
+    const recordedVerseSet = new Set();
+    let recordedFiles = 0;
+
+    files.forEach((file) => {
+      const verses = parseVerseFromFilename(file, fileExtension);
+      if (verses) {
+        recordedFiles += 1;
+        verses.forEach((v) => recordedVerseSet.add(v));
+      }
+    });
+
+    return {
+      recordedVerses: recordedVerseSet.size,
+      recordedFiles,
+      coveredVerses: Array.from(recordedVerseSet).sort((a, b) => a - b),
+    };
+  } catch (error) {
+    logger.error('Error reading chapter media path:', error);
+    return { recordedVerses: 0, recordedFiles: 0, coveredVerses: [] };
+  }
+};
+
 function ScopeManagement({
   metadata, currentScope, setCurrentScope, backendScope, projectName, projectId,
 }) {
@@ -37,7 +86,9 @@ function ScopeManagement({
 
   const fs = window.require('fs');
   const path = window.require('path');
-
+  const projectType = metadata?.type?.flavorType?.flavor?.name;
+  const ingredientsFolder = projectType === 'videoTranslation' ? 'video' : 'audio';
+  const fileExtension = projectType === 'videoTranslation' ? 'mp4' : 'mp3';
   useEffect(() => {
     const loadVersification = async () => {
       try {
@@ -50,7 +101,7 @@ function ScopeManagement({
         const projectFolderName = `${projectName}_${projectId}`;
         const projectBasePath = path.join(baseProjectsDir, projectFolderName);
         setProjectBasePath(projectBasePath);
-        const versificationPath = path.join(projectBasePath, 'audio', 'ingredients', 'versification.json');
+        const versificationPath = path.join(projectBasePath, ingredientsFolder, 'ingredients', 'versification.json');
         if (fs.existsSync(versificationPath)) {
           const data = JSON.parse(fs.readFileSync(versificationPath, 'utf8'));
           setVersificationData(data.maxVerses || {});
@@ -59,11 +110,11 @@ function ScopeManagement({
           if (!fs.existsSync(projectBasePath)) {
             logger.error('Project directory does not exist:', projectBasePath);
           }
-          const audioDir = path.join(projectBasePath, 'audio');
-          if (!fs.existsSync(audioDir)) {
-            logger.error('Audio directory does not exist:', audioDir);
+          const mediaDir = path.join(projectBasePath, ingredientsFolder);
+          if (!fs.existsSync(mediaDir)) {
+            logger.error('Audio/Video directory does not exist:', mediaDir);
           }
-          const ingredientsDir = path.join(projectBasePath, 'audio', 'ingredients');
+          const ingredientsDir = path.join(projectBasePath, ingredientsFolder, 'ingredients');
           if (!fs.existsSync(ingredientsDir)) {
             logger.error('Ingredients directory does not exist:', ingredientsDir);
           }
@@ -100,70 +151,61 @@ function ScopeManagement({
 
   const checkChapterCompletion = (bookCode, chapterNumber) => {
     if (!projectBasePath) {
-      logger.log('Project base path not available yet');
+      logger.debug('Project base path not available yet');
       return false;
     }
 
     // Ensure consistent case handling
     const normalizedBookCode = bookCode.toLowerCase();
     const normalizedChapterNumber = String(parseInt(chapterNumber, 10));
-
-    const audioPath = path.join(
+    const mediaPath = path.join(
       projectBasePath,
-      'audio',
+      ingredientsFolder,
       'ingredients',
       normalizedBookCode.toUpperCase(),
       normalizedChapterNumber,
     );
 
-    if (!fs.existsSync(audioPath)) {
+    if (!fs.existsSync(mediaPath)) {
       return false;
     }
     const bookVerses = versificationData?.[bookCode.toUpperCase()];
 
     if (!bookVerses) {
-      logger.log(`No versification data for ${bookCode.toUpperCase()}, available keys:`, Object.keys(versificationData?.maxVerses || {}));
+      logger.debug(`No versification data for ${bookCode.toUpperCase()}, available keys:`, Object.keys(versificationData?.maxVerses || {}));
       return false;
     }
     const chapterIndex = parseInt(normalizedChapterNumber, 10) - 1;
     if (chapterIndex < 0 || chapterIndex >= bookVerses.length) {
-      logger.log(`Invalid chapter index: ${chapterIndex} for ${normalizedBookCode}`);
+      logger.debug(`Invalid chapter index: ${chapterIndex} for ${normalizedBookCode}`);
       return false;
     }
 
     const totalVerses = parseInt(bookVerses[chapterIndex], 10);
     if (!totalVerses || totalVerses <= 0) {
-      logger.log(`Invalid verse count: ${totalVerses}`);
+      logger.debug(`Invalid verse count: ${totalVerses}`);
       return false;
     }
 
-    // Check if default take exists for each verse
-    let foundFiles = 0;
-    for (let verse = 1; verse <= totalVerses; verse++) {
-      const audioFile = `${normalizedChapterNumber}_${verse}_1_default.mp3`;
-      const audioFilePath = path.join(audioPath, audioFile);
+    const { recordedVerses } = countRecordedVersesFromFiles(
+      mediaPath,
+      fileExtension,
+      fs,
+    );
 
-      if (fs.existsSync(audioFilePath)) {
-        foundFiles += 1;
-      } else {
-        logger.warn(`Missing audio file: ${audioFilePath}`);
-      }
-    }
-
-    const isComplete = foundFiles === totalVerses;
-    logger.info(`${normalizedBookCode} chapter ${normalizedChapterNumber}: ${foundFiles}/${totalVerses} files found. Complete: ${isComplete}`);
+    const isComplete = recordedVerses === totalVerses;
     return isComplete;
   };
 
-  const checkBookCompletion = (bookCode, versificationDataRef) => {
+  const checkBookCompletion = (bookCode) => {
     const normalizedBookCode = bookCode.toLowerCase();
-    const bookVerses = versificationDataRef[bookCode.toUpperCase()];
+    const bookVerses = versificationData[bookCode.toUpperCase()];
     if (!bookVerses) {
       return false;
     }
     for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
       const chapterNumber = chapterIndex + 1; // Convert to 1-based chapter number
-      if (!checkChapterCompletion(normalizedBookCode, chapterNumber.toString(), versificationDataRef)) {
+      if (!checkChapterCompletion(normalizedBookCode, chapterNumber.toString())) {
         return false;
       }
     }
@@ -173,37 +215,41 @@ function ScopeManagement({
 
   const buildCompletionMap = () => {
     if (!projectBasePath || !versificationData || Object.keys(versificationData).length === 0) {
-      logger.log('Not ready to build completion map yet - missing data');
       return;
     }
+
     const completion = {};
     const bookCompletionTemp = {};
+
     bookList?.forEach((book) => {
       const bookCode = book.key.toUpperCase();
       const normalizedBookCode = book.key.toLowerCase();
       const isInScope = bookCode in currentScope;
       const isDisabled = backendScope && bookCode in backendScope;
+
       if (!isInScope) {
         return;
       }
       if (!isDisabled) {
         return;
       }
+
       completion[normalizedBookCode] = {};
       const bookVerses = versificationData[bookCode];
+
       if (!bookVerses) {
         bookCompletionTemp[bookCode] = false;
         return;
       }
-      const bookAudioPath = path.join(
+
+      const bookMediaPath = path.join(
         projectBasePath,
-        'audio',
+        ingredientsFolder,
         'ingredients',
         bookCode,
       );
 
-      if (!fs.existsSync(bookAudioPath)) {
-        // Still create completion entries but mark as incomplete
+      if (!fs.existsSync(bookMediaPath)) {
         for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
           const chapterNumber = (chapterIndex + 1).toString();
           const normalizedChapterKey = String(parseInt(chapterNumber, 10));
@@ -212,14 +258,17 @@ function ScopeManagement({
         bookCompletionTemp[bookCode] = false;
         return;
       }
+
       for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
         const chapterNumber = (chapterIndex + 1).toString();
-        const isFullyRecorded = checkChapterCompletion(normalizedBookCode, chapterNumber, versificationData);
+        const isFullyRecorded = checkChapterCompletion(normalizedBookCode, chapterNumber);
         const normalizedChapterKey = String(parseInt(chapterNumber, 10));
         completion[normalizedBookCode][normalizedChapterKey] = { fullyRecorded: isFullyRecorded };
       }
-      bookCompletionTemp[bookCode] = checkBookCompletion(normalizedBookCode, versificationData);
+
+      bookCompletionTemp[bookCode] = checkBookCompletion(normalizedBookCode);
     });
+
     setCompletionMap(completion);
     setBookCompletion(bookCompletionTemp);
   };
@@ -227,6 +276,9 @@ function ScopeManagement({
   const handleChangeBookToggle = (event) => {
     setBookFilter(event.target.value);
     const bookObj = {};
+    if (chapterFilter) {
+      setChapterFilter('');
+    }
     if (event.target.value === 'all') {
       bookList.forEach((book) => {
         bookObj[book.key.toUpperCase()] = [];
@@ -262,6 +314,9 @@ function ScopeManagement({
   const handleSelectBook = (e, book) => {
     if (bookFilter) {
       setBookFilter('');
+    }
+    if (chapterFilter) {
+      setChapterFilter('');
     }
     const bookCode = book.key.toUpperCase();
     setCurrentScope((prev) => {
@@ -345,16 +400,21 @@ function ScopeManagement({
 
   useEffect(() => {
     if (metadata?.type?.flavorType?.currentScope) {
-      const scopeObj = metadata?.type?.flavorType?.currentScope;
-      setSelectedChaptersSet(new Set(scopeObj[Object.keys(scopeObj)[0]]) || new Set([]));
-      const bookCode = Object.keys(scopeObj)[0];
-      onChangeBook(bookCode.toLowerCase(), bookCode.toLowerCase());
+      const scopeObj = metadata.type.flavorType.currentScope;
+      const bookKeys = Object.keys(scopeObj);
+      if (bookKeys.length > 0) {
+        setSelectedChaptersSet(new Set(scopeObj[bookKeys[0]]) || new Set([]));
+        const bookCode = bookKeys[0];
+        onChangeBook(bookCode.toLowerCase(), bookCode.toLowerCase());
+      } else {
+        setSelectedChaptersSet(new Set());
+        onChangeBook(null);
+      }
       setCurrentScope(scopeObj);
     } else {
       logger.error('ScopeManagement.js', 'Unable to read the scope from burrito');
     }
   }, []);
-
   return (
     <div className="w-full h-full pt-5 px-5">
       <TitleBar>
@@ -475,22 +535,19 @@ function ScopeManagement({
             const isFullyRecorded = completionMap[bookId?.toLowerCase()]?.[normalizedKey]?.fullyRecorded || false;
 
             const totalVerses = versificationData[bookId?.toUpperCase()]?.[parseInt(key, 10) - 1] || 0;
-            let recordedVerses = 0;
-            const chapterAudioPath = path.join(
+            const chapterMediaPath = path.join(
               projectBasePath,
-              'audio',
+              ingredientsFolder,
               'ingredients',
               bookId?.toUpperCase(),
               normalizedKey,
             );
-            if (fs.existsSync(chapterAudioPath)) {
-              for (let verse = 1; verse <= totalVerses; verse++) {
-                const audioFilePath = path.join(chapterAudioPath, `${normalizedKey}_${verse}_1_default.mp3`);
-                if (fs.existsSync(audioFilePath)) {
-                  recordedVerses += 1;
-                }
-              }
-            }
+
+            const { recordedVerses } = countRecordedVersesFromFiles(
+              chapterMediaPath,
+              fileExtension,
+              fs,
+            );
             function getBookButtonClass({ isFullyRecorded, disable, isInScope }) {
               if (isFullyRecorded) {
                 return 'border min-w-8 text-center bg-success text-white font-medium pointer-events-none cursor-default';

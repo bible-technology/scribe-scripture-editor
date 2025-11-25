@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import {
- FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon,
+  FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import localforage from 'localforage';
@@ -51,14 +51,14 @@ export default function ImportProjectPopUp(props) {
       active: false,
       loading: false,
       name: null,
-      action: () => {},
+      action: () => { },
     }
-    });
+  });
   const { action: { FetchProjects } } = useContext(AutographaContext);
   const {
     states: {
       languages,
-    }, actions: {},
+    }, actions: { },
   } = useContext(ProjectContext);
 
   const [importProgress, setImportProgress] = useState({
@@ -67,7 +67,7 @@ export default function ImportProjectPopUp(props) {
     completedSteps: 0,
   });
 
-    const triggerSnackBar = (status, message) => {
+  const triggerSnackBar = (status, message) => {
     setNotify(status);
     setSnackText(message);
     setOpenSnackBar(true);
@@ -79,12 +79,12 @@ export default function ImportProjectPopUp(props) {
     setValid(false);
     closePopUp(false);
     setShow(false);
-    setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
+    setImportProgress((prev) => ({ ...prev, importStarted: false, completedSteps: 0, totalSteps: 4 }))
   }
 
   const openFileDialogSettingData = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside openFileDialogSettingData');
-    const options = importingIsZip ? { properties: ['openFile'], filters: [{name:'zip file', extensions:["zip"]}] } : { properties: ['openDirectory'] };
+    const options = importingIsZip ? { properties: ['openFile'], filters: [{ name: 'zip file', extensions: ["zip"] }] } : { properties: ['openDirectory'] };
     const { dialog } = window.require('@electron/remote');
     const chosenFolder = await dialog.showOpenDialog(options);
     let selectedFolderPath;
@@ -95,13 +95,13 @@ export default function ImportProjectPopUp(props) {
         // Adding 'projects' to check the duplication in the user project resources list
         selectedFolderPath = chosenFolder.filePaths[0]
         // check if zip
-        if(chosenFolder.filePaths[0].endsWith('.zip')) {
+        if (chosenFolder.filePaths[0].endsWith('.zip')) {
           const AdmZip = window.require('adm-zip');
           setImportingIsZip(true)
           const path = require('path');
           const zip = new AdmZip(chosenFolder.filePaths[0]);
-          const extractFileName = chosenFolder.filePaths[0].replace('.zip',"__extracted")
-          zip.extractAllTo(path.join(extractFileName),true);
+          const extractFileName = chosenFolder.filePaths[0].replace('.zip', "__extracted")
+          zip.extractAllTo(path.join(extractFileName), true);
           // change the choosefolder Filepath to new path
           selectedFolderPath = extractFileName
         }
@@ -118,11 +118,11 @@ export default function ImportProjectPopUp(props) {
     setFolderPath(selectedFolderPath);
   };
 
-  const removeExtractedZipDir = async() => {
+  const removeExtractedZipDir = async () => {
     const path = require('path');
     const fs = window.require('fs');
     // delete the extracted zip file after successfull / failed import
-    if(importingIsZip && folderPath) {
+    if (importingIsZip && folderPath) {
       setImportingIsZip(false)
       if (fs.existsSync(path.join(folderPath))) {
         await fs.rmdirSync(path.join(folderPath), { recursive: true }, async (err) => {
@@ -144,16 +144,16 @@ export default function ImportProjectPopUp(props) {
         active: false,
         loading: false,
         name: null,
-        action: () => {},
+        action: () => { },
       }
     });
     setProcessMerge(false)
-    setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
+    setImportProgress((prev) => ({ ...prev, importStarted: false, completedSteps: 0, totalSteps: 4 }))
   };
 
   const callImport = async (updateBurriot) => {
     await modelClose();
-    setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
+    setImportProgress((prev) => ({ ...prev, importStarted: true, completedSteps: prev.completedSteps + 1 }))
     logger.debug('ImportProjectPopUp.js', 'Inside callImport');
     const path = require('path');
     const fs = window.require('fs');
@@ -161,12 +161,12 @@ export default function ImportProjectPopUp(props) {
       const status = await importBurrito(folderPath, value.username, updateBurriot, languages);
       // delete the extracted zip file after successfull / failed import
       await removeExtractedZipDir()
-      setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
+      setImportProgress((prev) => ({ ...prev, importStarted: true, completedSteps: prev.completedSteps + 1 }))
       setOpenSnackBar(true);
       closePopUp(false);
       setNotify(status[0].type);
       setSnackText(status[0].value);
-      setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: 0, totalSteps: 0}))
+      setImportProgress((prev) => ({ ...prev, importStarted: true, completedSteps: 0, totalSteps: 0 }))
       if (status[0].type === 'success') {
         setSbData({});
         close("Success");
@@ -179,7 +179,7 @@ export default function ImportProjectPopUp(props) {
 
   const checkBurritoVersion = () => {
     logger.debug('ImportProjectPopUp.js', 'Checking the burrito version');
-    setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
+    setImportProgress((prev) => ({ ...prev, importStarted: true, completedSteps: prev.completedSteps + 1 }))
     if (burrito?.meta?.version !== sbData?.version) {
       setModel({
         openModel: true,
@@ -193,51 +193,51 @@ export default function ImportProjectPopUp(props) {
   };
 
   // Update startTextTranslationMergeProcess to handle dialog state properly
-const startTextTranslationMergeProcess = async (startOver = false) => {
-  try {
-    if (startOver) {
-      const path = require('path');
-      const fs = window.require('fs');
-      const newpath = localStorage.getItem('userPath');
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-      const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-      const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
-      
-      if (fs.existsSync(projectMergePath)) {
-        fs.rmSync(projectMergePath, { recursive: true, force: true });
-      } else {
-        logger.log(`Folder does not exist: ${projectMergePath}`);
-      }
-    }
+  const startTextTranslationMergeProcess = async (startOver = false) => {
+    try {
+      if (startOver) {
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+        const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
 
-    // This will return true if conflicts found, false if no conflicts
-    const hasConflicts = await mergeTextTranslationProject(
-      folderPath, 
-      currentUser, 
-      setConflictPopup, 
-      setProcessMerge, 
-      sbData, 
-      triggerSnackBar, 
-      startOver
-    );
-    
-    // If no conflicts found, close the import dialog
-    if (!hasConflicts) {
+        if (fs.existsSync(projectMergePath)) {
+          fs.rmSync(projectMergePath, { recursive: true, force: true });
+        } else {
+          logger.debug(`Folder does not exist: ${projectMergePath}`);
+        }
+      }
+
+      // This will return true if conflicts found, false if no conflicts
+      const hasConflicts = await mergeTextTranslationProject(
+        folderPath,
+        currentUser,
+        setConflictPopup,
+        setProcessMerge,
+        sbData,
+        triggerSnackBar,
+        startOver
+      );
+
+      // If no conflicts found, close the import dialog
+      if (!hasConflicts) {
+        setSbData({});
+        setFolderPath();
+        close("NoConflicts");
+      }
+    } catch (err) {
+      logger.error("error in merge process: ", err);
+      triggerSnackBar('error', 'Merge process failed: ' + err.message);
+      setProcessMerge(false);
+
+      // Clear state and close dialog on error
       setSbData({});
       setFolderPath();
-      close("NoConflicts");
+      close("Error");
     }
-  } catch (err) {
-    logger.error("error in merge process: ", err);
-    triggerSnackBar('error', 'Merge process failed: ' + err.message);
-    setProcessMerge(false);
-    
-    // Clear state and close dialog on error
-    setSbData({});
-    setFolderPath();
-    close("Error");
-  }
-};
+  };
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
@@ -248,12 +248,12 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
       const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
       const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
       const projectMergePath = path.join(USFMMergeDirPath, projectDirName);
-      
+
       if (fs.existsSync(projectMergePath)) {
         fs.rmSync(projectMergePath, { recursive: true, force: true });
       }
-    } 
-    else if(model.buttonName === t('label-startover')) {
+    }
+    else if (model.buttonName === t('label-startover')) {
       startTextTranslationMergeProcess(true)
     }
     else {
@@ -262,75 +262,75 @@ const startTextTranslationMergeProcess = async (startOver = false) => {
   };
 
   // Fix 1: Remove the close() call from MergeFunction
-const MergeFunction = async () => {
-  logger.debug('importProjectPopUp.js', 'call for merge');
-  setProcessMerge(true);
-  modelClose();
+  const MergeFunction = async () => {
+    logger.debug('importProjectPopUp.js', 'call for merge');
+    setProcessMerge(true);
+    modelClose();
 
-  try {
-    if (sbData?.burritoType === 'gloss / textStories') {
-      await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
-      setSbData({});
-      close('MergeFunction OBS');
-    } else if (sbData?.burritoType === 'scripture / textTranslation') {      
-      const path = require('path');
-      const fs = window.require('fs');
-      const newpath = localStorage.getItem('userPath');
-      const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
-      const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
-      
-      if (fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
-        setModel({
-          openModel: true,
-          title: "Confirm",
-          confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
-          buttonName: t('label-startover'),
-          buttonName2: {
-            active: true,
-            loading: false,
-            name: t('label-continue'),
-            action: () => startTextTranslationMergeProcess(false),
-          }
-        });
-      } else {
-        await startTextTranslationMergeProcess(false);
+    try {
+      if (sbData?.burritoType === 'gloss / textStories') {
+        await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
+        setSbData({});
+        close('MergeFunction OBS');
+      } else if (sbData?.burritoType === 'scripture / textTranslation') {
+        const path = require('path');
+        const fs = window.require('fs');
+        const newpath = localStorage.getItem('userPath');
+        const USFMMergeDirPath = path.join(newpath, packageInfo.name, 'users', currentUser, '.merge-usfm');
+        const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+
+        if (fs.existsSync(path.join(USFMMergeDirPath, projectDirName))) {
+          setModel({
+            openModel: true,
+            title: "Confirm",
+            confirmMessage: "You already have a conflict resolution in progress. Do you want to continue or start over.",
+            buttonName: t('label-startover'),
+            buttonName2: {
+              active: true,
+              loading: false,
+              name: t('label-continue'),
+              action: () => startTextTranslationMergeProcess(false),
+            }
+          });
+        } else {
+          await startTextTranslationMergeProcess(false);
+        }
       }
+    } catch (err) {
+      logger.error("error merge function: ", err);
+      triggerSnackBar('error', 'Merge process failed: ' + err.message);
+    } finally {
+      setMerge(false);
+      setProcessMerge(false);
     }
-  } catch (err) {
-    logger.error("error merge function: ", err);
-    triggerSnackBar('error', 'Merge process failed: ' + err.message);
-  } finally {
-    setMerge(false);
-    setProcessMerge(false);
-  }
-  
-  // Don't close the dialog here - let the merge process handle it
-  logger.debug('importProjectPopUp.js', 'git merge process done');
-};
+
+    // Don't close the dialog here - let the merge process handle it
+    logger.debug('importProjectPopUp.js', 'git merge process done');
+  };
 
 
   const importProject = async () => {
     logger.debug('ImportProjectPopUp.js', 'Inside importProject');
     if (folderPath) {
-      setImportProgress((prev)=>({...prev, importStarted:true, completedSteps: prev.completedSteps + 1 }))
+      setImportProgress((prev) => ({ ...prev, importStarted: true, completedSteps: prev.completedSteps + 1 }))
       setValid(false);
-       let IsMergeOption = false
+      let IsMergeOption = false
       if (sbData.duplicate === true) {
         logger.warn('ImportProjectPopUp.js', 'Project already available');
         // currently MERGE feature only Enabled for OBS projects
-        if (sbData?.burritoType === 'gloss / textStories' || sbData?.burritoType === 'scripture / textTranslation'){
+        if (sbData?.burritoType === 'gloss / textStories' || sbData?.burritoType === 'scripture / textTranslation') {
           setMerge(true)
-           IsMergeOption = true
+          IsMergeOption = true
         }
         setModel({
           openModel: true,
           title: t('modal-title-replace-resource'),
           confirmMessage: t('dynamic-msg-confirm-replace-resource'),
           buttonName: t('btn-replace'),
-           buttonName2 : {
+          buttonName2: {
             active: IsMergeOption,
             loading: processMerge,
-            name:t('label-merge'),
+            name: t('label-merge'),
             action: () => MergeFunction(),
           }
         });
@@ -349,7 +349,7 @@ const MergeFunction = async () => {
 
   React.useEffect(() => {
     if (open) {
-      setImportProgress((prev)=>({...prev, importStarted:false, completedSteps: 0, totalSteps: 4}))
+      setImportProgress((prev) => ({ ...prev, importStarted: false, completedSteps: 0, totalSteps: 4 }))
       setShow(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -373,11 +373,11 @@ const MergeFunction = async () => {
           static
           open={show}
           // onClose={() => close('X')}
-          onClose={() => {}}
+          onClose={() => { }}
         >
           <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
           <div className="flex items-center justify-center h-screen">
-            <div className="w-5/12 h-3/6 items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
+            <div className="w-[43%] h-3/6 items-center justify-center m-auto z-50 shadow overflow-hidden rounded">
               <div className="relative h-full rounded shadow overflow-hidden bg-white">
                 <div className="flex justify-between items-center bg-secondary">
                   <div className="uppercase bg-secondary text-white py-2 px-2 text-xs tracking-widest leading-snug rounded-tl text-center">
@@ -408,10 +408,10 @@ const MergeFunction = async () => {
                   <div className="p-8 overflow-auto w-full h-full scrollbars-width flex flex-col justify-between">
 
                     <div className="bg-white text-sm text-left tracking-wide">
-                      <div className="flex gap-6">
-                        <h4 className="text-sm font-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-burrito-directory')}</h4>
+                      <div className="flex gap-1">
+                        <h4 className="text-sm fot-base mb-2 text-primary  tracking-wide leading-4  font-light">{t('label-burrito-directory')}</h4>
                         <button title={t('msg-select-dir-for-SB')} type="button" disabled>
-                          <InformationCircleIcon className="h-6 w-6 text-primary" />
+                          <InformationCircleIcon className="h-5 w-5 text-primary" />
                         </button>
                       </div>
                       <div className="flex items-center mb-4">
@@ -439,11 +439,11 @@ const MergeFunction = async () => {
                       {/* check zip or folder */}
                       {!folderPath && (
                         <div className="w-full flex">
-                        <div className="flex flex-row justify-end mr-3">
-                          <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
-                          <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                          <div className="flex flex-row justify-end mr-3">
+                            <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
+                            <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
+                          </div>
                         </div>
-                      </div>
                       )}
 
                     </div>
@@ -472,24 +472,25 @@ const MergeFunction = async () => {
                             value={sbData.burritoType}
                             disabled
                           />
-                          {(sbData.burritoType !== 'scripture / audioTranslation') && (
-                          <label className="inline-flex items-center">
-                            {(sbData?.validate)
-                              ? <CheckIcon className="w-6 h-6 text-green-500 border" />
-                            : <XMarkIcon className="w-6 h-6 text-red-500 border" />}
-                            {(sbData?.validate)
-                              ? <span className="ml-2">{t('dynamic-msg-burrito-validate-import-project')}</span>
-                            : <span className="ml-2 text-red-500">{(sbData?.version) ? t('dynamic-msg-burrito-validation-expected', { version: sbData.version }) : t('dynamic-msg-burrito-validation-failed')}</span>}
-                          </label>
-                        )}
+                          {(sbData.burritoType !== 'scripture / audioTranslation' &&
+                            sbData.burritoType !== 'scripture / videoTranslation') && (
+                              <label className="inline-flex items-center">
+                                {(sbData?.validate)
+                                  ? <CheckIcon className="w-6 h-6 text-green-500 border" />
+                                  : <XMarkIcon className="w-6 h-6 text-red-500 border" />}
+                                {(sbData?.validate)
+                                  ? <span className="ml-2">{t('dynamic-msg-burrito-validate-import-project')}</span>
+                                  : <span className="ml-2 text-red-500">{(sbData?.version) ? t('dynamic-msg-burrito-validation-expected', { version: sbData.version }) : t('dynamic-msg-burrito-validation-failed')}</span>}
+                              </label>
+                            )}
                         </div>
-                      ) }
+                      )}
 
                     <div className="flex gap-6 mb-5 justify-end">
 
                       <button
                         type="button"
-                         onClick={() => {setFolderPath(); setSbData({}); close('cancel')}}
+                        onClick={() => { setFolderPath(); setSbData({}); close('cancel') }}
                         className="py-2 px-6 rounded shadow bg-error text-white uppercase text-xs tracking-widest font-semibold"
                       >
                         {t('btn-cancel')}
@@ -501,8 +502,8 @@ const MergeFunction = async () => {
                             className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                             onClick={() => importProject()}
                           >
-                            {importProgress.importStarted 
-                              ? <LoadingSpinner height='h-4' width='w-4' colorTW='text-white'/>
+                            {importProgress.importStarted
+                              ? <LoadingSpinner height='h-4' width='w-4' colorTW='text-white' />
                               : t('btn-import')}
                           </button>
                         )}
@@ -531,7 +532,7 @@ const MergeFunction = async () => {
         buttonName={model.buttonName}
         closeModal={() => callFunction()}
         buttonName2={model?.buttonName2}
-   
+
       />
     </>
   );

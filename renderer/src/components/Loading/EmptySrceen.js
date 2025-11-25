@@ -43,7 +43,7 @@ export default function EmptyScreen({ call = '' }) {
                 <g />
               </svg>
             </div>
-            {call === 'audio' ? (
+            {call === 'audio' || call === 'video' ? (
               <>
                 <h2 className="mt-8 text-xl lg:text-5xl font-black">
                   {t('label-scope-not-selected')}

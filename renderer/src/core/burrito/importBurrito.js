@@ -97,7 +97,9 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       sb = JSON.stringify(metadata);
     }
     const success = await validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
-    if (success || metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
+    const flavorName = metadata.type?.flavorType?.flavor?.name;
+    if (success || flavorName === 'audioTranslation' || flavorName === 'videoTranslation') {
+      logger.debug('importBurrito.js', 'Burrito file validated successfully or Audio/Video Project');
       result.validate = true;
       logger.debug('importBurrito.js', 'Burrito file validated successfully');
       result.projectName = metadata.identification?.name?.en;
@@ -216,8 +218,9 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
     }
     const success = validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
     // after validate burrito for other than Audio
-    if (success || metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
-      logger.debug('importBurrito.js', 'Burrito file validated successfully or Audio Project');
+    const flavorName = metadata.type?.flavorType?.flavor?.name;
+    if (success || flavorName === 'audioTranslation' || flavorName === 'videoTranslation') {
+      logger.debug('importBurrito.js', 'Burrito file validated successfully or Audio/Video Project');
       let projectName = metadata.identification?.name?.en;
       let id; let foundId = false;
       logger.debug('importBurrito.js', 'Checking for scribe primary key');

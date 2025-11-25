@@ -19,6 +19,60 @@ import { updateJsonJuxta } from './utils/updateJsonJuxta';
 const grammar = require('usfm-grammar');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
 
+export const deleteVideoFiles = async (bookCodesToImport) => {
+  logger.debug('ImportPopUp.js', 'Deleting video files for imported books');
+  const path = window.require('path');
+  const fs = window.require('fs').promises;
+
+  try {
+    const { getDetails } = require('@/components/EditorPage/ObsEditor/utils/getDetails');
+    const { projectsDir } = await getDetails();
+
+    await Promise.all(
+      bookCodesToImport.map(async (bookCode) => {
+        try {
+          const bookFolder = path.join(
+            projectsDir,
+            'video',
+            'ingredients',
+            bookCode.toUpperCase(),
+          );
+
+          const stats = await fs.stat(bookFolder).catch(() => null);
+          if (!stats || !stats.isDirectory()) {
+            return;
+          }
+          const items = await fs.readdir(bookFolder);
+
+          await Promise.all(
+            items.map(async (item) => {
+              const itemPath = path.join(bookFolder, item);
+              const itemStats = await fs.stat(itemPath).catch(() => null);
+
+              if (itemStats?.isDirectory()) {
+                await fs.rm(itemPath, { recursive: true, force: true });
+                logger.debug('ImportPopUp.js', `Deleted chapter folder: ${itemPath}`);
+              }
+            }),
+          );
+
+          logger.debug(
+            'ImportPopUp.js',
+            `Successfully deleted all videos for ${bookCode.toUpperCase()}`,
+          );
+        } catch (err) {
+          logger.error(
+            'ImportPopUp.js',
+            `Error deleting videos for ${bookCode}: ${err.message}`,
+          );
+        }
+      }),
+    );
+  } catch (err) {
+    logger.error('ImportPopUp.js', `Error in deleteVideoFiles: ${err.message}`);
+  }
+};
+
 export default function ImportPopUp(props) {
   const {
     open,
@@ -40,6 +94,7 @@ export default function ImportPopUp(props) {
   const { t } = useTranslation();
   const [labelImportFiles, setLabelImportFiles] = useState(t('label-choose-usfm-files'));
   const [loading, setLoading] = useState(false);
+
   const {
     states: { canonSpecification, importedBookCodes },
     actions: { setCanonSpecification, setImportedBookCodes, setImportedFiles },
@@ -105,7 +160,7 @@ export default function ImportPopUp(props) {
         const { isValid: validUsfm, bookCode: code } = await validateUsfm(fileContent);
         isValid = validUsfm;
         bookCode = code || null;
-      } if (projectType === 'Audio' || projectType === 'Juxta') {
+      } if (projectType === 'Audio' || projectType === 'Juxta' || projectType === 'Video') {
         const file = await fs.readFile(book.path, 'utf8');
         const myUsfmParser = new grammar.USFMParser(file, grammar.LEVEL.RELAXED);
         isValid = myUsfmParser.validate();
@@ -191,7 +246,7 @@ export default function ImportPopUp(props) {
           const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
           if (isValid) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
-            replaceConformation(true);
+            // replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             files.push({ id: bookCode, content: validUSFM });
             bookCodeList.push(bookCode);
@@ -210,7 +265,27 @@ export default function ImportPopUp(props) {
           const isJsonValid = myUsfmParser.validate();
           if (isJsonValid) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
-            replaceConformation(true);
+            // replaceConformation(true);
+            logger.debug('ImportPopUp.js', 'Valid USFM file.');
+            const jsonOutput = myUsfmParser.toJSON();
+            files.push({ id: jsonOutput.book.bookCode, content: usfm });
+            bookCodeList.push(jsonOutput.book.bookCode);
+          } else {
+            logger.warn('ImportPopUp.js', 'Invalid USFM file.');
+            setNotify('failure');
+            setSnackText(t('dynamic-msg-invalid-usfm-file'));
+            setOpenSnackBar(true);
+          }
+          break;
+        }
+
+        case 'Video': {
+          const usfm = await fs.readFile(filePath, 'utf8');
+          const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+          const isJsonValid = myUsfmParser.validate();
+          if (isJsonValid) {
+            // If importing a USFM file then ask user for replace of USFM with the new content or not
+            // replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
@@ -259,7 +334,7 @@ export default function ImportPopUp(props) {
             const isJsonValid = myUsfmParser.validate();
             // if the USFM is valid
             if (isJsonValid) {
-              replaceConformation(true);
+              // replaceConformation(true);
               logger.debug('ImportPopUp.js', 'Valid USFM file.');
               // then we get the book code and we transform our data to our Juxta json file
               const jsonOutput = myUsfmParser.toJSON();
@@ -305,6 +380,13 @@ export default function ImportPopUp(props) {
     });
 
     await Promise.all(fileProcessingPromises);
+    if (call === 'edit' && projectType === 'Video' && bookCodeList.length > 0) {
+      logger.debug('ImportPopUp.js', 'Storing book codes for video deletion after save');
+      window.pendingBookCodesToDeleteVideos = bookCodeList;
+    }
+    if (call === 'edit') {
+      replaceConformation(true);
+    }
 
     const newCanonSpecification = {
       currentScope: bookCodeList,

@@ -220,7 +220,7 @@ const ProjectRowItem = ({
                           )}
                         </Menu.Item>
                         {
-                          project.type === 'Audio'
+                          (project.type === 'Audio' || project.type === 'Video')
                           && (
                             <Menu.Item>
                               {({ active }) => (
