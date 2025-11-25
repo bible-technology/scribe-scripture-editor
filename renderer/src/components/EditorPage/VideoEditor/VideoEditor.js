@@ -61,7 +61,7 @@ const normalizeVerseData = (verses) => {
     }
 
     if (isPreCombined) {
-      logger.log(`Verse ${verse.verseNumber} marked as pre-combined (no verseSegments)`);
+      logger.debug(`Verse ${verse.verseNumber} marked as pre-combined (no verseSegments)`);
     }
 
     return {
@@ -471,7 +471,7 @@ const VideoEditor = ({ editor }) => {
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        logger.log('Video file deleted:', filePath);
+        logger.debug('Video file deleted:', filePath);
       }
 
       const updatedContent = videoContent.map((item) => {
@@ -540,7 +540,7 @@ const VideoEditor = ({ editor }) => {
 
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          logger.log('Video deleted from recorder:', filePath);
+          logger.debug('Video deleted from recorder:', filePath);
         }
 
         const updatedContent = videoContent.map((item) => {
@@ -575,7 +575,7 @@ const VideoEditor = ({ editor }) => {
         const fs = window.require('fs');
         if (fs.existsSync(model.actionData.filePath)) {
           fs.unlinkSync(model.actionData.filePath);
-          logger.log('Deleted existing video for re-recording');
+          logger.debug('Deleted existing video for re-recording');
         }
       } catch (err) {
         setNotify('failure');

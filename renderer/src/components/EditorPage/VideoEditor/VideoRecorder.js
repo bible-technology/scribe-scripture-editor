@@ -240,7 +240,7 @@ const VideoRecorder = ({
       const timestamp = Date.now();
       const videoPath = `file://${path.join(projectPath, filename)}?t=${timestamp}`;
 
-      logger.log('Loading video for playback:', videoPath);
+      logger.debug('Loading video for playback:', videoPath);
 
       setIsPlaying(false);
       setPlaybackTime(0);
@@ -420,7 +420,7 @@ const VideoRecorder = ({
                 dur = video.duration;
                 if (Number.isFinite(dur)) {
                   setVideoDuration(dur);
-                  logger.log('Duration fixed:', dur);
+                  logger.debug('Duration fixed:', dur);
                 } else {
                   setVideoDuration(0);
                 }
@@ -540,7 +540,7 @@ const VideoRecorder = ({
 
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          logger.log('Deleted existing video for re-recording');
+          logger.debug('Deleted existing video for re-recording');
         }
       }
 
