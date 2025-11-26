@@ -151,8 +151,13 @@ const VideoRecorder = ({
         });
         tempStream.getTracks().forEach((track) => track.stop());
 
-        const targetCameraId = selectedCamera || (await getPreferredCamera());
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cams = devices.filter((d) => d.kind === 'videoinput');
+        if (mounted) {
+          setVideoDevices(cams);
+        }
 
+        const targetCameraId = selectedCamera || (await getPreferredCamera());
         const constraints = {
           video: targetCameraId ? {
             deviceId: { exact: targetCameraId },
@@ -235,10 +240,19 @@ const VideoRecorder = ({
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
       const path = require('path');
-      const filename = currentVerseData[currentVerseData.default];
+      const fs = window.require('fs');
+
+      const filename = `${chapter}_${verse}_1_default.mp4`;
+      const fullPath = path.join(projectPath, filename);
+
+      if (!fs.existsSync(fullPath)) {
+        logger.error('Video file does not exist:', fullPath);
+        setError('Video file not found');
+        return;
+      }
 
       const timestamp = Date.now();
-      const videoPath = `file://${path.join(projectPath, filename)}?t=${timestamp}`;
+      const videoPath = `file://${fullPath}?t=${timestamp}`;
 
       logger.debug('Loading video for playback:', videoPath);
 
@@ -348,21 +362,6 @@ const VideoRecorder = ({
       setShowSnackbar(false);
     }, 3000);
   };
-
-  useEffect(() => {
-    async function loadCameras() {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cams = devices.filter((d) => d.kind === 'videoinput');
-      setVideoDevices(cams);
-
-      if (!selectedCamera) {
-        const preferred = await getPreferredCamera();
-        setSelectedCamera(preferred);
-      }
-    }
-
-    loadCameras();
-  }, []);
 
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
@@ -800,8 +799,9 @@ const VideoRecorder = ({
                     {isRecording ? (
                       <StopIcon className="w-8 h-8" fill="currentColor" />
                     ) : (
-                      <PlayIcon className="w-8 h-8" fill="currentColor" />
+                      <div className="w-6 h-6 rounded-full bg-red-600" />
                     )}
+
                   </button>
                 </>
               )}
