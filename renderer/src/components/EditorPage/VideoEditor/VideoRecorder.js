@@ -108,11 +108,16 @@ const VideoRecorder = ({
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('success');
-
-  const currentVerseData = content?.find((v) => v.verseNumber === verse);
-  const hasVideo = currentVerseData?.default && currentVerseData[currentVerseData.default];
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
+
+  const fs = window.require('fs');
+  const path = window.require('path');
+
+  const filename = `${chapter}_${verse}.mp4`;
+  const filePath = path.join(projectPath, filename);
+
+  const hasVideo = fs.existsSync(filePath);
 
   useEffect(() => {
     const fs = window.require('fs');
@@ -318,7 +323,7 @@ const VideoRecorder = ({
         };
       }, 50);
     }
-  }, [currentMode, hasVideo, verse, projectPath, currentVerseData]);
+  }, [currentMode, hasVideo, verse, projectPath]);
   useEffect(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
@@ -777,7 +782,7 @@ const VideoRecorder = ({
                   <div className="relative">
                     <MicrophoneIcon className="w-6 h-6 text-gray-600" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w- h-0.5 bg-red-600 rotate-45" />
+                      <div className="w-4 h-0.5 bg-red-600 rotate-45" />
                     </div>
                   </div>
                 )}
@@ -788,7 +793,7 @@ const VideoRecorder = ({
                 type="button"
                 onClick={handlePreviousVerse}
                 disabled={!hasPreviousVerse() || isRecording}
-                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Previous Verse"
               >
                 <ChevronLeftIcon className="w-6 h-6" />
@@ -837,7 +842,7 @@ const VideoRecorder = ({
                 type="button"
                 onClick={handleNextVerse}
                 disabled={!hasNextVerse() || isRecording}
-                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Next Verse"
               >
                 <ChevronRightIcon className="w-6 h-6" />

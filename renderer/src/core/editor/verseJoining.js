@@ -69,47 +69,41 @@ export const getJoinedVerseRange = (joinedVerseNumber) => {
   };
 };
 
-export const deleteVerseVideos = (verse, videoDirPath) => {
+export const deleteVerseVideos = (chapter, verseNumber, videoDirPath) => {
   try {
     const fs = window.require('fs');
     const path = require('path');
 
-    const videoKeys = Object.keys(verse).filter((key) => key.startsWith('take'));
+    const filename = `${chapter}_${verseNumber}.mp4`;
+    const fullVideoPath = path.join(videoDirPath, filename);
 
-    logger.debug('Deleting videos for verse:', {
-      verseNumber: verse.verseNumber,
-      videoKeys,
-      videoDirPath,
-    });
+    if (fs.existsSync(fullVideoPath)) {
+      fs.unlinkSync(fullVideoPath);
+      logger.debug('Deleted video:', fullVideoPath);
+      return true;
+    }
 
-    let deletedCount = 0;
-    videoKeys.forEach((take) => {
-      const videoFileName = verse[take];
-      const fullVideoPath = path.join(videoDirPath, videoFileName);
-      if (fs.existsSync(fullVideoPath)) {
-        try {
-          fs.unlinkSync(fullVideoPath);
-          logger.debug('Successfully deleted video file:', fullVideoPath);
-          deletedCount += 1;
-        } catch (deleteError) {
-          logger.error('Failed to delete video file:', fullVideoPath, deleteError);
-        }
-      } else {
-        logger.warn('Video file not found:', fullVideoPath);
-      }
-    });
-
-    logger.debug(`Deleted ${deletedCount} video file(s) for verse ${verse.verseNumber}`);
-    return deletedCount > 0;
+    logger.warn('Video file not found:', fullVideoPath);
+    return false;
   } catch (error) {
-    logger.error('Error deleting verse videos:', error);
+    logger.error('Error deleting verse video:', error);
     return false;
   }
 };
 
-export const hasVerseRecordings = (verse) => {
-  if (!verse) { return false; }
-  return Object.keys(verse).some((key) => key.startsWith('take'));
+export const hasVerseRecordings = (chapter, verseNumber, videoDirPath) => {
+  try {
+    const fs = window.require('fs');
+    const path = require('path');
+
+    const filename = `${chapter}_${verseNumber}.mp4`;
+    const fullVideoPath = path.join(videoDirPath, filename);
+
+    return fs.existsSync(fullVideoPath);
+  } catch (error) {
+    logger.error('Error checking verse recording:', error);
+    return false;
+  }
 };
 
 export const readAndParseUSFM = (usfmPath) => {

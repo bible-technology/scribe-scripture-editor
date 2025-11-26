@@ -245,12 +245,20 @@ export const useVerseJoining = ({
       saveVerseStructure(updatedContent).then((saved) => {
         if (saved) {
           try {
-            if (hasVerseRecordings(currentVerse)) {
-              deleteVerseVideos(currentVerse, videoPath);
+            if (hasVerseRecordings(chapter, currentVerse.verseNumber, videoPath)) {
+              deleteVerseVideos(
+                chapter,
+                currentVerse.verseNumber,
+                videoPath,
+              );
               logger.debug('Deleted current verse videos after join');
             }
-            if (hasVerseRecordings(previousVerse)) {
-              deleteVerseVideos(previousVerse, videoPath);
+            if (hasVerseRecordings(chapter, previousVerse.verseNumber, videoPath)) {
+              deleteVerseVideos(
+                chapter,
+                previousVerse.verseNumber,
+                videoPath,
+              );
               logger.debug('Deleted previous verse videos after join');
             }
           } catch (deleteErr) {
@@ -460,8 +468,8 @@ export const useVerseJoining = ({
           logger.debug('Verse structure saved after incremental disjoin');
 
           try {
-            if (hasVerseRecordings(verse)) {
-              deleteVerseVideos(verse, videoPath);
+            if (hasVerseRecordings(chapter, verse.verseNumber, videoPath)) {
+              deleteVerseVideos(chapter, verse.verseNumber, videoPath);
               logger.debug('Deleted joined verse videos after disjoin');
             }
           } catch (deleteErr) {
@@ -499,8 +507,17 @@ export const useVerseJoining = ({
     const { currentVerseIndex, previousVerseIndex } = validation;
     const currentVerse = videoContent[currentVerseIndex];
     const previousVerse = videoContent[previousVerseIndex];
-    const currentHasVideo = hasVerseRecordings(currentVerse);
-    const previousHasVideo = hasVerseRecordings(previousVerse);
+    const currentHasVideo = hasVerseRecordings(
+      chapter,
+      currentVerse.verseNumber,
+      videoPath,
+    );
+
+    const previousHasVideo = hasVerseRecordings(
+      chapter,
+      previousVerse.verseNumber,
+      videoPath,
+    );
 
     if (currentHasVideo || previousHasVideo) {
       const operation = {
@@ -531,7 +548,11 @@ export const useVerseJoining = ({
 
     const { verseIndex } = validation;
     const verse = videoContent[verseIndex];
-    const hasVideo = hasVerseRecordings(verse);
+    const hasVideo = hasVerseRecordings(
+      chapter,
+      verse.verseNumber,
+      videoPath,
+    );
 
     if (hasVideo) {
       const operation = {

@@ -41,7 +41,6 @@ const parseVerseFromFilename = (filename, fileExtension) => {
   return null;
 };
 
-
 const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
   if (!fs.existsSync(chapterMediaPath)) {
     return { recordedVerses: 0, recordedFiles: 0, coveredVerses: [] };
