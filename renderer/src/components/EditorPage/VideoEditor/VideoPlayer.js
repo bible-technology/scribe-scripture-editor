@@ -110,7 +110,7 @@ const VideoPlayer = ({
     e.stopPropagation();
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verseNumber}_1_default.mp4`;
+    const filename = `${chapter}_${verseNumber}.mp4`;
     const filePath = path.join(location, filename);
 
     if (fs.existsSync(filePath)) {

@@ -14,24 +14,33 @@ const initialChapter = '1';
 const initialVerse = '1';
 
 const parseVerseFromFilename = (filename, fileExtension) => {
-  const pattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${fileExtension}$`);
-  const match = filename.match(pattern);
-  if (!match) {
-    return null;
-  }
-  const verseStr = match[1];
+  const audioPattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${fileExtension}$`);
+  const audioMatch = filename.match(audioPattern);
 
-  if (verseStr.includes('-')) {
-    const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
-    const verses = [];
-    for (let i = start; i <= end; i++) {
-      verses.push(i);
+  if (audioMatch) {
+    const verseStr = audioMatch[1];
+    if (verseStr.includes('-')) {
+      const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     }
-    return verses;
+    return [parseInt(verseStr, 10)];
   }
 
-  return [parseInt(verseStr, 10)];
+  const videoPattern = new RegExp(`^(\\d+)_([\\d-]+)\\.${fileExtension}$`);
+  const videoMatch = filename.match(videoPattern);
+
+  if (videoMatch) {
+    const verseStr = videoMatch[2];
+    if (verseStr.includes('-')) {
+      const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    }
+    return [parseInt(verseStr, 10)];
+  }
+
+  return null;
 };
+
 
 const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
   if (!fs.existsSync(chapterMediaPath)) {

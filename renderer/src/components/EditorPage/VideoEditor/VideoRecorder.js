@@ -117,7 +117,7 @@ const VideoRecorder = ({
   useEffect(() => {
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verse}_1_default.mp4`;
+    const filename = `${chapter}_${verse}.mp4`;
     const filePath = path.join(projectPath, filename);
 
     const videoExists = fs.existsSync(filePath);
@@ -241,7 +241,7 @@ const VideoRecorder = ({
       const path = require('path');
       const fs = window.require('fs');
 
-      const filename = `${chapter}_${verse}_1_default.mp4`;
+      const filename = `${chapter}_${verse}.mp4`;
       const fullPath = path.join(projectPath, filename);
 
       try {
@@ -387,7 +387,7 @@ const VideoRecorder = ({
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const filename = `${chapter}_${verse}_1_default.mp4`;
+      const filename = `${chapter}_${verse}.mp4`;
       const filePath = path.join(projectPath, filename);
 
       fs.writeFileSync(filePath, buffer);
@@ -456,7 +456,7 @@ const VideoRecorder = ({
 
   const handleDeleteClick = () => {
     const path = window.require('path');
-    const filename = `${chapter}_${verse}_1_default.mp4`;
+    const filename = `${chapter}_${verse}.mp4`;
     const filePath = path.join(projectPath, filename);
 
     onClose();
@@ -481,7 +481,7 @@ const VideoRecorder = ({
     try {
       const fs = window.require('fs');
       const path = window.require('path');
-      const filename = `${chapter}_${verse}_1_default.mp4`;
+      const filename = `${chapter}_${verse}.mp4`;
       const filePath = path.join(projectPath, filename);
 
       if (fs.existsSync(filePath)) {
@@ -550,7 +550,7 @@ const VideoRecorder = ({
       if (existingVideo) {
         const fs = window.require('fs');
         const path = window.require('path');
-        const filename = `${chapter}_${verse}_1_default.mp4`;
+        const filename = `${chapter}_${verse}.mp4`;
         const filePath = path.join(projectPath, filename);
 
         if (fs.existsSync(filePath)) {
