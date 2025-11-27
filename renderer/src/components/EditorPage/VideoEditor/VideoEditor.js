@@ -43,8 +43,8 @@ const normalizeVerseData = (verses) => {
     const isRangeVerse = verse.verseNumber.includes('-');
 
     const hasVerseSegments = verse.verseSegments
-                            && Array.isArray(verse.verseSegments)
-                            && verse.verseSegments.length > 0;
+      && Array.isArray(verse.verseSegments)
+      && verse.verseSegments.length > 0;
 
     const isPreCombined = verse.isPreCombined === true
       || (isRangeVerse && !hasVerseSegments);
@@ -752,25 +752,28 @@ const VideoEditor = ({ editor }) => {
       {((isLoading || !videoContent) && displyScreen) && <EmptyScreen call="video" />}
       {isLoading && !displyScreen && <LoadingScreen />}
       {videoContent && isLoading === false
-      && (
-        <VideoPlayer
-          verse={verse}
-          location={videoPath}
-          content={videoContent}
-          fontSize={editorFontSize}
-          selectedFont={selectedFont}
-          updateWave={updateVideoWave}
-          onChangeVerse={onChangeVerse}
-          onDeleteVideo={executeDeleteVideo}
-          onDisjoinVerse={onDisjoinVerse}
-          onJoinVerse={onJoinVerse}
-          setOpenModal={setModel}
-          chapter={chapter}
-          bookId={bookId}
-          pendingRecorderReopen={pendingRecorderReopen}
-          setPendingRecorderReopen={setPendingRecorderReopen}
-        />
-      )}
+        && (
+          <VideoPlayer
+            verse={verse}
+            location={videoPath}
+            content={videoContent}
+            fontSize={editorFontSize}
+            selectedFont={selectedFont}
+            updateWave={updateVideoWave}
+            onChangeVerse={onChangeVerse}
+            onDeleteVideo={executeDeleteVideo}
+            onDisjoinVerse={onDisjoinVerse}
+            onJoinVerse={onJoinVerse}
+            setOpenModal={setModel}
+            chapter={chapter}
+            bookId={bookId}
+            pendingRecorderReopen={pendingRecorderReopen}
+            setPendingRecorderReopen={setPendingRecorderReopen}
+            setNotify={setNotify}
+            setSnackText={setSnackText}
+            setOpenSnackBar={setOpenSnackBar}
+          />
+        )}
       <ConfirmationModal
         openModal={model.openModel}
         title={model.title}

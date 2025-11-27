@@ -28,6 +28,9 @@ const VideoPlayer = ({
   bookId,
   pendingRecorderReopen,
   setPendingRecorderReopen,
+  setNotify,
+  setSnackText,
+  setOpenSnackBar,
 }) => {
   const { t } = useTranslation();
 
@@ -286,6 +289,9 @@ const VideoPlayer = ({
           onVerseChange={handleVerseChangeInRecorder}
           setOpenModal={setOpenModal}
           isVisible={isRecorderVisible}
+          setNotify={setNotify}
+          setSnackText={setSnackText}
+          setOpenSnackBar={setOpenSnackBar}
         />
       )}
     </div>
@@ -306,6 +312,10 @@ VideoPlayer.propTypes = {
   bookId: PropTypes.string.isRequired,
   pendingRecorderReopen: PropTypes.object,
   setPendingRecorderReopen: PropTypes.func,
+  setNotify: PropTypes.func.isRequired,
+  setSnackText: PropTypes.func.isRequired,
+  setOpenSnackBar: PropTypes.func.isRequired,
+
 };
 
 VideoPlayer.defaultProps = {
