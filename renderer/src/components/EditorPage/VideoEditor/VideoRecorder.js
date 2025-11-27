@@ -13,6 +13,7 @@ import {
   StopIcon,
   ExclamationCircleIcon,
   TrashIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import * as logger from '../../../logger';
 
@@ -110,6 +111,8 @@ const VideoRecorder = ({
   const [snackbarType, setSnackbarType] = useState('success');
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
+  const [showCameraMenu, setShowCameraMenu] = useState(false);
+  const cameraMenuRef = useRef(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -134,6 +137,22 @@ const VideoRecorder = ({
       setCurrentMode('record');
     }
   }, [chapter, verse, projectPath, mode]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cameraMenuRef.current && !cameraMenuRef.current.contains(event.target)) {
+        setShowCameraMenu(false);
+      }
+    };
+
+    if (showCameraMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCameraMenu]);
 
   useEffect(() => {
     let mounted = true;
@@ -683,27 +702,6 @@ const VideoRecorder = ({
               </div>
             </div>
           )}
-          <div className="mb-4 flex gap-3 items-center">
-            <label className="text-sm font-medium text-gray-700">Camera:</label>
-            <select
-              className="border border-gray-300 rounded p-2"
-              value={selectedCamera || ''}
-              onChange={(e) => {
-                setSelectedCamera(e.target.value);
-                setCameraReady(false);
-                if (streamRef.current) {
-                  streamRef.current.getTracks().forEach((t) => t.stop());
-                }
-              }}
-            >
-              {videoDevices.map((device) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-6" style={{ aspectRatio: '16/9' }}>
             <video
               ref={videoPreviewRef}
@@ -768,101 +766,138 @@ const VideoRecorder = ({
           )}
 
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-center gap-6 pt-4 border-t">
-              <button
-                type="button"
-                onClick={toggleAudio}
-                disabled={!cameraReady || isProcessing || currentMode === 'view'}
-                className="p-4 rounded-full transition-colors bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
-              >
-                {isAudioEnabled ? (
-                  <MicrophoneIcon className="w-6 h-6 text-gray-700" />
-                ) : (
-                  <div className="relative">
-                    <MicrophoneIcon className="w-6 h-6 text-gray-600" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-4 h-0.5 bg-red-600 rotate-45" />
+            <div className="flex items-center pt-4 border-t relative">
+              <div className="flex items-center justify-center gap-6 flex-1">
+                <button
+                  type="button"
+                  onClick={toggleAudio}
+                  disabled={!cameraReady || isProcessing || currentMode === 'view'}
+                  className="p-4 rounded-full transition-colors bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
+                >
+                  {isAudioEnabled ? (
+                    <MicrophoneIcon className="w-6 h-6 text-gray-700" />
+                  ) : (
+                    <div className="relative">
+                      <MicrophoneIcon className="w-6 h-6 text-gray-600" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-4 h-0.5 bg-red-600 rotate-45" />
+                      </div>
                     </div>
-                  </div>
-                )}
-              </button>
-              <div className="w-6" />
-
-              <button
-                type="button"
-                onClick={handlePreviousVerse}
-                disabled={!hasPreviousVerse() || isRecording}
-                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Previous Verse"
-              >
-                <ChevronLeftIcon className="w-6 h-6" />
-              </button>
-              {currentMode === 'record' ? (
-                <button
-                  type="button"
-                  onClick={isRecording ? stopRecording : startRecording}
-                  disabled={!cameraReady || isProcessing || existingVideo}
-                  className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-primary hover:bg-primary-dark text-white'
-                  }`}
-                  title={(() => {
-                    if (isRecording) { return 'Stop recording'; }
-                    if (existingVideo) { return 'Recording exists - delete it first'; }
-                    return 'Start recording';
-                  })()}
-                >
-                  {isRecording ? (
-                    <StopIcon className="w-6 h-6" fill="currentColor" />
-                  ) : (
-
-                    <VideoCameraIcon className="w-6 h-6" />)}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={togglePlayPause}
-                  disabled={!hasVideo}
-                  className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
-                    ? 'bg-success hover:bg-green-700 text-white'
-                    : 'bg-gray-600 text-gray-400'
-                  }`}
-                  title={isPlaying ? 'Pause video' : 'Play video'}
-                >
-                  {isPlaying ? (
-                    <PauseIcon className="w-6 h-6" />
-                  ) : (
-                    <PlayIcon className="w-6 h-6" fill="currentColor" />
                   )}
                 </button>
-              )}
+                <div className="w-6" />
 
-              <button
-                type="button"
-                onClick={handleNextVerse}
-                disabled={!hasNextVerse() || isRecording}
-                className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Next Verse"
-              >
-                <ChevronRightIcon className="w-6 h-6" />
-              </button>
+                <button
+                  type="button"
+                  onClick={handlePreviousVerse}
+                  disabled={!hasPreviousVerse() || isRecording}
+                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Previous Verse"
+                >
+                  <ChevronLeftIcon className="w-6 h-6" />
+                </button>
+                {currentMode === 'record' ? (
+                  <button
+                    type="button"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={!cameraReady || isProcessing || existingVideo}
+                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
+                      ? 'bg-red-600 hover:bg-red-700 text-white'
+                      : 'bg-primary hover:bg-primary-dark text-white'
+                    }`}
+                    title={(() => {
+                      if (isRecording) { return 'Stop recording'; }
+                      if (existingVideo) { return 'Recording exists - delete it first'; }
+                      return 'Start recording';
+                    })()}
+                  >
+                    {isRecording ? (
+                      <StopIcon className="w-6 h-6" fill="currentColor" />
+                    ) : (
 
-              <div className="w-6" />
+                      <VideoCameraIcon className="w-6 h-6" />)}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={togglePlayPause}
+                    disabled={!hasVideo}
+                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
+                      ? 'bg-success hover:bg-green-700 text-white'
+                      : 'bg-gray-600 text-gray-400'
+                    }`}
+                    title={isPlaying ? 'Pause video' : 'Play video'}
+                  >
+                    {isPlaying ? (
+                      <PauseIcon className="w-6 h-6" />
+                    ) : (
+                      <PlayIcon className="w-6 h-6" fill="currentColor" />
+                    )}
+                  </button>
+                )}
 
-              <button
-                type="button"
-                onClick={handleDeleteClick}
-                disabled={!existingVideo || isRecording || isProcessing}
-                className={`p-4 rounded-full transition-all ${existingVideo
-                  ? 'bg-error text-white hover:bg-red-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-                title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
-              >
-                <TrashIcon className="w-6 h-6" />
-              </button>
+                <button
+                  type="button"
+                  onClick={handleNextVerse}
+                  disabled={!hasNextVerse() || isRecording}
+                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Next Verse"
+                >
+                  <ChevronRightIcon className="w-6 h-6" />
+                </button>
 
+                <div className="w-6" />
+
+                <button
+                  type="button"
+                  onClick={handleDeleteClick}
+                  disabled={!existingVideo || isRecording || isProcessing}
+                  className={`p-4 rounded-full transition-all ${existingVideo
+                    ? 'bg-error text-white hover:bg-red-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
+                >
+                  <TrashIcon className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div ref={cameraMenuRef} className="relative ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setShowCameraMenu(!showCameraMenu)}
+                  disabled={currentMode === 'view' || isRecording}
+                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Camera Settings"
+                >
+                  <Cog6ToothIcon className="w-6 h-6" />
+                </button>
+
+                {showCameraMenu && (
+                  <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[250px] z-50">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Select Camera:</p>
+                    {videoDevices.map((device) => (
+                      <button
+                        key={device.deviceId}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCamera(device.deviceId);
+                          setCameraReady(false);
+                          if (streamRef.current) {
+                            streamRef.current.getTracks().forEach((t) => t.stop());
+                          }
+                          setShowCameraMenu(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
+                        }`}
+                      >
+                        {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
