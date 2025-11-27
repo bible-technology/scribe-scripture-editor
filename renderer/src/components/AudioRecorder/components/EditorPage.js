@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const EditorPage = ({
-  content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont,
+  content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont, chapter,
 }) => {
   const path = require('path');
   const [waveUpdate, setWaveUpdate] = useState(false);
@@ -22,21 +22,34 @@ const EditorPage = ({
     if (updateWave) {
       setWaveUpdate(!waveUpdate);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateWave]);
   return (
     <div className="bg-white rounded-md overflow-hidden">
-      {content?.map((mainChunk) => (
-        mainChunk.verseNumber
+      {content?.map((mainChunk) => {
+        const isActive = (() => {
+          const current = Number(verse);
+          const num = mainChunk.verseNumber;
+
+          if (num && typeof num === 'string' && num.includes('-')) {
+            const [start, end] = num.split('-').map(Number);
+            return current >= start && current <= end;
+          }
+
+          return num === verse.toString();
+        })();
+
+        return (
+          mainChunk.verseNumber
           && (
             <div
               role="button"
+              id={`ch${chapter}v${mainChunk.verseNumber}`}
               aria-label="select verse"
               tabIndex={0}
               key={mainChunk.verseNumber}
-              className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
-            border border-gray-200 rounded-lg
-            hover:bg-light cursor-pointe`}
+              className={`relative ${isActive ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
+              border border-gray-200 rounded-lg hover:bg-light cursor-pointer`}
               onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
             >
               <div
@@ -83,7 +96,7 @@ const EditorPage = ({
                   url={location && (mainChunk[mainChunk.default] ? path.join(location, mainChunk[mainChunk.default]) : '')}
                   show={false}
                   interaction={false}
-                  setAudioPlayBack={() => {}}
+                  setAudioPlayBack={() => { }}
                 />
               </div>
               {/* <div className="bg-white mt-5 border border-gray-200 rounded-lg relative">
@@ -122,7 +135,8 @@ const EditorPage = ({
           </div> */}
             </div>
           )
-      ))}
+        );
+      })}
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {/* {verses.map((story, index) => ( */}
         {/* <div
@@ -226,4 +240,5 @@ EditorPage.propTypes = {
   onChangeVerse: PropTypes.any,
   verse: PropTypes.string,
   location: PropTypes.string,
+  chapter: PropTypes.string,
 };
