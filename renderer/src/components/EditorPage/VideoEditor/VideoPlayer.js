@@ -95,22 +95,16 @@ const VideoPlayer = ({
 
   const handlePlayVideoForVerse = (verseNumber, e) => {
     e.stopPropagation();
-
-    const verseData = content?.find((item) => item.verseNumber === verseNumber);
-    const hasVideo = verseData?.default && verseData[verseData.default];
-
-    if (hasVideo) {
-      setCurrentRecordingVerse(verseNumber);
-      setRecorderMode('view');
-      setShowVideoRecorder(true);
-    }
+    setCurrentRecordingVerse(verseNumber);
+    setRecorderMode('view');
+    setShowVideoRecorder(true);
   };
 
   const handleOpenVideoRecorder = (verseNumber, e) => {
     e.stopPropagation();
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verseNumber}_1_default.mp4`;
+    const filename = `${chapter}_${verseNumber}.mp4`;
     const filePath = path.join(location, filename);
 
     if (fs.existsSync(filePath)) {
@@ -177,10 +171,24 @@ const VideoPlayer = ({
     });
   };
 
+  const fs = window.require('fs');
+  const path = window.require('path');
+
+  const doesVideoExistForVerse = (verseNumber) => {
+    const filename = `${chapter}_${verseNumber}.mp4`;
+    const filePath = path.join(location, filename);
+    return fs.existsSync(filePath);
+  };
+
   return (
     <div className="bg-white rounded-md overflow-hidden">
-      {content?.map((mainChunk, index) => (
-        mainChunk.verseNumber && (
+      {content?.map((mainChunk, index) => {
+        const verseNum = mainChunk.verseNumber;
+        if (!verseNum) { return null; }
+
+        const hasVideo = doesVideoExistForVerse(verseNum);
+        return (
+
           <div
             role="button"
             aria-label="select verse"
@@ -196,10 +204,11 @@ const VideoPlayer = ({
               <div className={`flex items-center justify-center w-10 h-8 mr-2 rounded-full text-sm text-white flex-shrink-0 ${isJoinedVerse(mainChunk.verseNumber) ? 'bg-amber-600' : 'bg-primary'
               }`}
               >
-                {mainChunk.verseNumber}
+                {verseNum}
               </div>
               <p
-                className={`m-0 flex-1 text-sm ${isJoinedVerse(mainChunk.verseNumber) ? 'text-amber-900 font-medium' : 'text-gray-500'
+                className={`m-0 flex-1 text-sm ${
+                  isJoinedVerse(verseNum) ? 'text-amber-900 font-medium' : 'text-gray-500'
                 }`}
                 style={{
                   fontFamily: selectedFont || 'sans-serif',
@@ -210,43 +219,44 @@ const VideoPlayer = ({
                 {mainChunk.verseText || ''}
               </p>
 
-              {mainChunk.default && mainChunk[mainChunk.default] ? (
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={(e) => handlePlayVideoForVerse(mainChunk.verseNumber, e)}
-                    className="flex items-center justify-center p-2 rounded-full border-2 border-success text-success hover:bg-success hover:text-white transition-all duration-200"
-                    title="Play recorded video"
-                    aria-label={`Play video for verse ${mainChunk.verseNumber}`}
-                  >
-                    <PlayIcon ne className="w-5 h-5" />
-                  </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
 
+                {hasVideo ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => handlePlayVideoForVerse(verseNum, e)}
+                      className="flex items-center justify-center p-2 rounded-full border-2 border-success text-success hover:bg-success hover:text-white transition-all duration-200"
+                      title="Play recorded video"
+                    >
+                      <PlayIcon className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteVideo(e, verseNum, `${chapter}_${verseNum}.mp4`)}
+                      className="flex items-center justify-center p-2 rounded-full border-2 border-error text-error hover:bg-error hover:text-white transition-all duration-200"
+                      title="Delete recorded video"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
-                    onClick={(e) => handleDeleteVideo(e, mainChunk.verseNumber, mainChunk[mainChunk.default])}
-                    className="flex items-center justify-center p-2 rounded-full border-2 border-error text-error hover:bg-error hover:text-white transition-all duration-200"
-                    title="Delete recorded video"
-                    aria-label={`Delete video for verse ${mainChunk.verseNumber}`}
+                    onClick={(e) => handleOpenVideoRecorder(verseNum, e)}
+                    className="flex items-center justify-center p-2 rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200"
+                    title="Record video for this verse"
                   >
-                    <TrashIcon className="w-5 h-5" />
+                    <VideoCameraIcon className="w-5 h-5" />
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={(e) => handleOpenVideoRecorder(mainChunk.verseNumber, e)}
-                  className="flex items-center justify-center p-2 ml-2 rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 flex-shrink-0"
-                  title="Record video for this verse"
-                  aria-label={`Record video for verse ${mainChunk.verseNumber}`}
-                >
-                  <VideoCameraIcon className="w-5 h-5" />
-                </button>
-              )}
+                )}
+
+              </div>
             </div>
           </div>
-        )
-      ))}
+        );
+      })}
       <VerseContextMenu
         visible={contextMenu.visible}
         x={contextMenu.x}
