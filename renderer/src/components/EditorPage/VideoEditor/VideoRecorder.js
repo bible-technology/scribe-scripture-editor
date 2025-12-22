@@ -93,6 +93,7 @@ const VideoRecorder = ({
   setOpenSnackBar,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [recordingTime, setRecordingTime] = useState(0);
   const [playbackTime, setPlaybackTime] = useState(0);
@@ -532,10 +533,12 @@ const VideoRecorder = ({
       mediaRecorder.onerror = () => {
         setError('Recording failed. Please try again.');
         setIsRecording(false);
+        setIsPaused(false);
       };
 
       mediaRecorder.start(100);
       setIsRecording(true);
+      setIsPaused(false);
       setRecordingTime(0);
 
       timerRef.current = setInterval(() => {
@@ -546,10 +549,38 @@ const VideoRecorder = ({
     }
   }, [chapter, verse, projectPath, saveVideo]);
 
+  const pauseRecording = () => {
+    if (mediaRecorderRef.current && isRecording && !isPaused) {
+      mediaRecorderRef.current.pause();
+      setIsPaused(true);
+
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+
+      logger.debug('Recording paused');
+    }
+  };
+
+  const resumeRecording = () => {
+    if (mediaRecorderRef.current && isRecording && isPaused) {
+      mediaRecorderRef.current.resume();
+      setIsPaused(false);
+
+      timerRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+
+      logger.debug('Recording resumed');
+    }
+  };
+
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+      setIsPaused(false);
 
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -664,7 +695,7 @@ const VideoRecorder = ({
               <p className="text-sm text-gray-200">
                 {(() => {
                   if (isRecording) {
-                    return `Recording: ${formatTime(recordingTime)}`;
+                    return `${isPaused ? 'Paused' : 'Recording'}: ${formatTime(recordingTime)}`;
                   }
                   if (currentMode === 'view') {
                     return `${isPlaying ? 'Playing' : 'Paused'}: ${formatTime(playbackTime)} / ${formatTime(videoDuration)}`;
@@ -738,6 +769,11 @@ const VideoRecorder = ({
                 </div>
               </div>
             )}
+            {isPaused && (
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg">
+                Recording Paused
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex items-center  border-t relative">
@@ -808,6 +844,21 @@ const VideoRecorder = ({
                       <PauseIcon className="w-6 h-6" />
                     ) : (
                       <PlayIcon className="w-6 h-6" fill="currentColor" />
+                    )}
+                  </button>
+                )}
+
+                {isRecording && (
+                  <button
+                    type="button"
+                    onClick={isPaused ? resumeRecording : pauseRecording}
+                    className="p-4 bg-yellow-500 hover:bg-yellow-600 rounded-full transition-all transform hover:scale-105 text-white"
+                    title={isPaused ? 'Resume recording' : 'Pause recording'}
+                  >
+                    {isPaused ? (
+                      <PlayIcon className="w-6 h-6" fill="currentColor" />
+                    ) : (
+                      <PauseIcon className="w-6 h-6" />
                     )}
                   </button>
                 )}
