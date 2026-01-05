@@ -44,6 +44,33 @@ const AudioEditor = ({ editor }) => {
   } = useContext(ReferenceContext);
 
   useEffect(() => {
+    setTimeout(() => {
+      const container = document.getElementById('editor');
+      if (!container) { return; }
+
+      let el = container.querySelector(`#ch${chapter}v${verse}`);
+
+      if (!el) {
+        const candidates = container.querySelectorAll(`[id^="ch${chapter}v"]`);
+
+        candidates.forEach((node) => {
+          const id = node.getAttribute('id');
+          const range = id.replace(`ch${chapter}v`, '');
+
+          if (range.includes('-')) {
+            const [start, end] = range.split('-').map(Number);
+
+            if (Number(verse) >= start && Number(verse) <= end) {
+              el = node;
+            }
+          }
+        });
+      }
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
+  }, [chapter, verse, audioContent]);
+
+  useEffect(() => {
     if (isElectron()) {
       setIsLoading(true);
       setDisplayScreen(false);
@@ -209,10 +236,11 @@ const AudioEditor = ({ editor }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, chapter]);
   return (
-    <Editor callFrom="textTranslation" editor={editor}>
-      {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="audio" />}
-      {isLoading && !displyScreen && <LoadingScreen /> }
-      {audioContent && isLoading === false
+    <div id="editor">
+      <Editor callFrom="textTranslation" editor={editor}>
+        {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="audio" />}
+        {isLoading && !displyScreen && <LoadingScreen /> }
+        {audioContent && isLoading === false
       && (
         <EditorPage
           content={audioContent}
@@ -222,16 +250,18 @@ const AudioEditor = ({ editor }) => {
           updateWave={updateWave}
           fontSize={editorFontSize}
           selectedFont={selectedFont}
+          chapter={chapter}
         />
       )}
-      <SnackBar
-        openSnackBar={snackBar}
-        snackText={snackText}
-        setOpenSnackBar={setOpenSnackBar}
-        setSnackText={setSnackText}
-        error={notify}
-      />
-    </Editor>
+        <SnackBar
+          openSnackBar={snackBar}
+          snackText={snackText}
+          setOpenSnackBar={setOpenSnackBar}
+          setSnackText={setSnackText}
+          error={notify}
+        />
+      </Editor>
+    </div>
   );
 };
 export default AudioEditor;

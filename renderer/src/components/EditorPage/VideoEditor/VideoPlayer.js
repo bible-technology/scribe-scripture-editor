@@ -189,6 +189,18 @@ const VideoPlayer = ({
         const verseNum = mainChunk.verseNumber;
         if (!verseNum) { return null; }
 
+        const isActive = (() => {
+          const num = verseNum;
+          const current = Number(verse);
+
+          if (typeof num === 'string' && num.includes('-')) {
+            const [start, end] = num.split('-').map(Number);
+            return current >= start && current <= end;
+          }
+
+          return num === verse.toString();
+        })();
+
         const hasVideo = doesVideoExistForVerse(verseNum);
         return (
 
@@ -197,9 +209,14 @@ const VideoPlayer = ({
             aria-label="select verse"
             tabIndex={0}
             key={mainChunk.verseNumber}
-            className={`relative ${mainChunk.verseNumber === verse ? 'bg-light' : 'bg-gray-100'
-            } ${isJoinedVerse(mainChunk.verseNumber) ? 'border-l-4 border-amber-500 bg-amber-50' : ''
-            } m-3 px-3 py-4 justify-center items-center border border-gray-200 rounded-lg hover:bg-light cursor-pointer`}
+            id={`ch${chapter}v${mainChunk.verseNumber}`}
+            className={`
+              relative
+              ${isActive ? 'bg-light' : 'bg-gray-100'}
+              ${isJoinedVerse(verseNum) ? 'border-l-4 border-amber-500 bg-amber-50' : ''}
+              m-3 px-3 py-4 justify-center items-center
+              border border-gray-200 rounded-lg hover:bg-light cursor-pointer
+            `}
             onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
             onContextMenu={(e) => handleContextMenu(e, mainChunk, index)}
           >
@@ -210,8 +227,7 @@ const VideoPlayer = ({
                 {verseNum}
               </div>
               <p
-                className={`m-0 flex-1 text-sm ${
-                  isJoinedVerse(verseNum) ? 'text-amber-900 font-medium' : 'text-gray-500'
+                className={`m-0 flex-1 text-sm ${isJoinedVerse(verseNum) ? 'text-amber-900 font-medium' : 'text-gray-500'
                 }`}
                 style={{
                   fontFamily: selectedFont || 'sans-serif',
