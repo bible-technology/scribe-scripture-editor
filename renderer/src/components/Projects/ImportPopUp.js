@@ -56,9 +56,24 @@ export const deleteVideoFiles = async (bookCodesToImport) => {
             }),
           );
 
+          const jsonFileName = `${bookCode.toLowerCase()}.json`;
+          const jsonFilePath = path.join(bookFolder, jsonFileName);
+
+          try {
+            await fs.unlink(jsonFilePath);
+            logger.debug('ImportPopUp.js', `Deleted JSON structure file: ${jsonFilePath}`);
+          } catch (err) {
+            // File might not exist, which is fine
+            if (err.code !== 'ENOENT') {
+              logger.warn('ImportPopUp.js', `Error deleting JSON file ${jsonFilePath}: ${err.message}`);
+            } else {
+              logger.debug('ImportPopUp.js', `JSON file does not exist: ${jsonFilePath}`);
+            }
+          }
+
           logger.debug(
             'ImportPopUp.js',
-            `Successfully deleted all videos for ${bookCode.toUpperCase()}`,
+            `Successfully deleted all videos and JSON structure for ${bookCode.toUpperCase()}`,
           );
         } catch (err) {
           logger.error(
@@ -238,6 +253,8 @@ export default function ImportPopUp(props) {
     const fs = window.require('fs').promises;
     const files = [];
     const bookCodeList = [];
+    const actuallyImportedBookCodes = [];
+
     const fileProcessingPromises = folderPath.map(async (filePath) => {
       try {
         switch (projectType) {
@@ -288,8 +305,10 @@ export default function ImportPopUp(props) {
             // replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
             const jsonOutput = myUsfmParser.toJSON();
+            const bookCode = jsonOutput.book.bookCode;
             files.push({ id: jsonOutput.book.bookCode, content: usfm });
-            bookCodeList.push(jsonOutput.book.bookCode);
+            bookCodeList.push(bookCode);
+            actuallyImportedBookCodes.push(bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
             setNotify('failure');
@@ -380,9 +399,9 @@ export default function ImportPopUp(props) {
     });
 
     await Promise.all(fileProcessingPromises);
-    if (call === 'edit' && projectType === 'Video' && bookCodeList.length > 0) {
-      logger.debug('ImportPopUp.js', 'Storing book codes for video deletion after save');
-      window.pendingBookCodesToDeleteVideos = bookCodeList;
+    if (call === 'edit' && projectType === 'Video' && actuallyImportedBookCodes.length > 0) {
+      logger.debug('ImportPopUp.js', 'Storing book codes for video deletion after save:', actuallyImportedBookCodes);
+      window.pendingBookCodesToDeleteVideos = actuallyImportedBookCodes;
     }
     if (call === 'edit') {
       replaceConformation(true);

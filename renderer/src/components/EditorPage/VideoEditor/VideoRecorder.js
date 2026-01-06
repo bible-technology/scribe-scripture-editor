@@ -118,7 +118,7 @@ const VideoRecorder = ({
   const fs = window.require('fs');
   const path = window.require('path');
 
-  const filename = `${chapter}_${verse}.mp4`;
+  const filename = `${chapter}_${verse}.webm`;
   const filePath = path.join(projectPath, filename);
 
   const hasVideo = fs.existsSync(filePath);
@@ -126,7 +126,7 @@ const VideoRecorder = ({
   useEffect(() => {
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verse}.mp4`;
+    const filename = `${chapter}_${verse}.webm`;
     const filePath = path.join(projectPath, filename);
 
     const videoExists = fs.existsSync(filePath);
@@ -266,7 +266,7 @@ const VideoRecorder = ({
       const path = require('path');
       const fs = window.require('fs');
 
-      const filename = `${chapter}_${verse}.mp4`;
+      const filename = `${chapter}_${verse}.webm`;
       const fullPath = path.join(projectPath, filename);
 
       try {
@@ -290,7 +290,7 @@ const VideoRecorder = ({
       }
 
       const buffer = fs.readFileSync(fullPath);
-      const blob = new Blob([buffer], { type: 'video/mp4' });
+      const blob = new Blob([buffer], { type: 'video/webm' });
       const videoPath = URL.createObjectURL(blob);
 
       logger.debug('Loading video from Blob URL:', videoPath);
@@ -403,7 +403,7 @@ const VideoRecorder = ({
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const filename = `${chapter}_${verse}.mp4`;
+      const filename = `${chapter}_${verse}.webm`;
       const filePath = path.join(projectPath, filename);
 
       fs.writeFileSync(filePath, buffer);
@@ -427,7 +427,7 @@ const VideoRecorder = ({
       setTimeout(() => {
         if (videoPreviewRef.current) {
           const buffer = fs.readFileSync(filePath);
-          const blob = new Blob([buffer], { type: 'video/mp4' });
+          const blob = new Blob([buffer], { type: 'video/webm' });
           const objectUrl = URL.createObjectURL(blob);
 
           videoPreviewRef.current.pause();
@@ -475,7 +475,7 @@ const VideoRecorder = ({
 
   const handleDeleteClick = () => {
     const path = window.require('path');
-    const filename = `${chapter}_${verse}.mp4`;
+    const filename = `${chapter}_${verse}.webm`;
     const filePath = path.join(projectPath, filename);
 
     onClose();
@@ -500,7 +500,7 @@ const VideoRecorder = ({
     try {
       const fs = window.require('fs');
       const path = window.require('path');
-      const filename = `${chapter}_${verse}.mp4`;
+      const filename = `${chapter}_${verse}.webm`;
       const filePath = path.join(projectPath, filename);
 
       if (fs.existsSync(filePath)) {
@@ -599,7 +599,7 @@ const VideoRecorder = ({
       if (existingVideo) {
         const fs = window.require('fs');
         const path = window.require('path');
-        const filename = `${chapter}_${verse}.mp4`;
+        const filename = `${chapter}_${verse}.webm`;
         const filePath = path.join(projectPath, filename);
 
         if (fs.existsSync(filePath)) {
@@ -770,7 +770,7 @@ const VideoRecorder = ({
               </div>
             )}
             {isPaused && (
-              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg">
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-full shadow-lg">
                 Recording Paused
               </div>
             )}
@@ -852,7 +852,7 @@ const VideoRecorder = ({
                   <button
                     type="button"
                     onClick={isPaused ? resumeRecording : pauseRecording}
-                    className="p-4 bg-yellow-500 hover:bg-yellow-600 rounded-full transition-all transform hover:scale-105 text-white"
+                    className="p-4 bg-primary hover:bg-primary rounded-full transition-all transform hover:scale-105 text-white"
                     title={isPaused ? 'Resume recording' : 'Pause recording'}
                   >
                     {isPaused ? (
