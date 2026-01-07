@@ -747,6 +747,38 @@ const VideoEditor = ({ editor }) => {
     }
   }, [bookId, chapter]);
 
+  useEffect(() => {
+    if (!videoContent || isLoading) { return; }
+
+    setTimeout(() => {
+      const container = document.getElementById('video-editor');
+      if (!container) { return; }
+
+      let el = container.querySelector(`#ch${chapter}v${verse}`);
+      if (!el) {
+        const nodes = container.querySelectorAll(`[id^="ch${chapter}v"]`);
+        nodes.forEach((node) => {
+          const id = node.getAttribute('id');
+          const range = id.replace(`ch${chapter}v`, '');
+
+          if (range.includes('-')) {
+            const [start, end] = range.split('-').map(Number);
+            const v = Number(verse);
+
+            if (v >= start && v <= end) {
+              el = node;
+            }
+          }
+        });
+      }
+
+      el?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 80);
+  }, [chapter, verse, videoContent, isLoading]);
+
   return (
     <Editor callFrom="textTranslation" editor={editor}>
       {((isLoading || !videoContent) && displyScreen) && <EmptyScreen call="video" />}
