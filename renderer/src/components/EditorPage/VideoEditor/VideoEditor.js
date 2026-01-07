@@ -785,26 +785,28 @@ const VideoEditor = ({ editor }) => {
       {isLoading && !displyScreen && <LoadingScreen />}
       {videoContent && isLoading === false
         && (
-          <VideoPlayer
-            verse={verse}
-            location={videoPath}
-            content={videoContent}
-            fontSize={editorFontSize}
-            selectedFont={selectedFont}
-            updateWave={updateVideoWave}
-            onChangeVerse={onChangeVerse}
-            onDeleteVideo={executeDeleteVideo}
-            onDisjoinVerse={onDisjoinVerse}
-            onJoinVerse={onJoinVerse}
-            setOpenModal={setModel}
-            chapter={chapter}
-            bookId={bookId}
-            pendingRecorderReopen={pendingRecorderReopen}
-            setPendingRecorderReopen={setPendingRecorderReopen}
-            setNotify={setNotify}
-            setSnackText={setSnackText}
-            setOpenSnackBar={setOpenSnackBar}
-          />
+          <div id="video-editor" className="h-full overflow-auto">
+            <VideoPlayer
+              verse={verse}
+              location={videoPath}
+              content={videoContent}
+              fontSize={editorFontSize}
+              selectedFont={selectedFont}
+              updateWave={updateVideoWave}
+              onChangeVerse={onChangeVerse}
+              onDeleteVideo={executeDeleteVideo}
+              onDisjoinVerse={onDisjoinVerse}
+              onJoinVerse={onJoinVerse}
+              setOpenModal={setModel}
+              chapter={chapter}
+              bookId={bookId}
+              pendingRecorderReopen={pendingRecorderReopen}
+              setPendingRecorderReopen={setPendingRecorderReopen}
+              setNotify={setNotify}
+              setSnackText={setSnackText}
+              setOpenSnackBar={setOpenSnackBar}
+            />
+          </div>
         )}
       <ConfirmationModal
         openModal={model.openModel}
