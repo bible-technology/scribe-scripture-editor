@@ -74,7 +74,7 @@ export const deleteVerseVideos = (chapter, verseNumber, videoDirPath) => {
     const fs = window.require('fs');
     const path = require('path');
 
-    const filename = `${chapter}_${verseNumber}.mp4`;
+    const filename = `${chapter}_${verseNumber}.webm`;
     const fullVideoPath = path.join(videoDirPath, filename);
 
     if (fs.existsSync(fullVideoPath)) {
@@ -96,7 +96,7 @@ export const hasVerseRecordings = (chapter, verseNumber, videoDirPath) => {
     const fs = window.require('fs');
     const path = require('path');
 
-    const filename = `${chapter}_${verseNumber}.mp4`;
+    const filename = `${chapter}_${verseNumber}.webm`;
     const fullVideoPath = path.join(videoDirPath, filename);
 
     return fs.existsSync(fullVideoPath);

@@ -107,7 +107,7 @@ const VideoPlayer = ({
     e.stopPropagation();
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verseNumber}.mp4`;
+    const filename = `${chapter}_${verseNumber}.webm`;
     const filePath = path.join(location, filename);
 
     if (fs.existsSync(filePath)) {
@@ -178,7 +178,7 @@ const VideoPlayer = ({
   const path = window.require('path');
 
   const doesVideoExistForVerse = (verseNumber) => {
-    const filename = `${chapter}_${verseNumber}.mp4`;
+    const filename = `${chapter}_${verseNumber}.webm`;
     const filePath = path.join(location, filename);
     return fs.existsSync(filePath);
   };
@@ -253,7 +253,7 @@ const VideoPlayer = ({
 
                     <button
                       type="button"
-                      onClick={(e) => handleDeleteVideo(e, verseNum, `${chapter}_${verseNum}.mp4`)}
+                      onClick={(e) => handleDeleteVideo(e, verseNum, `${chapter}_${verseNum}.webm`)}
                       className="flex items-center justify-center p-2 rounded-full border-2 border-error text-error hover:bg-error hover:text-white transition-all duration-200"
                       title="Delete recorded video"
                     >
