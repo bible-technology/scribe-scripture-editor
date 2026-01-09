@@ -1,0 +1,17 @@
+diff --git a/node_modules/gitea-react-toolkit/dist/core/gitea-api/repos/search.js b/node_modules/gitea-react-toolkit/dist/core/gitea-api/repos/search.js
+index 4a9968b..ceb9bde 100644
+--- a/node_modules/gitea-react-toolkit/dist/core/gitea-api/repos/search.js
++++ b/node_modules/gitea-react-toolkit/dist/core/gitea-api/repos/search.js
+@@ -86,9 +86,10 @@ var repositorySearch = /*#__PURE__*/function () {
+             repositories = [];
+             params = {
+               q: _query,
+-              limit: 50
++              limit: 1000
+             };
+-            if (owner) url = _path.default.join(_.apiPath, 'users', owner, 'repos');else url = _path.default.join(_.apiPath, 'repos', 'search');
++
++            if (owner) url = _path.default.join(_.apiPath, 'users', owner, 'repos'); else url = _path.default.join(_.apiPath, 'repos', 'search');
+             _context2.prev = 6;
+             _context2.next = 9;
+             return (0, _.get)({
