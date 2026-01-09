@@ -115,6 +115,10 @@ const VideoRecorder = ({
   const [showCameraMenu, setShowCameraMenu] = useState(false);
   const cameraMenuRef = useRef(null);
 
+  const seekBarRef = useRef(null);
+  const [hoverTime, setHoverTime] = useState(null);
+  const [showHoverTime, setShowHoverTime] = useState(false);
+
   const fs = window.require('fs');
   const path = window.require('path');
 
@@ -393,6 +397,13 @@ const VideoRecorder = ({
     };
   }, [isPlaying, currentMode]);
 
+  useEffect(() => {
+    if (!seekBarRef.current || !videoDuration) { return; }
+
+    const percent = (playbackTime / videoDuration) * 100;
+    seekBarRef.current.style.setProperty('--progress', `${percent}%`);
+  }, [playbackTime, videoDuration]);
+
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
 
@@ -662,6 +673,26 @@ const VideoRecorder = ({
     }
   };
 
+  const handleSeekHover = (e) => {
+    if (!seekBarRef.current || !videoDuration) { return; }
+
+    const rect = seekBarRef.current.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+
+    const time = Math.max(
+      0,
+      Math.min(videoDuration, percent * videoDuration),
+    );
+
+    setHoverTime(time);
+    setShowHoverTime(true);
+  };
+
+  const clearSeekHover = () => {
+    setShowHoverTime(false);
+    setHoverTime(null);
+  };
+
   const formatTime = (seconds) => {
     if (!Number.isFinite(seconds) || seconds <= 0) { return '00:00'; }
     const mins = Math.floor(seconds / 60);
@@ -775,6 +806,41 @@ const VideoRecorder = ({
               </div>
             )}
           </div>
+
+          {currentMode === 'view' && hasVideo && (
+            <div className="relative px-4 pb-2">
+              <input
+                ref={seekBarRef}
+                type="range"
+                min={0}
+                max={videoDuration || 0}
+                step={0.01}
+                value={playbackTime}
+                onChange={(e) => {
+                  const time = Number(e.target.value);
+                  if (videoPreviewRef.current) {
+                    videoPreviewRef.current.currentTime = time;
+                    setPlaybackTime(time);
+                  }
+                }}
+                onMouseMove={handleSeekHover}
+                onMouseLeave={clearSeekHover}
+                className="w-full accent-primary cursor-pointer"
+              />
+
+              {showHoverTime && hoverTime !== null && (
+                <div
+                  className="absolute -top-7 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded"
+                  style={{
+                    left: `${(hoverTime / videoDuration) * 100}%`,
+                  }}
+                >
+                  {formatTime(hoverTime)}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex flex-col gap-4">
             <div className="flex items-center  border-t relative">
               <div className="flex items-center justify-center gap-6 flex-1">
