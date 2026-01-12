@@ -118,6 +118,7 @@ const VideoRecorder = ({
   const seekBarRef = useRef(null);
   const [hoverTime, setHoverTime] = useState(null);
   const [showHoverTime, setShowHoverTime] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -398,11 +399,33 @@ const VideoRecorder = ({
   }, [isPlaying, currentMode]);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cameraMenuRef.current && !cameraMenuRef.current.contains(event.target)) {
+        setShowCameraMenu(false);
+      }
+    };
+
+    if (showCameraMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCameraMenu]);
+
+  useEffect(() => {
     if (!seekBarRef.current || !videoDuration) { return; }
 
     const percent = (playbackTime / videoDuration) * 100;
     seekBarRef.current.style.setProperty('--progress', `${percent}%`);
   }, [playbackTime, videoDuration]);
+
+  useEffect(() => {
+    if (videoPreviewRef.current && currentMode === 'view') {
+      videoPreviewRef.current.playbackRate = playbackSpeed;
+    }
+  }, [playbackSpeed, currentMode]);
 
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
@@ -959,23 +982,22 @@ const VideoRecorder = ({
                 <button
                   type="button"
                   onClick={() => setShowCameraMenu(!showCameraMenu)}
-                  disabled={currentMode === 'view' || isRecording}
+                  disabled={isRecording || (currentMode === 'view' && !hasVideo)}
                   className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Camera Settings"
+                  aria-label={currentMode === 'view' ? 'Settings' : 'Camera Settings'}
                 >
                   <Cog6ToothIcon className="w-6 h-6" />
                 </button>
-                <div className="absolute right-full top-1/2 -translate-y-1/2  mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  Camera Settings
+                <div className="absolute right-full top-1/2 -translate-y-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  {currentMode === 'view' ? 'Settings' : 'Camera Settings'}
                 </div>
 
-                {showCameraMenu && (
+                {showCameraMenu && currentMode === 'record' && (
                   <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[250px] z-50">
                     <div className="flex items-center gap-2 mb-2">
                       <Cog6ToothIcon className="w-4 h-4 text-gray-600" />
                       <p className="text-sm font-medium text-gray-700">Select Camera</p>
                     </div>
-                    {' '}
                     {videoDevices.map((device) => (
                       <button
                         key={device.deviceId}
@@ -992,6 +1014,34 @@ const VideoRecorder = ({
                         }`}
                       >
                         {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {showCameraMenu && currentMode === 'view' && (
+                  <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[200px] z-50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Cog6ToothIcon className="w-4 h-4 text-gray-600" />
+                      <p className="text-sm font-medium text-gray-700">Playback Speed</p>
+                    </div>
+                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
+                      <button
+                        key={speed}
+                        type="button"
+                        onClick={() => {
+                          setPlaybackSpeed(speed);
+                          setShowCameraMenu(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm flex items-center justify-between ${playbackSpeed === speed ? 'bg-gray-200 font-medium' : ''
+                        }`}
+                      >
+                        <span>
+                          {speed}
+                          x
+                        </span>
+                        {speed === 1 && <span className="text-xs text-gray-500">(Normal)</span>}
+                        {playbackSpeed === speed && <span className="text-primary">✓</span>}
                       </button>
                     ))}
                   </div>
