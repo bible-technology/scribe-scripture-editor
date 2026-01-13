@@ -14,6 +14,8 @@ import {
   ExclamationCircleIcon,
   TrashIcon,
   Cog6ToothIcon,
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
 } from '@heroicons/react/24/outline';
 import * as logger from '../../../logger';
 
@@ -119,6 +121,8 @@ const VideoRecorder = ({
   const [hoverTime, setHoverTime] = useState(null);
   const [showHoverTime, setShowHoverTime] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -723,6 +727,24 @@ const VideoRecorder = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen(!isFullscreen);
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      } else if (e.key === 'f' && !e.target.matches('input, textarea')) {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen, toggleFullscreen]);
+
   const hasPreviousVerse = () => getPreviousVerseNumber(verse, content) !== null;
   const hasNextVerse = () => getNextVerseNumber(verse, content) !== null;
 
@@ -732,8 +754,14 @@ const VideoRecorder = ({
       className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''
       }`}
     >
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="bg-secondary text-white px-6 py-6 flex items-center justify-between">
+      <div
+        ref={containerRef}
+        className={`bg-white shadow-2xl flex flex-col transition-all ${isFullscreen
+          ? 'fixed inset-0 max-w-none max-h-none h-screen w-screen rounded-none z-[60]'
+          : 'rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden'
+        }`}
+      >
+        <div className="bg-secondary text-white px-6 py-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
             <VideoCameraIcon className="w-6 h-6" />
             <div>
@@ -760,6 +788,7 @@ const VideoRecorder = ({
 
             </div>
           </div>
+
           <button
             type="button"
             onClick={onClose}
@@ -769,9 +798,10 @@ const VideoRecorder = ({
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
+
         </div>
 
-        <div className="flex-1 overflow-auto p-2">
+        <div className={`flex-1 flex flex-col ${isFullscreen ? 'overflow-hidden' : 'overflow-auto'} p-2`}>
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
               <ExclamationCircleIcon className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -781,7 +811,12 @@ const VideoRecorder = ({
               </div>
             </div>
           )}
-          <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-2" style={{ aspectRatio: '16/9' }}>
+          <div
+            className={`relative bg-gray-900 rounded-lg overflow-hidden mb-2 group ${isFullscreen ? 'flex-1' : ''
+            }`}
+            style={isFullscreen ? {} : { aspectRatio: '16/9' }}
+          >
+            {' '}
             <video
               ref={videoPreviewRef}
               autoPlay={currentMode === 'record'}
@@ -796,6 +831,19 @@ const VideoRecorder = ({
             >
               <track kind="captions" src="" label="No captions" />
             </video>
+            {' '}
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="absolute bottom-4 right-4 p-3 bg-black bg-opacity-60 hover:bg-opacity-90 text-white rounded-lg transition-all opacity-0 group-hover:opacity-100 hover:opacity-100 z-20"
+              title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
+            >
+              {isFullscreen ? (
+                <ArrowsPointingInIcon className="w-5 h-5" />
+              ) : (
+                <ArrowsPointingOutIcon className="w-5 h-5" />
+              )}
+            </button>
 
             {currentMode === 'record' && !cameraReady && !error && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
@@ -831,7 +879,7 @@ const VideoRecorder = ({
           </div>
 
           {currentMode === 'view' && hasVideo && (
-            <div className="relative px-4 pb-2">
+            <div className="relative px-4 pb-2 flex-shrink-0">
               <input
                 ref={seekBarRef}
                 type="range"
@@ -864,7 +912,7 @@ const VideoRecorder = ({
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 flex-shrink-0">
             <div className="flex items-center  border-t relative">
               <div className="flex items-center justify-center gap-6 flex-1">
                 <div className="w-6" />
