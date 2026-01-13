@@ -17,6 +17,7 @@ import {
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
 } from '@heroicons/react/24/outline';
+import { debounce } from 'lodash';
 import * as logger from '../../../logger';
 
 const getNextVerseNumber = (currentVerse, content) => {
@@ -118,11 +119,14 @@ const VideoRecorder = ({
   const cameraMenuRef = useRef(null);
 
   const seekBarRef = useRef(null);
-  const [hoverTime, setHoverTime] = useState(null);
-  const [showHoverTime, setShowHoverTime] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
+  const thumbnailVideoRef = useRef(null);
+  const thumbnailCanvasRef = useRef(null);
+  const [hoverTime, setHoverTime] = useState(null);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showHoverTime, setShowHoverTime] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [thumbnailData, setThumbnailData] = useState(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -133,8 +137,6 @@ const VideoRecorder = ({
   const hasVideo = fs.existsSync(filePath);
 
   useEffect(() => {
-    const fs = window.require('fs');
-    const path = window.require('path');
     const filename = `${chapter}_${verse}.webm`;
     const filePath = path.join(projectPath, filename);
 
@@ -353,21 +355,6 @@ const VideoRecorder = ({
       }, 50);
     }
   }, [currentMode, hasVideo, verse, projectPath]);
-  useEffect(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    }
-
-    if (videoPreviewRef.current) {
-      videoPreviewRef.current.pause();
-      videoPreviewRef.current.srcObject = null;
-      videoPreviewRef.current.removeAttribute('src');
-      videoPreviewRef.current.load();
-    }
-
-    setCameraReady(false);
-  }, [verse, chapter]);
 
   useEffect(() => {
     if (currentMode === 'view' && videoPreviewRef.current) {
@@ -403,22 +390,6 @@ const VideoRecorder = ({
   }, [isPlaying, currentMode]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (cameraMenuRef.current && !cameraMenuRef.current.contains(event.target)) {
-        setShowCameraMenu(false);
-      }
-    };
-
-    if (showCameraMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showCameraMenu]);
-
-  useEffect(() => {
     if (!seekBarRef.current || !videoDuration) { return; }
 
     const percent = (playbackTime / videoDuration) * 100;
@@ -431,13 +402,44 @@ const VideoRecorder = ({
     }
   }, [playbackSpeed, currentMode]);
 
+  useEffect(() => () => {
+    if (videoPreviewRef.current) {
+      videoPreviewRef.current.pause();
+      videoPreviewRef.current.srcObject = null;
+      videoPreviewRef.current.src = '';
+      videoPreviewRef.current.load();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+        track.enabled = false;
+      });
+      streamRef.current = null;
+    }
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (playbackTimerRef.current) {
+      clearInterval(playbackTimerRef.current);
+      playbackTimerRef.current = null;
+    }
+
+    if (thumbnailCanvasRef.current) {
+      const ctx = thumbnailCanvasRef.current.getContext('2d');
+      ctx?.clearRect(0, 0, thumbnailCanvasRef.current.width, thumbnailCanvasRef.current.height);
+    }
+
+    if (videoPreviewRef.current?.src?.startsWith('blob:')) {
+      URL.revokeObjectURL(videoPreviewRef.current.src);
+    }
+  }, []);
+
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
 
     try {
-      const fs = window.require('fs');
-      const path = window.require('path');
-
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
@@ -536,8 +538,6 @@ const VideoRecorder = ({
 
   const startNewRecording = useCallback(() => {
     try {
-      const fs = window.require('fs');
-      const path = window.require('path');
       const filename = `${chapter}_${verse}.webm`;
       const filePath = path.join(projectPath, filename);
 
@@ -700,24 +700,80 @@ const VideoRecorder = ({
     }
   };
 
+  useEffect(() => {
+    if (currentMode === 'view' && hasVideo && !thumbnailVideoRef.current) {
+      thumbnailVideoRef.current = document.createElement('video');
+      thumbnailVideoRef.current.muted = true;
+      thumbnailVideoRef.current.preload = 'metadata';
+      thumbnailVideoRef.current.style.display = 'none';
+      document.body.appendChild(thumbnailVideoRef.current);
+    }
+
+    return () => {
+      if (thumbnailVideoRef.current) {
+        thumbnailVideoRef.current.remove();
+        thumbnailVideoRef.current = null;
+      }
+    };
+  }, [currentMode, hasVideo]);
+
+  const generateThumbnail = useCallback((time) => {
+    if (!videoPreviewRef.current || !thumbnailVideoRef.current) { return; }
+
+    const thumbnailVideo = thumbnailVideoRef.current;
+
+    if (thumbnailVideo.src !== videoPreviewRef.current.src) {
+      thumbnailVideo.src = videoPreviewRef.current.src;
+    }
+
+    if (!thumbnailCanvasRef.current) {
+      thumbnailCanvasRef.current = document.createElement('canvas');
+      thumbnailCanvasRef.current.width = 160;
+      thumbnailCanvasRef.current.height = 90;
+    }
+
+    const canvas = thumbnailCanvasRef.current;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    thumbnailVideo.currentTime = time;
+
+    const drawFrame = () => {
+      try {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(thumbnailVideo, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        setThumbnailData(dataUrl);
+      } catch (err) {
+        logger.error('Error generating thumbnail:', err);
+      }
+    };
+
+    thumbnailVideo.onseeked = drawFrame;
+  }, []);
+
+  const debouncedGenerateThumbnail = useCallback(
+    debounce((time) => {
+      if (videoPreviewRef.current && currentMode === 'view') {
+        generateThumbnail(time);
+      }
+    }, 100),
+    [generateThumbnail, currentMode],
+  );
   const handleSeekHover = (e) => {
     if (!seekBarRef.current || !videoDuration) { return; }
 
     const rect = seekBarRef.current.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
-
-    const time = Math.max(
-      0,
-      Math.min(videoDuration, percent * videoDuration),
-    );
+    const time = Math.max(0, Math.min(videoDuration, percent * videoDuration));
 
     setHoverTime(time);
     setShowHoverTime(true);
+    debouncedGenerateThumbnail(time);
   };
-
   const clearSeekHover = () => {
     setShowHoverTime(false);
     setHoverTime(null);
+    setThumbnailData(null);
   };
 
   const formatTime = (seconds) => {
@@ -901,12 +957,44 @@ const VideoRecorder = ({
 
               {showHoverTime && hoverTime !== null && (
                 <div
-                  className="absolute -top-7 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded"
+                  className="absolute pointer-events-none z-30"
                   style={{
-                    left: `${(hoverTime / videoDuration) * 100}%`,
+                    left: (() => {
+                      const thumbnailWidth = 160;
+                      const rect = seekBarRef.current?.getBoundingClientRect();
+                      if (!rect) { return '0px'; }
+
+                      const position = (hoverTime / videoDuration) * 100;
+                      const pixelPosition = (position / 100) * rect.width;
+                      const halfThumb = thumbnailWidth / 2;
+
+                      const clampedPosition = Math.max(
+                        halfThumb,
+                        Math.min(rect.width - halfThumb, pixelPosition),
+                      );
+
+                      return `${clampedPosition}px`;
+                    })(),
+                    transform: 'translateX(-50%)',
+                    bottom: '100%',
+                    marginBottom: '0.5rem',
                   }}
                 >
-                  {formatTime(hoverTime)}
+                  <div className="flex flex-col items-center">
+                    {thumbnailData && (
+                      <div className="mb-1 rounded overflow-hidden shadow-lg border-2 border-white w-40">
+                        <img
+                          src={thumbnailData}
+                          alt="Video preview"
+                          className="w-full h-auto block"
+                          style={{ aspectRatio: '16/9' }}
+                        />
+                      </div>
+                    )}
+                    <div className="bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      {formatTime(hoverTime)}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

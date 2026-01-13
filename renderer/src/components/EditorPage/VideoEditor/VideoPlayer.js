@@ -37,7 +37,6 @@ const VideoPlayer = ({
   const [showVideoRecorder, setShowVideoRecorder] = useState(false);
   const [currentRecordingVerse, setCurrentRecordingVerse] = useState(null);
   const [recorderMode, setRecorderMode] = useState('record');
-  const [isRecorderVisible, setIsRecorderVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -300,11 +299,9 @@ const VideoPlayer = ({
           onClose={() => {
             setShowVideoRecorder(false);
             setCurrentRecordingVerse(null);
-            setIsRecorderVisible;
           }}
           onVerseChange={handleVerseChangeInRecorder}
           setOpenModal={setOpenModal}
-          isVisible={isRecorderVisible}
           setNotify={setNotify}
           setSnackText={setSnackText}
           setOpenSnackBar={setOpenSnackBar}
