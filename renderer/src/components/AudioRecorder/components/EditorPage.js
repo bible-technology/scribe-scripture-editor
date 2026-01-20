@@ -1,14 +1,25 @@
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import VerseContextMenu from '@/components/EditorPage/AudioEditor/VerseContextMenu.jsx';
 
 const AudioWaveform = dynamic(() => import('./WaveForm'), { ssr: false });
 
 const EditorPage = ({
-  content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont, chapter,
+  content, onChangeVerse, verse, location, updateWave, fontSize, selectedFont, chapter, onJoinVerse, onDisjoinVerse,
 }) => {
   const path = require('path');
   const [waveUpdate, setWaveUpdate] = useState(false);
+
+  const [contextMenu, setContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    verse: null,
+    isFirstVerse: false,
+    isJoinedVerse: false,
+  });
+
   const selectVerse = (value) => {
     // For opening and closing the verse tab
     // if (selectedverse === value) {
@@ -17,6 +28,38 @@ const EditorPage = ({
     // setSelectedVerse(value);
     onChangeVerse(value.toString(), verse);
   };
+
+  const handleContextMenu = (e, verseItem, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isFirst = index === 0;
+    const isJoined = verseItem.verseNumber && verseItem.verseNumber.includes('-');
+
+    if (isFirst && !isJoined) {
+      return;
+    }
+
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      verse: verseItem,
+      isFirstVerse: isFirst,
+      isJoinedVerse: isJoined,
+    });
+  };
+  const handleCloseContextMenu = () => {
+    setContextMenu({
+      visible: false,
+      x: 0,
+      y: 0,
+      verse: null,
+      isFirstVerse: false,
+      isJoinedVerse: false,
+    });
+  };
+
   // To update the wave after deleting the default take (Re-render this component)
   useEffect(() => {
     if (updateWave) {
@@ -26,7 +69,7 @@ const EditorPage = ({
   }, [updateWave]);
   return (
     <div className="bg-white rounded-md overflow-hidden">
-      {content?.map((mainChunk) => {
+      {content?.map((mainChunk, index) => {
         const isActive = (() => {
           const current = Number(verse);
           const num = mainChunk.verseNumber;
@@ -38,6 +81,8 @@ const EditorPage = ({
 
           return num === verse.toString();
         })();
+
+        const isJoinedVerse = mainChunk.verseNumber && mainChunk.verseNumber.includes('-');
 
         return (
           mainChunk.verseNumber
@@ -51,15 +96,23 @@ const EditorPage = ({
               className={`relative ${isActive ? 'bg-light' : 'bg-gray-100'} m-3 px-3 py-4 justify-center items-center
               border border-gray-200 rounded-lg hover:bg-light cursor-pointer`}
               onClick={() => selectVerse(mainChunk.verseNumber, mainChunk.verseText)}
+              onContextMenu={(e) => handleContextMenu(e, mainChunk, index)}
             >
-              <div
-                className="flex w-full group-hover:text-white"
-              >
-                <div className="flex items-center justify-center bg-primary w-10 h-8 mr-2 rounded-full text-sm text-white">
+              <div className="flex w-full group-hover:text-white">
+                <div
+                  className={`
+                    flex items-center justify-center 
+                    w-10 h-8 mr-2 rounded-full text-sm text-white
+                    ${isJoinedVerse ? 'bg-amber-600' : 'bg-primary'}
+                  `}
+                >
                   {mainChunk.verseNumber}
                 </div>
                 <p
-                  className="m-0 w-full text-sm text-gray-500"
+                  className={`
+                    m-0 w-full text-sm 
+                    ${isJoinedVerse ? 'text-amber-900 font-medium' : 'text-gray-500'}
+                  `}
                   style={{
                     fontFamily: selectedFont || 'sans-serif',
                     fontSize: `${fontSize}rem`,
@@ -230,7 +283,17 @@ const EditorPage = ({
         </div> */}
         {/*  ))} */}
       </div>
-
+      <VerseContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        verse={contextMenu.verse}
+        isFirstVerse={contextMenu.isFirstVerse}
+        isJoinedVerse={contextMenu.isJoinedVerse}
+        onJoinVerse={onJoinVerse}
+        onDisjoinVerse={onDisjoinVerse}
+        onClose={handleCloseContextMenu}
+      />
     </div>
   );
 };
@@ -241,4 +304,6 @@ EditorPage.propTypes = {
   verse: PropTypes.string,
   location: PropTypes.string,
   chapter: PropTypes.string,
+  onJoinVerse: PropTypes.func,
+  onDisjoinVerse: PropTypes.func,
 };

@@ -7,6 +7,7 @@ import {
 import { useReactMediaRecorder } from 'react-media-recorder';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { getDetails } from '../ObsEditor/utils/getDetails';
+import * as logger from '../../../logger';
 
 const MainPlayer = () => {
   const {
@@ -15,7 +16,6 @@ const MainPlayer = () => {
       chapter,
       verse,
       audioContent,
-      audioCurrentChapter,
       audioPath,
       updateWave,
     }, actions: {
@@ -44,126 +44,218 @@ const MainPlayer = () => {
       buttonName: '',
     });
   };
-  const fetchUrl = () => {
-    Object.entries(audioContent).forEach(
-      ([key]) => {
-        if (audioContent[key].verseNumber === verse) {
-          setCurrentUrl(audioContent[key]);
-          setTrigger('url');
+  const findCurrentVerse = useCallback(() => {
+    if (!audioContent || !Array.isArray(audioContent)) { return null; }
+
+    return audioContent.find((v) => {
+      if (v.verseNumber === verse) { return true; }
+
+      if (v.verseNumber && v.verseNumber.includes('-')) {
+        const [start, end] = v.verseNumber.split('-').map(Number);
+        const verseNum = Number(verse);
+        if (!Number.isNaN(verseNum) && verseNum >= start && verseNum <= end) {
+          return true;
         }
-      },
-    );
-  };
+      }
+
+      if (v.joinedVerses && Array.isArray(v.joinedVerses)) {
+        return v.joinedVerses.some((jv) => jv.toString() === verse);
+      }
+
+      return false;
+    });
+  }, [audioContent, verse]);
+
+  const fetchUrl = useCallback(() => {
+    const currentVerse = findCurrentVerse();
+    if (currentVerse) {
+      setCurrentUrl(currentVerse);
+      setTrigger('url');
+    } else {
+      setCurrentUrl({});
+    }
+  }, [findCurrentVerse]);
 
   const loadChapter = async () => {
-    if (audioCurrentChapter) {
+    if (!audioPath || !audioContent) {
+      return;
+    }
+
+    try {
       const fs = window.require('fs');
       const path = require('path');
-      // Fetching the Audios
-      const chapters = await fs.readdirSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum));
-      chapters.forEach((verse) => {
-        const url = path.parse(verse).name;
-        const verseNum = url.split('_');
-        Object.entries(audioCurrentChapter.bookContent).forEach(
-          ([key]) => {
-            if (audioCurrentChapter.bookContent[key].chapterNumber === chapter) {
-              Object.entries(audioCurrentChapter.bookContent[key].contents).forEach(
-                ([v]) => {
-                  if (audioCurrentChapter.bookContent[key].contents[v].verseNumber === verseNum[1]) {
-                    // const url = 'https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3';
-                    if (verseNum[2]) {
-                      const take = `take${verseNum[2]}`;
-                      // replace url with verse
-                      audioCurrentChapter.bookContent[key].contents[v][take] = verse;
-                      if (verseNum[3] === 'default') {
-                        audioCurrentChapter.bookContent[key].contents[v].default = take;
-                      }
-                    }
-                  }
-                },
-              );
+
+      if (!fs.existsSync(audioPath)) {
+        return;
+      }
+
+      const audioFiles = fs.readdirSync(audioPath);
+
+      const updatedContent = audioContent.map((verse) => ({ ...verse }));
+
+      audioFiles.forEach((fileName) => {
+        const parsed = path.parse(fileName);
+        const parts = parsed.name.split('_');
+
+        if (parts.length >= 2) {
+          const fileChapter = parts[0];
+          const fileVerseNumber = parts[1];
+          const fileTakeNumber = parts[2];
+          const isDefault = parts[3] === 'default';
+
+          if (fileChapter === chapter.toString()) {
+            const verseIndex = updatedContent.findIndex((v) => {
+              if (v.verseNumber === fileVerseNumber) { return true; }
+
+              if (v.joinedVerses && Array.isArray(v.joinedVerses)) {
+                const fileNum = parseInt(fileVerseNumber, 10);
+                if (!Number.isNaN(fileNum) && v.joinedVerses.includes(fileNum)) {
+                  return true;
+                }
+              }
+
+              if (v.verseNumber && v.verseNumber.includes('-')) {
+                const [start, end] = v.verseNumber.split('-').map(Number);
+                if (fileVerseNumber.includes('-')) {
+                  const [fileStart, fileEnd] = fileVerseNumber.split('-').map(Number);
+                  return start === fileStart && end === fileEnd;
+                }
+                const fileNum = Number(fileVerseNumber);
+                if (!Number.isNaN(fileNum) && fileNum >= start && fileNum <= end) {
+                  return true;
+                }
+              }
+
+              return false;
+            });
+
+            if (verseIndex !== -1) {
+              if (fileTakeNumber) {
+                const takeKey = `take${fileTakeNumber}`;
+                updatedContent[verseIndex][takeKey] = fileName;
+                if (isDefault) {
+                  updatedContent[verseIndex].default = takeKey;
+                }
+              }
             }
-          },
-        );
-      });
-      Object.entries(audioCurrentChapter.bookContent).forEach(
-        ([key]) => {
-          if (audioCurrentChapter.bookContent[key].chapterNumber === chapter) {
-            // Storing the content in the ReferenceContext for the MainPlayer component
-            setAudioContent(audioCurrentChapter.bookContent[key].contents);
-            fetchUrl();
-            setUpdateWave(!updateWave);
           }
-        },
-      );
+        }
+      });
+
+      setAudioContent(updatedContent);
+    } catch (error) {
+      logger.error('Error loading chapter:', error);
     }
   };
 
   // Setting up the default audio from the takes
   const changeDefault = (value) => {
+    if (!audioPath) { return; }
+
     const fs = window.require('fs');
     const path = require('path');
-    let i = 1;
-    // Checking whether the take has any audio
-    if (audioCurrentChapter?.filePath && fs.existsSync(path.join(audioCurrentChapter?.filePath, audioCurrentChapter?.chapterNum, `${chapter}_${verse}_${value}.mp3`))) {
+
+    const currentVerse = findCurrentVerse();
+    if (!currentVerse) {
+      logger.warn('Current verse not found');
+      return;
+    }
+
+    const verseNum = currentVerse.verseNumber;
+
+    if (!fs.existsSync(path.join(audioPath, `${chapter}_${verseNum}_${value}.mp3`))) {
+      logger.warn(`Take ${value} does not exist`);
+      return;
+    }
+
+    try {
+      let i = 1;
       while (i < 4) {
-      // Looking for the existed default file so that we can easily rename both the files
-        if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`))) {
-        // Checking whether the user is trying to default the same default file, else rename both.
+        const defaultFilePath = path.join(audioPath, `${chapter}_${verseNum}_${i}_default.mp3`);
+        if (fs.existsSync(defaultFilePath)) {
           if (i !== value) {
-            fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`));
-            fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${value}_default.mp3`));
+            fs.renameSync(
+              defaultFilePath,
+              path.join(audioPath, `${chapter}_${verseNum}_${i}.mp3`),
+            );
+            fs.renameSync(
+              path.join(audioPath, `${chapter}_${verseNum}_${value}.mp3`),
+              path.join(audioPath, `${chapter}_${verseNum}_${value}_default.mp3`),
+            );
           }
+          break;
         }
         i += 1;
       }
       // Finally loading the data back
       loadChapter();
+    } catch (error) {
+      logger.error('Error changing default take:', error);
     }
   };
-  const saveAudio = (blob) => {
-    getDetails()
-      .then(({
-        projectsDir, path,
-      }) => {
-        const fs = window.require('fs');
-        const result = take.replace(/take/g, '');
-        // Fetching the mp3 files
-        const folderName = fs.readdirSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString()));
-        // Checking whether any takes are available for the selected verse
-        const name = folderName.filter((w) => w.match(`^${chapter}_${verse}_`));
-        let filePath;
-        if (name.length > 0) {
-        // While Re-recording replacing the file with same name
-          if (fs.existsSync(path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`))) {
-            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`);
-          } else {
-            filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}.mp3`);
-          }
-        } else {
-          filePath = path.join(projectsDir, 'audio', 'ingredients', bookId.toUpperCase(), chapter.toString(), `${chapter}_${verse}_${result}_default.mp3`);
-        }
 
-        fs.mkdirSync(path.dirname(filePath), { recursive: true });
-        const fileReader = new FileReader();
-        // eslint-disable-next-line func-names
-        fileReader.onload = function () {
-        // eslint-disable-next-line react/no-this-in-sfc
-          fs.writeFile(filePath, Buffer.from(new Uint8Array(this.result)), (err) => {
+  const saveAudio = (blob) => {
+    getDetails().then(({ projectsDir, path }) => {
+      const fs = window.require('fs');
+
+      const currentVerse = findCurrentVerse();
+      if (!currentVerse) {
+        logger.error('Cannot save audio - verse not found');
+        return;
+      }
+
+      const verseNum = currentVerse.verseNumber;
+      const result = take.replace(/take/g, '');
+
+      const audioFolder = path.join(
+        projectsDir,
+        'audio',
+        'ingredients',
+        bookId.toUpperCase(),
+        chapter.toString(),
+      );
+
+      const folderName = fs.readdirSync(audioFolder);
+      const existingTakes = folderName.filter((w) => w.match(`^${chapter}_${verseNum}_`));
+
+      let filePath;
+      const defaultPath = path.join(audioFolder, `${chapter}_${verseNum}_${result}_default.mp3`);
+      const regularPath = path.join(audioFolder, `${chapter}_${verseNum}_${result}.mp3`);
+
+      if (existingTakes.length > 0) {
+        filePath = fs.existsSync(defaultPath) ? defaultPath : regularPath;
+      } else {
+        filePath = defaultPath;
+      }
+
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        const { result } = e.target;
+        fs.writeFile(
+          filePath,
+          Buffer.from(new Uint8Array(result)),
+          (err) => {
             if (!err) {
               loadChapter();
+            } else {
+              logger.error('Error saving audio file:', err);
             }
-          });
-        };
-        fileReader.readAsArrayBuffer(blob);
-      });
+          },
+        );
+      };
+
+      fileReader.readAsArrayBuffer(blob);
+    });
   };
+
   const playRecordingFeedback = useCallback(
     async (blobUrl, blob) => {
       setNewBlob(blobUrl);
       saveAudio(blob);
     },
-    [bookId, chapter, verse, take, audioCurrentChapter],
+    [bookId, chapter, verse, take, audioPath],
   );
   const {
     startRecording,
@@ -178,50 +270,79 @@ const MainPlayer = () => {
   const handleFunction = () => {
     // We have used trigger to identify whether the call is from DeleteAudio or Re-record
     if (trigger === 'delete') {
+      if (!audioPath) { return; }
+
       const fs = window.require('fs');
       const path = require('path');
+
+      const currentVerse = findCurrentVerse();
+      if (!currentVerse) {
+        logger.error('Cannot delete - verse not found');
+        return;
+      }
+
+      const verseNum = currentVerse.verseNumber;
       const result = take.replace(/take/g, '');
-      let versePosition;
-      // Fetching verse datails from the JSON
-      Object.entries(audioCurrentChapter.bookContent[chapter - 1].contents).forEach(
-        ([v]) => {
-          if (audioCurrentChapter.bookContent[chapter - 1].contents[v].verseNumber === verse) {
-            versePosition = v;
-          }
-        },
-      );
-      // Checking whether the user is trying to delete the default file.
-      if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`))) {
-        // Since user is deleting the default file, we need to change the default to some other takes if available
-        let i = 1;
-        while (i < 4) {
-          if (i !== +result) {
-            if (fs.existsSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`))) {
-              fs.renameSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}.mp3`), path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${i}_default.mp3`));
-              delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-              fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`));
-              delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-              i = 5;
+
+      try {
+        const defaultFilePath = path.join(audioPath, `${chapter}_${verseNum}_${result}_default.mp3`);
+        const regularFilePath = path.join(audioPath, `${chapter}_${verseNum}_${result}.mp3`);
+
+        if (fs.existsSync(defaultFilePath)) {
+          let newDefaultSet = false;
+          let newDefaultTake = null;
+          for (let i = 1; i < 4; i++) {
+            if (i !== +result) {
+              const altFilePath = path.join(audioPath, `${chapter}_${verseNum}_${i}.mp3`);
+              if (fs.existsSync(altFilePath)) {
+                fs.renameSync(
+                  altFilePath,
+                  path.join(audioPath, `${chapter}_${verseNum}_${i}_default.mp3`),
+                );
+                newDefaultSet = true;
+                newDefaultTake = `take${i}`;
+                logger.debug(`Set take${i} as new default after deleting ${take}`);
+                break;
+              }
             }
           }
-          i += 1;
+
+          // Delete the old default
+          fs.unlinkSync(defaultFilePath);
+
+          setAudioContent((prevContent) => prevContent.map((v) => {
+            if (v.verseNumber === currentVerse.verseNumber) {
+              const updated = { ...v };
+              delete updated[take];
+              if (newDefaultSet && newDefaultTake) {
+                updated.default = newDefaultTake;
+              } else {
+                delete updated.default;
+              }
+              return updated;
+            }
+            return v;
+          }));
+        } else if (fs.existsSync(regularFilePath)) {
+          // Delete non-default take
+          fs.unlinkSync(regularFilePath);
+
+          setAudioContent((prevContent) => prevContent.map((v) => {
+            if (v.verseNumber === currentVerse.verseNumber) {
+              const updated = { ...v };
+              delete updated[take];
+              return updated;
+            }
+            return v;
+          }));
         }
-        // Deleting the default one
-        if (i !== 6) {
-          fs.unlinkSync(path.join(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}_default.mp3`)));
-          delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-          delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition].default;
-        }
-      } else {
-        delete audioCurrentChapter.bookContent[chapter - 1].contents[versePosition][take];
-        fs.unlinkSync(path.join(audioCurrentChapter.filePath, audioCurrentChapter.chapterNum, `${chapter}_${verse}_${result}.mp3`));
+
+        setTrigger();
+        setUpdateWave(!updateWave);
+        setNewBlob();
+      } catch (error) {
+        logger.error('Error deleting audio:', error);
       }
-      // Since we are not loading the entire component and updating the JSON data (audioContent), we need to update it manually.
-      setAudioContent(audioCurrentChapter.bookContent[chapter - 1].contents);
-      setTrigger();
-      setUpdateWave(!updateWave);
-      setNewBlob();
-      loadChapter();
     } else {
       setTrigger('record');
     }
@@ -230,11 +351,15 @@ const MainPlayer = () => {
   useEffect(() => {
     if (audioContent?.length > 0) {
       fetchUrl();
-      setTrigger();
-      setTake('take1');
-      setNewBlob();
     }
-  }, [audioContent, bookId, verse, chapter]);
+  }, [audioContent, bookId, verse, chapter, fetchUrl]);
+
+  // Reset state when verse/chapter changes
+  useEffect(() => {
+    setTrigger();
+    setTake('take1');
+    setNewBlob();
+  }, [verse, chapter, bookId]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
