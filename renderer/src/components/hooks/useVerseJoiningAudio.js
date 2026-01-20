@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import {
-  mergeDefaultAudios,
+  mergeAudioFiles,
   splitMergedAudio,
   deleteAllAudioForVerse,
   hasAnyAudioForVerse,
   getDefaultAudioForVerse,
-  mergeExistingAudioFiles,
+  getAllAudioForVerse,
 } from '@/components/AudioRecorder/core/audioMergeUtils';
 import * as logger from '../../logger';
 
@@ -93,6 +93,7 @@ export const useVerseJoiningAudio = ({
   setNotify,
   setSnackText,
   setOpenSnackBar,
+  setConfirmModal,
 }) => {
   const saveVerseStructure = useCallback(async (updatedContent) => {
     try {
@@ -133,15 +134,9 @@ export const useVerseJoiningAudio = ({
               verseSegments: verse.verseSegments || null,
             };
 
-            if (verse.take1) {
-              verseData.take1 = verse.take1;
-            }
-            if (verse.default) {
-              verseData.default = verse.default;
-            }
-            if (verse.timestamps) {
-              verseData.timestamps = verse.timestamps;
-            }
+            if (verse.take1) { verseData.take1 = verse.take1; }
+            if (verse.default) { verseData.default = verse.default; }
+            if (verse.timestamps) { verseData.timestamps = verse.timestamps; }
 
             return verseData;
           }),
@@ -153,7 +148,7 @@ export const useVerseJoiningAudio = ({
       }
 
       fs.writeFileSync(structureFile, JSON.stringify(allStructure, null, 2), 'utf8');
-      logger.debug('Verse structure saved successfully');
+      logger.debug('Verse structure saved');
       return true;
     } catch (err) {
       logger.error('Error saving verse structure:', err);
@@ -161,7 +156,12 @@ export const useVerseJoiningAudio = ({
     }
   }, [audioPath, chapter, bookId]);
 
-  const executeJoinVerse = useCallback(async (currentVerseNumber, currentVerseIndex, previousVerseIndex) => {
+  const executeJoinVerse = useCallback(async (
+    currentVerseNumber,
+    currentVerseIndex,
+    previousVerseIndex,
+    skipAudioCheck = false,
+  ) => {
     try {
       const path = require('path');
       const currentVerse = audioContent[currentVerseIndex];
@@ -196,67 +196,106 @@ export const useVerseJoiningAudio = ({
         .filter(Boolean);
       const combinedText = textArray.join(' ').trim();
 
+      const previousHasAudio = previousVerse.default && previousVerse[previousVerse.default];
+      const currentHasAudio = currentVerse.default && currentVerse[currentVerse.default];
+
+      const previousHasAnyAudio = previousHasAudio || hasAnyAudioForVerse(chapter, previousVerseNum, audioPath);
+      const currentHasAnyAudio = currentHasAudio || hasAnyAudioForVerse(chapter, currentVerseNumber, audioPath);
+
+      if (!skipAudioCheck && (previousHasAnyAudio !== currentHasAnyAudio)) {
+        setConfirmModal({
+          open: true,
+          title: t('modal-title-join-warning'),
+          message: t('msg-join-audio-mismatch'),
+          confirmText: t('label-continue'),
+          onConfirm: () => {
+            executeJoinVerse(currentVerseNumber, currentVerseIndex, previousVerseIndex, true);
+          },
+        });
+        return false;
+      }
+
+      if (previousHasAnyAudio) {
+        const prevAudios = getAllAudioForVerse(chapter, previousVerseNum, audioPath);
+        prevAudios.forEach((audio) => {
+          if (!audio.isDefault) {
+            const fs = window.require('fs');
+            fs.unlinkSync(audio.path);
+            logger.debug(`Deleted non-default: ${audio.filename}`);
+          }
+        });
+      }
+
+      if (currentHasAnyAudio) {
+        const currAudios = getAllAudioForVerse(chapter, currentVerseNumber, audioPath);
+        currAudios.forEach((audio) => {
+          if (!audio.isDefault) {
+            const fs = window.require('fs');
+            fs.unlinkSync(audio.path);
+            logger.debug(`Deleted non-default: ${audio.filename}`);
+          }
+        });
+      }
+
       let mergedAudio = null;
-      let hasAudio = false;
 
-      const previousHasAudio = previousVerse.take1 || hasAnyAudioForVerse(chapter, previousVerseNum, audioPath);
-      const currentHasAudio = currentVerse.take1 || hasAnyAudioForVerse(chapter, currentVerseNumber, audioPath);
-
-      hasAudio = previousHasAudio || currentHasAudio;
-
-      if (hasAudio) {
-        logger.debug('Audio detected, attempting merge...');
+      if (previousHasAudio && currentHasAudio) {
+        logger.debug('Both verses have audio - merging...');
 
         const audioFilesToMerge = [];
 
-        if (previousVerse.take1) {
+        if (previousVerse.timestamps && Array.isArray(previousVerse.timestamps)) {
           audioFilesToMerge.push({
-            path: path.join(audioPath, previousVerse.take1),
+            path: path.join(audioPath, previousVerse[previousVerse.default]),
             verseNumber: previousVerseNum,
+            timestamps: previousVerse.timestamps,
+            isMerged: true,
           });
-        }
-
-        if (currentVerse.take1) {
+        } else {
           audioFilesToMerge.push({
-            path: path.join(audioPath, currentVerse.take1),
-            verseNumber: currentVerseNumber,
+            path: path.join(audioPath, previousVerse[previousVerse.default]),
+            verseNumber: previousVerseNum,
+            isMerged: false,
           });
         }
+        audioFilesToMerge.push({
+          path: path.join(audioPath, currentVerse[currentVerse.default]),
+          verseNumber: currentVerseNumber,
+          isMerged: false,
+        });
 
-        if (audioFilesToMerge.length > 0) {
-          logger.debug('Files to merge:', audioFilesToMerge);
+        const mergeResult = await mergeAudioFiles(
+          audioFilesToMerge,
+          chapter,
+          audioPath,
+          newVerseNumber,
+          joinedVerses,
+        );
 
-          const mergeResult = await mergeExistingAudioFiles(
-            audioFilesToMerge,
-            chapter,
-            audioPath,
-            newVerseNumber,
-            joinedVerses,
-          );
+        if (mergeResult.success) {
+          mergedAudio = {
+            filename: mergeResult.filename,
+            timestamps: mergeResult.timestamps,
+          };
+          logger.debug('Audio merged successfully');
 
-          logger.debug('Merge result:', mergeResult);
-
-          if (mergeResult.success) {
-            mergedAudio = {
-              filename: mergeResult.filename,
-              timestamps: mergeResult.timestamps,
-            };
-            logger.debug('Audio merged successfully:', mergedAudio);
-
-            deleteAllAudioForVerse(chapter, previousVerseNum, audioPath);
-            deleteAllAudioForVerse(chapter, currentVerseNumber, audioPath);
-
-            logger.debug('Original audio files deleted');
-          } else if (mergeResult.hasAudio === false) {
-            logger.debug('No audio files to merge');
-          } else {
-            logger.error('Audio merge failed:', mergeResult.error);
-            setNotify('failure');
-            setSnackText(t('msg-audio-merge-failed') || 'Audio merge failed. Operation cancelled.');
-            setOpenSnackBar(true);
-            return false;
-          }
+          deleteAllAudioForVerse(chapter, previousVerseNum, audioPath);
+          deleteAllAudioForVerse(chapter, currentVerseNumber, audioPath);
+        } else {
+          logger.error('Audio merge failed:', mergeResult.error);
+          setNotify('failure');
+          setSnackText(t('msg-audio-merge-failed'));
+          setOpenSnackBar(true);
+          return false;
         }
+      } else if (previousHasAudio || currentHasAudio) {
+        if (previousHasAnyAudio) {
+          deleteAllAudioForVerse(chapter, previousVerseNum, audioPath);
+        }
+        if (currentHasAnyAudio) {
+          deleteAllAudioForVerse(chapter, currentVerseNumber, audioPath);
+        }
+        logger.debug('Deleted audio from verses with mismatched audio');
       }
 
       const updatedVerseEntry = {
@@ -283,27 +322,44 @@ export const useVerseJoiningAudio = ({
       await saveVerseStructure(updatedContent);
 
       setNotify('success');
-      setSnackText(t('msg-verses-joined') || 'Verses joined successfully');
+      setSnackText(t('msg-verses-joined'));
       setOpenSnackBar(true);
 
       return true;
     } catch (err) {
       logger.error('Error joining verses:', err);
       setNotify('failure');
-      setSnackText(t('msg-join-failed') || 'Failed to join verses');
+      setSnackText(t('msg-join-failed'));
       setOpenSnackBar(true);
       return false;
     }
-  }, [audioContent, setAudioContent, originalBookContent, chapter, audioPath, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
+  }, [
+    audioContent,
+    setAudioContent,
+    originalBookContent,
+    chapter,
+    audioPath,
+    t,
+    setNotify,
+    setSnackText,
+    setOpenSnackBar,
+    setConfirmModal,
+    saveVerseStructure,
+  ]);
 
-  const executeDisjoinVerse = useCallback(async (joinedVerseNumber, verseIndex) => {
+  const executeDisjoinVerse = useCallback(async (
+    joinedVerseNumber,
+    verseIndex,
+    skipAudioCheck = false,
+  ) => {
     try {
       const verse = audioContent[verseIndex];
+      const path = require('path');
 
       if (!verse) {
         logger.error('Verse not found at index', verseIndex);
         setNotify('failure');
-        setSnackText(t('msg-disjoin-failed') || 'Failed to separate verses');
+        setSnackText(t('msg-disjoin-failed'));
         setOpenSnackBar(true);
         return false;
       }
@@ -325,28 +381,26 @@ export const useVerseJoiningAudio = ({
         firstVerseNum,
       ) || '';
 
-      let canSplitAudio = false;
       const mergedAudioInfo = getDefaultAudioForVerse(chapter, joinedVerseNumber, audioPath);
+      const hasTimestamps = verse.timestamps && Array.isArray(verse.timestamps) && verse.timestamps.length > 0;
 
-      if (mergedAudioInfo.exists && verse.timestamps && Array.isArray(verse.timestamps)) {
-        canSplitAudio = true;
-        logger.debug('Can split audio - timestamps available');
-      } else if (mergedAudioInfo.exists && (!verse.timestamps || !Array.isArray(verse.timestamps))) {
-        logger.warn('Audio exists but no timestamps for splitting');
-
-        setNotify('warning');
-        setSnackText(
-          t('msg-cannot-split-audio-no-timestamps')
-          || 'Cannot split audio - no timestamp data. Audio will be deleted.',
-        );
-        setOpenSnackBar(true);
-
-        deleteAllAudioForVerse(chapter, joinedVerseNumber, audioPath);
-        logger.debug('Merged audio deleted (no timestamps)');
+      if (!skipAudioCheck && mergedAudioInfo.exists && !hasTimestamps) {
+        setConfirmModal({
+          open: true,
+          title: t('modal-title-disjoin-warning'),
+          message: t('msg-disjoin-no-timestamps'),
+          confirmText: t('label-continue'),
+          onConfirm: () => {
+            executeDisjoinVerse(joinedVerseNumber, verseIndex, true);
+          },
+        });
+        return false;
       }
 
-      if (canSplitAudio) {
-        logger.debug('Splitting audio with timestamps...');
+      let canSplitAudio = false;
+      if (mergedAudioInfo.exists && hasTimestamps) {
+        canSplitAudio = true;
+        logger.debug('Can split audio - timestamps available');
 
         const splitResult = await splitMergedAudio(
           mergedAudioInfo.path,
@@ -356,16 +410,18 @@ export const useVerseJoiningAudio = ({
         );
 
         if (splitResult.success) {
-          logger.debug('Audio split successfully:', splitResult.files);
-
+          logger.debug('Audio split successfully');
           deleteAllAudioForVerse(chapter, joinedVerseNumber, audioPath);
         } else {
           logger.error('Audio split failed:', splitResult.error);
           setNotify('failure');
-          setSnackText(t('msg-audio-split-failed') || 'Audio split failed. Operation cancelled.');
+          setSnackText(t('msg-audio-split-failed'));
           setOpenSnackBar(true);
           return false;
         }
+      } else if (mergedAudioInfo.exists && !hasTimestamps) {
+        deleteAllAudioForVerse(chapter, joinedVerseNumber, audioPath);
+        logger.debug('Deleted merged audio (no timestamps)');
       }
 
       const firstVerseEntry = {
@@ -380,7 +436,7 @@ export const useVerseJoiningAudio = ({
       }
 
       const remainingVerses = [];
-      for (let v = remainingStart; v <= end; v++) {
+      for (let v = remainingStart; v <= end; v += 1) {
         remainingVerses.push(v);
       }
 
@@ -410,22 +466,30 @@ export const useVerseJoiningAudio = ({
         }));
 
         const remainingText = segments.map((s) => s.text).filter(Boolean).join(' ').trim();
+        const remainingVerseNum = `${remainingVerses[0]}-${remainingVerses[remainingVerses.length - 1]}`;
 
         remainingVerseEntry = {
-          verseNumber: `${remainingVerses[0]}-${remainingVerses[remainingVerses.length - 1]}`,
+          verseNumber: remainingVerseNum,
           verseText: remainingText,
           joinedVerses: remainingVerses,
           verseSegments: segments,
         };
 
         if (canSplitAudio) {
-          logger.debug('Merging audio for remaining verses:', remainingVerses);
+          logger.debug('Merging remaining verses:', remainingVerses);
 
-          const remainingMergeResult = await mergeDefaultAudios(
-            remainingVerses,
+          const audioFilesToMerge = remainingVerses.map((vnum) => ({
+            path: path.join(audioPath, `${chapter}_${vnum}_1_default.mp3`),
+            verseNumber: vnum,
+            isMerged: false,
+          }));
+
+          const remainingMergeResult = await mergeAudioFiles(
+            audioFilesToMerge,
             chapter,
             audioPath,
-            `${remainingVerses[0]}-${remainingVerses[remainingVerses.length - 1]}`,
+            remainingVerseNum,
+            remainingVerses,
           );
 
           if (remainingMergeResult.success) {
@@ -433,7 +497,7 @@ export const useVerseJoiningAudio = ({
             remainingVerseEntry.default = 'take1';
             remainingVerseEntry.timestamps = remainingMergeResult.timestamps;
 
-            for (let i = 1; i < remainingVerses.length; i++) {
+            for (let i = 1; i < remainingVerses.length; i += 1) {
               deleteAllAudioForVerse(chapter, remainingVerses[i], audioPath);
             }
           }
@@ -447,18 +511,30 @@ export const useVerseJoiningAudio = ({
       await saveVerseStructure(updatedContent);
 
       setNotify('success');
-      setSnackText(t('msg-verses-disjoined') || 'Verses separated successfully');
+      setSnackText(t('msg-verses-disjoined'));
       setOpenSnackBar(true);
 
       return true;
     } catch (err) {
       logger.error('Error disjoining verses:', err);
       setNotify('failure');
-      setSnackText(t('msg-disjoin-failed') || 'Failed to separate verses');
+      setSnackText(t('msg-disjoin-failed'));
       setOpenSnackBar(true);
       return false;
     }
-  }, [audioContent, setAudioContent, originalBookContent, chapter, audioPath, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
+  }, [
+    audioContent,
+    setAudioContent,
+    originalBookContent,
+    chapter,
+    audioPath,
+    t,
+    setNotify,
+    setSnackText,
+    setOpenSnackBar,
+    setConfirmModal,
+    saveVerseStructure,
+  ]);
 
   const handleJoinVerse = useCallback((currentVerseNumber) => {
     const validation = validateVerseJoin(audioContent, currentVerseNumber);

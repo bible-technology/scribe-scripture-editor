@@ -194,13 +194,14 @@ const MainPlayer = () => {
     }
   };
 
-  const saveAudio = (blob) => {
+  const saveAudio = (blob) => new Promise((resolve, reject) => {
     getDetails().then(({ projectsDir, path }) => {
       const fs = window.require('fs');
 
       const currentVerse = findCurrentVerse();
       if (!currentVerse) {
         logger.error('Cannot save audio - verse not found');
+        reject(new Error('Verse not found'));
         return;
       }
 
@@ -216,7 +217,7 @@ const MainPlayer = () => {
       );
 
       const folderName = fs.readdirSync(audioFolder);
-      const existingTakes = folderName.filter((w) => w.match(`^${chapter}_${verseNum}_`));
+      const existingTakes = folderName.filter((w) => w.match(`^${chapter}_${verseNum.replace(/[-]/g, '\\-')}_`));
 
       let filePath;
       const defaultPath = path.join(audioFolder, `${chapter}_${verseNum}_${result}_default.mp3`);
@@ -231,31 +232,34 @@ const MainPlayer = () => {
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
       const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        const { result } = e.target;
-        fs.writeFile(
-          filePath,
-          Buffer.from(new Uint8Array(result)),
-          (err) => {
-            if (!err) {
-              loadChapter();
-            } else {
-              logger.error('Error saving audio file:', err);
-            }
-          },
-        );
+      fileReader.onload = (event) => {
+        fs.writeFile(filePath, Buffer.from(new Uint8Array(event.target.result)), (err) => {
+          if (!err) {
+            logger.debug(`✓ Audio saved: ${path.basename(filePath)}`);
+            loadChapter().then(() => {
+              resolve();
+            });
+          } else {
+            logger.error('Error saving audio file:', err);
+            reject(err);
+          }
+        });
       };
-
+      fileReader.onerror = () => reject(new Error('FileReader error'));
       fileReader.readAsArrayBuffer(blob);
-    });
-  };
+    }).catch(reject);
+  });
 
   const playRecordingFeedback = useCallback(
     async (blobUrl, blob) => {
       setNewBlob(blobUrl);
-      saveAudio(blob);
+      await saveAudio(blob);
+
+      setTimeout(() => {
+        fetchUrl();
+      }, 100);
     },
-    [bookId, chapter, verse, take, audioPath],
+    [bookId, chapter, verse, take, audioPath, fetchUrl],
   );
   const {
     startRecording,

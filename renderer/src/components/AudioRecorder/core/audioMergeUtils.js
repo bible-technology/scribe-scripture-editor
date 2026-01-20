@@ -12,7 +12,6 @@ export function getDefaultAudioForVerse(chapter, verseNumber, audioPath) {
     }
 
     const files = fs.readdirSync(audioPath);
-
     const escapedVerse = String(verseNumber).replace(/[-]/g, '\\-');
     const defaultPattern = new RegExp(`^${chapter}_${escapedVerse}_(\\d+)_default\\.(mp3|wav|webm)$`);
 
@@ -47,7 +46,6 @@ export function getAllAudioForVerse(chapter, verseNumber, audioPath) {
     }
 
     const files = fs.readdirSync(audioPath);
-
     const escapedVerse = String(verseNumber).replace(/[-]/g, '\\-');
     const versePattern = new RegExp(`^${chapter}_${escapedVerse}_(\\d+)(_default)?\\.(mp3|wav|webm)$`);
 
@@ -73,213 +71,6 @@ export function getAllAudioForVerse(chapter, verseNumber, audioPath) {
   }
 }
 
-export async function mergeDefaultAudios(
-  verseNumbers,
-  chapter,
-  audioPath,
-  newVerseNumber,
-) {
-  try {
-    const path = require('path');
-    const fs = window.require('fs');
-    const context = new window.AudioContext();
-
-    const audioFiles = verseNumbers
-      .map((verseNum) => {
-        const audioInfo = getDefaultAudioForVerse(chapter, verseNum, audioPath);
-
-        if (!audioInfo.exists) {
-          logger.warn(`No default audio found for verse ${verseNum}, skipping`);
-          return null;
-        }
-
-        logger.debug(`Found default audio for verse ${verseNum}:`, audioInfo.filename);
-        return audioInfo;
-      })
-      .filter(Boolean);
-
-    if (audioFiles.length === 0) {
-      logger.warn('No default audio files found to merge');
-      return {
-        success: false,
-        error: 'No default audio files found',
-        hasAudio: false,
-      };
-    }
-
-    const buffers = await Promise.all(
-      audioFiles.map(async (audioInfo) => {
-        const response = await fetch(`file://${audioInfo.path}`);
-        const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await context.decodeAudioData(arrayBuffer);
-
-        logger.debug(
-          `Loaded audio: ${audioInfo.filename}, duration: ${audioBuffer.duration}s`,
-        );
-
-        return audioBuffer;
-      }),
-    );
-
-    const totalLength = buffers.reduce(
-      (total, buffer) => total + buffer.length,
-      0,
-    );
-
-    const output = context.createBuffer(
-      buffers[0].numberOfChannels,
-      totalLength,
-      buffers[0].sampleRate,
-    );
-
-    const timestamps = [];
-    let offset = 0;
-    let currentTime = 0;
-
-    buffers.forEach((buffer, index) => {
-      const verseNum = verseNumbers[index];
-      const duration = buffer.duration;
-
-      timestamps.push({
-        verse: verseNum,
-        start: currentTime,
-        duration,
-      });
-
-      for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
-        output.copyToChannel(buffer.getChannelData(channel), channel, offset);
-      }
-
-      offset += buffer.length;
-      currentTime += duration;
-    });
-
-    logger.debug('Generated timestamps:', timestamps);
-
-    const wavData = toWav(output);
-    const blob = new Blob([new DataView(wavData)], { type: 'audio/wav' });
-
-    const mergedFilename = `${chapter}_${newVerseNumber}_1_default.mp3`;
-    const mergedPath = path.join(audioPath, mergedFilename);
-
-    const arrayBuffer = await blob.arrayBuffer();
-    fs.writeFileSync(mergedPath, Buffer.from(arrayBuffer));
-
-    logger.debug(
-      `Merged audio saved: ${mergedFilename}, duration: ${output.duration}s`,
-    );
-
-    return {
-      success: true,
-      filename: mergedFilename,
-      path: mergedPath,
-      duration: output.duration,
-      timestamps,
-    };
-  } catch (err) {
-    logger.error('Error merging audio:', err);
-    return {
-      success: false,
-      error: err.message,
-    };
-  }
-}
-
-export async function splitMergedAudio(
-  mergedAudioPath,
-  timestamps,
-  chapter,
-  audioPath,
-) {
-  logger.debug('Splitting merged audio:', { mergedAudioPath, timestamps });
-
-  try {
-    const path = require('path');
-    const fs = window.require('fs');
-    const context = new window.AudioContext();
-
-    const response = await fetch(`file://${mergedAudioPath}`);
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await context.decodeAudioData(arrayBuffer);
-
-    logger.debug(`Loaded merged audio: duration ${audioBuffer.duration}s`);
-
-    const splitFiles = timestamps
-      .map((timestamp) => {
-        const { verse, start, duration } = timestamp;
-
-        const startOffset = Math.floor(start * audioBuffer.sampleRate);
-        const frameCount = Math.floor(duration * audioBuffer.sampleRate);
-        const actualFrameCount = Math.min(
-          frameCount,
-          audioBuffer.length - startOffset,
-        );
-
-        if (actualFrameCount <= 0) {
-          logger.warn(`Invalid frame count for verse ${verse}, skipping`);
-          return null;
-        }
-
-        const verseBuffer = context.createBuffer(
-          audioBuffer.numberOfChannels,
-          actualFrameCount,
-          audioBuffer.sampleRate,
-        );
-
-        for (let channel = 0; channel < audioBuffer.numberOfChannels; channel += 1) {
-          const sourceData = audioBuffer.getChannelData(channel);
-          const targetData = verseBuffer.getChannelData(channel);
-
-          for (let i = 0; i < actualFrameCount; i += 1) {
-            targetData[i] = sourceData[startOffset + i];
-          }
-        }
-
-        const wavData = toWav(verseBuffer);
-        const blob = new Blob([new DataView(wavData)], { type: 'audio/wav' });
-
-        const filename = `${chapter}_${verse}_1_default.mp3`;
-        const filePath = path.join(audioPath, filename);
-
-        return {
-          verse,
-          filename,
-          filePath,
-          duration: verseBuffer.duration,
-          blob,
-        };
-      })
-      .filter(Boolean);
-
-    await Promise.all(
-      splitFiles.map(async (item) => {
-        const buffer = Buffer.from(await item.blob.arrayBuffer());
-        fs.writeFileSync(item.filePath, buffer);
-
-        logger.debug(
-          `Split audio saved: ${item.filename}, duration: ${item.duration}s`,
-        );
-      }),
-    );
-
-    return {
-      success: true,
-      files: splitFiles.map((f) => ({
-        verseNumber: f.verse,
-        filename: f.filename,
-        path: f.filePath,
-        duration: f.duration,
-      })),
-    };
-  } catch (err) {
-    logger.error('Error splitting audio:', err);
-    return {
-      success: false,
-      error: err.message,
-    };
-  }
-}
-
 export function deleteAllAudioForVerse(chapter, verseNumber, audioPath) {
   try {
     const fs = window.require('fs');
@@ -290,7 +81,6 @@ export function deleteAllAudioForVerse(chapter, verseNumber, audioPath) {
     }
 
     const files = fs.readdirSync(audioPath);
-
     const escapedVerse = String(verseNumber).replace(/[-]/g, '\\-');
     const pattern = new RegExp(`^${chapter}_${escapedVerse}_.*\\.(mp3|wav|webm|m4a)$`);
 
@@ -317,14 +107,14 @@ export function hasAnyAudioForVerse(chapter, verseNumber, audioPath) {
   return audioFiles.length > 0;
 }
 
-export async function mergeExistingAudioFiles(
+export async function mergeAudioFiles(
   audioFiles,
   chapter,
   audioPath,
   newVerseNumber,
   allVerseNumbers,
 ) {
-  logger.debug('Merging existing audio files:', {
+  logger.debug('=== Starting Audio Merge ===', {
     audioFiles,
     newVerseNumber,
     allVerseNumbers,
@@ -336,6 +126,7 @@ export async function mergeExistingAudioFiles(
     const context = new window.AudioContext();
 
     if (!audioFiles || audioFiles.length === 0) {
+      logger.warn('No audio files provided for merge');
       return {
         success: false,
         error: 'No audio files provided',
@@ -355,16 +146,16 @@ export async function mergeExistingAudioFiles(
           const arrayBuffer = await response.arrayBuffer();
           const audioBuffer = await context.decodeAudioData(arrayBuffer);
 
-          logger.debug(
-            `Loaded audio: ${audioFile.path}, duration: ${audioBuffer.duration}s`,
-          );
+          logger.debug(`Loaded: ${audioFile.filename || audioFile.path} (${audioBuffer.duration}s)`);
 
           return {
             buffer: audioBuffer,
             verseNumber: audioFile.verseNumber,
+            timestamps: audioFile.timestamps || null,
+            isMerged: audioFile.isMerged || false,
           };
         } catch (err) {
-          logger.error(`Error loading audio ${audioFile.path}:`, err);
+          logger.error(`Failed to load: ${audioFile.path}`, err);
           return null;
         }
       }),
@@ -411,50 +202,62 @@ export async function mergeExistingAudioFiles(
       });
 
       if (matching) {
-        const { buffer } = matching;
-        const duration = buffer.duration;
+        const { buffer, timestamps: itemTimestamps, isMerged } = matching;
 
-        timestamps.push({
-          verse: verseNum,
-          start: currentTime,
-          duration,
-        });
+        if (isMerged && itemTimestamps) {
+          const verseTimestamp = itemTimestamps.find((t) => t.verse === verseNum);
 
-        for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
-          output.copyToChannel(
-            buffer.getChannelData(channel),
-            channel,
-            offset,
-          );
+          if (verseTimestamp) {
+            timestamps.push({
+              verse: verseNum,
+              start: currentTime,
+              duration: verseTimestamp.duration,
+            });
+
+            const startFrame = Math.floor(verseTimestamp.start * buffer.sampleRate);
+            const frameCount = Math.floor(verseTimestamp.duration * buffer.sampleRate);
+            const actualFrameCount = Math.min(
+              frameCount,
+              buffer.length - startFrame,
+            );
+
+            for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+              const sourceData = buffer.getChannelData(channel);
+              const targetData = output.getChannelData(channel);
+
+              for (let i = 0; i < actualFrameCount; i += 1) {
+                targetData[offset + i] = sourceData[startFrame + i];
+              }
+            }
+
+            offset += actualFrameCount;
+            currentTime += verseTimestamp.duration;
+          }
+        } else {
+          const duration = buffer.duration;
+
+          timestamps.push({
+            verse: verseNum,
+            start: currentTime,
+            duration,
+          });
+
+          for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+            output.copyToChannel(buffer.getChannelData(channel), channel, offset);
+          }
+
+          offset += buffer.length;
+          currentTime += duration;
         }
-
-        offset += buffer.length;
-        currentTime += duration;
       } else {
-        logger.warn(`No audio found for verse ${verseNum}, adding silence`);
-
-        const silenceDuration = 0.5;
-        const silenceLength = Math.floor(
-          silenceDuration * output.sampleRate,
-        );
-
-        timestamps.push({
-          verse: verseNum,
-          start: currentTime,
-          duration: silenceDuration,
-        });
-
-        offset += silenceLength;
-        currentTime += silenceDuration;
+        logger.warn(`No audio for verse ${verseNum} - verse will have no audio in merge`);
       }
     });
 
     logger.debug('Generated timestamps:', timestamps);
 
     const wavData = toWav(output);
-    const blob = new Blob([new DataView(wavData)], {
-      type: 'audio/wav',
-    });
+    const blob = new Blob([new DataView(wavData)], { type: 'audio/wav' });
 
     const mergedFilename = `${chapter}_${newVerseNumber}_1_default.mp3`;
     const mergedPath = path.join(audioPath, mergedFilename);
@@ -462,9 +265,7 @@ export async function mergeExistingAudioFiles(
     const arrayBuffer = await blob.arrayBuffer();
     fs.writeFileSync(mergedPath, Buffer.from(arrayBuffer));
 
-    logger.debug(
-      `Merged audio saved: ${mergedFilename}, duration: ${output.duration}s`,
-    );
+    logger.debug(`Merged audio saved: ${mergedFilename} (${output.duration}s)`);
 
     return {
       success: true,
@@ -474,7 +275,98 @@ export async function mergeExistingAudioFiles(
       timestamps,
     };
   } catch (err) {
-    logger.error('Error merging existing audio files:', err);
+    logger.error('Error merging audio files:', err);
+    return {
+      success: false,
+      error: err.message,
+    };
+  }
+}
+
+export async function splitMergedAudio(
+  mergedAudioPath,
+  timestamps,
+  chapter,
+  audioPath,
+) {
+  logger.debug('=== Starting Audio Split ===', { mergedAudioPath, timestamps });
+
+  try {
+    const context = new window.AudioContext();
+
+    const response = await fetch(`file://${mergedAudioPath}`);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await context.decodeAudioData(arrayBuffer);
+
+    logger.debug(`Loaded merged audio: ${audioBuffer.duration}s`);
+
+    const splitJobs = timestamps
+      .map((timestamp) => {
+        const { verse, start, duration } = timestamp;
+
+        const startOffset = Math.floor(start * audioBuffer.sampleRate);
+        const frameCount = Math.floor(duration * audioBuffer.sampleRate);
+        const actualFrameCount = Math.min(
+          frameCount,
+          audioBuffer.length - startOffset,
+        );
+
+        if (actualFrameCount <= 0) {
+          logger.warn(`Invalid frame count for verse ${verse}, skipping`);
+          return null;
+        }
+
+        const verseBuffer = context.createBuffer(
+          audioBuffer.numberOfChannels,
+          actualFrameCount,
+          audioBuffer.sampleRate,
+        );
+
+        for (let channel = 0; channel < audioBuffer.numberOfChannels; channel += 1) {
+          const sourceData = audioBuffer.getChannelData(channel);
+          const targetData = verseBuffer.getChannelData(channel);
+
+          for (let i = 0; i < actualFrameCount; i += 1) {
+            targetData[i] = sourceData[startOffset + i];
+          }
+        }
+
+        const wavData = toWav(verseBuffer);
+        const blob = new Blob([new DataView(wavData)], { type: 'audio/wav' });
+
+        return {
+          verseNumber: verse,
+          filename: `${chapter}_${verse}_1_default.mp3`,
+          duration: verseBuffer.duration,
+          blob,
+        };
+      })
+      .filter(Boolean);
+
+    const path = require('path');
+    const fs = window.require('fs');
+
+    await Promise.all(
+      splitJobs.map(async (job) => {
+        const filePath = path.join(audioPath, job.filename);
+        const buffer = Buffer.from(await job.blob.arrayBuffer());
+        fs.writeFileSync(filePath, buffer);
+        logger.debug(`Split audio saved: ${job.filename}`);
+      }),
+    );
+
+    logger.debug(`Split complete: ${splitJobs.length} files created`);
+
+    return {
+      success: true,
+      files: splitJobs.map((f) => ({
+        verseNumber: f.verseNumber,
+        filename: f.filename,
+        duration: f.duration,
+      })),
+    };
+  } catch (err) {
+    logger.error('Error splitting audio:', err);
     return {
       success: false,
       error: err.message,

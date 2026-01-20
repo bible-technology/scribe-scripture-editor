@@ -51,7 +51,7 @@ const VerseContextMenu = ({
             onClick={handleJoin}
             className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 transition-colors"
           >
-            {t('label-join-with-previous') || 'Join with Previous Verse'}
+            {t('label-join-with-previous')}
           </button>
         )}
 
@@ -61,13 +61,13 @@ const VerseContextMenu = ({
             onClick={handleDisjoin}
             className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 transition-colors"
           >
-            {t('label-separate-verses') || 'Separate Verses'}
+            {t('label-separate-verses')}
           </button>
         )}
 
         {isFirstVerse && !isJoinedVerse && (
           <div className="px-4 py-2 text-sm text-gray-400 italic">
-            {t('label-no-actions-available') || 'No actions available'}
+            {t('label-no-actions-available')}
           </div>
         )}
       </div>

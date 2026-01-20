@@ -12,6 +12,7 @@ import {
   useState, useEffect, useContext, useRef,
 } from 'react';
 import { readRefBurrito } from '@/core/reference/readRefBurrito';
+import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { useVerseJoiningAudio } from '@/hooks/useVerseJoiningAudio';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import EditorPage from '@/components/AudioRecorder/components/EditorPage';
@@ -401,6 +402,13 @@ const AudioEditor = ({ editor }) => {
   const [snackBar, setOpenSnackBar] = useState(false);
   const [displyScreen, setDisplayScreen] = useState(false);
   const [originalBookContent, setOriginalBookContent] = useState([]);
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    onConfirm: null,
+  });
 
   const {
     state: {
@@ -437,7 +445,25 @@ const AudioEditor = ({ editor }) => {
     setNotify,
     setSnackText,
     setOpenSnackBar,
+    setConfirmModal,
   });
+
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      open: false,
+      title: '',
+      message: '',
+      confirmText: '',
+      onConfirm: null,
+    });
+  };
+
+  const handleConfirm = () => {
+    if (confirmModal.onConfirm) {
+      confirmModal.onConfirm();
+    }
+    closeConfirmModal();
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -642,6 +668,14 @@ const AudioEditor = ({ editor }) => {
           setOpenSnackBar={setOpenSnackBar}
           setSnackText={setSnackText}
           error={notify}
+        />
+        <ConfirmationModal
+          openModal={confirmModal.open}
+          title={confirmModal.title}
+          setOpenModal={closeConfirmModal}
+          confirmMessage={confirmModal.message}
+          buttonName={confirmModal.confirmText}
+          closeModal={handleConfirm}
         />
       </Editor>
     </div>
