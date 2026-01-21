@@ -44,6 +44,64 @@ const MainPlayer = () => {
       buttonName: '',
     });
   };
+
+  const saveVerseStructureToFile = useCallback(async (updatedContent) => {
+    try {
+      const fs = window.require('fs');
+      const path = require('path');
+
+      if (!audioPath || !bookId || !chapter) { return; }
+
+      const bookFolder = path.dirname(audioPath);
+      const bookIdUpper = bookId.toUpperCase();
+      const bookIdLower = bookId.toLowerCase();
+      const structureFile = path.join(bookFolder, `${bookIdLower}.json`);
+      const chapterKey = chapter.toString();
+
+      let allStructure = {};
+      if (fs.existsSync(structureFile)) {
+        try {
+          const existingData = fs.readFileSync(structureFile, 'utf8');
+          allStructure = JSON.parse(existingData);
+        } catch (parseError) {
+          logger.warn('Could not parse existing structure file:', parseError);
+        }
+      }
+
+      if (!allStructure[bookIdUpper]) {
+        allStructure[bookIdUpper] = {};
+      }
+
+      allStructure[bookIdUpper][chapterKey] = {
+        chapter: chapterKey,
+        lastModified: new Date().toISOString(),
+        verses: updatedContent
+          .filter((verse) => verse.verseNumber && verse.verseText !== undefined)
+          .map((verse) => {
+            const verseData = {
+              verseNumber: verse.verseNumber,
+              verseText: verse.verseText,
+              joinedVerses: verse.joinedVerses || null,
+              verseSegments: verse.verseSegments || null,
+            };
+
+            if (verse.take1) { verseData.take1 = verse.take1; }
+            if (verse.take2) { verseData.take2 = verse.take2; }
+            if (verse.take3) { verseData.take3 = verse.take3; }
+            if (verse.default) { verseData.default = verse.default; }
+            if (verse.timestamps) { verseData.timestamps = verse.timestamps; }
+            if (verse.atomicGroups) { verseData.atomicGroups = verse.atomicGroups; }
+
+            return verseData;
+          }),
+      };
+
+      fs.writeFileSync(structureFile, JSON.stringify(allStructure, null, 2), 'utf8');
+      logger.debug('bookId.json updated after recording/deletion');
+    } catch (err) {
+      logger.error('Error saving to bookId.json:', err);
+    }
+  }, [audioPath, bookId, chapter]);
   const findCurrentVerse = useCallback(() => {
     if (!audioContent || !Array.isArray(audioContent)) { return null; }
 
@@ -143,6 +201,7 @@ const MainPlayer = () => {
       });
 
       setAudioContent(updatedContent);
+      return updatedContent;
     } catch (error) {
       logger.error('Error loading chapter:', error);
     }
@@ -188,7 +247,11 @@ const MainPlayer = () => {
         i += 1;
       }
       // Finally loading the data back
-      loadChapter();
+      loadChapter().then((updatedContent) => {
+        if (updatedContent) {
+          saveVerseStructureToFile(updatedContent);
+        }
+      });
     } catch (error) {
       logger.error('Error changing default take:', error);
     }
@@ -233,12 +296,16 @@ const MainPlayer = () => {
 
       const fileReader = new FileReader();
       fileReader.onload = (event) => {
-        fs.writeFile(filePath, Buffer.from(new Uint8Array(event.target.result)), (err) => {
+        fs.writeFile(filePath, Buffer.from(new Uint8Array(event.target.result)), async (err) => {
           if (!err) {
-            logger.debug(`✓ Audio saved: ${path.basename(filePath)}`);
-            loadChapter().then(() => {
-              resolve();
-            });
+            logger.debug(`Audio saved: ${path.basename(filePath)}`);
+
+            const updatedContent = await loadChapter();
+            if (updatedContent) {
+              await saveVerseStructureToFile(updatedContent);
+            }
+
+            resolve();
           } else {
             logger.error('Error saving audio file:', err);
             reject(err);
@@ -315,36 +382,47 @@ const MainPlayer = () => {
           // Delete the old default
           fs.unlinkSync(defaultFilePath);
 
-          setAudioContent((prevContent) => prevContent.map((v) => {
-            if (v.verseNumber === currentVerse.verseNumber) {
-              const updated = { ...v };
-              delete updated[take];
-              if (newDefaultSet && newDefaultTake) {
-                updated.default = newDefaultTake;
-              } else {
-                delete updated.default;
+          setAudioContent((prevContent) => {
+            const updatedContent = prevContent.map((v) => {
+              if (v.verseNumber === currentVerse.verseNumber) {
+                const updated = { ...v };
+                delete updated[take];
+                if (newDefaultSet && newDefaultTake) {
+                  updated.default = newDefaultTake;
+                } else {
+                  delete updated.default;
+                }
+                return updated;
               }
-              return updated;
-            }
-            return v;
-          }));
+              return v;
+            });
+
+            saveVerseStructureToFile(updatedContent);
+            return updatedContent;
+          });
         } else if (fs.existsSync(regularFilePath)) {
           // Delete non-default take
           fs.unlinkSync(regularFilePath);
 
-          setAudioContent((prevContent) => prevContent.map((v) => {
-            if (v.verseNumber === currentVerse.verseNumber) {
-              const updated = { ...v };
-              delete updated[take];
-              return updated;
-            }
-            return v;
-          }));
+          setAudioContent((prevContent) => {
+            const updatedContent = prevContent.map((v) => {
+              if (v.verseNumber === currentVerse.verseNumber) {
+                const updated = { ...v };
+                delete updated[take];
+                return updated;
+              }
+              return v;
+            });
+
+            saveVerseStructureToFile(updatedContent);
+            return updatedContent;
+          });
         }
 
         setTrigger();
-        setUpdateWave(!updateWave);
+        setUpdateWave((prev) => !prev);
         setNewBlob();
+
         setTimeout(() => {
           setUpdateWave((prev) => !prev);
           fetchUrl();
