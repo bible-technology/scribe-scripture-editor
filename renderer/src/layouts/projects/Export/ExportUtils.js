@@ -4,6 +4,129 @@ import * as logger from '../../../logger';
 
 const md5 = require('md5');
 
+const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
+  try {
+    logger.debug(`Building updated chapter ${chapterNumber}...`);
+
+    const chapterMarker = `\\c ${chapterNumber}`;
+    const chapterIndex = originalUSFM.indexOf(chapterMarker);
+
+    if (chapterIndex === -1) {
+      logger.warn(`Chapter ${chapterNumber} not found in USFM`);
+      return originalUSFM;
+    }
+
+    const nextChapterPattern = new RegExp(`\\\\c\\s+${parseInt(chapterNumber, 10) + 1}`, 'm');
+    const nextChapterMatch = nextChapterPattern.exec(originalUSFM);
+    const nextChapterIndex = nextChapterMatch ? nextChapterMatch.index : originalUSFM.length;
+
+    const beforeChapter = originalUSFM.substring(0, chapterIndex);
+    const afterChapter = nextChapterIndex < originalUSFM.length
+      ? originalUSFM.substring(nextChapterIndex)
+      : '';
+
+    let newChapterContent = `\\c ${chapterNumber}\n\\p\n`;
+
+    const verses = jsonChapterData.verses.filter((v) => v.verseNumber && v.verseText !== undefined);
+
+    verses.forEach((verse) => {
+      const verseNum = verse.verseNumber;
+      const verseText = verse.verseText || '';
+
+      newChapterContent += `\\v ${verseNum} ${verseText}\n`;
+    });
+
+    const updatedUSFM = beforeChapter + newChapterContent + afterChapter;
+
+    logger.debug(`Built updated chapter ${chapterNumber}`);
+    return updatedUSFM;
+  } catch (err) {
+    logger.error('Error building updated USFM:', err);
+    return originalUSFM;
+  }
+};
+
+const mergeUSFMWithJSON = (originalUSFM, jsonData, bookId) => {
+  try {
+    logger.debug(`Merging USFM with JSON updates for ${bookId}...`);
+
+    const updatedChapterNumbers = Object.keys(jsonData);
+    logger.debug(`Chapters to update: ${updatedChapterNumbers.join(', ')}`);
+
+    let mergedUSFM = originalUSFM;
+
+    updatedChapterNumbers.forEach((chapterNum) => {
+      const jsonChapter = jsonData[chapterNum];
+
+      if (jsonChapter.verses) {
+        mergedUSFM = buildUpdatedUSFM(mergedUSFM, jsonChapter, chapterNum);
+        logger.debug(`Updated chapter ${chapterNum} for ${bookId}`);
+      }
+    });
+
+    return mergedUSFM;
+  } catch (err) {
+    logger.error('Error merging USFM with JSON:', err);
+    return originalUSFM;
+  }
+};
+
+const updateUSFMFromJSON = async (folder, exportPath, path, fs) => {
+  try {
+    logger.debug('Starting USFM update from bookId.json files...');
+
+    const audioIngredientsPath = path.join(folder, 'audio', 'ingredients');
+    const textIngredientsPath = path.join(exportPath, 'text-1', 'ingredients');
+
+    if (!fs.existsSync(textIngredientsPath)) {
+      logger.debug('No text-1 folder in export, skipping USFM update');
+      return;
+    }
+
+    if (!fs.existsSync(audioIngredientsPath)) {
+      logger.debug('No audio ingredients, skipping USFM update');
+      return;
+    }
+
+    const bookFolders = fs.readdirSync(audioIngredientsPath);
+
+    bookFolders.forEach((bookFolder) => {
+      const bookFolderPath = path.join(audioIngredientsPath, bookFolder);
+      const jsonFilePath = path.join(bookFolderPath, `${bookFolder.toLowerCase()}.json`);
+
+      if (fs.existsSync(jsonFilePath) && fs.statSync(bookFolderPath).isDirectory()) {
+        try {
+          const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+
+          if (jsonData[bookFolder]) {
+            const usfmPath = path.join(textIngredientsPath, `${bookFolder}.usfm`);
+
+            if (fs.existsSync(usfmPath)) {
+              const originalUSFM = fs.readFileSync(usfmPath, 'utf8');
+              const updatedUSFM = mergeUSFMWithJSON(
+                originalUSFM,
+                jsonData[bookFolder],
+                bookFolder,
+              );
+
+              fs.writeFileSync(usfmPath, updatedUSFM, 'utf8');
+              logger.debug(`Updated USFM for ${bookFolder}`);
+            } else {
+              logger.debug(`No USFM found for ${bookFolder}, skipping`);
+            }
+          }
+        } catch (err) {
+          logger.error(`Error processing ${bookFolder}:`, err);
+        }
+      }
+    });
+
+    logger.debug('USFM update completed');
+  } catch (err) {
+    logger.error('Error updating USFM from JSON:', err);
+  }
+};
+
 export async function writeRecfile(file, filePath, fs) {
   logger.debug('ExportProjectUtils.js', `in Chapter level file write : ${filePath}`);
   return new Promise((resolve) => {
@@ -93,6 +216,14 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   };
   ExportActions.setTotalExported((curr) => curr + 1);
   await fs.writeFileSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'metadata.json'), JSON.stringify(burrito));
+  if (ExportStates.checkText && fs.existsSync(path.join(folder, 'text-1'))) {
+    await updateUSFMFromJSON(
+      folder,
+      path.join(ExportStates.folderPath, ExportStates.project.name),
+      path,
+      fs,
+    );
+  }
   logger.debug('ExportProjectPopUp.js', 'Exported Successfully');
   ExportActions.resetExportProgress();
   ExportActions.setNotify('success');
@@ -112,7 +243,7 @@ const exportChapterAudio = async (defaultAudio, burrito, fs, path, folder, folde
     if (audioExtensions.some((ext) => _k.toLocaleLowerCase().includes(ext.toLocaleLowerCase()))) { delete burrito.ingredients[_k]; }
   });
   // eslint-disable-next-line
-    for (const audio of defaultAudio) {
+  for (const audio of defaultAudio) {
     const book = audio.split(/[\/\\]/).slice(-3)[0];
     const chapter = audio.split(/[\/\\]/).slice(-2)[0];
     const url = audio.split(/[\/\\]/).slice(-1)[0];
@@ -179,7 +310,7 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
   if (ExportStates.audioExport === 'default') {
     // Unable to use forEach, since forEach doesn't wait to finish the loop
     // eslint-disable-next-line
-      for (const audio of defaultAudio) {
+    for (const audio of defaultAudio) {
       const book = audio.split(/[\/\\]/).slice(-3)[0];
       const chapter = audio.split(/[\/\\]/).slice(-2)[0];
       const url = audio.split(/[\/\\]/).slice(-1)[0];
@@ -187,7 +318,7 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
       const verse = mp3.replace('.mp3', '');
       const mp3ExportPath = path.join('ingredients', book, chapter, mp3);
       // eslint-disable-next-line
-        await writeAndUpdateBurritoDefaultExport(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project);
+      await writeAndUpdateBurritoDefaultExport(audio, path, mp3ExportPath, fs, fse, book, verse, burrito, ExportStates.folderPath, ExportStates.project);
       ExportActions.setTotalExported((prev) => prev + 1);
     }
   } else if (ExportStates.audioExport === 'chapter') {
@@ -214,6 +345,13 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
     await fse.copySync(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), path.join(ExportStates.folderPath, ExportStates.project.name, 'audio', 'ingredients'));
     await fse.copySync(path.join(folder, 'text-1'), path.join(ExportStates.folderPath, ExportStates.project.name, 'text-1'));
     await fs.rmSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), { recursive: true, force: true });
+
+    await updateUSFMFromJSON(
+      folder,
+      path.join(ExportStates.folderPath, ExportStates.project.name),
+      path,
+      fs,
+    );
   }
   // if (audioExport === 'chapter') {
   //   pushNotification('Export Project', `${t('dynamic-msg-export-success')} ${project.name} project`);
