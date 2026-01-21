@@ -256,10 +256,11 @@ const MainPlayer = () => {
       await saveAudio(blob);
 
       setTimeout(() => {
+        setUpdateWave(!updateWave);
         fetchUrl();
-      }, 100);
+      }, 200);
     },
-    [bookId, chapter, verse, take, audioPath, fetchUrl],
+    [bookId, chapter, verse, take, audioPath, fetchUrl, updateWave, setUpdateWave],
   );
   const {
     startRecording,
@@ -344,6 +345,10 @@ const MainPlayer = () => {
         setTrigger();
         setUpdateWave(!updateWave);
         setNewBlob();
+        setTimeout(() => {
+          setUpdateWave((prev) => !prev);
+          fetchUrl();
+        }, 100);
       } catch (error) {
         logger.error('Error deleting audio:', error);
       }
@@ -356,7 +361,7 @@ const MainPlayer = () => {
     if (audioContent?.length > 0) {
       fetchUrl();
     }
-  }, [audioContent, bookId, verse, chapter, fetchUrl]);
+  }, [audioContent, bookId, verse, chapter, fetchUrl, updateWave]);
 
   // Reset state when verse/chapter changes
   useEffect(() => {

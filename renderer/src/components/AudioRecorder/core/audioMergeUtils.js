@@ -113,6 +113,7 @@ export async function mergeAudioFiles(
   audioPath,
   newVerseNumber,
   allVerseNumbers,
+  atomicGroups = [],
 ) {
   logger.debug('=== Starting Audio Merge ===', {
     audioFiles,
@@ -185,17 +186,55 @@ export async function mergeAudioFiles(
     let offset = 0;
     let currentTime = 0;
 
+    const getVerseIdentifier = (verseNum) => {
+      const match = atomicGroups.find((atomicGroup) => {
+        const parts = atomicGroup.split('-').map(Number);
+        return verseNum >= parts[0] && verseNum <= parts[parts.length - 1];
+      });
+
+      return match || verseNum;
+    };
+
+    const processedVerses = [];
+    const seenAtomicGroups = new Set();
+
     allVerseNumbers.forEach((verseNum) => {
+      const identifier = getVerseIdentifier(verseNum);
+
+      if (typeof identifier === 'string' && identifier.includes('-')) {
+        if (!seenAtomicGroups.has(identifier)) {
+          processedVerses.push(identifier);
+          seenAtomicGroups.add(identifier);
+        }
+      } else {
+        processedVerses.push(verseNum);
+      }
+    });
+
+    logger.debug('Processed verses for merge:', processedVerses);
+
+    processedVerses.forEach((verseIdentifier) => {
       const matching = buffers.find((item) => {
         const itemVerse = item.verseNumber;
 
-        if (itemVerse.toString() === verseNum.toString()) {
+        if (itemVerse.toString() === verseIdentifier.toString()) {
           return true;
         }
 
-        if (typeof itemVerse === 'string' && itemVerse.includes('-')) {
-          const [start, end] = itemVerse.split('-').map(Number);
-          return verseNum >= start && verseNum <= end;
+        if (typeof verseIdentifier === 'string' && verseIdentifier.includes('-')) {
+          if (itemVerse === verseIdentifier) {
+            return true;
+          }
+        }
+
+        if (item.isMerged && item.timestamps) {
+          const verseTimestamp = item.timestamps.find((t) => {
+            if (typeof t.verse === 'string') {
+              return t.verse === verseIdentifier.toString();
+            }
+            return t.verse === verseIdentifier;
+          });
+          return !!verseTimestamp;
         }
 
         return false;
@@ -205,11 +244,11 @@ export async function mergeAudioFiles(
         const { buffer, timestamps: itemTimestamps, isMerged } = matching;
 
         if (isMerged && itemTimestamps) {
-          const verseTimestamp = itemTimestamps.find((t) => t.verse === verseNum);
+          const verseTimestamp = itemTimestamps.find((t) => t.verse.toString() === verseIdentifier.toString());
 
           if (verseTimestamp) {
             timestamps.push({
-              verse: verseNum,
+              verse: verseIdentifier,
               start: currentTime,
               duration: verseTimestamp.duration,
             });
@@ -237,7 +276,7 @@ export async function mergeAudioFiles(
           const duration = buffer.duration;
 
           timestamps.push({
-            verse: verseNum,
+            verse: verseIdentifier,
             start: currentTime,
             duration,
           });
@@ -250,11 +289,11 @@ export async function mergeAudioFiles(
           currentTime += duration;
         }
       } else {
-        logger.warn(`No audio for verse ${verseNum} - verse will have no audio in merge`);
+        logger.warn(`No audio for ${verseIdentifier} - verse will have no audio in merge`);
       }
     });
 
-    logger.debug('Generated timestamps:', timestamps);
+    logger.debug('Generated timestamps with atomic groups:', timestamps);
 
     const wavData = toWav(output);
     const blob = new Blob([new DataView(wavData)], { type: 'audio/wav' });
@@ -273,6 +312,7 @@ export async function mergeAudioFiles(
       path: mergedPath,
       duration: output.duration,
       timestamps,
+      atomicGroups,
     };
   } catch (err) {
     logger.error('Error merging audio files:', err);
