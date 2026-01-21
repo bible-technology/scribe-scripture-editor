@@ -315,4 +315,12 @@ export const Ne = {
   'modal-title-clear-all-notifications': 'सबै सूचनाहरू खाली गर्नुहोस्',
   'msg-clear-all-notifications': 'के तपाइँ साँच्चिकै सबै सूचनाहरू खाली गर्न चाहनुहुन्छ? यो कार्य उल्टाउन सकिँदैन।',
   'btn-clear-all': 'सबै खाली गर्नुहोस्',
+  'msg-no-verse-data': 'कुनै वर्स डाटा छैन',
+  'msg-disjoin-failed': 'अडियो विभाजन असफल भयो',
+  'modal-title-join-warning': 'वर्सहरू जोड्नको लागि विद्यमान अडियो मेटाउन चाहनुहुन्छ?',
+  'msg-join-audio-mismatch': 'अडियो फाइलहरू मिलेनन्। सबै वर्सहरू एउटै अडियो फाइलमा हुनुपर्छ।',
+  'msg-audio-merge-failed': 'अडियो मर्ज असफल भयो',
+  'modal-title-disjoin-warning': 'विद्यमान अडियो मेटाउन चाहनुहुन्छ?',
+  'msg-disjoin-no-timestamps': 'यो अडियो समयस्ट्याम्पहरू बिना एउटा सिङ्गल रेकर्डिङ हो। विभाजनले विद्यमान अडियो मेटाउँछ। के तपाईं जारी गर्न चाहनुहुन्छ?',
+  'msg-audio-split-failed': 'अडियो स्प्लिट असफल भयो',
 };

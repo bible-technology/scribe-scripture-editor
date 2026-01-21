@@ -316,4 +316,13 @@ export const Fr = {
   'modal-title-clear-all-notifications': 'Effacer toutes les notifications',
   'msg-clear-all-notifications': 'Voulez-vous vraiment effacer toutes les notifications ? Cette action ne peut pas être annulée.',
   'btn-clear-all': 'Tout effacer',
+  'msg-no-verse-data': 'Aucune donnée de verset disponible',
+  'msg-disjoin-failed': 'Échec de la dissociation du verset',
+  'modal-title-join-warning': 'Supprimer l\'audio existant pour joindre les versets ?',
+  'msg-join-audio-mismatch': 'L\'audio est manquant dans l\'un des versets. La jointure supprimera l\'audio existant. Voulez-vous continuer ?',
+  'msg-audio-merge-failed': 'Échec de la fusion audio',
+  'modal-title-disjoin-warning': 'Supprimer l\'audio existant pour dissocier le verset ?',
+  'msg-disjoin-no-timestamps': 'Cet audio est un enregistrement unique sans horodatage. La dissociation supprimera l\'audio existant. Voulez-vous continuer ?',
+  'msg-audio-split-failed': 'Échec de la séparation audio',
+
 };
