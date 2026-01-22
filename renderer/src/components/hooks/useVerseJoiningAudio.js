@@ -3,7 +3,6 @@ import {
   mergeAudioFiles,
   splitMergedAudio,
   deleteAllAudioForVerse,
-  hasAnyAudioForVerse,
   getDefaultAudioForVerse,
   getAllAudioForVerse,
 } from '@/components/AudioRecorder/core/audioMergeUtils';
@@ -47,28 +46,11 @@ function resolveVerseText({
     }
   }
 
-  if (verseText !== undefined) {
+  if (verseText !== undefined && typeof verseText === 'string') {
     return verseText;
   }
 
   return getOriginalVerseText(originalBookContent, chapter, verseNumber);
-}
-
-function getAtomicVerseTextFromJSON({
-  verseNumber,
-  audioContent,
-  originalBookContent,
-  chapter,
-}) {
-  const atomic = audioContent.find(
-    (v) => v.verseNumber === verseNumber.toString(),
-  );
-
-  if (atomic && typeof atomic.verseText === 'string' && atomic.verseText.trim()) {
-    return atomic.verseText.trim();
-  }
-
-  return getOriginalVerseText(originalBookContent, chapter, verseNumber) || '';
 }
 
 function validateVerseJoin(audioContent, currentVerseNumber) {
@@ -175,8 +157,11 @@ export const useVerseJoiningAudio = ({
             };
 
             if (verse.take1) { verseData.take1 = verse.take1; }
+            if (verse.take2) { verseData.take2 = verse.take2; }
+            if (verse.take3) { verseData.take3 = verse.take3; }
             if (verse.default) { verseData.default = verse.default; }
             if (verse.timestamps) { verseData.timestamps = verse.timestamps; }
+            if (verse.atomicGroups) { verseData.atomicGroups = verse.atomicGroups; }
 
             return verseData;
           }),
@@ -209,28 +194,36 @@ export const useVerseJoiningAudio = ({
       const currentVerseNum = parseInt(currentVerse.verseNumber.split('-')[0], 10);
       const previousVerseNum = previousVerse.verseNumber;
 
-      logger.debug('Joining verses with audio:', {
+      logger.debug('Joining verses:', {
         current: currentVerseNumber,
         previous: previousVerseNum,
       });
 
       let newVerseNumber;
-      let joinedVerses;
+      let joinedVerses = [];
       let atomicGroups = [];
 
       if (previousVerseNum.includes('-')) {
         const parts = previousVerseNum.split('-').map(Number);
         const start = parts[0];
-        const end = Math.max(...parts);
+        const end = parts[parts.length - 1];
+
         newVerseNumber = `${start}-${currentVerseNum}`;
-        joinedVerses = previousVerse.joinedVerses
-          ? [...previousVerse.joinedVerses, currentVerseNum]
-          : Array.from({ length: end - start + 1 }, (_, i) => start + i).concat(currentVerseNum);
-        if (!previousVerse.timestamps || previousVerse.timestamps.length === 0) {
+
+        for (let v = start; v <= end; v++) {
+          joinedVerses.push(v);
+        }
+        joinedVerses.push(currentVerseNum);
+
+        const previousHasAudio = previousVerse.default && previousVerse[previousVerse.default];
+        const hasNoTimestamps = !previousVerse.timestamps || previousVerse.timestamps.length === 0;
+
+        if (previousHasAudio && hasNoTimestamps) {
           atomicGroups.push(previousVerseNum);
           logger.debug(`Detected atomic group: ${previousVerseNum}`);
         } else if (previousVerse.atomicGroups && Array.isArray(previousVerse.atomicGroups)) {
           atomicGroups = [...previousVerse.atomicGroups];
+          logger.debug(`Preserved atomic groups: ${JSON.stringify(atomicGroups)}`);
         }
       } else {
         const prevNum = parseInt(previousVerseNum, 10);
@@ -240,17 +233,29 @@ export const useVerseJoiningAudio = ({
 
       const textArray = joinedVerses
         .map((num) => {
-          const sourceVerse = audioContent.find(
-            (v) => v.verseNumber === num.toString(),
-          );
+          const sourceVerse = audioContent.find((v) => {
+            if (!v.verseNumber) { return false; }
+            if (v.verseNumber === num.toString()) { return true; }
 
-          return resolveVerseText({
-            verseNumber: num,
-            verseSegments: sourceVerse?.verseSegments,
-            verseText: sourceVerse?.verseText,
-            originalBookContent,
-            chapter: chapter.toString(),
+            if (v.verseNumber.includes('-')) {
+              const [start, end] = v.verseNumber.split('-').map(Number);
+              return num >= start && num <= end;
+            }
+
+            return false;
           });
+
+          if (sourceVerse) {
+            return resolveVerseText({
+              verseNumber: num,
+              verseSegments: sourceVerse.verseSegments,
+              verseText: sourceVerse.verseText,
+              originalBookContent,
+              chapter: chapter.toString(),
+            });
+          }
+
+          return getOriginalVerseText(originalBookContent, chapter.toString(), num);
         })
         .filter(Boolean);
 
@@ -258,9 +263,6 @@ export const useVerseJoiningAudio = ({
 
       const previousHasAudio = previousVerse.default && previousVerse[previousVerse.default];
       const currentHasAudio = currentVerse.default && currentVerse[currentVerse.default];
-
-      const previousHasAnyAudio = previousHasAudio || hasAnyAudioForVerse(chapter, previousVerseNum, audioPath);
-      const currentHasAnyAudio = currentHasAudio || hasAnyAudioForVerse(chapter, currentVerseNumber, audioPath);
 
       if (!skipAudioCheck && ((previousHasAudio && !currentHasAudio) || (!previousHasAudio && currentHasAudio))) {
         setConfirmModal({
@@ -275,7 +277,7 @@ export const useVerseJoiningAudio = ({
         return false;
       }
 
-      if (previousHasAnyAudio) {
+      if (previousHasAudio) {
         const prevAudios = getAllAudioForVerse(chapter, previousVerseNum, audioPath);
         prevAudios.forEach((audio) => {
           if (!audio.isDefault) {
@@ -286,7 +288,7 @@ export const useVerseJoiningAudio = ({
         });
       }
 
-      if (currentHasAnyAudio) {
+      if (currentHasAudio) {
         const currAudios = getAllAudioForVerse(chapter, currentVerseNumber, audioPath);
         currAudios.forEach((audio) => {
           if (!audio.isDefault) {
@@ -320,6 +322,7 @@ export const useVerseJoiningAudio = ({
             isAtomic: true,
           });
         }
+
         audioFilesToMerge.push({
           path: path.join(audioPath, currentVerse[currentVerse.default]),
           verseNumber: currentVerseNumber,
@@ -353,10 +356,10 @@ export const useVerseJoiningAudio = ({
           return false;
         }
       } else if (previousHasAudio || currentHasAudio) {
-        if (previousHasAnyAudio) {
+        if (previousHasAudio) {
           deleteAllAudioForVerse(chapter, previousVerseNum, audioPath);
         }
-        if (currentHasAnyAudio) {
+        if (currentHasAudio) {
           deleteAllAudioForVerse(chapter, currentVerseNumber, audioPath);
         }
         logger.debug('Deleted audio from verses with mismatched audio');
@@ -366,24 +369,52 @@ export const useVerseJoiningAudio = ({
         verseNumber: newVerseNumber,
         verseText: combinedText,
         joinedVerses,
-        atomicGroups,
-        verseSegments: joinedVerses.map((vnum) => ({
-          verse: vnum,
-          text: getAtomicVerseTextFromJSON({
-            verseNumber: vnum,
-            audioContent,
-            originalBookContent,
-            chapter: chapter.toString(),
-          }),
-        })),
+        verseSegments: joinedVerses.map((vnum) => {
+          const sourceVerse = audioContent.find((v) => {
+            if (!v.verseNumber) { return false; }
+
+            if (v.verseNumber === vnum.toString()) { return true; }
+
+            if (v.verseNumber.includes('-')) {
+              const [start, end] = v.verseNumber.split('-').map(Number);
+              return vnum >= start && vnum <= end;
+            }
+
+            return false;
+          });
+
+          if (sourceVerse?.verseSegments) {
+            const seg = sourceVerse.verseSegments.find(
+              (s) => s.verse.toString() === vnum.toString(),
+            );
+            if (seg?.text !== undefined) {
+              return { verse: vnum, text: seg.text };
+            }
+          }
+
+          if (sourceVerse?.verseText) {
+            return { verse: vnum, text: sourceVerse.verseText };
+          }
+
+          return {
+            verse: vnum,
+            text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
+          };
+        }),
 
       };
+
+      if (atomicGroups.length > 0) {
+        updatedVerseEntry.atomicGroups = atomicGroups;
+      }
 
       if (mergedAudio) {
         updatedVerseEntry.take1 = mergedAudio.filename;
         updatedVerseEntry.default = 'take1';
         updatedVerseEntry.timestamps = mergedAudio.timestamps;
-        updatedVerseEntry.atomicGroups = mergedAudio.atomicGroups;
+        if (mergedAudio.atomicGroups && mergedAudio.atomicGroups.length > 0) {
+          updatedVerseEntry.atomicGroups = mergedAudio.atomicGroups;
+        }
       }
 
       const updatedContent = [...audioContent];
@@ -445,31 +476,74 @@ export const useVerseJoiningAudio = ({
       const start = parts[0];
       const end = parts[parts.length - 1];
 
+      const mergedAudioInfo = getDefaultAudioForVerse(chapter, joinedVerseNumber, audioPath);
+      const hasTimestamps = verse.timestamps && Array.isArray(verse.timestamps) && verse.timestamps.length > 0;
       const hasAtomicGroups = verse.atomicGroups && verse.atomicGroups.length > 0;
       let firstVerseNum;
       let firstVerseText;
       let firstIsAtomic = false;
+      let remainingAtomicGroups = [];
 
       if (hasAtomicGroups) {
         const firstAtomicGroup = verse.atomicGroups[0];
-        firstVerseNum = firstAtomicGroup;
-        firstIsAtomic = true;
 
-        const atomicParts = firstAtomicGroup.split('-').map(Number);
-        const texts = atomicParts
-          .map((num) => resolveVerseText({
-            verseNumber: num,
+        const isDisjoinningAtomicGroup = firstAtomicGroup === joinedVerseNumber;
+
+        if (isDisjoinningAtomicGroup && mergedAudioInfo.exists && !hasTimestamps) {
+          logger.debug(`Disjoining atomic group ${firstAtomicGroup} - audio will be deleted`);
+
+          firstVerseNum = start;
+          firstIsAtomic = false;
+
+          firstVerseText = resolveVerseText({
+            verseNumber: firstVerseNum,
             verseSegments: verse.verseSegments,
             verseText: verse.verseText,
             originalBookContent,
             chapter: chapter.toString(),
-          }))
-          .filter(Boolean);
-        firstVerseText = texts.join(' ').trim();
+          }) || '';
 
-        logger.debug(`First verse is atomic group: ${firstAtomicGroup}`);
+          remainingAtomicGroups = [];
+
+          logger.debug(`Split off verse ${firstVerseNum}, no atomic groups preserved (audio deleted)`);
+        } else {
+          firstVerseNum = firstAtomicGroup;
+          firstIsAtomic = true;
+
+          const atomicSegment = verse.verseSegments?.find(
+            (seg) => seg.verse.toString() === firstAtomicGroup,
+          );
+
+          if (atomicSegment && atomicSegment.text) {
+            firstVerseText = atomicSegment.text.trim();
+            logger.debug(`Found atomic segment text for ${firstAtomicGroup}`);
+          } else {
+            const atomicParts = firstAtomicGroup.split('-').map(Number);
+            const texts = [];
+
+            for (let v = atomicParts[0]; v <= atomicParts[atomicParts.length - 1]; v++) {
+              texts.push(
+                resolveVerseText({
+                  verseNumber: v,
+                  verseSegments: verse.verseSegments,
+                  verseText: verse.verseText,
+                  originalBookContent,
+                  chapter: chapter.toString(),
+                }),
+              );
+            }
+
+            firstVerseText = texts.filter(Boolean).join(' ').trim();
+            logger.debug(`Built atomic text from segments for ${firstAtomicGroup}`);
+          }
+
+          remainingAtomicGroups = verse.atomicGroups.slice(1);
+
+          logger.debug(`Keeping atomic group together: ${firstAtomicGroup}`);
+        }
       } else {
         firstVerseNum = start;
+        firstIsAtomic = false;
 
         firstVerseText = resolveVerseText({
           verseNumber: firstVerseNum,
@@ -478,10 +552,9 @@ export const useVerseJoiningAudio = ({
           originalBookContent,
           chapter: chapter.toString(),
         }) || '';
-      }
 
-      const mergedAudioInfo = getDefaultAudioForVerse(chapter, joinedVerseNumber, audioPath);
-      const hasTimestamps = verse.timestamps && Array.isArray(verse.timestamps) && verse.timestamps.length > 0;
+        logger.debug(`No atomic groups - splitting off verse ${firstVerseNum}`);
+      }
 
       if (!skipAudioCheck && mergedAudioInfo.exists && !hasTimestamps) {
         setConfirmModal({
@@ -526,12 +599,21 @@ export const useVerseJoiningAudio = ({
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
         verseText: firstVerseText,
+        verseSegments: verse.verseSegments
+          ?.filter((s) => s.verse === firstVerseNum),
       };
 
       if (firstIsAtomic) {
-        const atomicParts = firstVerseNum.split('-').map(Number);
-        firstVerseEntry.joinedVerses = atomicParts;
-        firstVerseEntry.verseSegments = atomicParts.map((vnum) => ({
+        const rangeParts = firstVerseNum.split('-').map(Number);
+        const completeJoinedVerses = [];
+
+        for (let v = rangeParts[0]; v <= rangeParts[rangeParts.length - 1]; v++) {
+          completeJoinedVerses.push(v);
+        }
+
+        firstVerseEntry.joinedVerses = completeJoinedVerses;
+        firstVerseEntry.atomicGroups = [firstVerseNum];
+        firstVerseEntry.verseSegments = completeJoinedVerses.map((vnum) => ({
           verse: vnum,
           text: getOriginalVerseText(originalBookContent, chapter.toString(), vnum) || '',
         }));
@@ -552,13 +634,16 @@ export const useVerseJoiningAudio = ({
       }
 
       const remainingVerses = [];
-      for (let v = remainingStart; v <= end; v += 1) {
+      for (let v = remainingStart; v <= end; v++) {
         remainingVerses.push(v);
       }
 
       let remainingVerseEntry;
 
-      if (remainingVerses.length === 1) {
+      if (remainingVerses.length === 0) {
+        logger.warn('No remaining verses after disjoin');
+        remainingVerseEntry = null;
+      } else if (remainingVerses.length === 1) {
         const singleNum = remainingVerses[0];
 
         const singleText = resolveVerseText({
@@ -572,6 +657,8 @@ export const useVerseJoiningAudio = ({
         remainingVerseEntry = {
           verseNumber: singleNum.toString(),
           verseText: singleText,
+          verseSegments: verse.verseSegments
+            ?.filter((s) => s.verse === singleNum),
         };
 
         if (canSplitAudio) {
@@ -582,14 +669,13 @@ export const useVerseJoiningAudio = ({
       } else {
         const segments = remainingVerses.map((vnum) => ({
           verse: vnum,
-          text:
-            resolveVerseText({
-              verseNumber: vnum,
-              verseSegments: verse.verseSegments,
-              verseText: verse.verseText,
-              originalBookContent,
-              chapter: chapter.toString(),
-            }) || '',
+          text: resolveVerseText({
+            verseNumber: vnum,
+            verseSegments: verse.verseSegments,
+            verseText: verse.verseText,
+            originalBookContent,
+            chapter: chapter.toString(),
+          }) || '',
         }));
 
         const remainingText = segments
@@ -607,8 +693,9 @@ export const useVerseJoiningAudio = ({
           verseSegments: segments,
         };
 
-        if (hasAtomicGroups && verse.atomicGroups.length > 1) {
-          remainingVerseEntry.atomicGroups = verse.atomicGroups.slice(1);
+        if (remainingAtomicGroups.length > 0) {
+          remainingVerseEntry.atomicGroups = remainingAtomicGroups;
+          logger.debug(`Remaining verse has atomic groups: ${JSON.stringify(remainingAtomicGroups)}`);
         }
 
         if (canSplitAudio) {
@@ -626,7 +713,7 @@ export const useVerseJoiningAudio = ({
             audioPath,
             remainingVerseNum,
             remainingVerses,
-            remainingVerseEntry.atomicGroups || [],
+            remainingAtomicGroups,
           );
 
           if (remainingMergeResult.success) {
@@ -634,11 +721,11 @@ export const useVerseJoiningAudio = ({
             remainingVerseEntry.default = 'take1';
             remainingVerseEntry.timestamps = remainingMergeResult.timestamps;
 
-            if (remainingMergeResult.atomicGroups) {
+            if (remainingMergeResult.atomicGroups && remainingMergeResult.atomicGroups.length > 0) {
               remainingVerseEntry.atomicGroups = remainingMergeResult.atomicGroups;
             }
 
-            for (let i = 1; i < remainingVerses.length; i += 1) {
+            for (let i = 1; i < remainingVerses.length; i++) {
               deleteAllAudioForVerse(chapter, remainingVerses[i], audioPath);
             }
           }
@@ -646,7 +733,11 @@ export const useVerseJoiningAudio = ({
       }
 
       const updatedContent = [...audioContent];
-      updatedContent.splice(verseIndex, 1, firstVerseEntry, remainingVerseEntry);
+      if (remainingVerseEntry) {
+        updatedContent.splice(verseIndex, 1, firstVerseEntry, remainingVerseEntry);
+      } else {
+        updatedContent.splice(verseIndex, 1, firstVerseEntry);
+      }
 
       setAudioContent(updatedContent);
       await saveVerseStructure(updatedContent);
