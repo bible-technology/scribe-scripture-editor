@@ -127,6 +127,7 @@ const VideoRecorder = ({
   const [showHoverTime, setShowHoverTime] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [thumbnailData, setThumbnailData] = useState(null);
+  const errorTimeoutRef = useRef(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -135,6 +136,24 @@ const VideoRecorder = ({
   const filePath = path.join(projectPath, filename);
 
   const hasVideo = fs.existsSync(filePath);
+
+  const clearError = useCallback(() => {
+    setError(null);
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = null;
+    }
+  }, []);
+
+  const setErrorWithTimeout = useCallback((message, timeout = 5000) => {
+    setError(message);
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+    }
+    errorTimeoutRef.current = setTimeout(() => {
+      setError(null);
+    }, timeout);
+  }, []);
 
   useEffect(() => {
     const filename = `${chapter}_${verse}.webm`;
@@ -231,7 +250,7 @@ const VideoRecorder = ({
       } catch (err) {
         if (mounted) {
           logger.error('Camera initialization error:', err);
-          setError(getCameraErrorMessage(err));
+          setErrorWithTimeout(getCameraErrorMessage(err));
 
           if (err.name === 'OverconstrainedError') {
             try {
@@ -247,7 +266,7 @@ const VideoRecorder = ({
                   if (mounted) {
                     videoPreviewRef.current.play();
                     setCameraReady(true);
-                    setError(null);
+                    clearError(null);
                   }
                 };
               }
@@ -269,8 +288,11 @@ const VideoRecorder = ({
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
     };
-  }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter]);
+  }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter, setErrorWithTimeout, clearError]);
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
@@ -283,7 +305,7 @@ const VideoRecorder = ({
       try {
         if (!fs.existsSync(fullPath)) {
           logger.error('Video file does not exist:', fullPath);
-          setError(`Video file not found: ${filename}`);
+          setErrorWithTimeout(`Video file not found: ${filename}`);
           return;
         }
 
@@ -291,12 +313,12 @@ const VideoRecorder = ({
         logger.debug('Video file size:', stats.size);
 
         if (stats.size === 0) {
-          setError('Video file is empty');
+          setErrorWithTimeout('Video file is empty');
           return;
         }
       } catch (err) {
         logger.error('Error checking video file:', err);
-        setError(`Cannot access video: ${err.message}`);
+        setErrorWithTimeout(`Cannot access video: ${err.message}`);
         return;
       }
 
@@ -865,6 +887,14 @@ const VideoRecorder = ({
                 <p className="text-red-800 font-medium">Error</p>
                 <p className="text-red-700 text-sm">{error}</p>
               </div>
+              <button
+                type="button"
+                onClick={() => clearError()}
+                className="ml-auto text-red-600 hover:text-red-800"
+                title="Close"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
             </div>
           )}
           <div
@@ -888,18 +918,6 @@ const VideoRecorder = ({
               <track kind="captions" src="" label="No captions" />
             </video>
             {' '}
-            <button
-              type="button"
-              onClick={toggleFullscreen}
-              className="absolute bottom-4 right-4 p-3 bg-black bg-opacity-60 hover:bg-opacity-90 text-white rounded-lg transition-all opacity-0 group-hover:opacity-100 hover:opacity-100 z-20"
-              title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
-            >
-              {isFullscreen ? (
-                <ArrowsPointingInIcon className="w-5 h-5" />
-              ) : (
-                <ArrowsPointingOutIcon className="w-5 h-5" />
-              )}
-            </button>
 
             {currentMode === 'record' && !cameraReady && !error && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
@@ -1001,9 +1019,29 @@ const VideoRecorder = ({
           )}
 
           <div className="flex flex-col gap-4 flex-shrink-0">
-            <div className="flex items-center  border-t relative">
-              <div className="flex items-center justify-center gap-6 flex-1">
-                <div className="w-6" />
+            <div className="flex items-center border-t relative px-4 py-2">
+              <div className="flex items-center gap-2 w-44">
+                {currentMode === 'view' && hasVideo && (
+                  <div className="flex items-center gap-2 text-black px-3 py-1.5 rounded-md">
+                    <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
+                    <button
+                      type="button"
+                      onClick={() => setPlaybackSpeed((prev) => {
+                        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+                        const index = speeds.indexOf(prev);
+                        return speeds[(index + 1) % speeds.length];
+                      })}
+                      className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
+                      title="Change playback speed"
+                    >
+                      {playbackSpeed}
+                      x
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 flex items-center justify-center gap-10">
                 <button
                   type="button"
                   onClick={toggleAudio}
@@ -1022,83 +1060,83 @@ const VideoRecorder = ({
                     </div>
                   )}
                 </button>
-                <div className="w-6" />
 
-                <button
-                  type="button"
-                  onClick={handlePreviousVerse}
-                  disabled={!hasPreviousVerse() || isRecording}
-                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Previous Verse"
-                >
-                  <ChevronLeftIcon className="w-6 h-6" />
-                </button>
-                {currentMode === 'record' ? (
+                <div className="flex items-center gap-8">
                   <button
                     type="button"
-                    onClick={isRecording ? stopRecording : startRecording}
-                    disabled={!cameraReady || isProcessing || existingVideo}
-                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
-                      ? 'bg-red-600 hover:bg-red-700 text-white'
-                      : 'bg-primary hover:bg-primary-dark text-white'
-                    }`}
-                    title={(() => {
-                      if (isRecording) { return 'Stop recording'; }
-                      if (existingVideo) { return 'Recording exists - delete it first'; }
-                      return 'Start recording';
-                    })()}
+                    onClick={handlePreviousVerse}
+                    disabled={!hasPreviousVerse() || isRecording}
+                    className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Previous Verse"
                   >
-                    {isRecording ? (
-                      <StopIcon className="w-6 h-6" fill="currentColor" />
-                    ) : (
-
-                      <VideoCameraIcon className="w-6 h-6" />)}
+                    <ChevronLeftIcon className="w-6 h-6" />
                   </button>
-                ) : (
+
+                  {currentMode === 'record' ? (
+                    <button
+                      type="button"
+                      onClick={isRecording ? stopRecording : startRecording}
+                      disabled={!cameraReady || isProcessing || existingVideo}
+                      className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
+                        ? 'bg-red-600 hover:bg-red-700 text-white'
+                        : 'bg-primary hover:bg-primary-dark text-white'
+                      }`}
+                      title={(() => {
+                        if (isRecording) { return 'Stop recording'; }
+                        if (existingVideo) { return 'Recording exists - delete it first'; }
+                        return 'Start recording';
+                      })()}
+                    >
+                      {isRecording ? (
+                        <StopIcon className="w-6 h-6" fill="currentColor" />
+                      ) : (
+                        <VideoCameraIcon className="w-6 h-6" />
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={togglePlayPause}
+                      disabled={!hasVideo}
+                      className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
+                        ? 'bg-success hover:bg-green-700 text-white'
+                        : 'bg-gray-600 text-gray-400'
+                      }`}
+                      title={isPlaying ? 'Pause video' : 'Play video'}
+                    >
+                      {isPlaying ? (
+                        <PauseIcon className="w-6 h-6" />
+                      ) : (
+                        <PlayIcon className="w-6 h-6" fill="currentColor" />
+                      )}
+                    </button>
+                  )}
+
+                  {isRecording && (
+                    <button
+                      type="button"
+                      onClick={isPaused ? resumeRecording : pauseRecording}
+                      className="p-4 bg-primary hover:bg-primary rounded-full transition-all transform hover:scale-105 text-white"
+                      title={isPaused ? 'Resume recording' : 'Pause recording'}
+                    >
+                      {isPaused ? (
+                        <PlayIcon className="w-6 h-6" fill="currentColor" />
+                      ) : (
+                        <PauseIcon className="w-6 h-6" />
+                      )}
+                    </button>
+                  )}
+
                   <button
                     type="button"
-                    onClick={togglePlayPause}
-                    disabled={!hasVideo}
-                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
-                      ? 'bg-success hover:bg-green-700 text-white'
-                      : 'bg-gray-600 text-gray-400'
-                    }`}
-                    title={isPlaying ? 'Pause video' : 'Play video'}
+                    onClick={handleNextVerse}
+                    disabled={!hasNextVerse() || isRecording}
+                    className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Next Verse"
                   >
-                    {isPlaying ? (
-                      <PauseIcon className="w-6 h-6" />
-                    ) : (
-                      <PlayIcon className="w-6 h-6" fill="currentColor" />
-                    )}
+                    <ChevronRightIcon className="w-6 h-6" />
                   </button>
-                )}
-
-                {isRecording && (
-                  <button
-                    type="button"
-                    onClick={isPaused ? resumeRecording : pauseRecording}
-                    className="p-4 bg-primary hover:bg-primary rounded-full transition-all transform hover:scale-105 text-white"
-                    title={isPaused ? 'Resume recording' : 'Pause recording'}
-                  >
-                    {isPaused ? (
-                      <PlayIcon className="w-6 h-6" fill="currentColor" />
-                    ) : (
-                      <PauseIcon className="w-6 h-6" />
-                    )}
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleNextVerse}
-                  disabled={!hasNextVerse() || isRecording}
-                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Next Verse"
-                >
-                  <ChevronRightIcon className="w-6 h-6" />
-                </button>
-
-                <div className="w-6" />
+                </div>
 
                 <button
                   type="button"
@@ -1114,74 +1152,63 @@ const VideoRecorder = ({
                 </button>
               </div>
 
-              <div ref={cameraMenuRef} className="relative ml-auto group">
+              <div className="flex items-center gap-2 w-40 justify-end">
                 <button
                   type="button"
-                  onClick={() => setShowCameraMenu(!showCameraMenu)}
-                  disabled={isRecording || (currentMode === 'view' && !hasVideo)}
-                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label={currentMode === 'view' ? 'Settings' : 'Camera Settings'}
+                  onClick={toggleFullscreen}
+                  className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
+                  title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen (F)'}
                 >
-                  <Cog6ToothIcon className="w-6 h-6" />
+                  {isFullscreen ? (
+                    <ArrowsPointingInIcon className="w-6 h-6" />
+                  ) : (
+                    <ArrowsPointingOutIcon className="w-6 h-6" />
+                  )}
                 </button>
-                <div className="absolute right-full top-1/2 -translate-y-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {currentMode === 'view' ? 'Settings' : 'Camera Settings'}
+
+                <div ref={cameraMenuRef} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() => setShowCameraMenu(!showCameraMenu)}
+                    disabled={isRecording || currentMode === 'view'}
+                    className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Camera Settings"
+                  >
+                    <Cog6ToothIcon className="w-6 h-6" />
+                  </button>
+                  {currentMode === 'record' && (
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      Camera Settings
+                    </div>
+                  )}
+
+                  {showCameraMenu && currentMode === 'record' && (
+                    <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[250px] z-50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Cog6ToothIcon className="w-4 h-4 text-gray-600" />
+                        <p className="text-sm font-medium text-gray-700">Select Camera</p>
+                      </div>
+                      {videoDevices.map((device) => (
+                        <button
+                          key={device.deviceId}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCamera(device.deviceId);
+                            setCameraReady(false);
+                            if (streamRef.current) {
+                              streamRef.current.getTracks().forEach((t) => t.stop());
+                            }
+                            setShowCameraMenu(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
+                          }`}
+                        >
+                          {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-
-                {showCameraMenu && currentMode === 'record' && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[250px] z-50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Cog6ToothIcon className="w-4 h-4 text-gray-600" />
-                      <p className="text-sm font-medium text-gray-700">Select Camera</p>
-                    </div>
-                    {videoDevices.map((device) => (
-                      <button
-                        key={device.deviceId}
-                        type="button"
-                        onClick={() => {
-                          setSelectedCamera(device.deviceId);
-                          setCameraReady(false);
-                          if (streamRef.current) {
-                            streamRef.current.getTracks().forEach((t) => t.stop());
-                          }
-                          setShowCameraMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
-                        }`}
-                      >
-                        {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {showCameraMenu && currentMode === 'view' && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[200px] z-50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Cog6ToothIcon className="w-4 h-4 text-gray-600" />
-                      <p className="text-sm font-medium text-gray-700">Playback Speed</p>
-                    </div>
-                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
-                      <button
-                        key={speed}
-                        type="button"
-                        onClick={() => {
-                          setPlaybackSpeed(speed);
-                          setShowCameraMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm flex items-center justify-between ${playbackSpeed === speed ? 'bg-gray-200 font-medium' : ''
-                        }`}
-                      >
-                        <span>
-                          {speed}
-                          x
-                        </span>
-                        {speed === 1 && <span className="text-xs text-gray-500">(Normal)</span>}
-                        {playbackSpeed === speed && <span className="text-primary">✓</span>}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           </div>
