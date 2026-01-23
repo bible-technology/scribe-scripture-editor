@@ -179,7 +179,7 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   const AdmZip = window.require('adm-zip');
   const fse = window.require('fs-extra');
   const burrito = metadata;
-  const dir = path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients');
+  const dir = path.join(ExportStates.folderPath, ExportStates.project.name, 'audio', 'ingredients');
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -193,21 +193,25 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   zip.writeZip(path.join(dir, 'ag_internal_audio.zip'));
   logger.debug('ExportProjectUtils.js', 'write zip completed');
   ExportActions.setTotalExported((curr) => curr + 1);
-  const list = await walk(path.join(folder, 'audio', 'ingredients'), path, fs);
-  const otherFiles = list.filter((name) => !name.includes('.mp3') && !name.includes('.wav'));
-  await otherFiles.forEach(async (file) => {
-    const filePath = file.split(/[\/\\]ingredients[\/\\]/)[1];
-    await fse.copy(file, path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', filePath));
+
+  const audioIngredientsPath = path.join(folder, 'audio', 'ingredients');
+  const rootFiles = fs.readdirSync(audioIngredientsPath, { withFileTypes: true })
+    .filter((item) => item.isFile() && !item.name.includes('.mp3') && !item.name.includes('.wav'))
+    .map((item) => item.name);
+
+  rootFiles.forEach((file) => {
+    fse.copySync(path.join(audioIngredientsPath, file), path.join(dir, file));
   });
+
   logger.debug('ExportProjectUtils.js', 'copied all files');
   const renames = Object.keys(burrito.ingredients).filter((key) => key.includes('audio'));
   await renames?.forEach((rename) => {
-    burrito.ingredients[rename.replace(/audio[\/\\]/, '')] = burrito.ingredients[rename];
+    burrito.ingredients[rename.replace(/audio[\/\\]/, 'audio/ingredients/')] = burrito.ingredients[rename];
     delete burrito.ingredients[rename];
   });
   const content = fs.readFileSync(path.join(dir, 'ag_internal_audio.zip'), 'utf8');
   const stats = fs.statSync(path.join(dir, 'ag_internal_audio.zip'));
-  burrito.ingredients[path.join('ingredients', 'ag_internal_audio.zip')] = {
+  burrito.ingredients['audio/ingredients/ag_internal_audio.zip'] = {
     checksum: {
       md5: md5(content),
     },
@@ -217,6 +221,11 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   ExportActions.setTotalExported((curr) => curr + 1);
   await fs.writeFileSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'metadata.json'), JSON.stringify(burrito));
   if (ExportStates.checkText && fs.existsSync(path.join(folder, 'text-1'))) {
+    await fse.copySync(
+      path.join(folder, 'text-1'),
+      path.join(ExportStates.folderPath, ExportStates.project.name, 'text-1'),
+    );
+
     await updateUSFMFromJSON(
       folder,
       path.join(ExportStates.folderPath, ExportStates.project.name),
