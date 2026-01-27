@@ -599,8 +599,6 @@ export const useVerseJoiningAudio = ({
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
         verseText: firstVerseText,
-        verseSegments: verse.verseSegments
-          ?.filter((s) => s.verse === firstVerseNum),
       };
 
       if (firstIsAtomic) {
@@ -657,8 +655,6 @@ export const useVerseJoiningAudio = ({
         remainingVerseEntry = {
           verseNumber: singleNum.toString(),
           verseText: singleText,
-          verseSegments: verse.verseSegments
-            ?.filter((s) => s.verse === singleNum),
         };
 
         if (canSplitAudio) {
