@@ -106,10 +106,13 @@ const VideoPlayer = ({
     e.stopPropagation();
     const fs = window.require('fs');
     const path = window.require('path');
-    const filename = `${chapter}_${verseNumber}.webm`;
-    const filePath = path.join(location, filename);
+    const videoExists = ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(location, `${chapter}_${verseNumber}.${ext}`)));
 
-    if (fs.existsSync(filePath)) {
+    if (videoExists) {
+      const ext = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(location, `${chapter}_${verseNumber}.${ext}`)));
+      const filename = `${chapter}_${verseNumber}.${ext}`;
+      const filePath = path.join(location, filename);
+
       setOpenModal({
         openModel: true,
         title: t('modal-title-re-record-video'),
@@ -157,8 +160,13 @@ const VideoPlayer = ({
     onChangeVerse(newVerseNumber.toString(), verse);
   };
 
-  const handleDeleteVideo = (e, verseNumber, videoFileName) => {
+  const handleDeleteVideo = (e, verseNumber) => {
     e.stopPropagation();
+
+    const fs = window.require('fs');
+    const path = window.require('path');
+    const ext = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(location, `${chapter}_${verseNumber}.${ext}`)));
+    const videoFileName = ext ? `${chapter}_${verseNumber}.${ext}` : null;
 
     setOpenModal({
       openModel: true,
@@ -176,11 +184,7 @@ const VideoPlayer = ({
   const fs = window.require('fs');
   const path = window.require('path');
 
-  const doesVideoExistForVerse = (verseNumber) => {
-    const filename = `${chapter}_${verseNumber}.webm`;
-    const filePath = path.join(location, filename);
-    return fs.existsSync(filePath);
-  };
+  const doesVideoExistForVerse = (verseNumber) => ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(location, `${chapter}_${verseNumber}.${ext}`)));
 
   return (
     <div className="bg-white rounded-md overflow-hidden">
@@ -252,7 +256,7 @@ const VideoPlayer = ({
 
                     <button
                       type="button"
-                      onClick={(e) => handleDeleteVideo(e, verseNum, `${chapter}_${verseNum}.webm`)}
+                      onClick={(e) => handleDeleteVideo(e, verseNum)}
                       className="flex items-center justify-center p-2 rounded-full border-2 border-error text-error hover:bg-error hover:text-white transition-all duration-200"
                       title="Delete recorded video"
                     >

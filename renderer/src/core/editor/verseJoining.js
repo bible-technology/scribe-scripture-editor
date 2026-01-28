@@ -74,17 +74,17 @@ export const deleteVerseVideos = (chapter, verseNumber, videoDirPath) => {
     const fs = window.require('fs');
     const path = require('path');
 
-    const filename = `${chapter}_${verseNumber}.webm`;
-    const fullVideoPath = path.join(videoDirPath, filename);
+    let deleted = false;
+    ['webm', 'mp4'].forEach((ext) => {
+      const fullVideoPath = path.join(videoDirPath, `${chapter}_${verseNumber}.${ext}`);
+      if (fs.existsSync(fullVideoPath)) {
+        fs.unlinkSync(fullVideoPath);
+        deleted = true;
+      }
+    });
 
-    if (fs.existsSync(fullVideoPath)) {
-      fs.unlinkSync(fullVideoPath);
-      logger.debug('Deleted video:', fullVideoPath);
-      return true;
-    }
-
-    logger.warn('Video file not found:', fullVideoPath);
-    return false;
+    if (!deleted) { logger.warn('Video file not found:', chapter, verseNumber); }
+    return deleted;
   } catch (error) {
     logger.error('Error deleting verse video:', error);
     return false;
@@ -96,10 +96,7 @@ export const hasVerseRecordings = (chapter, verseNumber, videoDirPath) => {
     const fs = window.require('fs');
     const path = require('path');
 
-    const filename = `${chapter}_${verseNumber}.webm`;
-    const fullVideoPath = path.join(videoDirPath, filename);
-
-    return fs.existsSync(fullVideoPath);
+    return ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(videoDirPath, `${chapter}_${verseNumber}.${ext}`)));
   } catch (error) {
     logger.error('Error checking verse recording:', error);
     return false;

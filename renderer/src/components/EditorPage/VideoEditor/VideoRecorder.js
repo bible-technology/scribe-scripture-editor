@@ -66,10 +66,10 @@ const VideoRecorder = ({
   const fs = window.require('fs');
   const path = window.require('path');
 
-  const filename = `${chapter}_${verse}.webm`;
+  const hasVideo = ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+  const videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+  const filename = videoExt ? `${chapter}_${verse}.${videoExt}` : `${chapter}_${verse}.webm`;
   const filePath = path.join(projectPath, filename);
-
-  const hasVideo = fs.existsSync(filePath);
 
   const { error, setError, clearError } = useErrorHandler();
 
@@ -173,10 +173,7 @@ const VideoRecorder = ({
   const { showCameraMenu, setShowCameraMenu, cameraMenuRef } = useCameraMenu();
 
   useEffect(() => {
-    const filename = `${chapter}_${verse}.webm`;
-    const filePath = path.join(projectPath, filename);
-
-    const videoExists = fs.existsSync(filePath);
+    const videoExists = ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
     setExistingVideo(videoExists);
     setCurrentMode(videoExists ? 'view' : 'record');
   }, [chapter, verse, projectPath, mode]);

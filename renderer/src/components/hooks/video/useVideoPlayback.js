@@ -23,7 +23,14 @@ export const useVideoPlayback = ({
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
-      const filename = `${chapter}_${verse}.webm`;
+      const videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+
+      if (!videoExt) {
+        onError('Video file not found');
+        return;
+      }
+
+      const filename = `${chapter}_${verse}.${videoExt}`;
       const fullPath = path.join(projectPath, filename);
 
       try {
@@ -47,7 +54,8 @@ export const useVideoPlayback = ({
       }
 
       const buffer = fs.readFileSync(fullPath);
-      const blob = new Blob([buffer], { type: 'video/webm' });
+      const mimeType = videoExt === 'mp4' ? 'video/mp4' : 'video/webm';
+      const blob = new Blob([buffer], { type: mimeType });
       const videoPath = URL.createObjectURL(blob);
 
       logger.debug('Loading video from Blob URL:', videoPath);
