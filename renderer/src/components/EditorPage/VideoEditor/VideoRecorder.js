@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useEffect, useCallback,
+  useState, useRef, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -17,8 +17,14 @@ import {
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
 } from '@heroicons/react/24/outline';
-import { debounce } from 'lodash';
-import * as logger from '../../../logger';
+
+import { useCamera } from '@/hooks/video/useCamera';
+import { useCameraMenu } from '@/hooks/video/useCameraMenu';
+import { useFullscreen } from '@/hooks/video/useFullscreen';
+import { useErrorHandler } from '@/hooks/video/useErrorHandler';
+import { useVideoPlayback } from '@/hooks/video/useVideoPlayback';
+import { useVideoRecording } from '@/hooks/video/useVideoRecording';
+import { useVideoThumbnail } from '@/hooks/video/useVideoThumbnail';
 
 const getNextVerseNumber = (currentVerse, content) => {
   const currentIndex = content.findIndex((v) => v.verseNumber === currentVerse);
@@ -30,53 +36,6 @@ const getPreviousVerseNumber = (currentVerse, content) => {
   const currentIndex = content.findIndex((v) => v.verseNumber === currentVerse);
   if (currentIndex === -1 || currentIndex === 0) { return null; }
   return content[currentIndex - 1].verseNumber;
-};
-const getCameraErrorMessage = (err) => {
-  if (!err) { return 'Unknown error'; }
-
-  switch (err.name) {
-  case 'NotAllowedError':
-    return 'Camera permission denied. Please allow camera access.';
-  case 'NotFoundError':
-    return 'No camera found. Please connect a camera.';
-  case 'OverconstrainedError':
-    return 'Camera constraints not supported. Trying fallback...';
-  default:
-    return 'Failed to access camera. Please check your camera connection.';
-  }
-};
-
-const getPreferredCamera = async () => {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-
-    if (videoDevices.length === 0) {
-      throw new Error('No camera devices found');
-    }
-
-    const builtInKeywords = ['integrated', 'built-in', 'webcam', 'facetime'];
-
-    const usbCamera = videoDevices.find((device) => device.label.toLowerCase().includes('usb'));
-
-    if (usbCamera) {
-      return usbCamera.deviceId;
-    }
-
-    const externalCamera = videoDevices.find((device) => {
-      const label = device.label.toLowerCase();
-      return !builtInKeywords.some((keyword) => label.includes(keyword));
-    });
-
-    if (externalCamera) {
-      return externalCamera.deviceId;
-    }
-
-    return videoDevices[0].deviceId;
-  } catch (err) {
-    logger.error('Error enumerating devices:', err);
-    return null;
-  }
 };
 
 const VideoRecorder = ({
@@ -95,39 +54,14 @@ const VideoRecorder = ({
   setSnackText,
   setOpenSnackBar,
 }) => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [playbackTime, setPlaybackTime] = useState(0);
-  const [videoDuration, setVideoDuration] = useState(0);
-  const [error, setError] = useState(null);
-  const [cameraReady, setCameraReady] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [selectedCamera, setSelectedCamera] = useState(null);
+  const [existingVideo, setExistingVideo] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
 
   const videoPreviewRef = useRef(null);
-  const mediaRecorderRef = useRef(null);
-  const streamRef = useRef(null);
-  const timerRef = useRef(null);
-  const playbackTimerRef = useRef(null);
-  const [existingVideo, setExistingVideo] = useState(false);
-  const [videoDevices, setVideoDevices] = useState([]);
-  const [selectedCamera, setSelectedCamera] = useState(null);
-  const [showCameraMenu, setShowCameraMenu] = useState(false);
-  const cameraMenuRef = useRef(null);
-
-  const seekBarRef = useRef(null);
   const containerRef = useRef(null);
-  const thumbnailVideoRef = useRef(null);
-  const thumbnailCanvasRef = useRef(null);
-  const [hoverTime, setHoverTime] = useState(null);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [showHoverTime, setShowHoverTime] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [thumbnailData, setThumbnailData] = useState(null);
-  const errorTimeoutRef = useRef(null);
+  const seekBarRef = useRef(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -137,23 +71,106 @@ const VideoRecorder = ({
 
   const hasVideo = fs.existsSync(filePath);
 
-  const clearError = useCallback(() => {
-    setError(null);
-    if (errorTimeoutRef.current) {
-      clearTimeout(errorTimeoutRef.current);
-      errorTimeoutRef.current = null;
-    }
-  }, []);
+  const { error, setError, clearError } = useErrorHandler();
 
-  const setErrorWithTimeout = useCallback((message, timeout = 5000) => {
-    setError(message);
-    if (errorTimeoutRef.current) {
-      clearTimeout(errorTimeoutRef.current);
+  const {
+    cameraReady, videoDevices, streamRef, toggleAudio,
+  } = useCamera({
+    currentMode,
+    isAudioEnabled,
+    selectedCamera,
+    videoPreviewRef,
+    onError: setError,
+    clearError,
+    verse,
+    chapter,
+  });
+
+  const {
+    isPlaying,
+    playbackTime,
+    videoDuration,
+    playbackSpeed,
+    togglePlayPause,
+    seek,
+    cycleSpeed,
+    resetPlayback,
+    setIsPlaying,
+  } = useVideoPlayback({
+    currentMode,
+    hasVideo,
+    verse,
+    chapter,
+    projectPath,
+    videoPreviewRef,
+    onError: setError,
+  });
+
+  const handleSaveComplete = ({
+    verse, chapter, filePath, filename, buffer,
+  }) => {
+    if (onRecordingComplete) {
+      onRecordingComplete({
+        verse, chapter, filePath, filename,
+      });
     }
-    errorTimeoutRef.current = setTimeout(() => {
-      setError(null);
-    }, timeout);
-  }, []);
+
+    setExistingVideo(true);
+    setCurrentMode('view');
+
+    setNotify('success');
+    setSnackText('Video saved successfully');
+    setOpenSnackBar(true);
+
+    setTimeout(() => {
+      if (videoPreviewRef.current) {
+        const blob = new Blob([buffer], { type: 'video/webm' });
+        const objectUrl = URL.createObjectURL(blob);
+
+        videoPreviewRef.current.pause();
+        videoPreviewRef.current.srcObject = null;
+        videoPreviewRef.current.removeAttribute('src');
+        videoPreviewRef.current.load();
+
+        videoPreviewRef.current.src = objectUrl;
+        videoPreviewRef.current.load();
+      }
+    }, 100);
+  };
+
+  const {
+    isRecording,
+    isPaused,
+    recordingTime,
+    isProcessing,
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+  } = useVideoRecording({
+    chapter,
+    verse,
+    projectPath,
+    streamRef,
+    onSaveComplete: handleSaveComplete,
+    onError: setError,
+  });
+
+  const {
+    thumbnailData,
+    hoverTime,
+    showHoverTime,
+    handleSeekHover,
+    clearSeekHover,
+  } = useVideoThumbnail({
+    currentMode,
+    hasVideo,
+    videoPreviewRef,
+  });
+
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
+
+  const { showCameraMenu, setShowCameraMenu, cameraMenuRef } = useCameraMenu();
 
   useEffect(() => {
     const filename = `${chapter}_${verse}.webm`;
@@ -161,268 +178,14 @@ const VideoRecorder = ({
 
     const videoExists = fs.existsSync(filePath);
     setExistingVideo(videoExists);
-
-    if (videoExists) {
-      setCurrentMode('view');
-    } else {
-      setCurrentMode('record');
-    }
+    setCurrentMode(videoExists ? 'view' : 'record');
   }, [chapter, verse, projectPath, mode]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (cameraMenuRef.current && !cameraMenuRef.current.contains(event.target)) {
-        setShowCameraMenu(false);
-      }
-    };
-
-    if (showCameraMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showCameraMenu]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const initCamera = async () => {
-      if (currentMode === 'view') {
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach((track) => track.stop());
-          streamRef.current = null;
-        }
-        setCameraReady(false);
-        return;
-      }
-
-      try {
-        const tempStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        tempStream.getTracks().forEach((track) => track.stop());
-
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const cams = devices.filter((d) => d.kind === 'videoinput');
-        if (mounted) {
-          setVideoDevices(cams);
-        }
-
-        const targetCameraId = selectedCamera || (await getPreferredCamera());
-        const constraints = {
-          video: targetCameraId ? {
-            deviceId: { exact: targetCameraId },
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            frameRate: { ideal: 30 },
-          } : {
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            frameRate: { ideal: 30 },
-          },
-          audio: isAudioEnabled,
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-        if (!mounted) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
-
-        streamRef.current = stream;
-
-        if (videoPreviewRef.current) {
-          videoPreviewRef.current.srcObject = stream;
-          videoPreviewRef.current.onloadedmetadata = () => {
-            if (mounted) {
-              videoPreviewRef.current.play();
-              setCameraReady(true);
-
-              const videoTrack = stream.getVideoTracks()[0];
-              logger.debug('Using camera:', videoTrack.label);
-            }
-          };
-        }
-      } catch (err) {
-        if (mounted) {
-          logger.error('Camera initialization error:', err);
-          setErrorWithTimeout(getCameraErrorMessage(err));
-
-          if (err.name === 'OverconstrainedError') {
-            try {
-              const fallbackStream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: isAudioEnabled,
-              });
-
-              if (mounted && videoPreviewRef.current) {
-                streamRef.current = fallbackStream;
-                videoPreviewRef.current.srcObject = fallbackStream;
-                videoPreviewRef.current.onloadedmetadata = () => {
-                  if (mounted) {
-                    videoPreviewRef.current.play();
-                    setCameraReady(true);
-                    clearError(null);
-                  }
-                };
-              }
-            } catch (fallbackErr) {
-              logger.error('Fallback camera access failed:', fallbackErr);
-            }
-          }
-        }
-      }
-    };
-
-    initCamera();
-
-    return () => {
-      mounted = false;
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      if (errorTimeoutRef.current) {
-        clearTimeout(errorTimeoutRef.current);
-      }
-    };
-  }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter, setErrorWithTimeout, clearError]);
-
-  useEffect(() => {
-    if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
-      const path = require('path');
-      const fs = window.require('fs');
-
-      const filename = `${chapter}_${verse}.webm`;
-      const fullPath = path.join(projectPath, filename);
-
-      try {
-        if (!fs.existsSync(fullPath)) {
-          logger.error('Video file does not exist:', fullPath);
-          setErrorWithTimeout(`Video file not found: ${filename}`);
-          return;
-        }
-
-        const stats = fs.statSync(fullPath);
-        logger.debug('Video file size:', stats.size);
-
-        if (stats.size === 0) {
-          setErrorWithTimeout('Video file is empty');
-          return;
-        }
-      } catch (err) {
-        logger.error('Error checking video file:', err);
-        setErrorWithTimeout(`Cannot access video: ${err.message}`);
-        return;
-      }
-
-      const buffer = fs.readFileSync(fullPath);
-      const blob = new Blob([buffer], { type: 'video/webm' });
-      const videoPath = URL.createObjectURL(blob);
-
-      logger.debug('Loading video from Blob URL:', videoPath);
-
-      setIsPlaying(false);
-      setPlaybackTime(0);
-
-      const video = videoPreviewRef.current;
-
-      video.pause();
-      video.srcObject = null;
-      video.removeAttribute('src');
-      video.load();
-
-      setTimeout(() => {
-        if (!videoPreviewRef.current) { return; }
-        video.src = videoPath;
-        video.load();
-        video.onloadedmetadata = () => {
-          if (!videoPreviewRef.current) { return; }
-          let dur = video.duration;
-
-          if (!Number.isFinite(dur) || dur === 0) {
-            logger.warn('Duration invalid, forcing recalculation...');
-            video.currentTime = 1e101;
-            video.ontimeupdate = () => {
-              if (!videoPreviewRef.current) { return; }
-              video.ontimeupdate = null;
-              dur = video.duration;
-              if (Number.isFinite(dur)) {
-                setVideoDuration(dur);
-              } else {
-                setVideoDuration(0);
-              }
-              video.currentTime = 0;
-            };
-          } else {
-            setVideoDuration(dur);
-          }
-        };
-
-        video.onloadeddata = () => {
-          if (!videoPreviewRef.current) { return; }
-          logger.debug('Video data loaded and ready to play');
-        };
-
-        video.onerror = (e) => {
-          logger.error('Video load error:', e);
-          setError('Failed to load video file');
-        };
-      }, 50);
-    }
-  }, [currentMode, hasVideo, verse, projectPath]);
-
-  useEffect(() => {
-    if (currentMode === 'view' && videoPreviewRef.current) {
-      if (isPlaying) {
-        videoPreviewRef.current.play().catch((err) => {
-          logger.error('Error playing video:', err);
-          setIsPlaying(false);
-        });
-
-        playbackTimerRef.current = setInterval(() => {
-          if (videoPreviewRef.current) {
-            setPlaybackTime(videoPreviewRef.current.currentTime);
-          }
-        }, 100);
-      } else {
-        videoPreviewRef.current.pause();
-
-        if (playbackTimerRef.current) {
-          clearInterval(playbackTimerRef.current);
-          playbackTimerRef.current = null;
-        }
-        if (videoPreviewRef.current) {
-          setPlaybackTime(videoPreviewRef.current.currentTime);
-        }
-      }
-    }
-
-    return () => {
-      if (playbackTimerRef.current) {
-        clearInterval(playbackTimerRef.current);
-      }
-    };
-  }, [isPlaying, currentMode]);
-
-  useEffect(() => {
     if (!seekBarRef.current || !videoDuration) { return; }
-
     const percent = (playbackTime / videoDuration) * 100;
     seekBarRef.current.style.setProperty('--progress', `${percent}%`);
   }, [playbackTime, videoDuration]);
-
-  useEffect(() => {
-    if (videoPreviewRef.current && currentMode === 'view') {
-      videoPreviewRef.current.playbackRate = playbackSpeed;
-    }
-  }, [playbackSpeed, currentMode]);
 
   useEffect(() => () => {
     if (videoPreviewRef.current) {
@@ -431,117 +194,14 @@ const VideoRecorder = ({
       videoPreviewRef.current.src = '';
       videoPreviewRef.current.load();
     }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => {
-        track.stop();
-        track.enabled = false;
-      });
-      streamRef.current = null;
-    }
-
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (playbackTimerRef.current) {
-      clearInterval(playbackTimerRef.current);
-      playbackTimerRef.current = null;
-    }
-
-    if (thumbnailCanvasRef.current) {
-      const ctx = thumbnailCanvasRef.current.getContext('2d');
-      ctx?.clearRect(0, 0, thumbnailCanvasRef.current.width, thumbnailCanvasRef.current.height);
-    }
 
     if (videoPreviewRef.current?.src?.startsWith('blob:')) {
       URL.revokeObjectURL(videoPreviewRef.current.src);
     }
   }, []);
 
-  const saveVideo = useCallback(async (blob) => {
-    setIsProcessing(true);
-
-    try {
-      const arrayBuffer = await blob.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      const filename = `${chapter}_${verse}.webm`;
-      const filePath = path.join(projectPath, filename);
-
-      fs.writeFileSync(filePath, buffer);
-      if (onRecordingComplete) {
-        onRecordingComplete({
-          verse,
-          chapter,
-          filePath,
-          filename,
-        });
-      }
-
-      setExistingVideo(true);
-      setCurrentMode('view');
-      setIsProcessing(false);
-
-      setNotify('success');
-      setSnackText('Video saved successfully');
-      setOpenSnackBar(true);
-
-      setTimeout(() => {
-        if (videoPreviewRef.current) {
-          const buffer = fs.readFileSync(filePath);
-          const blob = new Blob([buffer], { type: 'video/webm' });
-          const objectUrl = URL.createObjectURL(blob);
-
-          videoPreviewRef.current.pause();
-          videoPreviewRef.current.srcObject = null;
-          videoPreviewRef.current.removeAttribute('src');
-          videoPreviewRef.current.load();
-
-          videoPreviewRef.current.src = objectUrl;
-          videoPreviewRef.current.load();
-
-          videoPreviewRef.current.onloadedmetadata = () => {
-            const video = videoPreviewRef.current;
-            if (!video) { return; }
-            let dur = video.duration;
-
-            if (!Number.isFinite(dur) || dur === 0) {
-              logger.warn('Duration invalid, forcing recalculation...');
-              video.currentTime = 1e101;
-              video.ontimeupdate = () => {
-                if (!videoPreviewRef.current) { return; }
-                video.ontimeupdate = null;
-                dur = video.duration;
-                if (Number.isFinite(dur)) {
-                  setVideoDuration(dur);
-                  logger.debug('Duration fixed:', dur);
-                } else {
-                  setVideoDuration(0);
-                }
-                video.currentTime = 0;
-              };
-            } else {
-              setVideoDuration(dur);
-            }
-          };
-        }
-      }, 100);
-    } catch (err) {
-      logger.error('Error saving video:', err);
-      setNotify('failure');
-      setSnackText(`Failed to save video: ${err.message}`);
-      setOpenSnackBar(true);
-      setIsProcessing(false);
-    }
-  }, [chapter, verse, projectPath, onRecordingComplete]);
-
   const handleDeleteClick = () => {
-    const path = window.require('path');
-    const filename = `${chapter}_${verse}.webm`;
-    const filePath = path.join(projectPath, filename);
-
     onClose();
-
     setOpenModal({
       openModel: true,
       title: 'Delete Video Recording?',
@@ -558,151 +218,17 @@ const VideoRecorder = ({
     });
   };
 
-  const startNewRecording = useCallback(() => {
-    try {
-      const filename = `${chapter}_${verse}.webm`;
-      const filePath = path.join(projectPath, filename);
-
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-      const options = {
-        mimeType: 'video/webm;codecs=vp9',
-        videoBitsPerSecond: 5000000,
-      };
-
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options.mimeType = 'video/webm;codecs=vp8';
-      }
-
-      const mediaRecorder = new MediaRecorder(streamRef.current, options);
-      mediaRecorderRef.current = mediaRecorder;
-
-      const chunks = [];
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-          chunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        await saveVideo(blob);
-      };
-
-      mediaRecorder.onerror = () => {
-        setError('Recording failed. Please try again.');
-        setIsRecording(false);
-        setIsPaused(false);
-      };
-
-      mediaRecorder.start(100);
-      setIsRecording(true);
-      setIsPaused(false);
-      setRecordingTime(0);
-
-      timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
-    } catch (err) {
-      setError('Failed to start recording. Please try again.');
+  const handleToggleAudio = async () => {
+    const success = await toggleAudio(isRecording);
+    if (success) {
+      setIsAudioEnabled(!isAudioEnabled);
     }
-  }, [chapter, verse, projectPath, saveVideo]);
-
-  const pauseRecording = () => {
-    if (mediaRecorderRef.current && isRecording && !isPaused) {
-      mediaRecorderRef.current.pause();
-      setIsPaused(true);
-
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-
-      logger.debug('Recording paused');
-    }
-  };
-
-  const resumeRecording = () => {
-    if (mediaRecorderRef.current && isRecording && isPaused) {
-      mediaRecorderRef.current.resume();
-      setIsPaused(false);
-
-      timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
-
-      logger.debug('Recording resumed');
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      setIsPaused(false);
-
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-  };
-
-  const startRecording = async () => {
-    if (!streamRef.current) {
-      setError('Camera not ready');
-      return;
-    }
-
-    try {
-      if (existingVideo) {
-        const fs = window.require('fs');
-        const path = window.require('path');
-        const filename = `${chapter}_${verse}.webm`;
-        const filePath = path.join(projectPath, filename);
-
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-          logger.debug('Deleted existing video for re-recording');
-        }
-      }
-
-      startNewRecording();
-    } catch (err) {
-      setError('Failed to access file system.');
-    }
-  };
-
-  const toggleAudio = async () => {
-    if (isRecording) {
-      setError('Cannot change audio settings while recording');
-      return;
-    }
-
-    setIsAudioEnabled(!isAudioEnabled);
-    setCameraReady(false);
-
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-    }
-  };
-
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
   };
 
   const handlePreviousVerse = () => {
     const prevVerse = getPreviousVerseNumber(verse, content);
     if (prevVerse && onVerseChange) {
-      if (videoPreviewRef.current) {
-        const video = videoPreviewRef.current;
-        video.pause();
-        video.srcObject = null;
-        video.removeAttribute('src');
-        video.load();
-      }
-      setIsPlaying(false);
+      resetPlayback();
       onVerseChange(prevVerse);
     }
   };
@@ -710,92 +236,9 @@ const VideoRecorder = ({
   const handleNextVerse = () => {
     const nextVerse = getNextVerseNumber(verse, content);
     if (nextVerse && onVerseChange) {
-      if (videoPreviewRef.current) {
-        const video = videoPreviewRef.current;
-        video.pause();
-        video.srcObject = null;
-        video.removeAttribute('src');
-        video.load();
-      }
-      setIsPlaying(false);
+      resetPlayback();
       onVerseChange(nextVerse);
     }
-  };
-
-  useEffect(() => {
-    if (currentMode === 'view' && hasVideo && !thumbnailVideoRef.current) {
-      thumbnailVideoRef.current = document.createElement('video');
-      thumbnailVideoRef.current.muted = true;
-      thumbnailVideoRef.current.preload = 'metadata';
-      thumbnailVideoRef.current.style.display = 'none';
-      document.body.appendChild(thumbnailVideoRef.current);
-    }
-
-    return () => {
-      if (thumbnailVideoRef.current) {
-        thumbnailVideoRef.current.remove();
-        thumbnailVideoRef.current = null;
-      }
-    };
-  }, [currentMode, hasVideo]);
-
-  const generateThumbnail = useCallback((time) => {
-    if (!videoPreviewRef.current || !thumbnailVideoRef.current) { return; }
-
-    const thumbnailVideo = thumbnailVideoRef.current;
-
-    if (thumbnailVideo.src !== videoPreviewRef.current.src) {
-      thumbnailVideo.src = videoPreviewRef.current.src;
-    }
-
-    if (!thumbnailCanvasRef.current) {
-      thumbnailCanvasRef.current = document.createElement('canvas');
-      thumbnailCanvasRef.current.width = 160;
-      thumbnailCanvasRef.current.height = 90;
-    }
-
-    const canvas = thumbnailCanvasRef.current;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    thumbnailVideo.currentTime = time;
-
-    const drawFrame = () => {
-      try {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(thumbnailVideo, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-        setThumbnailData(dataUrl);
-      } catch (err) {
-        logger.error('Error generating thumbnail:', err);
-      }
-    };
-
-    thumbnailVideo.onseeked = drawFrame;
-  }, []);
-
-  const debouncedGenerateThumbnail = useCallback(
-    debounce((time) => {
-      if (videoPreviewRef.current && currentMode === 'view') {
-        generateThumbnail(time);
-      }
-    }, 100),
-    [generateThumbnail, currentMode],
-  );
-  const handleSeekHover = (e) => {
-    if (!seekBarRef.current || !videoDuration) { return; }
-
-    const rect = seekBarRef.current.getBoundingClientRect();
-    const percent = (e.clientX - rect.left) / rect.width;
-    const time = Math.max(0, Math.min(videoDuration, percent * videoDuration));
-
-    setHoverTime(time);
-    setShowHoverTime(true);
-    debouncedGenerateThumbnail(time);
-  };
-  const clearSeekHover = () => {
-    setShowHoverTime(false);
-    setHoverTime(null);
-    setThumbnailData(null);
   };
 
   const formatTime = (seconds) => {
@@ -804,24 +247,6 @@ const VideoRecorder = ({
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  const toggleFullscreen = useCallback(() => {
-    setIsFullscreen(!isFullscreen);
-  }, [isFullscreen]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isFullscreen) {
-        setIsFullscreen(false);
-      } else if (e.key === 'f' && !e.target.matches('input, textarea')) {
-        e.preventDefault();
-        toggleFullscreen();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, toggleFullscreen]);
 
   const hasPreviousVerse = () => getPreviousVerseNumber(verse, content) !== null;
   const hasNextVerse = () => getNextVerseNumber(verse, content) !== null;
@@ -910,10 +335,6 @@ const VideoRecorder = ({
               playsInline
               className="w-full h-full object-contain"
               onEnded={() => setIsPlaying(false)}
-              onError={(e) => {
-                logger.error('Video playback error:', e);
-                setIsPlaying(false);
-              }}
             >
               <track kind="captions" src="" label="No captions" />
             </video>
@@ -961,14 +382,8 @@ const VideoRecorder = ({
                 max={videoDuration || 0}
                 step={0.01}
                 value={playbackTime}
-                onChange={(e) => {
-                  const time = Number(e.target.value);
-                  if (videoPreviewRef.current) {
-                    videoPreviewRef.current.currentTime = time;
-                    setPlaybackTime(time);
-                  }
-                }}
-                onMouseMove={handleSeekHover}
+                onChange={(e) => seek(Number(e.target.value))}
+                onMouseMove={(e) => handleSeekHover(e, seekBarRef, videoDuration)}
                 onMouseLeave={clearSeekHover}
                 className="w-full accent-primary cursor-pointer"
               />
@@ -1026,11 +441,7 @@ const VideoRecorder = ({
                     <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
                     <button
                       type="button"
-                      onClick={() => setPlaybackSpeed((prev) => {
-                        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
-                        const index = speeds.indexOf(prev);
-                        return speeds[(index + 1) % speeds.length];
-                      })}
+                      onClick={cycleSpeed}
                       className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
                       title="Change playback speed"
                     >
@@ -1044,7 +455,7 @@ const VideoRecorder = ({
               <div className="flex-1 flex items-center justify-center gap-10">
                 <button
                   type="button"
-                  onClick={toggleAudio}
+                  onClick={handleToggleAudio}
                   disabled={!cameraReady || isProcessing || currentMode === 'view'}
                   className="p-4 rounded-full transition-colors bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   title={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
@@ -1194,10 +605,6 @@ const VideoRecorder = ({
                           type="button"
                           onClick={() => {
                             setSelectedCamera(device.deviceId);
-                            setCameraReady(false);
-                            if (streamRef.current) {
-                              streamRef.current.getTracks().forEach((t) => t.stop());
-                            }
                             setShowCameraMenu(false);
                           }}
                           className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
