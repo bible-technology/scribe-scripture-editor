@@ -206,8 +206,18 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   logger.debug('ExportProjectUtils.js', 'copied all files');
   const renames = Object.keys(burrito.ingredients).filter((key) => key.includes('audio'));
   await renames?.forEach((rename) => {
-    burrito.ingredients[rename.replace(/audio[\/\\]/, 'audio/ingredients/')] = burrito.ingredients[rename];
-    delete burrito.ingredients[rename];
+    let newPath;
+    if (rename.startsWith('audio/ingredients/')) {
+      newPath = rename; // Keep as is
+    } else if (rename.startsWith('audio/')) {
+      newPath = rename.replace(/^audio[\/\\]/, 'audio/ingredients/');
+    } else {
+      newPath = rename;
+    }
+    if (newPath !== rename) {
+      burrito.ingredients[newPath] = burrito.ingredients[rename];
+      delete burrito.ingredients[rename];
+    }
   });
   const content = fs.readFileSync(path.join(dir, 'ag_internal_audio.zip'), 'utf8');
   const stats = fs.statSync(path.join(dir, 'ag_internal_audio.zip'));

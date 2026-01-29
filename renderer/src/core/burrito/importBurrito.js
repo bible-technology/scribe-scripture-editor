@@ -138,13 +138,7 @@ const updateAudioDir = async (dir, path, fs, status) => {
     const zip = new AdmZip(path.join(dir, 'audio', 'ingredients', 'ag_internal_audio.zip'));
     zip.extractAllTo(path.join(dir, 'audio', 'ingredients'), true);
     fs.unlinkSync(path.join(dir, 'audio', 'ingredients', 'ag_internal_audio.zip'));
-    const renames = Object.keys(buritto.ingredients);
-    await renames?.forEach((rename) => {
-      if (!rename.includes('ag_internal_audio.zip')) {
-        buritto.ingredients[rename.replace(rename, path.join('audio', rename))] = buritto.ingredients[rename];
-      }
-      delete buritto.ingredients[rename];
-    });
+    delete buritto.ingredients['audio/ingredients/ag_internal_audio.zip'];
     await fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify(buritto));
     // other than full project (verse wise)
   } else {
