@@ -5,7 +5,7 @@ import { SnackBar } from '@/components/SnackBar';
 import { readFile } from '@/core/editor/readFile';
 import { isElectron } from '@/core/handleElectron';
 import { useState, useEffect, useContext } from 'react';
-import { useVerseJoining } from '@/hooks/useVerseJoining';
+import { useVerseJoining } from '@/hooks/video/useVerseJoining';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import { readRefMeta } from '@/core/reference/readRefMeta';
 import LoadingScreen from '@/components/Loading/LoadingScreen';

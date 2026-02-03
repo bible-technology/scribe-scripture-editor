@@ -6,7 +6,7 @@ import {
   validateVerseJoin,
   validateVerseDisjoin,
 } from '@/core/editor/verseJoining';
-import * as logger from '../../logger';
+import * as logger from '../../../logger';
 
 export const useVerseJoining = ({
   videoContent,
