@@ -31,7 +31,7 @@ export default function ImportProjectPopUp(props) {
   const router = useRouter();
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
-  const [folderPath, setFolderPath] = React.useState();
+  const [folderPath, setFolderPath] = React.useState('');
   const [valid, setValid] = React.useState(false);
   const [snackBar, setOpenSnackBar] = React.useState(false);
   const [snackText, setSnackText] = React.useState('');
@@ -219,6 +219,7 @@ export default function ImportProjectPopUp(props) {
         sbData,
         triggerSnackBar,
         startOver
+    
       );
 
       // If no conflicts found, close the import dialog
@@ -440,7 +441,7 @@ export default function ImportProjectPopUp(props) {
                       {!folderPath && (
                         <div className="w-full flex">
                           <div className="flex flex-row justify-end mr-3">
-                            <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
+                            <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onChange={() => setImportingIsZip(!importingIsZip)} />
                             <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
                           </div>
                         </div>

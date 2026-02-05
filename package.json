@@ -177,7 +177,7 @@
     "i18next": "^21.8.9",
     "ionicons": "^7.1.2",
     "is-electron": "^2.2.1",
-    "isomorphic-git": "^1.24.0",
+    "isomorphic-git": "^1.36.3",
     "js-yaml": "^4.1.0",
     "jxl-pdf": "0.8.0",
     "localforage": "1.10.0",
