@@ -21,6 +21,7 @@ import { mergeProject } from './Import/mergeProject';
 import packageInfo from '../../../../package.json';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { mergeTextTranslationProject } from '@/components/TextTranslationMerge/mergeTextTranslationProject';
+import { detectObsCombinedAudio } from '@/components/EditorPage/ObsEditor/utils/detectObsCombinedAudio';
 
 export default function ImportProjectPopUp(props) {
   const {
@@ -75,7 +76,7 @@ export default function ImportProjectPopUp(props) {
 
   async function close(triggeredFrom) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
-    removeExtractedZipDir()
+    removeExtractedZipDir();
     setValid(false);
     closePopUp(false);
     setShow(false);
@@ -107,7 +108,23 @@ export default function ImportProjectPopUp(props) {
         }
 
         const result = await viewBurrito(selectedFolderPath, value.username, 'projects');
-        setSbData(result);
+        const fs = window.require('fs');
+
+        const isCombinedOBS =
+          result?.burritoType === 'gloss / textStories' &&
+          detectObsCombinedAudio(selectedFolderPath, fs);
+
+        setSbData({
+          ...result,
+          isObsCombinedAudio: isCombinedOBS,
+        });
+
+        if (isCombinedOBS) {
+          triggerSnackBar(
+            'failure',
+            'Cannot import OBS projects exported as Combined Stories Audio'
+          );
+        }
       });
     } else {
       logger.debug('ImportProjectPopUp.js', 'Didn\'t select any project');
@@ -219,7 +236,7 @@ export default function ImportProjectPopUp(props) {
         sbData,
         triggerSnackBar,
         startOver
-    
+
       );
 
       // If no conflicts found, close the import dialog
@@ -270,6 +287,14 @@ export default function ImportProjectPopUp(props) {
 
     try {
       if (sbData?.burritoType === 'gloss / textStories') {
+        if (sbData?.isObsCombinedAudio) {
+          triggerSnackBar(
+            'failure',
+            'Cannot import OBS projects exported as Combined Stories Audio'
+          );
+          setProcessMerge(false);
+          return;
+        }
         await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
         setSbData({});
         close('MergeFunction OBS');
@@ -502,6 +527,7 @@ export default function ImportProjectPopUp(props) {
                             type="button"
                             className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                             onClick={() => importProject()}
+                            disabled={sbData?.isObsCombinedAudio}
                           >
                             {importProgress.importStarted
                               ? <LoadingSpinner height='h-4' width='w-4' colorTW='text-white' />

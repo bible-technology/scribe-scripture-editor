@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import {
-  ArrowDownIcon,ArrowUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
+  ArrowDownIcon, ArrowUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
 } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 
