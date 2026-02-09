@@ -1,11 +1,12 @@
 // parse obs story based on the story number
 import { commitChanges } from '@/components/Sync/Isomorphic/utils';
-import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
+import { importMissingDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/mergeObsDefaultAudioUtils';
 import * as logger from '../../../logger';
+import OBSBack from '../../../lib/OBSback.md';
+import OBSFront from '../../../lib/OBSfront.md';
 // import OBSData from '../../../lib/OBSData.json';
 import OBSData from '../../../lib/OBSDataForMerge.json';
-import OBSFront from '../../../lib/OBSfront.md';
-import OBSBack from '../../../lib/OBSback.md';
+import JsonToMd from '../../../obsRcl/JsonToMd/JsonToMd';
 
 const path = require('path');
 
@@ -226,6 +227,32 @@ export async function copyFilesTempToOrginal(conflictData) {
     });
     // commit changes in project Dir
     await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
+
+    // Import missing audio files if this is a default audio export
+    if (conflictData.data.incomingPath) {
+      logger.debug('mergeObsUtils.js', 'Checking for missing audio to import');
+      const audioImportResult = await importMissingDefaultAudio(
+        conflictData.data.incomingPath,
+        conflictData.data.projectPath,
+        fs,
+        fse,
+      );
+
+      if (audioImportResult.importedCount > 0) {
+        logger.debug('mergeObsUtils.js', `Successfully imported ${audioImportResult.importedCount} missing audio files`);
+        await commitChanges(
+          fs,
+          conflictData.data.projectPath,
+          conflictData.data.author,
+          `Imported ${audioImportResult.importedCount} missing audio files from merge`,
+        );
+      }
+
+      if (audioImportResult.errors.length > 0) {
+        logger.warn('mergeObsUtils.js', `Audio import had ${audioImportResult.errors.length} errors`);
+      }
+    }
+
     // delete tempDir
     await fs.rmdirSync(conflictData.data.mergeDirPath, { recursive: true }, (err) => {
       if (err) {
