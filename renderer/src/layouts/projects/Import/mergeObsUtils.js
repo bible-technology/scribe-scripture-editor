@@ -1,5 +1,6 @@
 // parse obs story based on the story number
 import { commitChanges } from '@/components/Sync/Isomorphic/utils';
+import { mergeObsCompleteAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
 import { importMissingDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/mergeObsDefaultAudioUtils';
 import * as logger from '../../../logger';
 import OBSBack from '../../../lib/OBSback.md';
@@ -228,6 +229,36 @@ export async function copyFilesTempToOrginal(conflictData) {
     // commit changes in project Dir
     await commitChanges(fs, conflictData.data.projectPath, conflictData.data.author, 'commit conflcit resolved');
 
+    // Handle complete audio merge
+    if (conflictData.data.hasCompleteAudio && conflictData.data.incomingPath) {
+      logger.debug('mergeObsUtils.js', 'Merging complete audio files');
+
+      const audioMergeResult = await mergeObsCompleteAudio(
+        conflictData.data.incomingPath,
+        conflictData.data.projectPath,
+        fs,
+        fse,
+      );
+
+      if (audioMergeResult.success && audioMergeResult.importedCount > 0) {
+        logger.debug(
+          'mergeObsUtils.js',
+          `Successfully merged ${audioMergeResult.importedCount} audio files (${audioMergeResult.modifiedCount} modified)`,
+        );
+
+        await commitChanges(
+          fs,
+          conflictData.data.projectPath,
+          conflictData.data.author,
+          `Merged ${audioMergeResult.importedCount} audio files from import`,
+        );
+      } else if (audioMergeResult.errors.length > 0) {
+        logger.warn(
+          'mergeObsUtils.js',
+          `Audio merge had ${audioMergeResult.errors.length} errors`,
+        );
+      }
+    }
     // Import missing audio files if this is a default audio export
     if (conflictData.data.incomingPath) {
       logger.debug('mergeObsUtils.js', 'Checking for missing audio to import');
