@@ -1,7 +1,7 @@
 // parse obs story based on the story number
 import { commitChanges } from '@/components/Sync/Isomorphic/utils';
 import { mergeObsCompleteAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
-import { importMissingDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/mergeObsDefaultAudioUtils';
+import { importMissingDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/obsDefaultAudioUtils';
 import * as logger from '../../../logger';
 import OBSBack from '../../../lib/OBSback.md';
 import OBSFront from '../../../lib/OBSfront.md';

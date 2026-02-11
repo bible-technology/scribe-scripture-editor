@@ -1,15 +1,13 @@
 /* eslint-disable max-len */
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
-import {
-  detectObsCompleteAudio,
-  extractAndCleanupObsAudio,
-} from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
-import { environment } from '../../../environment';
+import { detectDefaultAudioExport, renameToDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/obsDefaultAudioUtils';
+import { detectObsCompleteAudio, extractAndCleanupObsAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
 import * as logger from '../../logger';
 import { validate } from '../../util/validate';
-import { updateVersion } from './updateTranslationSB';
 import packageInfo from '../../../../package.json';
+import { environment } from '../../../environment';
+import { updateVersion } from './updateTranslationSB';
 import { checkAndAddLanguageToCustom } from '../projects/languageUtil';
 
 const md5 = require('md5');
@@ -477,13 +475,30 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         }
         updateAudioDir(proDir, path, fs, status);
       }
-
       if (metadata.type?.flavorType?.flavor?.name === 'textStories') {
         const proDir = path.join(projectDir, `${projectName}_${id}`);
 
         logger.debug('importBurrito.js', 'Checking for OBS complete audio');
-
         await updateObsCompleteAudio(proDir, metadata, fs, status);
+
+        logger.debug('importBurrito.js', 'Checking for OBS default audio export');
+        if (detectDefaultAudioExport(proDir, fs)) {
+          logger.debug('importBurrito.js', 'Default audio export detected - renaming files');
+          const result = await renameToDefaultAudio(proDir, fs);
+
+          if (!result.success) {
+            logger.error('importBurrito.js', `Default audio renaming failed: ${result.errors}`);
+            status.push({
+              type: 'warning',
+              value: 'Default audio renaming had issues, but project imported',
+            });
+          } else {
+            logger.debug(
+              'importBurrito.js',
+              `Successfully renamed ${result.renamedCount} default audio files`,
+            );
+          }
+        }
       }
       // Check and create project Language if not exist in lang json / user custom list
       await checkAndAddLanguageToCustom(metadata, concatedLangs);

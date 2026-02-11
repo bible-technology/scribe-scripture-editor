@@ -18,6 +18,7 @@ import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
 import { detectObsCombinedAudio } from '@/components/EditorPage/ObsEditor/utils/detectObsCombinedAudio';
 import { FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon, } from '@heroicons/react/24/outline';
 import { mergeTextTranslationProject } from '@/components/TextTranslationMerge/mergeTextTranslationProject';
+import { detectDefaultAudioExport, replaceWithDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/obsDefaultAudioUtils';
 import { detectObsCompleteAudio, replaceObsCompleteAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
 
 
@@ -112,9 +113,17 @@ export default function ImportProjectPopUp(props) {
         const hasCompleteAudio = result?.metadata
           ? detectObsCompleteAudio(result.metadata)
           : false;
+          
+          const hasDefaultAudio = result?.burritoType === 'gloss / textStories'
+            ? detectDefaultAudioExport(selectedFolderPath, fs)
+            : false;
 
         if (hasCompleteAudio) {
           logger.debug('ImportProjectPopUp.js', 'Complete audio export detected from metadata');
+        }
+
+        if (hasDefaultAudio) {
+          logger.debug('ImportProjectPopUp.js', 'Default audio export detected from file structure');
         }
 
         const isCombinedOBS =
@@ -125,6 +134,7 @@ export default function ImportProjectPopUp(props) {
           ...result,
           isObsCombinedAudio: isCombinedOBS,
           hasCompleteAudio: hasCompleteAudio,
+          hasDefaultAudio: hasDefaultAudio,
         });
 
         if (isCombinedOBS) {
@@ -255,6 +265,45 @@ export default function ImportProjectPopUp(props) {
   }
 
 
+  // Handle default audio replacement for REPLACE mode
+const handleReplaceWithDefaultAudio = async () => {
+  logger.debug('ImportProjectPopUp.js', 'Handling REPLACE with default audio');
+
+  const path = require('path');
+  const fs = window.require('fs');
+  const fse = window.require('fs-extra');
+  const newpath = localStorage.getItem('userPath');
+
+  const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+  const existingProjectPath = path.join(
+    newpath,
+    packageInfo.name,
+    'users',
+    currentUser,
+    'projects',
+    projectDirName
+  );
+
+  const replaceResult = await replaceWithDefaultAudio(
+    folderPath,
+    existingProjectPath,
+    fs,
+    fse
+  );
+
+  if (replaceResult.success) {
+    logger.debug(
+      'ImportProjectPopUp.js',
+      `Successfully replaced audio with ${replaceResult.replacedCount} default files`
+    );
+  } else {
+    logger.error('ImportProjectPopUp.js', `Failed to replace default audio: ${replaceResult.errors}`);
+    triggerSnackBar('warning', 'Default audio replacement had issues, but continuing');
+  }
+
+  checkBurritoVersion();
+};
+
   // Update startTextTranslationMergeProcess to handle dialog state properly
   const startTextTranslationMergeProcess = async (startOver = false) => {
     try {
@@ -305,9 +354,18 @@ export default function ImportProjectPopUp(props) {
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
-      if (sbData?.hasCompleteAudio && sbData?.burritoType === 'gloss / textStories') {
-        logger.debug('ImportProjectPopUp.js', 'REPLACE mode with complete audio detected');
-        handleReplaceWithCompleteAudio();
+        if (sbData?.burritoType === 'gloss / textStories') {
+        if (sbData?.hasCompleteAudio) {
+          logger.debug('ImportProjectPopUp.js', 'REPLACE mode with complete audio detected');
+          handleReplaceWithCompleteAudio();
+        } 
+        else if (sbData?.hasDefaultAudio) {
+          logger.debug('ImportProjectPopUp.js', 'REPLACE mode with default audio export detected');
+          handleReplaceWithDefaultAudio();
+        } 
+        else {
+          checkBurritoVersion();
+        }
       } else {
         checkBurritoVersion();
       }
