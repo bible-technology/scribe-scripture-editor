@@ -314,4 +314,13 @@ export const Ar = {
   'modal-title-clear-all-notifications': 'مسح جميع الإشعارات',
   'msg-clear-all-notifications': 'هل تريد حقًا مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
   'btn-clear-all': 'مسح الكل',
+  'msg-no-verse-data': 'لا توجد بيانات آية متاحة',
+  'msg-disjoin-failed': 'فشل في فصل الآية',
+  'modal-title-join-warning': 'حذف الصوت الحالي لدمج الآيات؟',
+  'msg-join-audio-mismatch': 'الصوت مفقود في إحدى الآيات. سيتم حذف الصوت الحالي عند الدمج. هل تريد المتابعة؟',
+  'msg-audio-merge-failed': 'فشل في دمج الصوت',
+  'modal-title-disjoin-warning': 'حذف الصوت الحالي لفصل الآية؟',
+  'msg-disjoin-no-timestamps': 'لا توجد بيانات طوابع زمنية متاحة لفصل الآية. سيتم حذف الصوت الحالي عند الفصل. هل تريد المتابعة؟',
+  'msg-audio-split-failed': 'فشل في تقسيم الصوت',
+
 };

@@ -338,5 +338,13 @@ export const En = {
   'msg-cannot-join-to-precombined': 'Cannot join to a pre-combined verse',
   'msg-cannot-disjoin-precombined': 'Cannot disjoin a pre-combined verse',
   'msg-cannot-disjoin-missing-verses': 'Cannot disjoin - missing verses in original USFM for remaining range',
+  'msg-no-verse-data': 'No verse data available',
+  'msg-disjoin-failed': 'Failed to disjoin verse',
+  'modal-title-join-warning': 'Delete existing audio to join verses?',
+  'msg-join-audio-mismatch': 'The audio is missing in one of the verses. Joining will delete existing audio. Do you want to continue?',
+  'msg-audio-merge-failed': 'Failed to merge audio',
+  'modal-title-disjoin-warning': 'Delete existing audio to disjoin verse?',
+  'msg-disjoin-no-timestamps': 'This audio is a single recording without timestamps. Disjoining will delete existing audio. Do you want to continue?',
+  'msg-audio-split-failed': 'Failed to split audio',
 
 };

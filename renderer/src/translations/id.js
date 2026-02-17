@@ -312,4 +312,13 @@ export const Id = {
   'modal-title-clear-all-notifications': 'Bersihkan Semua Notifikasi',
   'msg-clear-all-notifications': 'Apakah Anda yakin ingin menghapus semua notifikasi? Tindakan ini tidak dapat dibatalkan.',
   'btn-clear-all': 'Bersihkan semua',
+  'msg-no-verse-data': 'Tidak ada data ayat tersedia',
+  'msg-disjoin-failed': 'Gagal memisahkan ayat',
+  'modal-title-join-warning': 'Hapus audio yang ada untuk menggabungkan ayat?',
+  'msg-join-audio-mismatch': 'Audio hilang di salah satu ayat. Menggabungkan akan menghapus audio yang ada. Apakah Anda ingin melanjutkan?',
+  'msg-audio-merge-failed': 'Gagal menggabungkan audio',
+  'modal-title-disjoin-warning': 'Hapus audio yang ada untuk memisahkan ayat?',
+  'msg-disjoin-no-timestamps': 'Tidak ada data cap waktu yang tersedia untuk memisahkan ayat. Memisahkan akan menghapus audio yang ada. Apakah Anda ingin melanjutkan?',
+  'msg-audio-split-failed': 'Gagal membagi audio',
+
 };

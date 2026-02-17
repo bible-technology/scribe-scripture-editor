@@ -315,4 +315,13 @@ export const Fa = {
   'modal-title-clear-all-notifications': 'پاک کردن همه اعلان‌ها',
   'msg-clear-all-notifications': 'آیا واقعاً می‌خواهید همه اعلان‌ها را پاک کنید؟ این عمل قابل بازگشت نیست.',
   'btn-clear-all': 'پاک کردن همه',
+  'msg-no-verse-data': 'داده‌های آیت در دسترس نیست',
+  'msg-disjoin-failed': 'خطا در جداسازی آیت',
+  'modal-title-join-warning': 'آیا می‌خواهید صدای موجود را حذف کنید تا آیات را به هم متصل کنید؟',
+  'msg-join-audio-mismatch': 'صدای در یکی از آیات وجود ندارد. اتصال صدا، صدای موجود را حذف خواهد کرد. آیا می‌خواهید ادامه دهید؟',
+  'msg-audio-merge-failed': 'خطا در تلفیق صدا',
+  'modal-title-disjoin-warning': 'آیا می‌خواهید صدای موجود را حذف کنید تا آیات جدا شوند؟',
+  'msg-disjoin-no-timestamps': 'این صدا یک ضبط منفرد بدون برچسب زمان است. جداسازی، صدای موجود را حذف خواهد کرد. آیا می‌خواهید ادامه دهید؟',
+  'msg-audio-split-failed': 'خطا در تقسیم صدا',
+
 };
