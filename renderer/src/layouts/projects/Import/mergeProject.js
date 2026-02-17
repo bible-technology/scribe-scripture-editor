@@ -1,4 +1,6 @@
+import { readUserSettings } from '@/core/projects/userSettings';
 import { readIngredients } from '@/core/reference/readIngredients';
+import { detectObsCompleteAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
 import {
   checkInitialize,
   checkoutJsonFiles,
@@ -9,9 +11,8 @@ import {
   listLocalBranches,
   mergeBranches,
 } from '@/components/Sync/Isomorphic/utils';
-import { readUserSettings } from '@/core/projects/userSettings';
-import packageInfo from '../../../../../package.json';
 import * as logger from '../../../logger';
+import packageInfo from '../../../../../package.json';
 import { environment } from '../../../../environment';
 import { copyFilesTempToOrginal, createAllMdInDir } from './mergeObsUtils';
 
@@ -51,11 +52,16 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     let currentActiveBranch = mainBranch;
     const fs = window.require('fs');
     const fse = window.require('fs-extra');
+
     // read incoming meta
     let incomingMeta = await readIngredients({
       filePath: path.join(incomingPath, 'metadata.json'),
     });
     incomingMeta = JSON.parse(incomingMeta);
+    const hasCompleteAudio = detectObsCompleteAudio(incomingMeta);
+    if (hasCompleteAudio) {
+      logger.debug('mergeProject.js', 'Complete audio export detected for merge');
+    }
     const projectId = Object.keys(
       incomingMeta.identification.primary[packageInfo.name],
     )[0];
@@ -122,7 +128,22 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
       path.join(targetPath, dirName),
       mergeDirPath,
       // { filter: (file) => path.extname(file) !== '.json' || !['LICENSE'].some((val) => file.includes(val)) },
-      { filter: (file) => path.extname(file) !== '.json' },
+      {
+        filter: (file) => {
+          const ext = path.extname(file);
+          const filename = path.basename(file);
+
+          if (ext === '.json') { return false; }
+
+          if (ext === '.mp3' || ext === '.wav') { return false; }
+
+          if (file.includes(`${path.sep}audio${path.sep}`) || file.endsWith(`${path.sep}audio`)) { return false; }
+
+          if (filename === '.scribe_default_audio_export') { return false; }
+
+          return true;
+        },
+      },
     );
     // remove license,
     await fs.unlinkSync(path.join(mergeDirPath, 'LICENSE.md'));
@@ -135,7 +156,22 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
     checkoutIncomingStatus && await fse.copy(
       path.join(incomingPath, dirName),
       mergeDirPath,
-      { filter: (file) => (path.extname(file) !== '.json') },
+      {
+        filter: (file) => {
+          const ext = path.extname(file);
+          const filename = path.basename(file);
+
+          if (ext === '.json') { return false; }
+
+          if (ext === '.mp3' || ext === '.wav') { return false; }
+
+          if (file.includes(`${path.sep}audio${path.sep}`) || file.endsWith(`${path.sep}audio`)) { return false; }
+
+          if (filename === '.scribe_default_audio_export') { return false; }
+
+          return true;
+        },
+      },
     );
 
     // remove license
@@ -157,6 +193,8 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
           projectPath: targetPath,
           projectContentDirName: dirName,
           author,
+          incomingPath,
+          hasCompleteAudio,
         },
       };
       const finalCopy = await copyFilesTempToOrginal(conflictData);
@@ -179,6 +217,7 @@ export const mergeProject = async (incomingPath, currentUser, setConflictPopup, 
           projectMainBranch: currentActiveBranch,
           currentUser,
           projectName: `${projectName}_${projectId}`,
+          hasCompleteAudio,
         },
       });
     }

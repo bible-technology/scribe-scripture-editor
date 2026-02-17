@@ -39,7 +39,7 @@ export default function TopMenuBar() {
     },
   } = useContext(ReferenceContext);
 
-  const [projectname, setprojectname] = useState(undefined);
+  const [projectname, setprojectname] = useState('');
 
   const { t } = useTranslation();
   const router = useRouter();

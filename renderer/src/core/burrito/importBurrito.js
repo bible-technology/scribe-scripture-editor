@@ -1,11 +1,13 @@
 /* eslint-disable max-len */
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
-import { environment } from '../../../environment';
+import { detectDefaultAudioExport, renameToDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/obsDefaultAudioUtils';
+import { detectObsCompleteAudio, extractAndCleanupObsAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
 import * as logger from '../../logger';
 import { validate } from '../../util/validate';
-import { updateVersion } from './updateTranslationSB';
 import packageInfo from '../../../../package.json';
+import { environment } from '../../../environment';
+import { updateVersion } from './updateTranslationSB';
 import { checkAndAddLanguageToCustom } from '../projects/languageUtil';
 
 const md5 = require('md5');
@@ -28,6 +30,36 @@ export const checkImportDuplicate = async (folderList, projectName, metadata, pr
   return {
     incomingId, incomingKey, upstreamObj, primaryId,
   };
+};
+
+const updateObsCompleteAudio = async (projectPath, metadata, fs, status) => {
+  try {
+    if (!detectObsCompleteAudio(metadata)) {
+      logger.debug('importBurrito.js', 'Not a complete audio export');
+      return;
+    }
+
+    logger.debug('importBurrito.js', 'OBS complete audio detected - extracting');
+    const result = await extractAndCleanupObsAudio(projectPath, fs);
+
+    if (!result.success) {
+      logger.error('importBurrito.js', `Audio extraction failed: ${result.error}`);
+      status.push({
+        type: 'warning',
+        value: 'Audio extraction had issues, but project imported',
+      });
+    } else {
+      logger.debug('importBurrito.js', `Successfully extracted ${result.extractedCount} audio files`);
+      logger.debug('importBurrito.js', 'Deleted obs_internal_audio.zip and updated metadata');
+    }
+  } catch (error) {
+    logger.error('importBurrito.js', `Error in updateObsCompleteAudio: ${error.message}`);
+    logger.error('importBurrito.js', `Stack: ${error.stack}`);
+    status.push({
+      type: 'warning',
+      value: 'Audio extraction had issues',
+    });
+  }
 };
 
 export const checkDuplicate = async (metadata, currentUser, resource) => {
@@ -67,7 +99,7 @@ export const checkDuplicate = async (metadata, currentUser, resource) => {
     await checkImportDuplicate(folderList, projectName, metadata, projectDir, fs)
       .then((upstreamValue) => {
         if (upstreamValue.incomingKey && Object.keys(upstreamValue.upstreamObj).includes(upstreamValue.incomingKey)
-      && (Object.keys(upstreamValue.upstreamObj[upstreamValue.incomingKey][0])).includes(upstreamValue.incomingId)) {
+          && (Object.keys(upstreamValue.upstreamObj[upstreamValue.incomingKey][0])).includes(upstreamValue.incomingId)) {
           logger.debug('importBurrito.js', 'Project already exists.');
           existingProject = true;
         }
@@ -112,6 +144,7 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       result.language = metadata.languages.map((lang) => lang.name.en);
       const duplicate = await checkDuplicate(metadata, currentUser, resource);
       result.duplicate = duplicate;
+      result.metadata = metadata;
     } else {
       result.validate = false;
       if (metadata.meta.version < environment.AG_MINIMUM_BURRITO_VERSION) {
@@ -204,6 +237,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         return status;
       }
     }
+
     // Fixing the issue of previous version of AG. The dateCreated was left empty and it will fail the validation.
     if (!metadata?.meta?.dateCreated) {
       const scribeId = Object.keys(metadata?.identification?.primary?.scribe);
@@ -262,7 +296,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         const folderList = await fs.readdirSync(projectDir);
         await checkImportDuplicate(folderList, projectName, metadata, projectDir, fs)
           .then((upstreamValue) => {
-          // The ID of the existing project, using it for over wriitting it.
+            // The ID of the existing project, using it for over wriitting it.
             if (upstreamValue.primaryId) {
               id = upstreamValue.primaryId;
               foundId = true;
@@ -316,7 +350,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       // copy from source (filePath) to target (audioDir) and update meta
       await fse.copy(filePath, audioDir)
         .then(() => {
-        // check rename add default
+          // check rename add default
           Object.entries(metadata.ingredients).forEach(([key, value]) => {
             logger.debug('importBurrito.js', 'Fetching keys from ingredients.');
             const content = fs.readFileSync(path.join(audioDir, key), 'utf8');
@@ -333,6 +367,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           });
         })
         .catch((err) => logger.error('importBurrito.js', `${err}`));
+
       metadata.meta.generator.softwareName = 'Scribe';
       metadata.meta.generator.userName = currentUser;
       if (!fs.existsSync(path.join(filePath, dirName, environment.PROJECT_SETTING_FILE))) {
@@ -427,13 +462,37 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       }
       await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, 'metadata.json'), JSON.stringify(metadata));
       logger.debug('importBurrito.js', 'Creating the metadata.json Burrito file.');
-      // if audio project call function , otherwise finished import
       if (metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
         const proDir = path.join(projectDir, `${projectName}_${id}`);
         if (fs.existsSync(path.join(proDir, 'audio', 'metadata.json'))) {
           fs.unlinkSync(path.join(proDir, 'audio', 'metadata.json'));
         }
         updateAudioDir(proDir, path, fs, status);
+      }
+      if (metadata.type?.flavorType?.flavor?.name === 'textStories') {
+        const proDir = path.join(projectDir, `${projectName}_${id}`);
+
+        logger.debug('importBurrito.js', 'Checking for OBS complete audio');
+        await updateObsCompleteAudio(proDir, metadata, fs, status);
+
+        logger.debug('importBurrito.js', 'Checking for OBS default audio export');
+        if (detectDefaultAudioExport(proDir, fs)) {
+          logger.debug('importBurrito.js', 'Default audio export detected - renaming files');
+          const result = await renameToDefaultAudio(proDir, fs);
+
+          if (!result.success) {
+            logger.error('importBurrito.js', `Default audio renaming failed: ${result.errors}`);
+            status.push({
+              type: 'warning',
+              value: 'Default audio renaming had issues, but project imported',
+            });
+          } else {
+            logger.debug(
+              'importBurrito.js',
+              `Successfully renamed ${result.renamedCount} default audio files`,
+            );
+          }
+        }
       }
       // Check and create project Language if not exist in lang json / user custom list
       await checkAndAddLanguageToCustom(metadata, concatedLangs);

@@ -1,26 +1,26 @@
 /* eslint-disable */
-import React, {
-  useRef, Fragment, useState, useContext
-} from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import {
-  FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon,
-} from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
 import localforage from 'localforage';
+import * as logger from '../../logger';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { SnackBar } from '@/components/SnackBar';
-import { AutographaContext } from '@/components/context/AutographaContext';
-import { ProjectContext } from '@/components/context/ProjectContext';
-import CloseIcon from '@/illustrations/close-button-black.svg';
-import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
-import * as logger from '../../logger';
-import ConfirmationModal from '../editor/ConfirmationModal';
+import packageInfo from '../../../../package.json';
 import burrito from '../../lib/BurritoTemplate.json';
 import { mergeProject } from './Import/mergeProject';
-import packageInfo from '../../../../package.json';
+import { Dialog, Transition } from '@headlessui/react';
+import ConfirmationModal from '../editor/ConfirmationModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import CloseIcon from '@/illustrations/close-button-black.svg';
+import { ProjectContext } from '@/components/context/ProjectContext';
+import React, { useRef, Fragment, useState, useContext } from 'react';
+import { AutographaContext } from '@/components/context/AutographaContext';
+import importBurrito, { viewBurrito } from '../../core/burrito/importBurrito';
+import { detectObsCombinedAudio } from '@/components/EditorPage/ObsEditor/utils/detectObsCombinedAudio';
+import { FolderOpenIcon, InformationCircleIcon, CheckIcon, XMarkIcon, } from '@heroicons/react/24/outline';
 import { mergeTextTranslationProject } from '@/components/TextTranslationMerge/mergeTextTranslationProject';
+import { detectDefaultAudioExport, replaceWithDefaultAudio } from '@/components/EditorPage/ObsEditor/utils/obsDefaultAudioUtils';
+import { detectObsCompleteAudio, replaceObsCompleteAudio } from '@/components/EditorPage/ObsEditor/utils/obsCompleteAudioUtils';
+
 
 export default function ImportProjectPopUp(props) {
   const {
@@ -31,7 +31,7 @@ export default function ImportProjectPopUp(props) {
   const router = useRouter();
   const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
-  const [folderPath, setFolderPath] = React.useState();
+  const [folderPath, setFolderPath] = React.useState('');
   const [valid, setValid] = React.useState(false);
   const [snackBar, setOpenSnackBar] = React.useState(false);
   const [snackText, setSnackText] = React.useState('');
@@ -75,7 +75,7 @@ export default function ImportProjectPopUp(props) {
 
   async function close(triggeredFrom) {
     logger.debug('ImportProjectPopUp.js', `Closing the Dialog box : Triggered from : ${triggeredFrom}`);
-    removeExtractedZipDir()
+    removeExtractedZipDir();
     setValid(false);
     closePopUp(false);
     setShow(false);
@@ -106,8 +106,43 @@ export default function ImportProjectPopUp(props) {
           selectedFolderPath = extractFileName
         }
 
+        const fs = window.require('fs');
+
         const result = await viewBurrito(selectedFolderPath, value.username, 'projects');
-        setSbData(result);
+
+        const hasCompleteAudio = result?.metadata
+          ? detectObsCompleteAudio(result.metadata)
+          : false;
+          
+          const hasDefaultAudio = result?.burritoType === 'gloss / textStories'
+            ? detectDefaultAudioExport(selectedFolderPath, fs)
+            : false;
+
+        if (hasCompleteAudio) {
+          logger.debug('ImportProjectPopUp.js', 'Complete audio export detected from metadata');
+        }
+
+        if (hasDefaultAudio) {
+          logger.debug('ImportProjectPopUp.js', 'Default audio export detected from file structure');
+        }
+
+        const isCombinedOBS =
+          result?.burritoType === 'gloss / textStories' &&
+          detectObsCombinedAudio(selectedFolderPath, fs);
+
+        setSbData({
+          ...result,
+          isObsCombinedAudio: isCombinedOBS,
+          hasCompleteAudio: hasCompleteAudio,
+          hasDefaultAudio: hasDefaultAudio,
+        });
+
+        if (isCombinedOBS) {
+          triggerSnackBar(
+            'failure',
+            'Cannot import OBS projects exported as Combined Stories Audio'
+          );
+        }
       });
     } else {
       logger.debug('ImportProjectPopUp.js', 'Didn\'t select any project');
@@ -192,6 +227,83 @@ export default function ImportProjectPopUp(props) {
     }
   };
 
+  // Handle complete audio replacement for REPLACE mode
+  const handleReplaceWithCompleteAudio = async () => {
+    logger.debug('ImportProjectPopUp.js', 'Handling REPLACE with complete audio');
+
+    const path = require('path');
+    const fs = window.require('fs');
+    const newpath = localStorage.getItem('userPath');
+
+    const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+    const existingProjectPath = path.join(
+      newpath,
+      packageInfo.name,
+      'users',
+      currentUser,
+      'projects',
+      projectDirName
+    );
+
+    const replaceResult = await replaceObsCompleteAudio(
+      folderPath,
+      existingProjectPath,
+      fs
+    );
+
+    if (replaceResult.success) {
+      logger.debug(
+        'ImportProjectPopUp.js',
+        `Successfully replaced audio with ${replaceResult.replacedCount} files`
+      );
+    } else {
+      logger.error('ImportProjectPopUp.js', `Failed to replace audio: ${replaceResult.error}`);
+      triggerSnackBar('warning', 'Audio replacement had issues, but continuing');
+    }
+
+    checkBurritoVersion();
+  }
+
+
+  // Handle default audio replacement for REPLACE mode
+const handleReplaceWithDefaultAudio = async () => {
+  logger.debug('ImportProjectPopUp.js', 'Handling REPLACE with default audio');
+
+  const path = require('path');
+  const fs = window.require('fs');
+  const fse = window.require('fs-extra');
+  const newpath = localStorage.getItem('userPath');
+
+  const projectDirName = `${sbData.projectName}_${sbData.id[0]}`;
+  const existingProjectPath = path.join(
+    newpath,
+    packageInfo.name,
+    'users',
+    currentUser,
+    'projects',
+    projectDirName
+  );
+
+  const replaceResult = await replaceWithDefaultAudio(
+    folderPath,
+    existingProjectPath,
+    fs,
+    fse
+  );
+
+  if (replaceResult.success) {
+    logger.debug(
+      'ImportProjectPopUp.js',
+      `Successfully replaced audio with ${replaceResult.replacedCount} default files`
+    );
+  } else {
+    logger.error('ImportProjectPopUp.js', `Failed to replace default audio: ${replaceResult.errors}`);
+    triggerSnackBar('warning', 'Default audio replacement had issues, but continuing');
+  }
+
+  checkBurritoVersion();
+};
+
   // Update startTextTranslationMergeProcess to handle dialog state properly
   const startTextTranslationMergeProcess = async (startOver = false) => {
     try {
@@ -219,6 +331,7 @@ export default function ImportProjectPopUp(props) {
         sbData,
         triggerSnackBar,
         startOver
+
       );
 
       // If no conflicts found, close the import dialog
@@ -241,7 +354,21 @@ export default function ImportProjectPopUp(props) {
   const callFunction = () => {
     if (model.buttonName === 'Replace') {
       setMerge(false);
-      checkBurritoVersion();
+        if (sbData?.burritoType === 'gloss / textStories') {
+        if (sbData?.hasCompleteAudio) {
+          logger.debug('ImportProjectPopUp.js', 'REPLACE mode with complete audio detected');
+          handleReplaceWithCompleteAudio();
+        } 
+        else if (sbData?.hasDefaultAudio) {
+          logger.debug('ImportProjectPopUp.js', 'REPLACE mode with default audio export detected');
+          handleReplaceWithDefaultAudio();
+        } 
+        else {
+          checkBurritoVersion();
+        }
+      } else {
+        checkBurritoVersion();
+      }
       const path = require('path');
       const fs = window.require('fs');
       const newpath = localStorage.getItem('userPath');
@@ -269,6 +396,14 @@ export default function ImportProjectPopUp(props) {
 
     try {
       if (sbData?.burritoType === 'gloss / textStories') {
+        if (sbData?.isObsCombinedAudio) {
+          triggerSnackBar(
+            'failure',
+            'Cannot import OBS projects exported as Combined Stories Audio'
+          );
+          setProcessMerge(false);
+          return;
+        }
         await mergeProject(folderPath, currentUser, setConflictPopup, setModel, setProcessMerge);
         setSbData({});
         close('MergeFunction OBS');
@@ -440,7 +575,7 @@ export default function ImportProjectPopUp(props) {
                       {!folderPath && (
                         <div className="w-full flex">
                           <div className="flex flex-row justify-end mr-3">
-                            <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onClick={() => setImportingIsZip(!importingIsZip)} />
+                            <input id="visible_1" className="visible" type="checkbox" checked={importingIsZip} onChange={() => setImportingIsZip(!importingIsZip)} />
                             <span className="ml-2 text-xs font-bold" title="">Project as zip</span>
                           </div>
                         </div>
@@ -501,6 +636,7 @@ export default function ImportProjectPopUp(props) {
                             type="button"
                             className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
                             onClick={() => importProject()}
+                            disabled={sbData?.isObsCombinedAudio}
                           >
                             {importProgress.importStarted
                               ? <LoadingSpinner height='h-4' width='w-4' colorTW='text-white' />

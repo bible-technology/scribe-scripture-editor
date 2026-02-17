@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import {
-  ArrowSmallDownIcon, ArrowSmallUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
+  ArrowDownIcon, ArrowUpIcon, ArrowsUpDownIcon, ArrowPathRoundedSquareIcon,
 } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 
@@ -78,7 +78,7 @@ const ConflictSection = ({
             title={t('tooltip-merge-orginal-btn')}
             className="bg-black w-6 h-6 rounded-full flex justify-center items-center"
           >
-            <ArrowSmallUpIcon className="w-4 h-4 text-white " />
+            <ArrowUpIcon className="w-4 h-4 text-white " />
           </div>
           {/* Both */}
           <div
@@ -102,7 +102,7 @@ const ConflictSection = ({
             title={t('tooltip-merge-new-btn')}
             className="bg-success w-6 h-6 rounded-full flex justify-center items-center"
           >
-            <ArrowSmallDownIcon className="w-5 h-5 text-white" />
+            <ArrowDownIcon className="w-4 h-4 text-white" />
           </div>
         </div>
       </div>
@@ -130,6 +130,7 @@ const ConflictSection = ({
           // </div>
           <div className="flex flex-col w-full  h-auto overflow-auto rounded-md px-2 py-1 ">
             <textarea
+              value={text ?? ''}
               onChange={(e) => handleEditAfterResolve(e, selectedFileContent, index)}
               className={`border border-black rounded-md focus:ring-0 overflow-y-auto ${selectedFileContent[index]?.resolvedType === 'both'
                 ? 'h-56' : 'h-24'} resize-y w-full focus:outline-none`}
