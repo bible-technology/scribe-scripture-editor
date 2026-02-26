@@ -56,7 +56,11 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
               const pushMain = await pushTheChanges(fs, projectsMetaPath, mainBranch, auth.token.sha1);
               const createStatus = pushMain && await createBranch(fs, projectsMetaPath, localBranch);
               const checkoutStatus = createStatus && await checkoutToBranch(fs, projectsMetaPath, localBranch);
-              checkoutStatus && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+              const pushUserBranch = checkoutStatus && await pushTheChanges(fs, projectsMetaPath, localBranch, auth.token.sha1);
+              // Write timestamp after successful first-time sync
+              if (pushUserBranch) {
+                await getOrPutLastSyncInAgSettings('put', projectData, auth?.user?.username);
+              }
             }
           } else {
             logger.debug('SyncToGitea.js', `Error in repo creation ${created?.message}`);
