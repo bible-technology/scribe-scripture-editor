@@ -63,19 +63,31 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
               }
             }
           } else {
+            // handles repo creation failure
             logger.debug('SyncToGitea.js', `Error in repo creation ${created?.message}`);
-            throw new Error(`Error in repo creation ${created?.message}`);
+
+            const isDuplicate = created?.message?.toLowerCase().includes('already exist');
+
+            if (isDuplicate) {
+              throw new Error('The project is already uploaded on Door43 by another user. Cannot sync to cloud.');
+            }
+            throw new Error(`Error in repo creation: ${created?.message}`);
           }
         }
       } else {
         setSyncProgress((prev) => ({
           ...prev, syncStarted: true, syncType: 'syncTo', completedFiles: 1, totalFiles: 3,
         }));
-        // const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+        const repoOwner = await getRepoOwner(fs, projectsMetaPath);
+        // repoOwner is null = this user never synced this project
+        // but a repo with the same name already exists → name conflict
+        if (!repoOwner) {
+          throw new Error('A project with the same name already exists on Door43. Please rename your project and try again.');
+        }
         const commitStatus = await commitChanges(fs, projectsMetaPath, { email: auth.user.email, username: auth.user.username }, 'Added from scribe');
         if (commitStatus) {
           setSyncProgress((prev) => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-          if ((auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
+          if (repoOwner && (auth.user.username).toLowerCase() !== repoOwner.toLowerCase()) {
             // checkout json files
             await checkoutJsonFiles(fs, projectsMetaPath, localBranch);
           }
@@ -125,7 +137,19 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
       logger.debug('SyncToGitea.js', `Error on Sync create/update : ${err}`);
       notifyStatus('failure', `Sync failed : ${err?.message || err}`);
       await addNotification('Sync', err?.message || err, 'failure');
-      throw new Error(err?.message || err);
+      // Only re-throw unexpected errors, not known user-facing ones
+      const knownErrors = [
+        'same name already exists',
+        'already exists on Door43',
+        'already uploaded on Door43',
+        'Conflict Exist',
+        'token expired',
+        'Error in repo creation',
+      ];
+      const isKnownError = knownErrors.some((msg) => err?.message?.includes(msg));
+      if (!isKnownError) {
+        throw new Error(err?.message || err);
+      }
     } finally {
       setSyncProgress((prev) => ({
         ...prev, syncStarted: false, syncType: null, completedFiles: 0, totalFiles: 0,
