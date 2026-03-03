@@ -13,31 +13,30 @@ const initialBook = 'gen';
 const initialChapter = '1';
 const initialVerse = '1';
 
-const parseVerseFromFilename = (filename, fileExtension) => {
-  const audioPattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${fileExtension}$`);
-  const audioMatch = filename.match(audioPattern);
-
-  if (audioMatch) {
-    const verseStr = audioMatch[1];
-    if (verseStr.includes('-')) {
-      const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+const parseVerseFromFilename = (filename, fileExtensions) => {
+  for (const ext of fileExtensions) {
+    const audioPattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${ext}$`);
+    const audioMatch = filename.match(audioPattern);
+    if (audioMatch) {
+      const verseStr = audioMatch[1];
+      if (verseStr.includes('-')) {
+        const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+      }
+      return [parseInt(verseStr, 10)];
     }
-    return [parseInt(verseStr, 10)];
-  }
 
-  const videoPattern = new RegExp(`^(\\d+)_([\\d-]+)\\.${fileExtension}$`);
-  const videoMatch = filename.match(videoPattern);
-
-  if (videoMatch) {
-    const verseStr = videoMatch[2];
-    if (verseStr.includes('-')) {
-      const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    const videoPattern = new RegExp(`^(\\d+)_([\\d-]+)\\.${ext}$`);
+    const videoMatch = filename.match(videoPattern);
+    if (videoMatch) {
+      const verseStr = videoMatch[2];
+      if (verseStr.includes('-')) {
+        const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+      }
+      return [parseInt(verseStr, 10)];
     }
-    return [parseInt(verseStr, 10)];
   }
-
   return null;
 };
 
@@ -96,7 +95,7 @@ function ScopeManagement({
   const path = window.require('path');
   const projectType = metadata?.type?.flavorType?.flavor?.name;
   const ingredientsFolder = projectType === 'videoTranslation' ? 'video' : 'audio';
-  const fileExtension = projectType === 'videoTranslation' ? 'mp4' : 'mp3';
+  const fileExtensions = projectType === 'videoTranslation' ? ['mp4', 'webm'] : ['mp3'];
   useEffect(() => {
     const loadVersification = async () => {
       try {
@@ -197,7 +196,7 @@ function ScopeManagement({
 
     const { recordedVerses } = countRecordedVersesFromFiles(
       mediaPath,
-      fileExtension,
+      fileExtensions,
       fs,
     );
 
@@ -553,7 +552,7 @@ function ScopeManagement({
 
             const { recordedVerses } = countRecordedVersesFromFiles(
               chapterMediaPath,
-              fileExtension,
+              fileExtensions,
               fs,
             );
             function getBookButtonClass({ isFullyRecorded, disable, isInScope }) {
