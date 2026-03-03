@@ -26,6 +26,7 @@ const isVisibleTag = (tag) => {
   if (/^\\q\d*$/.test(tag)) {
     return true;
   }
+  if (/^\\mt\d*$/.test(tag)) return true;
   return false;
 };
 
@@ -236,7 +237,10 @@ const USFMEditor = ({
 }) => {
   const [parsed, setParsed] = useState([]);
   const parsedRef = useRef([]);
+  const dragItemId = useRef(null);
   const cursorPosRef = useRef(null);
+  const dragOverItemId = useRef(null);
+  const [editingMtId, setEditingMtId] = useState(null);
   const [currentFocusId, setCurrentFocusId] = useState(null);
   const [selectedVerseId, setSelectedVerseId] = useState(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -479,6 +483,33 @@ const USFMEditor = ({
     }
   }, []);
 
+  const handleMtDrop = useCallback(() => {
+    if (dragItemId.current === null || dragOverItemId.current === null) return;
+    if (dragItemId.current === dragOverItemId.current) return;
+
+    const updatedParsed = [...parsed];
+
+    // Find positions of the two items
+    const dragIndex = updatedParsed.findIndex(el => el.id === dragItemId.current);
+    const dropIndex = updatedParsed.findIndex(el => el.id === dragOverItemId.current);
+
+    // Remove dragged item and insert at drop position
+    const [draggedItem] = updatedParsed.splice(dragIndex, 1);
+    updatedParsed.splice(dropIndex, 0, draggedItem);
+
+    parsedRef.current = updatedParsed;
+    setParsed(updatedParsed);
+
+    // Rebuild and save USFM in new order
+    if (onUsfmChange) {
+      const newUsfm = updatedParsed.map(line => line.original).join('\n');
+      onUsfmChange(newUsfm);
+    }
+
+    dragItemId.current = null;
+    dragOverItemId.current = null;
+  }, [parsed, onUsfmChange]);
+
   return (
     <div
       ref={containerRef}
@@ -521,6 +552,8 @@ const USFMEditor = ({
         `}</style>
         {parsed.map(({ id, tag, content, verseNumber, visible, chapter }) => {
           if (!visible) return null;
+
+
 
           if (tag === '\\c') {
             return (
@@ -590,6 +623,73 @@ const USFMEditor = ({
                     borderRadius: '4px',
                     direction: textDirection as 'ltr' | 'rtl',
                     border: 'none',
+                  }}
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              </div>
+            );
+          }
+
+          // Handle \mt, \mt1, \mt2, \mt3 — Book main title
+          if (/^\\mt\d*$/.test(tag)) {
+            const levelMatch = tag.match(/^\\mt(\d*)$/);
+            const level = parseInt(levelMatch?.[1] || '0', 10);
+
+            const sizeMap: Record<number, number> = { 0: 2.0, 1: 2.0, 2: 1.6, 3: 1.3 };
+            const emSize = sizeMap[level] ?? 1.1;
+
+            return (
+              <div
+                key={id}
+                draggable
+                onDragStart={() => { dragItemId.current = id; }}
+                onDragEnter={() => { dragOverItemId.current = id; }}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleMtDrop}
+                onDragEnd={() => {
+                  dragItemId.current = null;
+                  dragOverItemId.current = null;
+                }}
+                style={{
+                  textAlign: 'center',
+                  margin: '20px 0 8px',
+                  direction: textDirection as 'ltr' | 'rtl',
+                  cursor: 'grab',
+                  opacity: dragItemId.current === id ? 0.4 : 1,
+                }}
+              >
+                <div
+                  ref={(el) => { if (el) contentRefs.current[id] = el; }}
+                  contentEditable={editingMtId === id}
+                  suppressContentEditableWarning
+                  onClick={() => {
+                    setEditingMtId(id);
+                    contentRefs.current[id]?.focus();
+                  }}
+                  onBlur={() => {
+                    handleContentChange.flush();
+                    setEditingMtId(null);
+                  }}
+                  onInput={(e) => handleInput(e, id)}
+                  onKeyDown={(e) => handleKeyDown(e, id)}
+                  onPaste={(e) => handlePaste(e, id)}
+                  style={{
+                    display: 'inline-block',
+                    padding: '1px 4px',
+                    lineHeight: '1.2',
+                    outline: 'none',
+                    fontSize: `${emSize + fontSize / 16}em`,
+                    fontWeight: 'bold',
+                    letterSpacing: '0.02em',
+                    borderRadius: '4px',
+                    direction: textDirection as 'ltr' | 'rtl',
+                    cursor: editingMtId === id ? 'text' : 'default',
+                    backgroundColor: editingMtId === id ? '#fce4ec' : 'transparent',
+                    border: editingMtId === id
+                      ? '2px solid #e91e63'
+                      : 'none',
+                    transition: 'all 0.2s ease',
+                    color: '#1a1a1a',
                   }}
                   dangerouslySetInnerHTML={{ __html: content }}
                 />

@@ -248,6 +248,18 @@ export default function ImportPopUp(props) {
     await openFileDialogSettingData(true);
   };
 
+  const injectMtIfMissing = (usfmText, bookCode) => {
+    if (/^\\mt\d*\s/m.test(usfmText)) { return usfmText; }
+
+    const lines = usfmText.split('\n');
+    const idLineIndex = lines.findIndex((line) => /^\\id\s/.test(line));
+    const mtLine = `\\mt1 ${bookCode}`;
+
+    lines.splice(idLineIndex + 1, 0, mtLine);
+
+    return lines.join('\n');
+  };
+
   const importFiles = async (folderPath) => {
     logger.debug('ImportPopUp.js', 'Inside importFiles');
     const fs = window.require('fs').promises;
@@ -265,7 +277,8 @@ export default function ImportPopUp(props) {
             // If importing a USFM file then ask user for replace of USFM with the new content or not
             // replaceConformation(true);
             logger.debug('ImportPopUp.js', 'Valid USFM file.');
-            files.push({ id: bookCode, content: validUSFM });
+            const usfmWithMt = injectMtIfMissing(validUSFM, bookCode);
+            files.push({ id: bookCode, content: usfmWithMt });
             bookCodeList.push(bookCode);
           } else {
             logger.warn('ImportPopUp.js', 'Invalid USFM file.');
