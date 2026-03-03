@@ -13,34 +13,30 @@ const initialBook = 'gen';
 const initialChapter = '1';
 const initialVerse = '1';
 
-const parseVerseFromFilename = (filename, fileExtensions) => {
-  for (const ext of fileExtensions) {
-    const audioPattern = new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${ext}$`);
-    const audioMatch = filename.match(audioPattern);
-    if (audioMatch) {
-      const verseStr = audioMatch[1];
-      if (verseStr.includes('-')) {
-        const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
-        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-      }
-      return [parseInt(verseStr, 10)];
-    }
+const parseVerseFromFilename = (filename, fileExtensions, projectType) => {
+  let result = null;
+  fileExtensions.some((ext) => {
+    const pattern = projectType === 'videoTranslation'
+      ? new RegExp(`^(\\d+)_([\\d-]+)\\.${ext}$`)
+      : new RegExp(`^\\d+_([\\d-]+)_\\d+_default\\.${ext}$`);
 
-    const videoPattern = new RegExp(`^(\\d+)_([\\d-]+)\\.${ext}$`);
-    const videoMatch = filename.match(videoPattern);
-    if (videoMatch) {
-      const verseStr = videoMatch[2];
+    const match = filename.match(pattern);
+    if (match) {
+      const verseStr = projectType === 'videoTranslation' ? match[2] : match[1];
       if (verseStr.includes('-')) {
         const [start, end] = verseStr.split('-').map((v) => parseInt(v, 10));
-        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+        result = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+      } else {
+        result = [parseInt(verseStr, 10)];
       }
-      return [parseInt(verseStr, 10)];
+      return true;
     }
-  }
-  return null;
+    return false;
+  });
+  return result;
 };
 
-const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
+const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs, projectType) => {
   if (!fs.existsSync(chapterMediaPath)) {
     return { recordedVerses: 0, recordedFiles: 0, coveredVerses: [] };
   }
@@ -51,7 +47,7 @@ const countRecordedVersesFromFiles = (chapterMediaPath, fileExtension, fs) => {
     let recordedFiles = 0;
 
     files.forEach((file) => {
-      const verses = parseVerseFromFilename(file, fileExtension);
+      const verses = parseVerseFromFilename(file, fileExtension, projectType);
       if (verses) {
         recordedFiles += 1;
         verses.forEach((v) => recordedVerseSet.add(v));
@@ -198,6 +194,7 @@ function ScopeManagement({
       mediaPath,
       fileExtensions,
       fs,
+      projectType,
     );
 
     const isComplete = recordedVerses === totalVerses;
@@ -257,21 +254,21 @@ function ScopeManagement({
       );
 
       if (!fs.existsSync(bookMediaPath)) {
-        for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
+        bookVerses.forEach((_, chapterIndex) => {
           const chapterNumber = (chapterIndex + 1).toString();
           const normalizedChapterKey = String(parseInt(chapterNumber, 10));
           completion[normalizedBookCode][normalizedChapterKey] = { fullyRecorded: false };
-        }
+        });
         bookCompletionTemp[bookCode] = false;
         return;
       }
 
-      for (let chapterIndex = 0; chapterIndex < bookVerses.length; chapterIndex++) {
+      bookVerses.forEach((_, chapterIndex) => {
         const chapterNumber = (chapterIndex + 1).toString();
         const isFullyRecorded = checkChapterCompletion(normalizedBookCode, chapterNumber);
         const normalizedChapterKey = String(parseInt(chapterNumber, 10));
         completion[normalizedBookCode][normalizedChapterKey] = { fullyRecorded: isFullyRecorded };
-      }
+      });
 
       bookCompletionTemp[bookCode] = checkBookCompletion(normalizedBookCode);
     });
@@ -554,6 +551,7 @@ function ScopeManagement({
               chapterMediaPath,
               fileExtensions,
               fs,
+              projectType,
             );
             function getBookButtonClass({ isFullyRecorded, disable, isInScope }) {
               if (isFullyRecorded) {
