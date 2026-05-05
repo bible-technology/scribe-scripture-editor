@@ -60,6 +60,10 @@ export const useVerseJoining = ({
               isPreCombined: verse.isPreCombined || false,
             };
 
+            if (Array.isArray(verse.comments) && verse.comments.length > 0) {
+              verseData.comments = verse.comments;
+            }
+
             if (verse.joinedVerses && verse.joinedVerses.length > 0) {
               verseData.verseSegments = verse.joinedVerses.map((vNum) => {
                 const freshText = getOriginalVerseText(
@@ -237,6 +241,10 @@ export const useVerseJoining = ({
         verseText: combinedText,
         joinedVerses,
         isPreCombined: false,
+        comments: [
+          ...(previousVerse.comments || []),
+          ...(currentVerse.comments || []),
+        ],
       };
       updatedContent.splice(currentVerseIndex, 1);
 
@@ -380,6 +388,7 @@ export const useVerseJoining = ({
         verseNumber: firstVerseNum.toString(),
         verseText: firstVerseText || '',
         isPreCombined: false,
+        comments: verse.comments || [],
       };
 
       let remainingVerseEntry;

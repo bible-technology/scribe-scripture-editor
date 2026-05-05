@@ -11,6 +11,8 @@ const VerseContextMenu = ({
   isJoinedVerse,
   onJoinVerse,
   onDisjoinVerse,
+  onOpenComments,
+  canOpenComments,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -26,6 +28,11 @@ const VerseContextMenu = ({
 
   const handleDisjoin = () => {
     onDisjoinVerse(verse.verseNumber);
+    onClose();
+  };
+
+  const handleOpenComments = () => {
+    onOpenComments(verse);
     onClose();
   };
 
@@ -92,6 +99,29 @@ const VerseContextMenu = ({
           </button>
         )}
 
+        {canOpenComments && (
+          <button
+            type="button"
+            onClick={handleOpenComments}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 flex items-center gap-2"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 10h8M8 14h5m8-2a9 9 0 11-4.5-7.8L21 3v5h-5"
+              />
+            </svg>
+            {t('label-comments', { defaultValue: 'Comme' })}
+          </button>
+        )}
+
       </div>
     </>
   );
@@ -106,6 +136,13 @@ VerseContextMenu.propTypes = {
   isJoinedVerse: PropTypes.bool.isRequired,
   onJoinVerse: PropTypes.func.isRequired,
   onDisjoinVerse: PropTypes.func.isRequired,
+  onOpenComments: PropTypes.func.isRequired,
+  canOpenComments: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
 };
+
+VerseContextMenu.defaultProps = {
+  canOpenComments: false,
+};
+
 export default VerseContextMenu;

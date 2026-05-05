@@ -11,6 +11,7 @@ export const useVideoPlayback = ({
   projectPath,
   videoPreviewRef,
   onError,
+  fileNameOverride,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackTime, setPlaybackTime] = useState(0);
@@ -23,14 +24,16 @@ export const useVideoPlayback = ({
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
-      const videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+      const videoExt = fileNameOverride
+        ? path.extname(fileNameOverride).replace('.', '')
+        : ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
 
       if (!videoExt) {
         onError('Video file not found');
         return;
       }
 
-      const filename = `${chapter}_${verse}.${videoExt}`;
+      const filename = fileNameOverride || `${chapter}_${verse}.${videoExt}`;
       const fullPath = path.join(projectPath, filename);
 
       try {
@@ -108,7 +111,7 @@ export const useVideoPlayback = ({
         };
       }, 50);
     }
-  }, [currentMode, hasVideo, verse, chapter, projectPath]);
+  }, [currentMode, hasVideo, verse, chapter, projectPath, fileNameOverride]);
 
   useEffect(() => {
     if (currentMode === 'view' && videoPreviewRef.current) {

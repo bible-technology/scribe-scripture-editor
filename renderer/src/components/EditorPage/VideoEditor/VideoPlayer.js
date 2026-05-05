@@ -7,11 +7,13 @@ import { isJoinedVerse } from '@/core/editor/verseJoining';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import VideoRecorder from '@/components/EditorPage/VideoEditor/VideoRecorder';
 import {
+  ChatBubbleLeftEllipsisIcon,
   VideoCameraIcon,
   PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import VerseContextMenu from '@/components/EditorPage/VideoEditor/VerseContextMenu.jsx';
+import VideoCommentsPanel from '@/components/EditorPage/VideoEditor/VideoCommentsPanel.jsx';
 import * as logger from '../../../logger';
 
 const VideoPlayer = ({
@@ -37,6 +39,7 @@ const VideoPlayer = ({
   const [showVideoRecorder, setShowVideoRecorder] = useState(false);
   const [currentRecordingVerse, setCurrentRecordingVerse] = useState(null);
   const [recorderMode, setRecorderMode] = useState('record');
+  const [commentsVerse, setCommentsVerse] = useState(null);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -67,12 +70,6 @@ const VideoPlayer = ({
   const handleContextMenu = (e, verseItem) => {
     e.preventDefault();
     e.stopPropagation();
-    const first = Number(verseItem.verseNumber) === 1;
-    const joined = isJoinedVerse(verseItem.verseNumber);
-
-    if (first && !joined) {
-      return;
-    }
 
     setContextMenu({
       visible: true,
@@ -186,6 +183,16 @@ const VideoPlayer = ({
 
   const doesVideoExistForVerse = (verseNumber) => ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(location, `${chapter}_${verseNumber}.${ext}`)));
 
+  const handleVideoContentChange = (updatedContent) => {
+    setVideoContent(updatedContent);
+    if (commentsVerse) {
+      const updatedVerse = updatedContent.find(
+        (item) => item.verseNumber === commentsVerse.verseNumber,
+      );
+      setCommentsVerse(updatedVerse || null);
+    }
+  };
+
   return (
     <div className="bg-white rounded-md overflow-hidden">
       {content?.map((mainChunk, index) => {
@@ -242,6 +249,22 @@ const VideoPlayer = ({
               </p>
 
               <div className="flex items-center gap-2 flex-shrink-0">
+                {hasVideo && (mainChunk.comments?.length || 0) > 0 && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCommentsVerse(mainChunk);
+                    }}
+                    className="relative flex items-center justify-center p-2 rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                    title="View comments"
+                  >
+                    <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white">
+                      {mainChunk.comments.length}
+                    </span>
+                  </button>
+                )}
 
                 {hasVideo ? (
                   <>
@@ -288,7 +311,26 @@ const VideoPlayer = ({
         isJoinedVerse={contextMenu.isJoinedVerse}
         onJoinVerse={onJoinVerse}
         onDisjoinVerse={onDisjoinVerse}
+        onOpenComments={setCommentsVerse}
+        canOpenComments={contextMenu.verse
+          ? doesVideoExistForVerse(contextMenu.verse.verseNumber)
+          : false}
         onClose={handleCloseContextMenu}
+      />
+
+      <VideoCommentsPanel
+        open={!!commentsVerse}
+        verse={commentsVerse}
+        chapter={chapter}
+        bookId={bookId}
+        videoPath={location}
+        content={content}
+        onClose={() => setCommentsVerse(null)}
+        onContentChange={handleVideoContentChange}
+        setNotify={setNotify}
+        setSnackText={setSnackText}
+        setOpenSnackBar={setOpenSnackBar}
+        setOpenModal={setOpenModal}
       />
 
       {showVideoRecorder && currentRecordingVerse && (

@@ -315,6 +315,11 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
     }
 
     const videoFiles = fs.readdirSync(videoPath);
+    const commentVideoFiles = new Set(
+      verses.flatMap((verse) => (verse.comments || [])
+        .map((comment) => comment.videoFileName)
+        .filter(Boolean)),
+    );
     logger.debug('Scanning for video files:', {
       videoPath,
       fileCount: videoFiles.length,
@@ -327,6 +332,11 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
     let skippedCount = 0;
 
     videoFiles.forEach((fileName) => {
+      if (commentVideoFiles.has(fileName)) {
+        logger.debug(`Skipping comment video file: ${fileName}`);
+        return;
+      }
+
       const parsed = path.parse(fileName);
       const parts = parsed.name.split('_');
 
