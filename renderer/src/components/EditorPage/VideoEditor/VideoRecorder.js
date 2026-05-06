@@ -16,6 +16,7 @@ import {
   Cog6ToothIcon,
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
+  ChatBubbleLeftEllipsisIcon,
 } from '@heroicons/react/24/outline';
 
 import { useCamera } from '@/hooks/video/useCamera';
@@ -59,6 +60,9 @@ const VideoRecorder = ({
   disableExistingVideoCheck = false,
   allowOverwriteExistingVideo = false,
   hideDeleteButton = false,
+  commentCount = 0,
+  onOpenComments,
+  showCommentsButton = false,
 }) => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [selectedCamera, setSelectedCamera] = useState(null);
@@ -270,15 +274,13 @@ const VideoRecorder = ({
   return (
 
     <div
-      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''
-      }`}
+      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''}`}
     >
       <div
         ref={containerRef}
         className={`bg-white shadow-2xl flex flex-col transition-all ${isFullscreen
           ? 'fixed inset-0 max-w-none max-h-none h-screen w-screen rounded-none z-[60]'
-          : 'rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden'
-        }`}
+          : 'rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden'}`}
       >
         <div className="bg-secondary text-white px-6 py-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
@@ -343,8 +345,7 @@ const VideoRecorder = ({
             </div>
           )}
           <div
-            className={`relative bg-gray-900 rounded-lg overflow-hidden mb-2 group ${isFullscreen ? 'flex-1' : ''
-            }`}
+            className={`relative bg-gray-900 rounded-lg overflow-hidden mb-2 group ${isFullscreen ? 'flex-1' : ''}`}
             style={isFullscreen ? {} : { aspectRatio: '16/9' }}
           >
             {' '}
@@ -470,6 +471,30 @@ const VideoRecorder = ({
                     </button>
                   </div>
                 )}
+                {currentMode === 'view' && hasVideo && showCommentsButton && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+
+                      if (videoPreviewRef.current) {
+                        videoPreviewRef.current.pause();
+                      }
+
+                      onOpenComments?.();
+                    }}
+                    className="relative flex items-center justify-center p-2 rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                    title="Open comments"
+                  >
+                    <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
+
+                    {commentCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white">
+                        {commentCount}
+                      </span>
+                    )}
+                  </button>
+                )}
               </div>
 
               <div className="flex-1 flex items-center justify-center gap-10">
@@ -510,8 +535,7 @@ const VideoRecorder = ({
                       disabled={!cameraReady || isProcessing || (existingVideo && !allowOverwriteExistingVideo)}
                       className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
                         ? 'bg-red-600 hover:bg-red-700 text-white'
-                        : 'bg-primary hover:bg-primary-dark text-white'
-                      }`}
+                        : 'bg-primary hover:bg-primary-dark text-white'}`}
                       title={(() => {
                         if (isRecording) { return 'Stop recording'; }
                         if (existingVideo && !allowOverwriteExistingVideo) { return 'Recording exists - delete it first'; }
@@ -532,8 +556,7 @@ const VideoRecorder = ({
                       disabled={!hasVideo}
                       className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
                         ? 'bg-success hover:bg-green-700 text-white'
-                        : 'bg-gray-600 text-gray-400'
-                      }`}
+                        : 'bg-gray-600 text-gray-400'}`}
                       title={isPlaying ? 'Pause video' : 'Play video'}
                     >
                       {isPlaying ? (
@@ -577,8 +600,8 @@ const VideoRecorder = ({
                     disabled={!existingVideo || isRecording || isProcessing}
                     className={`p-4 rounded-full transition-all ${existingVideo
                       ? 'bg-error text-white hover:bg-red-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'} 
+                      disabled:opacity-50 disabled:cursor-not-allowed`}
                     title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
                   >
                     <TrashIcon className="w-6 h-6" />
@@ -630,8 +653,7 @@ const VideoRecorder = ({
                             setSelectedCamera(device.deviceId);
                             setShowCameraMenu(false);
                           }}
-                          className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
-                          }`}
+                          className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''}`}
                         >
                           {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
                         </button>
@@ -670,6 +692,9 @@ VideoRecorder.propTypes = {
   disableExistingVideoCheck: PropTypes.bool,
   allowOverwriteExistingVideo: PropTypes.bool,
   hideDeleteButton: PropTypes.bool,
+  commentCount: PropTypes.number,
+  onOpenComments: PropTypes.func,
+  showCommentsButton: PropTypes.bool,
 };
 
 VideoRecorder.defaultProps = {
@@ -682,6 +707,10 @@ VideoRecorder.defaultProps = {
   disableExistingVideoCheck: false,
   allowOverwriteExistingVideo: false,
   hideDeleteButton: false,
+  commentCount: 0,
+  onOpenComments: null,
+  showCommentsButton: false,
+
 };
 
 export default VideoRecorder;

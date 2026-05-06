@@ -351,6 +351,23 @@ const VideoPlayer = ({
           setNotify={setNotify}
           setSnackText={setSnackText}
           setOpenSnackBar={setOpenSnackBar}
+          commentCount={
+            content.find(
+              (item) => item.verseNumber === currentRecordingVerse,
+            )?.comments?.length || 0
+          }
+          showCommentsButton={
+            doesVideoExistForVerse(currentRecordingVerse)
+          }
+          onOpenComments={() => {
+            const verseData = content.find(
+              (item) => item.verseNumber === currentRecordingVerse,
+            );
+
+            if (verseData) {
+              setCommentsVerse(verseData);
+            }
+          }}
         />
       )}
     </div>

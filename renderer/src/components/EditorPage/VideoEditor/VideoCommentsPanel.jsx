@@ -434,7 +434,6 @@ const VideoCommentsPanel = ({
                     )}
                   </div>
 
-
                   {hasVideo && (
                     <video
                       key={`${comment.videoFileName}-${comment.videoUpdatedAt || comment.updatedAt || ''}`}
@@ -446,7 +445,9 @@ const VideoCommentsPanel = ({
                         comment.videoUpdatedAt || comment.updatedAt,
                       )}
                       className="mb-3 aspect-video w-full rounded-md bg-black"
-                    />
+                    >
+                      <track kind="captions" src="" label="No captions available" />
+                    </video>
                   )}
 
                   <div className="mb-2">
