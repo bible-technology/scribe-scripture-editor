@@ -64,7 +64,7 @@ const VideoRecorder = ({
   onOpenComments,
   showCommentsButton = false,
 }) => {
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [existingVideo, setExistingVideo] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
