@@ -186,6 +186,7 @@ const VideoCommentsPanel = ({
     return {
       id: `${chapter}-${verse.verseNumber}-${commentNumber}-${Date.now()}`,
       commentNumber,
+      verseNumber: verse.verseNumber,
       videoFileName,
       note,
       username: currentUser,
@@ -443,6 +444,10 @@ const VideoCommentsPanel = ({
                           Comment
                           {' '}
                           {comment.commentNumber}
+                          {' '}
+                          Verse
+                          {' '}
+                          {comment.verseNumber}
                         </span>
                       </p>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
