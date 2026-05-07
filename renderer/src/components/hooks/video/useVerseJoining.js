@@ -384,11 +384,19 @@ export const useVerseJoining = ({
         logger.debug('No USFM available, skipping validation for remaining verses');
       }
 
+      const firstVerseComments = (verse.comments || []).filter(
+        (comment) => String(comment.verseNumber) === String(firstVerseNum),
+      );
+
+      const remainingVerseComments = (verse.comments || []).filter(
+        (comment) => String(comment.verseNumber) !== String(firstVerseNum),
+      );
+
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
         verseText: firstVerseText || '',
         isPreCombined: false,
-        comments: verse.comments || [],
+        comments: firstVerseComments,
       };
 
       let remainingVerseEntry;
@@ -401,6 +409,7 @@ export const useVerseJoining = ({
           verseNumber: singleNum.toString(),
           verseText: singleText,
           isPreCombined: false,
+          comments: remainingVerseComments,
         };
 
         logger.debug('Split into two single verses:', {
@@ -454,6 +463,7 @@ export const useVerseJoining = ({
           joinedVerses: remainingVerses,
           verseSegments: segments,
           isPreCombined: false,
+          comments: remainingVerseComments,
         };
 
         logger.debug('Split into single verse and range:', {
