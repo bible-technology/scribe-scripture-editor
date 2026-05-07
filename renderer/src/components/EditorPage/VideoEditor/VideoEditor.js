@@ -595,6 +595,8 @@ const VideoEditor = ({ editor }) => {
       }
     } else if (model.action === 'joinVerse' || model.action === 'disjoinVerse') {
       executePendingOperation();
+    } else if (model.action === 'custom') {
+      model.actionData?.callback?.();
     }
     modelClose();
   };

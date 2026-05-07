@@ -324,6 +324,32 @@ const VideoCommentsPanel = ({
     )));
   };
 
+  const confirmDeleteVideo = (comment) => {
+    setOpenModal({
+      openModel: true,
+      title: 'Delete Comment Video?',
+      confirmMessage: 'Are you sure you want to delete this comment video?',
+      buttonName: 'Delete',
+      action: 'custom',
+      actionData: {
+        callback: () => handleDeleteVideo(comment),
+      },
+    });
+  };
+
+  const confirmDeleteText = (comment) => {
+    setOpenModal({
+      openModel: true,
+      title: 'Delete Comment?',
+      confirmMessage: 'Are you sure you want to delete this comment?',
+      buttonName: 'Delete',
+      action: 'custom',
+      actionData: {
+        callback: () => handleDeleteText(comment),
+      },
+    });
+  };
+
   const handleSaveEdit = (comment) => {
     if (comment.username !== currentUser) {
       return;
@@ -424,7 +450,7 @@ const VideoCommentsPanel = ({
                           <button
                             type="button"
                             className="rounded-full p-2 text-error hover:bg-red-50"
-                            onClick={() => handleDeleteVideo(comment)}
+                            onClick={() => confirmDeleteVideo(comment)}
                             title="Delete video"
                           >
                             <TrashIcon className="h-5 w-5" />
@@ -494,7 +520,7 @@ const VideoCommentsPanel = ({
                         <button
                           type="button"
                           className="inline-flex items-center gap-2 rounded-md border border-red-300 px-3 py-1.5 text-sm text-error hover:bg-red-50"
-                          onClick={() => handleDeleteText(comment)}
+                          onClick={() => confirmDeleteText(comment)}
                           title="Delete note"
                         >
                           <TrashIcon className="h-4 w-4" />
