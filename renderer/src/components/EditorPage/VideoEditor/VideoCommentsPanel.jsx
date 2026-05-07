@@ -380,6 +380,18 @@ const VideoCommentsPanel = ({
     return `file://${path.join(videoPath, fileName)}${cacheKey}`;
   };
 
+  const formatCommentDate = (timestamp) => {
+    if (!timestamp) { return ''; }
+
+    return new Intl.DateTimeFormat(undefined, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(new Date(timestamp));
+  };
+
   return (
     <div className="fixed inset-0 z-[55] flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-xl">
@@ -433,7 +445,9 @@ const VideoCommentsPanel = ({
                           {comment.commentNumber}
                         </span>
                       </p>
-                      <p className="text-xs text-gray-500">{comment.updatedAt || comment.createdAt}</p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {formatCommentDate(comment.updatedAt || comment.createdAt)}
+                      </p>
                     </div>
 
                     {isOwnComment && (
