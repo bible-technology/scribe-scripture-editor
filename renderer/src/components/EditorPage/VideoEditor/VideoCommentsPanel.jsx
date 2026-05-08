@@ -1,4 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import * as localforage from 'localforage';
 import {
@@ -126,12 +131,40 @@ const VideoCommentsPanel = ({
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState('');
 
+  const addCommentRef = useRef(null);
+  const commentsContainerRef = useRef(null);
   const comments = useMemo(() => verse?.comments || [], [verse]);
 
   useEffect(() => {
-    if (!open) { return; }
+    if (!open) {
+      setIsAdding(false);
+      setDraftText('');
+      setEditingCommentId(null);
+      setEditingText('');
+      return;
+    }
     getCurrentUsername().then(setCurrentUser);
   }, [open]);
+
+  useEffect(() => {
+    if (open && comments.length === 0 && !isAdding && !pendingComment) {
+      setIsAdding(true);
+    }
+  }, [open, comments.length, isAdding, pendingComment]);
+
+  useEffect(() => {
+    if (
+      isAdding
+      && commentsContainerRef.current
+    ) {
+      setTimeout(() => {
+        commentsContainerRef.current.scrollTo({
+          top: commentsContainerRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 50);
+    }
+  }, [isAdding]);
 
   if (!open || !verse) {
     return null;
@@ -419,12 +452,10 @@ const VideoCommentsPanel = ({
           </button>
         </div>
 
-        <div className="max-h-[70vh] overflow-auto p-5">
-          {comments.length === 0 && !isAdding && (
-            <div className="rounded-md border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
-              No comments recorded for this verse.
-            </div>
-          )}
+        <div
+          ref={commentsContainerRef}
+          className="max-h-[70vh] overflow-auto p-5"
+        >
 
           <div className="space-y-4">
             {comments.map((comment) => {
@@ -437,10 +468,12 @@ const VideoCommentsPanel = ({
                 <div key={comment.id} className="rounded-md border border-gray-200 p-4">
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">
-                        {comment.username}
-                        {' '}
-                        <span className="font-normal text-gray-500">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">
+                          {comment.username}
+                        </p>
+
+                        <p className="text-sm text-gray-500">
                           Comment
                           {' '}
                           {comment.commentNumber}
@@ -448,8 +481,8 @@ const VideoCommentsPanel = ({
                           Verse
                           {' '}
                           {comment.verseNumber}
-                        </span>
-                      </p>
+                        </p>
+                      </div>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
                         {formatCommentDate(comment.updatedAt || comment.createdAt)}
                       </p>
@@ -552,7 +585,10 @@ const VideoCommentsPanel = ({
             })}
           </div>
           {isAdding && (
-            <div className="mt-4 rounded-md border border-gray-200 p-4">
+            <div
+              ref={addCommentRef}
+              className="mt-4 rounded-md border border-gray-200 p-4"
+            >
               <label htmlFor="video-comment-note" className="mb-2 block text-sm font-medium text-gray-700">
                 Add a note
               </label>
@@ -564,16 +600,18 @@ const VideoCommentsPanel = ({
                 placeholder="Add a note for this video comment"
               />
               <div className="mt-3 flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700"
-                  onClick={() => {
-                    setIsAdding(false);
-                    setDraftText('');
-                  }}
-                >
-                  Cancel
-                </button>
+                {comments.length > 0 && (
+                  <button
+                    type="button"
+                    className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700"
+                    onClick={() => {
+                      setIsAdding(false);
+                      setDraftText('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
                 <button
                   type="button"
                   className="inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 text-sm text-primary"
@@ -594,15 +632,17 @@ const VideoCommentsPanel = ({
             </div>
           )}
 
-          {!isAdding && (
-            <button
-              type="button"
-              className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white"
-              onClick={() => setIsAdding(true)}
-            >
-              <PlusIcon className="h-5 w-5" />
-              Add more comment
-            </button>
+          {!isAdding && comments.length > 0 && (
+            <div className="sticky bottom-0 mt-4 border-t border-gray-200 bg-white pt-4">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white"
+                onClick={() => setIsAdding(true)}
+              >
+                <PlusIcon className="h-5 w-5" />
+                Add more comment
+              </button>
+            </div>
           )}
         </div>
       </div>
