@@ -633,16 +633,14 @@ const VideoCommentsPanel = ({
           )}
 
           {!isAdding && comments.length > 0 && (
-            <div className="sticky bottom-0 mt-4 border-t border-gray-200 bg-white pt-4">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white"
-                onClick={() => setIsAdding(true)}
-              >
-                <PlusIcon className="h-5 w-5" />
-                Add more comment
-              </button>
-            </div>
+            <button
+              type="button"
+              className="sticky bottom-0 mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-white"
+              onClick={() => setIsAdding(true)}
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add more comment
+            </button>
           )}
         </div>
       </div>
