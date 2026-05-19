@@ -114,6 +114,7 @@ export default function NewProject({ call, project, closeEdit }) {
       createProject,
       setNewProjectFields,
       setImportedBookCodes,
+      resetProjectStates,
     },
   } = React.useContext(ProjectContext);
   const { t } = useTranslation();
@@ -366,6 +367,7 @@ export default function NewProject({ call, project, closeEdit }) {
     if (call === 'edit') {
       loadData(project);
     } else if (call === 'new') {
+      resetProjectStates();
       // set englsh as default lang
       const defaulLang = languages.filter((lang) => lang.lc === 'en');
       setLanguage(defaulLang[0]);

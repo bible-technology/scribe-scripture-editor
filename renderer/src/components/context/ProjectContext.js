@@ -301,15 +301,14 @@ const ProjectContextProvider = ({ children }) => {
   };
 
   const resetProjectStates = () => {
-    const initialState = {
-      language: '',
+    setNewProjectFields({
       projectName: '',
-      scriptDirection: 'LTR',
-    };
-    setNewProjectFields({ ...initialState });
-    setCopyRight();
-    setCanonSpecification('OT');
-    setVersificationScheme('kjv');
+      description: '',
+      abbreviation: '',
+    });
+    setCopyRight(advanceSettings.copyright[0]);
+    setCanonSpecification(JSON.parse(JSON.stringify(advanceSettings.canonSpecification[0])));
+    setVersificationScheme(advanceSettings.versification[0]);
   };
 
   React.useEffect(() => {
