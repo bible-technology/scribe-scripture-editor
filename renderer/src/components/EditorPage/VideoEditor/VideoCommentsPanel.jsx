@@ -42,6 +42,25 @@ const readStructureFile = (structureFile) => {
   }
 };
 
+const toStructureVerse = (verse) => {
+  const verseData = {
+    verseNumber: verse.verseNumber,
+    verseText: verse.verseText || '',
+    joinedVerses: verse.joinedVerses || null,
+    isPreCombined: verse.isPreCombined || false,
+  };
+
+  if (verse.verseSegments) {
+    verseData.verseSegments = verse.verseSegments;
+  }
+
+  if (Array.isArray(verse.comments) && verse.comments.length > 0) {
+    verseData.comments = verse.comments;
+  }
+
+  return verseData;
+};
+
 const writeVerseComments = ({
   bookId,
   chapter,
@@ -49,6 +68,7 @@ const writeVerseComments = ({
   verseData,
   videoPath,
   comments,
+  chapterContent,
 }) => {
   const fs = window.require('fs');
   const path = window.require('path');
@@ -61,10 +81,15 @@ const writeVerseComments = ({
     allStructure[bookIdUpper] = {};
   }
 
-  if (!allStructure[bookIdUpper][chapterKey]) {
+  if (
+    !allStructure[bookIdUpper][chapterKey]
+    || !Array.isArray(allStructure[bookIdUpper][chapterKey].verses)
+  ) {
     allStructure[bookIdUpper][chapterKey] = {
       chapter: chapterKey,
-      verses: [],
+      verses: (chapterContent || [])
+        .filter((item) => item.verseNumber && item.verseText !== undefined)
+        .map(toStructureVerse),
     };
   }
 
@@ -193,6 +218,7 @@ const VideoCommentsPanel = ({
         verseData: verse,
         videoPath,
         comments: nextComments,
+        chapterContent: updatedContent,
       });
 
       onContentChange(updatedContent);
