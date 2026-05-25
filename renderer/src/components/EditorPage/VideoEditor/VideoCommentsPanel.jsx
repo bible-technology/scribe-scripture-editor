@@ -159,6 +159,7 @@ const VideoCommentsPanel = ({
   const addCommentRef = useRef(null);
   const commentsContainerRef = useRef(null);
   const comments = useMemo(() => verse?.comments || [], [verse]);
+  const [commentVideoUrls, setCommentVideoUrls] = useState({});
 
   useEffect(() => {
     if (!open) {
@@ -190,6 +191,42 @@ const VideoCommentsPanel = ({
       }, 50);
     }
   }, [isAdding]);
+
+  useEffect(() => {
+    if (!open || !videoPath) {
+      setCommentVideoUrls({});
+      return undefined;
+    }
+
+    const fs = window.require('fs');
+    const path = window.require('path');
+    const nextUrls = {};
+
+    comments.forEach((comment) => {
+      if (!comment.videoFileName) {
+        return;
+      }
+
+      const fullPath = path.join(videoPath, comment.videoFileName);
+      try {
+        if (!fs.existsSync(fullPath)) {
+          logger.warn('Comment video file does not exist:', fullPath);
+          return;
+        }
+
+        const buffer = fs.readFileSync(fullPath);
+        nextUrls[comment.id] = URL.createObjectURL(new Blob([buffer], { type: 'video/webm' }));
+      } catch (err) {
+        logger.error('Error loading comment video:', err);
+      }
+    });
+
+    setCommentVideoUrls(nextUrls);
+
+    return () => {
+      Object.values(nextUrls).forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [open, videoPath, comments]);
 
   if (!open || !verse) {
     return null;
@@ -434,12 +471,6 @@ const VideoCommentsPanel = ({
     setEditingText('');
   };
 
-  const getVideoSrc = (fileName, version) => {
-    const path = window.require('path');
-    const cacheKey = version ? `?v=${encodeURIComponent(version)}` : '';
-    return `file://${path.join(videoPath, fileName)}${cacheKey}`;
-  };
-
   const formatCommentDate = (timestamp) => {
     if (!timestamp) { return ''; }
 
@@ -544,10 +575,7 @@ const VideoCommentsPanel = ({
                       controls
                       controlsList="nodownload nofullscreen noremoteplayback"
                       disablePictureInPicture
-                      src={getVideoSrc(
-                        comment.videoFileName,
-                        comment.videoUpdatedAt || comment.updatedAt,
-                      )}
+                      src={commentVideoUrls[comment.id] || ''}
                       className="mb-3 aspect-video w-full rounded-md bg-black"
                     >
                       <track kind="captions" src="" label="No captions available" />
