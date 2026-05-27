@@ -359,7 +359,9 @@ const VideoPlayer = ({
             )?.comments?.length || 0
           }
           showCommentsButton={
-            doesVideoExistForVerse(currentRecordingVerse)
+            (content.find(
+              (item) => item.verseNumber === currentRecordingVerse,
+            )?.comments?.length || 0) > 0 || doesVideoExistForVerse(currentRecordingVerse)
           }
           onOpenComments={() => {
             const verseData = content.find(

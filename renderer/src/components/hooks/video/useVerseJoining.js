@@ -297,7 +297,6 @@ export const useVerseJoining = ({
           } catch (deleteErr) {
             logger.error('Error deleting videos after join:', deleteErr);
           }
-
         } else {
           logger.error('Failed to save structure, videos not deleted');
         }

@@ -496,6 +496,34 @@ const VideoRecorder = ({
                   </button>
                 )}
               </div>
+              <div className="w-12 flex justify-center">
+                {currentMode === 'record' && showCommentsButton ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+
+                      if (videoPreviewRef.current) {
+                        videoPreviewRef.current.pause();
+                      }
+
+                      onOpenComments?.();
+                    }}
+                    className="relative flex items-center justify-center p-2 rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                    title="Open comments"
+                  >
+                    <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
+
+                    {commentCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white">
+                        {commentCount}
+                      </span>
+                    )}
+                  </button>
+                ) : (
+                  <div className="w-10 h-10" />
+                )}
+              </div>
 
               <div className="flex-1 flex items-center justify-center gap-10">
                 <button
