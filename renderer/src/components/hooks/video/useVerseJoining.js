@@ -12,6 +12,25 @@ import {
 } from '@/hooks/video/videoCommentsUtils';
 import * as logger from '../../../logger';
 
+const getCommentIdentity = (comment) => (
+  comment?.id || `${comment?.verseNumber || ''}:${comment?.videoFileName || ''}:${comment?.note || ''}`
+);
+
+const dedupeComments = (comments = []) => {
+  const seenComments = new Set();
+
+  return comments.filter((comment) => {
+    const identity = getCommentIdentity(comment);
+
+    if (seenComments.has(identity)) {
+      return false;
+    }
+
+    seenComments.add(identity);
+    return true;
+  });
+};
+
 export const useVerseJoining = ({
   videoContent,
   setVideoContent,
@@ -241,10 +260,10 @@ export const useVerseJoining = ({
         verseText: combinedText,
         joinedVerses,
         isPreCombined: false,
-        comments: [
+        comments: dedupeComments([
           ...(previousVerse.comments || []),
           ...(currentVerse.comments || []),
-        ],
+        ]),
       };
       updatedContent.splice(currentVerseIndex, 1);
 
@@ -278,6 +297,7 @@ export const useVerseJoining = ({
           } catch (deleteErr) {
             logger.error('Error deleting videos after join:', deleteErr);
           }
+
         } else {
           logger.error('Failed to save structure, videos not deleted');
         }
@@ -390,19 +410,13 @@ export const useVerseJoining = ({
         logger.debug('No USFM available, skipping validation for remaining verses');
       }
 
-      const firstVerseComments = (verse.comments || []).filter(
-        (comment) => String(comment.verseNumber) === String(firstVerseNum),
-      );
-
-      const remainingVerseComments = (verse.comments || []).filter(
-        (comment) => String(comment.verseNumber) !== String(firstVerseNum),
-      );
+      const sharedComments = dedupeComments(verse.comments || []);
 
       const firstVerseEntry = {
         verseNumber: firstVerseNum.toString(),
         verseText: firstVerseText || '',
         isPreCombined: false,
-        comments: firstVerseComments,
+        comments: sharedComments,
       };
 
       let remainingVerseEntry;
@@ -415,7 +429,7 @@ export const useVerseJoining = ({
           verseNumber: singleNum.toString(),
           verseText: singleText,
           isPreCombined: false,
-          comments: remainingVerseComments,
+          comments: sharedComments,
         };
 
         logger.debug('Split into two single verses:', {
@@ -469,7 +483,7 @@ export const useVerseJoining = ({
           joinedVerses: remainingVerses,
           verseSegments: segments,
           isPreCombined: false,
-          comments: remainingVerseComments,
+          comments: sharedComments,
         };
 
         logger.debug('Split into single verse and range:', {
@@ -506,6 +520,12 @@ export const useVerseJoining = ({
           } catch (deleteErr) {
             logger.error('Error deleting videos after disjoin:', deleteErr);
           }
+          loadVerseStructure().then((reloadedVerses) => {
+            if (reloadedVerses) {
+              setVideoContent(reloadedVerses);
+              logger.debug('Reloaded verses after disjoin');
+            }
+          });
         } else {
           logger.error('Failed to save verse structure after disjoin, videos not deleted');
         }

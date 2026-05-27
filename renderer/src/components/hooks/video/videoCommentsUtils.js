@@ -68,21 +68,82 @@ const getChapterComments = (commentsData, bookId, chapter) => {
   return commentsData?.[bookIdUpper]?.[chapter.toString()] || {};
 };
 
-const getVerseCommentKeys = (verse) => {
-  const keys = new Set([verse.verseNumber]);
-
-  if (Array.isArray(verse.joinedVerses)) {
-    verse.joinedVerses.forEach((verseNumber) => keys.add(verseNumber.toString()));
-  } else if (typeof verse.verseNumber === 'string' && verse.verseNumber.includes('-')) {
-    const [start, end] = verse.verseNumber.split('-').map(Number);
-    if (!Number.isNaN(start) && !Number.isNaN(end)) {
-      for (let verseNumber = start; verseNumber <= end; verseNumber += 1) {
-        keys.add(verseNumber.toString());
-      }
-    }
+const getVerseRange = (verseNumber) => {
+  if (typeof verseNumber !== 'string' && typeof verseNumber !== 'number') {
+    return null;
   }
 
-  return Array.from(keys);
+  const verseText = verseNumber.toString();
+  const [startText, endText = startText] = verseText.split('-');
+  const start = Number(startText);
+  const end = Number(endText);
+
+  if (Number.isNaN(start) || Number.isNaN(end)) {
+    return null;
+  }
+
+  return {
+    start: Math.min(start, end),
+    end: Math.max(start, end),
+  };
+};
+
+const getVerseRanges = (verse) => {
+  if (Array.isArray(verse.joinedVerses) && verse.joinedVerses.length > 0) {
+    return verse.joinedVerses
+      .map((verseNumber) => getVerseRange(verseNumber))
+      .filter(Boolean);
+  }
+
+  const range = getVerseRange(verse.verseNumber);
+  return range ? [range] : [];
+};
+
+const rangesOverlap = (left, right) => left.start <= right.end && right.start <= left.end;
+
+const commentKeyMatchesVerse = (commentKey, verse) => {
+  const commentRange = getVerseRange(commentKey);
+  const verseRanges = getVerseRanges(verse);
+
+  if (!commentRange || verseRanges.length === 0) {
+    return commentKey === verse.verseNumber;
+  }
+
+  return verseRanges.some((verseRange) => rangesOverlap(commentRange, verseRange));
+};
+
+const getCommentIdentity = (comment, fallbackKey) => (
+  comment?.id || `${fallbackKey}:${comment?.videoFileName || ''}:${comment?.note || ''}`
+);
+
+const getVisibleCommentsForVerse = (chapterComments, verse) => {
+  const seenComments = new Set();
+
+  return Object.entries(chapterComments)
+    .filter(([commentKey]) => commentKeyMatchesVerse(commentKey, verse))
+    .flatMap(([commentKey, verseComments]) => (
+      Array.isArray(verseComments)
+        ? verseComments.map((comment) => ({ commentKey, comment }))
+        : []
+    ))
+    .filter(({ commentKey, comment }) => {
+      const identity = getCommentIdentity(comment, commentKey);
+
+      if (seenComments.has(identity)) {
+        return false;
+      }
+
+      seenComments.add(identity);
+      return true;
+    });
+};
+
+const removeEmptyChapterCommentKeys = (chapterComments) => {
+  Object.keys(chapterComments).forEach((commentKey) => {
+    if (!Array.isArray(chapterComments[commentKey]) || chapterComments[commentKey].length === 0) {
+      delete chapterComments[commentKey];
+    }
+  });
 };
 
 export const mergeCommentsIntoVerses = (verses, videoPath, bookId, chapter) => {
@@ -90,8 +151,8 @@ export const mergeCommentsIntoVerses = (verses, videoPath, bookId, chapter) => {
   const chapterComments = getChapterComments(commentsData, bookId, chapter);
 
   return (verses || []).map((verse) => {
-    const comments = getVerseCommentKeys(verse)
-      .flatMap((key) => chapterComments[key] || []);
+    const comments = getVisibleCommentsForVerse(chapterComments, verse)
+      .map(({ comment }) => comment);
 
     if (comments.length === 0) {
       const { comments: _comments, ...verseWithoutComments } = verse;
@@ -127,12 +188,50 @@ export const writeVerseComments = ({
     allComments[bookIdUpper][chapterKey] = {};
   }
 
-  getVerseCommentKeys(verseData || { verseNumber }).forEach((key) => {
-    delete allComments[bookIdUpper][chapterKey][key];
+  const chapterComments = allComments[bookIdUpper][chapterKey];
+  const visibleBeforeSave = getVisibleCommentsForVerse(
+    chapterComments,
+    verseData || { verseNumber },
+  );
+  const visibleBeforeIds = new Set(
+    visibleBeforeSave.map(({ commentKey, comment }) => getCommentIdentity(comment, commentKey)),
+  );
+  const nextCommentsById = new Map(
+    comments.map((comment) => [getCommentIdentity(comment, verseNumber), comment]),
+  );
+
+  Object.keys(chapterComments).forEach((commentKey) => {
+    chapterComments[commentKey] = (chapterComments[commentKey] || [])
+      .map((comment) => {
+        const identity = getCommentIdentity(comment, commentKey);
+
+        if (!visibleBeforeIds.has(identity)) {
+          return comment;
+        }
+
+        if (!nextCommentsById.has(identity)) {
+          return null;
+        }
+
+        const nextComment = nextCommentsById.get(identity);
+        nextCommentsById.delete(identity);
+        return nextComment;
+      })
+      .filter(Boolean);
   });
 
-  if (comments.length > 0) {
-    allComments[bookIdUpper][chapterKey][verseNumber] = comments;
+  const newComments = Array.from(nextCommentsById.values());
+  if (newComments.length > 0) {
+    chapterComments[verseNumber] = [
+      ...(chapterComments[verseNumber] || []),
+      ...newComments,
+    ];
+  }
+
+  removeEmptyChapterCommentKeys(chapterComments);
+
+  if (Object.keys(chapterComments).length === 0) {
+    delete allComments[bookIdUpper][chapterKey];
   }
 
   fs.mkdirSync(path.dirname(commentsFile), { recursive: true });
@@ -152,21 +251,62 @@ export const replaceChapterCommentsFromVerses = ({
   const commentsFile = getCommentsFilePath(videoPath, bookId);
   const allComments = readCommentsFile(videoPath, bookId);
   const chapterKey = chapter.toString();
-  const nextChapterComments = {};
+  const chapterComments = allComments[bookIdUpper]?.[chapterKey] || {};
+  const nextCommentsById = new Map();
 
   verses.forEach((verse) => {
     if (Array.isArray(verse.comments) && verse.comments.length > 0) {
-      nextChapterComments[verse.verseNumber] = verse.comments;
+      verse.comments.forEach((comment) => {
+        nextCommentsById.set(getCommentIdentity(comment, verse.verseNumber), {
+          verseNumber: verse.verseNumber,
+          comment,
+        });
+      });
     }
   });
 
   if (!allComments[bookIdUpper]) {
     allComments[bookIdUpper] = {};
   }
+  if (!allComments[bookIdUpper][chapterKey]) {
+    allComments[bookIdUpper][chapterKey] = {};
+  }
 
-  if (Object.keys(nextChapterComments).length > 0) {
-    allComments[bookIdUpper][chapterKey] = nextChapterComments;
-  } else {
+  const nextChapterComments = allComments[bookIdUpper][chapterKey];
+
+  Object.keys(chapterComments).forEach((commentKey) => {
+    nextChapterComments[commentKey] = (chapterComments[commentKey] || [])
+      .map((comment) => {
+        const identity = getCommentIdentity(comment, commentKey);
+
+        if (!nextCommentsById.has(identity)) {
+          return comment;
+        }
+
+        const nextComment = nextCommentsById.get(identity).comment;
+        nextCommentsById.delete(identity);
+        return nextComment;
+      });
+  });
+
+  Array.from(nextCommentsById.values()).forEach(({ verseNumber, comment }) => {
+    if (!nextChapterComments[verseNumber]) {
+      nextChapterComments[verseNumber] = [];
+    }
+
+    const identity = getCommentIdentity(comment, verseNumber);
+    const alreadyExists = nextChapterComments[verseNumber].some(
+      (existingComment) => getCommentIdentity(existingComment, verseNumber) === identity,
+    );
+
+    if (!alreadyExists) {
+      nextChapterComments[verseNumber].push(comment);
+    }
+  });
+
+  removeEmptyChapterCommentKeys(nextChapterComments);
+
+  if (Object.keys(nextChapterComments).length === 0) {
     delete allComments[bookIdUpper][chapterKey];
   }
 
