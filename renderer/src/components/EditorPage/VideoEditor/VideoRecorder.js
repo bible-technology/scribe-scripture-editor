@@ -456,22 +456,25 @@ const VideoRecorder = ({
 
           <div className="flex flex-col gap-4 flex-shrink-0">
             <div className="flex items-center border-t relative px-4 py-2">
-              <div className="flex items-center gap-2 w-44">
-                {currentMode === 'view' && hasVideo && (
-                  <div className="flex items-center gap-2 text-black px-3 py-1.5 rounded-md">
-                    <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
-                    <button
-                      type="button"
-                      onClick={cycleSpeed}
-                      className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
-                      title="Change playback speed"
-                    >
-                      {playbackSpeed}
-                      x
-                    </button>
-                  </div>
-                )}
-                {currentMode === 'view' && hasVideo && showCommentsButton && (
+              <div className="flex items-center justify-between w-44">
+                <div className="flex items-center gap-2">
+                  {currentMode === 'view' && hasVideo && (
+                    <div className="flex items-center gap-2 text-black px-3 py-1.5 rounded-md">
+                      <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
+                      <button
+                        type="button"
+                        onClick={cycleSpeed}
+                        className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
+                        title="Change playback speed"
+                      >
+                        {playbackSpeed}
+                        x
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {showCommentsButton && (
                   <button
                     type="button"
                     onClick={() => {
@@ -494,34 +497,6 @@ const VideoRecorder = ({
                       </span>
                     )}
                   </button>
-                )}
-              </div>
-              <div className="w-12 flex justify-center">
-                {currentMode === 'record' && showCommentsButton ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsPlaying(false);
-
-                      if (videoPreviewRef.current) {
-                        videoPreviewRef.current.pause();
-                      }
-
-                      onOpenComments?.();
-                    }}
-                    className="relative flex items-center justify-center p-2 rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                    title="Open comments"
-                  >
-                    <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
-
-                    {commentCount > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white">
-                        {commentCount}
-                      </span>
-                    )}
-                  </button>
-                ) : (
-                  <div className="w-10 h-10" />
                 )}
               </div>
 

@@ -613,7 +613,6 @@ const VideoCommentsPanel = ({
           hideVerseNavigation
           disableExistingVideoCheck
           allowOverwriteExistingVideo
-          hideDeleteButton
         />
       )}
     </div>
