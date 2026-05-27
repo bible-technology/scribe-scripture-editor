@@ -14,120 +14,13 @@ import {
   VideoCameraIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { writeVerseComments } from '@/hooks/video/videoCommentsUtils';
 import VideoRecorder from './VideoRecorder';
 import * as logger from '../../../logger';
 
 const getCurrentUsername = async () => {
   const userProfile = await localforage.getItem('userProfile');
   return userProfile?.username || userProfile?.user?.email || 'unknown-user';
-};
-
-const getStructureFilePath = (videoPath, bookId) => {
-  const path = window.require('path');
-  const bookFolder = path.dirname(videoPath);
-  return path.join(bookFolder, `${bookId.toLowerCase()}.json`);
-};
-
-const readStructureFile = (structureFile) => {
-  const fs = window.require('fs');
-  if (!fs.existsSync(structureFile)) {
-    return {};
-  }
-
-  try {
-    return JSON.parse(fs.readFileSync(structureFile, 'utf8'));
-  } catch (err) {
-    logger.warn('Could not parse video structure while saving comments:', err);
-    return {};
-  }
-};
-
-const toStructureVerse = (verse) => {
-  const verseData = {
-    verseNumber: verse.verseNumber,
-    verseText: verse.verseText || '',
-    joinedVerses: verse.joinedVerses || null,
-    isPreCombined: verse.isPreCombined || false,
-  };
-
-  if (verse.verseSegments) {
-    verseData.verseSegments = verse.verseSegments;
-  }
-
-  if (Array.isArray(verse.comments) && verse.comments.length > 0) {
-    verseData.comments = verse.comments;
-  }
-
-  return verseData;
-};
-
-const writeVerseComments = ({
-  bookId,
-  chapter,
-  verseNumber,
-  verseData,
-  videoPath,
-  comments,
-  chapterContent,
-}) => {
-  const fs = window.require('fs');
-  const path = window.require('path');
-  const bookIdUpper = bookId.toUpperCase();
-  const structureFile = getStructureFilePath(videoPath, bookId);
-  const chapterKey = chapter.toString();
-  const allStructure = readStructureFile(structureFile);
-
-  if (!allStructure[bookIdUpper]) {
-    allStructure[bookIdUpper] = {};
-  }
-
-  if (
-    !allStructure[bookIdUpper][chapterKey]
-    || !Array.isArray(allStructure[bookIdUpper][chapterKey].verses)
-  ) {
-    allStructure[bookIdUpper][chapterKey] = {
-      chapter: chapterKey,
-      verses: (chapterContent || [])
-        .filter((item) => item.verseNumber && item.verseText !== undefined)
-        .map(toStructureVerse),
-    };
-  }
-
-  const chapterData = allStructure[bookIdUpper][chapterKey];
-  const existingIndex = chapterData.verses.findIndex(
-    (item) => item.verseNumber === verseNumber,
-  );
-  const nextVerseData = {
-    verseNumber,
-    verseText: verseData?.verseText || '',
-    joinedVerses: verseData?.joinedVerses || null,
-    verseSegments: verseData?.verseSegments,
-    isPreCombined: verseData?.isPreCombined || false,
-  };
-
-  if (comments.length > 0) {
-    nextVerseData.comments = comments;
-  }
-
-  if (!nextVerseData.verseSegments) {
-    delete nextVerseData.verseSegments;
-  }
-
-  if (existingIndex >= 0) {
-    chapterData.verses[existingIndex] = {
-      ...chapterData.verses[existingIndex],
-      ...nextVerseData,
-    };
-    if (comments.length === 0) {
-      delete chapterData.verses[existingIndex].comments;
-    }
-  } else {
-    chapterData.verses.push(nextVerseData);
-  }
-
-  chapterData.lastModified = new Date().toISOString();
-  fs.mkdirSync(path.dirname(structureFile), { recursive: true });
-  fs.writeFileSync(structureFile, JSON.stringify(allStructure, null, 2), 'utf8');
 };
 
 const getNextCommentNumber = (comments) => comments.reduce(
@@ -255,7 +148,6 @@ const VideoCommentsPanel = ({
         verseData: verse,
         videoPath,
         comments: nextComments,
-        chapterContent: updatedContent,
       });
 
       onContentChange(updatedContent);

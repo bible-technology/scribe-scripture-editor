@@ -6,6 +6,10 @@ import {
   validateVerseJoin,
   validateVerseDisjoin,
 } from '@/core/editor/verseJoining';
+import {
+  mergeCommentsIntoVerses,
+  replaceChapterCommentsFromVerses,
+} from '@/hooks/video/videoCommentsUtils';
 import * as logger from '../../../logger';
 
 export const useVerseJoining = ({
@@ -59,10 +63,6 @@ export const useVerseJoining = ({
               joinedVerses: verse.joinedVerses || null,
               isPreCombined: verse.isPreCombined || false,
             };
-
-            if (Array.isArray(verse.comments) && verse.comments.length > 0) {
-              verseData.comments = verse.comments;
-            }
 
             if (verse.joinedVerses && verse.joinedVerses.length > 0) {
               verseData.verseSegments = verse.joinedVerses.map((vNum) => {
@@ -170,7 +170,7 @@ export const useVerseJoining = ({
           };
         });
 
-        return verses;
+        return mergeCommentsIntoVerses(verses, videoPath, bookId, chapter);
       }
 
       logger.debug(`No structure for ${bookId} chapter ${chapterKey}`);
@@ -249,6 +249,12 @@ export const useVerseJoining = ({
       updatedContent.splice(currentVerseIndex, 1);
 
       setVideoContent(updatedContent);
+      replaceChapterCommentsFromVerses({
+        bookId,
+        chapter,
+        videoPath,
+        verses: updatedContent,
+      });
 
       saveVerseStructure(updatedContent).then((saved) => {
         if (saved) {
@@ -289,7 +295,7 @@ export const useVerseJoining = ({
       setOpenSnackBar(true);
       return false;
     }
-  }, [videoContent, setVideoContent, originalBookContent, chapter, videoPath, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
+  }, [videoContent, setVideoContent, originalBookContent, chapter, videoPath, bookId, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
 
   const executeDisjoinVerse = useCallback((joinedVerseNumber, verseIndex) => {
     try {
@@ -481,6 +487,12 @@ export const useVerseJoining = ({
       });
 
       setVideoContent(updatedContent);
+      replaceChapterCommentsFromVerses({
+        bookId,
+        chapter,
+        videoPath,
+        verses: updatedContent,
+      });
 
       saveVerseStructure(updatedContent).then((saved) => {
         if (saved) {
@@ -511,7 +523,7 @@ export const useVerseJoining = ({
       setOpenSnackBar(true);
       return false;
     }
-  }, [videoContent, setVideoContent, originalBookContent, chapter, videoPath, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
+  }, [videoContent, setVideoContent, originalBookContent, chapter, videoPath, bookId, t, setNotify, setSnackText, setOpenSnackBar, saveVerseStructure]);
 
   const handleJoinVerse = useCallback((currentVerseNumber) => {
     const validation = validateVerseJoin(videoContent, currentVerseNumber);
