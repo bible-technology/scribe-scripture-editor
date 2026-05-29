@@ -17,6 +17,7 @@ import {
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
   ChatBubbleLeftEllipsisIcon,
+  ArrowUpTrayIcon,
 } from '@heroicons/react/24/outline';
 
 import { useCamera } from '@/hooks/video/useCamera';
@@ -68,10 +69,12 @@ const VideoRecorder = ({
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [existingVideo, setExistingVideo] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
+  const [isImporting, setIsImporting] = useState(false);
 
   const videoPreviewRef = useRef(null);
   const containerRef = useRef(null);
   const seekBarRef = useRef(null);
+  const importInputRef = useRef(null);
 
   const fs = window.require('fs');
   const path = window.require('path');
@@ -261,6 +264,89 @@ const VideoRecorder = ({
     }
   };
 
+  const handleImportClick = () => {
+    const openImportPicker = () => {
+      if (importInputRef.current) {
+        importInputRef.current.value = '';
+        importInputRef.current.click();
+      }
+    };
+
+    if (existingVideo) {
+      setOpenModal({
+        openModel: true,
+        title: 'Replace Existing Video?',
+        confirmMessage: 'A video already exists for this verse. Importing a new video will replace the current recording.',
+        buttonName: 'Replace',
+        action: 'custom',
+        actionData: { callback: openImportPicker },
+      });
+      return;
+    }
+
+    openImportPicker();
+  };
+
+  const handleImportFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) { return; }
+
+    const supportedTypes = ['video/webm'];
+    const supportedExtensions = ['.webm'];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+    if (!supportedTypes.includes(file.type) && !supportedExtensions.includes(fileExtension)) {
+      setError('Unsupported file type. Please select a .webm video file.');
+      return;
+    }
+
+    try {
+      setIsImporting(true);
+
+      const destFilename = fileNameOverride || `${chapter}_${verse}.webm`;
+      const destPath = path.join(projectPath, destFilename);
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      fs.writeFileSync(destPath, buffer);
+
+      if (onRecordingComplete) {
+        onRecordingComplete({
+          verse,
+          chapter,
+          filePath: destPath,
+          filename: destFilename,
+        });
+      }
+
+      setExistingVideo(true);
+      setCurrentMode('view');
+
+      setNotify('success');
+      setSnackText(`Video "${file.name}" imported successfully`);
+      setOpenSnackBar(true);
+
+      setTimeout(() => {
+        if (videoPreviewRef.current) {
+          const blob = new Blob([buffer], { type: file.type || 'video/mp4' });
+          const objectUrl = URL.createObjectURL(blob);
+
+          videoPreviewRef.current.pause();
+          videoPreviewRef.current.srcObject = null;
+          videoPreviewRef.current.removeAttribute('src');
+          videoPreviewRef.current.load();
+
+          videoPreviewRef.current.src = objectUrl;
+          videoPreviewRef.current.load();
+        }
+      }, 100);
+    } catch (err) {
+      setError(`Failed to import video: ${err.message}`);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   const formatTime = (seconds) => {
     if (!Number.isFinite(seconds) || seconds <= 0) { return '00:00'; }
     const mins = Math.floor(seconds / 60);
@@ -272,10 +358,17 @@ const VideoRecorder = ({
   const hasNextVerse = () => getNextVerseNumber(verse, content) !== null;
 
   return (
-
     <div
       className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''}`}
     >
+      <input
+        ref={importInputRef}
+        type="file"
+        accept=".webm,video/webm"
+        className="hidden"
+        onChange={handleImportFileChange}
+      />
+
       <div
         ref={containerRef}
         className={`bg-white shadow-2xl flex flex-col transition-all ${isFullscreen
@@ -301,6 +394,9 @@ const VideoRecorder = ({
               </h2>
               <p className="text-sm text-gray-200">
                 {(() => {
+                  if (isImporting) {
+                    return 'Importing video...';
+                  }
                   if (isRecording) {
                     return `${isPaused ? 'Paused' : 'Recording'}: ${formatTime(recordingTime)}`;
                   }
@@ -310,7 +406,6 @@ const VideoRecorder = ({
                   return 'Ready to record';
                 })()}
               </p>
-
             </div>
           </div>
 
@@ -318,12 +413,11 @@ const VideoRecorder = ({
             type="button"
             onClick={onClose}
             className="hover:bg-white hover:bg-opacity-20 p-2 rounded-full transition-colors"
-            disabled={isRecording}
+            disabled={isRecording || isImporting}
             title="Close"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
-
         </div>
 
         <div className={`flex-1 flex flex-col ${isFullscreen ? 'overflow-hidden' : 'overflow-auto'} p-2`}>
@@ -379,11 +473,11 @@ const VideoRecorder = ({
               </div>
             )}
 
-            {isProcessing && (
+            {(isProcessing || isImporting) && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90">
                 <div className="text-center text-white">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
-                  <p>Saving video...</p>
+                  <p>{isImporting ? 'Importing video...' : 'Saving video...'}</p>
                 </div>
               </div>
             )}
@@ -596,23 +690,49 @@ const VideoRecorder = ({
                   </button>
                 </div>
 
-                {!hideDeleteButton && (
-                  <button
-                    type="button"
-                    onClick={handleDeleteClick}
-                    disabled={!existingVideo || isRecording || isProcessing}
-                    className={`p-4 rounded-full transition-all ${existingVideo
-                      ? 'bg-error text-white hover:bg-red-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'} 
-                      disabled:opacity-50 disabled:cursor-not-allowed`}
-                    title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
-                  >
-                    <TrashIcon className="w-6 h-6" />
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {!hideDeleteButton && (
+                    <button
+                      type="button"
+                      onClick={handleDeleteClick}
+                      disabled={!existingVideo || isRecording || isProcessing || isImporting}
+                      className={`p-4 rounded-full transition-all ${existingVideo
+                        ? 'bg-error text-white hover:bg-red-700'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'} 
+                        disabled:opacity-50 disabled:cursor-not-allowed`}
+                      title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
+                    >
+                      <TrashIcon className="w-6 h-6" />
+                    </button>
+                  )}
+
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 w-40 justify-end">
+              <div className="flex items-center gap-2 w-44 justify-end">
+                <div className="relative group/import">
+                  <button
+                    type="button"
+                    onClick={handleImportClick}
+                    disabled={isRecording || isProcessing || isImporting}
+                    className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isImporting
+                        ? 'bg-blue-400 text-white cursor-wait'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                    title={(() => {
+                      if (isImporting) { return 'Importing...'; }
+                      if (existingVideo && !allowOverwriteExistingVideo) { return 'Video exists — delete it first to import'; }
+                      return 'Import video file';
+                    })()}
+                  >
+                    {isImporting ? (
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
+                    ) : (
+                      <ArrowUpTrayIcon className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={toggleFullscreen}
@@ -670,7 +790,6 @@ const VideoRecorder = ({
         </div>
       </div>
     </div>
-
   );
 };
 
@@ -713,7 +832,6 @@ VideoRecorder.defaultProps = {
   commentCount: 0,
   onOpenComments: null,
   showCommentsButton: false,
-
 };
 
 export default VideoRecorder;
