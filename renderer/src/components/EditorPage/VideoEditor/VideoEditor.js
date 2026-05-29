@@ -118,6 +118,33 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
   }
 };
 
+const parsedUsfmCache = new Map();
+
+const getParsedUsfmBook = (usfmPath) => {
+  const fs = window.require('fs');
+
+  const stat = fs.statSync(usfmPath);
+  const cached = parsedUsfmCache.get(usfmPath);
+
+  if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+    logger.debug('Using cached parsed USFM:', usfmPath);
+    return cached.bookContent;
+  }
+
+  const usfm = fs.readFileSync(usfmPath, 'utf8');
+  const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+  const jsonOutput = myUsfmParser.toJSON();
+  const bookContent = jsonOutput.chapters;
+
+  parsedUsfmCache.set(usfmPath, {
+    mtimeMs: stat.mtimeMs,
+    size: stat.size,
+    bookContent,
+  });
+
+  return bookContent;
+};
+
 const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
   try {
     const fs = window.require('fs');
@@ -137,19 +164,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
       };
     }
 
-    const usfm = fs.readFileSync(usfmPath, 'utf8');
-    const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
-    const isJsonValid = myUsfmParser.validate();
-
-    if (!isJsonValid) {
-      logger.error('Invalid USFM file');
-      return {
-        success: false, bookContent: null, verses: null, source: null,
-      };
-    }
-
-    const jsonOutput = myUsfmParser.toJSON();
-    const bookContent = jsonOutput.chapters;
+    const bookContent = getParsedUsfmBook(usfmPath);
 
     const chapterData = bookContent.find(
       (ch) => ch.chapterNumber === chapter.toString(),
@@ -609,6 +624,8 @@ const VideoEditor = ({ editor }) => {
     modelClose();
   };
   useEffect(() => {
+    let cancelled = false;
+
     if (isElectron()) {
       setIsLoading(true);
       setDisplayScreen(false);
@@ -728,6 +745,8 @@ const VideoEditor = ({ editor }) => {
                     chapter,
                   );
 
+                  if (cancelled) { return; }
+
                   setOriginalBookContent(bookContent);
 
                   logger.debug('Starting video attachment process...');
@@ -760,18 +779,23 @@ const VideoEditor = ({ editor }) => {
               }),
             );
 
-            if (_books.includes(bookId.toUpperCase()) === false) {
+            if (!cancelled && _books.includes(bookId.toUpperCase()) === false) {
               setVideoContent();
               setDisplayScreen(true);
+              setIsLoading(false);
             }
           }
         } catch (error) {
           logger.error('Error in useEffect:', error);
-          setIsLoading(false);
-          setDisplayScreen(true);
+          if (!cancelled) {
+            setIsLoading(false);
+            setDisplayScreen(true);
+          }
         }
       });
     }
+
+    return () => { cancelled = true; };
   }, [bookId, chapter]);
 
   useEffect(() => {
@@ -808,9 +832,9 @@ const VideoEditor = ({ editor }) => {
 
   return (
     <Editor callFrom="textTranslation" editor={editor}>
-      {((isLoading || !videoContent) && displyScreen) && <EmptyScreen call="video" />}
-      {isLoading && !displyScreen && <LoadingScreen />}
-      {videoContent && isLoading === false
+      {isLoading && <LoadingScreen />}
+      {!isLoading && displyScreen && <EmptyScreen call="video" />}
+      {!isLoading && videoContent
         && (
           <div id="video-editor" className="h-full overflow-auto">
             <VideoPlayer

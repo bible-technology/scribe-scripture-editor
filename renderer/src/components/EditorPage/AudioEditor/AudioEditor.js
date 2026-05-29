@@ -96,6 +96,33 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
   }
 };
 
+const parsedUsfmCache = new Map();
+
+const getParsedUsfmBook = (usfmPath) => {
+  const fs = window.require('fs');
+
+  const stat = fs.statSync(usfmPath);
+  const cached = parsedUsfmCache.get(usfmPath);
+
+  if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+    logger.debug('Using cached parsed USFM:', usfmPath);
+    return cached.bookContent;
+  }
+
+  const usfm = fs.readFileSync(usfmPath, 'utf8');
+  const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
+  const jsonOutput = myUsfmParser.toJSON();
+  const bookContent = jsonOutput.chapters;
+
+  parsedUsfmCache.set(usfmPath, {
+    mtimeMs: stat.mtimeMs,
+    size: stat.size,
+    bookContent,
+  });
+
+  return bookContent;
+};
+
 // Priority 2: Load from USFM
 const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
   try {
@@ -116,19 +143,7 @@ const loadVersesFromUSFM = (projectsDir, bookId, chapter) => {
       };
     }
 
-    const usfm = fs.readFileSync(usfmPath, 'utf8');
-    const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
-    const isJsonValid = myUsfmParser.validate();
-
-    if (!isJsonValid) {
-      logger.error('Invalid USFM file');
-      return {
-        success: false, bookContent: null, verses: null, source: null,
-      };
-    }
-
-    const jsonOutput = myUsfmParser.toJSON();
-    const bookContent = jsonOutput.chapters;
+    const bookContent = getParsedUsfmBook(usfmPath);
 
     const chapterData = bookContent.find(
       (ch) => ch.chapterNumber === chapter.toString(),
@@ -495,6 +510,8 @@ const AudioEditor = ({ editor }) => {
   useEffect(() => {
     if (!isElectron()) { return; }
 
+    let cancelled = false;
+
     structureAppliedRef.current = false;
 
     setIsLoading(true);
@@ -605,6 +622,8 @@ const AudioEditor = ({ editor }) => {
                 logger.debug('Data source:', dataSource);
                 logger.debug('Verse count:', finalVerses.length);
 
+                if (cancelled) { return; }
+
                 setOriginalBookContent(bookContent);
 
                 const versesWithAudios = structureAppliedRef.current
@@ -629,25 +648,30 @@ const AudioEditor = ({ editor }) => {
             }),
           );
 
-          if (_books.includes(bookId.toUpperCase()) === false) {
+          if (!cancelled && _books.includes(bookId.toUpperCase()) === false) {
             setAudioContent();
             setDisplayScreen(true);
+            setIsLoading(false);
           }
         }
       } catch (error) {
         logger.error('Error in useEffect:', error);
-        setIsLoading(false);
-        setDisplayScreen(true);
+        if (!cancelled) {
+          setIsLoading(false);
+          setDisplayScreen(true);
+        }
       }
     });
+
+    return () => { cancelled = true; };
   }, [bookId, chapter]);
 
   return (
     <div id="editor">
       <Editor callFrom="textTranslation" editor={editor}>
-        {((isLoading || !audioContent) && displyScreen) && <EmptyScreen call="audio" />}
-        {isLoading && !displyScreen && <LoadingScreen />}
-        {audioContent && isLoading === false
+        {isLoading && <LoadingScreen />}
+        {!isLoading && displyScreen && <EmptyScreen call="audio" />}
+        {!isLoading && audioContent
           && (
             <EditorPage
               verse={verse}
