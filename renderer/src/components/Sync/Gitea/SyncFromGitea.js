@@ -41,8 +41,9 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       logger.debug('SyncFromGitea.js', 'in SyncFromGiea : fetch and parse metaData Success');
       // Validate the burrito
       const success = await validate('metadata', 'gitea/metadata.json', JSON.stringify(metaDataSB), metaDataSB.meta.version);
+      const flavorName = metaDataSB.type?.flavorType?.flavor?.name;
       // if success proceed else raise error
-      if (success) {
+      if (success || flavorName === 'videoTranslation') {
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : metaData SB validated');
         // setProjectData
         setSyncProgress((prev) => ({

@@ -28,7 +28,7 @@ export default function ConfirmationModal({
 
   return (
     <Transition.Root show={openModal} as={Fragment}>
-      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" initialFocus={cancelButtonRef} onClose={setOpenModal}>
+      <Dialog as="div" className="fixed z-[70] inset-0 overflow-y-auto" initialFocus={cancelButtonRef} onClose={setOpenModal}>
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}

@@ -8,6 +8,7 @@ export const useVideoRecording = ({
   streamRef,
   onSaveComplete,
   onError,
+  fileNameOverride,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -22,15 +23,38 @@ export const useVideoRecording = ({
 
   const saveVideo = useCallback(async (blob) => {
     setIsProcessing(true);
+    let tempPath = null;
+    let backupPath = null;
+    let filePath = null;
 
     try {
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const filename = `${chapter}_${verse}.webm`;
-      const filePath = path.join(projectPath, filename);
+      const filename = fileNameOverride || `${chapter}_${verse}.webm`;
+      filePath = path.join(projectPath, filename);
 
-      fs.writeFileSync(filePath, buffer);
+      if (fileNameOverride && fs.existsSync(filePath)) {
+        tempPath = path.join(
+          projectPath,
+          `.${filename}.${Date.now()}.tmp`,
+        );
+        backupPath = path.join(
+          projectPath,
+          `.${filename}.${Date.now()}.backup`,
+        );
+
+        fs.writeFileSync(tempPath, buffer);
+        fs.renameSync(filePath, backupPath);
+        fs.renameSync(tempPath, filePath);
+        try {
+          fs.unlinkSync(backupPath);
+        } catch (cleanupErr) {
+          logger.warn('Could not remove previous video backup:', cleanupErr);
+        }
+      } else {
+        fs.writeFileSync(filePath, buffer);
+      }
 
       if (onSaveComplete) {
         onSaveComplete({
@@ -45,12 +69,22 @@ export const useVideoRecording = ({
       setIsProcessing(false);
       return true;
     } catch (err) {
+      try {
+        if (backupPath && filePath && fs.existsSync(backupPath) && !fs.existsSync(filePath)) {
+          fs.renameSync(backupPath, filePath);
+        }
+        if (tempPath && fs.existsSync(tempPath)) {
+          fs.unlinkSync(tempPath);
+        }
+      } catch (restoreErr) {
+        logger.error('Error restoring previous video after save failure:', restoreErr);
+      }
       logger.error('Error saving video:', err);
       onError(`Failed to save video: ${err.message}`);
       setIsProcessing(false);
       return false;
     }
-  }, [chapter, verse, projectPath, onSaveComplete, onError]);
+  }, [chapter, verse, projectPath, onSaveComplete, onError, fileNameOverride]);
 
   const startRecording = useCallback(async () => {
     if (!streamRef.current) {
@@ -59,10 +93,10 @@ export const useVideoRecording = ({
     }
 
     try {
-      const filename = `${chapter}_${verse}.webm`;
+      const filename = fileNameOverride || `${chapter}_${verse}.webm`;
       const filePath = path.join(projectPath, filename);
 
-      if (fs.existsSync(filePath)) {
+      if (!fileNameOverride && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         logger.debug('Deleted existing video for re-recording');
       }
@@ -108,7 +142,7 @@ export const useVideoRecording = ({
     } catch (err) {
       onError('Failed to start recording. Please try again.');
     }
-  }, [chapter, verse, projectPath, streamRef, saveVideo, onError]);
+  }, [chapter, verse, projectPath, streamRef, saveVideo, onError, fileNameOverride]);
 
   const pauseRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording && !isPaused) {

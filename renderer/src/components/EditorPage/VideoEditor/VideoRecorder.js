@@ -16,6 +16,7 @@ import {
   Cog6ToothIcon,
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
+  ChatBubbleLeftEllipsisIcon,
 } from '@heroicons/react/24/outline';
 
 import { useCamera } from '@/hooks/video/useCamera';
@@ -53,8 +54,17 @@ const VideoRecorder = ({
   setNotify,
   setSnackText,
   setOpenSnackBar,
+  fileNameOverride,
+  titleOverride,
+  hideVerseNavigation = false,
+  disableExistingVideoCheck = false,
+  allowOverwriteExistingVideo = false,
+  hideDeleteButton = false,
+  commentCount = 0,
+  onOpenComments,
+  showCommentsButton = false,
 }) => {
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [existingVideo, setExistingVideo] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
@@ -66,9 +76,11 @@ const VideoRecorder = ({
   const fs = window.require('fs');
   const path = window.require('path');
 
-  const hasVideo = ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+  const hasVideo = fileNameOverride
+    ? fs.existsSync(path.join(projectPath, fileNameOverride))
+    : ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
   const videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
-  const filename = videoExt ? `${chapter}_${verse}.${videoExt}` : `${chapter}_${verse}.webm`;
+  const filename = fileNameOverride || (videoExt ? `${chapter}_${verse}.${videoExt}` : `${chapter}_${verse}.webm`);
   const filePath = path.join(projectPath, filename);
 
   const { error, setError, clearError } = useErrorHandler();
@@ -104,6 +116,7 @@ const VideoRecorder = ({
     projectPath,
     videoPreviewRef,
     onError: setError,
+    fileNameOverride,
   });
 
   const handleSaveComplete = ({
@@ -154,6 +167,7 @@ const VideoRecorder = ({
     streamRef,
     onSaveComplete: handleSaveComplete,
     onError: setError,
+    fileNameOverride,
   });
 
   const {
@@ -173,10 +187,19 @@ const VideoRecorder = ({
   const { showCameraMenu, setShowCameraMenu, cameraMenuRef } = useCameraMenu();
 
   useEffect(() => {
-    const videoExists = ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+    const videoExists = fileNameOverride
+      ? fs.existsSync(path.join(projectPath, fileNameOverride))
+      : ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+    let nextMode = 'record';
+    if (fileNameOverride) {
+      nextMode = mode;
+    } else if (videoExists && !disableExistingVideoCheck) {
+      nextMode = 'view';
+    }
+
     setExistingVideo(videoExists);
-    setCurrentMode(videoExists ? 'view' : 'record');
-  }, [chapter, verse, projectPath, mode]);
+    setCurrentMode(nextMode);
+  }, [chapter, verse, projectPath, mode, fileNameOverride, disableExistingVideoCheck]);
 
   useEffect(() => {
     if (!seekBarRef.current || !videoDuration) { return; }
@@ -251,28 +274,30 @@ const VideoRecorder = ({
   return (
 
     <div
-      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''
-      }`}
+      className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[50] p-4 ${!isVisible ? 'hidden' : ''}`}
     >
       <div
         ref={containerRef}
         className={`bg-white shadow-2xl flex flex-col transition-all ${isFullscreen
           ? 'fixed inset-0 max-w-none max-h-none h-screen w-screen rounded-none z-[60]'
-          : 'rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden'
-        }`}
+          : 'rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden'}`}
       >
         <div className="bg-secondary text-white px-6 py-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
             <VideoCameraIcon className="w-6 h-6" />
             <div>
               <h2 className="text-lg font-semibold">
-                {currentMode === 'view' ? 'Video Player' : 'Video Recording'}
-                {' - '}
-                {bookId.toUpperCase()}
-                {' '}
-                {chapter}
-                :
-                {verse}
+                {titleOverride || (
+                  <>
+                    {currentMode === 'view' ? 'Video Player' : 'Video Recording'}
+                    {' - '}
+                    {bookId.toUpperCase()}
+                    {' '}
+                    {chapter}
+                    :
+                    {verse}
+                  </>
+                )}
               </h2>
               <p className="text-sm text-gray-200">
                 {(() => {
@@ -320,8 +345,7 @@ const VideoRecorder = ({
             </div>
           )}
           <div
-            className={`relative bg-gray-900 rounded-lg overflow-hidden mb-2 group ${isFullscreen ? 'flex-1' : ''
-            }`}
+            className={`relative bg-gray-900 rounded-lg overflow-hidden mb-2 group ${isFullscreen ? 'flex-1' : ''}`}
             style={isFullscreen ? {} : { aspectRatio: '16/9' }}
           >
             {' '}
@@ -432,20 +456,47 @@ const VideoRecorder = ({
 
           <div className="flex flex-col gap-4 flex-shrink-0">
             <div className="flex items-center border-t relative px-4 py-2">
-              <div className="flex items-center gap-2 w-44">
-                {currentMode === 'view' && hasVideo && (
-                  <div className="flex items-center gap-2 text-black px-3 py-1.5 rounded-md">
-                    <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
-                    <button
-                      type="button"
-                      onClick={cycleSpeed}
-                      className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
-                      title="Change playback speed"
-                    >
-                      {playbackSpeed}
-                      x
-                    </button>
-                  </div>
+              <div className="flex items-center justify-between w-44">
+                <div className="flex items-center gap-2">
+                  {currentMode === 'view' && hasVideo && (
+                    <div className="flex items-center gap-2 text-black px-3 py-1.5 rounded-md">
+                      <span className="text-xs font-bold tracking-wide opacity-70 w-12">Speed</span>
+                      <button
+                        type="button"
+                        onClick={cycleSpeed}
+                        className="bg-orange-500 hover:bg-primary text-white text-sm font-medium px-3 py-1 rounded-full w-16 text-center"
+                        title="Change playback speed"
+                      >
+                        {playbackSpeed}
+                        x
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {showCommentsButton && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+
+                      if (videoPreviewRef.current) {
+                        videoPreviewRef.current.pause();
+                      }
+
+                      onOpenComments?.();
+                    }}
+                    className="relative flex items-center justify-center p-2 rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                    title="Open comments"
+                  >
+                    <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
+
+                    {commentCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white">
+                        {commentCount}
+                      </span>
+                    )}
+                  </button>
                 )}
               </div>
 
@@ -473,7 +524,7 @@ const VideoRecorder = ({
                   <button
                     type="button"
                     onClick={handlePreviousVerse}
-                    disabled={!hasPreviousVerse() || isRecording}
+                    disabled={hideVerseNavigation || !hasPreviousVerse() || isRecording}
                     className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Previous Verse"
                   >
@@ -484,14 +535,14 @@ const VideoRecorder = ({
                     <button
                       type="button"
                       onClick={isRecording ? stopRecording : startRecording}
-                      disabled={!cameraReady || isProcessing || existingVideo}
+                      disabled={!cameraReady || isProcessing || (existingVideo && !allowOverwriteExistingVideo)}
                       className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${isRecording
                         ? 'bg-red-600 hover:bg-red-700 text-white'
-                        : 'bg-primary hover:bg-primary-dark text-white'
-                      }`}
+                        : 'bg-primary hover:bg-primary-dark text-white'}`}
                       title={(() => {
                         if (isRecording) { return 'Stop recording'; }
-                        if (existingVideo) { return 'Recording exists - delete it first'; }
+                        if (existingVideo && !allowOverwriteExistingVideo) { return 'Recording exists - delete it first'; }
+                        if (existingVideo && allowOverwriteExistingVideo) { return 'Re-record video'; }
                         return 'Start recording';
                       })()}
                     >
@@ -508,8 +559,7 @@ const VideoRecorder = ({
                       disabled={!hasVideo}
                       className={`p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${hasVideo
                         ? 'bg-success hover:bg-green-700 text-white'
-                        : 'bg-gray-600 text-gray-400'
-                      }`}
+                        : 'bg-gray-600 text-gray-400'}`}
                       title={isPlaying ? 'Pause video' : 'Play video'}
                     >
                       {isPlaying ? (
@@ -538,7 +588,7 @@ const VideoRecorder = ({
                   <button
                     type="button"
                     onClick={handleNextVerse}
-                    disabled={!hasNextVerse() || isRecording}
+                    disabled={hideVerseNavigation || !hasNextVerse() || isRecording}
                     className="p-4 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Next Verse"
                   >
@@ -546,18 +596,20 @@ const VideoRecorder = ({
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleDeleteClick}
-                  disabled={!existingVideo || isRecording || isProcessing}
-                  className={`p-4 rounded-full transition-all ${existingVideo
-                    ? 'bg-error text-white hover:bg-red-700'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
-                >
-                  <TrashIcon className="w-6 h-6" />
-                </button>
+                {!hideDeleteButton && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteClick}
+                    disabled={!existingVideo || isRecording || isProcessing}
+                    className={`p-4 rounded-full transition-all ${existingVideo
+                      ? 'bg-error text-white hover:bg-red-700'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'} 
+                      disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={existingVideo ? 'Delete recorded video' : 'No video to delete'}
+                  >
+                    <TrashIcon className="w-6 h-6" />
+                  </button>
+                )}
               </div>
 
               <div className="flex items-center gap-2 w-40 justify-end">
@@ -604,8 +656,7 @@ const VideoRecorder = ({
                             setSelectedCamera(device.deviceId);
                             setShowCameraMenu(false);
                           }}
-                          className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''
-                          }`}
+                          className={`w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm ${selectedCamera === device.deviceId ? 'bg-gray-200 font-medium' : ''}`}
                         >
                           {device.label || `Camera ${device.deviceId.substring(0, 5)}`}
                         </button>
@@ -638,12 +689,31 @@ VideoRecorder.propTypes = {
   setNotify: PropTypes.func.isRequired,
   setSnackText: PropTypes.func.isRequired,
   setOpenSnackBar: PropTypes.func.isRequired,
+  fileNameOverride: PropTypes.string,
+  titleOverride: PropTypes.string,
+  hideVerseNavigation: PropTypes.bool,
+  disableExistingVideoCheck: PropTypes.bool,
+  allowOverwriteExistingVideo: PropTypes.bool,
+  hideDeleteButton: PropTypes.bool,
+  commentCount: PropTypes.number,
+  onOpenComments: PropTypes.func,
+  showCommentsButton: PropTypes.bool,
 };
 
 VideoRecorder.defaultProps = {
   onRecordingComplete: null,
   onVerseChange: null,
   mode: 'record',
+  fileNameOverride: null,
+  titleOverride: null,
+  hideVerseNavigation: false,
+  disableExistingVideoCheck: false,
+  allowOverwriteExistingVideo: false,
+  hideDeleteButton: false,
+  commentCount: 0,
+  onOpenComments: null,
+  showCommentsButton: false,
+
 };
 
 export default VideoRecorder;

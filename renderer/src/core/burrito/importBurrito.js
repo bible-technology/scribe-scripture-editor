@@ -346,6 +346,13 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       }
       fs.mkdirSync(path.join(audioDir, dirName), { recursive: true });
       logger.debug('importBurrito.js', 'Creating a directory if not exists.');
+      if (metadata.type?.flavorType?.flavor?.name === 'videoTranslation') {
+        const existingVideoDir = path.join(audioDir, 'video');
+        if (fs.existsSync(existingVideoDir)) {
+          await fse.remove(existingVideoDir);
+          logger.debug('importBurrito.js', `Removed existing video directory before replace: ${existingVideoDir}`);
+        }
+      }
       // audioDir = projectPath + audio for audio || projectPath for other
       // copy from source (filePath) to target (audioDir) and update meta
       await fse.copy(filePath, audioDir)

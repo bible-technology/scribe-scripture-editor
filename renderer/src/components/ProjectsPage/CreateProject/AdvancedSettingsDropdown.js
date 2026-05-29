@@ -146,17 +146,24 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
     }
   };
   const selectCanon = (val) => {
-    const value = val;
+    const value = {
+      ...val,
+      currentScope: val.currentScope ? [...val.currentScope] : [],
+    };
     // console.log(val)
 
-    if (call === 'edit' && value.title === 'Other') {
+    if (call === 'new' && value.title === 'Other') {
+      value.currentScope = canonSpecification.title === 'Other'
+        ? [...canonSpecification.currentScope]
+        : [];
+    } else if (call === 'edit' && value.title === 'Other') {
       if (canonSpecification.title === 'Other') {
-        value.currentScope = canonSpecification.currentScope;
+        value.currentScope = [...canonSpecification.currentScope];
       } else {
-        value.currentScope = currentScope.currentScope;
+        value.currentScope = [...currentScope.currentScope];
       }
     } else if (canonSpecification.title === 'Other' && value.title === 'Other') {
-      value.currentScope = canonSpecification.currentScope;
+      value.currentScope = [...canonSpecification.currentScope];
     }
     setCanonSpecification(value);
     openBibleNav('edit');

@@ -43,15 +43,62 @@ export const deleteVideoFiles = async (bookCodesToImport) => {
             return;
           }
           const items = await fs.readdir(bookFolder);
+          const commentVideoFiles = new Set();
+          const commentsFilePath = path.join(bookFolder, `${bookCode.toLowerCase()}_comments.json`);
+
+          try {
+            const commentsContent = await fs.readFile(commentsFilePath, 'utf8');
+            const commentsData = JSON.parse(commentsContent);
+            const bookComments = commentsData?.[bookCode.toUpperCase()] || {};
+
+            Object.values(bookComments).forEach((chapterComments) => {
+              Object.values(chapterComments || {}).forEach((verseComments) => {
+                if (!Array.isArray(verseComments)) {
+                  return;
+                }
+
+                verseComments.forEach((comment) => {
+                  if (comment?.videoFileName) {
+                    commentVideoFiles.add(comment.videoFileName);
+                  }
+                });
+              });
+            });
+          } catch (err) {
+            if (err.code !== 'ENOENT') {
+              logger.warn('ImportPopUp.js', `Error reading comments file ${commentsFilePath}: ${err.message}`);
+            }
+          }
 
           await Promise.all(
             items.map(async (item) => {
               const itemPath = path.join(bookFolder, item);
               const itemStats = await fs.stat(itemPath).catch(() => null);
 
-              if (itemStats?.isDirectory()) {
-                await fs.rm(itemPath, { recursive: true, force: true });
-                logger.debug('ImportPopUp.js', `Deleted chapter folder: ${itemPath}`);
+              if (itemStats?.isDirectory() && /^\d+$/.test(item)) {
+                const chapterItems = await fs.readdir(itemPath);
+
+                await Promise.all(
+                  chapterItems.map(async (fileName) => {
+                    const filePath = path.join(itemPath, fileName);
+                    const fileStats = await fs.stat(filePath).catch(() => null);
+                    const isVideoFile = /\.(webm|mp4)$/i.test(fileName);
+                    const isCommentVideo = commentVideoFiles.has(fileName);
+
+                    if (fileStats?.isFile() && isVideoFile && !isCommentVideo) {
+                      await fs.unlink(filePath);
+                      logger.debug('ImportPopUp.js', `Deleted verse video file: ${filePath}`);
+                    }
+                  }),
+                );
+
+                const remainingItems = await fs.readdir(itemPath);
+                const hasCommentVideos = remainingItems.some((fileName) => commentVideoFiles.has(fileName));
+
+                if (!hasCommentVideos) {
+                  await fs.rm(itemPath, { recursive: true, force: true });
+                  logger.debug('ImportPopUp.js', `Deleted empty chapter folder: ${itemPath}`);
+                }
               }
             }),
           );
@@ -73,7 +120,7 @@ export const deleteVideoFiles = async (bookCodesToImport) => {
 
           logger.debug(
             'ImportPopUp.js',
-            `Successfully deleted all videos and JSON structure for ${bookCode.toUpperCase()}`,
+            `Successfully deleted verse videos and JSON structure for ${bookCode.toUpperCase()}`,
           );
         } catch (err) {
           logger.error(

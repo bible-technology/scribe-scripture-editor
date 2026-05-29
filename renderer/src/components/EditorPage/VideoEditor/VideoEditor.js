@@ -6,6 +6,7 @@ import { readFile } from '@/core/editor/readFile';
 import { isElectron } from '@/core/handleElectron';
 import { useState, useEffect, useContext } from 'react';
 import { useVerseJoining } from '@/hooks/video/useVerseJoining';
+import { mergeCommentsIntoVerses } from '@/hooks/video/videoCommentsUtils';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
 import { readRefMeta } from '@/core/reference/readRefMeta';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
@@ -79,6 +80,7 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
     const bookIdLower = bookId.toLowerCase();
     const bookIdUpper = bookId.toUpperCase();
     const bookFolder = path.join(projectsDir, 'video', 'ingredients', bookIdUpper);
+    const chapterFolder = path.join(bookFolder, chapter.toString());
     const structureFile = path.join(bookFolder, `${bookIdLower}.json`);
 
     if (fs.existsSync(structureFile)) {
@@ -90,11 +92,17 @@ const loadVerseStructureFromFile = (projectsDir, bookId, chapter) => {
         && allStructure[bookIdUpper][chapterKey]
         && allStructure[bookIdUpper][chapterKey].verses) {
         const normalizedVerses = normalizeVerseData(allStructure[bookIdUpper][chapterKey].verses);
+        const versesWithComments = mergeCommentsIntoVerses(
+          normalizedVerses,
+          chapterFolder,
+          bookId,
+          chapter,
+        );
 
         logger.debug(`Loaded verse structure from ${bookIdLower}.json for chapter ${chapterKey}`);
         return {
           success: true,
-          verses: normalizedVerses,
+          verses: versesWithComments,
           source: `${bookIdLower}.json`,
         };
       }
@@ -315,6 +323,11 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
     }
 
     const videoFiles = fs.readdirSync(videoPath);
+    const commentVideoFiles = new Set(
+      verses.flatMap((verse) => (verse.comments || [])
+        .map((comment) => comment.videoFileName)
+        .filter(Boolean)),
+    );
     logger.debug('Scanning for video files:', {
       videoPath,
       fileCount: videoFiles.length,
@@ -327,6 +340,11 @@ const attachVideosToVerses = (verses, videoPath, chapter) => {
     let skippedCount = 0;
 
     videoFiles.forEach((fileName) => {
+      if (commentVideoFiles.has(fileName)) {
+        logger.debug(`Skipping comment video file: ${fileName}`);
+        return;
+      }
+
       const parsed = path.parse(fileName);
       const parts = parsed.name.split('_');
 
@@ -585,6 +603,8 @@ const VideoEditor = ({ editor }) => {
       }
     } else if (model.action === 'joinVerse' || model.action === 'disjoinVerse') {
       executePendingOperation();
+    } else if (model.action === 'custom') {
+      model.actionData?.callback?.();
     }
     modelClose();
   };
@@ -701,6 +721,13 @@ const VideoEditor = ({ editor }) => {
                       }
                     }
                   }
+                  finalVerses = mergeCommentsIntoVerses(
+                    finalVerses,
+                    chapterFolder,
+                    bookId,
+                    chapter,
+                  );
+
                   setOriginalBookContent(bookContent);
 
                   logger.debug('Starting video attachment process...');
