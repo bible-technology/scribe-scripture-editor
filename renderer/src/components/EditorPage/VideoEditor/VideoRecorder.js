@@ -17,7 +17,7 @@ import {
   ArrowsPointingOutIcon,
   ArrowsPointingInIcon,
   ChatBubbleLeftEllipsisIcon,
-  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
 
 import { useCamera } from '@/hooks/video/useCamera';
@@ -729,7 +729,7 @@ const VideoRecorder = ({
                     {isImporting ? (
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
                     ) : (
-                      <ArrowUpTrayIcon className="w-5 h-5" />
+                      <ArrowDownTrayIcon className="w-5 h-5" />
                     )}
                   </button>
                 </div>
