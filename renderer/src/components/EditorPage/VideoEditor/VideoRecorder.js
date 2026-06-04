@@ -614,7 +614,7 @@ const VideoRecorder = ({
                   )}
                 </button>
 
-                <div className="flex items-center gap-8">
+                <div className="flex items-center gap-4">
                   <button
                     type="button"
                     onClick={handlePreviousVerse}
