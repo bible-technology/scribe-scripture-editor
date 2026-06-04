@@ -17,7 +17,11 @@ const VerseContextMenu = ({
 }) => {
   const { t } = useTranslation();
 
-  if (!visible) {
+  const hasMenuItems = (!isFirstVerse && !isJoinedVerse)
+  || isJoinedVerse
+  || canOpenComments;
+
+  if (!visible || !hasMenuItems) {
     return null;
   }
 
