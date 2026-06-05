@@ -68,7 +68,7 @@ const ProjectContextProvider = ({ children }) => {
     setLicenseList((advanceSettings.copyright).push({
       id: 'Other', title: 'Custom', licence: '', locked: false,
     }));
-    setLanguages([advanceSettings.languages]);
+    setLanguages([...staticLangJson]);
     const json = {
       version: environment.AG_USER_SETTING_VERSION,
       history: {
@@ -166,7 +166,7 @@ const ProjectContextProvider = ({ children }) => {
             : advanceSettings.canonSpecification);
           // concat static and custom languages
           const langFilter = await concatLanguages(json, staticLangJson);
-          const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang.trim() !== '');
+          const filteredLang = langFilter.concatedLang.filter((lang) => lang?.ang?.trim() !== '');
           setLanguages([...filteredLang]);
           setCustomLanguages(langFilter.userlanguages);
         } else {
