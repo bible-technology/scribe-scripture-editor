@@ -90,7 +90,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "vipinpaul",
+        "owner": "bible-technology",
         "repo": "scribe-scripture-editor"
       }
     ]
