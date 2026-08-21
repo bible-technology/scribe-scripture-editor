@@ -98,8 +98,10 @@ jobs:
             CI: false
             NODE_OPTIONS: --max-old-space-size=4096
         strategy:
+            fail-fast: false
             matrix:
                 node-version: [18.20.3]
+                arch: [x64, arm64]
 
         steps:
             - uses: actions/checkout@v2
@@ -135,13 +137,17 @@ jobs:
             - name: yarn install
               run: yarn install
 
+            - name: rebuild native modules for target arch
+              run: |
+                  npx electron-rebuild --arch=${{ matrix.arch }}
+
             - name: install dmg-license
               run: yarn add dmg-license
 
             - name: package
               id: package
               run: |
-                  yarn dist
+                  yarn build && npx electron-builder -p never --mac --${{ matrix.arch }}
 
             - name: Cleanup artifacts
               run: |
@@ -149,6 +155,6 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: Scribe-Mac-${{ github.run_id }}-${{ github.sha }}
-                path: dist
-                overwrite: true
+                  name: Scribe-Mac-${{ matrix.arch }}-${{ github.run_id }}-${{ github.sha }}
+                  path: dist
+                  overwrite: true
