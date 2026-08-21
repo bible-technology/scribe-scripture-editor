@@ -64,15 +64,11 @@
     },
     "mac": {
       "category": "public.app-category.Utilities",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": ["x64", "arm64"]
-        }
-      ],
+      "target": "dmg",
       "icon": "styles/scribe.icns",
       "type": "distribution",
       "minimumSystemVersion": "10.15",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
       "hardenedRuntime": false,
       "gatekeeperAssess": false
     },
