@@ -500,12 +500,19 @@ const VideoEditor = ({ editor }) => {
     try {
       const fs = window.require('fs');
       const path = require('path');
-      const filePath = path.join(videoPath, videoFileName);
-
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        logger.debug('Video file deleted:', filePath);
+      if (videoFileName) {
+        const filePath = path.join(videoPath, videoFileName);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          logger.debug('Video file deleted:', filePath);
+        }
       }
+      ['webm', 'mp4'].forEach((ext) => {
+        const p = path.join(videoPath, `${chapter}_${verseNumber}.${ext}`);
+        if (fs.existsSync(p)) {
+          fs.unlinkSync(p);
+        }
+      });
 
       const updatedContent = videoContent.map((item) => {
         if (item.verseNumber === verseNumber) {
@@ -564,16 +571,27 @@ const VideoEditor = ({ editor }) => {
   };
 
   const handleModalConfirm = () => {
+    const fs = window.require('fs');
+    const path = window.require('path');
+
     if (model.action === 'deleteVideo') {
       executeDeleteVideo(model.actionData.verseNumber, model.actionData.videoFileName);
     } else if (model.action === 'deleteVideoFromRecorder') {
       try {
-        const fs = window.require('fs');
         const { filePath, verse: verseNum } = model.actionData;
 
-        if (fs.existsSync(filePath)) {
+        if (filePath && fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
           logger.debug('Video deleted from recorder:', filePath);
+        }
+
+        if (verseNum) {
+          ['webm', 'mp4'].forEach((ext) => {
+            const p = path.join(videoPath, `${chapter}_${verseNum}.${ext}`);
+            if (fs.existsSync(p)) {
+              fs.unlinkSync(p);
+            }
+          });
         }
 
         const updatedContent = videoContent.map((item) => {
@@ -605,10 +623,17 @@ const VideoEditor = ({ editor }) => {
       }
     } else if (model.action === 'reRecordVideo') {
       try {
-        const fs = window.require('fs');
-        if (fs.existsSync(model.actionData.filePath)) {
+        if (model.actionData.filePath && fs.existsSync(model.actionData.filePath)) {
           fs.unlinkSync(model.actionData.filePath);
           logger.debug('Deleted existing video for re-recording');
+        }
+        if (model.actionData.verseNumber) {
+          ['webm', 'mp4'].forEach((ext) => {
+            const p = path.join(videoPath, `${chapter}_${model.actionData.verseNumber}.${ext}`);
+            if (fs.existsSync(p)) {
+              fs.unlinkSync(p);
+            }
+          });
         }
       } catch (err) {
         setNotify('failure');

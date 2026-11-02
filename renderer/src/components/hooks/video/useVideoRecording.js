@@ -31,17 +31,30 @@ export const useVideoRecording = ({
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const filename = fileNameOverride || `${chapter}_${verse}.webm`;
-      filePath = path.join(projectPath, filename);
+      const resolvedFilename = fileNameOverride
+        ? `${path.parse(fileNameOverride).name}.webm`
+        : `${chapter}_${verse}.webm`;
+      filePath = path.join(projectPath, resolvedFilename);
+
+      if (fileNameOverride && fileNameOverride !== resolvedFilename) {
+        const oldFile = path.join(projectPath, fileNameOverride);
+        if (fs.existsSync(oldFile)) {
+          try {
+            fs.unlinkSync(oldFile);
+          } catch (delErr) {
+            logger.warn('Could not remove previous mp4 video:', delErr);
+          }
+        }
+      }
 
       if (fileNameOverride && fs.existsSync(filePath)) {
         tempPath = path.join(
           projectPath,
-          `.${filename}.${Date.now()}.tmp`,
+          `.${resolvedFilename}.${Date.now()}.tmp`,
         );
         backupPath = path.join(
           projectPath,
-          `.${filename}.${Date.now()}.backup`,
+          `.${resolvedFilename}.${Date.now()}.backup`,
         );
 
         fs.writeFileSync(tempPath, buffer);
@@ -53,6 +66,16 @@ export const useVideoRecording = ({
           logger.warn('Could not remove previous video backup:', cleanupErr);
         }
       } else {
+        if (!fileNameOverride) {
+          const altPath = path.join(projectPath, `${chapter}_${verse}.mp4`);
+          if (fs.existsSync(altPath) && altPath !== filePath) {
+            try {
+              fs.unlinkSync(altPath);
+            } catch (cleanupErr) {
+              logger.warn('Could not remove previous mp4 video:', cleanupErr);
+            }
+          }
+        }
         fs.writeFileSync(filePath, buffer);
       }
 
@@ -61,7 +84,7 @@ export const useVideoRecording = ({
           verse,
           chapter,
           filePath,
-          filename,
+          filename: resolvedFilename,
           buffer,
         });
       }
@@ -93,12 +116,18 @@ export const useVideoRecording = ({
     }
 
     try {
-      const filename = fileNameOverride || `${chapter}_${verse}.webm`;
-      const filePath = path.join(projectPath, filename);
-
-      if (!fileNameOverride && fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        logger.debug('Deleted existing video for re-recording');
+      if (!fileNameOverride) {
+        ['webm', 'mp4'].forEach((ext) => {
+          const p = path.join(projectPath, `${chapter}_${verse}.${ext}`);
+          if (fs.existsSync(p)) {
+            try {
+              fs.unlinkSync(p);
+              logger.debug(`Deleted existing video (${ext}) for re-recording`);
+            } catch (delErr) {
+              logger.warn(`Could not delete existing video (${ext}):`, delErr);
+            }
+          }
+        });
       }
 
       const options = {

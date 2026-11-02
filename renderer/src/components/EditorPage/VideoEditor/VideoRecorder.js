@@ -27,6 +27,7 @@ import { useErrorHandler } from '@/hooks/video/useErrorHandler';
 import { useVideoPlayback } from '@/hooks/video/useVideoPlayback';
 import { useVideoRecording } from '@/hooks/video/useVideoRecording';
 import { useVideoThumbnail } from '@/hooks/video/useVideoThumbnail';
+import * as logger from '../../../logger';
 
 const getNextVerseNumber = (currentVerse, content) => {
   const currentIndex = content.findIndex((v) => v.verseNumber === currentVerse);
@@ -79,11 +80,49 @@ const VideoRecorder = ({
   const fs = window.require('fs');
   const path = window.require('path');
 
-  const hasVideo = fileNameOverride
-    ? fs.existsSync(path.join(projectPath, fileNameOverride))
-    : ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
-  const videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
-  const filename = fileNameOverride || (videoExt ? `${chapter}_${verse}.${videoExt}` : `${chapter}_${verse}.webm`);
+  const hasVideo = (() => {
+    if (fileNameOverride) {
+      if (fs.existsSync(path.join(projectPath, fileNameOverride))) {
+        return true;
+      }
+      const parsed = path.parse(fileNameOverride);
+      const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+      return fs.existsSync(path.join(projectPath, `${parsed.name}${altExt}`));
+    }
+    return ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+  })();
+
+  const videoExt = (() => {
+    if (fileNameOverride) {
+      if (fs.existsSync(path.join(projectPath, fileNameOverride))) {
+        return path.extname(fileNameOverride).replace('.', '').toLowerCase();
+      }
+      const parsed = path.parse(fileNameOverride);
+      const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+      if (fs.existsSync(path.join(projectPath, `${parsed.name}${altExt}`))) {
+        return altExt.replace('.', '');
+      }
+      return path.extname(fileNameOverride).replace('.', '').toLowerCase();
+    }
+    return ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+  })();
+
+  const filename = (() => {
+    if (fileNameOverride) {
+      if (fs.existsSync(path.join(projectPath, fileNameOverride))) {
+        return fileNameOverride;
+      }
+      const parsed = path.parse(fileNameOverride);
+      const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+      const altName = `${parsed.name}${altExt}`;
+      if (fs.existsSync(path.join(projectPath, altName))) {
+        return altName;
+      }
+      return fileNameOverride;
+    }
+    return videoExt ? `${chapter}_${verse}.${videoExt}` : `${chapter}_${verse}.webm`;
+  })();
+
   const filePath = path.join(projectPath, filename);
 
   const { error, setError, clearError } = useErrorHandler();
@@ -190,9 +229,17 @@ const VideoRecorder = ({
   const { showCameraMenu, setShowCameraMenu, cameraMenuRef } = useCameraMenu();
 
   useEffect(() => {
-    const videoExists = fileNameOverride
-      ? fs.existsSync(path.join(projectPath, fileNameOverride))
-      : ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+    const videoExists = (() => {
+      if (fileNameOverride) {
+        if (fs.existsSync(path.join(projectPath, fileNameOverride))) {
+          return true;
+        }
+        const parsed = path.parse(fileNameOverride);
+        const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+        return fs.existsSync(path.join(projectPath, `${parsed.name}${altExt}`));
+      }
+      return ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+    })();
     let nextMode = 'record';
     if (fileNameOverride) {
       nextMode = mode;
@@ -291,20 +338,45 @@ const VideoRecorder = ({
     const file = e.target.files?.[0];
     if (!file) { return; }
 
-    const supportedTypes = ['video/webm'];
-    const supportedExtensions = ['.webm'];
+    const supportedTypes = ['video/webm', 'video/mp4'];
+    const supportedExtensions = ['.webm', '.mp4'];
     const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 
     if (!supportedTypes.includes(file.type) && !supportedExtensions.includes(fileExtension)) {
-      setError('Unsupported file type. Please select a .webm video file.');
+      setError('Unsupported file type. Please select a .webm or .mp4 video file.');
       return;
     }
 
     try {
       setIsImporting(true);
 
-      const destFilename = fileNameOverride || `${chapter}_${verse}.webm`;
+      const isMp4 = fileExtension === '.mp4' || file.type === 'video/mp4';
+      const targetExt = isMp4 ? 'mp4' : 'webm';
+      const altExt = targetExt === 'mp4' ? 'webm' : 'mp4';
+
+      let destFilename;
+      if (fileNameOverride) {
+        const baseName = fileNameOverride.replace(/\.[^/.]+$/, '');
+        destFilename = `${baseName}.${targetExt}`;
+      } else {
+        destFilename = `${chapter}_${verse}.${targetExt}`;
+      }
       const destPath = path.join(projectPath, destFilename);
+
+      // Clean up existing file with alternate extension to prevent conflicts
+      const altFilename = fileNameOverride
+        ? `${fileNameOverride.replace(/\.[^/.]+$/, '')}.${altExt}`
+        : `${chapter}_${verse}.${altExt}`;
+      const altPath = path.join(projectPath, altFilename);
+
+      if (fs.existsSync(altPath) && altPath !== destPath) {
+        try {
+          fs.unlinkSync(altPath);
+          logger.debug('VideoRecorder.js', `Deleted alternate extension file: ${altPath}`);
+        } catch (cleanErr) {
+          logger.warn('VideoRecorder.js', `Could not delete alternate file: ${cleanErr.message}`);
+        }
+      }
 
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -328,7 +400,8 @@ const VideoRecorder = ({
 
       setTimeout(() => {
         if (videoPreviewRef.current) {
-          const blob = new Blob([buffer], { type: file.type || 'video/mp4' });
+          const mimeType = file.type || (targetExt === 'mp4' ? 'video/mp4' : 'video/webm');
+          const blob = new Blob([buffer], { type: mimeType });
           const objectUrl = URL.createObjectURL(blob);
 
           videoPreviewRef.current.pause();
@@ -364,7 +437,7 @@ const VideoRecorder = ({
       <input
         ref={importInputRef}
         type="file"
-        accept=".webm,video/webm"
+        accept=".webm,.mp4,video/webm,video/mp4"
         className="hidden"
         onChange={handleImportFileChange}
       />

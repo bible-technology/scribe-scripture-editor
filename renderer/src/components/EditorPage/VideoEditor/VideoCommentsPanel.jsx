@@ -108,7 +108,9 @@ const VideoCommentsPanel = ({
         }
 
         const buffer = fs.readFileSync(fullPath);
-        nextUrls[comment.id] = URL.createObjectURL(new Blob([buffer], { type: 'video/webm' }));
+        const ext = path.extname(comment.videoFileName || '').toLowerCase();
+        const mimeType = ext === '.mp4' ? 'video/mp4' : 'video/webm';
+        nextUrls[comment.id] = URL.createObjectURL(new Blob([buffer], { type: mimeType }));
       } catch (err) {
         logger.error('Error loading comment video:', err);
       }
@@ -265,8 +267,16 @@ const VideoCommentsPanel = ({
       const path = window.require('path');
       const filePath = path.join(videoPath, comment.videoFileName);
 
-      if (comment.videoFileName && fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+      if (comment.videoFileName) {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+        const parsed = path.parse(comment.videoFileName);
+        const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+        const altPath = path.join(videoPath, `${parsed.name}${altExt}`);
+        if (fs.existsSync(altPath)) {
+          fs.unlinkSync(altPath);
+        }
       }
 
       const hasText = Boolean((comment.note || '').trim());
