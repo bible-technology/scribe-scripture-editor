@@ -24,16 +24,34 @@ export const useVideoPlayback = ({
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
-      const videoExt = fileNameOverride
-        ? path.extname(fileNameOverride).replace('.', '')
-        : ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+      let videoExt;
+      let filename;
 
-      if (!videoExt) {
-        onError('Video file not found');
-        return;
+      if (fileNameOverride) {
+        if (fs.existsSync(path.join(projectPath, fileNameOverride))) {
+          filename = fileNameOverride;
+          videoExt = path.extname(fileNameOverride).replace('.', '').toLowerCase();
+        } else {
+          const parsed = path.parse(fileNameOverride);
+          const altExt = parsed.ext.toLowerCase() === '.mp4' ? '.webm' : '.mp4';
+          const altName = `${parsed.name}${altExt}`;
+          if (fs.existsSync(path.join(projectPath, altName))) {
+            filename = altName;
+            videoExt = altExt.replace('.', '');
+          } else {
+            filename = fileNameOverride;
+            videoExt = path.extname(fileNameOverride).replace('.', '').toLowerCase();
+          }
+        }
+      } else {
+        videoExt = ['webm', 'mp4'].find((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
+        if (!videoExt) {
+          onError('Video file not found');
+          return;
+        }
+        filename = `${chapter}_${verse}.${videoExt}`;
       }
 
-      const filename = fileNameOverride || `${chapter}_${verse}.${videoExt}`;
       const fullPath = path.join(projectPath, filename);
 
       try {
