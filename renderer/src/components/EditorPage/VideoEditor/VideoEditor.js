@@ -571,11 +571,13 @@ const VideoEditor = ({ editor }) => {
   };
 
   const handleModalConfirm = () => {
+    const fs = window.require('fs');
+    const path = window.require('path');
+
     if (model.action === 'deleteVideo') {
       executeDeleteVideo(model.actionData.verseNumber, model.actionData.videoFileName);
     } else if (model.action === 'deleteVideoFromRecorder') {
       try {
-        const fs = window.require('fs');
         const { filePath, verse: verseNum } = model.actionData;
 
         if (filePath && fs.existsSync(filePath)) {
@@ -621,7 +623,6 @@ const VideoEditor = ({ editor }) => {
       }
     } else if (model.action === 'reRecordVideo') {
       try {
-        const fs = window.require('fs');
         if (model.actionData.filePath && fs.existsSync(model.actionData.filePath)) {
           fs.unlinkSync(model.actionData.filePath);
           logger.debug('Deleted existing video for re-recording');

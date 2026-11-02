@@ -116,11 +116,6 @@ export const useVideoRecording = ({
     }
 
     try {
-      const resolvedFilename = fileNameOverride
-        ? `${path.parse(fileNameOverride).name}.webm`
-        : `${chapter}_${verse}.webm`;
-      const filePath = path.join(projectPath, resolvedFilename);
-
       if (!fileNameOverride) {
         ['webm', 'mp4'].forEach((ext) => {
           const p = path.join(projectPath, `${chapter}_${verse}.${ext}`);
