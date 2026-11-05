@@ -126,6 +126,15 @@ export const useVideoPlayback = ({
           onError('Failed to load video file');
         };
       }, 50);
+
+      return () => {
+        if (videoPreviewRef.current) {
+          const video = videoPreviewRef.current;
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        }
+      };
     }
   }, [currentMode, hasVideo, verse, chapter, projectPath, fileNameOverride]);
 

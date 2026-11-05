@@ -162,6 +162,10 @@ export const useCamera = ({
       mounted = false;
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+      if (videoPreviewRef?.current) {
+        videoPreviewRef.current.srcObject = null;
       }
     };
   }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter, videoPreviewRef, onError, clearError]);

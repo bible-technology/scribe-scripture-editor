@@ -135,6 +135,11 @@ const getParsedUsfmBook = (usfmPath) => {
   const jsonOutput = myUsfmParser.toJSON();
   const bookContent = jsonOutput.chapters;
 
+  if (parsedUsfmCache.size >= 2) {
+    const oldestKey = parsedUsfmCache.keys().next().value;
+    parsedUsfmCache.delete(oldestKey);
+  }
+
   parsedUsfmCache.set(usfmPath, {
     mtimeMs: stat.mtimeMs,
     size: stat.size,

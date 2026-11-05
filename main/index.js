@@ -19,6 +19,12 @@ function isDev() {
   return process.argv[2] == '--dev';
 }
 
+// Memory optimization switches
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=1024');
+app.commandLine.appendSwitch('disk-cache-size', '104857600');
+app.commandLine.appendSwitch('media-cache-size', '104857600');
+app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
+
 const CACHE_DIR = path.join(app.getPath('userData'), 'video-cache');
 
 if (!fs.existsSync(CACHE_DIR)) {
@@ -175,9 +181,11 @@ async function createWindow() {
         slashes: true,
       });
 
-  // useful line of code to debug puppet with the console in the app
-  // app.commandLine.appendSwitch('remote-debugging-port', '8000');
-  app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
+  mainWindow.on('minimize', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      session.defaultSession.clearCache().catch(() => {});
+    }
+  });
 
   // Chrome for puppeteer is verified/installed on-demand via 'get-browser-path'
   mainWindow.loadURL(url);
