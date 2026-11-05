@@ -179,11 +179,7 @@ async function createWindow() {
   // app.commandLine.appendSwitch('remote-debugging-port', '8000');
   app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
 
-  verifyAndInstallChrome('121.0.6167.85')
-  .catch(err => {
-    console.error(`Failed to verify or install Chrome: ${err.message}`);
-  });
-
+  // Chrome for puppeteer is verified/installed on-demand via 'get-browser-path'
   mainWindow.loadURL(url);
   autoUpdater.checkForUpdatesAndNotify();
 }

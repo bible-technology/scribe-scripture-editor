@@ -93,6 +93,7 @@ const VideoCommentsPanel = ({
 
     const fs = window.require('fs');
     const path = window.require('path');
+    const url = window.require('url');
     const nextUrls = {};
 
     comments.forEach((comment) => {
@@ -107,10 +108,8 @@ const VideoCommentsPanel = ({
           return;
         }
 
-        const buffer = fs.readFileSync(fullPath);
-        const ext = path.extname(comment.videoFileName || '').toLowerCase();
-        const mimeType = ext === '.mp4' ? 'video/mp4' : 'video/webm';
-        nextUrls[comment.id] = URL.createObjectURL(new Blob([buffer], { type: mimeType }));
+        const videoUrl = url.pathToFileURL ? url.pathToFileURL(fullPath).href : `file://${fullPath}`;
+        nextUrls[comment.id] = videoUrl;
       } catch (err) {
         logger.error('Error loading comment video:', err);
       }
@@ -119,7 +118,11 @@ const VideoCommentsPanel = ({
     setCommentVideoUrls(nextUrls);
 
     return () => {
-      Object.values(nextUrls).forEach((url) => URL.revokeObjectURL(url));
+      Object.values(nextUrls).forEach((videoUrl) => {
+        if (typeof videoUrl === 'string' && videoUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(videoUrl);
+        }
+      });
     };
   }, [open, videoPath, comments]);
 

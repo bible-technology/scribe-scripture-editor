@@ -104,7 +104,7 @@ export const exportVideoNormal = async (
 
     const gitPath = path.join(exportPath, '.git');
     if (fs.existsSync(gitPath)) {
-      await fs.rmdirSync(gitPath, { recursive: true });
+      await fse.remove(gitPath);
     }
 
     setTotalExported(3);
@@ -113,9 +113,12 @@ export const exportVideoNormal = async (
       const AdmZip = window.require('adm-zip');
       const zip = new AdmZip();
       zip.addLocalFolder(exportPath);
-      zip.writeZip(path.join(folderPath, `${project.name}.zip`));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      await zip.writeZipPromise(path.join(folderPath, `${project.name}.zip`));
 
-      await fs.rmdirSync(exportPath, { recursive: true });
+      await fse.remove(exportPath);
     }
 
     resetExportProgress();
@@ -214,7 +217,7 @@ export const exportVideoSynchronized = async (
 
     const gitPath = path.join(exportPath, '.git');
     if (fs.existsSync(gitPath)) {
-      await fs.rmdirSync(gitPath, { recursive: true });
+      await fse.remove(gitPath);
     }
     setTotalExported(5);
 
@@ -222,9 +225,12 @@ export const exportVideoSynchronized = async (
       const AdmZip = window.require('adm-zip');
       const zip = new AdmZip();
       zip.addLocalFolder(exportPath);
-      zip.writeZip(path.join(folderPath, `${project.name}.zip`));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      await zip.writeZipPromise(path.join(folderPath, `${project.name}.zip`));
 
-      await fs.rmdirSync(exportPath, { recursive: true });
+      await fse.remove(exportPath);
     }
     setTotalExported(6);
 

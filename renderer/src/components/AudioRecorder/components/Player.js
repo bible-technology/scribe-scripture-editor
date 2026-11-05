@@ -68,11 +68,12 @@ const Player = ({
   useEffect(() => {
     let intervalId;
     if (isRunning) {
-      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
-      intervalId = setInterval(() => setTime(time + 1), 10);
+      intervalId = setInterval(() => {
+        setTime((prev) => prev + 5);
+      }, 50);
     }
     return () => clearInterval(intervalId);
-  }, [isRunning, time]);
+  }, [isRunning]);
 
   // Update recording status based on trigger
   useEffect(() => {

@@ -21,6 +21,7 @@ export const useVideoPlayback = ({
 
   const fs = window.require('fs');
   const path = window.require('path');
+  const url = window.require('url');
 
   useEffect(() => {
     if (currentMode === 'view' && hasVideo && videoPreviewRef.current) {
@@ -74,12 +75,9 @@ export const useVideoPlayback = ({
         return;
       }
 
-      const buffer = fs.readFileSync(fullPath);
-      const mimeType = videoExt === 'mp4' ? 'video/mp4' : 'video/webm';
-      const blob = new Blob([buffer], { type: mimeType });
-      const videoPath = URL.createObjectURL(blob);
+      const videoPath = url.pathToFileURL ? url.pathToFileURL(fullPath).href : `file://${fullPath}`;
 
-      logger.debug('Loading video from Blob URL:', videoPath);
+      logger.debug('Loading video from native file URL:', videoPath);
 
       setIsPlaying(false);
       setPlaybackTime(0);
