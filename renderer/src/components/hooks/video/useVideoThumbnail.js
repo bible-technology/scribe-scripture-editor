@@ -23,6 +23,9 @@ export const useVideoThumbnail = ({ currentMode, hasVideo, videoPreviewRef }) =>
 
     return () => {
       if (thumbnailVideoRef.current) {
+        thumbnailVideoRef.current.pause();
+        thumbnailVideoRef.current.removeAttribute('src');
+        thumbnailVideoRef.current.load();
         thumbnailVideoRef.current.remove();
         thumbnailVideoRef.current = null;
       }
@@ -94,6 +97,9 @@ export const useVideoThumbnail = ({ currentMode, hasVideo, videoPreviewRef }) =>
     if (thumbnailCanvasRef.current) {
       const ctx = thumbnailCanvasRef.current.getContext('2d');
       ctx?.clearRect(0, 0, thumbnailCanvasRef.current.width, thumbnailCanvasRef.current.height);
+      thumbnailCanvasRef.current.width = 0;
+      thumbnailCanvasRef.current.height = 0;
+      thumbnailCanvasRef.current = null;
     }
   }, []);
 

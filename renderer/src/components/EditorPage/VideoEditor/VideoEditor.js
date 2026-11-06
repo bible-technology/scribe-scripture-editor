@@ -8,7 +8,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useVerseJoining } from '@/hooks/video/useVerseJoining';
 import { mergeCommentsIntoVerses } from '@/hooks/video/videoCommentsUtils';
 import EmptyScreen from '@/components/Loading/EmptySrceen';
-import { readRefMeta } from '@/core/reference/readRefMeta';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { readRefBurrito } from '@/core/reference/readRefBurrito';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
@@ -135,6 +134,11 @@ const getParsedUsfmBook = (usfmPath) => {
   const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
   const jsonOutput = myUsfmParser.toJSON();
   const bookContent = jsonOutput.chapters;
+
+  if (parsedUsfmCache.size >= 2) {
+    const oldestKey = parsedUsfmCache.keys().next().value;
+    parsedUsfmCache.delete(oldestKey);
+  }
 
   parsedUsfmCache.set(usfmPath, {
     mtimeMs: stat.mtimeMs,
@@ -661,16 +665,7 @@ const VideoEditor = ({ editor }) => {
         projectName, username, projectsDir, metaPath,
       }) => {
         try {
-          const refs = await readRefMeta({ projectsDir });
-
-          const results = await Promise.all(
-            refs.map(async () => {
-              const data = await readRefBurrito({ metaPath });
-              return data;
-            }),
-          );
-
-          const validData = results.find((data) => data);
+          const validData = await readRefBurrito({ metaPath });
 
           if (validData) {
             const _data = JSON.parse(validData);

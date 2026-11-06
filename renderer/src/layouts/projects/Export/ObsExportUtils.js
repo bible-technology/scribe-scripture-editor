@@ -179,10 +179,13 @@ export const exportObsComplete = async (metadata, folder, pathModule, fs, Export
       });
 
       const zipPath = pathModule.join(ingredientsDir, 'obs_internal_audio.zip');
-      zip.writeZip(zipPath);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      await zip.writeZipPromise(zipPath);
       logger.debug('ObsExportUtils.js', 'Audio zip file created successfully');
 
-      const zipContent = fs.readFileSync(zipPath, 'utf8');
+      const zipContent = fs.readFileSync(zipPath);
       const zipStats = fs.statSync(zipPath);
       burrito.ingredients[pathModule.join('ingredients', 'obs_internal_audio.zip')] = {
         checksum: { md5: md5(zipContent) },

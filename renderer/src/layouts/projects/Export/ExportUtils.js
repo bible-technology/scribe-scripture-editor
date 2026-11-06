@@ -158,7 +158,7 @@ const writeAndUpdateBurritoDefaultExport = async (audio, path, mp3ExportPath, fs
   await fse.copy(audio, path.join(folderPath, project.name, mp3ExportPath))
     .then(async () => {
       logger.debug('ExportProjectUtils.js', 'Creating the ingredients.');
-      const content = fs.readFileSync(path.join(folderPath, project.name, mp3ExportPath), 'utf8');
+      const content = fs.readFileSync(path.join(folderPath, project.name, mp3ExportPath));
       const stats = fs.statSync(path.join(folderPath, project.name, mp3ExportPath));
       burrito.ingredients[mp3ExportPath] = {
         checksum: {
@@ -190,7 +190,10 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
   directories.forEach((sourceDir) => {
     zip.addLocalFolder(path.join(folder, 'audio', 'ingredients', sourceDir), sourceDir);
   });
-  zip.writeZip(path.join(dir, 'ag_internal_audio.zip'));
+  await new Promise((resolve) => {
+    setTimeout(resolve, 50);
+  });
+  await zip.writeZipPromise(path.join(dir, 'ag_internal_audio.zip'));
   logger.debug('ExportProjectUtils.js', 'write zip completed');
   ExportActions.setTotalExported((curr) => curr + 1);
 
@@ -343,13 +346,11 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
   } else if (ExportStates.audioExport === 'chapter') {
     await exportChapterAudio(defaultAudio, burrito, fs, path, folder, ExportStates.folderPath, ExportStates.project, ExportActions);
   }
-  // We need to execute these loop before going to next line so 'for' is used instead of 'forEach'
-  // eslint-disable-next-line no-restricted-syntax
-  for (const file of otherFiles) {
+  await Promise.all(otherFiles.map(async (file) => {
     const filePath = file.split(/[\/\\]ingredients[\/\\]/)[1];
-    fse.copySync(file, path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', filePath));
+    await fse.copy(file, path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients', filePath));
     ExportActions.setTotalExported((curr) => curr + 1);
-  }
+  }));
   // Wants to export the TEXT along with the project so not updating the file path
   if (!ExportStates.checkText) {
     const renames = Object.keys(burrito.ingredients).filter((key) => key.includes('audio'));
@@ -361,9 +362,9 @@ export const exportDefaultAudio = async (metadata, folder, path, fs, ExportActio
   await fs.writeFileSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'metadata.json'), JSON.stringify(burrito));
   if (ExportStates.checkText && fs.existsSync(path.join(folder, 'text-1'))) {
     ExportActions.setTotalExported((prev) => prev + 1);
-    await fse.copySync(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), path.join(ExportStates.folderPath, ExportStates.project.name, 'audio', 'ingredients'));
-    await fse.copySync(path.join(folder, 'text-1'), path.join(ExportStates.folderPath, ExportStates.project.name, 'text-1'));
-    await fs.rmSync(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), { recursive: true, force: true });
+    await fse.copy(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'), path.join(ExportStates.folderPath, ExportStates.project.name, 'audio', 'ingredients'));
+    await fse.copy(path.join(folder, 'text-1'), path.join(ExportStates.folderPath, ExportStates.project.name, 'text-1'));
+    await fse.remove(path.join(ExportStates.folderPath, ExportStates.project.name, 'ingredients'));
 
     await updateUSFMFromJSON(
       folder,

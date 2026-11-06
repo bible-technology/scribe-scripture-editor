@@ -33,6 +33,7 @@ const AudioWaveForm = ((props, ref) => {
 
   const waveformRef = useRef(null);
   const wavesurfer = useRef(null);
+  const lastLoadedUrlRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [isRecordingPaused, setIsRecordingPaused] = useState(false);
   const [currentMode, setCurrentMode] = useState('empty'); // 'empty', 'audio', 'recording'
@@ -200,8 +201,12 @@ const AudioWaveForm = ((props, ref) => {
   // Handle URL changes - this is crucial for post-recording playback
   useEffect(() => {
     if (url && currentMode !== 'recording') {
-      createForm(url);
+      if (lastLoadedUrlRef.current !== url) {
+        lastLoadedUrlRef.current = url;
+        createForm(url);
+      }
     } else if (!url && currentMode !== 'recording') {
+      lastLoadedUrlRef.current = null;
       createEmptyForm();
     }
   }, [url, currentMode]);

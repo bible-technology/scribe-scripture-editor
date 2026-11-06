@@ -86,13 +86,10 @@ export default function ExportProjectPopUp(props) {
   };
 
   const deleteGitAfterCopy = async (fs, destinationPath, path) => {
-    const folders = await fs.readdirSync(destinationPath);
-    if (folders.includes('.git')) {
-      await fs.rmdirSync(path.join(destinationPath, '.git'), { recursive: true }, async (err) => {
-        if (err) {
-          throw new Error(`Remove Git failed :  ${err}`);
-        }
-      });
+    const fse = window.require('fs-extra');
+    const gitDir = path.join(destinationPath, '.git');
+    if (fs.existsSync(gitDir)) {
+      await fse.remove(gitDir);
     }
   };
 
@@ -119,13 +116,12 @@ export default function ExportProjectPopUp(props) {
                 const AdmZip = window.require('adm-zip');
                 const zip = new AdmZip();
                 zip.addLocalFolder(path.join(folderPath, project.name));
-                zip.writeZip(path.join(folderPath, `${project.name}.zip`));
-                // delete folder
-                await fs.rmdirSync(path.join(folderPath, project.name), { recursive: true }, async (err) => {
-                  if (err) {
-                    throw new Error(`Remove Org Exported Dir failed :  ${err}`);
-                  }
+                await new Promise((resolve) => {
+                  setTimeout(resolve, 50);
                 });
+                await zip.writeZipPromise(path.join(folderPath, `${project.name}.zip`));
+                // delete folder
+                await fse.remove(path.join(folderPath, project.name));
               }
               resetExportProgress(); // reset export states
               logger.debug('ExportProjectPopUp.js', 'Exported Successfully');

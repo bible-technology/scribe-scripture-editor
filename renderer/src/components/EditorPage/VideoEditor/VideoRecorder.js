@@ -66,17 +66,6 @@ const VideoRecorder = ({
   onOpenComments,
   showCommentsButton = false,
 }) => {
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
-  const [selectedCamera, setSelectedCamera] = useState(null);
-  const [existingVideo, setExistingVideo] = useState(false);
-  const [currentMode, setCurrentMode] = useState(mode);
-  const [isImporting, setIsImporting] = useState(false);
-
-  const videoPreviewRef = useRef(null);
-  const containerRef = useRef(null);
-  const seekBarRef = useRef(null);
-  const importInputRef = useRef(null);
-
   const fs = window.require('fs');
   const path = window.require('path');
 
@@ -91,6 +80,27 @@ const VideoRecorder = ({
     }
     return ['webm', 'mp4'].some((ext) => fs.existsSync(path.join(projectPath, `${chapter}_${verse}.${ext}`)));
   })();
+
+  const initialMode = (() => {
+    if (fileNameOverride) {
+      return mode;
+    }
+    if (hasVideo && !disableExistingVideoCheck) {
+      return 'view';
+    }
+    return mode;
+  })();
+
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [selectedCamera, setSelectedCamera] = useState(null);
+  const [existingVideo, setExistingVideo] = useState(hasVideo);
+  const [currentMode, setCurrentMode] = useState(initialMode);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const videoPreviewRef = useRef(null);
+  const containerRef = useRef(null);
+  const seekBarRef = useRef(null);
+  const importInputRef = useRef(null);
 
   const videoExt = (() => {
     if (fileNameOverride) {

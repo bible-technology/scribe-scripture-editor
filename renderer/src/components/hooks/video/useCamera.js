@@ -18,36 +18,28 @@ const getCameraErrorMessage = (err) => {
   }
 };
 
-const getPreferredCamera = async () => {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-
-    if (videoDevices.length === 0) {
-      throw new Error('No camera devices found');
-    }
-
-    const builtInKeywords = ['integrated', 'built-in', 'webcam', 'facetime'];
-    const usbCamera = videoDevices.find((device) => device.label.toLowerCase().includes('usb'));
-
-    if (usbCamera) {
-      return usbCamera.deviceId;
-    }
-
-    const externalCamera = videoDevices.find((device) => {
-      const label = device.label.toLowerCase();
-      return !builtInKeywords.some((keyword) => label.includes(keyword));
-    });
-
-    if (externalCamera) {
-      return externalCamera.deviceId;
-    }
-
-    return videoDevices[0].deviceId;
-  } catch (err) {
-    logger.error('Error enumerating devices:', err);
+const getPreferredCamera = (videoDevices = []) => {
+  if (!videoDevices || videoDevices.length === 0) {
     return null;
   }
+
+  const builtInKeywords = ['integrated', 'built-in', 'webcam', 'facetime'];
+  const usbCamera = videoDevices.find((device) => device.label && device.label.toLowerCase().includes('usb'));
+
+  if (usbCamera) {
+    return usbCamera.deviceId;
+  }
+
+  const externalCamera = videoDevices.find((device) => {
+    const label = (device.label || '').toLowerCase();
+    return !builtInKeywords.some((keyword) => label.includes(keyword));
+  });
+
+  if (externalCamera) {
+    return externalCamera.deviceId;
+  }
+
+  return videoDevices[0].deviceId;
 };
 
 export const useCamera = ({
@@ -78,30 +70,24 @@ export const useCamera = ({
       }
 
       try {
-        const tempStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        tempStream.getTracks().forEach((track) => track.stop());
-
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cams = devices.filter((d) => d.kind === 'videoinput');
         if (mounted) {
           setVideoDevices(cams);
         }
 
-        const targetCameraId = selectedCamera || (await getPreferredCamera());
+        const targetCameraId = selectedCamera || getPreferredCamera(cams);
         const constraints = {
           video: targetCameraId
             ? {
               deviceId: { exact: targetCameraId },
-              width: { ideal: 1920 },
-              height: { ideal: 1080 },
+              width: { ideal: 1280, max: 1920 },
+              height: { ideal: 720, max: 1080 },
               frameRate: { ideal: 30 },
             }
             : {
-              width: { ideal: 1920 },
-              height: { ideal: 1080 },
+              width: { ideal: 1280, max: 1920 },
+              height: { ideal: 720, max: 1080 },
               frameRate: { ideal: 30 },
             },
           audio: isAudioEnabled,
@@ -116,11 +102,22 @@ export const useCamera = ({
 
         streamRef.current = stream;
 
+        // Update device labels now that camera permission/stream is active
+        try {
+          const activeDevices = await navigator.mediaDevices.enumerateDevices();
+          const activeCams = activeDevices.filter((d) => d.kind === 'videoinput');
+          if (mounted && activeCams.length > 0) {
+            setVideoDevices(activeCams);
+          }
+        } catch (enumErr) {
+          logger.debug('Could not re-enumerate camera devices:', enumErr);
+        }
+
         if (videoPreviewRef.current) {
           videoPreviewRef.current.srcObject = stream;
           videoPreviewRef.current.onloadedmetadata = () => {
             if (mounted) {
-              videoPreviewRef.current.play();
+              videoPreviewRef.current.play().catch(() => {});
               setCameraReady(true);
 
               const videoTrack = stream.getVideoTracks()[0];
@@ -165,6 +162,10 @@ export const useCamera = ({
       mounted = false;
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+      if (videoPreviewRef?.current) {
+        videoPreviewRef.current.srcObject = null;
       }
     };
   }, [isAudioEnabled, currentMode, selectedCamera, verse, chapter, videoPreviewRef, onError, clearError]);

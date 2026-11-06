@@ -7,13 +7,19 @@ export const readRefBurrito = async ({
   const fs = window.require('fs');
   const path = require('path');
   return new Promise((resolve) => {
-    if (fs.existsSync(metaPath)) {
-      const fileContent = fs.readFileSync(
-        path.join(metaPath),
-        'utf8',
-      );
-      logger.debug('readIngreadients.js', 'Returning the metadata (burrito)');
-      resolve((fileContent));
+    try {
+      if (fs.existsSync(metaPath)) {
+        const fileContent = fs.readFileSync(
+          path.join(metaPath),
+          'utf8',
+        );
+        logger.debug('readIngreadients.js', 'Returning the metadata (burrito)');
+        resolve(fileContent);
+        return;
+      }
+    } catch (err) {
+      logger.error('readRefBurrito.js', 'Error reading burrito:', err);
     }
+    resolve(null);
   });
 };

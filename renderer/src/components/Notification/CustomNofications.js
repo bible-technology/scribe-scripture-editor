@@ -20,17 +20,24 @@ const CustomNofications = () => {
   } = useContext(AutographaContext);
 
   useEffect(() => {
+    let lastLength = -1;
+    let lastUnread = -1;
+
     const fetchNotifications = () => {
       localforage.getItem('notification').then((value) => {
         const notificationList = value || [];
-        setNotification(notificationList);
         const unread = notificationList.filter((n) => !n.isRead).length;
-        setActiveNotificationCount(unread);
+        if (notificationList.length !== lastLength || unread !== lastUnread) {
+          lastLength = notificationList.length;
+          lastUnread = unread;
+          setNotification(notificationList);
+          setActiveNotificationCount(unread);
+        }
       });
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 3000);
+    const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
   }, [setActiveNotificationCount]);
 
