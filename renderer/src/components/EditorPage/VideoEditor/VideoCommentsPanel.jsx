@@ -281,6 +281,7 @@ const VideoCommentsPanel = ({
         if (fs.existsSync(altPath)) {
           fs.unlinkSync(altPath);
         }
+        syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
       }
 
       const hasText = Boolean((comment.note || '').trim());
@@ -307,17 +308,14 @@ const VideoCommentsPanel = ({
   };
 
   const handleDeleteText = (comment) => {
-    const path = window.require('path');
-
     if (comment.username !== currentUser) {
       return;
     }
+
     if (!comment.videoFileName) {
       saveComments(comments.filter((item) => item.id !== comment.id));
       return;
     }
-
-    syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
 
     saveComments(comments.map((item) => (
       item.id === comment.id

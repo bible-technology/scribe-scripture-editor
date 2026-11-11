@@ -424,14 +424,14 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           // eslint-disable-next-line prefer-const
           let setting = settings;
           setting.version = environment.AG_SETTING_VERSION;
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].scriptDirection = settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection ? settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection : '';
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].starred = settings.project[metadata.type.flavorType.flavor.name]?.starred ? settings.project[metadata.type.flavorType.flavor.name]?.starred : false;
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].isArchived = settings.project[metadata.type.flavorType.flavor.name]?.isArchived ? settings.project[metadata.type.flavorType.flavor.name]?.isArchived : false;
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].versification = settings.project[metadata.type.flavorType.flavor.name]?.versification ? settings.project[metadata.type.flavorType.flavor.name]?.versification : 'ENG';
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].description = settings.project[metadata.type.flavorType.flavor.name]?.description ? settings.project[metadata.type.flavorType.flavor.name]?.description : '';
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].copyright = settings.project[metadata.type.flavorType.flavor.name]?.copyright ? settings.project[metadata.type.flavorType.flavor.name]?.copyright : { title: 'Custom' };
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].refResources = settings.project[metadata.type.flavorType.flavor.name]?.refResources ? settings.project[metadata.type.flavorType.flavor.name]?.refResources : [];
-          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].bookMarks = settings.project[metadata.type.flavorType.flavor.name]?.bookMarks ? settings.project[metadata.type.flavorType.flavor.name]?.bookMarks : [];
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].scriptDirection = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.scriptDirection ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.scriptDirection : '';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].starred = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.starred ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.starred : false;
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].isArchived = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.isArchived ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.isArchived : false;
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].versification = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.versification ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.versification : 'ENG';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].description = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.description ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.description : '';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].copyright = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.copyright ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.copyright : { title: 'Custom' };
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].refResources = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.refResources ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.refResources : [];
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].bookMarks = settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.bookMarks ? settings.project[flavorKey(metadata.type.flavorType.flavor.name)]?.bookMarks : [];
           // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
           if (!setting.sync && !setting.sync?.services) {
             setting.sync = { services: { door43: [] } };

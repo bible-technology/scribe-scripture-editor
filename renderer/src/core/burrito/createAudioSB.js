@@ -48,6 +48,10 @@ const createAudioSB = (
     json.languages[0].scriptDirection = direction?.toLowerCase();
     json.identification.name.en = projectFields.projectName;
     json.identification.abbreviation.en = projectFields.abbreviation;
+    const description = typeof projectFields.description === 'string' ? projectFields.description.trim() : '';
+    if (description) {
+      json.identification.description = { en: description };
+    }
     json.languages[0].name.en = language;
     // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
     json.idAuthorities.scribe.id = 'http://www.scribe.bible';

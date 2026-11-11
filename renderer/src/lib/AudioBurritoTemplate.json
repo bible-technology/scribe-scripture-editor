@@ -27,9 +27,6 @@
 		"name": {
 			"en": ""
 		},
-		"description": {
-			"en": ""
-		},
 		"abbreviation": {
 			"en": ""
 		}
@@ -65,17 +62,6 @@
 		}
 	},
 	"confidential": false,
-	"agencies": [
-		{}
-	],
-	"targetAreas": [
-		{
-			"code": "",
-			"name": {
-				"en": ""
-			}
-		}
-	],
 	"localizedNames": {
 		"GEN": {
 			"short": {

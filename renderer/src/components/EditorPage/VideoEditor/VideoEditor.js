@@ -518,6 +518,7 @@ const VideoEditor = ({ editor }) => {
           fs.unlinkSync(p);
         }
       });
+      syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
 
       const updatedContent = videoContent.map((item) => {
         if (item.verseNumber === verseNumber) {

@@ -222,7 +222,7 @@ export const exportFullAudio = async (metadata, folder, path, fs, ExportActions,
       delete burrito.ingredients[rename];
     }
   });
-  const content = fs.readFileSync(path.join(dir, 'ag_internal_audio.zip'), 'utf8');
+  const content = fs.readFileSync(path.join(dir, 'ag_internal_audio.zip'));
   const stats = fs.statSync(path.join(dir, 'ag_internal_audio.zip'));
   burrito.ingredients['audio/ingredients/ag_internal_audio.zip'] = {
     checksum: {

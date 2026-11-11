@@ -20,18 +20,13 @@ module.exports = {
     'renderer',
   ],
   moduleNameMapper: {
-    '\.(css|less)$': '<rootDir>/__mocks__/styleMock.js',
-    '\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
-    '^canvas$': '<rootDir>/__mocks__/canvasMock.js',
-    'canvas': '<rootDir>/__mocks__/canvasMock.js',
+    '\\.(css|less)$': '<rootDir>/__mocks__/styleMock.js',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
     '@core/(.*)$': '<rootDir>/renderer/src/core/$1',
     '@components/(.*)$': '<rootDir>/renderer/src/components/$1',
     '@modules/(.*)$': '<rootDir>/renderer/src/modules/$1',
     '@layouts/(.*)$': '<rootDir>/renderer/src/layouts/$1',
   },
-  setupFiles: [
-    '<rootDir>/jest.setup.js',
-  ],
   setupFilesAfterEnv: [
     '<rootDir>/testconfig/setupTests.js',
   ],
@@ -46,7 +41,6 @@ module.exports = {
     '/testconfig/',
     '/coverage/',
   ],
-  testEnvironment: 'node',
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
   },

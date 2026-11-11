@@ -91,7 +91,7 @@ export async function saveSettingsResourceHistory(
                       setOpenResourceR1(false);
                       setOpenResourceR2(true);
                     }
-                    resources.project[resources.type.flavorType.flavor.name].refResources[historyColumn] = {
+                    resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources[historyColumn] = {
                       1: {
                         resouceId: referenceToUse?.selectedResource,
                         language: referenceToUse?.languageId,

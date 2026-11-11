@@ -101,7 +101,7 @@ export const createAudioVersification = (
         const settingsJson = JSON.stringify(settings);
         await fs.writeFileSync(path.join(folder, environment.PROJECT_SETTING_FILE), settingsJson);
         const stat = fs.statSync(path.join(folder, environment.PROJECT_SETTING_FILE));
-        ingredients[`video/ingredients/${environment.PROJECT_SETTING_FILE}`] = {
+        ingredients[path.join('audio', 'ingredients', environment.PROJECT_SETTING_FILE)] = {
           checksum: {
             md5: md5(settingsJson),
           },

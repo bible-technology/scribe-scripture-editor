@@ -1,4 +1,4 @@
-// syncVideoIngredients is imported for compatibility but not currently used in this file
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import * as logger from '../../../logger';
 
 const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
@@ -100,6 +100,8 @@ export const exportVideoNormal = async (
     const fse = window.require('fs-extra');
     const exportPath = path.join(folderPath, project.name);
 
+    // Make metadata.json list every take with its real checksum before it is copied.
+    await syncVideoIngredients(folder, { rehashAll: true });
     await fse.copy(folder, exportPath);
     setTotalExported(2);
 
@@ -160,6 +162,8 @@ export const exportVideoSynchronized = async (
     const fse = window.require('fs-extra');
     const exportPath = path.join(folderPath, project.name);
 
+    // Make metadata.json list every take with its real checksum before it is copied.
+    await syncVideoIngredients(folder, { rehashAll: true });
     await fse.copy(folder, exportPath);
     setTotalExported(2);
 
