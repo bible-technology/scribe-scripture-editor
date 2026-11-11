@@ -5,11 +5,11 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import { Modal, Button, Input } from '@mui/material';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectContext } from '@/components/context/ProjectContext';
-import { flavorKey } from '../../core/burrito/flavors';
 import { AutographaContext } from '@/components/context/AutographaContext';
-import { useTranslation } from 'react-i18next';
+import { ProjectContext } from '@/components/context/ProjectContext';
 import { generate } from 'random-words';
+import { useTranslation } from 'react-i18next';
+import { flavorKey } from '../../core/burrito/flavors';
 import {
   TextOnlyTooltip,
   StyledSwitch,

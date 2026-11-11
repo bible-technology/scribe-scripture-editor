@@ -7,7 +7,7 @@ import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import { factoryCreateSB } from '@/util/factoryCreateSB';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
-import { flavorKey } from '../../core/burrito/flavors';
+import { flavorKey } from '../burrito/flavors';
 import packageInfo from '../../../../package.json';
 
 const bookAvailable = (list, id) => list.some((obj) => obj === id);

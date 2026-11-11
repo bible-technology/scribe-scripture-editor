@@ -2,7 +2,7 @@ import localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
-import { flavorKey } from '../../core/burrito/flavors';
+import { flavorKey } from '../burrito/flavors';
 import packageInfo from '../../../../package.json';
 
 export const updateAgSettings = async (username, projectName, data, font, fontSize = 1) => {

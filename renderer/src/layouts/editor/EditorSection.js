@@ -1,16 +1,16 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
+import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
+import { useTranslation } from 'react-i18next';
 import { ProjectContext } from '@/components/context/ProjectContext';
-import { flavorKey } from '../../core/burrito/flavors';
 import ResourcesPopUp from '@/components/Resources/ResourcesPopUp';
 import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
 import TwNavigation from '@/components/EditorPage/Reference/TW/TwNavigation';
 import { getScriptureDirection } from '@/core/projects/languageUtil';
-import MenuDropdown from '@/components/MenuDropdown/MenuDropdown';
+import { flavorKey } from '../../core/burrito/flavors';
 import AdjustmentsVerticalIcon from '@/icons/Common/AdjustmentsVertical.svg';
 import XMarkIcon from '@/icons/Common/XMark.svg';
 import SquaresPlusIcon from '@/icons/Common/SquaresPlus.svg';
