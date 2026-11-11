@@ -3,6 +3,7 @@ import {
 } from 'react';
 import GridRow from '../GridRow';
 import { SyncContext } from '../../context/SyncContext';
+import { flavorKey } from '../../core/burrito/flavors';
 
 export default function ProjectFileBrowser() {
   const {
@@ -35,8 +36,8 @@ export default function ProjectFileBrowser() {
   return (
     agProjectsMeta?.map((projectMeta) => (
       // not listing audio project in sync list
-      agProjects.filter((project) => projectMeta?.identification?.name?.en === project && projectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation'
-      && !projectMeta?.project[projectMeta?.type?.flavorType?.flavor?.name]?.isArchived).length > 0
+      agProjects.filter((project) => projectMeta?.identification?.name?.en === project && flavorKey(projectMeta?.type?.flavorType?.flavor?.name) !== 'audioTranslation'
+      && !projectMeta?.project[flavorKey(projectMeta?.type?.flavorType?.flavor?.name)]?.isArchived).length > 0
       && (
         <div
           // key={projectMeta?.identification?.name?.en}

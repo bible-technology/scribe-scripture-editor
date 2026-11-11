@@ -7,6 +7,7 @@
 import moment from 'moment';
 import { v5 as uuidv5 } from 'uuid';
 import * as localForage from 'localforage';
+import { flavorKey } from '@/core/burrito/flavors';
 import Textburrito from '../../../lib/BurritoTemplate.json';
 import OBSburrito from '../../../lib/OBSTemplete.json';
 import languageCode from '../../../lib/LanguageCode.json';
@@ -132,7 +133,7 @@ export const generateAgSettings = async (metaData, currentResourceMeta, selectRe
     const settings = {
       version: environment.AG_SETTING_VERSION,
       project: {
-        [metaData.type.flavorType.flavor.name]: {
+        [flavorKey(metaData.type.flavorType.flavor.name)]: {
           scriptDirection: currentResourceMeta?.dublin_core?.language?.direction,
           starred: false,
           description: currentResourceMeta?.dublin_core?.description,

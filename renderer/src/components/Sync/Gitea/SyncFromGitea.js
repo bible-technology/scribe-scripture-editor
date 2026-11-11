@@ -43,6 +43,9 @@ export async function downloadFromGitea(repo, auth, setSyncProgress, notifyStatu
       const success = await validate('metadata', 'gitea/metadata.json', JSON.stringify(metaDataSB), metaDataSB.meta.version);
       const flavorName = metaDataSB.type?.flavorType?.flavor?.name;
       // if success proceed else raise error
+      // Projects written before Scribe emitted the Burrito video flavor still carry 'videoTranslation'
+      // and never validated. They are accepted as they are and upgraded when next saved. Projects
+      // with 'signLanguageVideoTranslation' must validate.
       if (success || flavorName === 'videoTranslation') {
         logger.debug('SyncFromGitea.js', 'in SyncFromGiea : metaData SB validated');
         // setProjectData

@@ -2,6 +2,7 @@ import localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import { saveReferenceResource } from '../projects/updateAgSettings';
 import * as logger from '../../logger';
+import { flavorKey } from '../burrito/flavors';
 
 export async function saveSettingsResourceHistory(
   sectionNum,
@@ -43,15 +44,15 @@ export async function saveSettingsResourceHistory(
             Object?.entries(_value).forEach(
               ([, resources]) => {
                 if (resources.identification.name.en === _projectname[0]) {
-                  refsHistory.push(resources.project[resources.type.flavorType.flavor.name].refResources);
+                  refsHistory.push(resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources);
                   if (sectionNum === 1 || sectionNum === 0) {
                     logger.debug('SaveSettingsResourceHistory.js', 'section for remove both rows of C0 or C1');
                     if (openResourceR1 && openResourceR2) {
                     // works when all rows CxR0, CxR1 remove
                       if (sectionPlaceholderNum === '1') {
-                        resources.project[resources.type.flavorType.flavor.name].refResources.splice(0, 1);
+                        resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources.splice(0, 1);
                       } else if (sectionPlaceholderNum === '2') {
-                        resources.project[resources.type.flavorType.flavor.name].refResources.splice(1, 1);
+                        resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources.splice(1, 1);
                       }
                     }
                   }
@@ -107,7 +108,7 @@ export async function saveSettingsResourceHistory(
                   // works when both row open, set object of 2 items
                     logger.debug('SaveSettingsResourceHistory.js', 'section both rows of C0 or C1');
                     if (referenceColumnData1.refName !== undefined) {
-                      resources.project[resources.type.flavorType.flavor.name].refResources[historyColumn] = {
+                      resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources[historyColumn] = {
                         1: {
                           resouceId: referenceColumnData1?.selectedResource,
                           language: referenceColumnData1?.languageId,
@@ -132,7 +133,7 @@ export async function saveSettingsResourceHistory(
                     }
                   }
                   if (sectionPlaceholderNum === '2' && layout === 0 && openResourceR1 && openResourceR2) {
-                    resources.project[resources.type.flavorType.flavor.name].refResources = [];
+                    resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources = [];
                   }
                 }
               },

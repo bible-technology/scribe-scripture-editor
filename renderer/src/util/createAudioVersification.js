@@ -39,11 +39,12 @@ export const createAudioVersification = (
           fs.mkdirSync(folder, { recursive: true });
         }
         logger.debug('createAudioVersification.js', 'Creating versification.json file in ingredients');
-        await fs.writeFileSync(path.join(folder, 'versification.json'), JSON.stringify(file));
+        const versificationJson = JSON.stringify(file);
+        await fs.writeFileSync(path.join(folder, 'versification.json'), versificationJson);
         const stats = fs.statSync(path.join(folder, 'versification.json'));
         ingredients[path.join('audio', 'ingredients', 'versification.json')] = {
           checksum: {
-            md5: md5(file),
+            md5: md5(versificationJson),
           },
           mimeType: 'application/json',
           size: stats.size,
@@ -57,7 +58,7 @@ export const createAudioVersification = (
           const copyrightStats = fs.statSync(path.join(folder, 'license.md'));
           ingredients[path.join('audio', 'ingredients', 'license.md')] = {
             checksum: {
-              md5: md5(file),
+              md5: md5(copyright.licence),
             },
             mimeType: 'text/md',
             size: copyrightStats.size,
@@ -97,11 +98,12 @@ export const createAudioVersification = (
           settings.sync = currentBurrito?.sync;
         }
         logger.debug('createAudioVersification.js', `Creating ${environment.PROJECT_SETTING_FILE} file in ingredients`);
-        await fs.writeFileSync(path.join(folder, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
+        const settingsJson = JSON.stringify(settings);
+        await fs.writeFileSync(path.join(folder, environment.PROJECT_SETTING_FILE), settingsJson);
         const stat = fs.statSync(path.join(folder, environment.PROJECT_SETTING_FILE));
-        ingredients[path.join('audio', 'ingredients', environment.PROJECT_SETTING_FILE)] = {
+        ingredients[`video/ingredients/${environment.PROJECT_SETTING_FILE}`] = {
           checksum: {
-            md5: md5(settings),
+            md5: md5(settingsJson),
           },
           mimeType: 'application/json',
           size: stat.size,

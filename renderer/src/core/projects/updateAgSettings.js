@@ -2,6 +2,7 @@ import localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
+import { flavorKey } from '../../core/burrito/flavors';
 import packageInfo from '../../../../package.json';
 
 export const updateAgSettings = async (username, projectName, data, font, fontSize = 1) => {
@@ -20,18 +21,18 @@ export const updateAgSettings = async (username, projectName, data, font, fontSi
     } else {
       setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
     }
-    if (!setting.project[data.type.flavorType.flavor.name].font) {
-      setting.project[data.type.flavorType.flavor.name].font = font || '';
+    if (!setting.project[flavorKey(data.type.flavorType.flavor.name)].font) {
+      setting.project[flavorKey(data.type.flavorType.flavor.name)].font = font || '';
     }
-    if (!setting.project[data.type.flavorType.flavor.name].fontSize) {
-      setting.project[data.type.flavorType.flavor.name].fontSize = fontSize || 1;
+    if (!setting.project[flavorKey(data.type.flavorType.flavor.name)].fontSize) {
+      setting.project[flavorKey(data.type.flavorType.flavor.name)].fontSize = fontSize || 1;
     }
   }
-  const savedFont = JSON.stringify(setting.project[data.type.flavorType.flavor.name].font);
-  const savedFontSize = JSON.stringify(setting.project[data.type.flavorType.flavor.name].fontSize);
-  setting.project[data.type.flavorType.flavor.name] = data.project[data.type.flavorType.flavor.name];
-  setting.project[data.type.flavorType.flavor.name].font = font || JSON.parse(savedFont);
-  setting.project[data.type.flavorType.flavor.name].fontSize = fontSize || JSON.parse(savedFontSize);
+  const savedFont = JSON.stringify(setting.project[flavorKey(data.type.flavorType.flavor.name)].font);
+  const savedFontSize = JSON.stringify(setting.project[flavorKey(data.type.flavorType.flavor.name)].fontSize);
+  setting.project[flavorKey(data.type.flavorType.flavor.name)] = data.project[flavorKey(data.type.flavorType.flavor.name)];
+  setting.project[flavorKey(data.type.flavorType.flavor.name)].font = font || JSON.parse(savedFont);
+  setting.project[flavorKey(data.type.flavorType.flavor.name)].fontSize = fontSize || JSON.parse(savedFontSize);
   logger.debug('updateAgSettings.js', `Updating the ${environment.PROJECT_SETTING_FILE}`);
   await fs.writeFileSync(folder, JSON.stringify(setting));
 };
@@ -79,7 +80,7 @@ export const saveNavigationHistory = async (bookId, chapter, verse) => {
       Object.entries(_value).forEach(([/* key */, resources]) => {
         if (resources.identification.name.en === _projectname[0]) {
           // Get the flavor type
-          flavorType = resources.type.flavorType.flavor.name;
+          flavorType = flavorKey(resources.type.flavorType.flavor.name);
 
           // Update projectmeta with navigationHistory based on flavor type
           if (flavorType === 'textTranslation') {

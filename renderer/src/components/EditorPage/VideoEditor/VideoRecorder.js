@@ -27,6 +27,7 @@ import { useErrorHandler } from '@/hooks/video/useErrorHandler';
 import { useVideoPlayback } from '@/hooks/video/useVideoPlayback';
 import { useVideoRecording } from '@/hooks/video/useVideoRecording';
 import { useVideoThumbnail } from '@/hooks/video/useVideoThumbnail';
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import * as logger from '../../../logger';
 
 const getNextVerseNumber = (currentVerse, content) => {
@@ -391,6 +392,8 @@ const VideoRecorder = ({
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       fs.writeFileSync(destPath, buffer);
+
+      await syncVideoIngredients(path.resolve(projectPath, '..', '..', '..', '..'), { changedFile: destPath });
 
       if (onRecordingComplete) {
         onRecordingComplete({

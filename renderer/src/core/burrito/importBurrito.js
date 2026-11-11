@@ -7,6 +7,7 @@ import * as logger from '../../logger';
 import { validate } from '../../util/validate';
 import packageInfo from '../../../../package.json';
 import { environment } from '../../../environment';
+import { flavorKey } from './flavors';
 import { updateVersion } from './updateTranslationSB';
 import { checkAndAddLanguageToCustom } from '../projects/languageUtil';
 
@@ -129,6 +130,10 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       sb = JSON.stringify(metadata);
     }
     const success = await validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
+    // after validate burrito for other than Audio
+    // Projects written before Scribe emitted the Burrito video flavor still carry 'videoTranslation'
+    // and never validated. They are accepted as they are and upgraded when next saved. Projects
+    // with 'signLanguageVideoTranslation' must validate.
     const flavorName = metadata.type?.flavorType?.flavor?.name;
     if (success || flavorName === 'audioTranslation' || flavorName === 'videoTranslation') {
       logger.debug('importBurrito.js', 'Burrito file validated successfully or Audio/Video Project');
@@ -136,7 +141,7 @@ export const viewBurrito = async (filePath, currentUser, resource) => {
       logger.debug('importBurrito.js', 'Burrito file validated successfully');
       result.projectName = metadata.identification?.name?.en;
       result.version = metadata.meta.version;
-      result.burritoType = `${metadata.type?.flavorType?.name} / ${metadata.type?.flavorType?.flavor?.name}`;
+      result.burritoType = `${metadata.type?.flavorType?.name} / ${flavorKey(metadata.type?.flavorType?.flavor?.name)}`;
       result.ingredients = Object.keys(metadata.ingredients).map((key) => key);
       result.ingredientsObj = metadata.ingredients;
       result.primaryKey = metadata.identification.primary;
@@ -229,7 +234,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
     let sb = fs.readFileSync(path.join(filePath, 'metadata.json'));
     let metadata = JSON.parse(sb);
     // check if its an audio import and not the import burrito is for chapter level export
-    if (metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
+    if (flavorKey(metadata.type?.flavorType?.flavor?.name) === 'audioTranslation') {
       const chapterLevel = await checkTheProjectIsAudioChapterLevel(metadata);
       if (chapterLevel) {
         logger.error('importBurrito.js', 'Import not supported for chapter level audio projects');
@@ -246,6 +251,9 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
     }
     const success = validate('metadata', path.join(filePath, 'metadata.json'), sb, metadata.meta.version);
     // after validate burrito for other than Audio
+    // Projects written before Scribe emitted the Burrito video flavor still carry 'videoTranslation'
+    // and never validated. They are accepted as they are and upgraded when next saved. Projects
+    // with 'signLanguageVideoTranslation' must validate.
     const flavorName = metadata.type?.flavorType?.flavor?.name;
     if (success || flavorName === 'audioTranslation' || flavorName === 'videoTranslation') {
       logger.debug('importBurrito.js', 'Burrito file validated successfully or Audio/Video Project');
@@ -338,7 +346,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       let audioDir;
       // Checking the Flavor, because the Audio project should have 'audio' folder
       // Check whether the selected project has 'audio' folder or not
-      if (metadata.type?.flavorType?.flavor?.name === 'audioTranslation' && !fs.existsSync(path.join(filePath, 'audio'))) {
+      if (flavorKey(metadata.type?.flavorType?.flavor?.name) === 'audioTranslation' && !fs.existsSync(path.join(filePath, 'audio'))) {
         audioDir = path.join(projectDir, `${projectName}_${id}`, 'audio');
       } else {
         audioDir = path.join(projectDir, `${projectName}_${id}`);
@@ -346,7 +354,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       }
       fs.mkdirSync(path.join(audioDir, dirName), { recursive: true });
       logger.debug('importBurrito.js', 'Creating a directory if not exists.');
-      if (metadata.type?.flavorType?.flavor?.name === 'videoTranslation') {
+      if (flavorKey(metadata.type?.flavorType?.flavor?.name) === 'videoTranslation') {
         const existingVideoDir = path.join(audioDir, 'video');
         if (fs.existsSync(existingVideoDir)) {
           await fse.remove(existingVideoDir);
@@ -382,7 +390,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
         const settings = {
           version: environment.AG_SETTING_VERSION,
           project: {
-            [metadata.type.flavorType.flavor.name]: {
+            [flavorKey(metadata.type.flavorType.flavor.name)]: {
               scriptDirection: 'LTR',
               starred: false,
               isArchived: false,
@@ -416,33 +424,33 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
           // eslint-disable-next-line prefer-const
           let setting = settings;
           setting.version = environment.AG_SETTING_VERSION;
-          setting.project[metadata.type.flavorType.flavor.name].scriptDirection = settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection ? settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection : '';
-          setting.project[metadata.type.flavorType.flavor.name].starred = settings.project[metadata.type.flavorType.flavor.name]?.starred ? settings.project[metadata.type.flavorType.flavor.name]?.starred : false;
-          setting.project[metadata.type.flavorType.flavor.name].isArchived = settings.project[metadata.type.flavorType.flavor.name]?.isArchived ? settings.project[metadata.type.flavorType.flavor.name]?.isArchived : false;
-          setting.project[metadata.type.flavorType.flavor.name].versification = settings.project[metadata.type.flavorType.flavor.name]?.versification ? settings.project[metadata.type.flavorType.flavor.name]?.versification : 'ENG';
-          setting.project[metadata.type.flavorType.flavor.name].description = settings.project[metadata.type.flavorType.flavor.name]?.description ? settings.project[metadata.type.flavorType.flavor.name]?.description : '';
-          setting.project[metadata.type.flavorType.flavor.name].copyright = settings.project[metadata.type.flavorType.flavor.name]?.copyright ? settings.project[metadata.type.flavorType.flavor.name]?.copyright : { title: 'Custom' };
-          setting.project[metadata.type.flavorType.flavor.name].refResources = settings.project[metadata.type.flavorType.flavor.name]?.refResources ? settings.project[metadata.type.flavorType.flavor.name]?.refResources : [];
-          setting.project[metadata.type.flavorType.flavor.name].bookMarks = settings.project[metadata.type.flavorType.flavor.name]?.bookMarks ? settings.project[metadata.type.flavorType.flavor.name]?.bookMarks : [];
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].scriptDirection = settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection ? settings.project[metadata.type.flavorType.flavor.name]?.scriptDirection : '';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].starred = settings.project[metadata.type.flavorType.flavor.name]?.starred ? settings.project[metadata.type.flavorType.flavor.name]?.starred : false;
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].isArchived = settings.project[metadata.type.flavorType.flavor.name]?.isArchived ? settings.project[metadata.type.flavorType.flavor.name]?.isArchived : false;
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].versification = settings.project[metadata.type.flavorType.flavor.name]?.versification ? settings.project[metadata.type.flavorType.flavor.name]?.versification : 'ENG';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].description = settings.project[metadata.type.flavorType.flavor.name]?.description ? settings.project[metadata.type.flavorType.flavor.name]?.description : '';
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].copyright = settings.project[metadata.type.flavorType.flavor.name]?.copyright ? settings.project[metadata.type.flavorType.flavor.name]?.copyright : { title: 'Custom' };
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].refResources = settings.project[metadata.type.flavorType.flavor.name]?.refResources ? settings.project[metadata.type.flavorType.flavor.name]?.refResources : [];
+          setting.project[flavorKey(metadata.type.flavorType.flavor.name)].bookMarks = settings.project[metadata.type.flavorType.flavor.name]?.bookMarks ? settings.project[metadata.type.flavorType.flavor.name]?.bookMarks : [];
           // setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
           if (!setting.sync && !setting.sync?.services) {
             setting.sync = { services: { door43: [] } };
           } else {
             setting.sync.services.door43 = setting?.sync?.services?.door43 ? setting?.sync?.services?.door43 : [];
           }
-          if (!setting.project[metadata.type.flavorType.flavor.name].font) {
-            setting.project[metadata.type.flavorType.flavor.name].font = '';
+          if (!setting.project[flavorKey(metadata.type.flavorType.flavor.name)].font) {
+            setting.project[flavorKey(metadata.type.flavorType.flavor.name)].font = '';
           } else {
-            setting.font = (setting.project[metadata.type.flavorType.flavor.name].font) ? (setting.project[metadata.type.flavorType.flavor.name].font) : '';
+            setting.font = (setting.project[flavorKey(metadata.type.flavorType.flavor.name)].font) ? (setting.project[flavorKey(metadata.type.flavorType.flavor.name)].font) : '';
           }
-          if (!setting.project[metadata.type.flavorType.flavor.name]?.fontSize) {
-            setting.project[metadata.type.flavorType.flavor.name].fontSize = 1;
+          if (!setting.project[flavorKey(metadata.type.flavorType.flavor.name)]?.fontSize) {
+            setting.project[flavorKey(metadata.type.flavorType.flavor.name)].fontSize = 1;
           } else {
-            setting.fontSize = (setting.project[metadata.type.flavorType.flavor.name]?.fontSize) ? (setting.project[metadata.type.flavorType.flavor.name].fontSize) : 1;
+            setting.fontSize = (setting.project[flavorKey(metadata.type.flavorType.flavor.name)]?.fontSize) ? (setting.project[flavorKey(metadata.type.flavorType.flavor.name)].fontSize) : 1;
           }
           settings = setting;
         }
-        settings.project[metadata.type.flavorType.flavor.name].lastSeen = moment().format();
+        settings.project[flavorKey(metadata.type.flavorType.flavor.name)].lastSeen = moment().format();
         await fs.writeFileSync(path.join(audioDir, dirName, environment.PROJECT_SETTING_FILE), JSON.stringify(settings));
       }
       if (metadata.copyright?.fullStatementPlain) {
@@ -469,7 +477,7 @@ const importBurrito = async (filePath, currentUser, updateBurritoVersion, concat
       }
       await fs.writeFileSync(path.join(projectDir, `${projectName}_${id}`, 'metadata.json'), JSON.stringify(metadata));
       logger.debug('importBurrito.js', 'Creating the metadata.json Burrito file.');
-      if (metadata.type?.flavorType?.flavor?.name === 'audioTranslation') {
+      if (flavorKey(metadata.type?.flavorType?.flavor?.name) === 'audioTranslation') {
         const proDir = path.join(projectDir, `${projectName}_${id}`);
         if (fs.existsSync(path.join(proDir, 'audio', 'metadata.json'))) {
           fs.unlinkSync(path.join(proDir, 'audio', 'metadata.json'));

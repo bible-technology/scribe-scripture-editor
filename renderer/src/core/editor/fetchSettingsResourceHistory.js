@@ -2,6 +2,7 @@ import localforage from 'localforage';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
 import isBackendProjectExist from '../projects/existProjectInBackEnd';
 import * as logger from '../../logger';
+import { flavorKey } from '../burrito/flavors';
 
 const checkResourceExist = async (ProjectDir) => {
   if (ProjectDir) {
@@ -69,7 +70,7 @@ export async function fetchSettingsResourceHistory(
               ([, resources]) => {
                 // idenitfying current project
                 if (resources.identification.name.en === _projectname[0]) {
-                  refsHistory.push(resources.project[resources.type.flavorType.flavor.name].refResources);
+                  refsHistory.push(resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources);
                 }
               },
             );

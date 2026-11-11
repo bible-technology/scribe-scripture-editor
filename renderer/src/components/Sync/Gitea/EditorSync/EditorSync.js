@@ -11,6 +11,7 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import PopUpModal from '../../PopUpModal';
 import * as logger from '../../../../logger';
+import { flavorKey } from '../../../../core/burrito/flavors';
 import CloudUploadIcon from '@/icons/basil/Outline/Files/Cloud-upload.svg';
 import CloudCheckIcon from '@/icons/basil/Solid/Files/Cloud-check.svg';
 import { ProgressCircle } from '../../../ProgressCircle';
@@ -178,7 +179,7 @@ function EditorSync({ selectedProject }) {
           {/* ------------------------------------ */}
           <div className="mt-3">
             {/* audio project no sync */}
-            {currentProjectMeta?.type?.flavorType?.flavor?.name === 'audioTranslation' ? (
+            {flavorKey(currentProjectMeta?.type?.flavorType?.flavor?.name) === 'audioTranslation' ? (
               <div className="mt-3">
                 <p className="px-2 text-sm">
                   Sorry, Currently Sync is not avaialbe for
@@ -267,7 +268,7 @@ function EditorSync({ selectedProject }) {
           {/* ------------------------------------ */}
           <div className="mt-4 ">
             <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              {usersList?.length !== 0 && currentProjectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation'
+              {usersList?.length !== 0 && flavorKey(currentProjectMeta?.type?.flavorType?.flavor?.name) !== 'audioTranslation'
                 ? (
                   <button
                     aria-label="confirm-sync"
@@ -278,7 +279,7 @@ function EditorSync({ selectedProject }) {
                     {t('label-sync')}
                   </button>
                 )
-                : currentProjectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation' && (
+                : flavorKey(currentProjectMeta?.type?.flavorType?.flavor?.name) !== 'audioTranslation' && (
                   <button
                     href="/sync"
                     type="button"

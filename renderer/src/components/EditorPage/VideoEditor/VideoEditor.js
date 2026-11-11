@@ -14,6 +14,7 @@ import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import VideoPlayer from '@/components/EditorPage/VideoEditor/VideoPlayer';
 
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import { getDetails } from '../ObsEditor/utils/getDetails';
 import * as logger from '../../../logger';
 
@@ -574,7 +575,7 @@ const VideoEditor = ({ editor }) => {
     }
   };
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     const fs = window.require('fs');
     const path = window.require('path');
 
@@ -597,6 +598,8 @@ const VideoEditor = ({ editor }) => {
             }
           });
         }
+
+        await syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
 
         const updatedContent = videoContent.map((item) => {
           if (item.verseNumber === verseNum.toString()) {
@@ -639,6 +642,8 @@ const VideoEditor = ({ editor }) => {
             }
           });
         }
+
+        await syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
       } catch (err) {
         setNotify('failure');
         setSnackText('Failed to delete existing video');

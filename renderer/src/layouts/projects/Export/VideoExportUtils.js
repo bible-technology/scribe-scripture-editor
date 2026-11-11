@@ -1,4 +1,5 @@
 import * as logger from '../../../logger';
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 
 const buildUpdatedUSFM = (originalUSFM, jsonChapterData, chapterNumber) => {
   try {

@@ -11,6 +11,7 @@ import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { useBibleReference } from '@/hooks/useBibleReference';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
+import { flavorKey } from '../../core/burrito/flavors';
 import packageInfo from '../../../../package.json';
 
 export const ReferenceContext = createContext();

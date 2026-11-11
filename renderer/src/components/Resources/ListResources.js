@@ -8,6 +8,7 @@ import CheckHelpsUpdatePopUp from '@/components/Resources/ResourceUtils/CheckHel
 import RemoveResource from '@/components/Resources/ResourceUtils/RemoveResource';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { flavorKey } from '@/core/burrito/flavors';
 import * as logger from '../../logger';
 import LoadingScreen from '../Loading/LoadingScreen';
 
@@ -169,7 +170,7 @@ export const ListResources = ({
       const dependentResource = (selectResource === 'twl' ? resources.find((r) => r.id === 'tw') : '');
       // filter for a resource OR an x-bcvnotes burrito
       // const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' || item?.value?.type?.flavorType?.flavor?.name === 'x-resourcelinks') || (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource)) : [];
-      const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (item?.value?.type?.flavorType?.flavor?.name === 'x-bcvnotes' && selectResource === 'tn') || ((item?.value?.type?.flavorType?.flavor?.name === 'x-imagedict' || item?.value?.type?.flavorType?.flavor?.name === 'x-videolinks') && selectResource === 'tir')) : [];
+      const offlineResource = subMenuItems ? subMenuItems.filter((item) => (item?.value?.agOffline && item?.value?.dublin_core?.identifier === selectResource) || (flavorKey(item?.value?.type?.flavorType?.flavor?.name) === 'x-bcvnotes' && selectResource === 'tn') || ((flavorKey(item?.value?.type?.flavorType?.flavor?.name) === 'x-imagedict' || flavorKey(item?.value?.type?.flavorType?.flavor?.name) === 'x-videolinks') && selectResource === 'tir')) : [];
 
       return { reference, offlineResource, dependentResource };
     };

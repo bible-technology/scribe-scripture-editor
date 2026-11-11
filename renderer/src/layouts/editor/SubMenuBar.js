@@ -8,6 +8,7 @@ import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import CustomNofications from '@/components/Notification/CustomNofications';
 import localforage from 'localforage';
+import { flavorKey } from '../../core/burrito/flavors';
 import EditorSync from '@/components/Sync/Gitea/EditorSync/EditorSync';
 // import useNetwork from '@/components/hooks/useNetowrk';
 // import Font from '@/icons/font.svg';
@@ -120,7 +121,7 @@ export default function SubMenuBar() {
         const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
         const data = fs.readFileSync(metaPath, 'utf-8');
         const metadata = JSON.parse(data);
-        setResourceType(metadata.type.flavorType.flavor.name);
+        setResourceType(flavorKey(metadata.type.flavorType.flavor.name));
       });
     });
   });
@@ -280,7 +281,7 @@ export default function SubMenuBar() {
             {/* <div className={`group ${menuStyles.saved}`} title={`Network status : ${networkState.online ? 'Online' : 'Offline' }`}>
               <WifiIcon className={`w-6 h-6 ${networkState.online ? 'fill-green-500' : 'fill-red-500'}`} />
             </div> */}
-            {selectedProjectMeta?.type?.flavorType?.flavor?.name !== 'audioTranslation' && (
+            {flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name) !== 'audioTranslation' && (
               // eslint-disable-next-line
               <div
                 aria-label="add-panels"

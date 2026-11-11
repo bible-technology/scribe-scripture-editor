@@ -1,3 +1,4 @@
+import { flavorKey } from '@/core/burrito/flavors';
 import localForage from 'localforage';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
@@ -55,7 +56,7 @@ export const readProjectScope = async (projectName) => {
         logger.debug('readProjectScope.js', `read metadata file successfully - ${projectName}`);
         const json = await JSON.parse(metadataFile);
 
-        const projectType = json?.type?.flavorType?.flavor?.name;
+        const projectType = flavorKey(json?.type?.flavorType?.flavor?.name);
         let ingredientsFolder = 'audio';
 
         if (projectType === 'videoTranslation') {

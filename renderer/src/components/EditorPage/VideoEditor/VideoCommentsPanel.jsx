@@ -15,6 +15,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { writeVerseComments } from '@/hooks/video/videoCommentsUtils';
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import VideoRecorder from './VideoRecorder';
 import * as logger from '../../../logger';
 
@@ -306,14 +307,17 @@ const VideoCommentsPanel = ({
   };
 
   const handleDeleteText = (comment) => {
+    const path = window.require('path');
+
     if (comment.username !== currentUser) {
       return;
     }
-
     if (!comment.videoFileName) {
       saveComments(comments.filter((item) => item.id !== comment.id));
       return;
     }
+
+    syncVideoIngredients(path.resolve(videoPath, '..', '..', '..', '..'));
 
     saveComments(comments.map((item) => (
       item.id === comment.id

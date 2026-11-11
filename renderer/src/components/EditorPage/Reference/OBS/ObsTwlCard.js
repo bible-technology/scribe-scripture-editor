@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { flavorKey } from '@/core/burrito/flavors';
 import LoadingScreen from '@/components/Loading/LoadingScreen';
 import { getObsTn } from './getObsTn';
 import ObsResourceCard from './ObsResourceCard';
@@ -43,7 +44,7 @@ function ObsTwlCard({
     },
   } = useContext(ProjectContext);
   useEffect(() => {
-    const flavor = selectedProjectMeta?.type?.flavorType?.flavor?.name;
+    const flavor = flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name);
     if (selectedStory && scrollLock === false) {
       const i = items.findIndex((e) => (e[0].name)?.toString().padStart(2, '0') === (selectedStory - 1)?.toString().padStart(2, '0'));
       if (i > -1) {
@@ -76,7 +77,7 @@ function ObsTwlCard({
   }, [index]);
   useEffect(() => {
     async function fetchData() {
-      const flavor = selectedProjectMeta?.type?.flavorType?.flavor?.name;
+      const flavor = flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name);
       await getObsTn(owner, `${languageId}_${resourceId}`, `content/${chapter.toString().padStart(2, 0)}`, chapter, languageId, scrollLock, flavor)
         .then((data) => {
           setItems(data);
@@ -85,10 +86,10 @@ function ObsTwlCard({
 
     setItems([]);
     setIndex(1);
-    if (offlineResource && !offlineResource.offline && selectedProjectMeta?.type?.flavorType?.flavor?.name) {
+    if (offlineResource && !offlineResource.offline && flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name)) {
       fetchData();
     }
-  }, [chapter, languageId, owner, resourceId, offlineResource, scrollLock, selectedProjectMeta?.type?.flavorType?.flavor?.name]);
+  }, [chapter, languageId, owner, resourceId, offlineResource, scrollLock, flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name)]);
   return (
     markdown ? (
       <ObsResourceCard

@@ -3,6 +3,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { updateVersion } from '@/core/burrito/updateTranslationSB';
 import { checkImportDuplicate } from '@/core/burrito/importBurrito';
 import * as logger from '../../../logger';
+import { flavorKey } from '../../../core/burrito/flavors';
 import { environment } from '../../../../environment';
 import packageInfo from '../../../../../package.json';
 import {
@@ -43,7 +44,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
     const settings = {
       version: environment.AG_SETTING_VERSION,
       project: {
-        [sbDataObject.type.flavorType.flavor.name]: {
+        [flavorKey(sbDataObject.type.flavorType.flavor.name)]: {
           scriptDirection: 'LTR',
           starred: false,
           isArchived: false,
@@ -98,9 +99,9 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
         setting.project[sbFlavName].font = (setting.project[sbFlavName].font) ? (setting.project[sbFlavName].font) : '';
       }
       if (!setting.fontSize) {
-        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = 1;
+        setting.project[flavorKey(sbDataObject.type.flavorType.flavor.name)].fontSize = 1;
       } else {
-        setting.project[sbDataObject.type.flavorType.flavor.name].fontSize = (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) ? (setting.project[sbDataObject.type.flavorType.flavor.name].fontSize) : 1;
+        setting.project[flavorKey(sbDataObject.type.flavorType.flavor.name)].fontSize = (setting.project[flavorKey(sbDataObject.type.flavorType.flavor.name)].fontSize) ? (setting.project[flavorKey(sbDataObject.type.flavorType.flavor.name)].fontSize) : 1;
       }
       settings = setting;
     }

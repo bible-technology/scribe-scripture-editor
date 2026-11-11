@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { flavorKey } from '../../core/burrito/flavors';
 import ResourcesPopUp from '@/components/Resources/ResourcesPopUp';
 import { classNames } from '@/util/classNames';
 import TaNavigation from '@/components/EditorPage/Reference/TA/TaNavigation';
@@ -66,7 +67,7 @@ export default function EditorSection({
     states: { scrollLock, selectedProjectMeta },
   } = useContext(ProjectContext);
 
-  const flavorName = selectedProjectMeta?.type?.flavorType?.flavor?.name;
+  const flavorName = flavorKey(selectedProjectMeta?.type?.flavorType?.flavor?.name);
 
   function removeResource() {
     setOpenModal(true);

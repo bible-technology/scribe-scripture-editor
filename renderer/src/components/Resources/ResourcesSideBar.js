@@ -14,6 +14,7 @@ import {
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { flavorKey } from '@/core/burrito/flavors';
 import UploadIcon from '../../../public/icons/basil/Outline/Files/Upload.svg';
 
 import ResourcesSideBarOption from './ResourcesSideBarOption';
@@ -32,7 +33,7 @@ export default function ResourcesSidebar({
 
   useEffect(() => {
     if (!selectResource) {
-      switch (selectedProjectMeta.type.flavorType.flavor.name) {
+      switch (flavorKey(selectedProjectMeta.type.flavorType.flavor.name)) {
       case 'textTranslation':
         setSelectResource('bible');
         break;

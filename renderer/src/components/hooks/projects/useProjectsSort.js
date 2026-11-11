@@ -7,6 +7,7 @@ import {
 import { isElectron } from '../../../core/handleElectron';
 import fetchProjectsMeta from '../../../core/projects/fetchProjectsMeta';
 import * as logger from '../../../logger';
+import { flavorKey } from '../../../core/burrito/flavors';
 
 function useProjectsSort() {
   const [starredrow, setStarredRow] = React.useState('');
@@ -212,6 +213,7 @@ function useProjectsSort() {
                         flavorType = 'Audio';
                         break;
                       case 'videoTranslation':
+                      case 'signLanguageVideoTranslation':
                         lastSeen = _project.project
                           ?.videoTranslation
                           ?.lastSeen;
@@ -274,7 +276,7 @@ function useProjectsSort() {
     updatedProjects.projects.forEach((_project) => {
       if (_project.identification.name.en !== name) { return; }
 
-      const flavorName = _project.type.flavorType.flavor.name;
+      const flavorName = flavorKey(_project.type.flavorType.flavor.name);
       const dirNameMap = {
         textTranslation: 'textTranslation',
         textStories: 'textStories',
@@ -318,7 +320,7 @@ function useProjectsSort() {
     const toggleStarredStatus = (projects, name) => {
       projects.forEach((project) => {
         if (project.identification.name.en === name) {
-          const dirName = getDirName(project.type.flavorType.flavor.name);
+          const dirName = getDirName(flavorKey(project.type.flavorType.flavor.name));
           if (dirName) {
             project.project[dirName].starred = !project.project[dirName].starred;
             project.project[dirName].lastSeen = moment().format();

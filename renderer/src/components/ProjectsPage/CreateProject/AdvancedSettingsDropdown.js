@@ -10,6 +10,7 @@ import CustomCanonSpecification from './CustomCanonSpecification';
 import LicencePopover from './LicencePopover';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
+import { flavorKey } from '../../../core/burrito/flavors';
 
 function BookNumberTag(props) {
   const { children } = props;
@@ -132,7 +133,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
   };
   const loadLicence = () => {
     logger.debug('AdvancedSettingsDropdown.js', 'In loadLicence for loading the selected licence');
-    switch (project.type.flavorType.flavor.name) {
+    switch (flavorKey(project.type.flavorType.flavor.name)) {
     case 'textTranslation':
       setALicense(project.project?.textTranslation?.copyright, false);
       break;
@@ -176,7 +177,7 @@ export default function AdvancedSettingsDropdown({ call, project, projectType })
         setVersificationScheme({ title: project?.project?.textTranslation?.versification ? project?.project?.textTranslation?.versification : 'ENG' });
       }
     }
-    if (call === 'edit' && project.type.flavorType.flavor.name === 'textStories') {
+    if (call === 'edit' && flavorKey(project.type.flavorType.flavor.name) === 'textStories') {
       loadLicence(project);
     }
   }, [isShow]);

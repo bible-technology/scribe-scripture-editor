@@ -6,6 +6,7 @@ import AudioEditor from '@/components/EditorPage/AudioEditor/AudioEditor';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import VideoEditor from '@/components/EditorPage/VideoEditor/VideoEditor';
 import packageInfo from '../../../../package.json';
+import { flavorKey } from '../../core/burrito/flavors';
 import SectionPlaceholder1 from './SectionPlaceholder1';
 import SectionPlaceholder2 from './SectionPlaceholder2';
 import TextEditor from '@/components/EditorPage/TextEditor'; // eslint-disable-line 
@@ -38,8 +39,8 @@ const SectionContainer = () => {
         const metaPath = path.join(newpath, packageInfo.name, 'users', username, 'projects', projectName, 'metadata.json');
         const data = fs.readFileSync(metaPath, 'utf-8');
         const metadata = JSON.parse(data);
-        setEditor(metadata.type.flavorType.flavor.name);
-        if (metadata.type.flavorType.flavor.name === 'audioTranslation') {
+        setEditor(flavorKey(metadata.type.flavorType.flavor.name));
+        if (flavorKey(metadata.type.flavorType.flavor.name) === 'audioTranslation') {
           setAudioPlayerUI(true);
         } else {
           setAudioPlayerUI(false);

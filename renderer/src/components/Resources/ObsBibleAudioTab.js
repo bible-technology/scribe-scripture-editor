@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import RemoveResource from '@/components/Resources/ResourceUtils/RemoveResource';
 import CheckHelpsUpdatePopUp from '@/components/Resources/ResourceUtils/CheckHelpsUpdatePopUp';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { flavorKey } from '@/core/burrito/flavors';
 import readLocalResources from './useReadLocalResources';
 import LoadingScreen from '../Loading/LoadingScreen';
 
@@ -43,7 +44,7 @@ export default function ObsBibleAudioTab({
     const resourceName = (selectResource === 'bible')
       ? 'textTranslation' : (selectResource === 'obs')
         ? 'textStories' : (selectResource === 'audio') ? 'audioTranslation' : '';
-    const resourceArray = subMenuItems?.filter((ref) => ref?.value?.type?.flavorType?.flavor?.name === resourceName);
+    const resourceArray = subMenuItems?.filter((ref) => flavorKey(ref?.value?.type?.flavorType?.flavor?.name) === resourceName);
     setfilteredBibleObsAudio(resourceArray);
   }, [selectResource, loading, subMenuItems]);
   return (
@@ -74,7 +75,7 @@ export default function ObsBibleAudioTab({
               {selectResource === currentResourceType.resourceType && (
                 <tbody>
                   {filteredBibleObsAudio?.length > 0 && (
-                    filteredBibleObsAudio.map((ref) => (ref?.value?.type?.flavorType?.flavor?.name === currentResourceType.flavorName
+                    filteredBibleObsAudio.map((ref) => (flavorKey(ref?.value?.type?.flavorType?.flavor?.name) === currentResourceType.flavorName
                       ? (
                         <tr className="hover:bg-gray-200" key={ref.value.identification.name.en + ref.projectDir}>
 
@@ -123,7 +124,7 @@ export default function ObsBibleAudioTab({
                                 ref.value.languages[0].name.en,
                                 ref.projectDir,
                                 '',
-                                (selectResource !== 'audio' ? ref.value.type.flavorType.name : ref.value.type.flavorType.flavor.name),
+                                (selectResource !== 'audio' ? ref.value.type.flavorType.name : flavorKey(ref.value.type.flavorType.flavor.name)),
                               )}
                               role="button"
                               tabIndex="0"

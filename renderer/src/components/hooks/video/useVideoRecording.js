@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import * as logger from '../../../logger';
 
 export const useVideoRecording = ({
@@ -78,6 +79,11 @@ export const useVideoRecording = ({
         }
         fs.writeFileSync(filePath, buffer);
       }
+
+      await syncVideoIngredients(
+        path.resolve(projectPath, '..', '..', '..', '..'),
+        { changedFile: filePath },
+      );
 
       if (onSaveComplete) {
         onSaveComplete({

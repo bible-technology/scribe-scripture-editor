@@ -27,9 +27,6 @@
 		"name": {
 			"en": ""
 		},
-		"description": {
-			"en": ""
-		},
 		"abbreviation": {
 			"en": ""
 		}
@@ -46,18 +43,20 @@
 		"flavorType": {
 			"name": "scripture",
 			"flavor": {
-				"name": "videoTranslation",
-				"performance": [
-					"singleVoice",
-					"drama"
-				],
+				"name": "signLanguageVideoTranslation",
+				"contentByChapter": false,
 				"formats": {
 					"format1": {
-						"compression": "mp4",
-						"trackConfiguration": "1/0 (Mono)",
-						"bitRate": 64000,
-						"bitDepth": 16,
-						"samplingRate": 22050
+						"container": "mp4",
+						"videoStream": {
+							"bitRate": 2500000,
+							"frameRate": 30,
+							"screenResolution": "1280x720"
+						},
+						"audioStream": {
+							"compression": "mp3",
+							"trackConfiguration": "2/0 (Stereo)"
+						}
 					}
 				}
 			},
@@ -65,17 +64,6 @@
 		}
 	},
 	"confidential": false,
-	"agencies": [
-		{}
-	],
-	"targetAreas": [
-		{
-			"code": "",
-			"name": {
-				"en": ""
-			}
-		}
-	],
 	"localizedNames": {
 		"GEN": {
 			"short": {

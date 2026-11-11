@@ -7,6 +7,7 @@ import localForage from 'localforage';
 import { ReferenceContext } from '@/components/context/ReferenceContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
+import { flavorKey } from '@/core/burrito/flavors';
 import * as logger from '../../../logger';
 import packageInfo from '../../../../../package.json';
 
@@ -25,7 +26,7 @@ const ResourceResetAfterCheckSameOnRefResourceAgSettings = async (setResetResour
           Object.entries(_value).forEach(
             ([, resources]) => {
               if (resources.identification.name.en === _projectname[0]) {
-                refsHistory.push(resources.project[resources.type.flavorType.flavor.name].refResources);
+                refsHistory.push(resources.project[flavorKey(resources.type.flavorType.flavor.name)].refResources);
               }
             },
           );

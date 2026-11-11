@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+import { flavorKey } from '@/core/burrito/flavors';
+
 const handleChangeQuery = (query, resourceData, selectResource, setFilteredResources, subMenuItems, setfilteredBibleObsAudio) => {
   const filtered = { offlineResource: [], onlineResource: { ...resourceData?.reference } || {}, dependentResource: { ...resourceData?.dependentResource } };
   if (['tn', 'tir', 'tw', 'tq', 'ta', 'obs-tn', 'obs-tq', 'twl', 'obs-twlm'].includes(selectResource?.toLowerCase())) {
@@ -25,7 +27,7 @@ const handleChangeQuery = (query, resourceData, selectResource, setFilteredResou
     const resourceName = (selectResource === 'bible')
       ? 'textTranslation' : (selectResource === 'obs')
         ? 'textStories' : (selectResource === 'audio') ? 'audioTranslation' : '';
-    const resourceArray = subMenuItems?.filter((ref) => ref?.value?.type?.flavorType?.flavor?.name === resourceName);
+    const resourceArray = subMenuItems?.filter((ref) => flavorKey(ref?.value?.type?.flavorType?.flavor?.name) === resourceName);
     if (query?.length > 0) {
       // eslint-disable-next-line array-callback-return
       const resourceFilter = resourceArray?.filter((item) => {

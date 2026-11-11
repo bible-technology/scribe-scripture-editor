@@ -1,5 +1,6 @@
 import * as localForage from 'localforage';
 import * as logger from '../../../logger';
+import { flavorKey } from '../../../core/burrito/flavors';
 import packageInfo from '../../../../../package.json';
 import {
   addGitRemote, checkInitialize, checkoutJsonFiles, checkoutToBranch, commitChanges, createBranch, getRepoOwner, initProject, pullProject, pushTheChanges, pushToMain,
@@ -13,7 +14,7 @@ export async function uploadToGitea(projectDataAg, auth, setSyncProgress, notify
   const projectData = projectDataAg.projectMeta;
   const projectId = Object.keys(projectData.identification.primary[packageInfo.name])[0];
   const projectName = projectData.identification.name.en;
-  const repoName = `${projectData.languages[0].tag}-${projectData.type.flavorType.flavor.name}-${projectName.replace(/[\s+ -]/g, '_')}`;
+  const repoName = `${projectData.languages[0].tag}-${flavorKey(projectData.type.flavorType.flavor.name)}-${projectName.replace(/[\s+ -]/g, '_')}`;
   const mainBranch = `${packageInfo.name}-main`;
   const localBranch = `${auth?.user?.username}/${packageInfo.name}`;
   await localForage.getItem('userProfile').then(async (user) => {

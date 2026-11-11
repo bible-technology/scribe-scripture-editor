@@ -19,6 +19,7 @@ import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import ImageIcon from '@/icons/basil/Outline/Files/Image.svg';
 import { environment } from '../../../environment';
+import { flavorKey } from '../../core/burrito/flavors';
 import ImportPopUp, { deleteVideoFiles } from './ImportPopUp';
 import burrito from '../../lib/BurritoTemplate.json';
 import { classNames } from '../../util/classNames';
@@ -324,16 +325,16 @@ export default function NewProject({ call, project, closeEdit }) {
     setNewProjectFields({
       projectName: project.identification.name.en,
       abbreviation: project.identification.abbreviation.en,
-      description: project.project[project.type.flavorType.flavor.name].description,
+      description: project.project[flavorKey(project.type.flavorType.flavor.name)].description,
     });
     setProjectLangData({
       ang: project.languages[0].name.en,
-      ld: project.project[project.type.flavorType.flavor.name].scriptDirection,
+      ld: project.project[flavorKey(project.type.flavorType.flavor.name)].scriptDirection,
       lc: project.languages[0]?.tag ? project.languages[0].tag : project.languages[0].name.en.substring(0, 3),
     });
     setMetadata(project);
     // set dropdown to the project type
-    switch (project.type.flavorType.flavor.name) {
+    switch (flavorKey(project.type.flavorType.flavor.name)) {
     case 'textTranslation':
       setHeaderDropDown('Translation');
       break;

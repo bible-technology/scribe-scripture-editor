@@ -3,9 +3,11 @@ import * as localforage from 'localforage';
 import { v5 as uuidv5 } from 'uuid';
 import { checkInitialize, commitChanges, initProject } from '@/components/Sync/Isomorphic/utils';
 import { factoryCreateContent } from '@/util/factoryCreateContent';
+import syncVideoIngredients from '@/core/burrito/syncVideoIngredients';
 import { factoryCreateSB } from '@/util/factoryCreateSB';
 import * as logger from '../../logger';
 import { environment } from '../../../environment';
+import { flavorKey } from '../../core/burrito/flavors';
 import packageInfo from '../../../../package.json';
 
 const bookAvailable = (list, id) => list.some((obj) => obj === id);
@@ -72,7 +74,7 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       // read meta and check the flavors is same or not
       const readDuplicateMeta = fs.readFileSync(path.join(projectDir, folder, 'metadata.json'));
       const currentduplicateMeta = JSON.parse(readDuplicateMeta);
-      const duplicatePrjFlavor = currentduplicateMeta?.type?.flavorType?.flavor?.name;
+      const duplicatePrjFlavor = flavorKey(currentduplicateMeta?.type?.flavorType?.flavor?.name);
       const currentFlavorType = projectMetaObj.projectType;
       // checking for duplicates
       if (flavors[currentFlavorType] === duplicatePrjFlavor) {
@@ -230,6 +232,9 @@ export const saveProjectsMeta = async (projectMetaObj) => {
 
       // then init git for the Project
       const projectGitPath = path.join(projectDir, `${projectMetaObj.newProjectFields.projectName}_${id}`);
+      if (type === 'Video') {
+        await syncVideoIngredients(projectGitPath);
+      }
       await checkGitandCommitFiles(fs, projectGitPath, null, currentUser);
 
       // finally push git

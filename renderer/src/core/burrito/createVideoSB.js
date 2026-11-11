@@ -3,6 +3,7 @@ import burrito from '../../lib/VideoBurritoTemplate.json';
 import * as logger from '../../logger';
 import packageInfo from '../../../../package.json';
 import { updateVersion } from './updateTranslationSB';
+import migrateVideoBurrito from './migrateVideoBurrito';
 
 const createVideoSB = (
   username,
@@ -28,6 +29,7 @@ const createVideoSB = (
       if (update) {
         json = updateVersion(json);
       }
+      migrateVideoBurrito(json);
     } else {
       json = JSON.parse(JSON.stringify(burrito));
     }
@@ -48,6 +50,10 @@ const createVideoSB = (
     json.languages[0].scriptDirection = direction?.toLowerCase();
     json.identification.name.en = projectFields.projectName;
     json.identification.abbreviation.en = projectFields.abbreviation;
+    const description = typeof projectFields.description === 'string' ? projectFields.description.trim() : '';
+    if (description) {
+      json.identification.description = { en: description };
+    }
     json.languages[0].name.en = language;
     // Adding the below line in 0.5.8 version, since the id in the previous versions is autographa.org
     json.idAuthorities.scribe.id = 'http://www.scribe.bible';

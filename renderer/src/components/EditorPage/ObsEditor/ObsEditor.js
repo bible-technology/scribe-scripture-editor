@@ -12,6 +12,7 @@ import writeToFile from '@/core/editor/writeToFile';
 import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import moment from 'moment';
 import { splitStringByLastOccurence } from '@/util/splitStringByLastMarker';
+import { flavorKey } from '@/core/burrito/flavors';
 import EditorPanel from './EditorPanel';
 import * as logger from '../../../logger';
 import { getDetails } from './utils/getDetails';
@@ -112,8 +113,8 @@ const ObsEditor = () => {
                             Object.entries(_value).forEach(
                               ([, resources]) => {
                                 if (resources.identification.name.en === _projectname[0]) {
-                                  resources.project[resources.type.flavorType.flavor.name].navigation = obsNavigation;
-                                  resources.project[resources.type.flavorType.flavor.name].lastSeen = moment().format();
+                                  resources.project[flavorKey(resources.type.flavorType.flavor.name)].navigation = obsNavigation;
+                                  resources.project[flavorKey(resources.type.flavorType.flavor.name)].lastSeen = moment().format();
                                 }
                               },
                             );

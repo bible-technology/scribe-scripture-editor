@@ -7,6 +7,7 @@ import BulkSelectionGroup from './BulkSelectionGroup';
 import Button from '../Common/Button/Button';
 import BookItem from './BookItem';
 import * as logger from '../../../logger';
+import { flavorKey } from '../../../core/burrito/flavors';
 import { getDetails } from '../../EditorPage/ObsEditor/utils/getDetails';
 
 const initialBook = 'gen';
@@ -89,7 +90,7 @@ function ScopeManagement({
 
   const fs = window.require('fs');
   const path = window.require('path');
-  const projectType = metadata?.type?.flavorType?.flavor?.name;
+  const projectType = flavorKey(metadata?.type?.flavorType?.flavor?.name);
   const ingredientsFolder = projectType === 'videoTranslation' ? 'video' : 'audio';
   const fileExtensions = projectType === 'videoTranslation' ? ['mp4', 'webm'] : ['mp3'];
   useEffect(() => {

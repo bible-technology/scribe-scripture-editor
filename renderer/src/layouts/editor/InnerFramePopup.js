@@ -6,6 +6,7 @@ import { Modal, Button, Input } from '@mui/material';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectContext } from '@/components/context/ProjectContext';
+import { flavorKey } from '../../core/burrito/flavors';
 import { AutographaContext } from '@/components/context/AutographaContext';
 import { useTranslation } from 'react-i18next';
 import { generate } from 'random-words';
@@ -127,7 +128,7 @@ function createSection(folder, pickerJson) {
       // }
 
       let fileName;
-      if (jsonParse?.type?.flavorType?.flavor?.name === 'textTranslation') {
+      if (flavorKey(jsonParse?.type?.flavorType?.flavor?.name) === 'textTranslation') {
         if (jsonParse.resourceMeta) {
           pickerJson.book[jsonParse.resourceMeta?.full_name] = {
             description: `${jsonParse.resourceMeta?.full_name}`,
@@ -153,7 +154,7 @@ function createSection(folder, pickerJson) {
             books: [],
           };
         }
-      } else if (jsonParse?.type?.flavorType?.flavor?.name === 'textStories') {
+      } else if (flavorKey(jsonParse?.type?.flavorType?.flavor?.name) === 'textStories') {
         fileName = 'content';
         pickerJson.OBS[`OBS ${jsonParse.resourceMeta?.full_name}`] = {
           description: `OBS ${jsonParse.resourceMeta?.full_name}`,
@@ -179,7 +180,7 @@ function createSection(folder, pickerJson) {
           },
           books: [],
         };
-      } else if (jsonParse?.type?.flavorType?.flavor?.name === 'x-juxtalinear') {
+      } else if (flavorKey(jsonParse?.type?.flavorType?.flavor?.name) === 'x-juxtalinear') {
         fileName = 'content';
         pickerJson.jxl[Object.values(jsonParse.identification.name)[0]] = {
           description: `${Object.values(jsonParse.identification.name)[0]}`,
