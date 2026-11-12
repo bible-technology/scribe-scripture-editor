@@ -11,7 +11,6 @@ import { saveReferenceResource } from '@/core/projects/updateAgSettings';
 import { useBibleReference } from '@/hooks/useBibleReference';
 import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
-// eslint-disable-next-line no-unused-vars
 import { flavorKey } from '../../core/burrito/flavors';
 
 import packageInfo from '../../../../package.json';
@@ -171,7 +170,7 @@ export default function ReferenceContextProvider({ children }) {
                 ([, resources]) => {
                   const id = Object.keys(resources.identification.primary[packageInfo.name]);
                   if (id[0] === _projectname[1]) {
-                    switch (resources.type.flavorType.flavor.name) {
+                    switch (flavorKey(resources.type.flavorType.flavor.name)) {
                     case 'x-juxtalinear':
                       resProj = resources.project['x-juxtalinear'];
                       setBookmarksVerses(resProj.bookMarks);

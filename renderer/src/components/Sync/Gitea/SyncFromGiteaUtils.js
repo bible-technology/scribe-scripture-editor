@@ -74,7 +74,7 @@ async function createOrUpdateAgSettings(sbDataObject, currentUser, projectName, 
     logger.debug('SyncFromGiteaUtils', `Updating ${environment.PROJECT_SETTING_FILE} file`);
     const scribe = fs.readFileSync(path.join(projectDir, `${projectName}_${id}`, dirName, environment.PROJECT_SETTING_FILE));
     let settings = JSON.parse(scribe);
-    const sbFlavName = sbDataObject.type.flavorType.flavor.name;
+    const sbFlavName = flavorKey(sbDataObject.type.flavorType.flavor.name);
     if (settings.version !== environment.AG_SETTING_VERSION) {
       // eslint-disable-next-line prefer-const
       let setting = settings;

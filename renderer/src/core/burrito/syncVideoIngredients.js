@@ -106,7 +106,7 @@ const runSync = async (projectPath, { changedFile, rehashAll } = {}) => {
 
     results.forEach((result) => {
       if (!fs.existsSync(result.filePath)) {
-        return; // deleted while it was being hashing
+        return; // deleted while it was being hashed
       }
       const existing = ingredients[result.key] || {};
       const entry = {

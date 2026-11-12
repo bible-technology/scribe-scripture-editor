@@ -11,13 +11,6 @@ import { describeVideoFile, isVideoFile, toBurritoPath } from './videoIngredient
 
 jest.mock('./updateTranslationSB', () => ({ updateVersion: (json) => json }));
 
-// Node test environment has no `window` global; the app reads Node modules through
-// electron's window.require. Provide a stub so the syncVideoIngredients test can
-// run under node (the canvas native module is incompatible with Node 24).
-if (typeof global.window === 'undefined') {
-  global.window = { require };
-}
-
 const FAKE_MD5 = 'a'.repeat(32);
 const md5 = (data) => crypto.createHash('md5').update(data).digest('hex');
 const isValid = (metadata) => validate('metadata', 'test', JSON.stringify(metadata), '1.0.0');
