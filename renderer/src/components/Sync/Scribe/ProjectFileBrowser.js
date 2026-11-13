@@ -3,8 +3,7 @@ import {
 } from 'react';
 import GridRow from '../GridRow';
 import { SyncContext } from '../../context/SyncContext';
-// eslint-disable-next-line import/no-unresolved, import/extensions
-import { flavorKey } from '../../core/burrito/flavors';
+import { flavorKey } from '../../../core/burrito/flavors';
 
 export default function ProjectFileBrowser() {
   const {
